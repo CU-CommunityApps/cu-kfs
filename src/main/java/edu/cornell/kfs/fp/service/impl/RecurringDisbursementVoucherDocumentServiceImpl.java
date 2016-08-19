@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
@@ -30,13 +31,16 @@ import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
+import org.kuali.rice.krad.service.NoteService;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -48,7 +52,9 @@ import edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine;
 import edu.cornell.kfs.fp.dataaccess.RecurringDisbursementVoucherSearchDao;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherExtractionHelperService;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
+import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherPaymentMaintenanceService;
 import edu.cornell.kfs.gl.service.ScheduledAccountingLineService;
 import edu.emory.mathcs.backport.java.util.Collections;
 
@@ -59,9 +65,13 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     protected DocumentService documentService;
     protected ScheduledAccountingLineService scheduledAccountingLineService;
     protected BusinessObjectService businessObjectService;
+    protected RecurringDisbursementVoucherPaymentMaintenanceService recurringDisbursementVoucherPaymentMaintenanceService;	
     protected AccountingPeriodService accountingPeriodService;
     protected RecurringDisbursementVoucherSearchDao recurringDisbursementVoucherSearchDao;
     protected PersonService personService;
+    protected RouteHeaderService routeHeaderService;
+    protected CuDisbursementVoucherExtractionHelperService cuDisbursementVoucherExtractionHelperService;
+    protected NoteService noteService;
 
     @Override
     public void updateRecurringDisbursementVoucherDetails(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument){
@@ -306,9 +316,36 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         pdpStatus.setPdpStatus(disbursementVoucherDocument.getDisbursementVoucherPdpStatus());
         pdpStatus.setPaymentDetailDocumentType(disbursementVoucherDocument.getPaymentDetailDocumentType());
         pdpStatus.setDueDate(disbursementVoucherDocument.getDisbursementVoucherDueDate());
+        pdpStatus.setDvStatus(disbursementVoucherDocument.getDocumentHeader().getWorkflowDocument().getStatus().getLabel());
         return pdpStatus;
     }
-
+    
+    @Override
+    public Set<String> cancelOpenPDPPayments(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument, String cancelMessage) {
+        Collection<PaymentDetail> paymentDetails = findPaymentDetailsFromRecurringDisbursementVoucher(recurringDisbursementVoucherDocument);
+        Set<String> canceledPaymentGroups = new HashSet<String>();
+        Person loggedINPerson = GlobalVariables.getUserSession().getPerson();
+        for (PaymentDetail detail : paymentDetails) {
+            String paymentDetailStatus = detail.getPaymentGroup().getPaymentStatusCode();
+            if (isPaymentCancelableByLoggedInUser(paymentDetailStatus)) {
+                LOG.debug("cancelPDPPayments: About to Cancel " + detail.getId() + " for a reason of " + cancelMessage);
+                int paymentGroupId = detail.getPaymentGroupId().intValue();
+                int paymentDetailId = detail.getId().intValue();
+                boolean canceledSuccessfully = getRecurringDisbursementVoucherPaymentMaintenanceService().cancelPendingPayment(
+                        paymentGroupId, paymentDetailId, cancelMessage, loggedINPerson);
+                if (canceledSuccessfully) {
+                    canceledPaymentGroups.add(detail.getPaymentGroupId().toString());
+                } else {
+                    throw new RuntimeException("cancelPDPPayments: unable to cancel payment Payment Detail "+ detail.getId());
+                }
+            } else {
+                LOG.debug("cancelPDPPayments: Not going to cancel Payment Detail "+ detail.getId());
+            }
+        }
+        noteChangeOnRecurringDV(recurringDisbursementVoucherDocument, "The following payments were canceled: ", canceledPaymentGroups);
+        return canceledPaymentGroups;
+    }
+    
     @Override
     public Collection<PaymentDetail> findPaymentDetailsFromRecurringDisbursementVoucher(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument) {
         Collection<PaymentDetail> paymentDetails = new ArrayList<PaymentDetail>();
@@ -319,6 +356,32 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             paymentDetails.addAll(getBusinessObjectService().findMatching(PaymentDetail.class, fieldValues));
         }
         return paymentDetails;
+    }
+    
+    @Override
+    public boolean isPaymentCancelableByLoggedInUser(String paymentDetailStatus) {
+        return isPaymentDetailInCancelableStatus(paymentDetailStatus) && hasCancelPermission();
+    }
+    
+    private boolean isPaymentDetailInCancelableStatus(String paymentDetailStatus) {
+        return StringUtils.equals(PdpConstants.PaymentStatusCodes.OPEN, paymentDetailStatus)
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_CD, paymentDetailStatus)
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_EMPLOYEE_CD, paymentDetailStatus)
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NRA_CD, paymentDetailStatus)
+                || StringUtils.equals(PdpConstants.PaymentStatusCodes.HELD_TAX_NRA_EMPL_CD, paymentDetailStatus);
+    }
+    
+    private void noteChangeOnRecurringDV(RecurringDisbursementVoucherDocument recurringDV, String noteText, Set<String> setOfStrings) {
+        if (!setOfStrings.isEmpty()) {
+            Note note = buildNoteBase();
+            note.setNoteText(noteText + StringUtils.join(setOfStrings, ", "));;
+            recurringDV.addNote(note);
+            try {
+                getDocumentService().saveDocument(recurringDV);
+            } catch (WorkflowException e) {
+                throw new RuntimeException("noteChangeOnRecurringDV() Unable to save note.", e);
+            }
+        }
     }
     
     private Note buildNoteBase() {
@@ -442,21 +505,88 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             return currentPeriod.getUniversityFiscalPeriodEndDate();
         }
     }
-
-    protected PersonService getPersonService() {
-        return personService;
+    
+    @Override
+    public Set<String> cancelSavedDisbursementVouchers(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument, final String cancelMessage) {
+        Set<String> canceledDVs = new HashSet<String>();
+        for (RecurringDisbursementVoucherDetail detail : recurringDisbursementVoucherDocument.getRecurringDisbursementVoucherDetails()) {
+            if (isDVCancelable(detail.getDvDocumentNumber())) {
+                cancelDVAsSystemUser(cancelMessage, detail.getDvDocumentNumber());
+                canceledDVs.add(detail.getDvDocumentNumber());
+            }
+        }
+        noteChangeOnRecurringDV(recurringDisbursementVoucherDocument, "The following disbursement vouchers were canceled: ", canceledDVs);
+        return canceledDVs;
+    }
+    
+    private boolean isDVCancelable(String dvDocumentNumber) {
+        String dvStatus = getRouteHeaderService().getDocumentStatus(dvDocumentNumber);
+        return hasCancelPermission() && StringUtils.equalsIgnoreCase(dvStatus, DocumentStatus.SAVED.getCode());
     }
 
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
+    private boolean hasCancelPermission() {
+        return getRecurringDisbursementVoucherPaymentMaintenanceService().hasCancelPermission(GlobalVariables.getUserSession().getPerson());
     }
-
-    protected RecurringDisbursementVoucherSearchDao getRecurringDisbursementVoucherSearchDao() {
-        return recurringDisbursementVoucherSearchDao;
+    
+    private void cancelDVAsSystemUser(final String cancelMessage, final String dvDocumentNumber) {
+        try {
+            GlobalVariables.doInNewGlobalVariables(new UserSession(KFSConstants.SYSTEM_USER), new Callable<Object>() {
+                @Override
+                public Object call() throws WorkflowException {
+                    CuDisbursementVoucherDocument disbursementVoucher = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocumentNumber);
+                    
+                    Note note = buildNoteBase();
+                    note.setNoteText("This DV was canceled from the recurring disbursement voucher that created it.");
+                    String usersPrincipleID = GlobalVariables.getUserSession().getPrincipalId();
+                    note = getNoteService().createNote(note, disbursementVoucher.getDocumentHeader(), usersPrincipleID);
+                    getNoteService().save(note);
+                    
+                    getDocumentService().cancelDocument(disbursementVoucher, cancelMessage);
+                    return null;
+                    
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException("cancelDVAsSystemUser() Unable to cancel DV: " + dvDocumentNumber, e);
+        }
     }
-
-    public void setRecurringDisbursementVoucherSearchDao(RecurringDisbursementVoucherSearchDao recurringDisbursementVoucherSearchDao) {
-        this.recurringDisbursementVoucherSearchDao = recurringDisbursementVoucherSearchDao;
+    
+    @Override
+    public Set<String> cancelDisbursementVouchersFinalizedNotExtracted(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument, String cancelMessage) {
+        Set<String> canceledDVs = new HashSet<String>();
+        
+        for (RecurringDisbursementVoucherDetail detail : recurringDisbursementVoucherDocument.getRecurringDisbursementVoucherDetails()) {
+            String dvDocumentNumber = detail.getDvDocumentNumber();
+            if (!isDVCancelable(dvDocumentNumber)) {
+                CuDisbursementVoucherDocument dv;
+                try {
+                    dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
+                    if (isDvCancelableFromApprovedNotExtracted(dv)) {
+                        
+                        Date cancelDate =  new Date (Calendar.getInstance().getTimeInMillis());
+                        dv.setCancelDate(cancelDate);
+                        
+                        CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv);
+                        
+                        getCuDisbursementVoucherExtractionHelperService().getPaymentSourceHelperService().handleEntryCancellation(
+                                cancledDV, getCuDisbursementVoucherExtractionHelperService());
+                        
+                        canceledDVs.add(cancledDV.getDocumentNumber());
+                    }
+                } catch (WorkflowException e) {
+                    throw new RuntimeException(e);
+                }
+                
+            }
+        }
+        noteChangeOnRecurringDV(recurringDisbursementVoucherDocument, "The following disbursement vouchers were canceled after it was approved but before payments were created: ", canceledDVs);
+        return canceledDVs;
+    }
+    
+    private boolean isDvCancelableFromApprovedNotExtracted(CuDisbursementVoucherDocument dv) {
+        String dvStatus = getRouteHeaderService().getDocumentStatus(dv.getDocumentNumber());
+        return hasCancelPermission() && StringUtils.equals(dv.getDisbursementVoucherPdpStatus(), CuFPConstants.RecurringDisbursementVoucherDocumentConstants.PDP_PRE_EXTRACTION_STATUS)
+                && StringUtils.equalsIgnoreCase(dvStatus, DocumentStatus.FINAL.getCode());
     }
 
     public DocumentService getDocumentService() {
@@ -489,6 +619,55 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
         this.accountingPeriodService = accountingPeriodService;
+    }
+
+    public RecurringDisbursementVoucherPaymentMaintenanceService getRecurringDisbursementVoucherPaymentMaintenanceService() {
+        return recurringDisbursementVoucherPaymentMaintenanceService;
+    }
+
+    public void setRecurringDisbursementVoucherPaymentMaintenanceService(RecurringDisbursementVoucherPaymentMaintenanceService paymentMaintenanceService) {
+        this.recurringDisbursementVoucherPaymentMaintenanceService = paymentMaintenanceService;
+    }
+
+    public RouteHeaderService getRouteHeaderService() {
+        return routeHeaderService;
+    }
+
+    public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
+        this.routeHeaderService = routeHeaderService;
+    }
+
+    public CuDisbursementVoucherExtractionHelperService getCuDisbursementVoucherExtractionHelperService() {
+        return cuDisbursementVoucherExtractionHelperService;
+    }
+
+    public void setCuDisbursementVoucherExtractionHelperService(
+            CuDisbursementVoucherExtractionHelperService cuDisbursementVoucherExtractionHelperService) {
+        this.cuDisbursementVoucherExtractionHelperService = cuDisbursementVoucherExtractionHelperService;
+    }
+    
+    protected PersonService getPersonService() {
+        return personService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+    }
+    
+    protected RecurringDisbursementVoucherSearchDao getRecurringDisbursementVoucherSearchDao() {
+        return recurringDisbursementVoucherSearchDao;
+    }
+
+    public void setRecurringDisbursementVoucherSearchDao(RecurringDisbursementVoucherSearchDao recurringDisbursementVoucherSearchDao) {
+        this.recurringDisbursementVoucherSearchDao = recurringDisbursementVoucherSearchDao;
+    }
+
+    public NoteService getNoteService() {
+        return noteService;
+    }
+
+    public void setNoteService(NoteService noteService) {
+        this.noteService = noteService;
     }
 
 }

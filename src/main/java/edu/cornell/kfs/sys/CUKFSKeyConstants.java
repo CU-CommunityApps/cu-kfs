@@ -68,8 +68,9 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_RCDV_RECURRENCE_SUM_LESS_THAN_TANSACTION = "error.rcdv_recurrence_sum_less_than_transaction_amount";
     public static final String ERROR_RCDV_TOO_MANY_RECURRENCES="error.rcdv_too_many_recurrences";
     public static final String ERROR_RCDV_NO_FOREIGN_VENDORS = "error.rcdv_no_foreign_vendors";
-    public static final String INFO_RCDV_NO_PAYMENTS_CANCELED = "info.rcdv_no_payments_canceled";
+    public static final String INFO_RCDV_NO_PAYMENTS_OR_DVS_CANCELED = "info.rcdv_no_payments_or_dvs_canceled";
     public static final String INFO_RCDV_LIST_OF_PAYMENT_GROUPS_CANCELED = "info.rcdv_list_of_payment_groups_canceled";
+    public static final String INFO_RCDV_LIST_OF_DVS_CANCELED = "info.rcdv_list_of_dvs_canceled";
     
     // KFSPTS-1786
     public static final String ERROR_CURRBALANCE_LOOKUP_CRITERIA_REQD = "error.currentbalance.lookup.criteria.required";

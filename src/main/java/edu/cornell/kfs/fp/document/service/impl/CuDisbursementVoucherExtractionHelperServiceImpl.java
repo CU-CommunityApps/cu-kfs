@@ -43,10 +43,11 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherExtractionHelperService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 
 
-public class CuDisbursementVoucherExtractionHelperServiceImpl extends DisbursementVoucherExtractionHelperServiceImpl {
+public class CuDisbursementVoucherExtractionHelperServiceImpl extends DisbursementVoucherExtractionHelperServiceImpl implements CuDisbursementVoucherExtractionHelperService {
     static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuDisbursementVoucherExtractionHelperServiceImpl.class);
     protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 

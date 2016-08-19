@@ -136,6 +136,8 @@ public class CuFPConstants {
         public static final String RECURRING_DV_DOCUMENT_TYPE_NAME = "RCDV";
         public static final String RECURRING_DV_EXPLANATION_TO_DV_NOTE_STARTER = "DV created by recurring DV: ";
         public static final String RECURRING_DETAILS_TAB_NAME = "RecurringDetails";
+        public static final String RECURRING_DV_CANCEL_PAYMENTS_PERMISSION_NAME = "CANCEL RECURRING DISBURSEMENT VOUCHER PAYMENTS";
+        public static final String PDP_PRE_EXTRACTION_STATUS = "Pre-Extraction";
     }
     
     public static class AmazonWebServiceBillingConstants {

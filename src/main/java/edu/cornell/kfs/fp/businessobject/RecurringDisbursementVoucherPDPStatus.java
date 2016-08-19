@@ -14,6 +14,7 @@ public class RecurringDisbursementVoucherPDPStatus implements Serializable, Comp
     private Date paidDate;
     private Date dueDate;
     private String paymentDetailDocumentType;
+    private String dvStatus;
 
     public String getDocumentNumber() {
         return documentNumber;
@@ -69,6 +70,14 @@ public class RecurringDisbursementVoucherPDPStatus implements Serializable, Comp
 
     public void setPaymentDetailDocumentType(String paymentDetailDocumentType) {
         this.paymentDetailDocumentType = paymentDetailDocumentType;
+    }
+
+    public String getDvStatus() {
+        return dvStatus;
+    }
+
+    public void setDvStatus(String dvStatus) {
+        this.dvStatus = dvStatus;
     }
 
     @Override
