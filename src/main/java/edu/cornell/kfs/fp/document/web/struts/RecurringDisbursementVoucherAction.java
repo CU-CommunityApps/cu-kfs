@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -51,6 +52,14 @@ public class RecurringDisbursementVoucherAction extends CuDisbursementVoucherAct
                     KFSKeyConstants.ERROR_CUSTOM, "This Document needs to be saved before Submit");
         }
         ActionForward forward = super.route(mapping, form, request, response);
+        return forward;
+    }
+    
+    @Override
+    public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    	RecurringDisbursementVoucherForm recurringForm = (RecurringDisbursementVoucherForm) form;
+    	recurringForm.getPdpStatuses().clear();
+    	ActionForward forward = super.copy(mapping, form, request, response);
         return forward;
     }
     
