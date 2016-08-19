@@ -291,6 +291,15 @@
 		<property name="scheduledAccountingLineService" ref="scheduledAccountingLineService"/>
 		<property name="businessObjectService" ref="businessObjectService"/>
 		<property name="accountingPeriodService" ref="accountingPeriodService"/>
+		<property name="recurringDisbursementVoucherPaymentMaintenanceService" ref="recurringDisbursementVoucherPaymentMaintenanceService"/>
+		<property name="routeHeaderService" ref="enDocumentRouteHeaderService"/>
+	</bean>
+	
+	<bean id="recurringDisbursementVoucherPaymentMaintenanceService" parent="recurringDisbursementVoucherPaymentMaintenanceService-parentBean"/>
+	<bean id="recurringDisbursementVoucherPaymentMaintenanceService-parentBean" 
+		class="edu.cornell.kfs.fp.service.impl.RecurringDisbursementVoucherPaymentMaintenanceServiceImpl" 
+		abstract="true" parent="pdpPaymentMaintenanceService-parentBean">
+		<property name="permissionService" ref="permissionService"/>
 	</bean>
 
     <!-- KFSUPGRADE-973 -->
