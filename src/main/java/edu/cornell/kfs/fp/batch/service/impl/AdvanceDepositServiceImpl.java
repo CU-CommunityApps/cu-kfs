@@ -17,6 +17,7 @@ import edu.cornell.kfs.fp.businessobject.AchIncomeFileTransactionSet;
 import edu.cornell.kfs.fp.businessobject.AchIncomeNote;
 import edu.cornell.kfs.fp.businessobject.AchIncomeTransaction;
 import edu.cornell.kfs.fp.businessobject.IncomingWireAchMapping;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -33,6 +34,7 @@ import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.service.BankService;
+import org.kuali.kfs.sys.util.GlobalVariablesUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -52,15 +54,18 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.bo.Attachment;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.exception.InvalidAddressException;
+import org.kuali.rice.krad.exception.ValidationException;
 import org.kuali.rice.krad.service.AttachmentService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
 import org.kuali.rice.krad.service.MailService;
 import org.kuali.rice.krad.service.NoteService;
+import org.kuali.rice.krad.util.ErrorMessage;
 import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import javax.mail.MessagingException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,6 +75,7 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -186,16 +192,31 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
                     LOG.info("Routing advance deposit document # " + documentId + ".");
                 }
                 documentService.routeDocument(advanceDocument, "document routed by achIncome batch job", null);
-            } catch (WorkflowException e) {
-                LOG.error("Error routing document # " + documentId + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(), e);
+            }
+            catch (Exception e) {
+                LOG.error("Error routing document # " + documentId + " due to exception: " + e.getMessage());
+                logException(e);
             }
         }
 
         return true;
-    }
+    }  
 
-    /**
+    private void logException(Exception e) {
+        if (e instanceof ValidationException) {
+            List<String> errors = GlobalVariablesUtils.extractGlobalVariableErrors();
+            if (ObjectUtils.isNotNull(errors) && !errors.isEmpty()) {
+                for (String errorMessage : errors) {
+                    LOG.error(errorMessage);
+                }
+            }
+        } else {
+            LOG.error(e.getStackTrace());
+        }
+    }
+      
+
+	/**
      * Returns a list of all initiated but not yet routed advance deposit documents, using the WorkflowDocumentService.
      *
      * @return a list of advance deposit documents to route
