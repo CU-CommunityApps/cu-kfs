@@ -131,4 +131,9 @@ public class CUKFSConstants {
 
     public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
     
+    public static class BasicAccountingCategory{
+        public static final String ASSET = "AS";
+        public static final String EXPENSE = "EX";
+    }
+    
 }
