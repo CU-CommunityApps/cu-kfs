@@ -136,26 +136,5 @@ public class CuFPConstants {
         public static final String RECURRING_DETAILS_TAB_NAME = "RecurringDetails";
         public static final String RECURRING_DV_CANCEL_PAYMENTS_PERMISSION_NAME = "CANCEL RECURRING DISBURSEMENT VOUCHER PAYMENTS";
     }
-    
-    public static class AmazonWebServiceBillingConstants {
-        public static final String AWS_PROCESSING_DATE_PROPERTY_NAME = "AWS_PROCESSING_DATE";
-        public static final String AWS_FROM_ACCOUNT_PROPERTY_NAME = "AWS_FROM_ACCOUNT_NUMBER";
-        public static final String AWS_OBJECT_CODE_PROPERTY_NAME = "AWS_OBJECT_CODE";
-        public static final String AWS_DEFAULT_DOCUMENT_DESCRIPTION_PROPERTY_NAME = "AWS_DEFAULT_DOCUMENT_DESCRIPTION";
-        public static final String AWS_NOTE_HELP_TEXT_PROERTY_NAME = "AWS_NOTE_HELP_TEXT";
-        public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
-        
-        public static final int PROCESSING_DAY_OF_MONTH = 15;
-        
-        public static final String DEFAULT_BILLING_PERIOD_PARAMETER = "CURRENT";
-        public static final String INTERNAL_KFS_ACCOUNT_DESCRIPTION = "internal";
-        public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
-        public static final String AUTHORIZATION_TOKEN_VALUE_STARTER = "Token ";
-        public static final String URL_PARAMETER_YEAR  = "year=";
-        public static final String URL_PARAMETER_MONTH = "&month=";
-        public static final String HTTP_METHOD_GET_NAME = "GET";
-        public static final String DI_ROUTE_ANNOTATION = "DI automatically created by AWS Billing Batch Job";
-        public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
-    }
 
 }

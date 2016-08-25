@@ -67,7 +67,6 @@
             <list merge="true">
                 <value>incomingACHandWiresBatchJob</value>
                 <value>procurementCardSummaryFeedJob</value>
-                <value>loadAWSBillsBatchJob</value>
             </list>
         </property>
     </bean>
@@ -319,37 +318,6 @@
         <property name="parameterService" ref="parameterService" />  
         <property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
         <property name="subFundGroupService" ref="subFundGroupService" />                 
-    </bean>
-    
-    <bean id="loadAWSBillsBatchJob" parent="scheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="loadAWSBillsStep"/>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="loadAWSBillsStep" class="edu.cornell.kfs.fp.batch.LoadAWSBillsStep" parent="step">
-       <property name="amazonWebServicesBillingService" ref="amazonWebServicesBillingService"/>
-    </bean>
-    
-    <bean id="amazonWebServicesBillingService" parent="amazonWebServicesBillingService-parent"/>
-    <bean id="amazonWebServicesBillingService-parent" class="edu.cornell.kfs.fp.service.impl.AmazonWebServicesBillingServiceImpl" abstract="true">
-    	<property name="awsURL">
-            <value>${aws.service.url}</value>
-        </property>
-        <property name="awsToken">
-            <value>${aws.service.token}</value>
-        </property>
-        <property name="parameterService" ref="parameterService"/>
-        <property name="documentService" ref="documentService"/>
-        <property name="chartService" ref="chartService"/>
-        <property name="accountService" ref="accountService"/>
-        <property name="subAccountService" ref="subAccountService"/>
-        <property name="businessObjectService" ref="businessObjectService"/>
-        <property name="objectCodeService" ref="objectCodeService"/>
-        <property name="subObjectCodeService" ref="subObjectCodeService"/>
-        <property name="projectCodeService" ref="projectCodeService"/>
     </bean>
 
     <bean id="incomingACHandWiresBatchJob" parent="scheduledJobDescriptor">
