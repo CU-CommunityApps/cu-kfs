@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,11 +29,14 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.UserSession;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.service.BusinessObjectService;
@@ -44,6 +49,7 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherDetail;
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherPDPStatus;
 import edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine;
+import edu.cornell.kfs.fp.dataaccess.RecurringDisbursementVoucherSearchDao;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
@@ -61,6 +67,8 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     protected RecurringDisbursementVoucherPaymentMaintenanceService recurringDisbursementVoucherPaymentMaintenanceService;	
     protected AccountingPeriodService accountingPeriodService;
     protected RouteHeaderService routeHeaderService;
+    protected RecurringDisbursementVoucherSearchDao recurringDisbursementVoucherSearchDao;
+    protected PersonService personService;
 
     @Override
     public void updateRecurringDisbursementVoucherDetails(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument){
@@ -343,7 +351,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         }
         return paymentDetails;
     }
-    
+
     private void noteChangeOnRecurringDV(RecurringDisbursementVoucherDocument recurringDV, String noteText, Set<String> setOfStrings) {
         if (!setOfStrings.isEmpty()) {
             Note note = buildNoteBase();
@@ -409,8 +417,117 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             throw new RuntimeException("cancelDVAsSystemUser() Unable to cancel DV: " + dvDocumentNumber, e);
         }
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean autoApproveDisbursementVouchersSpawnedByRecurringDvs() {
+        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Entered.");
+        int approvalCount = 0;
+        int errorCount = 0;
+        Collection <String> dvDocIds = getRecurringDisbursementVoucherSearchDao().findSavedDvIdsSpawnedByRecurringDvForCurrentAndPastFiscalPeriods(getCurrentFiscalPeriodEndDate());
+        if (dvDocIds != null) {
+            for (String dvDocId :  dvDocIds) {
+                LOG.info("Processing start for DV ID:: " + dvDocId);
+                CuDisbursementVoucherDocument dv = null;
+
+                try{
+                    dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocId);
+                } catch (WorkflowException e) {
+                    errorCount++;
+                    LOG.error("Could NOT find DV for Document ID::" + dvDocId);
+                    dv = null;
+                }
+
+                if (dv != null) {
+                    if (isKfsSystemUserDvInitiator(dv)) {
+                        try {
+                            addNoteToAutoApproveDv(dv, "Batch job Submit and Blanket Approve performed for DV spawned by Recurring DV.");
+                            try{
+                                blanketApproveDisbursementVoucherDocument(dv);
+                                approvalCount++;
+
+                            } catch (WorkflowException e) {
+                                errorCount++;
+                            }
+                        } catch (WorkflowException e) {
+                            errorCount++;
+                        }
+                    }
+                    else {
+                        LOG.error("Detected document initiator was not KFS System user. Auto blanket approval was NOT attemtped for document ID: " + dv.getDocumentNumber());
+                        errorCount++;
+                    }
+                }
+            }
+        }
+        else {
+            LOG.info("No DV's spwned by Recurring DV found. Nothing will be auto approved. ");
+        }
+        LOG.info("Number of Disbursement Vouchers that generated Errors:: " + errorCount);
+        LOG.info("Number of Disbursement Vouchers successfuly Blanket Approved (fully processed):: " + approvalCount);
+        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Leaving.");
+        return errorCount == 0;
+    }
     
-    
+    private boolean isKfsSystemUserDvInitiator(CuDisbursementVoucherDocument dv) {
+        String dvDocInitatorPrincipalId = dv.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+
+        Person kfsSystemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+        String kfsSystemUserPrincipalId = kfsSystemUser.getPrincipalId();
+
+        if ( (dvDocInitatorPrincipalId != null) && (kfsSystemUserPrincipalId != null) &&
+             (!StringUtils.isBlank(dvDocInitatorPrincipalId)) && (!StringUtils.isBlank(kfsSystemUserPrincipalId)) &&
+             (StringUtils.equals(dvDocInitatorPrincipalId, kfsSystemUserPrincipalId)) )
+            return true;
+        else
+            return false;
+    }
+
+    private void addNoteToAutoApproveDv(CuDisbursementVoucherDocument dv, String noteText) throws WorkflowException {
+        Note note = buildNoteBase();
+        note.setNoteText(noteText);
+        dv.addNote(note);
+        try {
+            getDocumentService().saveDocument(dv);
+        } catch (WorkflowException e) {
+            LOG.error("addNoteToAutoApproveDv: Unable to save note for DV Document ID::" + dv.getDocumentNumber() + "the exception was: ", e);
+            throw e;
+        }
+    }
+
+    private void blanketApproveDisbursementVoucherDocument(CuDisbursementVoucherDocument dv) throws WorkflowException {
+        try {
+            getDocumentService().blanketApproveDocument(dv, "Auto blanket approve from Batch Job", null);
+        } catch (WorkflowException e) {
+            LOG.error("approveDisbursementVoucherDocument: Unable to blanket approve DV Document ID::" + dv.getDocumentNumber() + "the exception was: ", e);
+            throw e;
+        }
+    }
+
+    private Date getCurrentFiscalPeriodEndDate() {
+        Date today = KfsDateUtils.convertToSqlDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        AccountingPeriod currentPeriod = getAccountingPeriodService().getByDate(today);
+        if (currentPeriod == null)
+            return null;
+        else
+            return currentPeriod.getUniversityFiscalPeriodEndDate();
+    }
+
+    protected PersonService getPersonService() {
+        return personService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+    }
+    protected RecurringDisbursementVoucherSearchDao getRecurringDisbursementVoucherSearchDao() {
+        return recurringDisbursementVoucherSearchDao;
+    }
+
+    public void setRecurringDisbursementVoucherSearchDao(RecurringDisbursementVoucherSearchDao recurringDisbursementVoucherSearchDao) {
+        this.recurringDisbursementVoucherSearchDao = recurringDisbursementVoucherSearchDao;
+    }
+
     public DocumentService getDocumentService() {
         return documentService;
     }
