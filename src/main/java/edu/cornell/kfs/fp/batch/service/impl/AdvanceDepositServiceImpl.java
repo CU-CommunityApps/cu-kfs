@@ -17,13 +17,18 @@ import edu.cornell.kfs.fp.businessobject.AchIncomeFileTransactionSet;
 import edu.cornell.kfs.fp.businessobject.AchIncomeNote;
 import edu.cornell.kfs.fp.businessobject.AchIncomeTransaction;
 import edu.cornell.kfs.fp.businessobject.IncomingWireAchMapping;
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.ObjectType;
 import org.kuali.kfs.fp.businessobject.AdvanceDepositDetail;
 import org.kuali.kfs.fp.document.AdvanceDepositDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.FlatFileInformation;
 import org.kuali.kfs.sys.batch.FlatFileTransactionInformation;
@@ -33,6 +38,7 @@ import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.service.BankService;
+import org.kuali.kfs.sys.util.GlobalVariablesUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -52,6 +58,7 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.krad.bo.Attachment;
 import org.kuali.rice.krad.bo.Note;
 import org.kuali.rice.krad.exception.InvalidAddressException;
+import org.kuali.rice.krad.exception.ValidationException;
 import org.kuali.rice.krad.service.AttachmentService;
 import org.kuali.rice.krad.service.BusinessObjectService;
 import org.kuali.rice.krad.service.DocumentService;
@@ -61,6 +68,7 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.ObjectUtils;
 
 import javax.mail.MessagingException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,6 +84,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Portions Modified 04/2016 and Copyright Cornell University
@@ -186,16 +195,31 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
                     LOG.info("Routing advance deposit document # " + documentId + ".");
                 }
                 documentService.routeDocument(advanceDocument, "document routed by achIncome batch job", null);
-            } catch (WorkflowException e) {
-                LOG.error("Error routing document # " + documentId + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(), e);
+            }
+            catch (Exception e) {
+                LOG.error("Error routing document # " + documentId + " due to exception: " + e.getMessage());
+                logException(e);
             }
         }
 
         return true;
-    }
+    }  
 
-    /**
+    private void logException(Exception e) {
+        if (e instanceof ValidationException) {
+            List<String> errors = GlobalVariablesUtils.extractGlobalVariableErrors();
+            if (ObjectUtils.isNotNull(errors) && !errors.isEmpty()) {
+                for (String errorMessage : errors) {
+                    LOG.error(errorMessage);
+                }
+            }
+        } else {
+            LOG.error(e.getStackTrace());
+        }
+    }
+      
+
+	/**
      * Returns a list of all initiated but not yet routed advance deposit documents, using the WorkflowDocumentService.
      *
      * @return a list of advance deposit documents to route
@@ -334,13 +358,37 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         sourceAccountingLine.setFinancialObjectCode(objectCode);
         setSourceAccountingLineAccountNumber(account, sourceAccountingLine);
         sourceAccountingLine.setFinancialDocumentLineDescription(transaction.getPayerName());
-        sourceAccountingLine.setAmount(transaction.getTransactionAmount());
+        setSourceAccountingLineAmount(transaction, sourceAccountingLine, chart, objectCode);
         sourceAccountingLine.setOverrideCode(AccountingLineOverride.CODE.NONE);
         sourceAccountingLine.setPostingYear(advanceDepositDocument.getPostingYear());
         sourceAccountingLine.setDocumentNumber(advanceDepositDocument.getDocumentNumber());
         List<SourceAccountingLine> sourceLines = new ArrayList<>();
         sourceLines.add(sourceAccountingLine);
         advanceDepositDocument.setSourceAccountingLines(sourceLines);
+    }
+    
+    protected void setSourceAccountingLineAmount(AchIncomeTransaction transaction, SourceAccountingLine sourceAccountingLine, String chart, String objectCode){
+        KualiDecimal amount = transaction.getTransactionAmount();
+        String objectTypeCode = getObjectCodeType(chart, objectCode);
+        
+        if(CUKFSConstants.BasicAccountingCategory.ASSET.equalsIgnoreCase(objectTypeCode) || CUKFSConstants.BasicAccountingCategory.EXPENSE.equalsIgnoreCase(objectTypeCode)){
+            amount = amount.negated();         
+        }
+        sourceAccountingLine.setAmount(amount);
+        
+    }
+
+    protected String getObjectCodeType(String chart, String objectCode) {
+        Map<String, String> keys = new HashMap<String, String>();
+        keys.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chart);
+        keys.put(KFSPropertyConstants.FINANCIAL_OBJECT_CODE, objectCode);
+        
+        ObjectCode objectCodeInfo = businessObjectService.findByPrimaryKey(ObjectCode.class, keys);
+        objectCodeInfo.refreshReferenceObject(KFSPropertyConstants.FINANCIAL_OBJECT_TYPE);
+        ObjectType objectType = objectCodeInfo.getFinancialObjectType();
+        String objectTypeCode = objectType.getBasicAccountingCategoryCode();
+        
+        return objectTypeCode;
     }
 
     /**
