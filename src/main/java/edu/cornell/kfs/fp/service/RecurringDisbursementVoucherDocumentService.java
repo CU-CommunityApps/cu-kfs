@@ -58,7 +58,7 @@ public interface RecurringDisbursementVoucherDocumentService {
 	 * @return
 	 */
 	Collection<PaymentDetail> findPaymentDetailsFromRecurringDisbursementVoucher(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument);
-	
+
 	/**
 	 * Determines if the payment can be canceled from the Recurring DV by the user.
 	 * @param user
@@ -66,4 +66,11 @@ public interface RecurringDisbursementVoucherDocumentService {
 	 * @return True if the payment can be canceled.  False if ii can't be.
 	 */
 	boolean isPaymentCancelable(Person user, String paymentDetailStatus);
+
+	/**
+	 * This function should be called by a batch process.
+	 * Find all open DV spawned by a Recurring DV, and route and blanket approve those whose due date is today or in the past.
+	 * @return boolean
+	 */
+	boolean autoApproveDisbursementVouchersSpawnedByRecurringDvs();
 }
