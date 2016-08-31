@@ -68,6 +68,7 @@
                           <bean parent="MaintainableFieldDefinition" p:name="extension.costShareRequired"/>
         				  <bean parent="MaintainableFieldDefinition" p:name="extension.finalFinancialReportRequired"/>
         				  <bean parent="MaintainableFieldDefinition" p:name="extension.finalFiscalReportDate"/>
+        				  <bean parent="MaintainableFieldDefinition" p:name="extension.everify"/>
                        </list>
                    </property>
                </bean>
