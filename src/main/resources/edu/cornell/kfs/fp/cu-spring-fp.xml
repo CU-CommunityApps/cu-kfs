@@ -303,19 +303,10 @@
 		<property name="scheduledAccountingLineService" ref="scheduledAccountingLineService"/>
 		<property name="businessObjectService" ref="businessObjectService"/>
 		<property name="accountingPeriodService" ref="accountingPeriodService"/>
-		<property name="recurringDisbursementVoucherPaymentMaintenanceService" ref="recurringDisbursementVoucherPaymentMaintenanceService"/>
-		<property name="routeHeaderService" ref="enDocumentRouteHeaderService"/>
 		<property name="recurringDisbursementVoucherSearchDao" ref="recurringDisbursementVoucherSearchDao"/>
 		<property name="personService" ref="personService"/>
 	</bean>
 	
-	<bean id="recurringDisbursementVoucherPaymentMaintenanceService" parent="recurringDisbursementVoucherPaymentMaintenanceService-parentBean"/>
-	<bean id="recurringDisbursementVoucherPaymentMaintenanceService-parentBean" 
-		class="edu.cornell.kfs.fp.service.impl.RecurringDisbursementVoucherPaymentMaintenanceServiceImpl" 
-		abstract="true" parent="pdpPaymentMaintenanceService-parentBean">
-		<property name="permissionService" ref="permissionService"/>
-	</bean>
-
     <bean id="recurringDisbursementVoucherSearchDao" class="edu.cornell.kfs.fp.dataaccess.impl.RecurringDisbursementVoucherSearchDaoJdbc" parent="platformAwareDaoJdbc">
         <property name="dateTimeService" ref="dateTimeService"/>
     </bean>

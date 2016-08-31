@@ -27,7 +27,6 @@
 			<tr>
 				<th>DV Document Number</th>
 				<th>Due Date</th>
-				<th>DV Status</th>
 				<th>PDP Status</th>
 				<th>Extract Date</th>
 				<th>Paid Date</th>
@@ -42,10 +41,6 @@
 					<td class="datacell"><kul:htmlControlAttribute
 							attributeEntry="${dvAttributes.disbursementVoucherDueDate}"
 							property="pdpStatuses[${ctr}].dueDate" readOnly="true" /></td>
-					<td class="datacell">
-						<kul:htmlControlAttribute attributeEntry="${dvAttributes.disbursementVoucherPdpStatus}" 
-							property="pdpStatuses[${ctr}].dvStatus" readOnly="true" />
-					</td>
 					<td class="datacell"><kul:htmlControlAttribute
 							attributeEntry="${dvAttributes.disbursementVoucherPdpStatus}"
 							property="pdpStatuses[${ctr}].pdpStatus" readOnly="true" /></td>
@@ -65,20 +60,6 @@
 							property="pdpStatuses[${ctr}].cancelDate" readOnly="true" /></td>
 				</tr>
 			</logic:iterate>
-			<c:if test="${KualiForm.cancelPDPPaymentsActionAvailable}">
-				<tr>
-					<th colspan="6" align="center"><kul:htmlAttributeLabel
-							attributeEntry="${recurringDVAttributes.paymentCancelReason}" />
-						<br /> <kul:htmlControlAttribute
-							attributeEntry="${recurringDVAttributes.paymentCancelReason}"
-							property="document.paymentCancelReason" readOnly="false" /></th>
-					<th align="center" valign="center"><html:submit
-							styleClass="btn btn-default"
-							property="methodToCall.confirmAndCancel"
-							title="Cancel PDP Payments" alt="Cancel PDP Payments"
-							value="Cancel PDP Payments" /></th>
-				</tr>
-			</c:if>
 		</table>
 	</div>
 </kul:tab>
