@@ -22,6 +22,7 @@
      	<ref bean="Award-extension-costShareRequired"/>
         <ref bean="Award-extension-finalFiscalReportDate"/>
         <ref bean="Award-extension-finalFinancialReportRequired"/>
+        <ref bean="Award-extension-everify"/>
         <ref bean="Award-extension-locAccountId"/>
         <ref bean="Award-extension-budgetBeginningDate"/>
         <ref bean="Award-extension-budgetEndingDate"/>
@@ -46,6 +47,12 @@
   
   <bean id="Award-extension-finalFiscalReportDate-parentBean" abstract="true" parent="AwardExtendedAttribute-finalFiscalReportDate">
   	<property name="name" value="extension.finalFiscalReportDate"/>
+  </bean>
+  
+  <bean id="Award-extension-everify" parent="Award-extension-everify-parentBean"/>
+  
+  <bean id="Award-extension-everify-parentBean" abstract="true" parent="AwardExtendedAttribute-everify">
+	<property name="name" value="extension.everify"/>
   </bean>
   
   <bean id="Award-extension-locAccountId" parent="Award-extension-locAccountId-parentBean"/>
@@ -88,6 +95,7 @@
                           <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
                           <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
                           <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
+                          <bean parent="FieldDefinition" p:attributeName="extension.everify"/>
                       </list>
                   </property>
               </bean>

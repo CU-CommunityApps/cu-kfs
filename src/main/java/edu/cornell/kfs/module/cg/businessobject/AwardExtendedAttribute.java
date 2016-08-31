@@ -24,6 +24,7 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	private Date budgetBeginningDate;
 	private Date budgetEndingDate;
 	private KualiDecimal budgetTotalAmount;
+	private boolean everify;
 
 	public boolean isCostShareRequired() {
 		return costShareRequired;
@@ -87,6 +88,14 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 
 	public void setBudgetTotalAmount(KualiDecimal budgetTotalAmount) {
 		this.budgetTotalAmount = budgetTotalAmount;
+	}
+	
+	public boolean isEverify() {
+	    return everify;
+	}
+	
+	public void setEverify(boolean everify) {
+	    this.everify = everify;
 	}
 
 }
