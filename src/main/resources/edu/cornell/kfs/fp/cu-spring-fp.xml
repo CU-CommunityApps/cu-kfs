@@ -68,6 +68,7 @@
                 <value>incomingACHandWiresBatchJob</value>
                 <value>procurementCardSummaryFeedJob</value>
                 <value>loadAWSBillsBatchJob</value>
+                <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
             </list>
         </property>
     </bean>
@@ -89,7 +90,7 @@
             </list>
         </property>
     </bean>
-    
+
     <bean id="procurementCardSummaryFeedJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
@@ -97,7 +98,15 @@
             </list>
         </property>
     </bean>
-    
+
+    <bean id="approveDisbursementVouchersSpawnedByRecurringDvJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="approveDvsSpawnedByRecurringDvStep" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="procurementCardLoadTransactionsService"  parent="procurementCardLoadTransactionsService-parentBean"/> 
     <bean id="procurementCardLoadFlatTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
         <property name="procurementCardInputFileType">
@@ -123,6 +132,9 @@
         <property name="businessObjectService" ref="businessObjectService" />
     </bean> 
 
+    <bean id="approveDvsSpawnedByRecurringDvStep" class="edu.cornell.kfs.fp.batch.ApproveDvsSpawnedByRecurringDvStep" parent="step">
+        <property name="recurringDisbursementVoucherDocumentService" ref="recurringDisbursementVoucherDocumentService"/>
+    </bean>
 
     <bean id="procurementCardSummaryFeedService" parent="procurementCardSummaryFeedService-parentBean"/>
 
@@ -293,6 +305,8 @@
 		<property name="accountingPeriodService" ref="accountingPeriodService"/>
 		<property name="recurringDisbursementVoucherPaymentMaintenanceService" ref="recurringDisbursementVoucherPaymentMaintenanceService"/>
 		<property name="routeHeaderService" ref="enDocumentRouteHeaderService"/>
+		<property name="recurringDisbursementVoucherSearchDao" ref="recurringDisbursementVoucherSearchDao"/>
+		<property name="personService" ref="personService"/>
 	</bean>
 	
 	<bean id="recurringDisbursementVoucherPaymentMaintenanceService" parent="recurringDisbursementVoucherPaymentMaintenanceService-parentBean"/>
@@ -301,6 +315,10 @@
 		abstract="true" parent="pdpPaymentMaintenanceService-parentBean">
 		<property name="permissionService" ref="permissionService"/>
 	</bean>
+
+    <bean id="recurringDisbursementVoucherSearchDao" class="edu.cornell.kfs.fp.dataaccess.impl.RecurringDisbursementVoucherSearchDaoJdbc" parent="platformAwareDaoJdbc">
+        <property name="dateTimeService" ref="dateTimeService"/>
+    </bean>
 
     <!-- KFSUPGRADE-973 -->
 	<bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl">
