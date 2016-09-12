@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.dataaccess.PreferencesDao;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ public class PreferencesDaoDynamoDB implements PreferencesDao {
     public static final String DEFAULT_INSTITUTION_ID = "1232413535";
 
     private DynamoDBClient documentStoreClient;
+    private String tableNamePrefix;
 
     @Override
     public Map<String, Object> findInstitutionPreferences() {
@@ -193,6 +195,9 @@ public class PreferencesDaoDynamoDB implements PreferencesDao {
 
     protected Table retrieveTable(String tableName) {
         DynamoDB dynamoDB = new DynamoDB(documentStoreClient.getClient());
+        if (StringUtils.isNotBlank(tableNamePrefix)) {
+            tableName = tableNamePrefix + tableName;
+        }
         return dynamoDB.getTable(tableName);
     }
 
@@ -200,4 +205,11 @@ public class PreferencesDaoDynamoDB implements PreferencesDao {
         this.documentStoreClient = documentStoreClient;
     }
 
+    public String getTableNamePrefix() {
+        return tableNamePrefix;
+    }
+
+    public void setTableNamePrefix(String tableNamePrefix) {
+        this.tableNamePrefix = tableNamePrefix;
+    }
 }

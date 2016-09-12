@@ -269,6 +269,7 @@
 	<bean id="preferencesDao" parent="preferencesDao-parentBean"/>
 	<bean id="preferencesDao-parentBean" abstract="true" class="${kfs.documentstore.class}">
 		<property name="documentStoreClient" ref="documentStoreClient" />
+		<property name="tableNamePrefix" value="${kfs.documentstore.tablename.prefix}" />
 	</bean>
 
 </beans>
