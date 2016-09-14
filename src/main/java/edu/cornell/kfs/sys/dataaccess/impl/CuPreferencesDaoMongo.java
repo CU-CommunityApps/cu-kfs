@@ -7,11 +7,19 @@ public class CuPreferencesDaoMongo extends PreferencesDaoMongo implements Prefer
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPreferencesDaoMongo.class);
 
     private MongoDBClient documentStoreClient;
+    private String tableNamePrefix;
 
     public void setDocumentStoreClient(MongoDBClient documentStoreClient) {
         this.documentStoreClient = documentStoreClient;
         super.setMongoTemplate(documentStoreClient.getClient());
     }
 
+    public String getTableNamePrefix() {
+        return tableNamePrefix;
+    }
+
+    public void setTableNamePrefix(String tableNamePrefix) {
+        this.tableNamePrefix = tableNamePrefix;
+    }
 }
 
