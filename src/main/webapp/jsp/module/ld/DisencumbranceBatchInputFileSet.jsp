@@ -19,7 +19,7 @@
    - You should have received a copy of the GNU Affero General Public License
    - along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="docTitle">
     <bean:message key="${KualiForm.titleKey}"/>
@@ -35,24 +35,28 @@
         errorKey="foo"
         alternativeHelp="${ConfigProperties.externalizable.help.url}default.htm?turl=WordDocuments%2Fbatch.htm">
 
-    <html:hidden property="batchUpload.batchInputTypeName" />
-    <c:set var="batchUploadAttributes" value="${DataDictionary.BatchUpload.attributes}" />
+    <html:hidden property="batchUpload.batchInputTypeName"/>
+    <c:set var="batchUploadAttributes" value="${DataDictionary.BatchUpload.attributes}"/>
 
     <kul:tabTop tabTitle="Manage Batch Files" defaultOpen="true" tabErrorKey="">
         <div class="tab-container">
-            <kul:errors keyMatch="*" errorTitle="Errors Found In File:" warningTitle="Warnings Found In File:" displayInDiv="true"/>
+            <kul:errors keyMatch="*" errorTitle="Errors Found In File:" warningTitle="Warnings Found In File:"
+                        displayInDiv="true"/>
             <h3>Add Batch File Set</h3>
             <table class="standard" summary="" cellpadding="0" cellspacing="0">
                 <tr class="header">
                     <th>&nbsp;</th>
                     <th>${KFSConstants.REQUIRED_FIELD_SYMBOL}Browse File</th>
-                    <th><label for="batchUpload.fileUserIdentifer">${KFSConstants.REQUIRED_FIELD_SYMBOL}File Set Identifier</label></th>
+                    <th><label for="batchUpload.fileUserIdentifer">${KFSConstants.REQUIRED_FIELD_SYMBOL}File Set
+                        Identifier</label></th>
                     <th>Actions</th>
                 </tr>
 
                 <c:forEach items="${KualiForm.batchInputFileSetType.fileTypes}" var="fileType" varStatus="loopStatus">
                     <tr>
-                        <th class="right"><c:out value="${KualiForm.batchInputFileSetType.fileTypeDescription[fileType]}"/>:</th>
+                        <th class="right"><c:out
+                                value="${KualiForm.batchInputFileSetType.fileTypeDescription[fileType]}"/>:
+                        </th>
                         <td class="infoline">
                             <c:if test="${fileType eq 'DATA' }">
                                 <kul:htmlControlAttribute
@@ -76,7 +80,8 @@
                         </td>
                         <td class="infoline">
                             <c:if test="${loopStatus.first}">
-                                <kul:htmlControlAttribute attributeEntry="${batchUploadAttributes.fileUserIdentifer}" property="batchUpload.fileUserIdentifer"/>
+                                <kul:htmlControlAttribute attributeEntry="${batchUploadAttributes.fileUserIdentifer}"
+                                                          property="batchUpload.fileUserIdentifer"/>
                             </c:if>
                             <span class="fineprint">&nbsp;</span>
                         </td>

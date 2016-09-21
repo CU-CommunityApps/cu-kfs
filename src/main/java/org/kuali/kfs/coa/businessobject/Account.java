@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,14 +19,7 @@
 
 package org.kuali.kfs.coa.businessobject;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import edu.cornell.kfs.coa.service.CuAccountService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.kuali.kfs.coa.service.SubFundGroupService;
@@ -35,28 +28,32 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsCfda;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleService;
 import org.kuali.kfs.integration.ld.LaborBenefitRateCategory;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.service.ModuleService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.campus.CampusEbo;
 import org.kuali.rice.location.framework.postalcode.PostalCodeEbo;
 import org.kuali.rice.location.framework.state.StateEbo;
 
-import edu.cornell.kfs.coa.service.CuAccountService;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- *
- */
+
 public class Account extends PersistableBusinessObjectBase implements AccountIntf, MutableInactivatable {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Account.class);
 
@@ -1133,6 +1130,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     /**
      * This fix is temporary until Jonathan's fix is reflected to Rice
+     *
      * @see org.kuali.kfs.kns.bo.PersistableBusinessObjectBase#refreshReferenceObject(java.lang.String)
      */
     @Override
@@ -1969,6 +1967,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     /**
      * Gets the laborBenefitRateCategoryCode attribute.
+     *
      * @return Returns the laborBenefitRateCategoryCode.
      */
     public String getLaborBenefitRateCategoryCode() {
@@ -1977,6 +1976,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     /**
      * Sets the laborBenefitRateCategoryCode attribute value.
+     *
      * @param laborBenefitRateCategoryCode The laborBenefitRateCategoryCode to set.
      */
     public void setLaborBenefitRateCategoryCode(String laborBenefitRateCategoryCode) {
@@ -1985,6 +1985,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     /**
      * Gets the laborBenefitRateCategory attribute.
+     *
      * @return Returns the laborBenefitRateCategory.
      */
     public LaborBenefitRateCategory getLaborBenefitRateCategory() {
@@ -1994,6 +1995,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     /**
      * Sets the laborBenefitRateCategory attribute value.
+     *
      * @param laborBenefitRateCategory The laborBenefitRateCategory to set.
      */
     public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {

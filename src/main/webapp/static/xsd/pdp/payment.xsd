@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright 2007-2008 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   -
+   - Copyright 2005-2016 The Kuali Foundation
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
 <xsd:schema elementFormDefault="qualified"
-    targetNamespace="http://www.kuali.org/kfs/pdp/payment"
-    xmlns:kfs="http://www.kuali.org/kfs/sys/types"
-    xmlns="http://www.kuali.org/kfs/pdp/payment" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            targetNamespace="http://www.kuali.org/kfs/pdp/payment"
+            xmlns:kfs="http://www.kuali.org/kfs/sys/types"
+            xmlns="http://www.kuali.org/kfs/pdp/payment" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="classpath:org/kuali/kfs/sys/types.xsd" />
-
+    <xsd:import namespace="http://www.kuali.org/kfs/sys/types" schemaLocation="classpath:org/kuali/kfs/sys/types.xsd"/>
     <!-- simple data types -->
     <xsd:simpleType name="versionType">
         <xsd:restriction base="xsd:string">
             <xsd:pattern value="1.0"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <!-- definition of simple type elements -->
     <xsd:element name="chart" type="xsd:normalizedString"/>
     <xsd:element name="unit" type="xsd:normalizedString"/>
@@ -53,7 +55,7 @@
     <xsd:element name="payment_date" type="xsd:normalizedString"/>
     <xsd:element name="invoice_date" type="xsd:normalizedString"/>
     <xsd:element name="attachment_ind" type="xsd:normalizedString"/>
-	<xsd:element name="immediate_ind" type="xsd:normalizedString"/>
+    <xsd:element name="immediate_ind" type="xsd:normalizedString"/>
     <xsd:element name="special_handling_ind" type="xsd:normalizedString"/>
     <xsd:element name="taxable_ind" type="xsd:normalizedString"/>
     <xsd:element name="orig_invoice_amt" type="xsd:decimal"/>
@@ -66,7 +68,7 @@
     <xsd:element name="combine_group_ind" type="xsd:normalizedString"/>
     <xsd:element name="coa_cd" type="xsd:normalizedString"/>
     <xsd:element name="account_nbr" type="xsd:normalizedString"/>
-    <xsd:element name="sub_account_nbr"  type="xsd:normalizedString"/>
+    <xsd:element name="sub_account_nbr" type="xsd:normalizedString"/>
     <xsd:element name="object_cd" type="xsd:normalizedString"/>
     <xsd:element name="sub_object_cd" type="xsd:normalizedString"/>
     <xsd:element name="org_ref_id" type="xsd:normalizedString"/>
@@ -75,12 +77,12 @@
     <xsd:element name="payment_text" type="xsd:normalizedString"/>
     <xsd:element name="detail_count" type="xsd:integer"/>
     <xsd:element name="detail_tot_amt" type="xsd:decimal"/>
-    <xsd:element name="bank_code" type="xsd:normalizedString"/> 
-    <xsd:element name="fs_origin_cd" type="xsd:normalizedString"/> 
-    <xsd:element name="fdoc_typ_cd"  type="xsd:normalizedString"/> 
-    
+    <xsd:element name="bank_code" type="xsd:normalizedString"/>
+    <xsd:element name="fs_origin_cd" type="xsd:normalizedString"/>
+    <xsd:element name="fdoc_typ_cd" type="xsd:normalizedString"/>
+
     <!-- definition of attributes -->
-    
+
     <!-- definition of complex type elements -->
     <xsd:element name="pdp_file">
         <xsd:complexType>
@@ -92,7 +94,7 @@
             <xsd:attribute name="version" type="versionType" use="required"/>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="accounting">
         <xsd:complexType>
             <xsd:sequence>
@@ -107,7 +109,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="header">
         <xsd:complexType>
             <xsd:sequence>
@@ -118,7 +120,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="trailer">
         <xsd:complexType>
             <xsd:sequence>
@@ -127,14 +129,14 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="group">
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element ref="payee_name"/>
                 <xsd:element ref="payee_id"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="payee_own_cd"/>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="customer_institution_identifier"/>    
+                <xsd:element maxOccurs="1" minOccurs="0" ref="customer_institution_identifier"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address1"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address2"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="address3"/>
@@ -146,21 +148,21 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="campus_address_ind"/>
                 <xsd:element ref="payment_date"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="attachment_ind"/>
-				<xsd:element maxOccurs="1" minOccurs="0" ref="immediate_ind"/>
+                <xsd:element maxOccurs="1" minOccurs="0" ref="immediate_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="special_handling_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="taxable_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="nra_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="combine_group_ind"/>
                 <xsd:element maxOccurs="1" minOccurs="0" ref="bank_code"/>
                 <!--  Default check stub holds 27 note lines.  There is a line printed for each detail
-                      so the number of detail items on a check needs to be subtracted from the 
+                      so the number of detail items on a check needs to be subtracted from the
                       total allowed note lines.  This can't be enforced in the schema so it is possible
                       to provide too many note lines in some cases.  This rule will be enforced in
-                      code. 
-                      
-                      Because of this, the maximum number of detail segments is 27 (assuming they 
+                      code.
+
+                      Because of this, the maximum number of detail segments is 27 (assuming they
                       have no notes).
-                      
+
                       If your check stub holds more or less than 27 note lines, you need to change this,
                       the maximum number of detail segments in this file and the setting MAX_NOTE_LINES
                       in the application settings file.
@@ -169,7 +171,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="detail">
         <xsd:complexType>
             <xsd:sequence>
@@ -189,14 +191,14 @@
                 <xsd:element maxOccurs="1" minOccurs="0" ref="fdoc_typ_cd"/>
                 <xsd:element maxOccurs="unbounded" minOccurs="1" ref="accounting"/>
                 <!--  Default check stub holds 27 note lines.  There is a line printed for each detail
-                      so the number of detail items on a check needs to be subtracted from the 
+                      so the number of detail items on a check needs to be subtracted from the
                       total allowed note lines.  This can't be enforced in the schema so it is possible
                       to provide too many note lines in some cases.  This rule will be enforced in
-                      code. 
-                      
+                      code.
+
                       Because of this, the maximum note lines a detail can have is 26 (assuming there
                       is only one detail in the payment group).
-                      
+
                       If your check stub holds more or less than 27 note lines, you need to change this,
                       the maximum number of detail segments in this file and the setting MAX_NOTE_LINES
                       in the application settings file.
@@ -205,7 +207,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="payee_id">
         <xsd:complexType>
             <xsd:simpleContent>
@@ -215,5 +217,5 @@
             </xsd:simpleContent>
         </xsd:complexType>
     </xsd:element>
-    
+
 </xsd:schema>

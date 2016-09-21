@@ -13,14 +13,14 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 --%>
-<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <kul:page showDocumentInfo="false"
-	headerTitle="Disbursement Voucher Document" docTitle="Disbursement Voucher Document"
-	transactionalDocument="false" htmlFormAction="financialDisbursementVoucher"
-	errorKey="*">
-	<br>
-	<div class="topblurb">
-	
-	</div>
+          headerTitle="Disbursement Voucher Document" docTitle="Disbursement Voucher Document"
+          transactionalDocument="false" htmlFormAction="financialDisbursementVoucher"
+          errorKey="*">
+    <br>
+    <div class="topblurb">
+
+    </div>
 </kul:page>

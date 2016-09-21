@@ -1,114 +1,122 @@
 <%--
- Copyright 2007 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   -
+   - Copyright 2005-2016 The Kuali Foundation
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
+<%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <kul:documentPage showDocumentInfo="true"
-    documentTypeName="PaymentRequestDocument"
-    htmlFormAction="purapPaymentRequest" renderMultipart="true"
-    showTabButtons="true">
+                  documentTypeName="PaymentRequestDocument"
+                  htmlFormAction="purapPaymentRequest" renderMultipart="true"
+                  showTabButtons="true">
 
-    <c:set var="canEdit" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request" />
-	<c:set var="canSave" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SAVE]}" scope="request" />
-	<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}"  scope="request" />
-    <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request" />    
-    <c:set var="taxInfoViewable" value="${KualiForm.editingMode['taxInfoViewable']}" scope="request" />
-    <c:set var="taxAreaEditable" value="${KualiForm.editingMode['taxAreaEditable']}" scope="request" />
+    <c:set var="canEdit" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
+    <c:set var="canSave" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_SAVE]}" scope="request"/>
+    <c:set var="fullEntryMode"
+           value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}"
+           scope="request"/>
+    <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request"/>
+    <c:set var="taxInfoViewable" value="${KualiForm.editingMode['taxInfoViewable']}" scope="request"/>
+    <c:set var="taxAreaEditable" value="${KualiForm.editingMode['taxAreaEditable']}" scope="request"/>
 
     <!-- KFSPTS-1891 -->
-	<c:set var="wireEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['wireEntry']}" scope="request" />
-	<c:set var="frnEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['frnEntry']}" scope="request" />
- 	 	 	
-	<!--  Display hold message if payment is on hold -->
-	<c:if test="${KualiForm.paymentRequestDocument.holdIndicator}">	
-		<h4>This Payment Request has been Held by <c:out value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>		
-	</c:if>
-	
-	<c:if test="${KualiForm.paymentRequestDocument.paymentRequestedCancelIndicator}">	
-		<h4>This Payment Request has been Requested for Cancel by <c:out value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>		
-	</c:if>
-	
-	<c:if test="${not KualiForm.editingMode['displayInitTab']}" >
-	    <sys:documentOverview editingMode="${KualiForm.editingMode}"
-	        includePostingYear="true"
-	        fiscalYearReadOnly="true"
-	        postingYearAttributes="${DataDictionary.PaymentRequestDocument.attributes}" >
-	        
-	    	<purap:purapDocumentDetail
-	    		documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
-	    		detailSectionLabel="Payment Request Detail"
-	    		editableAccountDistributionMethod="${KualiForm.readOnlyAccountDistributionMethod}"
-	    		paymentRequest="true" />
-	    </sys:documentOverview>
-	</c:if>
-    
-    <c:if test="${KualiForm.editingMode['displayInitTab']}" > 
-    	<purap:paymentRequestInit 
-    		documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
-	 		displayPaymentRequestInitFields="true" />
-		<c:set var="globalButtonTabIndex" value="15"/>
-	</c:if>
-	
-	<c:if test="${not KualiForm.editingMode['displayInitTab']}" >
-		<purap:vendor
-	        documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}" 
-	        displayPurchaseOrderFields="false" displayPaymentRequestFields="true"/>
-	
-		<purap:paymentRequestInvoiceInfo 
-			documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
-	 		displayPaymentRequestInvoiceInfoFields="true" />        
+    <c:set var="wireEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['wireEntry']}" scope="request"/>
+    <c:set var="frnEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['frnEntry']}" scope="request"/>
 
-	  	<c:if test="${taxInfoViewable || taxAreaEditable}">
-		<purap:paymentRequestTaxInfo 
-			documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}" />  
-	  	</c:if>      
+    <!-- Display hold message if payment is on hold -->
+    <c:if test="${KualiForm.paymentRequestDocument.holdIndicator}">
+        <h4>This Payment Request has been Held by <c:out
+                value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
+    </c:if>
 
-		<purap:paymentRequestProcessItems 
-			documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
-			itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
-			accountingLineAttributes="${DataDictionary.PaymentRequestAccount.attributes}" />
-		   
-	    <purap:summaryaccounts
-            itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
-    	    documentAttributes="${DataDictionary.SourceAccountingLine.attributes}" />  
-	
-		<purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
-           	
-	    <purap:paymentHistory documentAttributes="${DataDictionary.RelatedDocuments.attributes}" />
-	    
-	    <purap:preqWireTransfer />
-	    <purap:preqForeignDraft />
-    	
-        <gl:generalLedgerPendingEntries />
+    <c:if test="${KualiForm.paymentRequestDocument.paymentRequestedCancelIndicator}">
+        <h4>This Payment Request has been Requested for Cancel by <c:out
+                value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
+    </c:if>
 
-		<kul:notes attachmentTypesValuesFinderClass="${DataDictionary.PaymentRequestDocument.attachmentTypesValuesFinderClass}" 
-	    	defaultOpen = "${KualiForm.document.openAttachmentTab}"/>
-        
-	    <kul:adHocRecipients />
-	    
-	    <kul:routeLog />
-	    
-    	<kul:superUserActions />
-	</c:if>
-	
-	<c:set var="extraButtons" value="${KualiForm.extraButtons}" />
-  	<sys:documentControls 
-        transactionalDocument="true"  
-        extraButtons="${extraButtons}"  
-        suppressRoutingControls="${KualiForm.editingMode['displayInitTab']}"
-       	tabindex="${globalButtonTabIndex}"
+    <c:if test="${not KualiForm.editingMode['displayInitTab']}">
+        <sys:documentOverview editingMode="${KualiForm.editingMode}"
+                              includePostingYear="true"
+                              fiscalYearReadOnly="true"
+                              postingYearAttributes="${DataDictionary.PaymentRequestDocument.attributes}">
+
+            <purap:purapDocumentDetail
+                    documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
+                    detailSectionLabel="Payment Request Detail"
+                    editableAccountDistributionMethod="${KualiForm.readOnlyAccountDistributionMethod}"
+                    paymentRequest="true"/>
+        </sys:documentOverview>
+    </c:if>
+
+    <c:if test="${KualiForm.editingMode['displayInitTab']}">
+        <purap:paymentRequestInit
+                documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
+                displayPaymentRequestInitFields="true"/>
+        <c:set var="globalButtonTabIndex" value="15"/>
+    </c:if>
+
+    <c:if test="${not KualiForm.editingMode['displayInitTab']}">
+        <purap:vendor
+                documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
+                displayPurchaseOrderFields="false" displayPaymentRequestFields="true"/>
+
+        <purap:paymentRequestInvoiceInfo
+                documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
+                displayPaymentRequestInvoiceInfoFields="true"/>
+
+        <c:if test="${taxInfoViewable || taxAreaEditable}">
+            <purap:paymentRequestTaxInfo
+                    documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"/>
+        </c:if>
+
+        <purap:paymentRequestProcessItems
+                documentAttributes="${DataDictionary.PaymentRequestDocument.attributes}"
+                itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
+                accountingLineAttributes="${DataDictionary.PaymentRequestAccount.attributes}"/>
+
+        <purap:summaryaccounts
+                itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
+                documentAttributes="${DataDictionary.SourceAccountingLine.attributes}"/>
+
+        <purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+
+        <purap:paymentHistory documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+
+        <purap:preqWireTransfer/>
+        <purap:preqForeignDraft/>
+
+        <gl:generalLedgerPendingEntries/>
+
+        <kul:notes
+                attachmentTypesValuesFinderClass="${DataDictionary.PaymentRequestDocument.attachmentTypesValuesFinderClass}"
+                defaultOpen="${KualiForm.document.openAttachmentTab}"/>
+
+        <kul:adHocRecipients/>
+
+        <kul:routeLog/>
+
+        <kul:superUserActions/>
+    </c:if>
+
+    <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
+    <sys:documentControls
+            transactionalDocument="true"
+            extraButtons="${extraButtons}"
+            suppressRoutingControls="${KualiForm.editingMode['displayInitTab']}"
+            tabindex="${globalButtonTabIndex}"
     />
-   
+
 </kul:documentPage>

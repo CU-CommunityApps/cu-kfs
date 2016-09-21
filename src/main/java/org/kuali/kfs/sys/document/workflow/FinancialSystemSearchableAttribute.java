@@ -1,27 +1,24 @@
 /*
- * Copyright 2009 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2016 The Kuali Foundation
  *
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.sys.document.workflow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
@@ -30,6 +27,18 @@ import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
 import org.kuali.kfs.integration.ld.LaborLedgerPendingEntryForSearching;
 import org.kuali.kfs.integration.ld.LaborLedgerPostingDocumentForSearching;
+import org.kuali.kfs.kns.lookup.LookupUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DictionaryValidationService;
+import org.kuali.kfs.kns.util.FieldUtils;
+import org.kuali.kfs.kns.web.ui.Field;
+import org.kuali.kfs.kns.web.ui.Row;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.datadictionary.DocumentEntry;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -53,21 +62,14 @@ import org.kuali.rice.kew.api.document.attribute.DocumentAttributeString;
 import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.api.extension.ExtensionDefinition;
-import org.kuali.kfs.kns.lookup.LookupUtils;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.kns.service.DictionaryValidationService;
-import org.kuali.kfs.kns.util.FieldUtils;
-import org.kuali.kfs.kns.web.ui.Field;
-import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.datadictionary.DocumentEntry;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 //RICE20 This class needs to be fixed to support pre-rice2.0 features
 public class FinancialSystemSearchableAttribute extends DataDictionarySearchableAttribute {
@@ -280,6 +282,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
 
     /**
      * Harvest chart of accounts code, account number, and organization code as searchable attributes from an accounting document
+     *
      * @param accountingDoc the accounting document to pull values from
      * @return a List of searchable values
      */
@@ -298,6 +301,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
 
     /**
      * Harvest GLPE document type as searchable attributes from a GL posting document
+     *
      * @param GLPDoc the GLP document to pull values from
      * @return a List of searchable values
      */
@@ -312,6 +316,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
 
     /**
      * Harvest LLPE document type as searchable attributes from a LL posting document
+     *
      * @param LLPDoc the LLP document to pull values from
      * @return a List of searchable values
      */
@@ -329,6 +334,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     /**
      * Pulls the default searchable attributes - chart code, account number, and account organization code - from a given accounting line and populates
      * the searchable attribute values in the given list
+     *
      * @param searchAttrValues a List of SearchableAttributeValue objects to populate
      * @param accountingLine an AccountingLine to get values from
      */
@@ -358,6 +364,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     /**
      * Pulls the default searchable attribute - financialSystemTypeCode - from a given accounting line and populates
      * the searchable attribute values in the given list
+     *
      * @param searchAttrValues a List of SearchableAttributeValue objects to populate
      * @param glpe a GeneralLedgerPendingEntry to get values from
      */
@@ -373,6 +380,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     /**
      * Pulls the default searchable attribute - financialSystemTypeCode from a given accounting line and populates
      * the searchable attribute values in the given list
+     *
      * @param searchAttrValues a List of SearchableAttributeValue objects to populate
      * @param llpe a LaborLedgerPendingEntry to get values from
      */

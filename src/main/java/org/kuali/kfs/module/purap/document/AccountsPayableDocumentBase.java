@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,9 +18,9 @@
  */
 package org.kuali.kfs.module.purap.document;
 
-import java.sql.Timestamp;
-import java.util.List;
-
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.AccountsPayableItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
@@ -38,9 +38,9 @@ import org.kuali.kfs.vnd.businessobject.CampusParameter;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.krad.util.ObjectUtils;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Accounts Payable Document Base
@@ -408,8 +408,9 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
 
     /**
      * Sets the processing campus.
-     * @deprecated
+     *
      * @param processingCampus
+     * @deprecated
      */
     @Deprecated
     public void setProcessingCampus(CampusParameter processingCampus) {
@@ -551,7 +552,6 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     /**
-     *
      * @see org.kuali.kfs.module.purap.document.AccountsPayableDocument#getTotalRemitAmount()
      */
     @Override
