@@ -1,31 +1,30 @@
 /*
- * Copyright 2007 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2016 The Kuali Foundation
  * 
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.rsmart.kuali.kfs.cr.CRConstants;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KeyValuesService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -41,13 +40,16 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KeyValuesService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import com.rsmart.kuali.kfs.cr.CRConstants;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents the PaymentGroup
@@ -124,6 +126,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the dailyReportSpecialHandling
+     *
      * @return dailyReportSpecialHandling
      */
     public boolean isDailyReportSpecialHandling() {
@@ -132,6 +135,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the dailyReportAttachment
+     *
      * @return dailyReportAttachment
      */
     public boolean isDailyReportAttachment() {
@@ -140,6 +144,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the paymentStatusCode
+     *
      * @return paymentStatusCode
      */
     public String getPaymentStatusCode() {
@@ -196,6 +201,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the boolean valuse of a Boolean object.
+     *
      * @param b the boolean object
      * @return the boolean value
      */
@@ -209,6 +215,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the notle lines
+     *
      * @return the note lines
      */
     public int getNoteLines() {
@@ -246,6 +253,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method sets the payment details list
+     *
      * @param paymentDetail
      */
     public void setPaymentDetails(List<PaymentDetail> paymentDetail) {
@@ -254,6 +262,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method adds a paymentDetail
+     *
      * @param pgh the payments detail to be added
      */
     public void addPaymentDetails(PaymentDetail pgh) {
@@ -276,6 +285,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method sets the payment group history list
+     *
      * @param paymentGroupHistory
      */
     public void setPaymentGroupHistory(List<PaymentGroupHistory> paymentGroupHistory) {
@@ -284,6 +294,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method adds a paymentGroupHistory
+     *
      * @param pd the paymentGroupHistory to be added
      */
     public void addPaymentGroupHistory(PaymentGroupHistory pd) {
@@ -293,6 +304,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method deletes a paymentGroupHistory
+     *
      * @param pd the paymentGroupHistory to be deleted
      */
     public void deletePaymentGroupHistory(PaymentGroupHistory pd) {
@@ -300,17 +312,17 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
 
     /**
+     * @return
      * @hibernate.id column="PMT_GRP_ID" generator-class="sequence"
      * @hibernate.generator-param name="sequence" value="PDP.PDP_PMT_GRP_ID_SEQ"
-     * @return
      */
     public KualiInteger getId() {
         return id;
     }
 
     /**
-     * @hibernate.one-to-one class="edu.iu.uis.pdp.bo.AchAccountNumber"
      * @return
+     * @hibernate.one-to-one class="edu.iu.uis.pdp.bo.AchAccountNumber"
      */
     public AchAccountNumber getAchAccountNumber() {
         return achAccountNumber;
@@ -318,6 +330,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method sets the achAccountNumber
+     *
      * @param aan
      */
     public void setAchAccountNumber(AchAccountNumber aan) {
@@ -326,6 +339,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the sortValue
+     *
      * @return sortValue
      */
     public String getSortValue() {
@@ -334,6 +348,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method sets the sort value
+     *
      * @param sortGroupId
      */
     public void setSortValue(int sortGroupId) {
@@ -360,8 +375,8 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
 
     /**
-     * @hibernate.property column="PMT_CTY_NM" length="30"
      * @return Returns the city.
+     * @hibernate.property column="PMT_CTY_NM" length="30"
      */
     public String getCity() {
         return city;
@@ -383,8 +398,8 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
 
     /**
-     * @hibernate.property column="PMT_CNTRY_NM" length="30"
      * @return Returns the country.
+     * @hibernate.property column="PMT_CNTRY_NM" length="30"
      */
     public String getCountry() {
         return country;
@@ -398,8 +413,8 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
 
     /**
-     * @hibernate.property column="PMT_ST_NM" length="30"
      * @return Returns the state.
+     * @hibernate.property column="PMT_ST_NM" length="30"
      */
     public String getState() {
         return state;
@@ -515,6 +530,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the disbursementDate.
+     *
      * @return disbursementDate
      */
     public Date getDisbursementDate() {
@@ -761,6 +777,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method sets disbursementDate.
+     *
      * @param disbursementDate a string representing the disbursementDate
      * @throws ParseException
      */
@@ -1075,6 +1092,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets a string representation of the address lines
+     *
      * @return the street as a combined representation of the address lines
      */
     public String getStreet() {
@@ -1109,6 +1127,7 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
 
     /**
      * This method gets the payeeIdTypeDesc
+     *
      * @return the payeeIdTypeDesc
      */
     public String getPayeeIdTypeDesc() {

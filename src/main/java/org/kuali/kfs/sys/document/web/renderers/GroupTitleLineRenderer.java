@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -334,6 +334,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
     /**
      * Renders the show/hide button
+     *
      * @param pageContext the page context to render to
      * @param parentTag the tag requesting all this rendering
      * @throws JspException thrown under terrible circumstances when the rendering failed and had to be left behind like so much refuse
@@ -617,6 +618,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
     /**
      * Sets the canEdit attribute value.
+     *
      * @param canEdit The canEdit to set.
      */
     public void setCanEdit(boolean canEdit) {
@@ -625,6 +627,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
     /**
      * Gets the hideDetails attribute.
+     *
      * @return Returns the hideDetails.
      */
     public boolean getHideDetails() {
@@ -633,6 +636,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
     /**
      * Sets the hideDetails attribute value.
+     *
      * @param hideDetails The hideDetails to set.
      */
     public void setHideDetails(boolean hideDetails) {

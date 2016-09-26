@@ -235,10 +235,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         final TransactionalDocumentAuthorizer documentAuthorizer = (TransactionalDocumentAuthorizer)getDocumentHelperService().getDocumentAuthorizer(document);
         Set<String> documentActions =  documentPresentationController.getDocumentActions(document);
         documentActions = documentAuthorizer.getDocumentActions(document, user, documentActions);
-        if (getDataDictionaryService().getDataDictionary().getDocumentEntry(document.getClass().getName()).getUsePessimisticLocking()) {
-            documentActions = getPessimisticLockService().getDocumentActions(document, user, documentActions);
-        }
-        
+
         Set<String> editModes = documentPresentationController.getEditModes(document);
         editModes = documentAuthorizer.getEditModes(document, user, editModes);
         

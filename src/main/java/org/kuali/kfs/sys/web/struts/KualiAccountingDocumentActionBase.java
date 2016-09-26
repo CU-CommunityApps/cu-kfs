@@ -1,44 +1,44 @@
 /*
- * Copyright 2007 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2016 The Kuali Foundation
  * 
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.sys.web.struts;
 
-import static org.kuali.kfs.sys.KFSKeyConstants.ERROR_DOCUMENT_ACCOUNTING_LINE_SALES_TAX_INVALID_ACCOUNT;
-import static org.kuali.kfs.sys.KFSKeyConstants.ERROR_DOCUMENT_ACCOUNTING_LINE_SALES_TAX_REQUIRED;
-import static org.kuali.kfs.sys.KFSKeyConstants.ERROR_REQUIRED;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.SalesTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.kns.service.DictionaryValidationService;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.service.PersistenceService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -61,22 +61,23 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.kns.service.DictionaryValidationService;
-import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.service.PersistenceService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.MessageMap;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.util.UrlFactory;
 
-import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import static org.kuali.kfs.sys.KFSKeyConstants.ERROR_DOCUMENT_ACCOUNTING_LINE_SALES_TAX_INVALID_ACCOUNT;
+import static org.kuali.kfs.sys.KFSKeyConstants.ERROR_DOCUMENT_ACCOUNTING_LINE_SALES_TAX_REQUIRED;
+import static org.kuali.kfs.sys.KFSKeyConstants.ERROR_REQUIRED;
 
 /**
  * This class handles UI actions for all shared methods of financial documents.

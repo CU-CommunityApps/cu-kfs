@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,28 +19,26 @@
 
 package org.kuali.kfs.module.purap.document;
 
-import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
-import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
-import static org.kuali.rice.core.api.util.type.KualiDecimal.ZERO;
-
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.service.SufficientFundsService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.dao.DocumentDao;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.KRADServiceLocatorInternal;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.NoteType;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.CreditMemoStatuses;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
@@ -98,7 +96,6 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.WorkflowDocument;
@@ -113,20 +110,23 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.dao.DocumentDao;
-import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.KRADServiceLocatorInternal;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.service.SequenceAccessorService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.NoteType;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
+import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
+import static org.kuali.rice.core.api.util.type.KualiDecimal.ZERO;
 
 /**
  * Purchase Order Document
@@ -1197,6 +1197,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     /**
      * Gets the purchaseOrderQuoteAwardedDate attribute.
+     *
      * @return Returns the purchaseOrderQuoteAwardedDate.
      */
     public Date getPurchaseOrderQuoteAwardedDate() {
@@ -1205,6 +1206,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     /**
      * Sets the purchaseOrderQuoteAwardedDate attribute value.
+     *
      * @param purchaseOrderQuoteAwardedDate The purchaseOrderQuoteAwardedDate to set.
      */
     public void setPurchaseOrderQuoteAwardedDate(Date purchaseOrderQuoteAwardedDate) {
@@ -1213,6 +1215,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     /**
      * Gets the purchaseOrderQuoteInitializationDate attribute.
+     *
      * @return Returns the purchaseOrderQuoteInitializationDate.
      */
     public Date getPurchaseOrderQuoteInitializationDate() {
@@ -1221,6 +1224,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     /**
      * Sets the purchaseOrderQuoteInitializationDate attribute value.
+     *
      * @param purchaseOrderQuoteInitializationDate The purchaseOrderQuoteInitializationDate to set.
      */
     public void setPurchaseOrderQuoteInitializationDate(Date purchaseOrderQuoteInitializationDate) {
@@ -1719,25 +1723,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected boolean isBudgetReviewRequired() {
         // if document's fiscal year is less than or equal to the current fiscal year
         if (SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear().compareTo(getPostingYear()) >= 0) {
-            // delete and recreate the GL entries for this document so they do not get included in the SF check
-            // This is *NOT* ideal.  The SF service needs to be updated to allow it to provide the current
-            // document number so that it can be exlcuded from pending entry checks.
-            List<GeneralLedgerPendingEntry> pendingEntries = getPendingLedgerEntriesForSufficientFundsChecking();
-            // dumb loop to just force OJB to load the objects.  Otherwise, the proxy object above
-            // only gets resolved *after* the delete below and no SF check happens.
-            for ( GeneralLedgerPendingEntry glpe : pendingEntries ) {
-                glpe.getChartOfAccountsCode();
-            }
-            SpringContext.getBean(GeneralLedgerPendingEntryService.class).delete(getDocumentNumber());
             // get list of sufficientfundItems
             List<SufficientFundsItem> fundsItems = SpringContext.getBean(SufficientFundsService.class).checkSufficientFunds(getPendingLedgerEntriesForSufficientFundsChecking());
-
-            SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(this);
-            if(!(StringUtils.equals(getApplicationDocumentStatus(),PurapConstants.PurchaseOrderStatuses.APPDOC_CANCELLED) ||
-                    StringUtils.equals(getApplicationDocumentStatus(), PurapConstants.PurchaseOrderStatuses.APPDOC_DAPRVD_PURCHASING) ||
-                    StringUtils.equals(getApplicationDocumentStatus(), PurapConstants.PurchaseOrderStatuses.APPDOC_DAPRVD_CG_APPROVAL))){
-                SpringContext.getBean(BusinessObjectService.class).save( getGeneralLedgerPendingEntries() );
-            }
 
             //kfsmi-7289
             if (fundsItems != null && fundsItems.size() > 0) {

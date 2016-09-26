@@ -1,20 +1,37 @@
 /*
- * Copyright 2007 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2016 The Kuali Foundation
  *
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kuali.kfs.vnd.businessobject;
+
+import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.log4j.Logger;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.LookupService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.VendorPropertyConstants;
+import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kim.api.identity.Person;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -22,21 +39,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.log4j.Logger;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.vnd.VendorPropertyConstants;
-import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.krad.service.LookupService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 /**
  * Contains all data for a specific parent or division Vendor, including a link to the <code>VendorHeader</code>, which only
@@ -768,7 +770,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      *  is a B2B vendor and false otherwise.
      *
      * @return true if this vendor is a B2B vendor and false otherwise.
-     *
      */
     public boolean isB2BVendor() {
         for (VendorContract contract : this.getVendorContracts()) {

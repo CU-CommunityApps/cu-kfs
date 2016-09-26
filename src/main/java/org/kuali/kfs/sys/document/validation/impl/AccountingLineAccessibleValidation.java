@@ -1,28 +1,29 @@
 /*
- * Copyright 2008 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2016 The Kuali Foundation
  *
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.sys.document.validation.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestAccount;
@@ -51,11 +52,13 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -82,14 +85,13 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     /**
      * Validates that the given accounting line is accessible for editing by the current user.
      * <strong>This method expects a document as the first parameter and an accounting line as the second</strong>
+     *
      * @see org.kuali.kfs.sys.document.validation.Validation#validate(java.lang.Object[])
      */
     @Override
     public boolean validate(AttributedDocumentEvent event) {
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
 
-        // TODO : There are several bug fixes in this class. Just copied it over from 3.0.1.  Furhter validation and change is needed.
-        
         if (accountingDocumentForValidation instanceof Correctable) {
             final String errorDocumentNumber = ((FinancialSystemDocumentHeader)accountingDocumentForValidation.getDocumentHeader()).getFinancialDocumentInErrorNumber();
             if (StringUtils.isNotBlank(errorDocumentNumber)) {
@@ -192,6 +194,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Returns the name of the accounting line group which holds the proper authorizer to do the KIM check
+     *
      * @return the name of the accouting line group to get the authorizer from
      */
     protected String getGroupName() {
@@ -222,6 +225,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Determines the property of the accounting line collection from the error prefixes
+     *
      * @return the accounting line collection property
      */
     protected String getAccountingLineCollectionProperty() {
@@ -242,6 +246,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Determines what error message should be shown based on the event that required this validation
+     *
      * @param event the event to use to determine the error message
      * @return the key of the error message to display
      */
@@ -259,6 +264,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Gets the accountingDocumentForValidation attribute.
+     *
      * @return Returns the accountingDocumentForValidation.
      */
     public AccountingDocument getAccountingDocumentForValidation() {
@@ -267,6 +273,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Sets the accountingDocumentForValidation attribute value.
+     *
      * @param accountingDocumentForValidation The accountingDocumentForValidation to set.
      */
     public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
@@ -275,6 +282,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Gets the accountingLineForValidation attribute.
+     *
      * @return Returns the accountingLineForValidation.
      */
     public AccountingLine getAccountingLineForValidation() {
@@ -283,6 +291,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Sets the accountingLineForValidation attribute value.
+     *
      * @param accountingLineForValidation The accountingLineForValidation to set.
      */
     public void setAccountingLineForValidation(AccountingLine accountingLineForValidation) {
@@ -291,6 +300,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Gets the dataDictionaryService attribute.
+     *
      * @return Returns the dataDictionaryService.
      */
     public DataDictionaryService getDataDictionaryService() {
@@ -299,6 +309,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
     /**
      * Sets the dataDictionaryService attribute value.
+     *
      * @param dataDictionaryService The dataDictionaryService to set.
      */
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {

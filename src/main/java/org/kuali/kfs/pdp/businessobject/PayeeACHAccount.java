@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,13 +18,12 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
@@ -39,9 +38,10 @@ import org.kuali.rice.kim.api.identity.entity.EntityDefault;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
-import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class PayeeACHAccount extends TimestampedBusinessObjectBase implements MutableInactivatable {
 
@@ -464,6 +464,7 @@ public class PayeeACHAccount extends TimestampedBusinessObjectBase implements Mu
 
     /**
      * KFSCNTRB-1682: Some of the fields contain confidential information
+     *
      * @see org.kuali.rice.krad.bo.BusinessObjectBase#toString()
      */
     @Override

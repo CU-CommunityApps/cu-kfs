@@ -53,7 +53,7 @@ public class CuOrganizationRoutingModelNameLookupableHelperServiceImplTest exten
         
         String befoerBackLocation = lookupForm.getBackLocation();
         HtmlData results = lookupableHelperServiceImpl.getReturnUrl(accountDelegateModel, lookupForm, returnKeys, businessObjectRestrictions);
-        assertEquals("return value ", results.getDisplayText());
+        assertEquals("return value", results.getDisplayText());
         assertEquals(befoerBackLocation, lookupForm.getBackLocation());
 
     }

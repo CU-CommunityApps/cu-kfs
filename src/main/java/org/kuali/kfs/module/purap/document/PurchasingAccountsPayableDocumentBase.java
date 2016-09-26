@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,19 +18,19 @@
  */
 package org.kuali.kfs.module.purap.document;
 
-import java.math.BigDecimal;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.document.TransactionalDocument;
+import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.service.KualiModuleService;
+import org.kuali.kfs.krad.service.ModuleService;
+import org.kuali.kfs.krad.util.NoteType;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
@@ -66,19 +66,19 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.document.TransactionalDocument;
-import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
-import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
-import org.kuali.kfs.krad.service.KualiModuleService;
-import org.kuali.kfs.krad.service.ModuleService;
-import org.kuali.kfs.krad.util.NoteType;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.country.CountryEbo;
+
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base class for Purchasing-Accounts Payable Documents.
@@ -544,6 +544,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Find the item in the document via its string identifier.
+     *
      * @param itemStrID the string identifier of the item being searched for
      * @return the item being searched for
      */
@@ -560,6 +561,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Find the item in the document via its identifier.
+     *
      * @param itemID the string identifier of the item being searched for
      * @return the item being searched for
      */
@@ -644,6 +646,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * This method...
+     *
      * @param excludedTypes
      * @param includeBelowTheLine
      * @param itemsForTotal
@@ -675,6 +678,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * This method...
+     *
      * @param tradeInItems
      */
     @Override
@@ -1255,6 +1259,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Overridden to return the source lines of all of the items
+     *
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getSourceAccountingLines()
      */
     @SuppressWarnings("rawtypes")
@@ -1327,6 +1332,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     /**
      * Checks whether the related purchase order views need a warning to be displayed,
      * i.e. if at least one of the purchase orders has never been opened.
+     *
      * @return true if at least one related purchase order needs a warning; false otherwise
      */
     public boolean getNeedWarningRelatedPOs() {
@@ -1341,6 +1347,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Accounting lines that are read-only should skip validation
+     *
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getPersistedSourceAccountingLinesForComparison()
      */
     @SuppressWarnings("rawtypes")
@@ -1372,6 +1379,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     /**
      * Accounting lines that are read-only should skip validation
+     *
      * @see org.kuali.kfs.sys.document.AccountingDocumentBase#getSourceAccountingLinesForComparison()
      */
     @SuppressWarnings("rawtypes")

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,16 +18,6 @@
  */
 package org.kuali.kfs.gl.web.struts;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -37,12 +27,6 @@ import org.kuali.kfs.gl.ObjectHelper;
 import org.kuali.kfs.gl.businessobject.AccountBalance;
 import org.kuali.kfs.gl.businessobject.lookup.AccountBalanceByConsolidationLookupableHelperServiceImpl;
 import org.kuali.kfs.integration.ld.SegmentedBusinessObject;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kns.lookup.LookupResultsService;
 import org.kuali.kfs.kns.lookup.Lookupable;
 import org.kuali.kfs.kns.web.struts.action.KualiMultipleValueLookupAction;
@@ -55,6 +39,21 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Balance inquiries are pretty much just lookups already, but are not used in the traditional sense. In most cases, balance
@@ -112,11 +111,11 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
 
     /**
      * search - sets the values of the data entered on the form on the jsp into a map and then searches for the results.
-     * 
+     * <p>
      * KRAD Conversion: Lookupable performs customization of the results if 
      * balance inquiry. The result rows are added to a collection 
      * based on field's actual size if truncated is > 7.
-     * 
+     * <p>
      * Fields are in data dictionary for bo Balance.
      */
     public ActionForward search(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -310,10 +309,10 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param maxRowsPerPage
      * @param bounded whether the results will be bounded
      * @return the list of result BOs, possibly bounded by size
-     * 
+     * <p>
      * KRAD Conversion: Lookupable performs customization of the results if 
      * balance inquiry. The multiple value results are sorted.
-     * 
+     * <p>
      * Fields are in data dictionary for bo Balance.
      */
     protected Collection performMultipleValueLookup(MultipleValueLookupForm multipleValueLookupForm, List<ResultRow> resultTable, int maxRowsPerPage, boolean bounded) {
@@ -366,9 +365,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
     /**
      * @see org.kuali.kfs.kns.web.struts.action.KualiMultipleValueLookupAction#selectAll(org.kuali.kfs.kns.web.struts.form.MultipleValueLookupForm,
      *      int)
-     * 
+     * <p>
      * KRAD Conversion: Lookupable performs customization of the results.
-     * 
+     * <p>
      * Fields are in data dictionary for bo Balance.
      */
     @Override
@@ -400,9 +399,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param multipleValueLookupForm the given struts form
      * @param resultTable the given result table that holds all data being presented
      * @return the map containing all entries available for selection
-     * 
+     * <p>
      * KRAD Conversion: Performs customization of the results. Prepares
-     * 
+     * <p>
      * There is no use of data dictionary for fields.
      */
     private Map<String, String> getSelectedObjectIds(MultipleValueLookupForm multipleValueLookupForm, List<ResultRow> resultTable) {

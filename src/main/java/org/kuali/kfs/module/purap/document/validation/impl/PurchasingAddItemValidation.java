@@ -1,25 +1,31 @@
 /*
- * Copyright 2009 The Kuali Foundation
+ * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright 2005-2016 The Kuali Foundation
  * 
- * http://www.opensource.org/licenses/ecl2.php
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants.ItemFields;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -31,17 +37,10 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.UnitOfMeasure;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.kfs.vnd.businessobject.CommodityCode;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddItemValidation {
 
@@ -73,8 +72,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
 
         return valid;
     }
-
-    
 
     /**
      * Validates the unit price for all applicable item types. It validates that the unit price field was
@@ -111,18 +108,58 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         return valid;
     }
 
-    
-    
-   
+    /**
+     * Validates that if the item type is quantity based, the unit of measure is required.
+     *
+     * @param item the item to be validated
+     * @return boolean false if the item type is quantity based and the unit of measure is empty.
+     */
+    public boolean validateUnitOfMeasure(PurApItem item) {
+        boolean valid = true;
+        PurchasingItemBase purItem = (PurchasingItemBase) item;
+        // Validations for quantity based item type
+        if (purItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
+            String uomCode = purItem.getItemUnitOfMeasureCode();
+            if (StringUtils.isEmpty(uomCode)) {
+                valid = false;
+                String attributeLabel = dataDictionaryService.
+                        getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
+                        getAttributeDefinition(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).
+                        getLabel();
+                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
+            }
+            else {
+                //Find out whether the unit of measure code has existed in the database
+                Map<String,String> fieldValues = new HashMap<String, String>();
+                fieldValues.put(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, purItem.getItemUnitOfMeasureCode());
+                if (businessObjectService.countMatching(UnitOfMeasure.class, fieldValues) != 1) {
+                    //This is the case where the unit of measure code on the item does not exist in the database.
+                    valid = false;
+                    GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, PurapKeyConstants.PUR_ITEM_UNIT_OF_MEASURE_CODE_INVALID,  " in " + item.getItemIdentifierString());
+                }
+            }
+        }
+
+        // Validations for non-quantity based item type
+        if (purItem.getItemType().isAmountBasedGeneralLedgerIndicator() && StringUtils.isNotBlank(purItem.getItemUnitOfMeasureCode())) {
+            valid = false;
+            String attributeLabel = dataDictionaryService.
+                    getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
+                    getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).getLabel();
+            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, PurapKeyConstants.ERROR_ITEM_UOM_NOT_ALLOWED, attributeLabel + " in " + item.getItemIdentifierString());
+        }
+
+        return valid;
+    }
 
     /**
      * Checks that a description was entered for the item.
-     * 
+     *
      * @param item
      * @return
      */
     public boolean validateItemDescription(PurApItem item) {
-        boolean valid = true;      
+        boolean valid = true;
         if (StringUtils.isEmpty(item.getItemDescription())) {
             valid = false;
             String attributeLabel = dataDictionaryService.
@@ -136,7 +173,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
     /**
      * Validates that if the item type is quantity based, the item quantity is required and if the item type is amount based, the
      * quantity is not allowed.
-     * 
+     *
      * @param item the item to be validated
      * @return boolean false if there's any validation that fails.
      */
@@ -147,14 +184,14 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
             valid = false;
             String attributeLabel = dataDictionaryService.
                                     getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                    getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();            
+                                    getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.QUANTITY, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
         }
         else if (purItem.getItemType().isAmountBasedGeneralLedgerIndicator() && ObjectUtils.isNotNull(purItem.getItemQuantity())) {
             valid = false;
             String attributeLabel = dataDictionaryService.
                                     getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                    getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel(); 
+                                    getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.QUANTITY, PurapKeyConstants.ERROR_ITEM_QUANTITY_NOT_ALLOWED, attributeLabel + " in " + item.getItemIdentifierString());
         }
 
@@ -163,8 +200,8 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
 
     /**
      * Predicate to do a parameter lookup and tell us whether a commodity code is required.
-     * Override in child classes. 
-     * 
+     * Override in child classes.
+     *
      * @return      True if a commodity code is required.
      */
     protected boolean commodityCodeIsRequired() {
@@ -179,7 +216,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         }
         return true;
     }
-    
+
     private boolean validateMixItemType(PurApItem newItem, PurchasingAccountsPayableDocument purapDocument) {
         boolean valid = true;
         if(StringUtils.isNotBlank(newItem.getItemTypeCode())) {
@@ -189,7 +226,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
                          (CUPurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode()) ||
                                 CUPurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode()))) {
                     GlobalVariables.getMessageMap().addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
-                    GlobalVariables.getMessageMap().putError(CUPurapPropertyConstants.ITEM_TYPE_CODE, CUPurapKeyConstants.PURAP_MIX_ITEM_QTY_NONQTY); 
+                    GlobalVariables.getMessageMap().putError(CUPurapPropertyConstants.ITEM_TYPE_CODE, CUPurapKeyConstants.PURAP_MIX_ITEM_QTY_NONQTY);
                     valid &= false;
                     GlobalVariables.getMessageMap().removeFromErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
                     break;
@@ -198,46 +235,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         }
         return valid;
     }
-    
-    public boolean validateUnitOfMeasure(PurApItem item) {
-        boolean valid = true;
-        PurchasingItemBase purItem = (PurchasingItemBase) item;
-        // Validations for quantity based item type
-        if (purItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
-            String uomCode = purItem.getItemUnitOfMeasureCode();
-            if (StringUtils.isEmpty(uomCode)) {
-                valid = false;
-                String attributeLabel = dataDictionaryService.
-                                        getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                        getAttributeDefinition(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).
-                                        getLabel();
-                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
-            }
-            else {
-                //Find out whether the unit of measure code has existed in the database
-                Map<String,String> fieldValues = new HashMap<String, String>();
-                fieldValues.put(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, purItem.getItemUnitOfMeasureCode());
-                if (businessObjectService.countMatching(UnitOfMeasure.class, fieldValues) != 1) {
-                    //This is the case where the unit of measure code on the item does not exist in the database.
-                    valid = false;
-                    GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, PurapKeyConstants.PUR_ITEM_UNIT_OF_MEASURE_CODE_INVALID,  " in " + item.getItemIdentifierString());
-                }
-            }
-        }
-        
-        // Validations for non-quantity based item type
-         if (purItem.getItemType().isAmountBasedGeneralLedgerIndicator() && StringUtils.isNotBlank(purItem.getItemUnitOfMeasureCode())) {
-             valid = false;
-             String attributeLabel = dataDictionaryService.
-                                     getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                     getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE).getLabel(); 
-             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, PurapKeyConstants.ERROR_ITEM_UOM_NOT_ALLOWED, attributeLabel + " in " + item.getItemIdentifierString());
-         }
-
-        return valid;
-    }
-    
-    
 
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
@@ -246,7 +243,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
-    
 
     public DataDictionaryService getDataDictionaryService() {
         return dataDictionaryService;
@@ -256,8 +252,6 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         this.dataDictionaryService = dataDictionaryService;
     }
     
-    
-
     public PurchasingCommodityCodeValidation getCommodityCodeValidation() {
         return commodityCodeValidation;
     }
@@ -265,6 +259,5 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
     public void setCommodityCodeValidation(PurchasingCommodityCodeValidation commodityCodeValidation) {
         this.commodityCodeValidation = commodityCodeValidation;
     }
-    
 
 }

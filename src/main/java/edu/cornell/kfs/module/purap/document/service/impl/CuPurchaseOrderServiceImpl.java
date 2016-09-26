@@ -36,17 +36,10 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchaseOrderServiceImpl.class);
 
     @Override
-    public void performPurchaseOrderFirstTransmitViaPrinting(String documentNumber, ByteArrayOutputStream baosPDF) {
-        PurchaseOrderDocument po = getPurchaseOrderByDocumentNumber(documentNumber);
-        String environment = kualiConfigurationService.getPropertyValueAsString(KFSConstants.ENVIRONMENT_KEY);
-        Collection<String> generatePDFErrors = printService.generatePurchaseOrderPdf(po, baosPDF, environment, null);
-        if (!generatePDFErrors.isEmpty()) {
-            addStringErrorMessagesToMessageMap(PurapKeyConstants.ERROR_PURCHASE_ORDER_PDF, generatePDFErrors);
-            throw new ValidationException("printing purchase order for first transmission failed");
-        }
+    public void performPurchaseOrderFirstTransmitViaPrinting(PurchaseOrderDocument po) {
         if (ObjectUtils.isNotNull(po.getPurchaseOrderFirstTransmissionTimestamp())) {
             // should not call this method for first transmission if document has already been transmitted
-            String errorMsg = "Method to perform first transmit was called on document (doc id " + documentNumber + ") with already filled in 'first transmit date'";
+            String errorMsg = "Method to perform first transmit was called on document (doc id " + po.getDocumentNumber() + ") with already filled in 'first transmit date'";
             LOG.error(errorMsg);
             throw new RuntimeException(errorMsg);
         }

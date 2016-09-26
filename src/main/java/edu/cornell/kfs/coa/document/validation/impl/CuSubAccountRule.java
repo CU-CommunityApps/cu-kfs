@@ -14,16 +14,6 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuSubAccountRule extends SubAccountRule {
 	
-	/**
-	 * @see org.kuali.kfs.coa.document.validation.impl.SubAccountRule#setupConvenienceObjects()
-	 */
-	@Override
-	public void setupConvenienceObjects() {
-		super.setupConvenienceObjects();
-		setIndirectCostRecoveryAccountList( new ArrayList<IndirectCostRecoveryAccount>(newSubAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts()));
-	}
-	
-
     @Override
     protected boolean checkCgCostSharingRules() {
 

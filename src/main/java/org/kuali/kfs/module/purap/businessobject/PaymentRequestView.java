@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2014 The Kuali Foundation
+ * Copyright 2005-2016 The Kuali Foundation
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,19 +18,18 @@
  */
 package org.kuali.kfs.module.purap.businessobject;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
+import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.web.format.CurrencyFormatter;
 import org.kuali.rice.core.web.format.DateFormatter;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.NoteService;
 
-import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Payment Request View Business Object.
  */

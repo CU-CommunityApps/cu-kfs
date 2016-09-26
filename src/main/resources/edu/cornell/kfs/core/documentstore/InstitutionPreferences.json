@@ -1,2502 +1,2570 @@
 {
   "institutionId": "1232413535",
   "logoUrl": "static/images/kuali-logo.png",
-  "linkGroups": [{
-    "label": "Accounting",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "AD",
-        "linkType": "kfs"
-      }, {
-        "label": "Auxiliary Voucher",
-        "link": "financialAuxiliaryVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=AV",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "AV"
-          }
-        }
-      }, {
-        "documentTypeCode": "CMD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CCR",
-        "linkType": "kfs"
-      }, {
-        "label": "Distribution Of Income And Expense",
-        "link": "financialDistributionOfIncomeAndExpense.do?methodToCall=docHandler&command=initiate&docTypeName=DI",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "DI"
-          }
-        }
-      }, {
-        "label": "Electronic Payment Claim",
-        "link": "electronicFundTransfer.do?methodToCall=start",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.sys.web.struts.ElectronicFundTransferAction"
-          }
-        }
-      }, {
-        "documentTypeCode": "GEC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GLCP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ICA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "IB",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "IAA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "JV",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ND",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PE",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SB",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "YEDI",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "YEGE",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "YEJV",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "YETF",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "label": "Available Balances",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.AccountBalance&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Balances by Consolidation",
-        "link": "glAccountBalanceByConsolidationLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.AccountBalanceByConsolidation&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Cash Balances",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.CashBalance&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Detailed Transactions",
-        "link": "#/transactions-report",
-        "linkType": "report",
-        "permission": {
-          "templateNamespace": "KFS-SYS",
-          "templateName": "View Report",
-          "details": {
-            "reportCode": "TRAN"
-          }
-        }
-      }, {
-        "label": "Current Fund Balance",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.gl.businessobject.CurrentAccountBalance&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "General Ledger Balance",
-        "link": "glBalanceInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Balance&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "General Ledger Entry",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Entry&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "General Ledger Pending Entry",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Income Statement/Balance Sheet",
-        "link": "#/available-balances-report",
-        "linkType": "report",
-        "permission": {
-          "templateNamespace": "KFS-SYS",
-          "templateName": "View Report",
-          "details": {
-            "reportCode": "ISBS"
-          }
-        }
-      }, {
-        "label": "Open Encumbrances",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Encumbrance&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Trial Balance",
-        "link": "glTrialBalance.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.TrialBalanceReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.TrialBalanceReportAction"
-          }
-        }
-      }],
-      "administration": [{
-        "documentTypeCode": "CDS",
-        "linkType": "kfs"
-      }, {
-        "label": "Collector Flat File Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=collectorFlatFileInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "collectorFlatFileInputFileType"
-          }
-        }
-      }, {
-        "label": "Collector XML Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=collectorXmlInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "collectorXmlInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "CCTY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CCVN",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchDefault",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVPR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVIC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVTC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVET",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVML",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVPD",
-        "linkType": "kfs"
-      }, {
-        "label": "Enterprise Feed Upload",
-        "link": "batchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=enterpriseFeederFileSetType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "enterpriseFeederFileSetType"
-          }
-        }
-      }, {
-        "documentTypeCode": "IWAM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVTX",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PCDM",
-        "linkType": "kfs"
-      }, {
-        "label": "Procurement Card Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "procurementCardInputFileType"
-          }
-        }
-      }, {
-        "label": "Procurement Card Flat Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardFlatInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "procurementCardFlatInputFileType"
-          }
-        }
-      }, {
-        "label": "Disbursement Voucher Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=disbursementVoucherInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "disbursementVoucherInputFileType"
-          }
-        }
-      }]
-    }
-  }, {
-    "label": "Accounts Receivable",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "CTRL",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CRM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "INV",
-        "linkType": "kfs"
-      }, {
-        "label": "Customer Invoice Generation",
-        "link": "arCustomerInvoiceGeneration.do?methodToCall=start",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS-AR"
-          }
-        }
-      }, {
-        "documentTypeCode": "INVW",
-        "linkType": "kfs"
-      }, {
-        "label": "Customer Invoice Writeoff Lookup",
-        "link": "arCustomerInvoiceWriteoffLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.CustomerInvoiceWriteoffLookupResult&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "INVW"
-          }
-        }
-      }, {
-        "documentTypeCode": "APP",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "label": "Billing Statement",
-        "link": "arCustomerStatement.do?methodToCall=start",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS-AR"
-          }
-        }
-      }, {
-        "documentTypeCode": "CUS",
-        "linkType": "kfs"
-      }, {
-        "label": "Customer Aging Report",
-        "link": "arCustomerAgingReportLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.CustomerAgingReportDetail",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS-AR"
-          }
-        }
-      }, {
-        "documentTypeCode": "INVR",
-        "linkType": "kfs"
-      }, {
-        "label": "Outstanding Invoice Report",
-        "link": "contractsGrantsInvoiceReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Payment History Report",
-        "link": "contractsGrantsPaymentHistoryReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsPaymentHistoryReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }],
-      "administration": [{
-        "documentTypeCode": "CATY",
-        "linkType": "kfs"
-      }, {
-        "label": "Customer CSV Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=customerLoadCSVInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "customerLoadCSVInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "IICO",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CTY",
-        "linkType": "kfs"
-      }, {
-        "label": "Customer XML Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=customerLoadInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "customerLoadInputFileType"
-          }
-        }
-      }, {
-        "label": "Lockbox Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=lockboxInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "lockboxInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "OADF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OOPT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMED",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ARSI",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Budget",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "BA",
-        "linkType": "kfs"
-      }, {
-        "label": "Budget Construction Selection",
-        "link": "budgetBudgetConstructionSelection.do?methodToCall=loadExpansionScreen",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS-BC"
-          }
-        }
-      }, {
-        "documentTypeCode": "YEBA",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "BCAR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DURA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BCRC",
-        "linkType": "kfs"
-      }, {
-        "label": "Budget Construction Position",
-        "link": "budgetTempListLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "CSFO",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BFYC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BFNC",
-        "linkType": "kfs"
-      }, {
-        "label": "Intended Incumbent",
-        "link": "budgetTempListLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "BCOR",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Capital Assets",
-    "links": {
-      "activities": [{
-        "businessObjectClass": "org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableProcessingReport",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "documentTypeCode": "CASM",
-        "linkType": "kfs"
-      }, {
-        "label": "Asset Fabrication",
-        "link": "kr/maintenance.do?maintenanceAction=New&methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetFabrication",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "FR"
-          }
-        }
-      }, {
-        "label": "Asset Global (add)",
-        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetAcquisitionType&conversionFields=acquisitionTypeCode:acquisitionTypeCode&docFormKey=88888888",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "AA"
-          }
-        }
-      }, {
-        "documentTypeCode": "ALOC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "MPAY",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.module.cam.businessobject.AssetPayment",
-        "linkType": "kfs"
-      }, {
-        "label": "Asset Retirement Global",
-        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetRetirementReason&conversionFields=retirementReasonCode:retirementReasonCode&docFormKey=88888888",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "ARG"
-          }
-        }
-      }, {
-        "documentTypeCode": "PTAG",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "ACQT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ACON",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DPRC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DPRM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ASLT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "COBJ",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "APDT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RRSN",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ASTA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMTT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ASST",
-        "linkType": "kfs"
-      }, {
-        "label": "Barcode Inventory Process",
-        "link": "uploadBarcodeInventoryFile.do?methodToCall=start&batchUpload.batchInputTypeName=assetBarcodeInventoryInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "assetBarcodeInventoryInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "YDPA",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Chart of Accounts",
-    "links": {
-      "reference": [{
-        "documentTypeCode": "ACCT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ADEL",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GDLG",
-        "linkType": "kfs"
-      }, {
-        "label": "Account Delegate Global from Model",
-        "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.coa.businessobject.AccountDelegateModel&conversionFields=chartOfAccountsCode:modelChartOfAccountsCode,organizationCode:modelOrganizationCode,accountDelegateModelName:modelName&docFormKey=88888888&backdoorId=khuntley",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "GDLM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GACC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RPTC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OBJT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GOBJ",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ORGN",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GORG",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ORR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PROJ",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SACC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GSACC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SOBJ",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GSOB",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GSOI",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "UPPM",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "ACCR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GARV",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ATYP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "APRD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "AFUN",
-        "linkType": "kfs"
-      }, {
-        "label": "Account Reversion File Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=accountReversionInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "accountReversionInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "APPA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BTYP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ACTY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BAMD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BRL",
-        "linkType": "kfs"
-      }, {
-        "label": "CG Reporting Code",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "COAT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "FFUN",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "FFC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "FGRP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "HEFN",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "MAC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "MTE",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OBJC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OBJL",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OSTY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OTYP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OFAC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "OFSD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ORGR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ORGC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GORV",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ORTY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RCEN",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RSTA",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "edu.cornell.kfs.coa.businessobject.ReversionCategory",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SOF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SFGR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SFPR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SFGT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SFC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "UFUN",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Check Reconciliation",
-    "links": {
-      "administration": [{
-        "businessObjectClass": "com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation",
-        "linkType": "kfs"
-      }, {
-        "label": "Reconciliation Report",
-        "link": "crCheckReconciliationReport.do",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportAction"
-          }
-        }
-      }]
-    }
-  }, {
-    "label": "Contracts & Grants",
-    "links": {
-      "reference": [{
-        "documentTypeCode": "AACD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "AGCY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "AWRD",
-        "linkType": "kfs"
-      }, {
-        "label": "Award Balances",
-        "link": "contractsGrantsAwardBalancesReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cg.businessobject.ContractsGrantsAwardBalancesReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "BFM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PRPL",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "AGTY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "AWDS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CFDM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "GDES",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ICRA",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ICRE",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ITYP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "INST",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "edu.cornell.kfs.module.cg.businessobject.InvoiceType",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "LOCF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "LFGR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PURP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PRST",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PATY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CLOS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RRT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "SUBC",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Contracts & Grants Billing",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "CCA",
-        "linkType": "kfs"
-      }, {
-        "label": "Contracts & Grants Invoice",
-        "link": "arContractsGrantsInvoiceLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceLookupResult&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "LCR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "FBI",
-        "linkType": "kfs"
-      }, {
-        "label": "Generate Dunning Letters",
-        "link": "arGenerateDunningLettersLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.GenerateDunningLettersLookupResult&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Transmit Contracts & Grants Invoices",
-        "link": "arTransmitContractsAndGrantsInvoices.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.TransmitContractsAndGrantsInvoicesLookupDataHolder&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }],
-      "reference": [{
-        "label": "Collection Activity Report",
-        "link": "collectionActivityReportLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.CollectionActivityReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "documentTypeCode": "CVNT",
-        "linkType": "kfs"
-      }, {
-        "label": "Contracts & Grants Aging Report",
-        "link": "contractsGrantsAgingReportLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsAndGrantsAgingReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Contracts & Grants Invoice Errors",
-        "link": "contractsGrantsInvoiceDocumentErrorLogReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Federal Financial Report",
-        "link": "arFederalFinancialReport.do?methodToCall=start",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.module.cg.web.struts.FederalFinancialReportAction"
-          }
-        }
-      }, {
-        "label": "Letter of Credit Draw Report",
-        "link": "contractsGrantsLOCReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsLOCReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Milestone Report",
-        "link": "contractsGrantsMilestoneReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsMilestoneReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Suspended Invoice Detail Report",
-        "link": "contractsGrantsSuspendedInvoiceDetailReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsSuspendedInvoiceDetailReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Suspended Invoice Summary Report",
-        "link": "contractsGrantsSuspendedInvoiceSummaryReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsSuspendedInvoiceSummaryReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Tickler",
-        "link": "arTicklersReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.TicklersReport&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }],
-      "administration": [{
-        "documentTypeCode": "BILF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CATP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "CAT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DUNC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DLTM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ITM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "IMTM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "MILE",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PDBS",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Effort Certification",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "ECD",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.DuplicateCertificationsReport",
-        "linkType": "kfs"
-      }, {
-        "label": "Effort Certification Extract Build",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ec.businessobject.EffortCertificationDetailBuild&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.OutstandingCertificationsByOrganization",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.OutstandingCertificationsByReport",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "ECRD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ECPG",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.EffortCertificationPeriodStatusCode",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ECRT",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Identity",
-    "links": {
-      "reference": [{
-        "label": "Group",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.group.GroupBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Person",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.api.identity.Person&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }],
-      "administration": [{
-        "label": "Address Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.address.EntityAddressTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Affiliation Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.affiliation.EntityAffiliationTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Campus Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.location.impl.campus.CampusTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Citizenship Status",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.citizenship.EntityCitizenshipStatusBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Email Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.email.EntityEmailTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Employee Status",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.employment.EntityEmploymentStatusBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Employee Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.employment.EntityEmploymentTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Entity Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.EntityTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "External Identifier Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.external.EntityExternalIdentifierTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Name Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.name.EntityNameTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Permission",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.permission.UberPermissionBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Phone Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.identity.phone.EntityPhoneTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Responsibility",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.responsibility.UberResponsibilityBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Role",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.role.RoleBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Role/Group/Permission/Responsibility Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.type.KimTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Routing & Authorization Document Type Hierarchy",
-        "link": "kew/RuleQuickLinks.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }]
-    }
-  }, {
-    "label": "Labor",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "BT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "LLJV",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "LLCP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ST",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "YEBT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "YEST",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "label": "Account Status (Base Funds)",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.AccountStatusBaseFunds&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Account Status (Current Funds)",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.AccountStatusCurrentFunds&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Calculated Salary Foundation",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LaborCalculatedSalaryFoundationTracker&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Employee Funding",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.EmployeeFunding&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "July 1 Position Funding",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.July1PositionFunding&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Labor Ledger Pending Entry",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Labor Ledger View",
-        "link": "glBalanceInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LedgerBalance&docFormKey=88888888&hideReturnLink=true&financialBalanceTypeCode=AC",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }, {
-        "label": "Position Inquiry",
-        "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.PositionData&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
-          }
-        }
-      }],
-      "administration": [{
-        "documentTypeCode": "BCAL",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BNRC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "BENT",
-        "linkType": "kfs"
-      }, {
-        "label": "Create Disencumbrance",
-        "link": "disencumbranceBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=disencumbranceEnterpriseFeederFileSetType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "disencumbranceEnterpriseFeederFileSetType"
-          }
-        }
-      }, {
-        "label": "Labor Enterprise Feed Upload",
-        "link": "laborBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=laborEnterpriseFeederFileSetType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "laborEnterpriseFeederFileSetType"
-          }
-        }
-      }, {
-        "documentTypeCode": "LOBJ",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "LOBN",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "POGR",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Orders",
-    "links": {
-      "activities": [{
-        "documentTypeCode": "RCVB",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ACM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RCVL",
-        "linkType": "kfs"
-      }, {
-        "label": "Payment Request",
-        "link": "purapPaymentRequest.do?methodToCall=docHandler&command=initiate&docTypeName=PREQ",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "PREQ"
-          }
-        }
-      }, {
-        "label": "Requisition",
-        "link": "purapRequisition.do?methodToCall=docHandler&command=initiate&docTypeName=REQS",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "REQS"
-          }
-        }
-      }, {
-        "label": "e-SHOP",
-        "link": "b2b.do?methodToCall=shopCatalogs",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.module.purap.web.struts.B2BAction"
-          }
-        }
-      }, {
-        "label": "I Want",
-        "link": "purapIWant.do?methodToCall=docHandler&command=initiate&docTypeName=IWNT&step=customerDataStep",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "IWNT"
-          }
-        }
-      }, {
-        "label": "Vendor Credit Memo",
-        "link": "purapVendorCreditMemo.do?methodToCall=docHandler&command=initiate&docTypeName=CM",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "CM"
-          }
-        }
-      }],
-      "administration": [{
-        "documentTypeCode": "PMBA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMTY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMSY",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMDR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "EIIM",
-        "linkType": "kfs"
-      }, {
-        "label": "Electronic Invoice Test File Generation",
-        "link": "purapElectronicInvoiceTestFileGeneration.do",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Electronic Invoice Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=electronicInvoiceInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "electronicInvoiceInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "PMFS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "IRAD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMIT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMTM",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMNP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMOP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMAA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCL",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMQL",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMQT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMQS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMVC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMRA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "THLD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMRF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMRP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMSO",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMSN",
-        "linkType": "kfs"
-      }, {
-        "label": "Vendor Exclusion Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorExcludeInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "vendorExcludeInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "PMSI",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Pre-Disbursement",
-    "links": {
-      "activities": [{
-        "label": "Format Checks/ACH",
-        "link": "pdp/format.do?methodToCall=start",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS-PDP"
-          }
-        }
-      }, {
-        "businessObjectClass": "org.kuali.kfs.pdp.businessobject.FormatProcess",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.pdp.businessobject.Batch",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.pdp.businessobject.PaymentDetail",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "documentTypeCode": "CSPR",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.pdp.businessobject.PaymentProcess",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.pdp.businessobject.BankChangeHistory",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "ACTC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ABNK",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ACTR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ACHT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DBRG",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DSTP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PAAT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PYTP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMTC",
-        "linkType": "kfs"
-      }, {
-        "label": "Payment File Batch Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=paymentInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "paymentInputFileType"
-          }
-        }
-      }, {
-        "label": "Payment Spreadsheet Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=researchParticipantInboundServiceInputType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "researchParticipantInboundServiceInputType"
-          }
-        }
-      }, {
-        "documentTypeCode": "PMTS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMTP",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Reimbursements",
-    "links": {
-      "activities": [{
-        "label": "Disbursement Voucher",
-        "link": "financialDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=DV",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "DV"
-          }
-        }
-      },
-      {
-        "documentTypeCode": "ENT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "RELO",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "System",
-    "links": {
-      "reference": [{
-        "documentTypeCode": "BLDG",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ROOM",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "BANK",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.sys.batch.BatchFile",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "edu.cornell.kfs.sys.batch.CreateDoneBatchFile",
-        "linkType": "kfs"
-      }, {
-        "label": "Batch Semaphore File Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=semaphoreInputFileTypeError",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "semaphoreInputFileTypeError"
-          }
-        }
-      }, {
-        "label": "Cache Admin",
-        "link": "kr-krad/core/admin/cache?viewId=CacheAdmin-view1&methodToCall=start",
-        "linkType": "rice"
-      }, {
-        "label": "Campus",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.location.impl.campus.CampusBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Configuration Viewer",
-        "link": "ksb/ConfigViewer.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.ksb.messaging.web.ConfigViewerAction"
-          }
-        }
-      }, {
-        "label": "Country",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.location.impl.country.CountryBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "County",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.location.impl.county.CountyBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Data Mapping Field Definition",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.businessobject.DataMappingFieldDefinition&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS*"
-          }
-        }
-      }, {
-        "label": "Document Operation",
-        "link": "kew/DocumentOperation.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.kew.documentoperation.web.DocumentOperationAction"
-          }
-        }
-      }, {
-        "label": "Document Reindex File Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=documentReindexFlatFileInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "documentReindexFlatFileInputFileType"
-          }
-        }
-      }, {
-        "label": "Document Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kew.doctype.bo.DocumentType&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "businessObjectClass": "org.kuali.kfs.coreservice.impl.namespace.NamespaceBo",
-        "linkType": "kfs",
-        "newTarget": true
-      }, {
-        "documentTypeCode": "PARM",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.coreservice.impl.component.ComponentBo",
-        "linkType": "kfs",
-        "newTarget": true
-      }, {
-        "businessObjectClass": "org.kuali.kfs.coreservice.impl.parameter.ParameterTypeBo",
-        "linkType": "kfs",
-        "newTarget": true
-      }, {
-        "documentTypeCode": "FFD",
-        "linkType": "kfs"
-      }, {
-        "label": "Institution Configuration",
-        "link": "app/sys/institutionconfiguration.jsp",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KFS-SYS",
-            "actionClass": "InstitutionConfig"
-          }
-        }
-      }, {
-        "documentTypeCode": "MOTD",
-        "linkType": "kfs"
-      }, {
-        "label": "Message Queue",
-        "link": "ksb/MessageQueue.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.ksb.messaging.web.MessageQueueAction"
-          }
-        }
-      }, {
-        "documentTypeCode": "ORIG",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVDL",
-        "linkType": "kfs"
-      }, {
-        "label": "Postal Code",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.location.impl.postalcode.PostalCodeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Quartz",
-        "link": "ksb/Quartz.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.ksb.messaging.web.QuartzQueueAction"
-          }
-        }
-      }, {
-        "label": "Rice Namespace",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.coreservice.impl.namespace.NamespaceBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR-NS",
-            "componentName": "ParameterNamespace"
-          }
-        }
-      }, {
-        "label": "Rice Parameter",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.coreservice.impl.parameter.ParameterBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Rice Parameter Component",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.coreservice.impl.component.ComponentBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR-NS",
-            "componentName": "ParameterDetailType"
-          }
-        }
-      }, {
-        "label": "Rice Parameter Type",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.coreservice.impl.parameter.ParameterTypeBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR-NS",
-            "componentName": "ParameterType"
-          }
-        }
-      }, {
-        "label": "Batch Schedule",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.batch.BatchJobStatus&docFormKey=88888888&hideReturnLink=true&conversionFields=name:name,group:group",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "componentName": "BatchJobStatus"
-          }
-        }
-      }, {
-        "label": "Security Management",
-        "link": "ksb/JavaSecurityManagement.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.ksb.security.admin.web.JavaSecurityManagementAction"
-          }
-        }
-      }, {
-        "label": "Service Registry",
-        "link": "ksb/ServiceRegistry.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.ksb.messaging.web.ServiceRegistryAction"
-          }
-        }
-      }, {
-        "label": "Sidebar Menu Cache Configuration",
-        "link": "sidebarMenuCache.do?methodToCall=start",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.kfs.sys.web.struts.SidebarMenuCacheAction"
-
-          }
-        }
-      }, {
-        "label": "Special Batch File Upload",
-        "link": "batchFileUpload",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "GLCP"
-          }
-        }
-      }, {
-        "label": "State",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.location.impl.state.StateBo&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "label": "Statistics Report",
-        "link": "kew/Stats.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KR*"
-          }
-        }
-      }, {
-        "documentTypeCode": "SOPT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TAXR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TRTP",
-        "linkType": "kfs"
-      }, {
-        "label": "Thread Pool",
-        "link": "ksb/ThreadPool.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "actionClass": "org.kuali.rice.ksb.messaging.web.ThreadPoolAction"
-          }
-        }
-      }, {
-        "documentTypeCode": "UDAT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "DVWT",
-        "linkType": "kfs"
-      }, {
-        "label": "Workflow Attribute",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kew.rule.bo.RuleAttribute&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR-WKFLW",
-            "componentName": "RuleAttribute"
-          }
-        }
-      }, {
-        "label": "XML Ingester",
-        "link": "core/Ingester.do",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Use Screen",
-          "details": {
-            "namespaceCode": "KR-WKFLW",
-            "actionClass": "org.kuali.rice.core.web.impex.IngesterAction"
-          }
-        }
-      }, {
-        "documentTypeCode": "PMUM",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-      "label": "Tax Reporting",
+  "linkGroups": [
+    {
+      "label": "Accounting",
       "links": {
-        "reference": [{
-          "businessObjectClass": "edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping",
-          "linkType": "kfs"
-        }, {
-          "businessObjectClass": "edu.cornell.kfs.tax.businessobject.TransactionOverride",
-          "linkType": "kfs"
-        }],
-        "administration": [{
-          "label": "Transaction Override Upload",
-          "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=bulkTransactionOverrideFileType",
-          "linkType": "kfs",
-          "permission": {
-            "templateNamespace": "KR-NS",
-            "templateName": "Upload Batch Input File(s)",
-            "details": {
-              "beanName": "bulkTransactionOverrideFileType"
+        "activities": [
+          {
+            "documentTypeCode": "AD",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Auxiliary Voucher",
+            "link": "financialAuxiliaryVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=AV",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "AV"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "CMD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CCR",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Distribution Of Income And Expense",
+            "link": "financialDistributionOfIncomeAndExpense.do?methodToCall=docHandler&command=initiate&docTypeName=DI",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "DI"
+              }
+            }
+          },
+          {
+            "label": "Electronic Payment Claim",
+            "link": "electronicFundTransfer.do?methodToCall=start",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.sys.web.struts.ElectronicFundTransferAction"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "GEC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GLCP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ICA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "IB",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "IAA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "JV",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ND",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PE",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SB",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YEDI",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YEGE",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YEJV",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YETF",
+            "linkType": "kfs"
+          }
+        ],
+        "reference": [
+          {
+            "label": "Available Balances",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.AccountBalance&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Balances by Consolidation",
+            "link": "glAccountBalanceByConsolidationLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.AccountBalanceByConsolidation&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Cash Balances",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.CashBalance&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Detailed Transactions",
+            "link": "/reports#/transactions-report",
+            "linkType": "report",
+            "permission": {
+              "templateNamespace": "KFS-SYS",
+              "templateName": "View Report",
+              "details": {
+                "reportCode": "TRAN"
+              }
+            }
+          },
+          {
+            "label": "Current Fund Balance",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.gl.businessobject.CurrentAccountBalance&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "General Ledger Balance",
+            "link": "glBalanceInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Balance&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "General Ledger Entry",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Entry&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "General Ledger Pending Entry",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Income Statement/Balance Sheet",
+            "link": "/reports#/available-balances-report",
+            "linkType": "report",
+            "permission": {
+              "templateNamespace": "KFS-SYS",
+              "templateName": "View Report",
+              "details": {
+                "reportCode": "ISBS"
+              }
+            }
+          },
+          {
+            "label": "Open Encumbrances",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.Encumbrance&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Trial Balance",
+            "link": "glTrialBalance.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.gl.businessobject.TrialBalanceReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.TrialBalanceReportAction"
+              }
             }
           }
-        }]
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "CDS",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Collector Flat File Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=collectorFlatFileInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "collectorFlatFileInputFileType"
+              }
+            }
+          },
+          {
+            "label": "Collector XML Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=collectorXmlInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "collectorXmlInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "CCTY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CCVN",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchDefault",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVPR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVIC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVTC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVET",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVML",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVPD",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Enterprise Feed Upload",
+            "link": "batchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=enterpriseFeederFileSetType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "enterpriseFeederFileSetType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "IWAM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVTX",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PCDM",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Procurement Card Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "procurementCardInputFileType"
+              }
+            }
+          },
+          {
+            "label": "Procurement Card Flat Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=procurementCardFlatInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "procurementCardFlatInputFileType"
+              }
+            }
+          },
+          {
+            "label": "Disbursement Voucher Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=disbursementVoucherInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "disbursementVoucherInputFileType"
+              }
+            }
+          }
+        ]
       }
-  }, {
-    "label": "Travel",
-    "links": {
-      "activities": [{
-        "label": "Corporate Card Application",
-        "link": "kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=CCAP&methodToCall=search",
-        "linkType": "rice",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KR*"
+    },
+    {
+      "label": "Accounts Receivable",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "CTRL",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CRM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "INV",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Customer Invoice Generation",
+            "link": "arCustomerInvoiceGeneration.do?methodToCall=start",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS-AR"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "INVW",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Customer Invoice Writeoff Lookup",
+            "link": "arCustomerInvoiceWriteoffLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.CustomerInvoiceWriteoffLookupResult&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "INVW"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "APP",
+            "linkType": "kfs"
           }
-        }
-      }, {
-        "documentTypeCode": "CCIE",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.module.tem.businessobject.CreditCardStagingData",
-        "linkType": "kfs"
-      }, {
-        "label": "CTS Card Application",
-        "link": "temCTSCardApplication.do?methodToCall=checkExistingCard&docTypeName=CTAP",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-SYS",
-          "templateName": "Initiate Document",
-          "details": {
-            "documentTypeName": "CTAP"
+        ],
+        "reference": [
+          {
+            "label": "Billing Statement",
+            "link": "arCustomerStatement.do?methodToCall=start",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS-AR"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "CUS",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Customer Aging Report",
+            "link": "arCustomerAgingReportLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.CustomerAgingReportDetail",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS-AR"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "INVR",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Outstanding Invoice Report",
+            "link": "contractsGrantsInvoiceReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Payment History Report",
+            "link": "contractsGrantsPaymentHistoryReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsPaymentHistoryReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
           }
-        }
-      }, {
-        "documentTypeCode": "TAAR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TTA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TR",
-        "linkType": "kfs"
-      }],
-      "reference": [{
-        "businessObjectClass": "org.kuali.kfs.module.tem.businessobject.TemProfileAccount",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TTP",
-        "linkType": "kfs"
-      }],
-      "administration": [{
-        "documentTypeCode": "TAT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TAPR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TASF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TAS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TCOS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TCRT",
-        "linkType": "kfs"
-      }, {
-        "label": "Credit Card Data Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=creditCardDataXmlInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "creditCardDataXmlInputFileType"
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "CATY",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Customer CSV Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=customerLoadCSVInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "customerLoadCSVInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "IICO",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CTY",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Customer XML Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=customerLoadInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "customerLoadInputFileType"
+              }
+            }
+          },
+          {
+            "label": "Lockbox Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=lockboxInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "lockboxInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "OADF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OOPT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMED",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ARSI",
+            "linkType": "kfs"
           }
-        }
-      }, {
-        "documentTypeCode": "TCCA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TPUR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ETC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "ETOC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TJC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TMR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TPD",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TPDB",
-        "linkType": "kfs"
-      }, {
-        "label": "Per Diem TXT Batch Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemTxtInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "perDiemTxtInputFileType"
-          }
-        }
-      }, {
-        "label": "Per Diem XML Batch Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemXmlInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "perDiemXmlInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "TRR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TSCQ",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TTM",
-        "linkType": "kfs"
-      }, {
-        "label": "Travel Agency Data Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=agencyDataXmlInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "agencyDataXmlInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "TCT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TTYT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "TTRT",
-        "linkType": "kfs"
-      }]
-    }
-  }, {
-    "label": "Vendor",
-    "links": {
-      "reference": [{
-        "documentTypeCode": "PVEN",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.vnd.businessobject.VendorContract",
-        "linkType": "kfs"
-      }, {
-        "label": "Vendor Tax Lookup",
-        "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.vnd.businessobject.VendorTaxDetail&docFormKey=88888888&hideReturnLink=true",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Look Up Records",
-          "details": {
-            "namespaceCode": "KFS-VND",
-            "component": "VendorTaxDetail"
-          }
-        }
-      }],
-      "administration": [{
-        "documentTypeCode": "PMAT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PVCT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PVCF",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCC",
-        "linkType": "kfs"
-      }, {
-        "label": "Commodity Code File Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=commodityCodeInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "commodityCodeInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "PMCT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCO",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMCS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMOT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMOC",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMPA",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMPT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMSP",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMSS",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMST",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMSD",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.vnd.businessobject.DebarredVendorMatch",
-        "linkType": "kfs"
-      }, {
-        "businessObjectClass": "org.kuali.kfs.vnd.businessobject.DebarredUnmatchedVendor",
-        "linkType": "kfs"
-      }, {
-        "label": "Vendor Inactive or Convert File Upload",
-        "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorInactivateConvertBatchCsvInputFileType",
-        "linkType": "kfs",
-        "permission": {
-          "templateNamespace": "KR-NS",
-          "templateName": "Upload Batch Input File(s)",
-          "details": {
-            "beanName": "vendorInactivateConvertBatchCsvInputFileType"
-          }
-        }
-      }, {
-        "documentTypeCode": "PMIR",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PMVT",
-        "linkType": "kfs"
-      }, {
-        "documentTypeCode": "PVFT",
-        "linkType": "kfs"
+        ]
       }
-      ]
+    },
+    {
+      "label": "Budget",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "BA",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Budget Construction Selection",
+            "link": "budgetBudgetConstructionSelection.do?methodToCall=loadExpansionScreen",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS-BC"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "YEBA",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "BCAR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DURA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BCRC",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Budget Construction Position",
+            "link": "budgetTempListLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "CSFO",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BFYC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BFNC",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Intended Incumbent",
+            "link": "budgetTempListLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "BCOR",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Capital Assets",
+      "links": {
+        "activities": [
+          {
+            "businessObjectClass": "org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableProcessingReport",
+            "linkType": "kfs"
+          }
+        ],
+        "reference": [
+          {
+            "documentTypeCode": "CASM",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Asset Fabrication",
+            "link": "kr/maintenance.do?maintenanceAction=New&methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetFabrication",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "FR"
+              }
+            }
+          },
+          {
+            "label": "Asset Global (add)",
+            "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetAcquisitionType&conversionFields=acquisitionTypeCode:acquisitionTypeCode&docFormKey=88888888",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "AA"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "ALOC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "MPAY",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.module.cam.businessobject.AssetPayment",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Asset Retirement Global",
+            "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.module.cam.businessobject.AssetRetirementReason&conversionFields=retirementReasonCode:retirementReasonCode&docFormKey=88888888",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "ARG"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "PTAG",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "ACQT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ACON",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DPRC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DPRM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ASLT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "COBJ",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "APDT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RRSN",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ASTA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMTT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ASST",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Barcode Inventory Process",
+            "link": "uploadBarcodeInventoryFile.do?methodToCall=start&batchUpload.batchInputTypeName=assetBarcodeInventoryInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "assetBarcodeInventoryInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "YDPA",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Chart of Accounts",
+      "links": {
+        "reference": [
+          {
+            "documentTypeCode": "ACCT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ADEL",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GDLG",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Account Delegate Global from Model",
+            "link": "kr/lookup.do?businessObjectClassName=org.kuali.kfs.coa.businessobject.AccountDelegateModel&conversionFields=chartOfAccountsCode:modelChartOfAccountsCode,organizationCode:modelOrganizationCode,accountDelegateModelName:modelName&docFormKey=88888888&backdoorId=khuntley",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "GDLM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GACC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RPTC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OBJT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GOBJ",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ORGN",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GORG",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ORR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PROJ",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SACC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GSACC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SOBJ",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GSOB",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GSOI",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "UPPM",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "ACCR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GARV",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ATYP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "APRD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "AFUN",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Account Reversion File Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=accountReversionInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "accountReversionInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "APPA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BTYP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ACTY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BAMD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BRL",
+            "linkType": "kfs"
+          },
+          {
+            "label": "CG Reporting Code",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "COAT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "FFUN",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "FFC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "FGRP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "HEFN",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "MAC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "MTE",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OBJC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OBJL",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OSTY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OTYP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OFAC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "OFSD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ORGR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ORGC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GORV",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ORTY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RCEN",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RSTA",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "edu.cornell.kfs.coa.businessobject.ReversionCategory",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SOF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SFGR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SFPR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SFGT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SFC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "UFUN",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Check Reconciliation",
+      "links": {
+        "administration": [
+          {
+            "businessObjectClass": "com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Reconciliation Report",
+            "link": "crCheckReconciliationReport.do",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportAction"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "Contracts & Grants",
+      "links": {
+        "reference": [
+          {
+            "documentTypeCode": "AACD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "AGCY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "AWRD",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Award Balances",
+            "link": "contractsGrantsAwardBalancesReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.cg.businessobject.ContractsGrantsAwardBalancesReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "BFM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PRPL",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "AGTY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "AWDS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CFDM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "GDES",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ICRA",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.coa.businessobject.IndirectCostRecoveryExclusionType",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ICRE",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ITYP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "INST",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "edu.cornell.kfs.module.cg.businessobject.InvoiceType",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "LOCF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "LFGR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PURP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PRST",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PATY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CLOS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RRT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "SUBC",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Contracts & Grants Billing",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "CCA",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Contracts & Grants Invoice",
+            "link": "arContractsGrantsInvoiceLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceLookupResult&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "LCR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "FBI",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Generate Dunning Letters",
+            "link": "arGenerateDunningLettersLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.GenerateDunningLettersLookupResult&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Transmit Contracts & Grants Invoices",
+            "link": "arTransmitContractsAndGrantsInvoices.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.TransmitContractsAndGrantsInvoicesLookupDataHolder&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          }
+        ],
+        "reference": [
+          {
+            "label": "Collection Activity Report",
+            "link": "collectionActivityReportLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.CollectionActivityReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "CVNT",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Contracts & Grants Aging Report",
+            "link": "contractsGrantsAgingReportLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsAndGrantsAgingReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Contracts & Grants Invoice Errors",
+            "link": "contractsGrantsInvoiceDocumentErrorLogReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Federal Financial Report",
+            "link": "arFederalFinancialReport.do?methodToCall=start",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.module.cg.web.struts.FederalFinancialReportAction"
+              }
+            }
+          },
+          {
+            "label": "Letter of Credit Draw Report",
+            "link": "contractsGrantsLOCReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsLOCReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Milestone Report",
+            "link": "contractsGrantsMilestoneReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsMilestoneReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Suspended Invoice Detail Report",
+            "link": "contractsGrantsSuspendedInvoiceDetailReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsSuspendedInvoiceDetailReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Suspended Invoice Summary Report",
+            "link": "contractsGrantsSuspendedInvoiceSummaryReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.ContractsGrantsSuspendedInvoiceSummaryReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Tickler",
+            "link": "arTicklersReport.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ar.businessobject.TicklersReport&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "BILF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CATP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CAT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DUNC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DLTM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ITM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "IMTM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "MILE",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PDBS",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Effort Certification",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "ECD",
+            "linkType": "kfs"
+          }
+        ],
+        "reference": [
+          {
+            "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.DuplicateCertificationsReport",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Effort Certification Extract Build",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ec.businessobject.EffortCertificationDetailBuild&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.OutstandingCertificationsByOrganization",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.OutstandingCertificationsByReport",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "ECRD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ECPG",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.module.ec.businessobject.EffortCertificationPeriodStatusCode",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ECRT",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Labor",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "BT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "LLJV",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "LLCP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ST",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YEBT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YEST",
+            "linkType": "kfs"
+          }
+        ],
+        "reference": [
+          {
+            "label": "Account Status (Base Funds)",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.AccountStatusBaseFunds&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Account Status (Current Funds)",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.AccountStatusCurrentFunds&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Calculated Salary Foundation",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LaborCalculatedSalaryFoundationTracker&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Employee Funding",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.EmployeeFunding&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "July 1 Position Funding",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.July1PositionFunding&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Labor Ledger Pending Entry",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Labor Ledger View",
+            "link": "glBalanceInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.LedgerBalance&docFormKey=88888888&hideReturnLink=true&financialBalanceTypeCode=AC",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          },
+          {
+            "label": "Position Inquiry",
+            "link": "glModifiedInquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.ld.businessobject.PositionData&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.gl.web.struts.BalanceInquiryAction"
+              }
+            }
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "BCAL",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BNRC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BENT",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Create Disencumbrance",
+            "link": "disencumbranceBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=disencumbranceEnterpriseFeederFileSetType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "disencumbranceEnterpriseFeederFileSetType"
+              }
+            }
+          },
+          {
+            "label": "Labor Enterprise Feed Upload",
+            "link": "laborBatchUploadFileSet.do?methodToCall=start&batchUpload.batchInputTypeName=laborEnterpriseFeederFileSetType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "laborEnterpriseFeederFileSetType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "LOBJ",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "LOBN",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "POGR",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Orders",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "RCVB",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ACM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RCVL",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Payment Request",
+            "link": "purapPaymentRequest.do?methodToCall=docHandler&command=initiate&docTypeName=PREQ",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "PREQ"
+              }
+            }
+          },
+          {
+            "label": "Requisition",
+            "link": "purapRequisition.do?methodToCall=docHandler&command=initiate&docTypeName=REQS",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "REQS"
+              }
+            }
+          },
+          {
+            "label": "e-SHOP",
+            "link": "b2b.do?methodToCall=shopCatalogs",
+            "linkType": "kfs",
+            "newTarget": true,
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.module.purap.web.struts.B2BAction"
+              }
+            }
+          },
+          {
+            "label": "I Want",
+            "link": "purapIWant.do?methodToCall=docHandler&command=initiate&docTypeName=IWNT&step=customerDataStep",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "IWNT"
+              }
+            }
+          },
+          {
+            "label": "Vendor Credit Memo",
+            "link": "purapVendorCreditMemo.do?methodToCall=docHandler&command=initiate&docTypeName=CM",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "CM"
+              }
+            }
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "PMBA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMTY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMSY",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMDR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "EIIM",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Electronic Invoice Test File Generation",
+            "link": "purapElectronicInvoiceTestFileGeneration.do",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Electronic Invoice Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=electronicInvoiceInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "electronicInvoiceInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "PMFS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "IRAD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMIT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMTM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMNP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMOP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMAA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCL",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMQL",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMQT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMQS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMVC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMRA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "THLD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMRF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMRP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMSO",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMSN",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Vendor Exclusion Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorExcludeInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "vendorExcludeInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "PMSI",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Pre-Disbursement",
+      "links": {
+        "activities": [
+          {
+            "label": "Format Checks/ACH",
+            "link": "pdp/format.do?methodToCall=start",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS-PDP"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.pdp.businessobject.FormatProcess",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.pdp.businessobject.Batch",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.pdp.businessobject.PaymentDetail",
+            "linkType": "kfs"
+          }
+        ],
+        "reference": [
+          {
+            "documentTypeCode": "CSPR",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.pdp.businessobject.PaymentProcess",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.pdp.businessobject.BankChangeHistory",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "ACTC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ABNK",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ACTR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ACHT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DBRG",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DSTP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PAAT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PYTP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMTC",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Payment File Batch Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=paymentInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "paymentInputFileType"
+              }
+            }
+          },
+          {
+            "label": "Payment Spreadsheet Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=researchParticipantInboundServiceInputType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "researchParticipantInboundServiceInputType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "PMTS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMTP",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Reimbursements",
+      "links": {
+        "activities": [
+          {
+            "label": "Disbursement Voucher",
+            "link": "financialDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=DV",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "DV"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "ENT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "RELO",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "System",
+      "links": {
+        "reference": [
+          {
+            "documentTypeCode": "BLDG",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Group",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.group.GroupBo&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "rice",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KR*"
+              }
+            }
+          },
+          {
+            "label": "Person",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.api.identity.Person&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "rice",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KR*"
+              }
+            }
+          },
+          {
+            "label": "Role",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.rice.kim.impl.role.RoleBo&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "rice",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KR*"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "ROOM",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "BANK",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.sys.batch.BatchFile",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Batch Schedule",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.batch.BatchJobStatus&docFormKey=88888888&hideReturnLink=true&conversionFields=name:name,group:group",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "componentName": "BatchJobStatus"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "edu.cornell.kfs.sys.batch.CreateDoneBatchFile",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Batch Semaphore File Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=semaphoreInputFileTypeError",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "semaphoreInputFileTypeError"
+              }
+            }
+          },
+          {
+            "label": "Data Mapping Field Definition",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.businessobject.DataMappingFieldDefinition&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
+          },
+          {
+            "label": "Financials Configuration Viewer",
+            "link": "ksb/ConfigViewer.do",
+            "linkType": "kfs",
+            "newTarget": true,
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.rice.ksb.messaging.web.ConfigViewerAction"
+              }
+            }
+          },
+          {
+            "label": "Document Reindex File Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=documentReindexFlatFileInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "documentReindexFlatFileInputFileType"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.coreservice.impl.namespace.NamespaceBo",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PARM",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.coreservice.impl.component.ComponentBo",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.coreservice.impl.parameter.ParameterTypeBo",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "FFD",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Institution Configuration",
+            "link": "app/sys/institutionconfiguration.jsp",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "namespaceCode": "KFS-SYS",
+                "actionClass": "InstitutionConfig"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "MOTD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ORIG",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVDL",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Rice",
+            "link": "/",
+            "linkType": "rice"
+          },
+          {
+            "label": "Sidebar Menu Cache Configuration",
+            "link": "sidebarMenuCache.do?methodToCall=start",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Use Screen",
+              "details": {
+                "actionClass": "org.kuali.kfs.sys.web.struts.SidebarMenuCacheAction"
+              }
+            }
+          },
+          {
+            "label": "Special Batch File Upload",
+            "link": "batchFileUpload",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "GLCP"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "SOPT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TAXR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TRTP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMUM",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "UDAT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "DVWT",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Tax Reporting",
+      "links": {
+        "reference": [
+          {
+            "businessObjectClass": "edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "edu.cornell.kfs.tax.businessobject.TransactionOverride",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "label": "Transaction Override Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=bulkTransactionOverrideFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "bulkTransactionOverrideFileType"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "Travel",
+      "links": {
+        "activities": [
+          {
+            "documentTypeCode": "CCAP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "CCIE",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.module.tem.businessobject.CreditCardStagingData",
+            "linkType": "kfs"
+          },
+          {
+            "label": "CTS Card Application",
+            "link": "temCTSCardApplication.do?methodToCall=checkExistingCard&docTypeName=CTAP",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "CTAP"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "TAAR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TTA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TR",
+            "linkType": "kfs"
+          }
+        ],
+        "reference": [
+          {
+            "businessObjectClass": "org.kuali.kfs.module.tem.businessobject.TemProfileAccount",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TTP",
+            "linkType": "kfs"
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "TAT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TAPR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TASF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TAS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TCOS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TCRT",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Credit Card Data Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=creditCardDataXmlInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "creditCardDataXmlInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "TCCA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TPUR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ETC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "ETOC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TJC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TMR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TPD",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TPDB",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Per Diem TXT Batch Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemTxtInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "perDiemTxtInputFileType"
+              }
+            }
+          },
+          {
+            "label": "Per Diem XML Batch Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemXmlInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "perDiemXmlInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "TRR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TSCQ",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TTM",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Travel Agency Data Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=agencyDataXmlInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "agencyDataXmlInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "TCT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TTYT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "TTRT",
+            "linkType": "kfs"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Vendor",
+      "links": {
+        "reference": [
+          {
+            "documentTypeCode": "PVEN",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.vnd.businessobject.VendorContract",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Vendor Tax Lookup",
+            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.vnd.businessobject.VendorTaxDetail&docFormKey=88888888&hideReturnLink=true",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS-VND",
+                "component": "VendorTaxDetail"
+              }
+            }
+          }
+        ],
+        "administration": [
+          {
+            "documentTypeCode": "PMAT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PVCT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PVCF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCC",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Commodity Code File Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=commodityCodeInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "commodityCodeInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "PMCT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCO",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMCS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMOT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMOC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMPA",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMPT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMSP",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMSS",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMST",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMSD",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.vnd.businessobject.DebarredVendorMatch",
+            "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.vnd.businessobject.DebarredUnmatchedVendor",
+            "linkType": "kfs"
+          },
+          {
+            "label": "Vendor Inactive or Convert File Upload",
+            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=vendorInactivateConvertBatchCsvInputFileType",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Upload Batch Input File(s)",
+              "details": {
+                "beanName": "vendorInactivateConvertBatchCsvInputFileType"
+              }
+            }
+          },
+          {
+            "documentTypeCode": "PMIR",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PMVT",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "PVFT",
+            "linkType": "kfs"
+          }
+        ]
+      }
     }
-  }],
-  "menu": [{
-    "label": "Feedback",
-    "link": "kr/kualiFeedbackReport.do"
-  }, {
-    "label": "Help",
-    "link": "static/help/default.htm"
-  }]
+  ],
+  "menu": [
+    {
+      "label": "Feedback",
+      "link": "kr/kualiFeedbackReport.do"
+    },
+    {
+      "label": "Help",
+      "link": "static/help/default.htm"
+    }
+  ]
 }
