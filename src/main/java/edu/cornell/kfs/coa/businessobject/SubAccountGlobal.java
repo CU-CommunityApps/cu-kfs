@@ -26,23 +26,26 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 
 public class SubAccountGlobal extends PersistableBusinessObjectBase implements GlobalObjectWithIndirectCostRecoveryAccounts {
-	protected String documentNumber;
-	
-	protected boolean inactivate;    
-	protected String subAccountName;
-	protected String financialReportChartCode;
-	protected String finReportOrganizationCode;
-	protected String financialReportingCode;
-	
-	protected A21SubAccountChange a21SubAccount;
-    
-	protected ReportingCode reportingCode;
-	protected Organization org;
-	protected Chart financialReportChart;
-  
-	protected List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts;
+
+    protected String documentNumber;
+
+    protected boolean inactivate;
+    protected String subAccountName;
+    protected String financialReportChartCode;
+    protected String finReportOrganizationCode;
+    protected String financialReportingCode;
+
+    protected A21SubAccountChange a21SubAccount;
+
+    protected ReportingCode reportingCode;
+    protected Organization org;
+    protected Chart financialReportChart;
+
+    protected List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts;
     protected List<SubAccountGlobalDetail> subAccountGlobalDetails;
     
+    protected transient GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService;
+
     /**
      * Constructs a SubAccountGlobal object.
      * 
@@ -140,9 +143,9 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		return changesToPersist;
 	}
 
-    public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
-    	return SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class).getActiveIndirectCostRecoveryAccounts(this);
-    }
+	public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
+	    return getGlobalObjectWithIndirectCostRecoveryAccountsService().getActiveIndirectCostRecoveryAccounts(this);
+	}
 
 	public boolean hasIcrAccounts(){
 		return ObjectUtils.isNotNull(indirectCostRecoveryAccounts) && indirectCostRecoveryAccounts.size() > 0;
@@ -210,7 +213,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	}
 
 	public void updateIcrAccounts(GlobalBusinessObjectDetailBase globalDetail, List<IndirectCostRecoveryAccount> icrAccounts){
-		SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class).updateIcrAccounts(this, globalDetail, icrAccounts);
+		getGlobalObjectWithIndirectCostRecoveryAccountsService().updateIcrAccounts(this, globalDetail, icrAccounts);
 	}
 
 	/**
@@ -455,6 +458,17 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	public void setIndirectCostRecoveryAccounts(
 			List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts) {
 		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
+	}
+
+	public GlobalObjectWithIndirectCostRecoveryAccountsService getGlobalObjectWithIndirectCostRecoveryAccountsService() {
+	    if (this.globalObjectWithIndirectCostRecoveryAccountsService == null) {
+	        this.setGlobalObjectWithIndirectCostRecoveryAccountsService(SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class));
+	    }
+	    return this.globalObjectWithIndirectCostRecoveryAccountsService;
+	}
+
+	public void setGlobalObjectWithIndirectCostRecoveryAccountsService(GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService) {
+	    this.globalObjectWithIndirectCostRecoveryAccountsService = globalObjectWithIndirectCostRecoveryAccountsService;
 	}
 
 }

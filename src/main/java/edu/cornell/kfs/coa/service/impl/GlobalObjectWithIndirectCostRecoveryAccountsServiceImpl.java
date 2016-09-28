@@ -110,7 +110,7 @@ public class GlobalObjectWithIndirectCostRecoveryAccountsServiceImpl implements 
 			int maxPosition, 
 			boolean foundMatch, 
 			int positionForMatchWithSameActiveIndicator) {
-		return currentPosition < maxPosition && (!foundMatch || (foundMatch && positionForMatchWithSameActiveIndicator !=-1));
+		return currentPosition < maxPosition && (!foundMatch || positionForMatchWithSameActiveIndicator !=-1);
 	}
 
 }

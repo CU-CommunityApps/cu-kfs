@@ -81,6 +81,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     protected static final String DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW = "DOLLAR_THRESHOLD_REQUIRING_TRAVEL_REVIEW";
     protected static final String OBJECT_CODES_REQUIRING_TRAVEL_REVIEW = "OBJECT_CODES_REQUIRING_TRAVEL_REVIEW";
     
+    protected static final String DISAPPROVE_ANNOTATION_REASON_STARTER = "Disapproval reason - ";
+    
     protected CuDisbursementVoucherPayeeDetail dvPayeeDetail;
 
     // TRIP INFORMATION FIELDS
@@ -110,14 +112,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         boolean tripReOpened = false;
         boolean isTravelDoc = false;
         List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
-        String disapprovalReason = "";
-
-        if(actionsTaken.size() > 0) {
-          String annotation = actionsTaken.get(actionsTaken.size() - 1).getAnnotation();
-          if(StringUtils.isNotEmpty(annotation)) {
-            disapprovalReason = annotation.substring("Disapproval reason - ".length());
-          }
-        }
+        String disapprovalReason = findDissapprovalReason(actionsTaken);
 
         try {
           CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
@@ -136,6 +131,21 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
       }
 
       super.doRouteStatusChange(statusChangeEvent);
+    }
+
+    private String findDissapprovalReason(List<ActionTaken> actionsTaken) {
+        String disapprovalReason = "";
+        if(actionsTaken.size() > 0) {
+          String annotation = actionsTaken.get(actionsTaken.size() - 1).getAnnotation();
+          if(StringUtils.isNotEmpty(annotation)) {
+              if(StringUtils.contains(annotation, DISAPPROVE_ANNOTATION_REASON_STARTER)) {
+                  disapprovalReason = annotation.substring(DISAPPROVE_ANNOTATION_REASON_STARTER.length());  
+              } else {
+                  disapprovalReason = annotation;
+              }
+          }
+        }
+        return disapprovalReason;
     }
 
     public void templateVendor(VendorDetail vendor, VendorAddress vendorAddress) {
@@ -901,7 +911,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             return true;
         }
 
-        if (getParameterEvaluatorService().getParameterEvaluator(this.getClass(), DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
+        if (getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherDocument.PAYMENT_REASONS_REQUIRING_TAX_REVIEW_PARAMETER_NAME, paymentReasonCode).evaluationSucceeds()) {
             return true;
         }
 

@@ -8,15 +8,12 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_INACTIVATE_CONVERT_CODE = "message.batchUpload.title.InactivateConvertCode";
 
     public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.programCodeNotAssociatedWithGroupCode";
-    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.programCodeNotAssociatedWithGroupCode";
-    public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
-            "error.document.accountMaintenance.programCodeCannotBeBlank";
-    public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = 
-            "error.document.accountMaintenance.acct.programCodeCannotBeBlank";
+    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCT_PROGRAM_CODE_NOT_GROUP_CODE = "error.document.accountGlobalMaintenance.acct.programCodeNotAssociatedWithGroupCode";
+    public static final String ERROR_DOCUMENT_ACCMAINT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = "error.document.accountMaintenance.programCodeCannotBeBlank";
+    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_ACCT_PROGRAM_CODE_CANNOT_BE_BLANK_FOR_GROUP_CODE = "error.document.accountGlobalMaintenance.acct.programCodeCannotBeBlank";
     public static final String ERROR_DOCUMENT_ACCMAINT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.appropAcctNotAssociatedWithGroupCode";
     public static final String ERROR_DOCUMENT_ACCMAINT_ACCT_APPROP_ACCT_NOT_GROUP_CODE = "error.document.accountMaintenance.acct.appropAcctNotAssociatedWithGroupCode";
-    public static final String ERROR_DOCUMENT_ACCMAINT_MJR_RPT_CAT_CODE_NOT_EXIST = 
-            "error.document.accountMaintenance.majorRptgCatCodeEnteredDoesNotExist";
+    public static final String ERROR_DOCUMENT_ACCMAINT_MJR_RPT_CAT_CODE_NOT_EXIST = "error.document.accountMaintenance.majorRptgCatCodeEnteredDoesNotExist";
     public static final String ERROR_DOCUMENT_BA_ACCOUNT_AMOUNTS_BALANCED = "error.document.ba.accountAmountsNotBalanced";
     public static final String ERROR_DOCUMENT_BA_ACCOUNT_BASE_AMOUNTS_BALANCED = "error.document.ba.accountBaseAmountsNotBalanced";
     public static final String ERROR_DOCUMENT_OBJCDMAINT_CG_RPT_CAT_CODE_NOT_EXIST = "error.document.objectCodeMaintenance.cgReptgCodeEnteredDoesNotExist";
@@ -66,6 +63,14 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DV_CHECK_TOTAL_NO_CHANGE = "error.dv.checkTotalNoChange";
     public static final String ERROR_DV_CHECK_TOTAL_MUST_EQUAL_ACCOUNTING_LINE_TOTAL = "error.dv.checkTotalMustEqualAccountingLineTotal";
     public static final String ERROR_DV_CHECK_STUB_REQUIRED ="error.dv.checkStubRequired";
+    public static final String ERROR_RCDV_END_DATE_PASSED_MAX_END_DATE = "error.rcdv_end_date_passed_max_end_date";
+    public static final String ERROR_RCDV_PAYMENT_CANCEL_REASON_REQUIRED = "error.rcdv_paymeent_cancel_reason_required";
+    public static final String ERROR_RCDV_RECURRENCE_SUM_LESS_THAN_TANSACTION = "error.rcdv_recurrence_sum_less_than_transaction_amount";
+    public static final String ERROR_RCDV_TOO_MANY_RECURRENCES="error.rcdv_too_many_recurrences";
+    public static final String ERROR_RCDV_NO_FOREIGN_VENDORS = "error.rcdv_no_foreign_vendors";
+    public static final String INFO_RCDV_NO_PAYMENTS_OR_DVS_CANCELED = "info.rcdv_no_payments_or_dvs_canceled";
+    public static final String INFO_RCDV_LIST_OF_PAYMENT_GROUPS_CANCELED = "info.rcdv_list_of_payment_groups_canceled";
+    public static final String INFO_RCDV_LIST_OF_DVS_CANCELED = "info.rcdv_list_of_dvs_canceled";
     
     // KFSPTS-1786
     public static final String ERROR_CURRBALANCE_LOOKUP_CRITERIA_REQD = "error.currentbalance.lookup.criteria.required";
@@ -201,5 +206,5 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED_WHEN_INC_STR_REQ = "error.document.accountGlobalMaintenance.removeIncStrChartAndAcctChecked.incStrReq";
     public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_REMOVE_INC_STR_CHART_AND_ACCT_CHECKED_WHEN_INC_STR_REQ_FOR_ACCT = "error.document.accountGlobalMaintenance.removeIncStrChartAndAcctChecked.incStrReqForAcct";
     public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CLOSED_CHECKED_WHEN_ACCOUNT_HAS_OPEN_ENCUMBRENCES = "error.document.accountGlobalMaintenance.accountCannotCloseOpenEncumbrance";
-    public static final String ERROR_DOCUMENT_GLB_MAINT_CANNOT_BE_CLOSED_EXP_DATE_INVALID = "error.document.accountGlobalMaintenance.accountCannotBeClosedExpDateInvalid";
+    public static final String ERROR_DOCUMENT_ACCT_GLB_MAINT_CANNOT_BE_CLOSED_EXP_DATE_NOT_ENTERED_EXISTING_DATE_INVALID = "error.document.accountGlobalMaintenance.accountCannotBeClosedExpDateNotEnteredExistingDateInvalid";
 }

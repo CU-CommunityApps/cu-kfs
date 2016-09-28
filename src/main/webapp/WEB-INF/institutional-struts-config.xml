@@ -126,7 +126,7 @@
 		</action>
 		
 		<action path="/financialRecurringDisbursementVoucher" name="RecurringDisbursementVoucherForm" input="/jsp/fp/RecurringDisbursementVoucher.jsp"
-			type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherAction" scope="request"
+			type="edu.cornell.kfs.fp.document.web.struts.RecurringDisbursementVoucherAction" scope="request"
 			parameter="methodToCall" validate="true" attribute="KualiForm">
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/fp/RecurringDisbursementVoucher.jsp" />

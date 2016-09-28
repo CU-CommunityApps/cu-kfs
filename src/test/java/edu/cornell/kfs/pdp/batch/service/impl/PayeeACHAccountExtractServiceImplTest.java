@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -53,6 +54,7 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.options.CUCheckingSavingsValuesFinder;
 import edu.cornell.kfs.pdp.CUPdpConstants;
@@ -113,6 +115,8 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     private TestPayeeACHAccountExtractService payeeACHAccountExtractService;
 
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PayeeACHAccountExtractServiceImplTest.class);
+
     @Before
     public void setUp() throws Exception {
         payeeACHAccountExtractService = new TestPayeeACHAccountExtractService();
@@ -133,13 +137,11 @@ public class PayeeACHAccountExtractServiceImplTest {
         removeTestFilesAndDirectories();
     }
 
-
-
     @Test
     public void testLoadValidFile() throws Exception {
         // Load only the "good" file, which we expect to completely succeed.
         List<PayeeACHAccountExtractDetail> expectedSuccessfulDetails = Arrays.asList(
-                getExpectedExtractDetailForTestAccount(), getExpectedExtractDetailForAlternateTestAccount());
+                getExpectedExtractDetailForTestAccount());
         
         copyInputFilesAndGenerateDoneFiles(GOOD_LINES_FILE);
         payeeACHAccountExtractService.processACHBatchDetails();
@@ -155,7 +157,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.processACHBatchDetails();
         assertFileAndRowLoadingResultsAreCorrect(
                 new AchFileResults(0, 0, 1), new AchRowResults(), Collections.<PayeeACHAccountExtractDetail>emptyList());
-        assertDoneFilesWereDeleted(GOOD_LINES_FILE);
+        assertDoneFilesWereDeleted(BAD_HEADERS_FILE);
     }
 
     @Test
@@ -165,7 +167,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.processACHBatchDetails();
         assertFileAndRowLoadingResultsAreCorrect(
                 new AchFileResults(0, 1, 0), getExpectedResultsForBadLinesFile(), Collections.<PayeeACHAccountExtractDetail>emptyList());
-        assertDoneFilesWereDeleted(GOOD_LINES_FILE);
+        assertDoneFilesWereDeleted(BAD_LINES_FILE);
     }
 
     @Test
@@ -174,23 +176,21 @@ public class PayeeACHAccountExtractServiceImplTest {
         copyInputFilesAndGenerateDoneFiles(MIX_GOOD_BAD_LINES_FILE);
         payeeACHAccountExtractService.processACHBatchDetails();
         assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(0, 1, 0), getExpectedResultsForMixedGoodBadLinesFile(),
-                Collections.<PayeeACHAccountExtractDetail>singletonList(getExpectedExtractDetailForAlternateTestAccount()));
-        assertDoneFilesWereDeleted(GOOD_LINES_FILE);
+                new AchFileResults(0, 1, 0), getExpectedResultsForMixedGoodBadLinesFile(), Collections.<PayeeACHAccountExtractDetail>emptyList());
+        assertDoneFilesWereDeleted(MIX_GOOD_BAD_LINES_FILE);
     }
 
     @Test
     public void testLoadMultipleFiles() throws Exception {
         // Load the badly-formatted file, the all-invalid-data file, and the some-invalid-data file.
-        AchRowResults expectedRowResults = AchRowResults.createSummarizedResults(
-                getExpectedResultsForBadLinesFile(), getExpectedResultsForMixedGoodBadLinesFile());
-        
+        AchRowResults expectedRowResults = AchRowResults.createSummarizedResults(getExpectedResultsForBadLinesFile(), getExpectedResultsForMixedGoodBadLinesFile());
         copyInputFilesAndGenerateDoneFiles(BAD_HEADERS_FILE, BAD_LINES_FILE, MIX_GOOD_BAD_LINES_FILE);
         payeeACHAccountExtractService.processACHBatchDetails();
         assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(0, 2, 1), expectedRowResults,
-                Collections.<PayeeACHAccountExtractDetail>singletonList(getExpectedExtractDetailForAlternateTestAccount()));
-        assertDoneFilesWereDeleted(GOOD_LINES_FILE);
+                new AchFileResults(0, 2, 1), expectedRowResults, Collections.<PayeeACHAccountExtractDetail>emptyList());
+        assertDoneFilesWereDeleted(BAD_HEADERS_FILE);
+        assertDoneFilesWereDeleted(BAD_LINES_FILE);
+        assertDoneFilesWereDeleted(MIX_GOOD_BAD_LINES_FILE);
     }
 
     @Test
@@ -203,8 +203,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         
         assertEquals("Email body placeholders and special characters were not resolved properly", expectedBody, actualBody);
     }
-
-
 
     private void assertFileAndRowLoadingResultsAreCorrect(AchFileResults expectedFileResults,
             AchRowResults expectedRowResults, List<PayeeACHAccountExtractDetail> expectedSuccessfulDetails) throws Exception {
@@ -244,8 +242,6 @@ public class PayeeACHAccountExtractServiceImplTest {
             assertEquals("Wrong payment detail first name", expectedDetail.getFirstName(), actualDetail.getFirstName());
             assertEquals("Wrong payment detail payment type", expectedDetail.getPaymentType(), actualDetail.getPaymentType());
             assertEquals("Wrong payment detail balance account indicator", expectedDetail.getBalanceAccount(), actualDetail.getBalanceAccount());
-            assertEquals("Wrong payment detail completion date", expectedDetail.getCompletedDate(), actualDetail.getCompletedDate());
-            assertEquals("Wrong payment detail bank name", expectedDetail.getBankName(), actualDetail.getBankName());
             assertEquals("Wrong payment detail routing number", expectedDetail.getBankRoutingNumber(), actualDetail.getBankRoutingNumber());
             assertEquals("Wrong payment detail account number", expectedDetail.getBankAccountNumber(), actualDetail.getBankAccountNumber());
             assertEquals("Wrong payment detail account type", expectedDetail.getBankAccountType(), actualDetail.getBankAccountType());
@@ -258,8 +254,6 @@ public class PayeeACHAccountExtractServiceImplTest {
             assertFalse("There should not be a .done file for " + inputFileName, doneFile.exists());
         }
     }
-
-
 
     protected void copyInputFilesAndGenerateDoneFiles(String... inputFileNames) throws IOException {
         for (String inputFileName : inputFileNames) {
@@ -289,8 +283,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         }
     }
 
-
-
     private AchRowResults getExpectedResultsForBadLinesFile() {
         // All file lines should fail.
         return new AchRowResults(
@@ -298,15 +290,15 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
 
     private AchRowResults getExpectedResultsForGoodFile() {
-        // All file lines should succeed, resulting in 1 new employee account, 2 new entity accounts, and 1 skipped update to an existing employee account.
+        // File line should succeed, resulting in 1 new employee account and 1 new entity account with no errors.
         return new AchRowResults(
-                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 1, 1), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 2, 0), 0);
+                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 1, 0), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 1, 0), 0);
     }
 
     private AchRowResults getExpectedResultsForMixedGoodBadLinesFile() {
-        // One file line should fail, and one file line should succeed with 1 new entity account and 1 skipped update to an existing employee account.
+        // Ten file lines should fail, and four file lines should succeed
         return new AchRowResults(
-                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 0, 1), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 1, 0), 1);
+                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 0, 4), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 4, 0), 14);
     }
 
     private PayeeACHAccountExtractDetail getExpectedExtractDetailForTestAccount() {
@@ -341,8 +333,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         return detail;
     }
 
-
-
     private PayeeACHAccountExtractCsvInputFileType getBatchInputFileType() {
         PayeeACHAccountExtractCsvInputFileType fileType = new PayeeACHAccountExtractCsvInputFileType();
         fileType.setDirectoryPath(ACH_TESTING_FILE_PATH);
@@ -350,8 +340,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         fileType.setCsvEnumClass(PayeeACHAccountExtractCsv.class);
         return fileType;
     }
-
-
 
     @SuppressWarnings("unchecked")
     private DocumentService createMockDocumentService() throws Exception {
@@ -391,8 +379,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         maintainable.setDataObject(new PayeeACHAccount());
         return maintainable;
     }
-
-
 
     private DataDictionaryService createMockDataDictionaryService() throws Exception {
         /*
@@ -446,8 +432,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         return attrDefinition;
     }
 
-
-
     private PersonService createMockPersonService() throws Exception {
         PersonService personService = EasyMock.createMock(PersonServiceImpl.class);
         EasyMock.expect(personService.getPersonByPrincipalName(TEST_PRINCIPALNAME)).andStubReturn(createTestUser());
@@ -488,8 +472,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         return new MockPersonImpl(principal.build());
     }
 
-
-
     private AchService createMockAchService() throws Exception {
         AchService achService = EasyMock.createMock(AchServiceImpl.class);
         // Only the alternate employee ID is expected to return a non-null payee result.
@@ -515,8 +497,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         return achAccount;
     }
 
-
-
     private AchBankService createMockAchBankService() throws Exception {
         AchBankService achBankService = EasyMock.createMock(AchBankServiceImpl.class);
         EasyMock.expect(achBankService.getByPrimaryId(TEST_BANK_ROUTING_NUMBER)).andStubReturn(
@@ -536,8 +516,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         bank.setActive(true);
         return bank;
     }
-
-
 
     private static class MockPersonImpl extends PersonImpl {
         private static final long serialVersionUID = 1L;
@@ -577,8 +555,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         
     }
 
-
-
     // Helper implementation of PayeeACHAccountExtractService that tracks various statistics.
     private static class TestPayeeACHAccountExtractService extends PayeeACHAccountExtractServiceImpl {
         private AchFileResults fileResults = new AchFileResults();
@@ -586,15 +562,16 @@ public class PayeeACHAccountExtractServiceImplTest {
         private List<PayeeACHAccountExtractDetail> successfulDetails = new ArrayList<>();
         
         @Override
-        protected boolean loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
+        protected List<String> loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
             try {
-                boolean completeSuccess = super.loadACHBatchDetailFile(inputFileName, batchInputFileType);
-                if (completeSuccess) {
+                List<String>failedRowsErrors = new ArrayList<String>();
+                failedRowsErrors = super.loadACHBatchDetailFile(inputFileName, batchInputFileType);
+                if (failedRowsErrors.isEmpty()) {
                     fileResults.incrementNumSuccessfulFiles();
                 } else {
                     fileResults.incrementNumFilesWithBadRows();
                 }
-                return completeSuccess;
+                return failedRowsErrors;
             } catch (Exception e) {
                 fileResults.incrementNumBadFiles();
                 throw e;
@@ -602,34 +579,36 @@ public class PayeeACHAccountExtractServiceImplTest {
         }
         
         @Override
-        protected boolean processACHBatchDetail(PayeeACHAccountExtractDetail achDetail) {
-            boolean success = super.processACHBatchDetail(achDetail);
-            if (success) {
+        protected String processACHBatchDetail(PayeeACHAccountExtractDetail achDetail) {
+            String failureMessage = super.processACHBatchDetail(achDetail);
+            if (ObjectUtils.isNull(failureMessage) || StringUtils.isBlank(failureMessage)) {
                 successfulDetails.add(achDetail);
             } else {
                 rowResults.incrementNumBadRows();
             }
-            return success;
+            return failureMessage;
         }
         
         @Override
-        protected void addACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType) {
-            super.addACHAccount(payee, achDetail, payeeType);
+        protected String addACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType) {
+            String processingResults = super.addACHAccount(payee, achDetail, payeeType);
             if (PayeeIdTypeCodes.EMPLOYEE.equals(payeeType)) {
                 rowResults.getEmployeeRowResults().incrementNumNewRows();
             } else if (PayeeIdTypeCodes.ENTITY.equals(payeeType)) {
                 rowResults.getEntityRowResults().incrementNumNewRows();
             }
+            return processingResults;
         }
         
         @Override
-        protected void updateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail, PayeeACHAccount achAccount) {
-            super.updateACHAccountIfNecessary(payee, achDetail, achAccount);
+        protected String updateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail, PayeeACHAccount achAccount) {
+            String processingResults = super.updateACHAccountIfNecessary(payee, achDetail, achAccount);
             if (PayeeIdTypeCodes.EMPLOYEE.equals(achAccount.getPayeeIdentifierTypeCode())) {
                 rowResults.getEmployeeRowResults().incrementNumExistingRows();
             } else if (PayeeIdTypeCodes.ENTITY.equals(achAccount.getPayeeIdentifierTypeCode())) {
                 rowResults.getEntityRowResults().incrementNumExistingRows();
             }
+            return processingResults;
         }
         
         @Override
@@ -664,8 +643,6 @@ public class PayeeACHAccountExtractServiceImplTest {
             return successfulDetails;
         }
     }
-
-
 
     // Helper object summarizing the statistics for the file rows.
     private static class AchRowResults {

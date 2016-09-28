@@ -17,7 +17,8 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class AccountGlobalPreRules extends MaintenancePreRulesBase {
 	
-	protected CuAccountGlobal accountGlobal;
+    protected ConfigurationService configurationService;
+    protected CuAccountGlobal accountGlobal;
 	
     protected boolean doCustomPreRules(MaintenanceDocument maintenanceDocument) {
     	boolean preRulesOK = super.doCustomPreRules(maintenanceDocument);
@@ -96,7 +97,7 @@ public class AccountGlobalPreRules extends MaintenancePreRulesBase {
       boolean continueRules = true;
 
       if (accountGlobal.getAccountOffCampusIndicator() !=null && accountGlobal.getAccountOffCampusIndicator()) {
-        String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR);
+        String questionText = getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR);
 
         boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(CUKFSConstants.AccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
 
@@ -113,6 +114,17 @@ public class AccountGlobalPreRules extends MaintenancePreRulesBase {
     protected void setupConvenienceObjects(MaintenanceDocument document) {
     	 accountGlobal = (CuAccountGlobal) document.getNewMaintainableObject().getBusinessObject();
     	 accountGlobal.refreshNonUpdateableReferences();
+    }
+
+    public ConfigurationService getConfigurationService() {
+        if (this.configurationService == null) {
+            this.setConfigurationService(SpringContext.getBean(ConfigurationService.class));
+        }
+        return this.configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

@@ -149,6 +149,9 @@
                 <ref bean="payeeACHAccountExtractCsvInputFileType" />
             </list>
         </property>
+        <property name="configurationService">
+            <ref bean="kualiConfigurationService" />
+        </property>
     </bean>
 
     <bean id="payeeACHAccountExtractStep" class="edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep" parent="step">

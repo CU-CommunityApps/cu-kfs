@@ -3,7 +3,6 @@ package edu.cornell.kfs.fp;
 import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
 
@@ -42,6 +41,7 @@ public class CuFPConstants {
     public static final String ACTIVE = "active";
     public static final String YES = "Y";
     public static final String NO = "N";
+    public static final String OPEN = "OPEN";
     public static final String INTERDEPARTMENTAL_PAYMENT = "interdepartmentalPayment";
     public static final String DISPLAY_ON_DV_DOCUMENT = "displayOnDisbursementVoucherDocument";
     public static final String DISPLAY_ON_VENDOR_DOCUMENT = "displayOnVendorDocument";
@@ -126,10 +126,37 @@ public class CuFPConstants {
         	}
     	}
     }
-    
+
     public static class RecurringDisbursementVoucherDocumentConstants {
-    	public static final String RECURRING_DV_COMPONENT_NAME = "RecurringDisbursementVoucher";
-    	public static final String RECURRING_DV_PAYMENT_REASON_FILTER_PARAMETER_NAME = "recurringDVPaymentReasonFilter";
+        public static final String RECURRING_DV_COMPONENT_NAME = "RecurringDisbursementVoucher";
+        public static final String RECURRING_DV_PAYMENT_METHOD_FILTER_PARAMETER_NAME = "RECURRING_DV_PAYMENT_METHOD_FILTER";
+        public static final String RECURRING_DV_MAX_FUTURE_DATE = "RECURRING_DV_MAX_FUTURE_DATE";
+        public static final String RECURRING_DV_DOCUMENT_TYPE_NAME = "RCDV";
+        public static final String RECURRING_DV_EXPLANATION_TO_DV_NOTE_STARTER = "DV created by recurring DV: ";
+        public static final String RECURRING_DETAILS_TAB_NAME = "RecurringDetails";
+        public static final String RECURRING_DV_CANCEL_PAYMENTS_PERMISSION_NAME = "CANCEL RECURRING DISBURSEMENT VOUCHER PAYMENTS";
+        public static final String PDP_PRE_EXTRACTION_STATUS = "Pre-Extraction";
+    }
+    
+    public static class AmazonWebServiceBillingConstants {
+        public static final String AWS_PROCESSING_DATE_PROPERTY_NAME = "AWS_PROCESSING_DATE";
+        public static final String AWS_FROM_ACCOUNT_PROPERTY_NAME = "AWS_FROM_ACCOUNT_NUMBER";
+        public static final String AWS_OBJECT_CODE_PROPERTY_NAME = "AWS_OBJECT_CODE";
+        public static final String AWS_DEFAULT_DOCUMENT_DESCRIPTION_PROPERTY_NAME = "AWS_DEFAULT_DOCUMENT_DESCRIPTION";
+        public static final String AWS_NOTE_HELP_TEXT_PROERTY_NAME = "AWS_NOTE_HELP_TEXT";
+        public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
+        
+        public static final int PROCESSING_DAY_OF_MONTH = 15;
+        
+        public static final String DEFAULT_BILLING_PERIOD_PARAMETER = "CURRENT";
+        public static final String INTERNAL_KFS_ACCOUNT_DESCRIPTION = "internal";
+        public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+        public static final String AUTHORIZATION_TOKEN_VALUE_STARTER = "Token ";
+        public static final String URL_PARAMETER_YEAR  = "year=";
+        public static final String URL_PARAMETER_MONTH = "&month=";
+        public static final String HTTP_METHOD_GET_NAME = "GET";
+        public static final String DI_ROUTE_ANNOTATION = "DI automatically created by AWS Billing Batch Job";
+        public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
     }
 
 }

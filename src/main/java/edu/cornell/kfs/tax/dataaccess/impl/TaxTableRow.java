@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonDocumentNoteFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonDvSourceFieldNames;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonPRNCSourceFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonPdpSourceFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonVendorAddressFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonVendorFieldNames;
@@ -220,6 +221,63 @@ abstract class TaxTableRow {
             this.accountNbr = getAliasedField(CommonPdpSourceFieldNames.ACCOUNT_NUMBER);
             this.finObjectCode = getAliasedField(CommonPdpSourceFieldNames.FIN_OBJECT_CODE);
             this.accountNetAmount = getAliasedField(CommonPdpSourceFieldNames.ACCOUNT_NET_AMOUNT);
+            // Vendor-related fields will be configured by the superclass.
+        }
+    }
+    
+    /**
+     * Default TaxTableRow implementation for PRNC tax source data.
+     */
+    static final class PRNCSourceRow extends TaxSourceRowWithVendorData {
+        
+        // Fields from AP_PMT_RQST_ACCT_T 
+        final TaxTableField accountIdentifier;
+        final TaxTableField accountItemIdentifier;
+        final TaxTableField amount;
+        final TaxTableField chartOfAccountsCode;
+        final TaxTableField accountNumber;
+        final TaxTableField financialObjectCode;
+        
+        // Fields from AP_PMT_RQST_ITM_T 
+        final TaxTableField purapDocumentIdentifier;
+        final TaxTableField itemIdentifier;
+
+        // Fields from AP_PMT_RQST_T (PaymentRequestDocument)
+        final TaxTableField preqDocumentNumber;
+        final TaxTableField preqPurapDocumentIdentifier;
+        final TaxTableField paymentMethodCode;
+        final TaxTableField taxClassificationCode;
+        final TaxTableField preqVendorHeaderGeneratedIdentifier;
+        final TaxTableField preqVendorDetailAssignedIdentifier;
+        final TaxTableField preqVendorName;
+        final TaxTableField vendorLine1Address;
+        final TaxTableField vendorCountryCode;
+        
+        // Fields from SH_UNIV_DATE_T (UniversityDate)
+        final TaxTableField universityDate;
+
+        
+        PRNCSourceRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
+            super(rowId, fields, tables, aliasedFields, insertOffset);
+            
+            this.accountIdentifier = getAliasedField(CommonPRNCSourceFieldNames.ACCOUNTING_LINE_IDENTIFIER);
+            this.accountItemIdentifier =  getAliasedField(CommonPRNCSourceFieldNames.ACCOUNTING_LINE_ITEM_IDENTIFIER);
+            this.amount =  getAliasedField(CommonPRNCSourceFieldNames.AMOUNT);
+            this.chartOfAccountsCode = getAliasedField(CommonPRNCSourceFieldNames.CHART_OF_ACCOUNTS_CODE);
+            this.accountNumber = getAliasedField(CommonPRNCSourceFieldNames.ACCOUNT_NUMBER);
+            this.financialObjectCode = getAliasedField(CommonPRNCSourceFieldNames.FIN_OBJECT_CODE);
+            this.purapDocumentIdentifier = getAliasedField(CommonPRNCSourceFieldNames.PURAP_DOC_IDENTIFIER);
+            this.itemIdentifier = getAliasedField(CommonPRNCSourceFieldNames.ITEM_IDENTIFIER);           
+            this.preqDocumentNumber = getAliasedField(CommonPRNCSourceFieldNames.PREQ_DOCUMENT_NUMBER);
+            this.preqPurapDocumentIdentifier = getAliasedField(CommonPRNCSourceFieldNames.PREQ_PURAP_DOC_IDENTIFIER);
+            this.paymentMethodCode = getAliasedField(CommonPRNCSourceFieldNames.DOCUMENT_PREQ_PAYMENT_METHOD_CODE); 
+            this.taxClassificationCode = getAliasedField(CommonPRNCSourceFieldNames.DOCUMENT_PREQ_TAX_CLASSIFICATION_CODE);
+            this.preqVendorHeaderGeneratedIdentifier = getAliasedField(CommonPRNCSourceFieldNames.PREQ_VENDOR_HEADER_GENERATED_ID);
+            this.preqVendorDetailAssignedIdentifier = getAliasedField(CommonPRNCSourceFieldNames.PREQ_VENDOR_DETAIL_ASSIGNED_ID);
+            this.preqVendorName = getAliasedField(CommonPRNCSourceFieldNames.PREQ_VENDOR_NAME);
+            this.vendorLine1Address = getAliasedField(CommonPRNCSourceFieldNames.PREQ_VENDOR_LINE1_ADDRESS);
+            this.vendorCountryCode = getAliasedField(CommonPRNCSourceFieldNames.PREQ_VENDOR_COUNTRY_CODE);;
+            this.universityDate = getAliasedField(CommonPRNCSourceFieldNames.UNIVERSITY_DATE);           
             // Vendor-related fields will be configured by the superclass.
         }
     }

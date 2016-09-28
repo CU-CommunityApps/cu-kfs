@@ -16,6 +16,7 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType;
 import org.kuali.kfs.coa.businessobject.RestrictedStatus;
+import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -32,6 +33,10 @@ import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
 public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIndirectCostRecoveryAccounts{
     
     private static final long serialVersionUID = 1L;
+
+    protected transient DateTimeService dateTimeService;
+    protected transient BusinessObjectService businessObjectService;
+    protected transient GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService;
 
     protected String majorReportingCategoryCode;
     protected String accountPhysicalCampusCode;
@@ -64,10 +69,10 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     protected boolean removeContinuationChartAndAccount;
     protected String financialIcrSeriesIdentifier;
     protected Boolean everify;
-    protected boolean removeIncomeStreamChartAndAccount;
-
-	protected MajorReportingCategory majorReportingCategory;
-    protected CampusEbo accountPhysicalCampus;
+    protected boolean removeIncomeStreamChartAndAccount;  
+    
+    protected MajorReportingCategory majorReportingCategory;
+    protected CampusEbo accountPhysicalCampus;  
     protected Account contractControlAccount;
     protected Chart contractControlChartOfAccounts;
     protected IndirectCostRecoveryType acctIndirectCostRcvyType;
@@ -115,7 +120,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	private Account updateAccountValuesOnAccountGlobalDetailWithNewValuesFromAccountGlobalDoc(
 			GlobalBusinessObjectDetailBase globalDetail) {
 		AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
-		Account account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class,accountGlobalDetail.getPrimaryKeys());
+		Account account = getBusinessObjectService().findByPrimaryKey(Account.class,accountGlobalDetail.getPrimaryKeys());
 
 		if (ObjectUtils.isNotNull(account)) {
 			updateAccountBasicFields(account);
@@ -127,6 +132,43 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		return account;
+	}
+
+	/**
+	 * The business rules for the accountRestrictedStatusCode is as follows:
+	 *
+	 * If the sub-fund of the account listed in the edit list of accounts on
+	 * the global maintenance edoc is one that has a default accountRestrictedStatusCode
+	 * listed, then any change entered in the global account maintenance edoc is ignored.
+	 *
+	 * If the sub-fund of the account listed in the edit list of accounts on
+	 * the global maintenance edoc is one that does NOT have a default accountRestrictedStatusCode
+	 * listed, then any change entered in the global account maintenance edoc overwrites
+	 * the accountRestrictedStatusCode value on that particular account from the edit list.
+	 *
+	 * @param globalAccountMaintenanceDocSubFundGroup User entered Sub-Fund Group for the Sub-Fund Group Code.
+	 * @param globalAccountMaintenanceDocRestrictedStatusCode User entered Account Restricted Status Code value.
+	 * @param accountBeingEdited The Single Account to apply the business rules to.
+	 */
+	private void updateAccountRestrictedStatusCodeForAccountBeingEdited(SubFundGroup globalAccountMaintenanceDocSubFundGroup, String globalAccountMaintenanceDocRestrictedStatusCode, Account accountBeingEdited)
+	{
+	    if (ObjectUtils.isNull(globalAccountMaintenanceDocSubFundGroup)) {
+	        if ( !isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(accountBeingEdited.getSubFundGroup()) ) {
+	            accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
+	        }
+	    }
+	    else if ( !isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(globalAccountMaintenanceDocSubFundGroup) ) {
+	            accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
+	    }
+	}
+
+	/**
+	 *
+	 * @param subFundGroup
+	 * @return true when a default account restricted status code set on the sub-fund; false otherwise
+	 */
+	private boolean isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(SubFundGroup subFundGroup) {
+		return ObjectUtils.isNotNull(subFundGroup) && StringUtils.isNotBlank(subFundGroup.getAccountRestrictedStatusCode());
 	}
 
 	private void updateAccountBasicFields(Account account) {
@@ -248,7 +290,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
-		    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
+			updateAccountRestrictedStatusCodeForAccountBeingEdited(subFundGroup, accountRestrictedStatusCode, account);
 		}
 
 		if (ObjectUtils.isNotNull(accountRestrictedStatusDate)) {
@@ -339,17 +381,17 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	private void updateAccountExtendedAttribute(Account account) {
-		AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
-		if (this.getClosed() != null && this.getClosed() && aea.getAccountClosedDate() == null) {
-		    aea.setAccountClosedDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-		} else if (this.getClosed() != null && !this.getClosed() && aea.getAccountClosedDate() != null) {
-		    aea.setAccountClosedDate(null);
-		}
+	    AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
+	    if (this.getClosed() != null && this.getClosed() && aea.getAccountClosedDate() == null) {
+	        aea.setAccountClosedDate(this.getDateTimeService().getCurrentSqlDate());
+	    } else if (this.getClosed() != null && !this.getClosed() && aea.getAccountClosedDate() != null) {
+	        aea.setAccountClosedDate(null);
+	    }
 	}
 
-    public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
-    	return SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class).getActiveIndirectCostRecoveryAccounts(this);
-    }
+	public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
+	    return getGlobalObjectWithIndirectCostRecoveryAccountsService().getActiveIndirectCostRecoveryAccounts(this);
+	}
 
 	public boolean hasIcrAccounts(){
 		return ObjectUtils.isNotNull(indirectCostRecoveryAccounts) && indirectCostRecoveryAccounts.size() > 0;
@@ -405,7 +447,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	public void updateIcrAccounts(GlobalBusinessObjectDetailBase globalDetail, List<IndirectCostRecoveryAccount> icrAccounts){
-		SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class).updateIcrAccounts(this, globalDetail, icrAccounts);
+		getGlobalObjectWithIndirectCostRecoveryAccountsService().updateIcrAccounts(this, globalDetail, icrAccounts);
 	}
 
 	@Override
@@ -822,4 +864,36 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
 	}
 
+	public DateTimeService getDateTimeService() {
+        if (this.dateTimeService == null) {
+            this.setDateTimeService(SpringContext.getBean(DateTimeService.class));
+        }
+        return this.dateTimeService;
+    }
+
+	public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
+	public BusinessObjectService getBusinessObjectService() {
+        if (this.businessObjectService == null) {
+            this.setBusinessObjectService(SpringContext.getBean(BusinessObjectService.class));
+        }
+        return this.businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public GlobalObjectWithIndirectCostRecoveryAccountsService getGlobalObjectWithIndirectCostRecoveryAccountsService() {
+        if (this.globalObjectWithIndirectCostRecoveryAccountsService == null) {
+            this.setGlobalObjectWithIndirectCostRecoveryAccountsService(SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class));
+        }
+        return this.globalObjectWithIndirectCostRecoveryAccountsService;
+    }
+
+    public void setGlobalObjectWithIndirectCostRecoveryAccountsService(GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService) {
+        this.globalObjectWithIndirectCostRecoveryAccountsService = globalObjectWithIndirectCostRecoveryAccountsService;
+    }
 }
