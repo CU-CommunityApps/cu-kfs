@@ -21,7 +21,7 @@ import org.kuali.rice.kew.api.document.Document;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.cynergy.kew.routeheader.service.BulkFinalizedDateRouteHeaderService;
 import edu.cornell.kfs.tax.CUTaxConstants;

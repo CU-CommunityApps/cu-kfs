@@ -4,10 +4,10 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetGlpeSourceDetail;
-import org.kuali.rice.krad.util.ObjectUtils;
-import org.kuali.rice.coreservice.api.parameter.EvaluationOperator;
-import org.kuali.rice.coreservice.api.parameter.Parameter;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import edu.cornell.kfs.module.cam.document.service.CuAssetSubAccountService;
 

@@ -51,13 +51,13 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kns.document.MaintenanceDocument;
-import org.kuali.rice.krad.bo.PersistableBusinessObject;
-import org.kuali.rice.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.service.DocumentDictionaryService;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.ObjectUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentDictionaryService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 
 import edu.cornell.kfs.module.cam.document.service.CuAssetSubAccountService;

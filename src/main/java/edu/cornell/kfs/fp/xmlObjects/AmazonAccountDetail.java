@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Generated("org.jsonschema2pojo")

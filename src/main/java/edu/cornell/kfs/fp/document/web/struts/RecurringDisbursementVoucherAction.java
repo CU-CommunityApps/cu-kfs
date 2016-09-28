@@ -16,9 +16,9 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants;
 import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.kns.util.KNSGlobalVariables;
-import org.kuali.rice.krad.service.DocumentService;
-import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
