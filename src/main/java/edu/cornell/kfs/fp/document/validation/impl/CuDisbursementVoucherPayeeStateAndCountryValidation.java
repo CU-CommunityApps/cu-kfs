@@ -10,6 +10,8 @@ import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
+import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
@@ -20,6 +22,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class CuDisbursementVoucherPayeeStateAndCountryValidation extends GenericValidation {
 
     private AccountingDocument accountingDocumentForValidation;
+    protected transient CuDisbursementVoucherTaxService cuDisbursementVoucherTaxService;
 
     @Override
     public boolean validate(AttributedDocumentEvent event) {
@@ -36,6 +39,17 @@ public class CuDisbursementVoucherPayeeStateAndCountryValidation extends Generic
             isValid = false;
         }
         
+        if (dvDocument instanceof RecurringDisbursementVoucherDocument) {
+            String payeeTypeCode = payeeDetail.getDisbursementVoucherPayeeTypeCode();
+            String paymentReasonCode = payeeDetail.getDisbVchrPaymentReasonCode();
+            Integer vendorHeaderId = payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
+            if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewRequired(payeeTypeCode, paymentReasonCode, vendorHeaderId)) {
+                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(KFSConstants.GENERAL_PAYMENT_TAB_ERRORS, 
+                        CUKFSKeyConstants.ERROR_RCDV_NO_FOREIGN_VENDORS);
+                isValid = false;
+            }
+        }
+        
         GlobalVariables.getMessageMap().removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
         
         return isValid;
@@ -49,6 +63,14 @@ public class CuDisbursementVoucherPayeeStateAndCountryValidation extends Generic
 
     public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
+    }
+    
+    protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
+        return cuDisbursementVoucherTaxService;
+    }
+
+    public void setCuDisbursementVoucherTaxService(CuDisbursementVoucherTaxService cuDisbursementVoucherTaxService) {
+        this.cuDisbursementVoucherTaxService = cuDisbursementVoucherTaxService;
     }
 
 }

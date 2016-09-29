@@ -21,6 +21,7 @@ public final class CUTaxConstants {
     public static final String TAX_TYPE_1042S = "1042S";
     public static final String TAX_SOURCE_DV = "DV";
     public static final String TAX_SOURCE_PDP = "PDP";
+    public static final String TAX_SOURCE_PRNC = "PRNC";
     public static final String DOC_ID_ZERO = "0";
     public static final String DOC_TITLE_IF_NOT_FOUND = "No Doc Header";
     public static final String NETID_IF_NOT_FOUND = "No NetID";

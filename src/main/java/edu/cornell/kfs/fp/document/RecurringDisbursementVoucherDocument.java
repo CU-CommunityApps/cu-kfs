@@ -25,6 +25,7 @@ public class RecurringDisbursementVoucherDocument extends CuDisbursementVoucherD
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherDocument.class);
 	
 	private List<RecurringDisbursementVoucherDetail> recurringDisbursementVoucherDetails;
+	private transient String paymentCancelReason;
 	
 	@Override
     public void customizeExplicitGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
@@ -96,5 +97,13 @@ public class RecurringDisbursementVoucherDocument extends CuDisbursementVoucherD
 	public RecurringDisbursementVoucherDocumentService getRecurringDisbursementVoucherDocumentService() {
 		return SpringContext.getBean(RecurringDisbursementVoucherDocumentService.class);
 	}
+
+    public String getPaymentCancelReason() {
+        return paymentCancelReason;
+    }
+
+    public void setPaymentCancelReason(String paymentCancelReason) {
+        this.paymentCancelReason = paymentCancelReason;
+    }
 
 }

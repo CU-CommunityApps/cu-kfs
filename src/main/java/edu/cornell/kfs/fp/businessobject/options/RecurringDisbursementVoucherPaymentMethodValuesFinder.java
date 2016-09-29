@@ -35,7 +35,7 @@ public class RecurringDisbursementVoucherPaymentMethodValuesFinder extends Payme
 	protected boolean isFilteredKey(String key) {
 		String filters = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
 				CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_COMPONENT_NAME, 
-				CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_PAYMENT_REASON_FILTER_PARAMETER_NAME);
+				CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_PAYMENT_METHOD_FILTER_PARAMETER_NAME);
 		if (StringUtils.isEmpty(key)) {
 			return false;
 		} else {

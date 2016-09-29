@@ -29,10 +29,10 @@ public enum IndirectCostRecoveryAccountChangeFixture {
 	ICR_CHANGE_3333333_100_PERCENT_INACTIVE("IT", "3333333",
 			new BigDecimal(100), false);
 
-	public String indirectCostRecoveryFinCoaCode;
-	public String indirectCostRecoveryAccountNumber;
-	public BigDecimal accountLinePercent;
-	public boolean active;
+	public final String indirectCostRecoveryFinCoaCode;
+	public final String indirectCostRecoveryAccountNumber;
+	public final BigDecimal accountLinePercent;
+	public final boolean active;
 
 	private IndirectCostRecoveryAccountChangeFixture(
 			String indirectCostRecoveryFinCoaCode,

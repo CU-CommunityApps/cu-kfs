@@ -20,6 +20,7 @@
 <%@ attribute name="dvAttributesType" required="true" type="java.lang.Object" %>
 <%@ attribute name="displayGLPE" required="true" type="java.lang.Boolean"%>
 <%@ attribute name="displayRecurringDetail" required="true" type="java.lang.Boolean"%>
+<%@ attribute name="displayRecurringPDPDetail" required="true" type="java.lang.Boolean"%>
 
 <kul:documentPage showDocumentInfo="true"
 	htmlFormAction="${formAction}"
@@ -96,7 +97,15 @@
 	<fp:foreignDraft />
 	<fp:dvNonEmployeeTravel />
 	<fp:dvPrePaidTravel />
-    <fp:dvPDPStatus />
+	
+	<c:choose>
+		<c:when test="${displayRecurringPDPDetail }">
+			<fp:recurringDVPDPStatus />
+		</c:when>
+		<c:otherwise>
+			<fp:dvPDPStatus />
+		</c:otherwise>
+	</c:choose>
     
     <c:if test="${displayGLPE}">
     	<gl:generalLedgerPendingEntries />

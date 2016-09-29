@@ -10,7 +10,8 @@
     	<field-descriptor name="locAccountId" column="LOC_ACCT_ID" jdbc-type="VARCHAR" />
     	<field-descriptor name="budgetBeginningDate" column="BUDG_BEG_DT" jdbc-type="DATE"/>
     	<field-descriptor name="budgetEndingDate" column="BUDG_END_DT" jdbc-type="DATE"/>
-    	<field-descriptor name="budgetTotalAmount" column="BUDG_TOT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="budgetTotalAmount" column="BUDG_TOT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="everify" column="E_VERIFY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     </class-descriptor>
     
     <class-descriptor class="edu.cornell.kfs.module.cg.businessobject.CuAward" table="CG_AWD_T">

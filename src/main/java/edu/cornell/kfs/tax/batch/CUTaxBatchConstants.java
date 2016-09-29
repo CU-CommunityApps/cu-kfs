@@ -43,6 +43,7 @@ public final class CUTaxBatchConstants {
         DETAIL,
         PDP,
         DV,
+        PRNC,
         VENDOR,
         VENDOR_US_ADDRESS,
         VENDOR_FOREIGN_ADDRESS,
@@ -189,6 +190,48 @@ public final class CUTaxBatchConstants {
         }
     }
 
+    /**
+     * Helper subclass containing aliases for PRNC tax source fields used by the tax processing.
+     */
+    public static final class CommonPRNCSourceFieldNames {
+
+        // Fields from AP_PMT_RQST_ACCT_T (Payment Request Accounting lines table)
+        public static final String ACCOUNTING_LINE_IDENTIFIER = "accountIdentifier";
+        public static final String ACCOUNTING_LINE_ITEM_IDENTIFIER = "accountItemIdentifier";
+        public static final String AMOUNT = "amount";
+        public static final String CHART_OF_ACCOUNTS_CODE = "chartOfAccountsCode";
+        public static final String ACCOUNT_NUMBER = CUTaxBatchConstants.ACCOUNT_NUMBER;
+        public static final String FIN_OBJECT_CODE = "financialObjectCode";
+        
+        // Fields from AP_PMT_RQST_ITM_T (Payment Request Item table)
+        public static final String PURAP_DOC_IDENTIFIER = "purapDocumentIdentifier";
+        public static final String ITEM_IDENTIFIER = "itemIdentifier";
+
+        // Fields from AP_PMT_RQST_T (PaymentRequestDocument)
+        public static final String PREQ_DOCUMENT_NUMBER = "preq.documentNumber";
+        public static final String PREQ_PURAP_DOC_IDENTIFIER = "preqPurapDocumentIdentifier";
+        public static final String DOCUMENT_PREQ_PAYMENT_METHOD_CODE = "document.paymentMethodCode";
+        public static final String DOCUMENT_PREQ_TAX_CLASSIFICATION_CODE = "document.taxClassificationCode";
+        public static final String PREQ_VENDOR_HEADER_GENERATED_ID = "document.vendorHeaderGeneratedIdentifier";
+        public static final String PREQ_VENDOR_DETAIL_ASSIGNED_ID = "document.vendorDetailAssignedIdentifier";
+        public static final String PREQ_VENDOR_NAME = "preqVendorName";
+        public static final String PREQ_VENDOR_LINE1_ADDRESS = "vendorLine1Address";
+        public static final String PREQ_VENDOR_COUNTRY_CODE = "vendorCountryCode";
+
+        // Fields from PUR_VNDR_HDR_T (VendorHeader)
+        public static final String VENDOR_HEADER_GENERATED_ID = CommonVendorFieldNames.VENDOR_HEADER_GENERATED_ID;
+        public static final String VENDOR_TAX_NUMBER = CommonVendorFieldNames.VENDOR_TAX_NUMBER;
+        public static final String VENDOR_TYPE_CODE = CommonVendorFieldNames.VENDOR_TYPE_CODE;
+        public static final String VENDOR_OWNERSHIP_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CODE;
+        public static final String VENDOR_OWNERSHIP_CATEGORY_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CATEGORY_CODE;
+        public static final String VENDOR_FOREIGN_IND = CommonVendorFieldNames.VENDOR_FOREIGN_IND;
+        // Fields from SH_UNIV_DATE_T (UniversityDate)
+        public static final String UNIVERSITY_DATE = "universityDate";    
+        
+        private CommonPRNCSourceFieldNames() {
+            throw new UnsupportedOperationException("do not call CommonPRNCSourceFieldNames constructor");
+        }
+    }
 
 
     /**

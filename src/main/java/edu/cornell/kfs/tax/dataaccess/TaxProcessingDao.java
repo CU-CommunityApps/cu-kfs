@@ -32,11 +32,12 @@ public interface TaxProcessingDao {
 
     /**
      * Helper method that takes a list of document IDs and returns a List containing only the ones
-     * representing Foreign Draft or Wire Transfer DVs.
+     * representing Foreign Draft or Wire Transfer DVs or PRNCs.
      * 
      * @param documentIds The list of document IDs to filter; cannot be null.
      * @param helperObject An implementation-specific object containing data for building any needed queries; cannot be null.
-     * @return A new List containing only the Foreign Draft and Wire Transfer DV IDs.
+     * @param docType doc type for which we get foreign wire and transfers; could be DV or PRNC.
+     * @return A new List containing only the Foreign Draft and Wire Transfer DV IDs or PRNC IDs.
      */
-    List<String> findForeignDraftsAndWireTransfers(List<String> documentIds, Object helperObject);
+    List<String> findForeignDraftsAndWireTransfers(List<String> documentIds, Object helperObject, String docType);
 }

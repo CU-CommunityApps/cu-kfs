@@ -13,9 +13,13 @@ import edu.cornell.kfs.fp.businessobject.AchIncomeFileTransactionSetTrailer;
 import edu.cornell.kfs.fp.businessobject.AchIncomeNote;
 import edu.cornell.kfs.fp.businessobject.AchIncomeTransaction;
 import edu.cornell.kfs.fp.businessobject.IncomingWireAchMapping;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl;
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
 import org.junit.Before;
@@ -70,6 +74,10 @@ public class AdvanceDepositServiceImplTest {
     private static final String EMPTY_DATA_FILE = BATCH_DIRECTORY + DATA_FILE_EMPTY_NAME + "." + TXT_FILE_EXTENSION;
     private static final String GOOD_DONE_FILE = BATCH_DIRECTORY + DATA_FILE_GOOD_NAME + "." + DONE_FILE_EXTENSION;
     private static final String GOOD_DATA_FILE = BATCH_DIRECTORY + DATA_FILE_GOOD_NAME + "." + TXT_FILE_EXTENSION;
+    
+    private static final String EXPENSE_OBJECT_CODE = "EXOBJ";
+    private static final String ASSET_OBJECT_CODE = "ASSETOBJ";
+    private static final String NON_ASSET_EXPENSE_OBJECT_CODE = "SOMEOBJ";
 
     @Before
     public void setUp() {
@@ -321,7 +329,27 @@ public class AdvanceDepositServiceImplTest {
         advanceDepositService.setAchTransactions(achIncomeFiles.get(0), achIncomeTransactions);
         assertEquals("should have one ach income transaction", 1, achIncomeTransactions.size());
     }
+    
+    @Test
+    public void testSetupSourceAccountingLine_NegativeAmount() {
+        SourceAccountingLine sourceAccountingLine = new SourceAccountingLine();
+        AchIncomeTransaction achIncomeTransaction = new AchIncomeTransaction();
+        achIncomeTransaction.setTransactionAmount(new KualiDecimal(10));
+        advanceDepositService.setupSourceAccountingLine(achIncomeTransaction, advanceDepositDocument, "IT", EXPENSE_OBJECT_CODE, "1234567");
 
+        assertEquals("Accounting line amount should be the transaction amount negated", achIncomeTransaction.getTransactionAmount().negated(), advanceDepositDocument.getSourceAccountingLine(0).getAmount());
+    }
+
+    @Test
+    public void testSetupSourceAccountingLine_PositiveAmount() {
+        SourceAccountingLine sourceAccountingLine = new SourceAccountingLine();
+        AchIncomeTransaction achIncomeTransaction = new AchIncomeTransaction();
+        achIncomeTransaction.setTransactionAmount(new KualiDecimal(10));
+        advanceDepositService.setupSourceAccountingLine(achIncomeTransaction, advanceDepositDocument, "IT", NON_ASSET_EXPENSE_OBJECT_CODE, "1234567");
+
+        assertEquals("Accounting line amount should equal the transaction amount", achIncomeTransaction.getTransactionAmount(), advanceDepositDocument.getSourceAccountingLine(0).getAmount());
+    }
+    
     @Test
     public void testLoadFile() throws IOException, ParseException {
         additionalSetupForFileProcessing();
@@ -537,6 +565,17 @@ public class AdvanceDepositServiceImplTest {
                 throw new RuntimeException("huh, how did this happen?", e);
             }
         }
+        
+        @Override
+        protected String getObjectCodeType(String chart, String objectCode) {
+            if (EXPENSE_OBJECT_CODE.equalsIgnoreCase(objectCode)) {
+                return CUKFSConstants.BasicAccountingCategory.EXPENSE;
+            } else if (ASSET_OBJECT_CODE.equalsIgnoreCase(objectCode)) {
+                return CUKFSConstants.BasicAccountingCategory.ASSET;
+            } else
+                return StringUtils.EMPTY;
+        }     
+
     }
 
     private class MockBusinessObjectService implements BusinessObjectService {

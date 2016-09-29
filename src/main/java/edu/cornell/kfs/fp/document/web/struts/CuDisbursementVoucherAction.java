@@ -59,7 +59,6 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         if (actionAfterPayeeLookup != null) {
             return actionAfterPayeeLookup;
         }
-
         return super.refresh(mapping, form, request, response);
     }
     

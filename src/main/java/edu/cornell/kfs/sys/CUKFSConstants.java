@@ -14,7 +14,9 @@ public class CUKFSConstants {
     public static final String ACCOUNT_RESTRICTED_STATUS_CODE = "R";
     public static final String CASH_REVERSION_OBJECT_CD = "CASH_REVERSION_OBJECT_CD";
     public static final String RULE_CODE_CA = "CA";
-    
+    public static final String DELIMITER = ".";
+    public static final String DATE_FORMAT_YYYY = "YYYY";
+
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
         public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";
@@ -133,4 +135,10 @@ public class CUKFSConstants {
     public static class AccountDocumentConstants {
         public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
     }
+
+    public static class BasicAccountingCategory{
+        public static final String ASSET = "AS";
+        public static final String EXPENSE = "EX";
+    }
+
 }

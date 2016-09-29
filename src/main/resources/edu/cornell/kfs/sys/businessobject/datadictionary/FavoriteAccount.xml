@@ -32,6 +32,7 @@
         <ref bean="FavoriteAccount-primaryInd"/>
         <ref bean="FavoriteAccount-description"/>
         <ref bean="FavoriteAccount-account.accountName"/>
+        <ref bean="FavoriteAccount-active"/>
 
 
       </list>
@@ -147,5 +148,10 @@
   <bean id="FavoriteAccount-account.accountName-parentBean" abstract="true" parent="Account-accountName">
     <property name="name" value="account.accountName"/>
   </bean>
+  
+  <bean id="FavoriteAccount-active" parent="FavoriteAccount-active-parentBean"/>
+  <bean id="FavoriteAccount-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="active"/>
+  </bean> 
  
 </beans>

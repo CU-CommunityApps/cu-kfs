@@ -23,6 +23,8 @@
 	<cynergy.version.suffix>current</cynergy.version.suffix>
 	<kfs.version>2016-09-15</kfs.version>
 	<cynergy.development>true</cynergy.development>
+	<jsr311-api.version>1.1.1</jsr311-api.version>
+	<jersey.version>1.18.1</jersey.version>
 	<skipTests>true</skipTests>
 	<test.excludes>**/*Test.java.bogus</test.excludes>
     <buildNumber>6.0.1-SNAPSHOT</buildNumber>
@@ -923,6 +925,39 @@
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-validator-annotation-processor</artifactId>
           <version>4.1.0.Final</version>
+      </dependency>
+
+      <dependency>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+          <version>${jsr311-api.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-client</artifactId>
+          <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-json</artifactId>
+          <version>${jersey.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-server</artifactId>
+          <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-servlet</artifactId>
+          <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.jersey.contribs</groupId>
+          <artifactId>jersey-multipart</artifactId>
+          <version>${jersey.version}</version>
       </dependency>
   </dependencies>
 

@@ -14,23 +14,16 @@ import org.junit.Test;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetGlpeSourceDetail;
-import org.kuali.kfs.module.cam.document.service.impl.AssetLocationServiceImpl;
-import org.kuali.kfs.module.cam.document.service.impl.AssetObjectCodeServiceImpl;
-import org.kuali.kfs.module.cam.document.service.impl.AssetPaymentServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.sys.service.impl.UniversityDateServiceImpl;
-import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
 import org.kuali.kfs.coreservice.api.parameter.Parameter;
 import org.kuali.kfs.coreservice.api.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
-import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
-
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 
-public class CuAssetTransferServiceImplTest {
+public class CuAssetSubAccountServiceImplTest {
 
     private static final String TEST_ACCOUNT = "G104700";
     private static final String TEST_SUB_ACCOUNT = "TECH";
@@ -51,26 +44,16 @@ public class CuAssetTransferServiceImplTest {
     private static final boolean PLANT_DETAIL_PRESERVED = true;
     private static final boolean PLANT_DETAIL_NOT_PRESERVED = false;
 
-    protected TestCuAssetTransferServiceImpl assetTransferService;
+    protected TestCuAssetSubAccountServiceImpl assetSubAccountService;
     protected AssetGlpeSourceDetail regularDetail;
     protected AssetGlpeSourceDetail plantDetail;
 
     @Before
     public void setUp() throws Exception {
-        assetTransferService = new TestCuAssetTransferServiceImpl();
+        assetSubAccountService = new TestCuAssetSubAccountServiceImpl();
         regularDetail = createSourceDetail(TEST_ACCOUNT, TEST_SUB_ACCOUNT);
         plantDetail = createSourceDetail(TEST_PLANT_ACCOUNT, TEST_SUB_ACCOUNT);
-        
-        assetTransferService.setAssetService(createMockServiceExpectingNoCalls(CuAssetServiceImpl.class));
-        assetTransferService.setUniversityDateService(createMockServiceExpectingNoCalls(UniversityDateServiceImpl.class));
-        assetTransferService.setBusinessObjectService(createMockServiceExpectingNoCalls(BusinessObjectServiceImpl.class));
-        assetTransferService.setAssetPaymentService(createMockServiceExpectingNoCalls(AssetPaymentServiceImpl.class));
-        assetTransferService.setAssetObjectCodeService(createMockServiceExpectingNoCalls(AssetObjectCodeServiceImpl.class));
-        assetTransferService.setDateTimeService(createMockServiceExpectingNoCalls(DateTimeServiceImpl.class));
-        assetTransferService.setAssetLocationService(createMockServiceExpectingNoCalls(AssetLocationServiceImpl.class));
     }
-
-
 
     @Test
     public void testWildcardPatternMatchForBlacklist() throws Exception {
@@ -135,41 +118,39 @@ public class CuAssetTransferServiceImplTest {
     @Test
     public void testHandlingOfInvalidPatternSetup() throws Exception {
         setupParameterServiceWithPlantAccountValue(TEST_BAD_PATTERN, EvaluationOperator.DISALLOW);
-        
+
         try {
-            assetTransferService.shouldClearSubAccount(regularDetail);
-            fail("CuAssetTransferServiceImpl should have thrown a PatternSyntaxException due to an invalid pattern string");
+            assetSubAccountService.shouldClearSubAccount(regularDetail);
+            fail("CuAssetSubAccountServiceImpl should have thrown a PatternSyntaxException due to an invalid pattern string.");
         } catch (PatternSyntaxException e) {
         }
-        
+
         assertPreservationOfDetailSubAccounts(PLANT_DETAIL_PRESERVED);
     }
 
-
-
     protected void assertPreservationOfRegularDetailOnly(boolean whitelist) throws Exception {
         assertFalse(whitelist ? "Regular Detail should have matched a whitelisted pattern" : "Regular Detail should not have matched a blacklisted pattern",
-                assetTransferService.shouldClearSubAccount(regularDetail));
+                assetSubAccountService.shouldClearSubAccount(regularDetail));
         assertTrue(whitelist ? "Plant Detail should not have matched a whitelisted pattern" : "Plant Detail should have matched a blacklisted pattern",
-                assetTransferService.shouldClearSubAccount(plantDetail));
+                assetSubAccountService.shouldClearSubAccount(plantDetail));
         assertPreservationOfDetailSubAccounts(PLANT_DETAIL_NOT_PRESERVED);
     }
 
     protected void assertPreservationOfBothDetails(boolean whitelist) throws Exception {
         assertFalse(whitelist ? "Regular Detail should have matched a whitelisted pattern" : "Regular Detail should not have matched a blacklisted pattern",
-                assetTransferService.shouldClearSubAccount(regularDetail));
+                assetSubAccountService.shouldClearSubAccount(regularDetail));
         assertFalse(whitelist ? "Plant Detail should have matched a whitelisted pattern" : "Plant Detail should not have matched a blacklisted pattern",
-                assetTransferService.shouldClearSubAccount(plantDetail));
+                assetSubAccountService.shouldClearSubAccount(plantDetail));
         assertPreservationOfDetailSubAccounts(PLANT_DETAIL_PRESERVED);
     }
 
     protected void assertPreservationOfDetailSubAccounts(boolean plantDetailPreserved) throws Exception {
         assertNotNull("Regular Detail should have had its sub-account defined prior to processing", regularDetail.getSubAccountNumber());
         assertNotNull("Plant Detail should have had its sub-account defined prior to processing", plantDetail.getSubAccountNumber());
-        
-        assetTransferService.clearSubAccountIfNecessary(regularDetail);
-        assetTransferService.clearSubAccountIfNecessary(plantDetail);
-        
+
+        assetSubAccountService.clearSubAccountIfNecessary(regularDetail);
+        assetSubAccountService.clearSubAccountIfNecessary(plantDetail);
+
         assertNotNull("Regular Detail should have had its sub-account preserved", regularDetail.getSubAccountNumber());
         if (plantDetailPreserved) {
             assertNotNull("Plant Detail should have had its sub-account preserved", plantDetail.getSubAccountNumber());
@@ -177,7 +158,6 @@ public class CuAssetTransferServiceImplTest {
             assertNull("Plant Detail should have had its sub-account cleared out", plantDetail.getSubAccountNumber());
         }
     }
-
 
     protected <T> T createMockServiceExpectingNoCalls(Class<T> serviceClass) {
         T mockService = EasyMock.createMock(serviceClass);
@@ -187,14 +167,12 @@ public class CuAssetTransferServiceImplTest {
 
     protected void setupParameterServiceWithPlantAccountValue(String parameterValue, EvaluationOperator operator) {
         Parameter parameter = createAssetTransferPlantAccountParameter(parameterValue, operator);
-        assetTransferService.setParameterService(createMockParameterServiceForReturningFullParameter(
-                parameter, parameter, Asset.class));
+        assetSubAccountService.setParameterService(createMockParameterServiceForReturningFullParameter(parameter, parameter, Asset.class));
     }
 
     protected void setupParameterServiceToReturnNullPlantAccountParameter() {
         Parameter parameterForSearchArgs = createAssetTransferPlantAccountParameter(KFSConstants.EMPTY_STRING, EvaluationOperator.DISALLOW);
-        assetTransferService.setParameterService(createMockParameterServiceForReturningFullParameter(
-                parameterForSearchArgs, null, Asset.class));
+        assetSubAccountService.setParameterService(createMockParameterServiceForReturningFullParameter(parameterForSearchArgs, null, Asset.class));
     }
 
     protected ParameterService createMockParameterServiceForReturningFullParameter(Parameter searchArgs, Parameter returnValue, Class<?> componentClass) {
@@ -209,7 +187,7 @@ public class CuAssetTransferServiceImplTest {
     protected Parameter createAssetTransferPlantAccountParameter(String value, EvaluationOperator operator) {
         Parameter.Builder parameter = Parameter.Builder.create(
                 KFSConstants.APPLICATION_NAMESPACE_CODE, CamsConstants.CAM_MODULE_CODE, Asset.class.getSimpleName(),
-                CuCamsConstants.Parameters.ASSET_TRANSFER_PLANT_ACCOUNTS_FOR_SUB_ACCOUNTS,
+                CuCamsConstants.Parameters.ASSET_PLANT_ACCOUNTS_TO_FORCE_CLEARING_OF_GLPE_SUB_ACCOUNTS,
                 ParameterType.Builder.create(KfsParameterConstants.PARAMETER_CONFIG_TYPE_CODE));
         parameter.setValue(value);
         parameter.setEvaluationOperator(operator);
@@ -217,7 +195,6 @@ public class CuAssetTransferServiceImplTest {
     }
 
     protected AssetGlpeSourceDetail createSourceDetail(String accountNumber, String subAccountNumber) {
-        // This only sets up a few minimal fields. If testing other functionality of the service, more initialization is needed.
         AssetGlpeSourceDetail sourceDetail = new AssetGlpeSourceDetail();
         sourceDetail.setChartOfAccountsCode("IT");
         sourceDetail.setAccountNumber(accountNumber);
@@ -225,14 +202,12 @@ public class CuAssetTransferServiceImplTest {
         return sourceDetail;
     }
 
-
-
-    protected static class TestCuAssetTransferServiceImpl extends CuAssetTransferServiceImpl {
+    protected static class TestCuAssetSubAccountServiceImpl extends CuAssetSubAccountServiceImpl {
         @Override
         public void clearSubAccountIfNecessary(AssetGlpeSourceDetail postable) {
             super.clearSubAccountIfNecessary(postable);
         }
-        
+
         @Override
         public boolean shouldClearSubAccount(AssetGlpeSourceDetail postable) {
             return super.shouldClearSubAccount(postable);

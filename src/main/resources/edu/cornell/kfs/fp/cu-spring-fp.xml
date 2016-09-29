@@ -67,6 +67,8 @@
             <list merge="true">
                 <value>incomingACHandWiresBatchJob</value>
                 <value>procurementCardSummaryFeedJob</value>
+                <value>loadAWSBillsBatchJob</value>
+                <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
             </list>
         </property>
     </bean>
@@ -88,7 +90,7 @@
             </list>
         </property>
     </bean>
-    
+
     <bean id="procurementCardSummaryFeedJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
@@ -96,7 +98,15 @@
             </list>
         </property>
     </bean>
-    
+
+    <bean id="approveDisbursementVouchersSpawnedByRecurringDvJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="approveDvsSpawnedByRecurringDvStep" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="procurementCardLoadTransactionsService"  parent="procurementCardLoadTransactionsService-parentBean"/> 
     <bean id="procurementCardLoadFlatTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
         <property name="procurementCardInputFileType">
@@ -122,6 +132,9 @@
         <property name="businessObjectService" ref="businessObjectService" />
     </bean> 
 
+    <bean id="approveDvsSpawnedByRecurringDvStep" class="edu.cornell.kfs.fp.batch.ApproveDvsSpawnedByRecurringDvStep" parent="step">
+        <property name="recurringDisbursementVoucherDocumentService" ref="recurringDisbursementVoucherDocumentService"/>
+    </bean>
 
     <bean id="procurementCardSummaryFeedService" parent="procurementCardSummaryFeedService-parentBean"/>
 
@@ -289,7 +302,25 @@
 		<property name="documentService" ref="documentService"/>
 		<property name="scheduledAccountingLineService" ref="scheduledAccountingLineService"/>
 		<property name="businessObjectService" ref="businessObjectService"/>
+		<property name="accountingPeriodService" ref="accountingPeriodService"/>
+		<property name="recurringDisbursementVoucherSearchDao" ref="recurringDisbursementVoucherSearchDao"/>
+		<property name="personService" ref="personService"/>
+		<property name="recurringDisbursementVoucherPaymentMaintenanceService" ref="recurringDisbursementVoucherPaymentMaintenanceService"/>
+		<property name="routeHeaderService" ref="enDocumentRouteHeaderService"/>
+		<property name="cuDisbursementVoucherExtractionHelperService" ref="disbursementVoucherExtractionHelperService"/>
+		<property name="noteService" ref="noteService" />
 	</bean>
+	
+	<bean id="recurringDisbursementVoucherPaymentMaintenanceService" parent="recurringDisbursementVoucherPaymentMaintenanceService-parentBean"/>
+	<bean id="recurringDisbursementVoucherPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.fp.service.impl.RecurringDisbursementVoucherPaymentMaintenanceServiceImpl" abstract="true">
+		<property name="permissionService" ref="permissionService"/>
+		<property name="businessObjectService" ref="businessObjectService"/>
+		<property name="paymentGroupService" ref="pdpPaymentGroupService"/>
+	</bean>
+	
+    <bean id="recurringDisbursementVoucherSearchDao" class="edu.cornell.kfs.fp.dataaccess.impl.RecurringDisbursementVoucherSearchDaoJdbc" parent="platformAwareDaoJdbc">
+        <property name="dateTimeService" ref="dateTimeService"/>
+    </bean>
 
     <!-- KFSUPGRADE-973 -->
 	<bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl">
@@ -308,6 +339,37 @@
         <property name="parameterService" ref="parameterService" />  
         <property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
         <property name="subFundGroupService" ref="subFundGroupService" />                 
+    </bean>
+    
+    <bean id="loadAWSBillsBatchJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="loadAWSBillsStep"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="loadAWSBillsStep" class="edu.cornell.kfs.fp.batch.LoadAWSBillsStep" parent="step">
+       <property name="amazonWebServicesBillingService" ref="amazonWebServicesBillingService"/>
+    </bean>
+    
+    <bean id="amazonWebServicesBillingService" parent="amazonWebServicesBillingService-parent"/>
+    <bean id="amazonWebServicesBillingService-parent" class="edu.cornell.kfs.fp.service.impl.AmazonWebServicesBillingServiceImpl" abstract="true">
+    	<property name="awsURL">
+            <value>${aws.service.url}</value>
+        </property>
+        <property name="awsToken">
+            <value>${aws.service.token}</value>
+        </property>
+        <property name="parameterService" ref="parameterService"/>
+        <property name="documentService" ref="documentService"/>
+        <property name="chartService" ref="chartService"/>
+        <property name="accountService" ref="accountService"/>
+        <property name="subAccountService" ref="subAccountService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="objectCodeService" ref="objectCodeService"/>
+        <property name="subObjectCodeService" ref="subObjectCodeService"/>
+        <property name="projectCodeService" ref="projectCodeService"/>
     </bean>
 
     <bean id="incomingACHandWiresBatchJob" parent="scheduledJobDescriptor">

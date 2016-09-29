@@ -7,6 +7,7 @@ import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
  */
 public class PayeeACHAccountExtractDetail extends TransientBusinessObjectBase {
     private static final long serialVersionUID = -2028073232803324343L;
+    private static final String DATA_DELIMITER = ";";
 
     private String employeeID;
     private String netID;
@@ -106,6 +107,14 @@ public class PayeeACHAccountExtractDetail extends TransientBusinessObjectBase {
 
     public void setBankAccountType(String bankAccountType) {
         this.bankAccountType = bankAccountType;
+    }
+
+    public String getLogData() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getNetID()).append(DATA_DELIMITER)
+        .append(getFirstName()).append(DATA_DELIMITER)
+        .append(getLastName());
+        return sb.toString();
     }
 
 }

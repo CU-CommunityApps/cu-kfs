@@ -29,8 +29,8 @@
     <property name="attributes">
       <list>
         <ref bean="UserProcurementProfile-userProfileId"/>
-   <!--      <ref bean="UserProcurementProfile-documentTypeCode"/> -->
         <ref bean="UserProcurementProfile-principalId"/>
+        <ref bean="UserProcurementProfile-active"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.chartOfAccountsCode"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.description"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.accountNumber"/>
@@ -40,8 +40,9 @@
         <ref bean="UserProcurementProfile-favoriteAccounts.projectCode"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.organizationReferenceId"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.primaryInd"/>
-         <ref bean="UserProcurementProfile-profileUser.principalName"/>
-         <ref bean="UserProcurementProfile-profileUser.name"/>
+        <ref bean="UserProcurementProfile-favoriteAccounts.active"/>
+        <ref bean="UserProcurementProfile-profileUser.principalName"/>
+        <ref bean="UserProcurementProfile-profileUser.name"/>
         <ref bean="UserProcurementProfile-favoriteAccounts.account.accountName"/>
         <ref bean="UserProcurementProfile-resultAccount.description"/>
         <ref bean="UserProcurementProfile-resultAccount.accountNumber"/>
@@ -49,6 +50,7 @@
         <ref bean="UserProcurementProfile-resultAccount.financialObjectCode"/>
         <ref bean="UserProcurementProfile-resultAccount.organizationReferenceId"/>
         <ref bean="UserProcurementProfile-resultAccount.financialSubObjectCode"/>
+        <ref bean="UserProcurementProfile-resultAccount.active"/>
       </list>
     </property>
    <property name="collections">
@@ -161,6 +163,12 @@
     <dd:user universalIdAttribute="principalId" userObjectAttribute="profileUser"/>
   </dd:boAttributeRef>
   
+  <bean id="UserProcurementProfile-active" parent="UserProcurementProfile-active-parentBean"/>
+  <bean id="UserProcurementProfile-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+    <property name="name" value="active"/>
+    <property name="shortLabel" value="User Profile Active"/>
+  </bean>  
+  
   <bean id="UserProcurementProfile-favoriteAccounts.chartOfAccountsCode" parent="UserProcurementProfile-favoriteAccounts.chartOfAccountsCode-parentBean"/>
 
   <bean id="UserProcurementProfile-favoriteAccounts.chartOfAccountsCode-parentBean" abstract="true" parent="FavoriteAccount-chartOfAccountsCode">
@@ -257,6 +265,20 @@
   <bean id="UserProcurementProfile-favoriteAccounts.account.accountName-parentBean" abstract="true" parent="Account-accountName">
     <property name="name" value="favoriteAccounts.account.accountName"/>
   </bean>
+  
+  <bean id="UserProcurementProfile-favoriteAccounts.active" parent="UserProcurementProfile-favoriteAccounts.active-parentBean"/>
+  
+  <bean id="UserProcurementProfile-favoriteAccounts.active-parentBean" abstract="true" parent="FavoriteAccount-active">
+    <property name="name" value="favoriteAccounts.active"/>
+    <property name="label" value="Favorite Account Active"/>
+  </bean>  
+  
+  <bean id="UserProcurementProfile-resultAccount.active" parent="UserProcurementProfile-resultAccount.active-parentBean"/>
+  
+  <bean id="UserProcurementProfile-resultAccount.active-parentBean" abstract="true" parent="FavoriteAccount-active">
+    <property name="name" value="resultAccount.active"/>
+    <property name="label" value="Favorite Account Active"/>
+  </bean>  
 
 
 <!-- Business Object Inquiry Definition -->
@@ -274,8 +296,8 @@
           <property name="inquiryFields">
             <list>
               <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
-            <!--   <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
               <bean parent="FieldDefinition" p:attributeName="principalId"/>
+              <bean parent="FieldDefinition" p:attributeName="active"/>
              </list>
           </property>
         </bean>
@@ -303,26 +325,23 @@
     </property>
     <property name="lookupFields">
       <list>
-       <!--  <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
-        <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
         <bean parent="FieldDefinition" p:attributeName="profileUser.principalName"/>
+        <bean parent="FieldDefinition" p:attributeName="active" p:useShortLabel="true"/>
         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.description"/>
         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.chartOfAccountsCode"/>
         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.accountNumber"/>
-         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.financialObjectCode"/>
-      <!--   <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.currentYear" p:hidden="true"/> -->
+        <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.subAccountNumber"/>
         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.account.accountName" p:noLookup="true"/>
-         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.financialSubObjectCode"/>
-         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.projectCode"/>
-         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.organizationReferenceId"/>
-         <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.primaryInd"/>
+        <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.financialSubObjectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.projectCode"/>
+        <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.organizationReferenceId"/>
+        <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.primaryInd"/>
+        <bean parent="FieldDefinition" p:attributeName="favoriteAccounts.active"/>         
       </list>
     </property>
     <property name="resultFields">
       <list>
-       <!--  <bean parent="FieldDefinition" p:attributeName="userProfileId"/>
-        <bean parent="FieldDefinition" p:attributeName="documentTypeCode"/> -->
         <bean parent="FieldDefinition" p:attributeName="profileUser.name"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.description"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.accountNumber"/>
@@ -330,6 +349,8 @@
         <bean parent="FieldDefinition" p:attributeName="resultAccount.financialObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.financialSubObjectCode"/>
         <bean parent="FieldDefinition" p:attributeName="resultAccount.organizationReferenceId"/>
+        <bean parent="FieldDefinition" p:attributeName="active" p:useShortLabel="true"/>
+        <bean parent="FieldDefinition" p:attributeName="resultAccount.active"/>        
        </list>
     </property>
   </bean>

@@ -177,7 +177,7 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 		} else {
 
 			for (GlobalBusinessObjectDetailBase globalDetail : globalObjectWithIndirectCostRecoveryAccounts.getGlobalObjectDetailsAndIcrAccountsMap().keySet()) {
-				if (!checkICRAccuntTotalDistributionOnDetailWillBe100PercentAfterUpdate(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts(), globalObjectWithIndirectCostRecoveryAccounts.getGlobalObjectDetailsAndIcrAccountsMap().get(globalDetail), globalDetail, globalObjectWithIndirectCostRecoveryAccounts)) {
+				if (!checkICRAccountTotalDistributionOnDetailWillBe100PercentAfterUpdate(globalObjectWithIndirectCostRecoveryAccounts.getIndirectCostRecoveryAccounts(), globalObjectWithIndirectCostRecoveryAccounts.getGlobalObjectDetailsAndIcrAccountsMap().get(globalDetail), globalDetail, globalObjectWithIndirectCostRecoveryAccounts)) {
 					putFieldError(globalObjectWithIndirectCostRecoveryAccounts.getGlobalDetailsPropertyName(), CUKFSKeyConstants.ERROR_DOCUMENT_GLB_MAINT_ICR_ACCOUNT_TOTAL_NOT_100_PERCENT, new String[] { buildMessageFromPrimaryKey(globalDetail) });
 					result = false;
 				}
@@ -188,7 +188,7 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 	}
 	
 
-	protected boolean checkICRAccuntTotalDistributionOnDetailWillBe100PercentAfterUpdate(List<IndirectCostRecoveryAccountChange> icrUpdates, List<IndirectCostRecoveryAccount> existingICRs, GlobalBusinessObjectDetailBase globalDetail, GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts) {
+	protected boolean checkICRAccountTotalDistributionOnDetailWillBe100PercentAfterUpdate(List<IndirectCostRecoveryAccountChange> icrUpdates, List<IndirectCostRecoveryAccount> existingICRs, GlobalBusinessObjectDetailBase globalDetail, GlobalObjectWithIndirectCostRecoveryAccounts globalObjectWithIndirectCostRecoveryAccounts) {
 		List<IndirectCostRecoveryAccount> currentActiveIndirectCostRecoveryAccountList = buildCurrentActiveICRAccountsAfterICRUpdates(icrUpdates, existingICRs, globalDetail, globalObjectWithIndirectCostRecoveryAccounts);
 
 		if ((ObjectUtils.isNull(currentActiveIndirectCostRecoveryAccountList) || (currentActiveIndirectCostRecoveryAccountList.size() == 0))) {
@@ -324,7 +324,7 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 
 	private boolean noMatchFoundOrSameActiveIndicatorMatchFoundAndStillHaveICRAccountsToCheck(int currentPosition, int maxPosition,
 			boolean foundMatch, IndirectCostRecoveryAccount matchingICRAccountWithSameActiveIndicator) {
-		return currentPosition < maxPosition && (!foundMatch || (foundMatch && ObjectUtils.isNotNull(matchingICRAccountWithSameActiveIndicator)));
+		return currentPosition < maxPosition && (!foundMatch || ObjectUtils.isNotNull(matchingICRAccountWithSameActiveIndicator));
 	}
 
 	private String buildMessageFromPrimaryKey(GlobalBusinessObjectDetailBase detail){

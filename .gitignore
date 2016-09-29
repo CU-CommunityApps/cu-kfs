@@ -3,7 +3,7 @@ target/
 
 # Unit Tests
 overlays/
-test/
+/test/
 
 # Workspace junk
 .classpath

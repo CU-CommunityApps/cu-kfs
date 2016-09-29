@@ -1968,6 +1968,18 @@
             }
           },
           {
+            "label": "Recurring Disbursement Voucher",
+            "link": "financialRecurringDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=RCDV",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "RCDV"
+              }
+            }
+          },
+          {
             "documentTypeCode": "ENT",
             "linkType": "kfs"
           },

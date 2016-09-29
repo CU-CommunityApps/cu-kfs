@@ -20,4 +20,5 @@
 
 <fp:disbursementVoucherBase formAction="financialDisbursementVoucher" documentTypeName="DisbursementVoucherDocument"
                             dvAttributesType="${DataDictionary.DisbursementVoucherDocument.attributes}"
-                            displayGLPE="${true }" displayRecurringDetail="${false }"/>
+                            displayGLPE="${true }" displayRecurringDetail="${false }"
+                            displayRecurringPDPDetail="${false }"/>
