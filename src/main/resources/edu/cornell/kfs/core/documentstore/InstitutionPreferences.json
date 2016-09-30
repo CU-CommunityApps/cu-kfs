@@ -764,10 +764,6 @@
                 "beanName": "assetBarcodeInventoryInputFileType"
               }
             }
-          },
-          {
-            "documentTypeCode": "YDPA",
-            "linkType": "kfs"
           }
         ]
       }
