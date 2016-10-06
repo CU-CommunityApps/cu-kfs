@@ -23,7 +23,7 @@ import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.kfs.krad.util.KRADConstants;
 
-import edu.cornell.cynergy.kew.routeheader.service.BulkFinalizedDateRouteHeaderService;
+import edu.cornell.cynergy.kew.routeheader.service.CynergyRouteHeaderService;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
@@ -67,7 +67,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
         
         // Find all PRNC documents that were finalized between the start and end dates.
-        BulkFinalizedDateRouteHeaderService routeHeaderService = (BulkFinalizedDateRouteHeaderService) SpringContext.getBean(
+        CynergyRouteHeaderService routeHeaderService = (CynergyRouteHeaderService) SpringContext.getBean(
                 RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
         Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT,
                 new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
