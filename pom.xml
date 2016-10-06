@@ -365,7 +365,7 @@
       </dependency>
 
       <dependency>
-          <groupId>edu.cornell.cynergy </groupId>
+          <groupId>edu.cornell.cynergy</groupId>
           <artifactId>cynergy-customizations</artifactId>
           <version>${cynergy.version}-${cynergy.version.suffix}</version>
           <exclusions>
