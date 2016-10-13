@@ -602,7 +602,7 @@
               "templateNamespace": "KR-NS",
               "templateName": "Look Up Records",
               "details": {
-                "namespaceCode": "KFS*"
+                "namespaceCode": "KFS-BC"
               }
             }
           },
@@ -626,7 +626,7 @@
               "templateNamespace": "KR-NS",
               "templateName": "Look Up Records",
               "details": {
-                "namespaceCode": "KFS*"
+                "namespaceCode": "KFS-BC"
               }
             }
           },
@@ -2565,7 +2565,7 @@
       }
     }
   ],
-  "menu": [
+   "menu": [
     {
       "label": "Feedback",
       "link": "kr/kualiFeedbackReport.do"
