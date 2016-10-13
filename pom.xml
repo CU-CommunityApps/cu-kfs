@@ -21,7 +21,7 @@
 	<rice.version>2.5.17</rice.version>
 	<cynergy.version>2.5.10</cynergy.version>
 	<cynergy.version.suffix>current</cynergy.version.suffix>
-	<kfs.version>2016-09-15</kfs.version>
+	<kfs.version>2016-10-06</kfs.version>
 	<cynergy.development>true</cynergy.development>
 	<jsr311-api.version>1.1.1</jsr311-api.version>
 	<jersey.version>1.18.1</jersey.version>
