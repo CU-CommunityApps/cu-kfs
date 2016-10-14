@@ -19,7 +19,8 @@
     <documentType>
       <name>LLJV</name>
       <parent>LD</parent>
-      <docHandler>${application.url}/laborJournalVoucher.do?methodToCall=docHandler</docHandler>
+      <label>Labor Journal Voucher</label>
+      <docHandler>${kfs.url}/laborLaborJournalVoucher.do?methodToCall=docHandler</docHandler>
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="LLJVApproval"/>
@@ -29,8 +30,7 @@
       <routeNodes>
         <start name="AdHoc"/>
         <role name="LLJVApproval">
-			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver
-			</qualifierResolverClass>
+			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
 			<activationType>P</activationType>
 		</role>
       </routeNodes>

@@ -19,7 +19,8 @@
     <documentType>
       <name>JV</name>
       <parent>FP</parent>
-      <docHandler>${application.url}/financialJournalVoucher.do?methodToCall=docHandler</docHandler>
+      <label>Journal Voucher</label>
+      <docHandler>${kfs.url}/financialJournalVoucher.do?methodToCall=docHandler</docHandler>
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="JVApproval"/>
@@ -29,8 +30,7 @@
       <routeNodes>
         <start name="AdHoc"/>
         <role name="JVApproval">
-			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver
-			</qualifierResolverClass>
+			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
 			<activationType>P</activationType>
 		</role>
       </routeNodes>

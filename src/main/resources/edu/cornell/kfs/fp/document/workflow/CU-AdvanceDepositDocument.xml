@@ -20,7 +20,7 @@
       <name>AD</name>
       <parent>FP</parent>
       <label>Advance Deposit</label>
-      <docHandler>${application.url}/financialAdvanceDeposit.do?methodToCall=docHandler</docHandler>
+      <docHandler>${kfs.url}/financialAdvanceDeposit.do?methodToCall=docHandler</docHandler>
       <active>true</active>
 	  <routingVersion>2</routingVersion>
       <routePaths>
