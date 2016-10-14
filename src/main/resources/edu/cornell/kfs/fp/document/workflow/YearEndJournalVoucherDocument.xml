@@ -20,7 +20,7 @@
       <name>YEJV</name>
       <parent>FPYE</parent>
       <label>Year End Journal Voucher</label>
-      <docHandler>${application.url}/financialYearEndJournalVoucher.do?methodToCall=docHandler</docHandler>
+      <docHandler>${kfs.url}/financialYearEndJournalVoucher.do?methodToCall=docHandler</docHandler>
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="JVApproval"/>
@@ -30,8 +30,7 @@
       <routeNodes>
         <start name="AdHoc"/>
         <role name="JVApproval">
-			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver
-			</qualifierResolverClass>
+			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
 			<activationType>P</activationType>
 		</role>
       </routeNodes>

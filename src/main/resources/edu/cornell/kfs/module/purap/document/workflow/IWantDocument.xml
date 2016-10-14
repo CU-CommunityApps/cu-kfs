@@ -21,7 +21,7 @@
       <parent>KFST</parent>
       <description>To see I Want document help page please click &lt;a href="https://confluence.cornell.edu/x/vQjPCw"&gt;here&lt;/a&gt;</description>
       <label>I Want Document</label>
-      <docHandler>${application.url}/purapIWant.do?methodToCall=docHandler</docHandler>
+      <docHandler>${kfs.url}/purapIWant.do?methodToCall=docHandler</docHandler>
       
       <routePaths>
         <routePath>
