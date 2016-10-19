@@ -7,7 +7,6 @@ dd_folders += `find #{src_folder} -type d -name accesssecurity`;
 dd_folders += `find #{src_folder} -type d -name overrides`;
 
 #puts dd_folders.inspect
-#test-plugin
 
 dd_folders.split("\n").each do |dd_folder| 
   subfolder = dd_folder[dd_folder.rindex("org/kuali/kfs"), dd_folder.length];
