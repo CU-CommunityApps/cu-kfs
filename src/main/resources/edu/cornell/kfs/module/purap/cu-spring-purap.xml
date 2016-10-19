@@ -176,12 +176,7 @@
    <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
    
    <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
-    
-    <bean id="purchaseOrderTransmissionMethodDataRulesService" class="edu.cornell.kfs.module.purap.document.service.impl.PurchaseOrderTransmissionMethodDataRulesServiceImpl">
-    	<property name="postalCodeValidationService" ref="postalCodeValidationService" />
-    	<property name="phoneNumberService" ref="phoneNumberService" />
-    </bean>
-    
+    <bean id="purchaseOrderTransmissionMethodDataRulesService" class="edu.cornell.kfs.module.purap.document.service.impl.PurchaseOrderTransmissionMethodDataRulesServiceImpl" />
     <bean id="paymentRequestService" parent="paymentRequestService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPaymentRequestServiceImpl" >
             <!-- KFSPTS-1891 -->
         <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />

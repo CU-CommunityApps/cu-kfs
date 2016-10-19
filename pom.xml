@@ -42,6 +42,7 @@
 			**/CuPurchase*Test.java,
 			**/CuRequisitionServiceImplTest.java,
 			**/IWantDocumentServiceImplTest.java,
+			**/PurchaseOrderTransmissionMethodDataRulesServiceImplTest.java,
 			**/CuElectronicInvoiceHelperServiceImplTest.java,
 			**/CuPurapAccountingServiceImplTest.java,
 			**/CuPurapGeneralLedgerServiceImplTest.java,

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 
@@ -15,8 +16,6 @@ import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMe
  */
 public class PurchaseOrderTransmissionMethodDataRulesServiceImpl implements PurchaseOrderTransmissionMethodDataRulesService{
 	
-	private PostalCodeValidationService postalCodeValidationService;
-	private PhoneNumberService phoneNumberService;
 	
 	/**
 	 * Returns false when faxNumber is null OR blank OR not is not in the PhoneNumberService.isValidPhoneNumber format;
@@ -24,7 +23,7 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImpl implements Purc
 	 */
 	public boolean isFaxNumberValid(String faxNumber) {
 		boolean dataIsValid = true; 
-		if ( (faxNumber == null) || (StringUtils.isEmpty(faxNumber)) || (!getPhoneNumberService().isValidPhoneNumber(faxNumber)) ) {
+		if ( (faxNumber == null) || (StringUtils.isEmpty(faxNumber)) || (!SpringContext.getBean(PhoneNumberService.class).isValidPhoneNumber(faxNumber)) ) {
 			dataIsValid &= false;
 	    }
 		return dataIsValid;		
@@ -111,26 +110,10 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImpl implements Purc
 		boolean dataIsValid = true;
 		
 		if (!this.isCountryCodeValid(countryCode) || !this.isStateCodeValid(stateCode) || !this.isZipCodeValid(zipCode) || !this.isAddress1Valid(address1) || !this.isCityValid(cityName) || 
-			!getPostalCodeValidationService().validateAddress(countryCode, stateCode, zipCode, "", "")) {
+			!SpringContext.getBean(PostalCodeValidationService.class).validateAddress(countryCode, stateCode, zipCode, "", "")) {
 			dataIsValid &= false;
 		}
 		return dataIsValid;		
-	}
-
-	public PostalCodeValidationService getPostalCodeValidationService() {
-		return postalCodeValidationService;
-	}
-
-	public void setPostalCodeValidationService(PostalCodeValidationService postalCodeValidationService) {
-		this.postalCodeValidationService = postalCodeValidationService;
-	}
-
-	public PhoneNumberService getPhoneNumberService() {
-		return phoneNumberService;
-	}
-
-	public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
-		this.phoneNumberService = phoneNumberService;
 	}
 	
 }
