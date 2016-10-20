@@ -109,14 +109,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         }
     }
     
-    /**
-     * Returns the highest or lowest key value of either map passed in.  This function respects the possibility of an empty map.
-     * @param newSourceLines
-     * @param savedSourceLines
-     * @param isMinSearch True if searching for the minimum, false if searching for the maximium value.
-     * @return
-     */
-	protected int findMinOrMaxKeyValue(Map<Integer, AccountingLine> newSourceLines, 
+	protected int findMinOrMaxKeyValue(Map<Integer, AccountingLine> newSourceLines,
 			Map<Integer, AccountingLine> savedSourceLines, boolean isMinSearch) {
 		int newSourceValue = findKeySetMaxOrMin(newSourceLines, isMinSearch);
 		int savedSourceValue = findKeySetMaxOrMin(savedSourceLines, isMinSearch);
