@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -30,7 +31,6 @@ import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -61,24 +61,23 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     */
     @Override
     public void extractAchPayments() {
-        LOG.debug("AchBundlerExtractPaymentServiceImpl MOD - extractAchPayments() started");
+        LOG.debug("MOD - extractAchPayments() started");
 
-        Date processDate = SpringContext.getBean(DateTimeService.class).getCurrentDate();
+        Date processDate = dateTimeService.getCurrentDate();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        PaymentStatus extractedStatus = (PaymentStatus) SpringContext.getBean(BusinessObjectService.class)
-                .findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);
+        PaymentStatus extractedStatus = (PaymentStatus) businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.EXTRACTED);
     
-        String achFilePrefix = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
+        String achFilePrefix = kualiConfigurationService.getPropertyValueAsString(PdpKeyConstants.ExtractPayment.ACH_FILENAME);
         achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });
     
         String filename = getOutputFile(achFilePrefix, processDate);
-        LOG.debug("AchBundlerExtractPayment MOD: extractAchPayments() filename = " + filename);
+        LOG.debug("MOD: extractAchPayments() filename = " + filename);
 
        /** 
         * MOD: This is the only section in the method that is changed.  This mod calls a new method that bundles 
         * ACHs into single disbursements if the flag to do so is turned on.
         */
-        if (SpringContext.getBean(AchBundlerHelperService.class).shouldBundleAchPayments()) {
+        if (getAchBundlerHelperService().shouldBundleAchPayments()) {
             writeExtractBundledAchFile(extractedStatus, filename, processDate, sdf);
         } else {
             writeExtractAchFile(extractedStatus, filename, processDate, sdf);
@@ -86,8 +85,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
    }
     
    /**
-    * KFSPTS-1460: 
-    * Re-factored 
+    * A custom method that goes through and extracts all pending ACH payments and bundles them by payee/disbursement nbr.
     * Changes made to this method due to re-factoring the code so that common pieces could be used 
     * by both ExtractPaymentServiceImpl.writeExtractAchFile and AchBundlerExtractPaymentServiceImpl.writeExtractBundledAchFile
     * as well as incorporating the Mellon file creation.
@@ -96,9 +94,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     * --Added the call to writePaymentDetailToAchFile for re-factored code
     * --Made the "finally" clause match the ExtractPaymentServiceImpl.writeExtractAchFile finally so that the XML files are named the same regardless of which routine is invoked.
     * --Added call to get the parameterized bank notification email addresses
-    */
-   /**
-    * A custom method that goes through and extracts all pending ACH payments and bundles them by payee/disbursement nbr.
     * 
     * @param extractedStatus
     * @param filename
@@ -106,16 +101,15 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     * @param sdf
     */
    protected void writeExtractBundledAchFile(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
-       LOG.info("AchBundledExtractPaymentServiceImpl.writeExtractBundledAchFile started.");
+       LOG.info("writeExtractBundledAchFile started.");
        BufferedWriter os = null;
 
        try {
-           
-           //KFSPTS-1460: parameterized the hard coded email addresses
            List<String> notificationEmailAddresses = getBankPaymentFileNotificationEmailAddresses();  
            
-           // Writes out the BNY Mellon Fast Track formatted file for ACH payments.  We need to do this first since the status is set in this method which
-           //   causes the writeExtractAchFileMellonBankFastTrack method to not find anything.
+           // Writes out the BNY Mellon Fast Track formatted file for ACH payments.
+           // We need to do this first since the status is set in this method which
+           // causes the writeExtractAchFileMellonBankFastTrack method to not find anything.
            writeExtractAchFileMellonBankFastTrack(extractedStatus, filename, processDate, sdf, notificationEmailAddresses);
            
            // totals for summary
@@ -126,10 +120,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
            os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
            writeOpenTag(os, 0, "achPayments");            
 
-           HashSet<String> bankCodes = SpringContext.getBean(AchBundlerHelperService.class).getDistinctBankCodesForPendingAchPayments();
+           HashSet<String> bankCodes = getAchBundlerHelperService().getDistinctBankCodesForPendingAchPayments();
 
            for (String bankCode : bankCodes) {
-               HashSet<Integer> disbNbrs = SpringContext.getBean(AchBundlerHelperService.class).getDistinctDisbursementNumbersForPendingAchPaymentsByBankCode(bankCode);
+               HashSet<Integer> disbNbrs = getAchBundlerHelperService().getDistinctDisbursementNumbersForPendingAchPaymentsByBankCode(bankCode);
                for (Iterator<Integer> iter = disbNbrs.iterator(); iter.hasNext();) {
                    Integer disbursementNbr = iter.next();
 
@@ -138,30 +132,28 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                    KualiDecimal totalNetAmount = new KualiDecimal(0);
 
                    // this seems wasteful, but since the total net amount is needed on the first payment detail...it's needed
-                   Iterator<PaymentDetail> i2 = SpringContext.getBean(AchBundlerHelperService.class).getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
+                   Iterator<PaymentDetail> i2 = getAchBundlerHelperService().getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
                    while (i2.hasNext()) {
                        PaymentDetail pd = i2.next();
                        totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
                    }
 
-                   Iterator<PaymentDetail> paymentDetails = SpringContext.getBean(AchBundlerHelperService.class).getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
+                   Iterator<PaymentDetail> paymentDetails = getAchBundlerHelperService().getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
                    while (paymentDetails.hasNext()) {
                        PaymentDetail paymentDetail = paymentDetails.next();
                        PaymentGroup paymentGroup = paymentDetail.getPaymentGroup();
                        if (!testMode) {
                            paymentGroup.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                            paymentGroup.setPaymentStatus(extractedStatus);
-                           SpringContext.getBean(BusinessObjectService.class).save(paymentGroup);
+                           businessObjectService.save(paymentGroup);
                        }
 
                        if (first) {
-                           writePayeeSpecificsToAchFile(os, paymentGroup, processDate, sdf);  //KFSPTS-1460: re--factored
-
+                           writePayeeSpecificsToAchFile(os, paymentGroup, processDate, sdf);
                            writeOpenTag(os, 4, "payments");
                        }
                                               
-                       writePaymentDetailToAchFile(os, paymentGroup, paymentDetail, unitCounts, unitTotals, sdf);   //KFSPTS-1460: re-factored
-                       
+                       writePaymentDetailToAchFile(os, paymentGroup, paymentDetail, unitCounts, unitTotals, sdf);
                        first = false;
                    }
                    writeCloseTag(os, 4, "payments");
@@ -170,11 +162,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
            }
            writeCloseTag(os, 0, "achPayments");
            
-           // send summary email
-           getPaymentFileEmailService().sendAchSummaryEmail(unitCounts, unitTotals, SpringContext.getBean(DateTimeService.class).getCurrentDate());
+           getPaymentFileEmailService().sendAchSummaryEmail(unitCounts, unitTotals, dateTimeService.getCurrentDate());
        }
        catch (IOException ie) {
-           LOG.error("AchBunderlExtract MOD: extractAchFile() Problem reading file:  " + filename, ie);
+           LOG.error("MOD: extractAchFile() Problem reading file:  " + filename, ie);
            throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
        }
        finally {
@@ -214,7 +205,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
 
         try {
-            //KFSPTS-1460: parameterized the hard coded email addresses
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
             
             writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId, notificationEmailAddresses);
@@ -409,6 +399,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             }
         }
     }
+
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
     protected void writeExtractCheckFileMellonBankFastTrack(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId, List<String> notificationEmailAddresses) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
@@ -704,7 +695,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                         cDelim +                              // Reserved Field - 3 Bytes
                                         "\n");                                // Filler - 872 bytes
                                 
-                                //KFSPTS-1460: Start of parameterized email notification changes
                                 totalRecordCount = 1;                           
                                 //Write the Fast Track email records (FIL00020) once for each file
                                 for (Iterator<String> emailIter = notificationEmailAddresses.iterator(); emailIter.hasNext();) {
@@ -718,29 +708,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     
                                     totalRecordCount = totalRecordCount + 1;  
                                 }                           
-                                //KFSPTS-1460: End of parameterized email notification changes
-                                
-                                /*KFSPTS-1460: Replaced this hardcoded section with parameterized the email addresses
-                                //Write the Fast Track email records (FIL00020)
-                                os.write("FIL00020" + cDelim + 
-                                        "uco_operations-mailbox@cornell.edu" + cDelim +
-                                        cDelim +
-                                        "\n");
-                                os.write("FIL00020" + cDelim + 
-                                        "uc0-accts-pay-mailbox@cornell.edu" + 
-                                        cDelim + 
-                                        "\n");
-                                os.write("FIL00020" + cDelim + 
-                                        "lcs38@cornell.edu" + cDelim +
-                                        cDelim + 
-                                        "\n");
-                                os.write("FIL00020" + cDelim + 
-                                        "cms1@cornell.edu" + cDelim +
-                                        cDelim +
-                                        "\n");
-                                
-                                totalRecordCount = 5;  // We've successfully written 1 header record and 4 email records.
-                                KFSPTS-1460*/
                                 wroteMellonFastTrackHeaderRecords = true;
                             }
                             
@@ -1508,41 +1475,29 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.PROD_ENVIRONMENT_CODE_KEY).equalsIgnoreCase(
                 ConfigContext.getCurrentContextConfig().getEnvironment());
     }
-    
-    
-    /*
-     * KFSPTS-1460: Added accessor method for extended classes
-     */
+
     protected DateTimeService getDateTimeService() {
         return dateTimeService;
     }
     
-    /*
-     * KFSPTS-1460: Added accessor method for extended classes
-     */
     protected BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
     }
     
-    /*
-     * KFSPTS-1460: Added accessor method for extended classes
-     */
     protected ConfigurationService getKualiConfigurationService() {
         return kualiConfigurationService;
     }
     
-    /*
-     * KFSPTS-1460: Added accessor method for extended classes
-     */
     protected PdpEmailService getPaymentFileEmailService() {
         return paymentFileEmailService;
     }
-  //KFSPTS-1460: 
+
     // Adjusted the code in this method to deal with the output of the payment details based upon 
-    //payee with multiple payments in the same payment group.
+    // payee with multiple payments in the same payment group.
     protected void writeExtractAchFileMellonBankFastTrack(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf, List<String> notificationEmailAddresses) {
         BufferedWriter os = null;
         sdf = new SimpleDateFormat("yyyyMMddHHmmss"); //Used in the Fast Track file HEADER record
+        Date headerDate = calculateHeaderDate(processDate); //headerDate must be day after processDate to prevent additional cost for same day ACH payments
         SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd"); //Used in the Fast Track file PAY01000 record
         String cDelim = "^";  //column delimiter: Per BNY Mellon FastTrack spec, your choices are: "^" or ",".  If you change this make sure you change the associated name on the next line!
         String cDname = "FFCARET";  // column delimiter name: Per BNY Mellon FastTrack spec, your choices are: FFCARET and FFCOMMA for variable record types
@@ -1600,7 +1555,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         if (!wroteFastTrackHeaderRecords) {                         
                             // open the file for writing
                             os = new BufferedWriter(new FileWriter(filename));
-                            
+
                             //Write the Fast Track header record (FIL00010) once for each file
                             os.write("FIL00010" + cDelim +                // Record Type
                                     hdrRecType + cDelim +                 // Variable (V) or Fixed (F) flag
@@ -1610,48 +1565,22 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     "820" + cDelim +                      // EDI Document Id (3 Bytes)
                                     "043000261" + cDelim +                // Our Mellon bank id (15 Bytes)
                                     cDelim +                              // Customer Division Id - 35 bytes - Optional
-                                    sdf.format(processDate) + cDelim +    // File Date and Time - 14 Bytes  YYMMDD format
+                                    sdf.format(headerDate) + cDelim +     // File Date and Time - 14 Bytes  YYMMDD format
                                     cDelim +                              // Reserved Field - 3 Bytes
                                     "\n");
                             
-                            //KFSPTS-1460: Start of parameterized email notification changes
                             totalRecordCount = 1;                           
                             //Write the Fast Track email records (FIL00020) once for each file
                             for (Iterator<String> emailIter = notificationEmailAddresses.iterator(); emailIter.hasNext();) {
                                 String emailAddress = emailIter.next();
                                 
-                                //write (FIL00020) record for each email address
                                 os.write("FIL00020" + cDelim + 
                                         emailAddress + cDelim +
                                         cDelim +
                                         "\n");
                                 
                                 totalRecordCount = totalRecordCount + 1;  
-                            }                           
-                            //KFSPTS-1460: End of parameterized email notification changes
-                            
-                            /*KFSPTS-1460: Replaced this hardcoded section with parameterized the email addresses.
-                            //Write the Fast Track email records (FIL00020) once for each file
-                            os.write("FIL00020" + cDelim + 
-                                    "uco_operations-mailbox@cornell.edu" + cDelim +
-                                    cDelim +
-                                    "\n");
-                            os.write("FIL00020" + cDelim + 
-                                    "uc0-accts-pay-mailbox@cornell.edu" + 
-                                    cDelim + 
-                                    "\n");
-                            os.write("FIL00020" + cDelim + 
-                                    "lcs38@cornell.edu" + cDelim +
-                                    cDelim + 
-                                    "\n");
-                            os.write("FIL00020" + cDelim + 
-                                    "cms1@cornell.edu" + cDelim +
-                                    cDelim +
-                                    "\n");
-                            
-                            totalRecordCount = 5;  // We've successfully written the header and 4 email records.
-                            KFSPTS-1460*/
-                            
+                            }
                             wroteFastTrackHeaderRecords = true;
                         }
                         
@@ -1757,7 +1686,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             
                             if (ObjectUtils.isNotNull(pg.getDisbursementNbr().toString()))
                                 CheckNumber = pg.getDisbursementNbr().toString();
-                            
+
                             //Write only 1 PAY01000 record for each payee
                             os.write("PAY01000" + cDelim +                            // Record Type - 8 bytes
                                     "1" + cDelim +                                    // 7=Payment and Electronic Advice (Transaction handling code - 2 bytes)
@@ -1918,7 +1847,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                             InvoiceDate = pd.getInvoiceDate().toString().replace("-", "");
                             dateQualifer = "003";
                         }
-                        
+
                         os.write("REM03020" + cDelim +                                              // Record type - 8 bytes
                                 remittanceIdCode + cDelim +                                         // Remittance qualifier code - 3 bytes
                                 remittanceIdText + cDelim +                                         // Remittance ID - 50 bytes
@@ -1984,6 +1913,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                 }
             }
         }
+    }
+
+    protected Date calculateHeaderDate(Date processDate) {
+        return DateUtils.addDays(new Date(processDate.getTime()), 1);
     } 
     
     @Override
@@ -2016,13 +1949,13 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         businessObjectService.save(paymentGroup);
                     }
 
-                    writePayeeSpecificsToAchFile(os, paymentGroup, processDate, sdf);   //KFSPTS-1460: re-factored
+                    writePayeeSpecificsToAchFile(os, paymentGroup, processDate, sdf);
 
                     // Write all payment level information
                     writeOpenTag(os, 4, "payments");
                     List<PaymentDetail> pdList = paymentGroup.getPaymentDetails();
                     for ( PaymentDetail paymentDetail: pdList) {
-                        writePaymentDetailToAchFile(os, paymentGroup, paymentDetail, unitCounts, unitTotals, sdf);  //KFSPTS-1460: re-factored
+                        writePaymentDetailToAchFile(os, paymentGroup, paymentDetail, unitCounts, unitTotals, sdf);
                     }
 
                     writeCloseTag(os, 4, "payments");
@@ -2030,7 +1963,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                 }
                 writeCloseTag(os, 0, "achPayments");
 
-                // send summary email
                 paymentFileEmailService.sendAchSummaryEmail(unitCounts, unitTotals, dateTimeService.getCurrentDate());
             }
         } catch (IOException ie) {
@@ -2048,7 +1980,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
     /*
-     * KFSPTS-1460: 
      * New method created due to refactoring the code from ExtractPaymentServiceImpl and AchBundlerExtractPaymnetServiceImpl.
      * Method writes all tags and data for a single payee from open ach to close of customerProfile.
      */
@@ -2068,11 +1999,9 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             writePayeeAch(os, 4, paymentGroup);
             writeTag(os, 4, "paymentDate", sdf.format(paymentGroup.getPaymentDate()));
         
-            // Write customer profile information
             CustomerProfile cp = paymentGroup.getBatch().getCustomerProfile();
             writeCustomerProfile(os, 4, cp);
         
-            // Write all payment level information
             writeOpenTag(os, 4, "payments");
         }
         catch (IOException ioe) {
@@ -2083,7 +2012,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
     
     /*
-     * KFSPTS-1460: New method created due to refactoring the code from ExtractPaymentServiceImpl and AchBundlerExtractPaymnetServiceImpl
+     * New method created due to refactoring the code from ExtractPaymentServiceImpl and AchBundlerExtractPaymnetServiceImpl
      */
     protected void writePaymentDetailToAchFile(BufferedWriter os, PaymentGroup paymentGroup, PaymentDetail paymentDetail, Map<String, Integer> unitCounts, Map<String, KualiDecimal> unitTotals, SimpleDateFormat sdf) throws IOException {
         
@@ -2133,7 +2062,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
     
     /**
-     * KFSPTS-1460:
      * Obtains the notification email addresses to include in the bank payment files from the system parameters.
      * @return
      */
@@ -2155,10 +2083,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return emailAddressList;
     }
     protected String updateNoteLine(String noteLine) {
-        //  Had to add this code to check for and remove the colons (::) that were added in 
-        //   DisbursementVoucherExtractServiceImpl.java line 506 v4229 if they exist.  If not
-        //   then just return what was sent.  This was placed in a method as it is used in
-        //   two locations in this class
+        // Had to add this code to check for and remove the colons (::) that were added in
+        // DisbursementVoucherExtractServiceImpl.java line 506 v4229 if they exist.  If not
+        // then just return what was sent.  This was placed in a method as it is used in
+        // two locations in this class
 
         if (noteLine.length() >= 2 && noteLine.substring(0,2).contains(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER)) {
             noteLine = noteLine.substring(2);     
@@ -2183,15 +2111,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return  String.format(String.format("%%0%dd", n), 0).replace("0",s);
     }
     
-    //KFSPTS-1460
     public AchBundlerHelperService getAchBundlerHelperService() {
         return achBundlerHelperService;
     }
 
-    //KFSPTS-1460
     public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
         this.achBundlerHelperService = achBundlerHelperService;
     }
- 
 }
-
