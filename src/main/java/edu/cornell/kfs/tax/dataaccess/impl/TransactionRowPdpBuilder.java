@@ -14,6 +14,7 @@ import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.rice.kew.api.document.Document;
 import org.kuali.kfs.krad.util.KRADConstants;
 
+import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.PdpSourceRow;
@@ -83,6 +84,15 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                 getTaxTypeSpecificConditionForSelect(summary),
                 SqlText.AND,
                         pdpRow.vendorForeignInd, SqlText.EQUALS, SqlText.PARAMETER,
+                        
+                SqlText.AND,
+                		pdpRow.preqDocumentNumber, SqlText.CONDITIONAL_EQUALS_JOIN, pdpRow.custPaymentDocNbr,
+                		
+                SqlText.AND,
+                		pdpRow.dvDocumentNumber, SqlText.CONDITIONAL_EQUALS_JOIN, pdpRow.custPaymentDocNbr,
+                
+                SqlText.AND,
+                		pdpRow.nraDocumentNumber, SqlText.CONDITIONAL_EQUALS_JOIN, pdpRow.dvDocumentNumber,
                 
                 // Build the ORDER BY clause.
                 SqlText.ORDER_BY,
@@ -195,9 +205,12 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
              * INITIATOR_NETID
              * VENDOR_TAX_NBR (if null, in which case it should be set to an auto-generated value)
              */
+            
+            String documentType = rs.getString(pdpRow.financialDocumentTypeCode.index);
+            
             insertStatement.setInt(detailRow.reportYear.index - offset, summary.reportYear);
             insertStatement.setString(detailRow.documentNumber.index - offset, (StringUtils.isNotBlank(documentId)) ? documentId : null);
-            insertStatement.setString(detailRow.documentType.index - offset, rs.getString(pdpRow.financialDocumentTypeCode.index));
+            insertStatement.setString(detailRow.documentType.index - offset, documentType);
             insertStatement.setInt(detailRow.financialDocumentLineNumber.index - offset, rs.getInt(pdpRow.accountDetailId.index));
             insertStatement.setString(detailRow.finObjectCode.index - offset, financialObjectCode);
             insertStatement.setBigDecimal(detailRow.netPaymentAmount.index - offset, netPaymentAmount);
@@ -216,6 +229,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(pdpRow.country.index));
             insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(pdpRow.accountDetailFinChartCode.index)); // ?
             insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(pdpRow.accountNbr.index));
+            insertStatement.setString(detailRow.incomeClassCode.index - offset, findincomeClassCode(rs, pdpRow, documentType));
             
             insertNullsForTransactionRow(insertStatement, detailRow, offset);
             
@@ -237,12 +251,21 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         prepareForSecondPass(summary, docIds);
     }
 
+	protected String findincomeClassCode(ResultSet rs, PdpSourceRow pdpRow, String documentType) throws SQLException {
+		String incomeClassCode = null;
+		if (StringUtils.equalsIgnoreCase(documentType, CUPdpConstants.PdpDocumentTypes.PAYMENT_REQUEST)) {
+			incomeClassCode = rs.getString(pdpRow.taxClassificationCode.index);
+		} else if (StringUtils.equalsIgnoreCase(documentType, CUPdpConstants.PdpDocumentTypes.DISBURSEMENT_VOUCHER)) {
+			incomeClassCode = rs.getString(pdpRow.dvIncomeClassCode.index);
+		}
+		return incomeClassCode;
+	}
+
     /**
      * Overridden to also insert nulls for the following field placeholders:
      * 
      * <ul>
      *   <li>dvCheckStubText</li>
-     *   <li>incomeClassCode</li>
      *   <li>incomeTaxTreatyExemptIndicator</li>
      *   <li>foreignSourceIncomeIndicator</li>
      *   <li>federalIncomeTaxPercent</li>
@@ -256,7 +279,6 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
     void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
         super.insertNullsForTransactionRow(insertStatement, detailRow, offset);
         insertStatement.setString(detailRow.dvCheckStubText.index - offset, null);
-        insertStatement.setString(detailRow.incomeClassCode.index - offset, null);
         insertStatement.setString(detailRow.incomeTaxTreatyExemptIndicator.index - offset, null);
         insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, null);
         insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, null);
@@ -421,22 +443,13 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
         @Override
         void doTaxSpecificSecondPassRowSetup(ResultSet rs, Transaction1042SSummary summary) throws SQLException {
             String financialObjectCode = rs.getString(summary.transactionDetailRow.finObjectCode.index);
-            String incomeClassCode;
+            String incomeClassCode = rs.getString(summary.transactionDetailRow.incomeClassCode.index);
             String incomeCode;
             String incomeCodeSubType;
             
             // Prepare the income and subtype codes.
-            incomeClassCode = summary.objectCodeToIncomeClassCodeMap.get(financialObjectCode);
-            if (StringUtils.isNotBlank(incomeClassCode)) {
-                // If income class code exists for the given object code, then get the income code and subtype.
-                incomeCode = summary.incomeClassCodeToIrsIncomeCodeMap.get(incomeClassCode);
-                incomeCodeSubType = summary.incomeClassCodeToIrsIncomeCodeSubTypeMap.get(incomeClassCode);
-                if (StringUtils.isBlank(incomeCodeSubType)) {
-                    // If no subtype was found, then set it to the exclusion value.
-                    incomeCodeSubType = summary.excludedIncomeCodeSubType;
-                    numExcludedAssignedIncomeCodeSubTypes++;
-                }
-            } else {
+            incomeCode = summary.incomeClassCodeToIrsIncomeCodeMap.get(incomeClassCode);
+            if (StringUtils.isBlank(incomeCode)) {
                 // If no income class code was found, then check whether the object code is a fed-tax-withheld one.
                 if (summary.federalTaxWithheldObjectCodes.contains(financialObjectCode)) {
                     // If the object code represents a fed-tax-withheld one, then use the non-reportable income code.
@@ -456,8 +469,13 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                         numExcludedAssignedIncomeCodes++;
                     }
                 }
-                // Set income code subtype to excluded value for now.
+            }
+            
+            incomeCodeSubType = summary.incomeClassCodeToIrsIncomeCodeSubTypeMap.get(incomeClassCode);
+            if (StringUtils.isBlank(incomeCodeSubType)) {
+                // If no subtype was found, then set it to the exclusion value.
                 incomeCodeSubType = summary.excludedIncomeCodeSubType;
+                numExcludedAssignedIncomeCodeSubTypes++;
             }
             
             // Prepare to update income code and income code subtype fields.
