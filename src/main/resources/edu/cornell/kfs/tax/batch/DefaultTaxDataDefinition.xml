@@ -350,5 +350,6 @@
         <field name="box18" type="DECIMAL" />
         <field name="box???" type="DECIMAL" />
         <field name="box????" type="DECIMAL" />
+        <field name="endDate" type="DATE" />
     </row>
 </taxDataDefinition>
