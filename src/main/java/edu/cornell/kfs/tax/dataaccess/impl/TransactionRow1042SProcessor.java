@@ -151,6 +151,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
     private RecordPiece1042SString incomeCodeForOutputP;
     private RecordPiece1042SString taxEINValueP;
     private RecordPiece1042SString stateCodeP;
+    private RecordPiece1042SDate endDateP;
     private RecordPiece1042SBigDecimal chapter3TaxRateP;
     private RecordPiece1042SBigDecimal grossAmountP;
     private RecordPiece1042SBigDecimal ftwAmountP;
@@ -422,7 +423,8 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                         derivedValues.grossAmount,
                         derivedValues.fedTaxWithheldAmount,
                         derivedValues.stateIncomeTaxWithheldAmount,
-                        derivedValues.stateCode
+                        derivedValues.stateCode,
+                        derivedValues.endDate
                 ));
                 break;
             
@@ -519,6 +521,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         sitwAmountP = (RecordPiece1042SBigDecimal) complexPieces.get(derivedValues.stateIncomeTaxWithheldAmount.propertyName);
         sitwAmountP.negateStringValue = true;
         stateCodeP = (RecordPiece1042SString) complexPieces.get(derivedValues.stateCode.propertyName);
+        endDateP = (RecordPiece1042SDate) complexPieces.get(derivedValues.endDate.propertyName);
     }
 
 
@@ -596,6 +599,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         // Setup values that are not expected to change between each iteration.
         taxEINValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_9_CHARS : summary.taxEIN;
         stateCodeP.value = summary.stateCode;
+        endDateP.value = summary.getEndDate();
         rsDummy = new DummyResultSet();
         detailRow = summary.transactionDetailRow;
         vendorRow = summary.vendorRow;
@@ -1567,6 +1571,7 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         incomeCodeForOutputP = null;
         taxEINValueP = null;
         stateCodeP = null;
+        endDateP = null;
         chapter3TaxRateP = null;
         grossAmountP = null;
         ftwAmountP = null;
