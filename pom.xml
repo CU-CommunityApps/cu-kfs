@@ -18,14 +18,15 @@
 
   <properties>
 	<job.name>${project.artifactId}</job.name>
-	<rice.version>2.1.9</rice.version>
+	<rice.version>2.1.16</rice.version>
 	<cynergy.version>2.3.4</cynergy.version>
 	<cynergy.version.suffix>current</cynergy.version.suffix>
 	<kfs.version>5.3.1</kfs.version>
 	<cynergy.development>true</cynergy.development>
 	<jsr311-api.version>1.1.1</jsr311-api.version>
 	<jersey.version>1.18.1</jersey.version>
-	<skipTests>true</skipTests>
+    <esapi.version>2.1.0.1</esapi.version>
+    <skipTests>true</skipTests>
 	<test.excludes>**/*Test.java.bogus</test.excludes>
   </properties>
   
@@ -1285,7 +1286,42 @@
       <artifactId>jersey-multipart</artifactId>
       <version>${jersey.version}</version>
     </dependency>
-    
+
+    <dependency>
+        <groupId>org.owasp.esapi</groupId>
+        <artifactId>esapi</artifactId>
+        <version>${esapi.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>xom</groupId>
+            <artifactId>xom</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.beanshell</groupId>
+            <artifactId>bsh-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.owasp.antisamy</groupId>
+            <artifactId>antisamy</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-css</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+        </exclusions>
+    </dependency>
   </dependencies>
 
   <distributionManagement>

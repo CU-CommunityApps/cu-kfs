@@ -62,17 +62,20 @@ public class KFSMailMessageServiceImplTest extends KualiTestBase {
     private class testableConfigurationService implements ConfigurationService {
 		@Override
 		public String getPropertyValueAsString(String key) {
-			// TODO Auto-generated method stub
 			return "does_not_matter";
 		}
 		@Override
 		public boolean getPropertyValueAsBoolean(String key) {
-			// TODO Auto-generated method stub
 			return false;
 		}
-		@Override
+
+        @Override
+        public boolean getPropertyValueAsBoolean(String s, boolean b) {
+            return false;
+        }
+
+        @Override
 		public Map<String, String> getAllProperties() {
-			// TODO Auto-generated method stub
 			return null;
 		}
     }
