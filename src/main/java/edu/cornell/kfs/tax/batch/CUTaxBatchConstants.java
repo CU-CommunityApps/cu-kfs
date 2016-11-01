@@ -393,6 +393,7 @@ public final class CUTaxBatchConstants {
         public static final String BOX18 = "box18";
         public static final String BOX_UNKNOWN_1099 = "box???";
         public static final String BOX_UNKNOWN_1042S = "box????";
+        public static final String END_DATE = "endDate";
         
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");
