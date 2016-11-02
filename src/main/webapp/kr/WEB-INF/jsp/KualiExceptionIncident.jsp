@@ -1,6 +1,6 @@
 <%--
 
-    Copyright 2005-2016 The Kuali Foundation
+    Copyright 2005-2015 The Kuali Foundation
 
     Licensed under the Educational Community License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 <%@ page import="org.kuali.rice.krad.exception.KualiExceptionIncident"%>
 <%@ include file="tldHeader.jsp"%>
 
-<%-- CU Customization: Added the Rice 2.3.13 version of this file, to introduce some security fixes. --%>
+<%-- CU Customization: Added the Rice 2.1.11 version of this file, to introduce some fixes. --%>
 <c:set var="textAreaAttributes"
 	value="${DataDictionary.AttributeReferenceElements.attributes}" />
 
@@ -125,7 +125,7 @@
 					</td>
 					<td align="left" valign="top">
 						<div align="left">
-							<font color="green"><c:out value="${documentId}"/></font>
+							<font color="green">${documentId}</font>
 						</div>
 					</td>
 				</tr>
