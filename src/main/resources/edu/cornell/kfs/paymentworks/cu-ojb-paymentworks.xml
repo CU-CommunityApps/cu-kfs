@@ -1,0 +1,78 @@
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<descriptor-repository version="1.0">
+
+<class-descriptor class="edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor" table="PAYMENT_WORKS_VENDOR_T">
+    <field-descriptor name="vendorRequestId" column="VND_REQ_ID" jdbc-type="VARCHAR" primarykey="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" />
+    <field-descriptor name="vendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" />
+    <field-descriptor name="vendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" />
+    <field-descriptor name="documentNumberList" column="FDOC_NBR_LIST" jdbc-type="VARCHAR" />
+    <field-descriptor name="vendorNumberList" column="VNDR_NBR_LIST" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestStatus" column="REQ_STATUS" jdbc-type="VARCHAR" />
+    <field-descriptor name="transactionType" column="TRANS_TYPE" jdbc-type="VARCHAR" />
+    <field-descriptor name="groupName" column="GROUP_NAME" jdbc-type="VARCHAR" />    
+    <field-descriptor name="processStatus" column="PROC_STATUS" jdbc-type="VARCHAR" />
+    <field-descriptor name="processTimestamp" column="PROC_TS" jdbc-type="TIMESTAMP"/>
+    <field-descriptor name="requestingCompanyId" column="REQ_CMP_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyTin" column="REQ_CMP_TIN" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+	<field-descriptor name="requestingCompanyTinType" column="REQ_CMP_TIN_TYPE" jdbc-type="VARCHAR" />
+	<field-descriptor name="requestingCompanyTaxCountry" column="REQ_CMP_TAX_COUNTRY" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyLegalName" column="REQ_CMP_LEGAL_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyName" column="REQ_CMP_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyNameOldValue" column="REQ_CMP_NM_OLD" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyDesc" column="REQ_CMP_DESC" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyTelephone" column="REQ_CMP_TELEPHONE" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyTelephone" column="REQ_CMP_TELEPHONE_OLD" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyDuns" column="REQ_CMP_DUNS" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyTaxClassificationCode" column="REQ_CMP_TAX_CLASS_CODE" jdbc-type="VARCHAR" />   
+    <field-descriptor name="requestingCompanyTaxClassificationName" column="REQ_CMP_TAX_CLASS_NAME" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyUrl" column="REQ_CMP_URL" jdbc-type="VARCHAR" />
+    <field-descriptor name="requestingCompanyW8W9" column="REQ_CMP_W8W9" jdbc-type="VARCHAR" />
+    <field-descriptor name="typeOfBusiness" column="TYPE_OF_BUS" jdbc-type="VARCHAR" />
+    <field-descriptor name="studentIndicator" column="STUDENT_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="stateOfConnecticutEmployeeIndicator" column="STATE_CT_EMP_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="currentFormerStateOfConnecticutEmployee" column="CUR_FRMR_STATE_CT_EMP" jdbc-type="VARCHAR" />        
+    <field-descriptor name="immediateFamilyIndicator" column="IMMEDIATE_FAMILY_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="smallOrMinorityOwnedBusinessIndicator" column="SMALL_MINOR_OWN_BUS_IND" jdbc-type="CHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="poFaxNumber" column="PO_FAX_NUM" jdbc-type="VARCHAR" />
+    <field-descriptor name="achEmailAddress" column="ACH_EMAIL_ADDR" jdbc-type="VARCHAR" />
+    <field-descriptor name="uconnContactEmailAddress" column="UCONN_CNTCT_EMAIL_ADDR" jdbc-type="VARCHAR" />                
+    <field-descriptor name="remittanceAddressId" column="REMIT_ADDR_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressName" column="REMIT_ADDR_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressStreet1" column="REMIT_ADDR_STREET1" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressStreet2" column="REMIT_ADDR_STREET2" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressCity" column="REMIT_ADDR_CITY" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressState" column="REMIT_ADDR_ST" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressCountry" column="REMIT_ADDR_COUNTRY" jdbc-type="VARCHAR" />
+    <field-descriptor name="remittanceAddressZipCode" column="REMIT_ADDR_ZIP_CODE" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressId" column="CORP_ADDR_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressName" column="CORP_ADDR_NM" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressStreet1" column="CORP_ADDR_STREET1" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressStreet2" column="CORP_ADDR_STREET2" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressCity" column="CORP_ADDR_CITY" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressState" column="CORP_ADDR_ST" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressCountry" column="CORP_ADDR_COUNTRY" jdbc-type="VARCHAR" />
+    <field-descriptor name="corpAddressZipCode" column="CORP_ADDR_ZIP_CODE" jdbc-type="VARCHAR" />    
+</class-descriptor>
+
+
+</descriptor-repository>
