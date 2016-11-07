@@ -2573,6 +2573,10 @@
     {
       "label": "Help",
       "link": "static/help/default.htm"
+    },
+    {
+      "label": "KFS Help",
+      "link": "https://www.dfa.cornell.edu/fsaid/gethelp"
     }
   ]
 }
