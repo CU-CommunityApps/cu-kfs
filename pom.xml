@@ -22,8 +22,8 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2016-10-06</kfs.version>
-        <rice.version>2.5.17</rice.version>
+        <kfs.version>2016-11-03.1</kfs.version>
+        <rice.version>2.5.18</rice.version>
         <cynergy.version>2.5.x</cynergy.version>
         <cynergy.version.suffix>SNAPSHOT</cynergy.version.suffix>
 
