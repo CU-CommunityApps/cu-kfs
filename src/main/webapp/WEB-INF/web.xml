@@ -26,31 +26,15 @@
         <param-value>classpath:kfs-startup.xml</param-value>
     </context-param>
 
-    <!--  FILTER DEFINITIONS -->
-    <filter>
-        <filter-name>monitoring</filter-name>
-        <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
-        <init-param>
-            <param-name>url-exclude-pattern</param-name>
-            <param-value>/static/.*|/kr/static/.*|/kr/images/.*|/images-portal/.*</param-value>
-        </init-param>
-        <init-param>
-            <param-name>system-actions-enabled</param-name>
-            <param-value>false</param-value>
-        </init-param>
-        <init-param>
-            <param-name>http-transform-pattern</param-name>
-            <param-value>\\d+</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>monitoring</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <context-param>
+        <param-name>javamelody.quartz-default-listener-disabled</param-name>
+        <param-value>true</param-value>
+    </context-param>
 
-    <listener>
-        <listener-class>net.bull.javamelody.SessionListener</listener-class>
-    </listener>
+    <context-param>
+        <param-name>javamelody.system-actions-enabled</param-name>
+        <param-value>false</param-value>
+    </context-param>
 
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
@@ -165,6 +149,22 @@
     <filter-mapping>
         <filter-name>ResourceLoginFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
+        <url-pattern>/sys/*</url-pattern>
+
+        <url-pattern>/ar/api/*</url-pattern>
+        <url-pattern>/bc/api/*</url-pattern>
+        <url-pattern>/cam/api/*</url-pattern>
+        <url-pattern>/cg/api/*</url-pattern>
+        <url-pattern>/coa/api/*</url-pattern>
+        <url-pattern>/ec/api/*</url-pattern>
+        <url-pattern>/fp/api/*</url-pattern>
+        <url-pattern>/gl/api/*</url-pattern>
+        <url-pattern>/kc/api/*</url-pattern>
+        <url-pattern>/ld/api/*</url-pattern>
+        <url-pattern>/pdp/api/*</url-pattern>
+        <url-pattern>/purap/api/*</url-pattern>
+        <url-pattern>/tem/api/*</url-pattern>
+        <url-pattern>/vnd/api/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
