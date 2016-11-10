@@ -1,12 +1,6 @@
 package edu.cornell.kfs.gl.dataaccess.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
@@ -18,49 +12,18 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 
-import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuBalanceDaoOjb.class);
-    protected static final String PARAMETER_PREFIX = "SELECTION_";
-
-    /**
-     * this is for KFSPTS-1786 begin
-     */ 
-
-    public Collection<Balance> getAccountBalance(Map<String, String> input) {
-        Criteria criteria = new Criteria();
-        for (String key:input.keySet()) {
-            criteria.addEqualTo(key, input.get(key));
-        }
-
-        @SuppressWarnings("unchecked")
-        Collection<Balance> balance = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Balance.class, criteria));
-        return balance;
-
-    }
-
-    @SuppressWarnings("rawtypes")
-    public Collection<Balance> getAccountBalance(Map<String, String> input, Collection objectTypeCode) {
-        Criteria criteria = new Criteria();
-        for (String key:input.keySet()) {
-            criteria.addEqualTo(key, input.get(key));
-        }
-        criteria.addIn(KFSPropertyConstants.OBJECT_TYPE_CODE, objectTypeCode);
-        @SuppressWarnings("unchecked")
-        Collection<Balance> balance = getPersistenceBrokerTemplate().getCollectionByQuery(QueryFactory.newQuery(Balance.class, criteria));
-        return balance;
-
-    }
-
-    /**
-     * this is for KFSPTS-1786 end
-     */ 
 
     /**
      * Returns a list of balances to return for the Organization Reversion year end job to process
      * 
-     * @param the university fiscal year to find balances for
+     * @param year the university fiscal year to find balances for
      * @param endOfYear if true, use currrent year accounts, otherwise use prior year accounts
      * @return an Iterator of Balances to process
      * @see org.kuali.kfs.gl.dataaccess.BalanceDao#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean,

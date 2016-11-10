@@ -165,16 +165,8 @@
             }
           },
           {
-            "label": "Current Fund Balance",
-            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.gl.businessobject.CurrentAccountBalance&docFormKey=88888888&hideReturnLink=true",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Look Up Records",
-              "details": {
-                "namespaceCode": "KFS*"
-              }
-            }
+            "businessObjectClass": "org.kuali.kfs.gl.businessobject.CurrentAccountBalance",
+            "linkType": "kfs"
           },
           {
             "label": "General Ledger Balance",

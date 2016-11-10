@@ -31,17 +31,6 @@ public class CUKFSParameterKeyConstants {
 		public static final String YEAR_END_AUTO_DISAPPROVE_START_DATE = "YEAR_END_AUTO_DISAPPROVE_START_DATE";
     }
     
-    public static class GeneralLedgerSysParmeterKeys {
-        public static final String EXPENSE_OBJECT_TYPE_CODE_PARAM = "EXPENSE_OBJECT_TYPE_CODE";
-        public static final String INCOME_OBJECT_TYPE_CODE_PARAM = "INCOME_OBJECT_TYPE_CODE";
-        public static final String CASH_BUDGET_RECORD_LEVEL_PARM = "CASH_BUDGET_RECORD_LEVEL";
-        public static final String FUND_BALANCE_OBJECT_CODE_PARAM = "FUND_BALANCE_OBJECT_CODE";
-        public static final String CURRENT_ASSET_OBJECT_CODE_PARAM = "CURRENT_ASSET_OBJECT_TYPE_CODE";
-        public static final String CURRENT_LIABILITY_OBJECT_CODE_PARAM = "CURRENT_LIABILITY_OBJECT_TYPE_CODE";
-        public static final String ENCUMBRANCE_BALANCE_TYPE_PARAM = "ENCUMBRANCE_BALANCE_TYPE";
-        public static final String EXCLUDE_CB_PERIOD_PARAM = "EXCLUDE_CB_PERIOD";
-        }
-    
     public static class LdParameterConstants {
         // KFSPTS-1627
         public static final String VALIDATE_TRANSFER_ACCOUNT_TYPES_IND = "VALIDATE_TRANSFER_ACCOUNT_TYPES_IND";

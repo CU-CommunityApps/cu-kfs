@@ -16,17 +16,12 @@
 package edu.cornell.kfs.sys;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.rice.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
-
 
 /**
  * Property name constants.
  */
 public class CUKFSPropertyConstants extends KFSPropertyConstants {
-    
-    public static final String CURRENT_ACCOUNT_BALANCE_REQUIRED_FIELDS = "currentAccountBalanceRequiredFields";
-    
+
     // KFSUPGRADE-779
     public static final String DOC_HDR_FINANCIAL_DOCUMENT_STATUS_CODE = "documentHeader.financialDocumentStatusCode";
     
