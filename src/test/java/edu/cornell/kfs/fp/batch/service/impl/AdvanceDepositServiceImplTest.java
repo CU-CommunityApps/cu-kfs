@@ -641,11 +641,6 @@ public class AdvanceDepositServiceImplTest {
         }
 
         @Override
-        public <T extends BusinessObject> Collection<T> findMatching(Class<T> aClass, Map<String, ?> map, int i, int i1, String[] strings) {
-            return null;
-        }
-
-        @Override
         public int countMatching(Class clazz, Map<String, ?> fieldValues) {
             return 0;
         }

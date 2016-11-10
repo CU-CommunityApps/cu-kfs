@@ -60,8 +60,8 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         assertEquals("O", cuDisbursementVoucherDocument.getDisbursementVoucherDocumentationLocationCode());
         assertEquals("DISB", cuDisbursementVoucherDocument.getDisbVchrBankCode());
 
-        assertEquals("607-255-9466", cuDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
-        assertEquals("ccs1@cornell.edu", cuDisbursementVoucherDocument.getDisbVchrContactEmailId());
+        assertEquals(StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
+        assertEquals(StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrContactEmailId());
         assertEquals(StringUtils.EMPTY, cuDisbursementVoucherDocument.getDisbVchrPayeeTaxControlCode());
 
         assertEquals(new KualiDecimal(86.00), cuDisbursementVoucherDocument.getDisbVchrCheckTotalAmount());
