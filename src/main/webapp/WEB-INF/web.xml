@@ -149,6 +149,22 @@
     <filter-mapping>
         <filter-name>ResourceLoginFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
+        <url-pattern>/sys/*</url-pattern>
+
+        <url-pattern>/ar/api/*</url-pattern>
+        <url-pattern>/bc/api/*</url-pattern>
+        <url-pattern>/cam/api/*</url-pattern>
+        <url-pattern>/cg/api/*</url-pattern>
+        <url-pattern>/coa/api/*</url-pattern>
+        <url-pattern>/ec/api/*</url-pattern>
+        <url-pattern>/fp/api/*</url-pattern>
+        <url-pattern>/gl/api/*</url-pattern>
+        <url-pattern>/kc/api/*</url-pattern>
+        <url-pattern>/ld/api/*</url-pattern>
+        <url-pattern>/pdp/api/*</url-pattern>
+        <url-pattern>/purap/api/*</url-pattern>
+        <url-pattern>/tem/api/*</url-pattern>
+        <url-pattern>/vnd/api/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
