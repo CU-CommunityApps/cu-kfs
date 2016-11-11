@@ -17,9 +17,7 @@
         </property>
         
         <property name="dataDictionaryPackages">
-			<list>
-                <value>classpath:edu/cornell/kfs/gl/businessobject/datadictionary/*.xml</value>
-            </list>
+			<list/>
 		</property>
 		
 		<property name="databaseRepositoryFilePaths">
@@ -203,12 +201,6 @@
         </property>
     </bean>
 
-	<bean id="glYearEndService" parent="glYearEndService-parentBean">
-       <property name="encumbranceDao">
-            <bean class="edu.cornell.kfs.gl.dataaccess.impl.CuEncumbranceDaoOjb" parent="platformAwareDao" />
-       </property>
-	</bean>
-
 	<bean id="scrubberProcess-parentBean" class="edu.cornell.kfs.gl.batch.service.impl.CuScrubberProcessImpl" abstract="true">
 		<property name="dateTimeService">
 			<ref bean="dateTimeService" />
@@ -245,27 +237,9 @@
     <bean id="scrubberValidator" class="edu.cornell.kfs.gl.service.impl.CuScrubberValidatorImpl" parent="scrubberValidator-parentBean"/>
      
      
-      <!-- AER-0630 - Rq_GL_630 add a simple balance inquiry menu item to KFS main menu-->
- 	 	 	 		 <bean id="glCurrentAccountBalanceLookupableHelperService" class="edu.cornell.kfs.gl.businessobject.lookup.CurrentAccountBalanceLookupableHelperServiceImpl" scope="prototype">
- 	 	 	 		 <property name="personService" ref="personService" />
- 	 	 	 		 <property name="balanceService" ref="glBalanceService" />
- 	 	 	 		 <property name="parameterService" ref="parameterService" />
- 	 	 	 		 <property name="generalLedgerPendingEntryService" ref="generalLedgerPendingEntryService" />
- 	 	 	 		 <property name="postBalance" ref="glPostBalance" />
- 	 	 	 		 <property name="accountingPeriodService" ref="accountingPeriodService"/>
- 	 	 	 		
- 	 	 	 		 <property name="lookupService" ref="lookupService" />
- 	 	 	 		 </bean>
- 	 	 	 		 <bean id="glCurrentAccountBalanceLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
- 	 	 	 		 <property name="lookupableHelperService">
- 	 	 	 		         <ref bean="glCurrentAccountBalanceLookupableHelperService" />
- 	 	 	 		 </property>
- 	 	 	 		 </bean>
- 	 	 	 		 
-	
-		<bean id="glLedgerEntryBalanceCachingDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuLedgerEntryBalanceCachingDaoJdbc" />
+	<bean id="glLedgerEntryBalanceCachingDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.gl.batch.dataaccess.impl.CuLedgerEntryBalanceCachingDaoJdbc" />
 	 	
-	 	<bean id="glPosterService" abstract="true" class="edu.cornell.kfs.gl.batch.service.impl.CuPosterServiceImpl"> 	
+	<bean id="glPosterService" abstract="true" class="edu.cornell.kfs.gl.batch.service.impl.CuPosterServiceImpl">
 		<property name="transactionPosters">
 			<list>
 				<ref bean="glPostGlEntry" />
