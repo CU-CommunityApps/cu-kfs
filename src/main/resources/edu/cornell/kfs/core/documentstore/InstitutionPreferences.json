@@ -553,8 +553,16 @@
       "links": {
         "activities": [
           {
-            "documentTypeCode": "BA",
-            "linkType": "kfs"
+            "label": "Budget Adjustment",
+            "link": "financialBudgetAdjustment.do?methodToCall=docHandler&command=initiate&docTypeName=BA",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "BA"
+              }
+            }
           },
           {
             "label": "Budget Construction Selection",
