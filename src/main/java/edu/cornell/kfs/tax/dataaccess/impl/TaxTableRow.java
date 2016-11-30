@@ -186,6 +186,11 @@ abstract class TaxTableRow {
         final TaxTableField accountNbr;
         final TaxTableField finObjectCode;
         final TaxTableField accountNetAmount;
+        final TaxTableField taxClassificationCode;
+        final TaxTableField preqDocumentNumber;
+        final TaxTableField dvDocumentNumber;
+        final TaxTableField nraDocumentNumber;
+        final TaxTableField dvIncomeClassCode;
         
         PdpSourceRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -221,6 +226,11 @@ abstract class TaxTableRow {
             this.accountNbr = getAliasedField(CommonPdpSourceFieldNames.ACCOUNT_NUMBER);
             this.finObjectCode = getAliasedField(CommonPdpSourceFieldNames.FIN_OBJECT_CODE);
             this.accountNetAmount = getAliasedField(CommonPdpSourceFieldNames.ACCOUNT_NET_AMOUNT);
+            this.taxClassificationCode = getAliasedField(CommonPdpSourceFieldNames.TAX_CLASSIFICATION_CODE);
+            this.preqDocumentNumber = getAliasedField(CommonPRNCSourceFieldNames.PREQ_DOCUMENT_NUMBER);
+            this.dvDocumentNumber = getAliasedField(CommonDvSourceFieldNames.DV_DOCUMENT_NUMBER);
+            this.nraDocumentNumber = getAliasedField(CommonDvSourceFieldNames.NRA_DOCUMENT_NUMBER);
+            this.dvIncomeClassCode = getAliasedField(CommonDvSourceFieldNames.INCOME_CLASS_CODE);
             // Vendor-related fields will be configured by the superclass.
         }
     }
@@ -625,6 +635,7 @@ abstract class TaxTableRow {
         // These two represent unknown/undefined 1099/1042S tax boxes. They allow for using TransactionOverride BOs to exclude transactions.
         final TaxTableField boxUnknown1099;
         final TaxTableField boxUnknown1042s;
+        final TaxTableField endDate;
         
         DerivedValuesRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields, Integer insertOffset) {
             super(rowId, fields, tables, aliasedFields, insertOffset);
@@ -671,6 +682,7 @@ abstract class TaxTableRow {
             this.box18 = getAliasedField(DerivedFieldNames.BOX18);
             this.boxUnknown1099 = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1099);
             this.boxUnknown1042s = getAliasedField(DerivedFieldNames.BOX_UNKNOWN_1042S);
+            this.endDate = getAliasedField(DerivedFieldNames.END_DATE);
         }
     }
 

@@ -93,6 +93,7 @@ final class TaxSqlUtils {
         OR(" OR "),
         NOT("NOT "),
         EQUALS(" = "),
+        CONDITIONAL_EQUALS_JOIN(" (+) = "),
         NOT_EQUAL(" <> "),
         IS_NULL(" IS NULL"),
         IS_NOT_NULL(" IS NOT NULL"),

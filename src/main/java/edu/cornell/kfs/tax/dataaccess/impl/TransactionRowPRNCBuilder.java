@@ -250,8 +250,12 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
                
         // Update or remove rows as needed.
         while (rs.next()) {
-            // Only update PREQ-related rows.
-            if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(rs.getString(detailRow.documentType.index))) {
+        	String documentType = rs.getString(detailRow.documentType.index);
+        	
+        	// Retrieve payment method, which is temporarily stored in the doc title field.
+            paymentMethodCode = rs.getString(detailRow.documentTitle.index);
+        	
+            if (isPaymentRequestDocument(documentType) && isForeignOrWireTransferPaymentMethod(summary, paymentMethodCode)) {
                 // Initialized minimal variables for current row.
                 processCurrentRow = true;
                 documentId = rs.getString(detailRow.documentNumber.index);
@@ -269,9 +273,6 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
                         dateFinalized = new java.sql.Date(document.getDateFinalized().getMillis());
                     }
                 }
-                // Retrieve payment method, which is temporarily stored in the doc title field.
-                paymentMethodCode = rs.getString(detailRow.documentTitle.index);
-                
                 
                 // Depending on payment method, verify that the PRNC has indeed been finalized during the given time period.
                 if (summary.foreignDraftCode.equals(paymentMethodCode) || summary.wireTransferCode.equals(paymentMethodCode)) {
@@ -337,6 +338,15 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
             }
         }
     }
+
+	private boolean isForeignOrWireTransferPaymentMethod(T summary, String paymentMethodCode) {
+		return StringUtils.equalsIgnoreCase(paymentMethodCode, summary.foreignDraftCode) || 
+				StringUtils.equalsIgnoreCase(paymentMethodCode, summary.wireTransferCode);
+	}
+
+	private boolean isPaymentRequestDocument(String documentType) {
+		return StringUtils.equalsIgnoreCase(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT, documentType);
+	}
     
     @Override
     void insertNullsForTransactionRow(PreparedStatement insertStatement,

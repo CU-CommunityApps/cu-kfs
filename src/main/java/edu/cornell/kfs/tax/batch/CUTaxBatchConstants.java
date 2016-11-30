@@ -1,6 +1,9 @@
 package edu.cornell.kfs.tax.batch;
 
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonPdpSourceFieldNames;
 
 /**
  * Helper class containing tax-batch-related constants.
@@ -128,6 +131,8 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_OWNERSHIP_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CODE;
         public static final String VENDOR_OWNERSHIP_CATEGORY_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CATEGORY_CODE;
         public static final String VENDOR_FOREIGN_IND = CommonVendorFieldNames.VENDOR_FOREIGN_IND;
+        //fields from AP_PMT_RQST_T (PaymentRequestDocument)
+        public static final String TAX_CLASSIFICATION_CODE = PurapPropertyConstants.TAX_CLASSIFICATION_CODE;
         
         
         
@@ -338,7 +343,6 @@ public final class CUTaxBatchConstants {
         public static final String PAYMENT_REASON_CODE = "paymentReasonCode";
         
         
-        
         private TransactionDetailFieldNames() {
             throw new UnsupportedOperationException("do not call TransactionDetailFieldNames constructor");
         }
@@ -393,6 +397,7 @@ public final class CUTaxBatchConstants {
         public static final String BOX18 = "box18";
         public static final String BOX_UNKNOWN_1099 = "box???";
         public static final String BOX_UNKNOWN_1042S = "box????";
+        public static final String END_DATE = "endDate";
         
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");

@@ -16,6 +16,9 @@
             <objectClass name="org.kuali.kfs.pdp.businessobject.PaymentDetail" />
             <objectClass name="org.kuali.kfs.pdp.businessobject.PaymentAccountDetail" />
             <objectClass name="org.kuali.kfs.vnd.businessobject.VendorHeader" />
+            <objectClass name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument" /> 
+            <objectClass name="org.kuali.kfs.fp.document.DisbursementVoucherDocument"/>
+            <objectClass name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax"/>
         </objectClasses>
         <!-- ==== Fields from PDP_PROC_SUM_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::id" alias="summary.id" />
@@ -60,6 +63,14 @@
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCode" alias="vendorOwnershipCode" />
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
         <field name="org.kuali.kfs.vnd.businessobject.VendorHeader::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <!-- ==== Fields from AP_PMT_RQST_T ==== -->
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::taxClassificationCode" alias="taxClassificationCode" />
+        <field name="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument::documentNumber" alias="preq.documentNumber" />
+        <!-- ==== Fields from FP_DV_DOC_T ==== -->
+        <field name="org.kuali.kfs.fp.document.DisbursementVoucherDocument::documentNumber" alias="dv.documentNumber" />
+        <!-- ==== Fields from FP_DV_NRA_TAX_T ==== -->
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::documentNumber" alias="nra.documentNumber" />
+        <field name="org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax::incomeClassCode" alias="incomeClassCode" />
     </row>
     <!--
         =================================================================
@@ -339,5 +350,6 @@
         <field name="box18" type="DECIMAL" />
         <field name="box???" type="DECIMAL" />
         <field name="box????" type="DECIMAL" />
+        <field name="endDate" type="DATE" />
     </row>
 </taxDataDefinition>
