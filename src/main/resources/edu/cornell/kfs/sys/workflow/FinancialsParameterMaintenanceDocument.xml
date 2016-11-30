@@ -1,0 +1,76 @@
+<!--
+   - Portions Modified 11/2016 and Copyright Cornell University
+   -
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   -
+   - Copyright 2005-2016 The Kuali Foundation
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<data xmlns="ns:workflow" xsi:schemaLocation="ns:workflow resource:WorkflowData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>
+                PARM
+            </name>
+            <parent>
+                FSSM
+            </parent>
+            <label>
+                Financials Parameter
+            </label>
+            <helpDefinitionURL>
+                default.htm?turl=WordDocuments%2Fparameter.htm
+            </helpDefinitionURL>
+            <active>
+                true
+            </active>
+            <routingVersion>
+                2
+            </routingVersion>
+            <routePaths>
+                <routePath>
+                    <start nextNode="KFS Parameter Change Reviewer 1" name="AdHoc" />
+                    <role nextNode="KFS Parameter Change Watcher" name="KFS Parameter Change Reviewer 1" />
+                    <role name="KFS Parameter Change Watcher" />
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc" />
+                <role name="KFS Parameter Change Reviewer 1">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                </role>
+                <role name="KFS Parameter Change Watcher">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                </role>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
+</data>
