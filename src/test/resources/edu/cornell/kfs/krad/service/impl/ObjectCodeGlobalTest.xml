@@ -1,0 +1,129 @@
+<xmlConversionTestCase>
+
+<oldData>
+  <maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ObjectCodeGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.ObjectCodeGlobal>
+    <financialObjectActiveIndicator>false</financialObjectActiveIndicator>
+    <objectCodeGlobalDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+      <unserializable-parents/>
+      <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        <default>
+          <size>1</size>
+        </default>
+        <int>10</int>
+        <org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+      </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <org.kuali.rice.kns.util.TypedArrayList>
+        <default>
+          <listObjectType>org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail</listObjectType>
+        </default>
+      </org.kuali.rice.kns.util.TypedArrayList>
+    </objectCodeGlobalDetails>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </org.kuali.kfs.coa.businessobject.ObjectCodeGlobal><maintenanceAction>New</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.ObjectCodeGlobal>
+    <documentNumber>5420758</documentNumber>
+    <financialObjectCode>6890</financialObjectCode>
+    <financialObjectCodeName>Interdept - Utilities - Waste Water</financialObjectCodeName>
+    <financialObjectCodeShortName>Waste Water</financialObjectCodeShortName>
+    <financialObjectLevelCode>UTIL</financialObjectLevelCode>
+    <reportsToFinancialObjectCode>E383</reportsToFinancialObjectCode>
+    <financialObjectTypeCode>EX</financialObjectTypeCode>
+    <financialObjectSubTypeCode>ID</financialObjectSubTypeCode>
+    <historicalFinancialObjectCode>672*</historicalFinancialObjectCode>
+    <financialObjectActiveIndicator>true</financialObjectActiveIndicator>
+    <financialBudgetAggregationCd>O</financialBudgetAggregationCd>
+    <finObjMandatoryTrnfrOrElimCd>N</finObjMandatoryTrnfrOrElimCd>
+    <financialFederalFundedCode>N</financialFederalFundedCode>
+    <objectCodeGlobalDetails class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+      <unserializable-parents/>
+      <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+        <default>
+          <size>1</size>
+        </default>
+        <int>10</int>
+        <org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+          <universityFiscalYear>2013</universityFiscalYear>
+          <chartOfAccountsCode>FS</chartOfAccountsCode>
+          <financialObjectCode>6890</financialObjectCode>
+          <documentNumber>5420758</documentNumber>
+          <newCollectionRecord>true</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+      </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <org.kuali.rice.kns.util.TypedArrayList>
+        <default>
+          <listObjectType>org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail</listObjectType>
+        </default>
+      </org.kuali.rice.kns.util.TypedArrayList>
+    </objectCodeGlobalDetails>
+    <financialObjectCodeDescr>Interdepartmental expense for waste water Use: Waste Water service provided by Cornell dept.</financialObjectCodeDescr>
+    <cgReportingCode>10OT</cgReportingCode>
+    <code>10OT</code>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </org.kuali.kfs.coa.businessobject.ObjectCodeGlobal><maintenanceAction>New</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+  <maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.ObjectCodeGlobalMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal>
+    <financialObjectActiveIndicator>false</financialObjectActiveIndicator>
+    <objectCodeGlobalDetails>
+
+
+
+
+      <org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+
+
+    </objectCodeGlobalDetails>
+    <newCollectionRecord>false</newCollectionRecord>
+
+  </edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal><maintenanceAction>New</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal>
+    <documentNumber>5420758</documentNumber>
+    <financialObjectCode>6890</financialObjectCode>
+    <financialObjectCodeName>Interdept - Utilities - Waste Water</financialObjectCodeName>
+    <financialObjectCodeShortName>Waste Water</financialObjectCodeShortName>
+    <financialObjectLevelCode>UTIL</financialObjectLevelCode>
+    <reportsToFinancialObjectCode>E383</reportsToFinancialObjectCode>
+    <financialObjectTypeCode>EX</financialObjectTypeCode>
+    <financialObjectSubTypeCode>ID</financialObjectSubTypeCode>
+    <historicalFinancialObjectCode>672*</historicalFinancialObjectCode>
+    <financialObjectActiveIndicator>true</financialObjectActiveIndicator>
+    <financialBudgetAggregationCd>O</financialBudgetAggregationCd>
+    <finObjMandatoryTrnfrOrElimCd>N</finObjMandatoryTrnfrOrElimCd>
+    <financialFederalFundedCode>N</financialFederalFundedCode>
+    <objectCodeGlobalDetails>
+
+
+
+
+      <org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+        <universityFiscalYear>2013</universityFiscalYear>
+        <chartOfAccountsCode>FS</chartOfAccountsCode>
+        <financialObjectCode>6890</financialObjectCode>
+        <documentNumber>5420758</documentNumber>
+        <newCollectionRecord>true</newCollectionRecord>
+
+      </org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail>
+
+
+    </objectCodeGlobalDetails>
+    <financialObjectCodeDescr>Interdepartmental expense for waste water Use: Waste Water service provided by Cornell dept.</financialObjectCodeDescr>
+    <cgReportingCode>10OT</cgReportingCode>
+    <code>10OT</code>
+    <newCollectionRecord>false</newCollectionRecord>
+
+  </edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal><maintenanceAction>New</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

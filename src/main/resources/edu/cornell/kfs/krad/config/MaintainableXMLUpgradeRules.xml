@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005-2013 The Kuali Foundation
+
+    Licensed under the Educational Community License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.opensource.org/licenses/ecl2.php
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+    ====
+    CU Customization (KFSUPGRADE-204):
+    Added IU's just-in-time maintainable XML conversion feature,
+    available at https://github.com/ewestfal/rice-xml-converter
+    
+    Also added extra conversion rules, and updated the comments
+    below to mention the new rules as well as some other
+    conversion feature notes.
+    
+    Another note is that our CU updates will cause the XML
+    conversion process to also consider nested elements of
+    interest plus elements that rely on "class" attributes
+    for type identification.
+    ====
+ -->
+<rules>
+
+    <!-- Rules for any changes to the fully qualified class name
+         Uses regex to match.
+
+         ====
+         CU Notes:
+
+         Although the comment above implies that regex-based matching is performed,
+         in reality both IU's and Rice's MaintainableXMLConversionServiceImpl
+         implementations appear to be using exact matching instead. For the moment,
+         the CU changes to this class are sticking with exact matching as well.
+
+         Furthermore, the patterns below have been consolidated into the
+         "maint_doc_changed_class_properties" section under the "*" entry,
+         to keep the CU version of the processing simpler due to our "class"
+         attribute value replacement feature.
+         ====
+    -->
+    <rule name="maint_doc_classname_changes" alsoRenameClass="true">
+    </rule>
+
+    <!-- Rules specifying any change in class properties.
+         Empty replacement tag will remove that property from the class.
+         Uses XPath to match names, can use wildcards
+
+         ====
+         CU Notes:
+
+         Despite the XPath matching implied above, both IU's and Rice's
+         MaintainableXMLConversionServiceImpl implementations appear
+         to be using exact matching instead, and rely on an entry with
+         a class of "*" to perform global replacements on its own pass
+         (the non-"*" map, if given, is used on a separate first pass).
+         With our CU changes, we use one pass to do the matching and
+         replacing, with non-"*"-map changes trumping "*"-map changes.
+
+         Our CU version does not use the "maint_doc_classname_changes"
+         map, and instead places its entries under the "*"-map changes
+         in the rules below.
+
+         In addition, we've added the following features to allow
+         for less hard-coded conversion of types like TypedArrayList:
+
+         [1] If a maintainable XML "class" attribute has a value equal to
+         one of the matches below, then its value will be updated or the
+         whole element will be removed accordingly. (It is possible for
+         both an element's name and its "class" attribute to be updated
+         during conversion.) If an element does have a "class" attribute
+         and its converted value results in a non-"*" map match below,
+         then that non-"*" map will be used instead of any non-"*" map
+         match for the element's converted name.
+
+         [2] Adding "(ATTR)" to the end of a key will indicate that it
+         should match on an attribute name instead of a sub-element name
+         or "class" attribute value. (Note, however, that such keys will
+         not perform matching on the attribute's value.) This is handy
+         for removing an element's "class" attribute even when
+         the element has non-"*"-map changes.
+
+         [3] For element name or "class" attribute value matching,
+         setting the replacement value to "(MOVE_NODES_TO_PARENT)"
+         will remove the element and its attributes during the conversion,
+         but will still preserve its sub-elements and move them
+         to the parent element. Handy for converting TypedArrayLists
+         with ListProxyDefaultImpl sub-elements.
+
+         [4] For element names referring to map entries, setting the
+         replacement value to "(CONVERT_TO_MAP_ENTRIES)" will wrap
+         that element and its next sibling inside of an "entry"
+         element. Needed for implementing the string-map-conversion
+         behavior from IU's and Rice's conversion code. (NOTE: Nested
+         map handling of this type is not supported at the moment.)
+         ====
+    -->
+    <rule name="maint_doc_changed_class_properties">
+        <pattern>
+            <class>org.kuali.rice.location.impl.campus.CampusBo</class>
+            <pattern>
+                <match>campusName</match>
+                <replacement>name</replacement>
+            </pattern>
+            <pattern>
+                <match>campusCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>campusShortName</match>
+                <replacement>shortName</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.coreservice.impl.parameter.ParameterBo</class>
+            <pattern>
+                <match>parameterNamespaceCode</match>
+                <replacement>namespaceCode</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterDetailTypeCode</match>
+                <replacement>componentCode</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterName</match>
+                <replacement>name</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterApplicationNamespaceCode</match>
+                <replacement>applicationId</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterValue</match>
+                <replacement>value</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterDescription</match>
+                <replacement>description</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterConstraintCode</match>
+                <replacement>evaluationOperatorCode</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterWorkgroupName</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>parameterDetailType</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>parameterNamespace</match>
+                <replacement>namespace</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.rule.RuleDelegationBo</class>
+            <pattern>
+                <match>delegationType</match>
+                <replacement>delegationTypeCode</replacement>
+            </pattern>
+            <pattern>
+                <match>delegationRuleBaseValues</match>
+                <replacement>delegationRule</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.rule.RuleBaseValues</class>
+            <pattern>
+                <match>ruleBaseValuesId</match>
+                <replacement>id</replacement>
+            </pattern>
+            <pattern>
+                <match>previousVersionId</match>
+                <replacement>previousRuleId</replacement>
+            </pattern>
+            <pattern>
+                <match>activeInd</match>
+                <replacement>active</replacement>
+            </pattern>
+            <pattern>
+                <match>routeHeaderId</match>
+                <replacement>documentId</replacement>
+            </pattern>
+            <pattern>
+                <match>toDate</match>
+                <replacement>toDateValue</replacement>
+            </pattern>
+            <pattern>
+                <match>fromDate</match>
+                <replacement>fromDateValue</replacement>
+            </pattern>
+            <pattern>
+                <match>activeInd</match>
+                <replacement>active</replacement>
+            </pattern>
+            <pattern>
+                <match>ignorePrevious</match>
+                <replacement>forceAction</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.rule.bo.RuleTemplateBo</class>
+            <pattern>
+                <match>ruleTemplateId</match>
+                <replacement>id</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.location.impl.campus.CampusTypeBo</class>
+            <pattern>
+                <match>campusTypeCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>campusTypeName</match>
+                <replacement>name</replacement>
+            </pattern>
+            <pattern>
+                <match>dataObjectMaintenanceCodeActiveIndicator</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</class>
+            <pattern>
+                <match>applicationNamespaceCode</match>
+                <replacement>applicationId</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.coreservice.impl.component.ComponentBo</class>
+            <pattern>
+                <match>parameterNamespaceCode</match>
+                <replacement>namespaceCode</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterDetailTypeCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>parameterDetailTypeName</match>
+                <replacement>name</replacement>
+            </pattern>
+            <pattern>
+                <match>virtualDetailType</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.location.impl.country.CountryBo</class>
+            <pattern>
+                <match>postalCountryCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>alternatePostalCountryCode</match>
+                <replacement>alternateCode</replacement>
+            </pattern>
+            <pattern>
+                <match>postalCountryName</match>
+                <replacement>name</replacement>
+            </pattern>
+            <pattern>
+                <match>postalCountryRestrictedIndicator</match>
+                <replacement>restricted</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kim.impl.permission.GenericPermissionBo</class>
+            <pattern>
+                <match>permissionId</match>
+                <replacement>id</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.doctype.bo.DocumentType</class>
+            <pattern>
+                <match>routeHeaderId</match>
+                <replacement>documentId</replacement>
+            </pattern>
+            <pattern>
+                <match>actualServiceNamespace</match>
+                <replacement>actualApplicationId</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.rule.PersonRuleResponsibility</class>
+            <pattern>
+                <match>ruleResponsibilityKey</match>
+                <replacement>id</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.rule.GroupRuleResponsibility</class>
+            <pattern>
+                <match>ruleResponsibilityKey</match>
+                <replacement>id</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kew.rule.RoleRuleResponsibility</class>
+            <pattern>
+                <match>ruleResponsibilityKey</match>
+                <replacement>id</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>a21SubAccount</class>
+            <pattern>
+                <match>indirectCostRecoveryChartOfAccountsCode</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>indirectCostRecoveryAccountNumber</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.Account</class>
+            <pattern>
+                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
+                <replacement>org.kuali.rice.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+            <pattern>
+                <match>indirectCostRcvyFinCoaCode</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>indirectCostRecoveryAcctNbr</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation</class>
+            <pattern>
+                <match>disbursementVoucherDocumentationLocationCode</match>
+                <replacement>paymentDocumentationLocationCode</replacement>
+            </pattern>
+            <pattern>
+                <match>disbursementVoucherDocumentationLocationName</match>
+                <replacement>paymentDocumentationLocationName</replacement>
+            </pattern>
+            <pattern>
+                <match>disbursementVoucherDocumentationLocationAddress</match>
+                <replacement>paymentDocumentationLocationAddress</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.identity.OrgReviewRole</class>
+            <pattern>
+                <match>delegation</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>delegationMemberRole</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>delegationMemberGroup</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>delegationMemberPerson</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>memberRole</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>memberGroup</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>memberPerson</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</class>
+            <pattern>
+                <match>responsibilityId</match>
+                <replacement>id</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.location.impl.state.StateBo</class>
+            <pattern>
+                <match>postalCountryCode</match>
+                <replacement>countryCode</replacement>
+            </pattern>
+            <pattern>
+                <match>postalStateCode</match>
+                <replacement>code</replacement>
+            </pattern>
+            <pattern>
+                <match>postalStateName</match>
+                <replacement>name</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute</class>
+            <pattern>
+                <match>laborBenefitRateCategoryCode</match>
+                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.rice.kim.impl.identity.PersonImpl</class>
+            <pattern>
+                <match>address</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressLine1</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressLine2</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressLine3</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressCityName</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressStateCode</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressPostalCode</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>addressCountryCode</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <!-- ==== CU Customization ==== -->
+        <pattern>
+            <class>org.kuali.rice.kns.util.TypedArrayList</class>
+            <pattern>
+                <match>class(ATTR)</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>unserializable-parents</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.util.TypedArrayList</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl</match>
+                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl</class>
+            <pattern>
+                <match>default</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>int</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <!-- Special entry for converting string maps. -->
+        <pattern>
+            <class>map</class>
+            <pattern>
+                <match>default</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>int</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>string</match>
+                <replacement>(CONVERT_TO_MAP_ENTRIES)</replacement>
+            </pattern>
+        </pattern>
+        <!-- Added match for performing the same ManageableArrayList handling as in UCD's version of the code. -->
+        <pattern>
+            <class>org.apache.ojb.broker.util.collections.ManageableArrayList</class>
+            <pattern>
+                <match>class(ATTR)</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <!-- Added global matches. -->
+        <pattern>
+            <class>*</class>
+            <pattern>
+                <match>serialization(ATTR)</match>
+                <replacement></replacement>
+            </pattern>
+            <!-- KDO-763 -->
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.ObjectCodeGlobal</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.CUObjectCodeGlobal</replacement>
+            </pattern>
+            <!--KDO-766 -->
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.AccountReversion</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.AccountReversion</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.coa.businessobject.AccountReversionDetail</match>
+                <replacement>edu.cornell.kfs.coa.businessobject.AccountReversionDetail</replacement>
+            </pattern>
+            <!-- KDO-934 -->
+            <pattern>
+                <match>edu.cornell.kfs.vnd.businessobject.CuVendorChapter4Status</match>
+                <replacement>org.kuali.kfs.vnd.businessobject.Chapter4Status</replacement>
+            </pattern>
+            <!-- Moved the following entries over from the "maint_doc_classname_changes" section. -->
+            <pattern>
+                <match>org.kuali.rice.kns.bo.CampusImpl</match>
+                <replacement>org.kuali.rice.location.impl.campus.CampusBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.Parameter</match>
+                <replacement>org.kuali.rice.coreservice.impl.parameter.ParameterBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kew.rule.RuleDelegation</match>
+                <replacement>org.kuali.rice.kew.rule.RuleDelegationBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.CampusTypeImpl</match>
+                <replacement>org.kuali.rice.location.impl.campus.CampusTypeBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.Namespace</match>
+                <replacement>org.kuali.rice.coreservice.impl.namespace.NamespaceBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.ParameterDetailType</match>
+                <replacement>org.kuali.rice.coreservice.impl.component.ComponentBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.CountryImpl</match>
+                <replacement>org.kuali.rice.location.impl.country.CountryBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.bo.impl.GenericPermission</match>
+                <replacement>org.kuali.rice.kim.impl.permission.GenericPermissionBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.KualiCodeBase</match>
+                <replacement>org.kuali.kfs.krad.bo.KualiCodeBase</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
+                <replacement>org.kuali.rice.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.fp.businessobject.WireCharge</match>
+                <replacement>org.kuali.kfs.sys.businessobject.WireCharge</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.fp.businessobject.DisbursementVoucherDocumentationLocation</match>
+                <replacement>org.kuali.kfs.sys.businessobject.PaymentDocumentationLocation</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.StateImpl</match>
+                <replacement>org.kuali.rice.location.impl.state.StateBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kim.bo.impl.ReviewResponsibility</match>
+                <replacement>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.kns.bo.Note</match>
+                <replacement>org.kuali.kfs.krad.bo.Note</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.krad.bo.Note</match>
+                <replacement>org.kuali.kfs.krad.bo.Note</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.krad.bo.NoteType</match>
+                <replacement>org.kuali.kfs.krad.bo.NoteType</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.rice.krad.bo.AdHocRoutePerson</match>
+                <replacement>org.kuali.kfs.krad.bo.AdHocRoutePerson</replacement>
+            </pattern>
+            <pattern>
+                <match>boNotes</match>
+                <replacement>(CONVERT_LEGACY_NOTES)</replacement>
+            </pattern>
+            <pattern>
+                <match>unserializable-parents</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>autoIncrementSet</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>map</match>
+                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <!-- KDO-873 -->
+        <pattern>
+            <class>organizationOwnerAccount</class>
+            <pattern>
+                <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
+                <replacement>org.kuali.rice.kim.impl.identity.PersonImpl</replacement>
+            </pattern>
+            <pattern>
+                <match>indirectCostRcvyFinCoaCode</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>indirectCostRecoveryAcctNbr</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <!-- KDO-873 end -->
+        <!-- KDO-934 -->
+        <!--
+            NOTE: We will need to revisit these VendorHeader conversion rules with the next
+            major change to vendor object structure, since our header extension object has
+            been added back in but with a reduced number of properties (though these rules
+            should not end up getting applied to the newer-style headers).
+        -->
+        <pattern>
+            <class>vendorHeader</class>
+            <pattern>
+                <match>extension</match>
+                <replacement>(MOVE_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension</class>
+            <pattern>
+                <match>vendorHeaderGeneratedIdentifier</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>objectId</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>versionNumber</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>newCollectionRecord</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>vendorW9ReceivedDate</match>
+                <replacement>vendorW9SignedDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorW8BenReceivedDate</match>
+                <replacement>vendorW8SignedDate</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignTaxNumber</match>
+                <replacement>vendorForeignTaxId</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorForeignRecipientBirthDate</match>
+                <replacement>vendorDOB</replacement>
+            </pattern>
+            <pattern>
+                <match>vendorLocale</match>
+                <replacement></replacement>
+            </pattern>
+            <pattern>
+                <match>vendorChapter4Status</match>
+                <replacement>chapter4Status</replacement>
+            </pattern>
+        </pattern>
+        <!-- KDO-934 end -->
+        <pattern>
+            <class>noteType</class>
+            <pattern>
+                <match>reference(ATTR)</match>
+                <replacement></replacement>
+            </pattern>
+        </pattern>
+        <!-- ==== End CU Customization ==== -->
+    </rule>
+
+    <!-- Rules for any changes Dates from the format YYYY-MM-DD to other format.  The
+       text in the replacement section will be added to the end of the date.
+       i.e 2010-05-09  will become 2010-05-09 00:00:00.0
+    -->
+    <rule name="maint_doc_date_changes">
+        <pattern>
+            <match>fromDateValue</match>
+            <replacement>00:00:00.0</replacement>
+        </pattern>
+        <pattern>
+            <match>toDateValue</match>
+            <replacement>00:00:00.0</replacement>
+        </pattern>
+        <pattern>
+            <match>activeFromDate</match>
+            <replacement>00:00:00 GMT-08:00</replacement>
+        </pattern>
+        <pattern>
+            <match>activeToDate</match>
+            <replacement>00:00:00 GMT-08:00</replacement>
+        </pattern>
+        <pattern>
+            <match>notePostedTimestamp</match>
+            <replacement>.0</replacement>
+        </pattern>
+    </rule>
+</rules>
