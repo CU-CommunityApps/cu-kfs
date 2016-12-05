@@ -1,0 +1,255 @@
+<xmlConversionTestCase>
+
+<oldData>
+  <maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountReversionMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountReversion>
+    <accountNumber>4253312</accountNumber>
+    <accountReversionDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+      <org.kuali.kfs.coa.businessobject.AccountReversionDetail>
+        <accountNumber>4253312</accountNumber>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <accountReversionCode>CA</accountReversionCode>
+        <accountReversionObjectCode>3059</accountReversionObjectCode>
+        <universityFiscalYear>2014</universityFiscalYear>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <reversionObject>
+          <universityFiscalYear>2014</universityFiscalYear>
+          <chartOfAccountsCode>IT</chartOfAccountsCode>
+          <financialObjectCode>3059</financialObjectCode>
+          <financialObjectCodeName>Tfer from - Year End Closing</financialObjectCodeName>
+          <financialObjectCodeShortName>TF Year End</financialObjectCodeShortName>
+          <historicalFinancialObjectCode>259*</historicalFinancialObjectCode>
+          <active>true</active>
+          <financialObjectLevelCode>TTIN</financialObjectLevelCode>
+          <reportsToChartOfAccountsCode>CU</reportsToChartOfAccountsCode>
+          <reportsToFinancialObjectCode>T000</reportsToFinancialObjectCode>
+          <financialObjectTypeCode>IN</financialObjectTypeCode>
+          <financialObjectSubTypeCode>TN</financialObjectSubTypeCode>
+          <financialBudgetAggregationCd>O</financialBudgetAggregationCd>
+          <finObjMandatoryTrnfrelimCd>N</finObjMandatoryTrnfrelimCd>
+          <financialFederalFundedCode>N</financialFederalFundedCode>
+          <versionNumber>4</versionNumber>
+          <objectId>08E0D210-AA6C-D56C-A183-BF9C3D64E10C</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </reversionObject>
+        <reversionCategory>
+          <reversionCategoryCode>A1</reversionCategoryCode>
+          <reversionCategoryName>Reversion</reversionCategoryName>
+          <reversionSortCode>A1</reversionSortCode>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>9D6E35AC2A6CE77EE04054802EC264EA</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </reversionCategory>
+        <versionNumber>1</versionNumber>
+        <objectId>26420C9D-4D9A-B365-7B71-EBBD31149E94</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionDetail>
+    </accountReversionDetails>
+    <universityFiscalYear>2014</universityFiscalYear>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <budgetReversionChartOfAccountsCode>IT</budgetReversionChartOfAccountsCode>
+    <budgetReversionAccountNumber>4253100</budgetReversionAccountNumber>
+    <carryForwardByObjectCodeIndicator>false</carryForwardByObjectCodeIndicator>
+    <cashReversionFinancialChartOfAccountsCode>IT</cashReversionFinancialChartOfAccountsCode>
+    <cashReversionAccountNumber>4253100</cashReversionAccountNumber>
+    <active>true</active>
+    <versionNumber>1</versionNumber>
+    <objectId>5D181424-4571-9834-E4A0-A80FABA31DF3</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </org.kuali.kfs.coa.businessobject.AccountReversion><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountReversion>
+    <accountNumber>4253312</accountNumber>
+    <accountReversionDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+      <org.kuali.kfs.coa.businessobject.AccountReversionDetail>
+        <accountNumber>4253312</accountNumber>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <accountReversionCode>CA</accountReversionCode>
+        <accountReversionObjectCode>3059</accountReversionObjectCode>
+        <universityFiscalYear>2014</universityFiscalYear>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <reversionObject>
+          <universityFiscalYear>2014</universityFiscalYear>
+          <chartOfAccountsCode>IT</chartOfAccountsCode>
+          <financialObjectCode>3059</financialObjectCode>
+          <financialObjectCodeName>Tfer from - Year End Closing</financialObjectCodeName>
+          <financialObjectCodeShortName>TF Year End</financialObjectCodeShortName>
+          <historicalFinancialObjectCode>259*</historicalFinancialObjectCode>
+          <active>true</active>
+          <financialObjectLevelCode>TTIN</financialObjectLevelCode>
+          <reportsToChartOfAccountsCode>CU</reportsToChartOfAccountsCode>
+          <reportsToFinancialObjectCode>T000</reportsToFinancialObjectCode>
+          <financialObjectTypeCode>IN</financialObjectTypeCode>
+          <financialObjectSubTypeCode>TN</financialObjectSubTypeCode>
+          <financialBudgetAggregationCd>O</financialBudgetAggregationCd>
+          <finObjMandatoryTrnfrelimCd>N</finObjMandatoryTrnfrelimCd>
+          <financialFederalFundedCode>N</financialFederalFundedCode>
+          <versionNumber>4</versionNumber>
+          <objectId>08E0D210-AA6C-D56C-A183-BF9C3D64E10C</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </reversionObject>
+        <reversionCategory>
+          <reversionCategoryCode>A1</reversionCategoryCode>
+          <reversionCategoryName>Reversion</reversionCategoryName>
+          <reversionSortCode>A1</reversionSortCode>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>9D6E35AC2A6CE77EE04054802EC264EA</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+          <autoIncrementSet>false</autoIncrementSet>
+        </reversionCategory>
+        <versionNumber>1</versionNumber>
+        <objectId>26420C9D-4D9A-B365-7B71-EBBD31149E94</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.coa.businessobject.AccountReversionDetail>
+    </accountReversionDetails>
+    <universityFiscalYear>2014</universityFiscalYear>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <budgetReversionChartOfAccountsCode>IT</budgetReversionChartOfAccountsCode>
+    <budgetReversionAccountNumber>4253100</budgetReversionAccountNumber>
+    <carryForwardByObjectCodeIndicator>false</carryForwardByObjectCodeIndicator>
+    <cashReversionFinancialChartOfAccountsCode>IT</cashReversionFinancialChartOfAccountsCode>
+    <cashReversionAccountNumber>4253100</cashReversionAccountNumber>
+    <active>false</active>
+    <versionNumber>1</versionNumber>
+    <objectId>5D181424-4571-9834-E4A0-A80FABA31DF3</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <autoIncrementSet>false</autoIncrementSet>
+  </org.kuali.kfs.coa.businessobject.AccountReversion><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+  <maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountReversionMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.AccountReversion>
+    <accountNumber>4253312</accountNumber>
+    <accountReversionDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+      <edu.cornell.kfs.coa.businessobject.AccountReversionDetail>
+        <accountNumber>4253312</accountNumber>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <accountReversionCode>CA</accountReversionCode>
+        <accountReversionObjectCode>3059</accountReversionObjectCode>
+        <universityFiscalYear>2014</universityFiscalYear>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <reversionObject>
+          <universityFiscalYear>2014</universityFiscalYear>
+          <chartOfAccountsCode>IT</chartOfAccountsCode>
+          <financialObjectCode>3059</financialObjectCode>
+          <financialObjectCodeName>Tfer from - Year End Closing</financialObjectCodeName>
+          <financialObjectCodeShortName>TF Year End</financialObjectCodeShortName>
+          <historicalFinancialObjectCode>259*</historicalFinancialObjectCode>
+          <active>true</active>
+          <financialObjectLevelCode>TTIN</financialObjectLevelCode>
+          <reportsToChartOfAccountsCode>CU</reportsToChartOfAccountsCode>
+          <reportsToFinancialObjectCode>T000</reportsToFinancialObjectCode>
+          <financialObjectTypeCode>IN</financialObjectTypeCode>
+          <financialObjectSubTypeCode>TN</financialObjectSubTypeCode>
+          <financialBudgetAggregationCd>O</financialBudgetAggregationCd>
+          <finObjMandatoryTrnfrelimCd>N</finObjMandatoryTrnfrelimCd>
+          <financialFederalFundedCode>N</financialFederalFundedCode>
+          <versionNumber>4</versionNumber>
+          <objectId>08E0D210-AA6C-D56C-A183-BF9C3D64E10C</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+
+        </reversionObject>
+        <reversionCategory>
+          <reversionCategoryCode>A1</reversionCategoryCode>
+          <reversionCategoryName>Reversion</reversionCategoryName>
+          <reversionSortCode>A1</reversionSortCode>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>9D6E35AC2A6CE77EE04054802EC264EA</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+
+        </reversionCategory>
+        <versionNumber>1</versionNumber>
+        <objectId>26420C9D-4D9A-B365-7B71-EBBD31149E94</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </edu.cornell.kfs.coa.businessobject.AccountReversionDetail>
+    </accountReversionDetails>
+    <universityFiscalYear>2014</universityFiscalYear>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <budgetReversionChartOfAccountsCode>IT</budgetReversionChartOfAccountsCode>
+    <budgetReversionAccountNumber>4253100</budgetReversionAccountNumber>
+    <carryForwardByObjectCodeIndicator>false</carryForwardByObjectCodeIndicator>
+    <cashReversionFinancialChartOfAccountsCode>IT</cashReversionFinancialChartOfAccountsCode>
+    <cashReversionAccountNumber>4253100</cashReversionAccountNumber>
+    <active>true</active>
+    <versionNumber>1</versionNumber>
+    <objectId>5D181424-4571-9834-E4A0-A80FABA31DF3</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+
+  </edu.cornell.kfs.coa.businessobject.AccountReversion><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.AccountReversion>
+    <accountNumber>4253312</accountNumber>
+    <accountReversionDetails class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl">
+      <edu.cornell.kfs.coa.businessobject.AccountReversionDetail>
+        <accountNumber>4253312</accountNumber>
+        <accountReversionCategoryCode>A1</accountReversionCategoryCode>
+        <accountReversionCode>CA</accountReversionCode>
+        <accountReversionObjectCode>3059</accountReversionObjectCode>
+        <universityFiscalYear>2014</universityFiscalYear>
+        <chartOfAccountsCode>IT</chartOfAccountsCode>
+        <active>true</active>
+        <reversionObject>
+          <universityFiscalYear>2014</universityFiscalYear>
+          <chartOfAccountsCode>IT</chartOfAccountsCode>
+          <financialObjectCode>3059</financialObjectCode>
+          <financialObjectCodeName>Tfer from - Year End Closing</financialObjectCodeName>
+          <financialObjectCodeShortName>TF Year End</financialObjectCodeShortName>
+          <historicalFinancialObjectCode>259*</historicalFinancialObjectCode>
+          <active>true</active>
+          <financialObjectLevelCode>TTIN</financialObjectLevelCode>
+          <reportsToChartOfAccountsCode>CU</reportsToChartOfAccountsCode>
+          <reportsToFinancialObjectCode>T000</reportsToFinancialObjectCode>
+          <financialObjectTypeCode>IN</financialObjectTypeCode>
+          <financialObjectSubTypeCode>TN</financialObjectSubTypeCode>
+          <financialBudgetAggregationCd>O</financialBudgetAggregationCd>
+          <finObjMandatoryTrnfrelimCd>N</finObjMandatoryTrnfrelimCd>
+          <financialFederalFundedCode>N</financialFederalFundedCode>
+          <versionNumber>4</versionNumber>
+          <objectId>08E0D210-AA6C-D56C-A183-BF9C3D64E10C</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+
+        </reversionObject>
+        <reversionCategory>
+          <reversionCategoryCode>A1</reversionCategoryCode>
+          <reversionCategoryName>Reversion</reversionCategoryName>
+          <reversionSortCode>A1</reversionSortCode>
+          <active>true</active>
+          <versionNumber>1</versionNumber>
+          <objectId>9D6E35AC2A6CE77EE04054802EC264EA</objectId>
+          <newCollectionRecord>false</newCollectionRecord>
+
+        </reversionCategory>
+        <versionNumber>1</versionNumber>
+        <objectId>26420C9D-4D9A-B365-7B71-EBBD31149E94</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </edu.cornell.kfs.coa.businessobject.AccountReversionDetail>
+    </accountReversionDetails>
+    <universityFiscalYear>2014</universityFiscalYear>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <budgetReversionChartOfAccountsCode>IT</budgetReversionChartOfAccountsCode>
+    <budgetReversionAccountNumber>4253100</budgetReversionAccountNumber>
+    <carryForwardByObjectCodeIndicator>false</carryForwardByObjectCodeIndicator>
+    <cashReversionFinancialChartOfAccountsCode>IT</cashReversionFinancialChartOfAccountsCode>
+    <cashReversionAccountNumber>4253100</cashReversionAccountNumber>
+    <active>false</active>
+    <versionNumber>1</versionNumber>
+    <objectId>5D181424-4571-9834-E4A0-A80FABA31DF3</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+
+  </edu.cornell.kfs.coa.businessobject.AccountReversion><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

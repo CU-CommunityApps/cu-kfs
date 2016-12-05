@@ -1,0 +1,112 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterValue>Some New Value</parameterValue>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+  <boNotes>
+    <org.kuali.rice.kns.bo.Note>
+      <noteIdentifier>1541785</noteIdentifier>
+      <remoteObjectIdentifier>00000000-1111-2222-3333-444444444444</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1234567</authorUniversalIdentifier>
+      <notePostedTimestamp>2013-02-01 08:42:45.556</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Adding a note</noteText>
+      <versionNumber>1</versionNumber>
+      <objectId>99999999-8888-7777-6666-555555555555</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.rice.kns.bo.Note>
+    <org.kuali.rice.kns.bo.Note>
+      <noteIdentifier>1541786</noteIdentifier>
+      <remoteObjectIdentifier>00000000-1111-2222-3333-444444444444</remoteObjectIdentifier>
+      <authorUniversalIdentifier>98765</authorUniversalIdentifier>
+      <notePostedTimestamp>2013-02-01 10:06:47.451</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>This is another note!</noteText>
+      <versionNumber>1</versionNumber>
+      <objectId>11111111-3333-5555-7777-999999999999</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+    </org.kuali.rice.kns.bo.Note>
+  </boNotes>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <value>Some New Value</value>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>1541785</noteIdentifier>
+      <remoteObjectIdentifier>00000000-1111-2222-3333-444444444444</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1234567</authorUniversalIdentifier>
+      <notePostedTimestamp>2013-02-01 08:42:45.556</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Adding a note</noteText>
+      <versionNumber>1</versionNumber>
+      <objectId>99999999-8888-7777-6666-555555555555</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>1541786</noteIdentifier>
+      <remoteObjectIdentifier>00000000-1111-2222-3333-444444444444</remoteObjectIdentifier>
+      <authorUniversalIdentifier>98765</authorUniversalIdentifier>
+      <notePostedTimestamp>2013-02-01 10:06:47.451</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>This is another note!</noteText>
+      <versionNumber>1</versionNumber>
+      <objectId>11111111-3333-5555-7777-999999999999</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+  </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
