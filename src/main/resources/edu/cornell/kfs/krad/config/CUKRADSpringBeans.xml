@@ -30,4 +30,41 @@
         </property>
     </bean>
 
+    <bean id="cf.maintainableXMLConversionService" class="edu.cornell.kfs.krad.service.impl.NoOpMaintainableXMLConversionServiceImpl" />
+
+    <bean id="cuMaintainableXMLConversionService" parent="cuMaintainableXMLConversionService-parentBean"/>
+    <bean id="cuMaintainableXMLConversionService-parentBean" abstract="true" class="edu.cornell.kfs.krad.service.impl.CuMaintainableXMLConversionServiceImpl">
+        <property name="conversionRuleFile" value="classpath:edu/cornell/kfs/krad/config/MaintainableXMLUpgradeRules.xml"/>
+    </bean>
+
+    <bean id="cf.documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl">
+        <property name="documentDao">
+            <ref bean="cf.documentDao"/>
+        </property>
+        <property name="dateTimeService">
+            <ref bean="cf.dateTimeService"/>
+        </property>
+        <property name="workflowDocumentService">
+            <ref bean="cf.workflowDocumentService"/>
+        </property>
+        <property name="documentHeaderService">
+            <ref bean="cf.documentHeaderService"/>
+        </property>
+        <property name="businessObjectService">
+            <ref bean="cf.businessObjectService"/>
+        </property>
+        <property name="noteService">
+            <ref bean="cf.noteService"/>
+        </property>
+        <property name="dataDictionaryService">
+            <ref bean="cf.dataDictionaryService"/>
+        </property>
+        <property name="kualiConfigurationService">
+            <ref bean="cf.kualiConfigurationService"/>
+        </property>
+        <property name="maintainableXMLConversionService">
+            <ref bean="cuMaintainableXMLConversionService"/>
+        </property>
+    </bean>
+
 </beans>

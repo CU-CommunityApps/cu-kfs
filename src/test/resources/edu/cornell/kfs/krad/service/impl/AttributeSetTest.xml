@@ -1,0 +1,121 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+  <qualifier serialization="custom">
+    <unserializable-parents/>
+    <map>
+      <default>
+        <loadFactor>0.75</loadFactor>
+        <threshold>12</threshold>
+      </default>
+      <int>16</int>
+      <int>4</int>
+      <string>firstItem</string>
+      <string>1234</string>
+      <string>secondItem</string>
+      <string>SOME_VALUE</string>
+      <string>thirdItem</string>
+      <string>100000.00</string>
+      <string>fourthItem</string>
+      <string>12/12/2012</string>
+    </map>
+  </qualifier>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterValue>Some New Value</parameterValue>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+  <qualifier serialization="custom">
+    <unserializable-parents/>
+    <map>
+      <default>
+        <loadFactor>0.75</loadFactor>
+        <threshold>12</threshold>
+      </default>
+      <int>16</int>
+      <int>4</int>
+      <string>firstItem</string>
+      <string>1234</string>
+      <string>secondItem</string>
+      <string>SOME_VALUE</string>
+      <string>thirdItem</string>
+      <string>100000.00</string>
+      <string>fourthItem</string>
+      <string>12/12/2012</string>
+    </map>
+  </qualifier>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <qualifier>
+      <entry><string>firstItem</string>
+      <string>1234</string></entry>
+      <entry><string>secondItem</string>
+      <string>SOME_VALUE</string></entry>
+      <entry><string>thirdItem</string>
+      <string>100000.00</string></entry>
+      <entry><string>fourthItem</string>
+      <string>12/12/2012</string></entry>
+  </qualifier>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <value>Some New Value</value>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <qualifier>
+      <entry><string>firstItem</string>
+      <string>1234</string></entry>
+      <entry><string>secondItem</string>
+      <string>SOME_VALUE</string></entry>
+      <entry><string>thirdItem</string>
+      <string>100000.00</string></entry>
+      <entry><string>fourthItem</string>
+      <string>12/12/2012</string></entry>
+  </qualifier>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
