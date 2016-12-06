@@ -1,0 +1,135 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <active>true</active>
+  <securityGroupTabs class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>2</size>
+      </default>
+      <int>10</int>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.rice.ksr.bo.SecurityGroupTab</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </securityGroupTabs>
+</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <securityGroupId>
+    <value>1</value>
+  </securityGroupId>
+  <securityGroupName>Test Security Group 01</securityGroupName>
+  <securityGroupDescription>This security group is only for testing purposes</securityGroupDescription>
+  <active>true</active>
+  <securityGroupTabs class="org.kuali.rice.kns.util.TypedArrayList" serialization="custom">
+    <unserializable-parents/>
+    <org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+      <default>
+        <size>2</size>
+      </default>
+      <int>10</int>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>true</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <tabId>
+          <value>2</value>
+        </tabId>
+        <tabName>One Set of Roles</tabName>
+        <tabOrder>
+          <value>1</value>
+        </tabOrder>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>true</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <tabId>
+          <value>3</value>
+        </tabId>
+        <tabName>Another Set of Roles</tabName>
+        <tabOrder>
+          <value>2</value>
+        </tabOrder>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+    </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.kns.util.TypedArrayList>
+      <default>
+        <listObjectType>org.kuali.rice.ksr.bo.SecurityGroupTab</listObjectType>
+      </default>
+    </org.kuali.rice.kns.util.TypedArrayList>
+  </securityGroupTabs>
+</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.ksr.maintenance.SecurityGroupMaintainable"><oldMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+  <newCollectionRecord>false</newCollectionRecord>
+  <active>true</active>
+  <securityGroupTabs>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>false</newCollectionRecord>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>false</newCollectionRecord>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+  </securityGroupTabs>
+</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.ksr.bo.SecurityGroup>
+  <newCollectionRecord>false</newCollectionRecord>
+  <securityGroupId>
+    <value>1</value>
+  </securityGroupId>
+  <securityGroupName>Test Security Group 01</securityGroupName>
+  <securityGroupDescription>This security group is only for testing purposes</securityGroupDescription>
+  <active>true</active>
+  <securityGroupTabs>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>true</newCollectionRecord>
+        <tabId>
+          <value>2</value>
+        </tabId>
+        <tabName>One Set of Roles</tabName>
+        <tabOrder>
+          <value>1</value>
+        </tabOrder>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+      <org.kuali.rice.ksr.bo.SecurityGroupTab>
+        <newCollectionRecord>true</newCollectionRecord>
+        <tabId>
+          <value>3</value>
+        </tabId>
+        <tabName>Another Set of Roles</tabName>
+        <tabOrder>
+          <value>2</value>
+        </tabOrder>
+        <active>true</active>
+      </org.kuali.rice.ksr.bo.SecurityGroupTab>
+  </securityGroupTabs>
+</org.kuali.rice.ksr.bo.SecurityGroup><maintenanceAction>New</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

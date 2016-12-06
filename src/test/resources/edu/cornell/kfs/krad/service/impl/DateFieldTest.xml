@@ -1,0 +1,79 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+  <fromDateValue>2013-01-01</fromDateValue>
+  <toDateValue>2013-01-31</toDateValue>
+  <activeFromDate>2014-07-15</activeFromDate>
+  <activeToDate>2014-07-16</activeToDate>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterValue>Some New Value</parameterValue>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+  <fromDateValue>2013-01-01 12:00:50.6</fromDateValue>
+  <toDateValue>2013-01-31 08:35:22.1</toDateValue>
+  <activeFromDate>2014-07-15 15:14:13 GMT-08:00</activeFromDate>
+  <activeToDate>2014-07-16 03:02:01 GMT-08:00</activeToDate>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <fromDateValue>2013-01-01 00:00:00.0</fromDateValue>
+  <toDateValue>2013-01-31 00:00:00.0</toDateValue>
+  <activeFromDate>2014-07-15 00:00:00 GMT-08:00</activeFromDate>
+  <activeToDate>2014-07-16 00:00:00 GMT-08:00</activeToDate>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <value>Some New Value</value>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+  <fromDateValue>2013-01-01 12:00:50.6</fromDateValue>
+  <toDateValue>2013-01-31 08:35:22.1</toDateValue>
+  <activeFromDate>2014-07-15 15:14:13 GMT-08:00</activeFromDate>
+  <activeToDate>2014-07-16 03:02:01 GMT-08:00</activeToDate>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
