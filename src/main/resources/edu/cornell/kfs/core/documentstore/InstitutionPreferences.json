@@ -2111,19 +2111,47 @@
           },
           {
             "businessObjectClass": "org.kuali.kfs.coreservice.impl.namespace.NamespaceBo",
-            "linkType": "kfs"
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
           },
           {
             "documentTypeCode": "PARM",
-            "linkType": "kfs"
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
           },
           {
             "businessObjectClass": "org.kuali.kfs.coreservice.impl.component.ComponentBo",
-            "linkType": "kfs"
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
           },
           {
             "businessObjectClass": "org.kuali.kfs.coreservice.impl.parameter.ParameterTypeBo",
-            "linkType": "kfs"
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS*"
+              }
+            }
           },
           {
             "documentTypeCode": "FFD",
