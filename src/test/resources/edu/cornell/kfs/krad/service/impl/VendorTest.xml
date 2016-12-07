@@ -1,0 +1,917 @@
+<xmlConversionTestCase>
+
+<oldData>
+  <maintainableDocumentContents maintainableImplClass='edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl'><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/><oldMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+    <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+    <vendorParentIndicator>false</vendorParentIndicator>
+    <vendorName>Avis Rent A Car System LLC</vendorName>
+    <activeIndicator>true</activeIndicator>
+    <vendorDunsNumber>062506134</vendorDunsNumber>
+    <vendorPaymentTermsCode>00N30</vendorPaymentTermsCode>
+    <vendorShippingTitleCode>DE</vendorShippingTitleCode>
+    <vendorShippingPaymentTermsCode>PA</vendorShippingPaymentTermsCode>
+    <vendorUrlAddress>www.avisbudgetgroup.com</vendorUrlAddress>
+    <vendorFirstLastNameIndicator>false</vendorFirstLastNameIndicator>
+    <taxableIndicator>false</taxableIndicator>
+    <vendorAddresses>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>PO</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Ieuan Sandiford</vendorAttentionName>
+        <vendorAddressEmailAddress>ieuan.sandiford@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>B9B15E24-8B0D-1E2A-1211-3D8B34E2670A</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'><vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorDefaultAddressIndicator>false</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>3</versionNumber>
+        <objectId>42657EB6-9416-6995-FC95-7F7FB46B4ACB</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'><vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>300 Center Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Remittance Processing Department</vendorAttentionName>
+        <vendorAddressEmailAddress>remittanceporcessing@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorFaxNumber>757-687-3795</vendorFaxNumber>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>9F3A7FCF-416E-6D63-783D-610C9D3D5749</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'><vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+    </vendorAddresses>
+    <vendorAliases/>
+    <vendorContacts>
+      <org.kuali.kfs.vnd.businessobject.VendorContact>
+        <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorContactTypeCode>AR</vendorContactTypeCode>
+        <vendorContactName>Kettly Galiote</vendorContactName>
+        <vendorContactEmailAddress>kettly.galiote@avisbudget.com</vendorContactEmailAddress>
+        <vendorContactCommentText>FAX 757-687-3796</vendorContactCommentText>
+        <vendorLine1Address>300 Centre Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <active>true</active>
+        <vendorContactPhoneNumbers>
+          <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+            <vendorContactPhoneGeneratedIdentifier>28177</vendorContactPhoneGeneratedIdentifier>
+            <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+            <vendorPhoneTypeCode>AR</vendorPhoneTypeCode>
+            <vendorPhoneNumber>757-687-2589</vendorPhoneNumber>
+            <active>true</active>
+            <versionNumber>2</versionNumber>
+            <objectId>EF1CDC30-A02B-088E-9C6A-441F6546182F</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+            <autoIncrementSet>false</autoIncrementSet>
+          </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+        </vendorContactPhoneNumbers>
+        <versionNumber>2</versionNumber>
+        <objectId>89E03501-7B3F-FEB1-CBB8-DB42FE5BCB98</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.vnd.businessobject.VendorContact>
+    </vendorContacts>
+    <vendorContracts/>
+    <vendorCustomerNumbers/>
+    <vendorPhoneNumbers>
+      <org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+        <vendorPhoneGeneratedIdentifier>18875</vendorPhoneGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorPhoneTypeCode>PH</vendorPhoneTypeCode>
+        <vendorPhoneNumber>973-496-5437</vendorPhoneNumber>
+        <active>true</active>
+        <versionNumber>2</versionNumber>
+        <objectId>66F09BF9-A545-6850-FB99-74332B6F4DCA</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+    </vendorPhoneNumbers>
+    <vendorShippingSpecialConditions/>
+    <vendorCommodities/>
+    <vendorHeader>
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorTypeCode>DV</vendorTypeCode>
+      <vendorTaxNumber>123456789</vendorTaxNumber>
+      <vendorTaxTypeCode>FEIN</vendorTaxTypeCode>
+      <vendorOwnershipCode>PT</vendorOwnershipCode>
+      <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+      <vendorForeignIndicator>false</vendorForeignIndicator>
+      <vendorSupplierDiversities class='org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl'/>
+
+      <versionNumber>4</versionNumber>
+      <objectId>A52235912D982E6DE04054802EC24C1B</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension'><vendorW9ReceivedDate>2014-10-01</vendorW9ReceivedDate><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord><vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier></extension></vendorHeader>
+    <vendorRestrictedPerson class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <firstName/>
+      <middleName/>
+      <lastName/>
+      <name/>
+      <addressLine1/>
+      <addressLine2/>
+      <addressLine3/>
+      <addressCityName/>
+      <addressStateCode/>
+      <addressPostalCode/>
+      <addressCountryCode/>
+      <emailAddress/>
+      <phoneNumber/>
+      <suppressName>false</suppressName>
+      <suppressAddress>false</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode/>
+      <employeeStatusCode/>
+      <employeeTypeCode/>
+      <primaryDepartmentCode/>
+      <employeeId/>
+      <baseSalaryAmount>
+        <value>0.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </vendorRestrictedPerson>
+    <vendorParentName>Avis Budget Group Inc</vendorParentName>
+
+
+    <versionNumber>3</versionNumber>
+    <objectId>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class='edu.cornell.kfs.vnd.businessobject.VendorDetailExtension'>
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
+      <versionNumber>3</versionNumber>
+      <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension>
+    <autoIncrementSet>false</autoIncrementSet>
+  </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+    <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+    <vendorParentIndicator>false</vendorParentIndicator>
+    <vendorName>Avis Rent A Car System LLC</vendorName>
+    <activeIndicator>true</activeIndicator>
+    <vendorDunsNumber>062506134</vendorDunsNumber>
+    <vendorPaymentTermsCode>00N30</vendorPaymentTermsCode>
+    <vendorShippingTitleCode>DE</vendorShippingTitleCode>
+    <vendorShippingPaymentTermsCode>PA</vendorShippingPaymentTermsCode>
+    <vendorUrlAddress>www.avisbudgetgroup.com</vendorUrlAddress>
+    <vendorFirstLastNameIndicator>false</vendorFirstLastNameIndicator>
+    <taxableIndicator>false</taxableIndicator>
+    <vendorAddresses>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>PO</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Ieuan Sandiford</vendorAttentionName>
+        <vendorAddressEmailAddress>ieuan.sandiford@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>B9B15E24-8B0D-1E2A-1211-3D8B34E2670A</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'><vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorDefaultAddressIndicator>false</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>3</versionNumber>
+        <objectId>42657EB6-9416-6995-FC95-7F7FB46B4ACB</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'><vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>300 Center Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Remittance Processing Department</vendorAttentionName>
+        <vendorAddressEmailAddress>remittanceprocessing@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorFaxNumber>757-687-3795</vendorFaxNumber>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>9F3A7FCF-416E-6D63-783D-610C9D3D5749</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+        <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension'><vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+    </vendorAddresses>
+    <vendorAliases/>
+    <vendorContacts>
+      <org.kuali.kfs.vnd.businessobject.VendorContact>
+        <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorContactTypeCode>AR</vendorContactTypeCode>
+        <vendorContactName>Kettly Galiote</vendorContactName>
+        <vendorContactEmailAddress>kettly.galiote@avisbudget.com</vendorContactEmailAddress>
+        <vendorContactCommentText>FAX 757-687-3796</vendorContactCommentText>
+        <vendorLine1Address>300 Centre Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <active>true</active>
+        <vendorContactPhoneNumbers>
+          <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+            <vendorContactPhoneGeneratedIdentifier>28177</vendorContactPhoneGeneratedIdentifier>
+            <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+            <vendorPhoneTypeCode>AR</vendorPhoneTypeCode>
+            <vendorPhoneNumber>757-687-2589</vendorPhoneNumber>
+            <active>true</active>
+            <versionNumber>2</versionNumber>
+            <objectId>EF1CDC30-A02B-088E-9C6A-441F6546182F</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+            <autoIncrementSet>false</autoIncrementSet>
+          </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+        </vendorContactPhoneNumbers>
+        <versionNumber>2</versionNumber>
+        <objectId>89E03501-7B3F-FEB1-CBB8-DB42FE5BCB98</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.vnd.businessobject.VendorContact>
+    </vendorContacts>
+    <vendorContracts/>
+    <vendorCustomerNumbers/>
+    <vendorPhoneNumbers>
+      <org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+        <vendorPhoneGeneratedIdentifier>18875</vendorPhoneGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorPhoneTypeCode>PH</vendorPhoneTypeCode>
+        <vendorPhoneNumber>973-496-5437</vendorPhoneNumber>
+        <active>true</active>
+        <versionNumber>2</versionNumber>
+        <objectId>66F09BF9-A545-6850-FB99-74332B6F4DCA</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+    </vendorPhoneNumbers>
+    <vendorShippingSpecialConditions/>
+    <vendorCommodities/>
+    <vendorHeader>
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorTypeCode>DV</vendorTypeCode>
+      <vendorTaxNumber>123456789</vendorTaxNumber>
+      <vendorTaxTypeCode>FEIN</vendorTaxTypeCode>
+      <vendorOwnershipCode>PT</vendorOwnershipCode>
+      <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+      <vendorForeignIndicator>false</vendorForeignIndicator>
+      <vendorSupplierDiversities class='org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl'/>
+
+      <versionNumber>4</versionNumber>
+      <objectId>A52235912D982E6DE04054802EC24C1B</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <extension class='edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension'><vendorW9ReceivedDate>2014-10-01</vendorW9ReceivedDate><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord><vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier></extension></vendorHeader>
+    <vendorRestrictedPerson class='org.kuali.rice.kim.bo.impl.PersonImpl'>
+      <firstName/>
+      <middleName/>
+      <lastName/>
+      <name/>
+      <addressLine1/>
+      <addressLine2/>
+      <addressLine3/>
+      <addressCityName/>
+      <addressStateCode/>
+      <addressPostalCode/>
+      <addressCountryCode/>
+      <emailAddress/>
+      <phoneNumber/>
+      <suppressName>false</suppressName>
+      <suppressAddress>false</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode/>
+      <employeeStatusCode/>
+      <employeeTypeCode/>
+      <primaryDepartmentCode/>
+      <employeeId/>
+      <baseSalaryAmount>
+        <value>0.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </vendorRestrictedPerson>
+    <vendorParentName>Avis Budget Group Inc</vendorParentName>
+
+
+    <versionNumber>3</versionNumber>
+    <objectId>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class='edu.cornell.kfs.vnd.businessobject.VendorDetailExtension'>
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
+      <versionNumber>3</versionNumber>
+      <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+      <autoIncrementSet>false</autoIncrementSet>
+      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension>
+    <boNotes>
+      <org.kuali.rice.kns.bo.Note>
+        <noteIdentifier>3469742</noteIdentifier>
+        <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+        <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+        <notePostedTimestamp>2014-10-01 11:18:39.0</notePostedTimestamp>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteText>Add vendor document ID 5985062</noteText>
+        <versionNumber>3</versionNumber>
+        <objectId>93AAFF49-1EA9-5D50-C352-808F81FB9B53</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.rice.kns.bo.Note>
+      <org.kuali.rice.kns.bo.Note>
+        <noteIdentifier>3469743</noteIdentifier>
+        <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+        <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+        <notePostedTimestamp>2014-10-01 11:18:39.0</notePostedTimestamp>
+        <noteTypeCode>BO</noteTypeCode>
+        <noteText>add dba w9 w/parent</noteText>
+        <versionNumber>3</versionNumber>
+        <objectId>9595F6A8-6170-2A16-9697-03EBB5BA48F2</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.rice.kns.bo.Note>
+      <org.kuali.rice.kns.bo.Note>
+        <noteIdentifier>3470427</noteIdentifier>
+        <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+        <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+        <notePostedTimestamp>2014-10-01 12:34:48.0</notePostedTimestamp>
+        <noteTypeCode>BO</noteTypeCode>
+        <noteText>switched from dv to po forms w/parent</noteText>
+        <versionNumber>2</versionNumber>
+        <objectId>B1110D7E-C7B2-38AE-E839-432181181213</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.rice.kns.bo.Note>
+      <org.kuali.rice.kns.bo.Note>
+        <noteIdentifier>3470426</noteIdentifier>
+        <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+        <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+        <notePostedTimestamp>2014-10-01 12:34:48.0</notePostedTimestamp>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteText>Change vendor document ID 5985440</noteText>
+        <versionNumber>2</versionNumber>
+        <objectId>41A11541-9D53-6CFC-C49B-20AC5F1D15E7</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.rice.kns.bo.Note>
+      <org.kuali.rice.kns.bo.Note>
+        <noteIdentifier>3470457</noteIdentifier>
+        <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+        <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+        <notePostedTimestamp>2014-10-01 12:45:53.0</notePostedTimestamp>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteText>Change vendor document ID 5985452</noteText>
+        <versionNumber>1</versionNumber>
+        <objectId>C192B257-5862-60B0-0CC0-C4FE35D2EB7A</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.rice.kns.bo.Note>
+      <org.kuali.rice.kns.bo.Note>
+        <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+        <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+        <notePostedTimestamp>2014-10-01 12:48:06.44</notePostedTimestamp>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteText>Change vendor document ID 5985460</noteText>
+        <newCollectionRecord>false</newCollectionRecord>
+        <autoIncrementSet>false</autoIncrementSet>
+      </org.kuali.rice.kns.bo.Note>
+    </boNotes>
+    <autoIncrementSet>false</autoIncrementSet>
+  </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+  <maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl/><oldMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+    <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+    <vendorParentIndicator>false</vendorParentIndicator>
+    <vendorName>Avis Rent A Car System LLC</vendorName>
+    <activeIndicator>true</activeIndicator>
+    <vendorDunsNumber>062506134</vendorDunsNumber>
+    <vendorPaymentTermsCode>00N30</vendorPaymentTermsCode>
+    <vendorShippingTitleCode>DE</vendorShippingTitleCode>
+    <vendorShippingPaymentTermsCode>PA</vendorShippingPaymentTermsCode>
+    <vendorUrlAddress>www.avisbudgetgroup.com</vendorUrlAddress>
+    <vendorFirstLastNameIndicator>false</vendorFirstLastNameIndicator>
+    <taxableIndicator>false</taxableIndicator>
+    <vendorAddresses>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>PO</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Ieuan Sandiford</vendorAttentionName>
+        <vendorAddressEmailAddress>ieuan.sandiford@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>B9B15E24-8B0D-1E2A-1211-3D8B34E2670A</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension"><vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorDefaultAddressIndicator>false</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>3</versionNumber>
+        <objectId>42657EB6-9416-6995-FC95-7F7FB46B4ACB</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension"><vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>300 Center Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Remittance Processing Department</vendorAttentionName>
+        <vendorAddressEmailAddress>remittanceporcessing@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorFaxNumber>757-687-3795</vendorFaxNumber>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>9F3A7FCF-416E-6D63-783D-610C9D3D5749</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension"><vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+    </vendorAddresses>
+    <vendorAliases/>
+    <vendorContacts>
+      <org.kuali.kfs.vnd.businessobject.VendorContact>
+        <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorContactTypeCode>AR</vendorContactTypeCode>
+        <vendorContactName>Kettly Galiote</vendorContactName>
+        <vendorContactEmailAddress>kettly.galiote@avisbudget.com</vendorContactEmailAddress>
+        <vendorContactCommentText>FAX 757-687-3796</vendorContactCommentText>
+        <vendorLine1Address>300 Centre Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <active>true</active>
+        <vendorContactPhoneNumbers>
+          <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+            <vendorContactPhoneGeneratedIdentifier>28177</vendorContactPhoneGeneratedIdentifier>
+            <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+            <vendorPhoneTypeCode>AR</vendorPhoneTypeCode>
+            <vendorPhoneNumber>757-687-2589</vendorPhoneNumber>
+            <active>true</active>
+            <versionNumber>2</versionNumber>
+            <objectId>EF1CDC30-A02B-088E-9C6A-441F6546182F</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+
+          </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+        </vendorContactPhoneNumbers>
+        <versionNumber>2</versionNumber>
+        <objectId>89E03501-7B3F-FEB1-CBB8-DB42FE5BCB98</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </org.kuali.kfs.vnd.businessobject.VendorContact>
+    </vendorContacts>
+    <vendorContracts/>
+    <vendorCustomerNumbers/>
+    <vendorPhoneNumbers>
+      <org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+        <vendorPhoneGeneratedIdentifier>18875</vendorPhoneGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorPhoneTypeCode>PH</vendorPhoneTypeCode>
+        <vendorPhoneNumber>973-496-5437</vendorPhoneNumber>
+        <active>true</active>
+        <versionNumber>2</versionNumber>
+        <objectId>66F09BF9-A545-6850-FB99-74332B6F4DCA</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+    </vendorPhoneNumbers>
+    <vendorShippingSpecialConditions/>
+    <vendorCommodities/>
+    <vendorHeader>
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorTypeCode>DV</vendorTypeCode>
+      <vendorTaxNumber>123456789</vendorTaxNumber>
+      <vendorTaxTypeCode>FEIN</vendorTaxTypeCode>
+      <vendorOwnershipCode>PT</vendorOwnershipCode>
+      <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+      <vendorForeignIndicator>false</vendorForeignIndicator>
+      <vendorSupplierDiversities class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+
+      <versionNumber>4</versionNumber>
+      <objectId>A52235912D982E6DE04054802EC24C1B</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+      <vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
+    <vendorRestrictedPerson class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <firstName/>
+      <middleName/>
+      <lastName/>
+      <name/>
+
+
+
+
+
+
+
+      <emailAddress/>
+      <phoneNumber/>
+      <suppressName>false</suppressName>
+      <suppressAddress>false</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode/>
+      <employeeStatusCode/>
+      <employeeTypeCode/>
+      <primaryDepartmentCode/>
+      <employeeId/>
+      <baseSalaryAmount>
+        <value>0.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </vendorRestrictedPerson>
+    <vendorParentName>Avis Budget Group Inc</vendorParentName>
+
+
+    <versionNumber>3</versionNumber>
+    <objectId>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
+      <versionNumber>3</versionNumber>
+      <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension>
+
+  </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.vnd.businessobject.VendorDetail>
+    <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+    <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+    <vendorParentIndicator>false</vendorParentIndicator>
+    <vendorName>Avis Rent A Car System LLC</vendorName>
+    <activeIndicator>true</activeIndicator>
+    <vendorDunsNumber>062506134</vendorDunsNumber>
+    <vendorPaymentTermsCode>00N30</vendorPaymentTermsCode>
+    <vendorShippingTitleCode>DE</vendorShippingTitleCode>
+    <vendorShippingPaymentTermsCode>PA</vendorShippingPaymentTermsCode>
+    <vendorUrlAddress>www.avisbudgetgroup.com</vendorUrlAddress>
+    <vendorFirstLastNameIndicator>false</vendorFirstLastNameIndicator>
+    <taxableIndicator>false</taxableIndicator>
+    <vendorAddresses>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>PO</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Ieuan Sandiford</vendorAttentionName>
+        <vendorAddressEmailAddress>ieuan.sandiford@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>B9B15E24-8B0D-1E2A-1211-3D8B34E2670A</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension"><vendorAddressGeneratedIdentifier>85973</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>6 Sylvan Way</vendorLine1Address>
+        <vendorCityName>Parsiappany</vendorCityName>
+        <vendorStateCode>NJ</vendorStateCode>
+        <vendorZipCode>07054</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorDefaultAddressIndicator>false</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>3</versionNumber>
+        <objectId>42657EB6-9416-6995-FC95-7F7FB46B4ACB</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension"><vendorAddressGeneratedIdentifier>85968</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+      <org.kuali.kfs.vnd.businessobject.VendorAddress>
+        <vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorAddressTypeCode>RM</vendorAddressTypeCode>
+        <vendorLine1Address>300 Center Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <vendorAttentionName>Remittance Processing Department</vendorAttentionName>
+        <vendorAddressEmailAddress>remittanceprocessing@avisbudget.com</vendorAddressEmailAddress>
+        <vendorBusinessToBusinessUrlAddress>www.avisbudgetgroup.com</vendorBusinessToBusinessUrlAddress>
+        <vendorFaxNumber>757-687-3795</vendorFaxNumber>
+        <vendorDefaultAddressIndicator>true</vendorDefaultAddressIndicator>
+        <active>true</active>
+        <vendorDefaultAddresses/>
+        <versionNumber>2</versionNumber>
+        <objectId>9F3A7FCF-416E-6D63-783D-610C9D3D5749</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+        <extension class="edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension"><vendorAddressGeneratedIdentifier>85974</vendorAddressGeneratedIdentifier><versionNumber>1</versionNumber><newCollectionRecord>false</newCollectionRecord></extension></org.kuali.kfs.vnd.businessobject.VendorAddress>
+    </vendorAddresses>
+    <vendorAliases/>
+    <vendorContacts>
+      <org.kuali.kfs.vnd.businessobject.VendorContact>
+        <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorContactTypeCode>AR</vendorContactTypeCode>
+        <vendorContactName>Kettly Galiote</vendorContactName>
+        <vendorContactEmailAddress>kettly.galiote@avisbudget.com</vendorContactEmailAddress>
+        <vendorContactCommentText>FAX 757-687-3796</vendorContactCommentText>
+        <vendorLine1Address>300 Centre Pointe Dr</vendorLine1Address>
+        <vendorCityName>Virginia Beach</vendorCityName>
+        <vendorStateCode>VA</vendorStateCode>
+        <vendorZipCode>23462</vendorZipCode>
+        <vendorCountryCode>US</vendorCountryCode>
+        <active>true</active>
+        <vendorContactPhoneNumbers>
+          <org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+            <vendorContactPhoneGeneratedIdentifier>28177</vendorContactPhoneGeneratedIdentifier>
+            <vendorContactGeneratedIdentifier>31319</vendorContactGeneratedIdentifier>
+            <vendorPhoneTypeCode>AR</vendorPhoneTypeCode>
+            <vendorPhoneNumber>757-687-2589</vendorPhoneNumber>
+            <active>true</active>
+            <versionNumber>2</versionNumber>
+            <objectId>EF1CDC30-A02B-088E-9C6A-441F6546182F</objectId>
+            <newCollectionRecord>false</newCollectionRecord>
+
+          </org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber>
+        </vendorContactPhoneNumbers>
+        <versionNumber>2</versionNumber>
+        <objectId>89E03501-7B3F-FEB1-CBB8-DB42FE5BCB98</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </org.kuali.kfs.vnd.businessobject.VendorContact>
+    </vendorContacts>
+    <vendorContracts/>
+    <vendorCustomerNumbers/>
+    <vendorPhoneNumbers>
+      <org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+        <vendorPhoneGeneratedIdentifier>18875</vendorPhoneGeneratedIdentifier>
+        <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+        <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+        <vendorPhoneTypeCode>PH</vendorPhoneTypeCode>
+        <vendorPhoneNumber>973-496-5437</vendorPhoneNumber>
+        <active>true</active>
+        <versionNumber>2</versionNumber>
+        <objectId>66F09BF9-A545-6850-FB99-74332B6F4DCA</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+
+      </org.kuali.kfs.vnd.businessobject.VendorPhoneNumber>
+    </vendorPhoneNumbers>
+    <vendorShippingSpecialConditions/>
+    <vendorCommodities/>
+    <vendorHeader>
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorTypeCode>DV</vendorTypeCode>
+      <vendorTaxNumber>123456789</vendorTaxNumber>
+      <vendorTaxTypeCode>FEIN</vendorTaxTypeCode>
+      <vendorOwnershipCode>PT</vendorOwnershipCode>
+      <vendorW9ReceivedIndicator>true</vendorW9ReceivedIndicator>
+      <vendorForeignIndicator>false</vendorForeignIndicator>
+      <vendorSupplierDiversities class="org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl"/>
+
+      <versionNumber>4</versionNumber>
+      <objectId>A52235912D982E6DE04054802EC24C1B</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+      <vendorW9SignedDate>2014-10-01</vendorW9SignedDate></vendorHeader>
+    <vendorRestrictedPerson class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <firstName/>
+      <middleName/>
+      <lastName/>
+      <name/>
+
+
+
+
+
+
+
+      <emailAddress/>
+      <phoneNumber/>
+      <suppressName>false</suppressName>
+      <suppressAddress>false</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode/>
+      <employeeStatusCode/>
+      <employeeTypeCode/>
+      <primaryDepartmentCode/>
+      <employeeId/>
+      <baseSalaryAmount>
+        <value>0.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </vendorRestrictedPerson>
+    <vendorParentName>Avis Budget Group Inc</vendorParentName>
+
+
+    <versionNumber>3</versionNumber>
+    <objectId>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
+      <vendorHeaderGeneratedIdentifier>10385</vendorHeaderGeneratedIdentifier>
+      <vendorDetailAssignedIdentifier>1</vendorDetailAssignedIdentifier>
+      <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
+      <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
+      <versionNumber>3</versionNumber>
+      <objectId>0C9A8292-8F15-AB5E-24B9-BE79FD97891F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+      <insuranceRequiredIndicator>false</insuranceRequiredIndicator><vendorCreditCardMerchants/><insuranceRequirementsCompleteIndicator/><cornellAdditionalInsuredIndicator/></extension>
+
+
+  </org.kuali.kfs.vnd.businessobject.VendorDetail><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>3469742</noteIdentifier>
+      <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2014-10-01 11:18:39.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Add vendor document ID 5985062</noteText>
+      <versionNumber>3</versionNumber>
+      <objectId>93AAFF49-1EA9-5D50-C352-808F81FB9B53</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>3469743</noteIdentifier>
+      <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2014-10-01 11:18:39.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>add dba w9 w/parent</noteText>
+      <versionNumber>3</versionNumber>
+      <objectId>9595F6A8-6170-2A16-9697-03EBB5BA48F2</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>3470427</noteIdentifier>
+      <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2014-10-01 12:34:48.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>switched from dv to po forms w/parent</noteText>
+      <versionNumber>2</versionNumber>
+      <objectId>B1110D7E-C7B2-38AE-E839-432181181213</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>3470426</noteIdentifier>
+      <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2014-10-01 12:34:48.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 5985440</noteText>
+      <versionNumber>2</versionNumber>
+      <objectId>41A11541-9D53-6CFC-C49B-20AC5F1D15E7</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>3470457</noteIdentifier>
+      <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2014-10-01 12:45:53.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 5985452</noteText>
+      <versionNumber>1</versionNumber>
+      <objectId>C192B257-5862-60B0-0CC0-C4FE35D2EB7A</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <remoteObjectIdentifier>5DE8BD8C-4801-F689-74B5-6EB8B00E1C62</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2014-10-01 12:48:06.44</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 5985460</noteText>
+      <newCollectionRecord>false</newCollectionRecord>
+
+    </org.kuali.kfs.krad.bo.Note>
+  </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

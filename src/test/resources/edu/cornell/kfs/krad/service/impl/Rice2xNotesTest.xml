@@ -1,0 +1,167 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  <org.kuali.rice.krad.bo.Note>
+    <authorUniversalIdentifier>1133555</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-02-02 12:24:00.615</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>This is a note with an attachment!</noteText>
+    <attachmentIdentifier>aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</attachmentIdentifier>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>ABCDEFGHIJKLMNOPQRSTUVWXYZ123456</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <attachment>
+      <attachmentMimeTypeCode>file/pdf</attachmentMimeTypeCode>
+      <attachmentFileName>some_document.pdf</attachmentFileName>
+      <attachmentIdentifier>aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</attachmentIdentifier>
+      <attachmentFileSize>291192</attachmentFileSize>
+      <note reference='../..'/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </attachment>
+    <adHocRouteRecipient class='org.kuali.rice.krad.bo.AdHocRoutePerson'>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.rice.krad.bo.Note>
+  <org.kuali.rice.krad.bo.Note>
+    <authorUniversalIdentifier>24680</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-03-03 08:48:13.115</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>This note has no attachment.</noteText>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>654321ZYXWVUTSRQPONMLKJIHGFEDCBA</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <adHocRouteRecipient class='org.kuali.rice.krad.bo.AdHocRoutePerson'>
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.rice.krad.bo.Note>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.kns.bo.Parameter>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <autoIncrementSet>false</autoIncrementSet>
+  <parameterNamespaceCode>KR-WKFLW</parameterNamespaceCode>
+  <parameterDetailTypeCode>All</parameterDetailTypeCode>
+  <parameterName>TEST_PARAMETER_1</parameterName>
+  <parameterApplicationNamespaceCode>KUALI</parameterApplicationNamespaceCode>
+  <parameterValue>Some New Value</parameterValue>
+  <parameterDescription>This parameter is only for testing!</parameterDescription>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <parameterConstraintCode>A</parameterConstraintCode>
+</org.kuali.rice.kns.bo.Parameter><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.rice.kns.document.ParameterMaintainable"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+  <org.kuali.kfs.krad.bo.Note>
+    <authorUniversalIdentifier>1133555</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-02-02 12:24:00.615</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>This is a note with an attachment!</noteText>
+    <attachmentIdentifier>aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</attachmentIdentifier>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>ABCDEFGHIJKLMNOPQRSTUVWXYZ123456</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <attachment>
+      <attachmentMimeTypeCode>file/pdf</attachmentMimeTypeCode>
+      <attachmentFileName>some_document.pdf</attachmentFileName>
+      <attachmentIdentifier>aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</attachmentIdentifier>
+      <attachmentFileSize>291192</attachmentFileSize>
+      <note reference="../.."/>
+      <newCollectionRecord>false</newCollectionRecord>
+    </attachment>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.kfs.krad.bo.Note>
+  <org.kuali.kfs.krad.bo.Note>
+    <authorUniversalIdentifier>24680</authorUniversalIdentifier>
+    <notePostedTimestamp>2015-03-03 08:48:13.115</notePostedTimestamp>
+    <noteTypeCode>BO</noteTypeCode>
+    <noteText>This note has no attachment.</noteText>
+    <noteType>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+      <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+      <versionNumber>1</versionNumber>
+      <objectId>654321ZYXWVUTSRQPONMLKJIHGFEDCBA</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </noteType>
+    <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+      <type>0</type>
+      <actionRequested>A</actionRequested>
+      <versionNumber>1</versionNumber>
+      <newCollectionRecord>false</newCollectionRecord>
+    </adHocRouteRecipient>
+    <newCollectionRecord>false</newCollectionRecord>
+  </org.kuali.kfs.krad.bo.Note>
+</org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.rice.coreservice.impl.parameter.ParameterBo>
+  <versionNumber>4</versionNumber>
+  <objectId>00000000-1111-2222-3333-444444444444</objectId>
+  <newCollectionRecord>false</newCollectionRecord>
+  <namespaceCode>KR-WKFLW</namespaceCode>
+  <componentCode>All</componentCode>
+  <name>TEST_PARAMETER_1</name>
+  <applicationId>KUALI</applicationId>
+  <value>Some New Value</value>
+  <description>This parameter is only for testing!</description>
+  <parameterTypeCode>CONFG</parameterTypeCode>
+  <evaluationOperatorCode>A</evaluationOperatorCode>
+</org.kuali.rice.coreservice.impl.parameter.ParameterBo><maintenanceAction>Edit</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

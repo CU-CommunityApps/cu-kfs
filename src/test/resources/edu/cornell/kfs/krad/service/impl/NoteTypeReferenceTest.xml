@@ -1,0 +1,411 @@
+<xmlConversionTestCase>
+
+<oldData>
+  <maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>2155</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1569557</authorUniversalIdentifier>
+      <notePostedTimestamp>2010-12-10 13:39:32.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Add vendor document ID 10000470</noteText>
+      <noteType>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteTypeDescription>DOCUMENT HEADER</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE7B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>97</versionNumber>
+      <objectId>D513556A-ED8E-F094-9249-45FEFEFB5AF0</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>2156</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1569557</authorUniversalIdentifier>
+      <notePostedTimestamp>2010-12-10 13:39:32.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>#1013514</noteText>
+      <noteType>
+        <noteTypeCode>BO</noteTypeCode>
+        <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE6B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>97</versionNumber>
+      <objectId>43BED4F4-C151-279E-D927-E0F3DA6E3D17</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>2157</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1494054</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-01-05 16:42:03.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>Added SBA information and expiration date.</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note[2]/noteType"/>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>97</versionNumber>
+      <objectId>20F38C46-6BC1-F9EF-01C0-4EEEE2449C6A</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>5578</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1492581</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-03-24 10:54:12.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 10003812</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note/noteType"/>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>96</versionNumber>
+      <objectId>F76B5AC0-E54B-B60F-24C2-A3774D96BE6A</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>145307</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-09-26 06:37:21.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>per invoice fm vendor updated their remit too address PO Box 1040 &amp; updated their fax too!</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note[2]/noteType"/>
+      <attachment>
+        <noteIdentifier>145307</noteIdentifier>
+        <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+        <attachmentFileName>Krackeler Scientific Inc - invoice updated remit too &amp; fax number.pdf</attachmentFileName>
+        <attachmentIdentifier>33CADC86-BB69-07BD-28F7-FBE0CA882385</attachmentIdentifier>
+        <attachmentFileSize>71505</attachmentFileSize>
+        <note reference="../.."/>
+        <versionNumber>94</versionNumber>
+        <objectId>8692F063-220E-1073-7548-80DBFC022FAD</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </attachment>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>95</versionNumber>
+      <objectId>36C2C24F-45DE-25FB-AF31-009CC638230C</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>145396</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>2</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-09-26 12:36:46.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID &lt;360124&gt;. Document was automatically created from PO &lt;24607&gt; to add commodity codes used on this PO that were not yet assigned to this vendor.</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note/noteType"/>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>93</versionNumber>
+      <objectId>D1369156-5040-B6BE-FE40-76C69D4F5E71</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>473347</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1494054</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-02-10 10:30:57.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>Set default commodity code</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note[2]/noteType"/>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>92</versionNumber>
+      <objectId>F2F4A7ED-34CB-AFED-6E5A-4155C085A98B</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>473346</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1494054</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-02-10 10:30:58.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 1068032</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note/noteType"/>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>92</versionNumber>
+      <objectId>61856E5B-BBCE-08C9-93C1-5F073C89C55E</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>478662</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1863051</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-02-13 14:44:28.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>updated SBA</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note[2]/noteType"/>
+      <attachment>
+        <noteIdentifier>478662</noteIdentifier>
+        <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+        <attachmentFileName>SBA - Krackeler Scientific Inc.pdf</attachmentFileName>
+        <attachmentIdentifier>DD633B5C-1DE0-5B46-930F-9DEC5A97B0F6</attachmentIdentifier>
+        <attachmentFileSize>48227</attachmentFileSize>
+        <note reference="../.."/>
+        <versionNumber>90</versionNumber>
+        <objectId>FFA1021C-373C-6A18-ECA1-E8FF356B0ED2</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </attachment>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>91</versionNumber>
+      <objectId>18BECE45-B7BD-8BB4-233E-6AECBFA35A28</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+  </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes>
+  </maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+  <maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.vnd.document.CuVendorMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>2155</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1569557</authorUniversalIdentifier>
+      <notePostedTimestamp>2010-12-10 13:39:32.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Add vendor document ID 10000470</noteText>
+      <noteType>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteTypeDescription>DOCUMENT HEADER</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE7B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>97</versionNumber>
+      <objectId>D513556A-ED8E-F094-9249-45FEFEFB5AF0</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>2156</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1569557</authorUniversalIdentifier>
+      <notePostedTimestamp>2010-12-10 13:39:32.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>#1013514</noteText>
+      <noteType>
+        <noteTypeCode>BO</noteTypeCode>
+        <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE6B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>97</versionNumber>
+      <objectId>43BED4F4-C151-279E-D927-E0F3DA6E3D17</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>2157</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1494054</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-01-05 16:42:03.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>Added SBA information and expiration date.</noteText>
+      <noteType/>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>97</versionNumber>
+      <objectId>20F38C46-6BC1-F9EF-01C0-4EEEE2449C6A</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>5578</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1492581</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-03-24 10:54:12.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 10003812</noteText>
+      <noteType/>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>96</versionNumber>
+      <objectId>F76B5AC0-E54B-B60F-24C2-A3774D96BE6A</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>145307</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>36099</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-09-26 06:37:21.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>per invoice fm vendor updated their remit too address PO Box 1040 &amp; updated their fax too!</noteText>
+      <noteType/>
+      <attachment>
+        <noteIdentifier>145307</noteIdentifier>
+        <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+        <attachmentFileName>Krackeler Scientific Inc - invoice updated remit too &amp; fax number.pdf</attachmentFileName>
+        <attachmentIdentifier>33CADC86-BB69-07BD-28F7-FBE0CA882385</attachmentIdentifier>
+        <attachmentFileSize>71505</attachmentFileSize>
+        <note reference="../.."/>
+        <versionNumber>94</versionNumber>
+        <objectId>8692F063-220E-1073-7548-80DBFC022FAD</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </attachment>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>95</versionNumber>
+      <objectId>36C2C24F-45DE-25FB-AF31-009CC638230C</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>145396</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>2</authorUniversalIdentifier>
+      <notePostedTimestamp>2011-09-26 12:36:46.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID &lt;360124>. Document was automatically created from PO &lt;24607> to add commodity codes used on this PO that were not yet assigned to this vendor.</noteText>
+      <noteType/>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>93</versionNumber>
+      <objectId>D1369156-5040-B6BE-FE40-76C69D4F5E71</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>473347</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1494054</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-02-10 10:30:57.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>Set default commodity code</noteText>
+      <noteType/>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>92</versionNumber>
+      <objectId>F2F4A7ED-34CB-AFED-6E5A-4155C085A98B</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>473346</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1494054</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-02-10 10:30:58.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Change vendor document ID 1068032</noteText>
+      <noteType/>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>92</versionNumber>
+      <objectId>61856E5B-BBCE-08C9-93C1-5F073C89C55E</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>478662</noteIdentifier>
+      <remoteObjectIdentifier>9E1B79E1-D7AC-B799-BEAF-26D095899564</remoteObjectIdentifier>
+      <authorUniversalIdentifier>1863051</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-02-13 14:44:28.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>updated SBA</noteText>
+      <noteType/>
+      <attachment>
+        <noteIdentifier>478662</noteIdentifier>
+        <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+        <attachmentFileName>SBA - Krackeler Scientific Inc.pdf</attachmentFileName>
+        <attachmentIdentifier>DD633B5C-1DE0-5B46-930F-9DEC5A97B0F6</attachmentIdentifier>
+        <attachmentFileSize>48227</attachmentFileSize>
+        <note reference="../.."/>
+        <versionNumber>90</versionNumber>
+        <objectId>FFA1021C-373C-6A18-ECA1-E8FF356B0ED2</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </attachment>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>91</versionNumber>
+      <objectId>18BECE45-B7BD-8BB4-233E-6AECBFA35A28</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+  </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes>
+  </maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>

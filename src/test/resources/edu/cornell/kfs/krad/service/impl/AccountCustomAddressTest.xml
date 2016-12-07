@@ -1,0 +1,1295 @@
+<xmlConversionTestCase>
+
+<oldData>
+  <maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.coa.document.CUAccountMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>5333000</noteIdentifier>
+      <remoteObjectIdentifier>8E2E9796-01E4-5457-7453-1F79D56A3164</remoteObjectIdentifier>
+      <authorUniversalIdentifier>44136</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-07-23 09:14:50.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>Add account document ID 2058193</noteText>
+      <noteType>
+        <noteTypeCode>BO</noteTypeCode>
+        <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE6B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>5</versionNumber>
+      <objectId>2DED8D9821940A28E0534D73100A352C</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>988785</noteIdentifier>
+      <remoteObjectIdentifier>8E2E9796-01E4-5457-7453-1F79D56A3164</remoteObjectIdentifier>
+      <authorUniversalIdentifier>44136</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-07-23 10:42:26.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>e-mail dated 7/17/2012</noteText>
+      <noteType>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteTypeDescription>DOCUMENT HEADER</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE7B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <attachment>
+        <noteIdentifier>988785</noteIdentifier>
+        <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+        <attachmentFileName>4504700_Dir_DVM_Tchg.pdf</attachmentFileName>
+        <attachmentIdentifier>2C48C812-AE08-F370-1972-93EB39D355BA</attachmentIdentifier>
+        <attachmentFileSize>75832</attachmentFileSize>
+        <note reference="../.."/>
+        <versionNumber>16</versionNumber>
+        <objectId>355D5B6F-1073-E4CF-4F9B-F0DD35EF5922</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </attachment>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>17</versionNumber>
+      <objectId>B4391145-FC56-AA4F-6845-611C4F215B89</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+    <org.kuali.rice.krad.bo.Note>
+      <noteIdentifier>5730789</noteIdentifier>
+      <remoteObjectIdentifier>8E2E9796-01E4-5457-7453-1F79D56A3164</remoteObjectIdentifier>
+      <authorUniversalIdentifier>44136</authorUniversalIdentifier>
+      <notePostedTimestamp>2016-06-24 16:48:27.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Edit account document ID 13847711 4504700 Modify Account</noteText>
+      <noteType reference="../../org.kuali.rice.krad.bo.Note[2]/noteType"/>
+      <adHocRouteRecipient class="org.kuali.rice.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>4</versionNumber>
+      <objectId>accdf07d-ab87-4ee3-97f9-84f12c995d92</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.rice.krad.bo.Note>
+  </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>4504700</accountNumber>
+    <accountName>Director Vet Curriculum - Salaries</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>S3007 Schurman Hall</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCountryCode>US</accountCountryCode>
+    <accountCreateDate>2012-07-23</accountCreateDate>
+    <accountEffectiveDate>2012-07-16</accountEffectiveDate>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>1011063</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>38696</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>36681</accountManagerSystemIdentifier>
+    <organizationCode>044O</organizationCode>
+    <accountTypeCode>CC</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>APSTAT</subFundGroupCode>
+    <financialHigherEdFunctionCd>4740</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <organization>
+      <organizationCode>044O</organizationCode>
+      <organizationName>DVM Teaching Activities</organizationName>
+      <organizationCityName>Ithaca</organizationCityName>
+      <organizationStateCode>NY</organizationStateCode>
+      <organizationZipCode>14853</organizationZipCode>
+      <organizationBeginDate>2010-07-01</organizationBeginDate>
+      <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+      <organizationManagerUniversalId>1444089</organizationManagerUniversalId>
+      <responsibilityCenterCode>NA</responsibilityCenterCode>
+      <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+      <organizationTypeCode>S</organizationTypeCode>
+      <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+      <reportsToOrganizationCode>048U</reportsToOrganizationCode>
+      <organizationPlantAccountNumber>400CAPT</organizationPlantAccountNumber>
+      <campusPlantAccountNumber>400CAPT</campusPlantAccountNumber>
+      <organizationPlantChartCode>IT</organizationPlantChartCode>
+      <campusPlantChartCode>IT</campusPlantChartCode>
+      <organizationCountryCode>US</organizationCountryCode>
+      <organizationLine1Address>S3 005 Schurman Hall</organizationLine1Address>
+      <responsibilityCenter>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <responsibilityCenterName>Not Applicable</responsibilityCenterName>
+        <responsibilityCenterShortName>Not Used</responsibilityCenterShortName>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>943FB78C68736602E04054802FC21FF7</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </responsibilityCenter>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7C3185467EE04054802FC207C1</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </organization>
+    <accountFiscalOfficerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>1011063</principalId>
+      <principalName>jjd9</principalName>
+      <entityId>1011063</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Jackie</firstName>
+      <middleName>J.</middleName>
+      <lastName>Dodge</lastName>
+      <name>Dodge, Jackie J.</name>
+      <address serialization="custom">
+        <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <default/>
+        </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <org.kuali.rice.kim.api.identity.address.EntityAddress>
+          <default>
+            <active>true</active>
+            <defaultValue>true</defaultValue>
+            <suppressAddress>false</suppressAddress>
+            <validated>false</validated>
+            <addressType serialization="custom">
+              <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <default/>
+              </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <org.kuali.rice.kim.api.identity.CodedAttribute>
+                <default>
+                  <active>true</active>
+                  <code>HM</code>
+                  <name>Home</name>
+                  <objectId>5B35758A2D240503E0404F8189D878D8</objectId>
+                  <sortCode>b</sortCode>
+                  <versionNumber>1</versionNumber>
+                </default>
+              </org.kuali.rice.kim.api.identity.CodedAttribute>
+            </addressType>
+            <city>Candor</city>
+            <cityUnmasked>Candor</cityUnmasked>
+            <countryCode> </countryCode>
+            <countryCodeUnmasked> </countryCodeUnmasked>
+            <entityId>1011063</entityId>
+            <entityTypeCode>PERSON</entityTypeCode>
+            <id>57084011</id>
+            <line1>49 Chapel Hill Rd</line1>
+            <line1Unmasked>49 Chapel Hill Rd</line1Unmasked>
+            <line2> </line2>
+            <line2Unmasked> </line2Unmasked>
+            <line3> </line3>
+            <line3Unmasked> </line3Unmasked>
+            <modifiedDate>2014-10-18T01:50:40.000-04:00</modifiedDate>
+            <objectId>A69F061008B404F2E04054802EC268A4</objectId>
+            <postalCode>13743-1919</postalCode>
+            <postalCodeUnmasked>13743-1919</postalCodeUnmasked>
+            <stateProvinceCode>NY</stateProvinceCode>
+            <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+            <versionNumber>1</versionNumber>
+          </default>
+        </org.kuali.rice.kim.api.identity.address.EntityAddress>
+      </address>
+      <emailAddress>jjd9@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3944</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1006213</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1006213</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1006213</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountFiscalOfficerUser>
+    <accountSupervisoryUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>38696</principalId>
+      <principalName>ll15</principalName>
+      <entityId>38696</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Lynne</firstName>
+      <middleName>Rae</middleName>
+      <lastName>Vrooman</lastName>
+      <name>Vrooman, Lynne Rae</name>
+      <address serialization="custom">
+        <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <default/>
+        </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <org.kuali.rice.kim.api.identity.address.EntityAddress>
+          <default>
+            <active>true</active>
+            <defaultValue>true</defaultValue>
+            <suppressAddress>false</suppressAddress>
+            <validated>false</validated>
+            <addressType serialization="custom">
+              <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <default/>
+              </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <org.kuali.rice.kim.api.identity.CodedAttribute>
+                <default>
+                  <active>true</active>
+                  <code>HM</code>
+                  <name>Home</name>
+                  <objectId>5B35758A2D240503E0404F8189D878D8</objectId>
+                  <sortCode>b</sortCode>
+                  <versionNumber>1</versionNumber>
+                </default>
+              </org.kuali.rice.kim.api.identity.CodedAttribute>
+            </addressType>
+            <city>Van Etten</city>
+            <cityUnmasked>Van Etten</cityUnmasked>
+            <countryCode> </countryCode>
+            <countryCodeUnmasked> </countryCodeUnmasked>
+            <entityId>38696</entityId>
+            <entityTypeCode>PERSON</entityTypeCode>
+            <id>57078961</id>
+            <line1>1008 State Route 224</line1>
+            <line1Unmasked>1008 State Route 224</line1Unmasked>
+            <line2> </line2>
+            <line2Unmasked> </line2Unmasked>
+            <line3> </line3>
+            <line3Unmasked> </line3Unmasked>
+            <modifiedDate>2014-10-18T01:50:40.000-04:00</modifiedDate>
+            <objectId>A69F060F963004F2E04054802EC268A4</objectId>
+            <postalCode>14889-9497</postalCode>
+            <postalCodeUnmasked>14889-9497</postalCodeUnmasked>
+            <stateProvinceCode>NY</stateProvinceCode>
+            <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+            <versionNumber>1</versionNumber>
+          </default>
+        </org.kuali.rice.kim.api.identity.address.EntityAddress>
+      </address>
+      <emailAddress>ll15@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3511</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1002464</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1002464</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1002464</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountSupervisoryUser>
+    <accountManagerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>36681</principalId>
+      <principalName>ldw3</principalName>
+      <entityId>36681</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Lorin</firstName>
+      <middleName>D.</middleName>
+      <lastName>Warnick</lastName>
+      <name>Warnick, Lorin D.</name>
+      <address serialization="custom">
+        <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <default/>
+        </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <org.kuali.rice.kim.api.identity.address.EntityAddress>
+          <default>
+            <active>true</active>
+            <defaultValue>true</defaultValue>
+            <suppressAddress>false</suppressAddress>
+            <validated>false</validated>
+            <addressType serialization="custom">
+              <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <default/>
+              </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <org.kuali.rice.kim.api.identity.CodedAttribute>
+                <default>
+                  <active>true</active>
+                  <code>HM</code>
+                  <name>Home</name>
+                  <objectId>5B35758A2D240503E0404F8189D878D8</objectId>
+                  <sortCode>b</sortCode>
+                  <versionNumber>1</versionNumber>
+                </default>
+              </org.kuali.rice.kim.api.identity.CodedAttribute>
+            </addressType>
+            <city>Groton</city>
+            <cityUnmasked>Groton</cityUnmasked>
+            <countryCode> </countryCode>
+            <countryCodeUnmasked> </countryCodeUnmasked>
+            <entityId>36681</entityId>
+            <entityTypeCode>PERSON</entityTypeCode>
+            <id>57087929</id>
+            <line1>614 Scofield Rd</line1>
+            <line1Unmasked>614 Scofield Rd</line1Unmasked>
+            <line2> </line2>
+            <line2Unmasked> </line2Unmasked>
+            <line3> </line3>
+            <line3Unmasked> </line3Unmasked>
+            <modifiedDate>2014-10-18T01:50:40.000-04:00</modifiedDate>
+            <objectId>A69F061061B604F2E04054802EC268A4</objectId>
+            <postalCode>13073-9765</postalCode>
+            <postalCodeUnmasked>13073-9765</postalCodeUnmasked>
+            <stateProvinceCode>NY</stateProvinceCode>
+            <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+            <versionNumber>1</versionNumber>
+          </default>
+        </org.kuali.rice.kim.api.identity.address.EntityAddress>
+      </address>
+      <emailAddress>ldw3@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3030</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1010914</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1010914</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-043L</primaryDepartmentCode>
+      <employeeId>1010914</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountManagerUser>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <accountExpenseGuidelineText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>The only income activity on this account should be a college NYS appropriation allocation.</accountIncomeGuidelineText>
+      <accountPurposeText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountPurposeText>
+      <versionNumber>1</versionNumber>
+      <objectId>736249E2-4FBA-B950-F93E-A359DF0C5878</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>73E6277B-FCBA-BE8B-C004-175FE56C17A7</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountDescription>
+    <indirectCostRecoveryAccounts/>
+    <laborBenefitRateCategoryCode>CC</laborBenefitRateCategoryCode>
+    <versionNumber>2</versionNumber>
+    <objectId>8E2E9796-01E4-5457-7453-1F79D56A3164</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <programCode>REGAPP</programCode>
+      <appropriationAccountNumber>40072000</appropriationAccountNumber>
+      <subFundGroupCode>APSTAT</subFundGroupCode>
+      <everify>false</everify>
+      <majorReportingCategoryCode>DEAN</majorReportingCategoryCode>
+      <versionNumber>2</versionNumber>
+      <objectId>0E44B85B-C29C-F171-B97F-FD1AA371CB5F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </extension>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>4504700</accountNumber>
+    <accountName>Director Vet Curriculum - Salaries</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>S3007 Schurman Hall</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCountryCode>US</accountCountryCode>
+    <accountCreateDate>2012-07-23</accountCreateDate>
+    <accountEffectiveDate>2012-07-16</accountEffectiveDate>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>1011063</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>38696</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>287868</accountManagerSystemIdentifier>
+    <organizationCode>044O</organizationCode>
+    <accountTypeCode>CC</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>APSTAT</subFundGroupCode>
+    <financialHigherEdFunctionCd>4740</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <organization>
+      <organizationCode>044O</organizationCode>
+      <organizationName>DVM Teaching Activities</organizationName>
+      <organizationCityName>Ithaca</organizationCityName>
+      <organizationStateCode>NY</organizationStateCode>
+      <organizationZipCode>14853</organizationZipCode>
+      <organizationBeginDate>2010-07-01</organizationBeginDate>
+      <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+      <organizationManagerUniversalId>1444089</organizationManagerUniversalId>
+      <responsibilityCenterCode>NA</responsibilityCenterCode>
+      <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+      <organizationTypeCode>S</organizationTypeCode>
+      <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+      <reportsToOrganizationCode>048U</reportsToOrganizationCode>
+      <organizationPlantAccountNumber>400CAPT</organizationPlantAccountNumber>
+      <campusPlantAccountNumber>400CAPT</campusPlantAccountNumber>
+      <organizationPlantChartCode>IT</organizationPlantChartCode>
+      <campusPlantChartCode>IT</campusPlantChartCode>
+      <organizationCountryCode>US</organizationCountryCode>
+      <organizationLine1Address>S3 005 Schurman Hall</organizationLine1Address>
+      <responsibilityCenter>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <responsibilityCenterName>Not Applicable</responsibilityCenterName>
+        <responsibilityCenterShortName>Not Used</responsibilityCenterShortName>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>943FB78C68736602E04054802FC21FF7</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </responsibilityCenter>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7C3185467EE04054802FC207C1</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </organization>
+    <accountFiscalOfficerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>1011063</principalId>
+      <principalName>jjd9</principalName>
+      <entityId>1011063</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Jackie</firstName>
+      <middleName>J.</middleName>
+      <lastName>Dodge</lastName>
+      <name>Dodge, Jackie J.</name>
+      <address serialization="custom">
+        <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <default/>
+        </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <org.kuali.rice.kim.api.identity.address.EntityAddress>
+          <default>
+            <active>true</active>
+            <defaultValue>true</defaultValue>
+            <suppressAddress>false</suppressAddress>
+            <validated>false</validated>
+            <addressType serialization="custom">
+              <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <default/>
+              </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <org.kuali.rice.kim.api.identity.CodedAttribute>
+                <default>
+                  <active>true</active>
+                  <code>HM</code>
+                  <name>Home</name>
+                  <objectId>5B35758A2D240503E0404F8189D878D8</objectId>
+                  <sortCode>b</sortCode>
+                  <versionNumber>1</versionNumber>
+                </default>
+              </org.kuali.rice.kim.api.identity.CodedAttribute>
+            </addressType>
+            <city>Candor</city>
+            <cityUnmasked>Candor</cityUnmasked>
+            <countryCode> </countryCode>
+            <countryCodeUnmasked> </countryCodeUnmasked>
+            <entityId>1011063</entityId>
+            <entityTypeCode>PERSON</entityTypeCode>
+            <id>57084011</id>
+            <line1>49 Chapel Hill Rd</line1>
+            <line1Unmasked>49 Chapel Hill Rd</line1Unmasked>
+            <line2> </line2>
+            <line2Unmasked> </line2Unmasked>
+            <line3> </line3>
+            <line3Unmasked> </line3Unmasked>
+            <modifiedDate>2014-10-18T01:50:40.000-04:00</modifiedDate>
+            <objectId>A69F061008B404F2E04054802EC268A4</objectId>
+            <postalCode>13743-1919</postalCode>
+            <postalCodeUnmasked>13743-1919</postalCodeUnmasked>
+            <stateProvinceCode>NY</stateProvinceCode>
+            <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+            <versionNumber>1</versionNumber>
+          </default>
+        </org.kuali.rice.kim.api.identity.address.EntityAddress>
+      </address>
+      <emailAddress>jjd9@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3944</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1006213</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1006213</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1006213</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountFiscalOfficerUser>
+    <accountSupervisoryUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>38696</principalId>
+      <principalName>ll15</principalName>
+      <entityId>38696</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Lynne</firstName>
+      <middleName>Rae</middleName>
+      <lastName>Vrooman</lastName>
+      <name>Vrooman, Lynne Rae</name>
+      <address serialization="custom">
+        <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <default/>
+        </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <org.kuali.rice.kim.api.identity.address.EntityAddress>
+          <default>
+            <active>true</active>
+            <defaultValue>true</defaultValue>
+            <suppressAddress>false</suppressAddress>
+            <validated>false</validated>
+            <addressType serialization="custom">
+              <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <default/>
+              </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <org.kuali.rice.kim.api.identity.CodedAttribute>
+                <default>
+                  <active>true</active>
+                  <code>HM</code>
+                  <name>Home</name>
+                  <objectId>5B35758A2D240503E0404F8189D878D8</objectId>
+                  <sortCode>b</sortCode>
+                  <versionNumber>1</versionNumber>
+                </default>
+              </org.kuali.rice.kim.api.identity.CodedAttribute>
+            </addressType>
+            <city>Van Etten</city>
+            <cityUnmasked>Van Etten</cityUnmasked>
+            <countryCode> </countryCode>
+            <countryCodeUnmasked> </countryCodeUnmasked>
+            <entityId>38696</entityId>
+            <entityTypeCode>PERSON</entityTypeCode>
+            <id>57078961</id>
+            <line1>1008 State Route 224</line1>
+            <line1Unmasked>1008 State Route 224</line1Unmasked>
+            <line2> </line2>
+            <line2Unmasked> </line2Unmasked>
+            <line3> </line3>
+            <line3Unmasked> </line3Unmasked>
+            <modifiedDate>2014-10-18T01:50:40.000-04:00</modifiedDate>
+            <objectId>A69F060F963004F2E04054802EC268A4</objectId>
+            <postalCode>14889-9497</postalCode>
+            <postalCodeUnmasked>14889-9497</postalCodeUnmasked>
+            <stateProvinceCode>NY</stateProvinceCode>
+            <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+            <versionNumber>1</versionNumber>
+          </default>
+        </org.kuali.rice.kim.api.identity.address.EntityAddress>
+      </address>
+      <emailAddress>ll15@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3511</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1002464</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1002464</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1002464</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountSupervisoryUser>
+    <accountManagerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>287868</principalId>
+      <principalName>mcf32</principalName>
+      <entityId>287868</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Marnie</firstName>
+      <middleName>FitzMaurice</middleName>
+      <lastName>Cryer</lastName>
+      <name>Cryer, Marnie FitzMaurice</name>
+      <address serialization="custom">
+        <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <default/>
+        </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+        <org.kuali.rice.kim.api.identity.address.EntityAddress>
+          <default>
+            <active>true</active>
+            <defaultValue>true</defaultValue>
+            <suppressAddress>false</suppressAddress>
+            <validated>false</validated>
+            <addressType serialization="custom">
+              <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <default/>
+              </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+              <org.kuali.rice.kim.api.identity.CodedAttribute>
+                <default>
+                  <active>true</active>
+                  <code>HM</code>
+                  <name>Home</name>
+                  <objectId>5B35758A2D240503E0404F8189D878D8</objectId>
+                  <sortCode>b</sortCode>
+                  <versionNumber>1</versionNumber>
+                </default>
+              </org.kuali.rice.kim.api.identity.CodedAttribute>
+            </addressType>
+            <city>Ithaca</city>
+            <cityUnmasked>Ithaca</cityUnmasked>
+            <countryCode> </countryCode>
+            <countryCodeUnmasked> </countryCodeUnmasked>
+            <entityId>287868</entityId>
+            <entityTypeCode>PERSON</entityTypeCode>
+            <id>57743591</id>
+            <line1>172 Sodom Rd</line1>
+            <line1Unmasked>172 Sodom Rd</line1Unmasked>
+            <line2> </line2>
+            <line2Unmasked> </line2Unmasked>
+            <line3> </line3>
+            <line3Unmasked> </line3Unmasked>
+            <modifiedDate>2014-10-18T01:50:40.000-04:00</modifiedDate>
+            <objectId>A69F064B8DEB04F2E04054802EC268A4</objectId>
+            <postalCode>14850-8774</postalCode>
+            <postalCodeUnmasked>14850-8774</postalCodeUnmasked>
+            <stateProvinceCode>NY</stateProvinceCode>
+            <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+            <versionNumber>1</versionNumber>
+          </default>
+        </org.kuali.rice.kim.api.identity.address.EntityAddress>
+      </address>
+      <emailAddress>mcf32@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3807</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1834929</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1834929</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0415</primaryDepartmentCode>
+      <employeeId>1834929</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountManagerUser>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <accountExpenseGuidelineText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>The only income activity on this account should be a college NYS appropriation allocation.</accountIncomeGuidelineText>
+      <accountPurposeText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountPurposeText>
+      <versionNumber>1</versionNumber>
+      <objectId>736249E2-4FBA-B950-F93E-A359DF0C5878</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>73E6277B-FCBA-BE8B-C004-175FE56C17A7</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountDescription>
+    <indirectCostRecoveryAccounts/>
+    <laborBenefitRateCategoryCode>CC</laborBenefitRateCategoryCode>
+    <versionNumber>2</versionNumber>
+    <objectId>8E2E9796-01E4-5457-7453-1F79D56A3164</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <programCode>REGAPP</programCode>
+      <appropriationAccountNumber>40072000</appropriationAccountNumber>
+      <subFundGroupCode>APSTAT</subFundGroupCode>
+      <everify>false</everify>
+      <majorReportingCategoryCode>DEAN</majorReportingCategoryCode>
+      <versionNumber>2</versionNumber>
+      <objectId>0E44B85B-C29C-F171-B97F-FD1AA371CB5F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </extension>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+  <maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.coa.document.CUAccountMaintainableImpl"><notes><org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>5333000</noteIdentifier>
+      <remoteObjectIdentifier>8E2E9796-01E4-5457-7453-1F79D56A3164</remoteObjectIdentifier>
+      <authorUniversalIdentifier>44136</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-07-23 09:14:50.0</notePostedTimestamp>
+      <noteTypeCode>BO</noteTypeCode>
+      <noteText>Add account document ID 2058193</noteText>
+      <noteType>
+        <noteTypeCode>BO</noteTypeCode>
+        <noteTypeDescription>DOCUMENT BUSINESS OBJECT</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE6B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>5</versionNumber>
+      <objectId>2DED8D9821940A28E0534D73100A352C</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>988785</noteIdentifier>
+      <remoteObjectIdentifier>8E2E9796-01E4-5457-7453-1F79D56A3164</remoteObjectIdentifier>
+      <authorUniversalIdentifier>44136</authorUniversalIdentifier>
+      <notePostedTimestamp>2012-07-23 10:42:26.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>e-mail dated 7/17/2012</noteText>
+      <noteType>
+        <noteTypeCode>DH</noteTypeCode>
+        <noteTypeDescription>DOCUMENT HEADER</noteTypeDescription>
+        <noteTypeActiveIndicator>true</noteTypeActiveIndicator>
+        <versionNumber>1</versionNumber>
+        <objectId>2D3C47C53BE7B016E043814FD881B016</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </noteType>
+      <attachment>
+        <noteIdentifier>988785</noteIdentifier>
+        <attachmentMimeTypeCode>application/pdf</attachmentMimeTypeCode>
+        <attachmentFileName>4504700_Dir_DVM_Tchg.pdf</attachmentFileName>
+        <attachmentIdentifier>2C48C812-AE08-F370-1972-93EB39D355BA</attachmentIdentifier>
+        <attachmentFileSize>75832</attachmentFileSize>
+        <note reference="../.."/>
+        <versionNumber>16</versionNumber>
+        <objectId>355D5B6F-1073-E4CF-4F9B-F0DD35EF5922</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </attachment>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>17</versionNumber>
+      <objectId>B4391145-FC56-AA4F-6845-611C4F215B89</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+    <org.kuali.kfs.krad.bo.Note>
+      <noteIdentifier>5730789</noteIdentifier>
+      <remoteObjectIdentifier>8E2E9796-01E4-5457-7453-1F79D56A3164</remoteObjectIdentifier>
+      <authorUniversalIdentifier>44136</authorUniversalIdentifier>
+      <notePostedTimestamp>2016-06-24 16:48:27.0</notePostedTimestamp>
+      <noteTypeCode>DH</noteTypeCode>
+      <noteText>Edit account document ID 13847711 4504700 Modify Account</noteText>
+      <noteType/>
+      <adHocRouteRecipient class="org.kuali.kfs.krad.bo.AdHocRoutePerson">
+        <type>0</type>
+        <actionRequested>A</actionRequested>
+        <versionNumber>1</versionNumber>
+        <newCollectionRecord>false</newCollectionRecord>
+      </adHocRouteRecipient>
+      <versionNumber>4</versionNumber>
+      <objectId>accdf07d-ab87-4ee3-97f9-84f12c995d92</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </org.kuali.kfs.krad.bo.Note>
+  </org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl></notes><oldMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>4504700</accountNumber>
+    <accountName>Director Vet Curriculum - Salaries</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>S3007 Schurman Hall</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCountryCode>US</accountCountryCode>
+    <accountCreateDate>2012-07-23</accountCreateDate>
+    <accountEffectiveDate>2012-07-16</accountEffectiveDate>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>1011063</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>38696</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>36681</accountManagerSystemIdentifier>
+    <organizationCode>044O</organizationCode>
+    <accountTypeCode>CC</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>APSTAT</subFundGroupCode>
+    <financialHigherEdFunctionCd>4740</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <organization>
+      <organizationCode>044O</organizationCode>
+      <organizationName>DVM Teaching Activities</organizationName>
+      <organizationCityName>Ithaca</organizationCityName>
+      <organizationStateCode>NY</organizationStateCode>
+      <organizationZipCode>14853</organizationZipCode>
+      <organizationBeginDate>2010-07-01</organizationBeginDate>
+      <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+      <organizationManagerUniversalId>1444089</organizationManagerUniversalId>
+      <responsibilityCenterCode>NA</responsibilityCenterCode>
+      <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+      <organizationTypeCode>S</organizationTypeCode>
+      <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+      <reportsToOrganizationCode>048U</reportsToOrganizationCode>
+      <organizationPlantAccountNumber>400CAPT</organizationPlantAccountNumber>
+      <campusPlantAccountNumber>400CAPT</campusPlantAccountNumber>
+      <organizationPlantChartCode>IT</organizationPlantChartCode>
+      <campusPlantChartCode>IT</campusPlantChartCode>
+      <organizationCountryCode>US</organizationCountryCode>
+      <organizationLine1Address>S3 005 Schurman Hall</organizationLine1Address>
+      <responsibilityCenter>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <responsibilityCenterName>Not Applicable</responsibilityCenterName>
+        <responsibilityCenterShortName>Not Used</responsibilityCenterShortName>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>943FB78C68736602E04054802FC21FF7</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </responsibilityCenter>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7C3185467EE04054802FC207C1</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </organization>
+    <accountFiscalOfficerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>1011063</principalId>
+      <principalName>jjd9</principalName>
+      <entityId>1011063</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Jackie</firstName>
+      <middleName>J.</middleName>
+      <lastName>Dodge</lastName>
+      <name>Dodge, Jackie J.</name>
+      <emailAddress>jjd9@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3944</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1006213</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1006213</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1006213</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountFiscalOfficerUser>
+    <accountSupervisoryUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>38696</principalId>
+      <principalName>ll15</principalName>
+      <entityId>38696</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Lynne</firstName>
+      <middleName>Rae</middleName>
+      <lastName>Vrooman</lastName>
+      <name>Vrooman, Lynne Rae</name>
+      <emailAddress>ll15@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3511</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1002464</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1002464</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1002464</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountSupervisoryUser>
+    <accountManagerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>36681</principalId>
+      <principalName>ldw3</principalName>
+      <entityId>36681</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Lorin</firstName>
+      <middleName>D.</middleName>
+      <lastName>Warnick</lastName>
+      <name>Warnick, Lorin D.</name>
+      <emailAddress>ldw3@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3030</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1010914</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1010914</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-043L</primaryDepartmentCode>
+      <employeeId>1010914</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountManagerUser>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <accountExpenseGuidelineText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>The only income activity on this account should be a college NYS appropriation allocation.</accountIncomeGuidelineText>
+      <accountPurposeText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountPurposeText>
+      <versionNumber>1</versionNumber>
+      <objectId>736249E2-4FBA-B950-F93E-A359DF0C5878</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>73E6277B-FCBA-BE8B-C004-175FE56C17A7</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountDescription>
+    <indirectCostRecoveryAccounts/>
+    <laborBenefitRateCategoryCode>CC</laborBenefitRateCategoryCode>
+    <versionNumber>2</versionNumber>
+    <objectId>8E2E9796-01E4-5457-7453-1F79D56A3164</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <programCode>REGAPP</programCode>
+      <appropriationAccountNumber>40072000</appropriationAccountNumber>
+      <subFundGroupCode>APSTAT</subFundGroupCode>
+      <everify>false</everify>
+      <majorReportingCategoryCode>DEAN</majorReportingCategoryCode>
+      <versionNumber>2</versionNumber>
+      <objectId>0E44B85B-C29C-F171-B97F-FD1AA371CB5F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </extension>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.Account>
+    <chartOfAccountsCode>IT</chartOfAccountsCode>
+    <accountNumber>4504700</accountNumber>
+    <accountName>Director Vet Curriculum - Salaries</accountName>
+    <accountsFringesBnftIndicator>true</accountsFringesBnftIndicator>
+    <accountCityName>ITHACA</accountCityName>
+    <accountStateCode>NY</accountStateCode>
+    <accountStreetAddress>S3007 Schurman Hall</accountStreetAddress>
+    <accountZipCode>14853</accountZipCode>
+    <accountCountryCode>US</accountCountryCode>
+    <accountCreateDate>2012-07-23</accountCreateDate>
+    <accountEffectiveDate>2012-07-16</accountEffectiveDate>
+    <accountInFinancialProcessingIndicator>false</accountInFinancialProcessingIndicator>
+    <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
+    <accountSufficientFundsCode>N</accountSufficientFundsCode>
+    <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
+    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
+    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
+    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
+    <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
+    <accountOffCampusIndicator>false</accountOffCampusIndicator>
+    <active>true</active>
+    <accountFiscalOfficerSystemIdentifier>1011063</accountFiscalOfficerSystemIdentifier>
+    <accountsSupervisorySystemsIdentifier>38696</accountsSupervisorySystemsIdentifier>
+    <accountManagerSystemIdentifier>287868</accountManagerSystemIdentifier>
+    <organizationCode>044O</organizationCode>
+    <accountTypeCode>CC</accountTypeCode>
+    <accountPhysicalCampusCode>IT</accountPhysicalCampusCode>
+    <subFundGroupCode>APSTAT</subFundGroupCode>
+    <financialHigherEdFunctionCd>4740</financialHigherEdFunctionCd>
+    <accountRestrictedStatusCode>U</accountRestrictedStatusCode>
+    <organization>
+      <organizationCode>044O</organizationCode>
+      <organizationName>DVM Teaching Activities</organizationName>
+      <organizationCityName>Ithaca</organizationCityName>
+      <organizationStateCode>NY</organizationStateCode>
+      <organizationZipCode>14853</organizationZipCode>
+      <organizationBeginDate>2010-07-01</organizationBeginDate>
+      <organizationInFinancialProcessingIndicator>false</organizationInFinancialProcessingIndicator>
+      <organizationManagerUniversalId>1444089</organizationManagerUniversalId>
+      <responsibilityCenterCode>NA</responsibilityCenterCode>
+      <organizationPhysicalCampusCode>IT</organizationPhysicalCampusCode>
+      <organizationTypeCode>S</organizationTypeCode>
+      <reportsToChartOfAccountsCode>IT</reportsToChartOfAccountsCode>
+      <reportsToOrganizationCode>048U</reportsToOrganizationCode>
+      <organizationPlantAccountNumber>400CAPT</organizationPlantAccountNumber>
+      <campusPlantAccountNumber>400CAPT</campusPlantAccountNumber>
+      <organizationPlantChartCode>IT</organizationPlantChartCode>
+      <campusPlantChartCode>IT</campusPlantChartCode>
+      <organizationCountryCode>US</organizationCountryCode>
+      <organizationLine1Address>S3 005 Schurman Hall</organizationLine1Address>
+      <responsibilityCenter>
+        <responsibilityCenterCode>NA</responsibilityCenterCode>
+        <responsibilityCenterName>Not Applicable</responsibilityCenterName>
+        <responsibilityCenterShortName>Not Used</responsibilityCenterShortName>
+        <active>true</active>
+        <versionNumber>1</versionNumber>
+        <objectId>943FB78C68736602E04054802FC21FF7</objectId>
+        <newCollectionRecord>false</newCollectionRecord>
+      </responsibilityCenter>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <active>true</active>
+      <versionNumber>1</versionNumber>
+      <objectId>A53DCA7C3185467EE04054802FC207C1</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </organization>
+    <accountFiscalOfficerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>1011063</principalId>
+      <principalName>jjd9</principalName>
+      <entityId>1011063</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Jackie</firstName>
+      <middleName>J.</middleName>
+      <lastName>Dodge</lastName>
+      <name>Dodge, Jackie J.</name>
+      <emailAddress>jjd9@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3944</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1006213</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1006213</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1006213</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountFiscalOfficerUser>
+    <accountSupervisoryUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>38696</principalId>
+      <principalName>ll15</principalName>
+      <entityId>38696</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Lynne</firstName>
+      <middleName>Rae</middleName>
+      <lastName>Vrooman</lastName>
+      <name>Vrooman, Lynne Rae</name>
+      <emailAddress>ll15@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3511</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1002464</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1002464</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-045T</primaryDepartmentCode>
+      <employeeId>1002464</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountSupervisoryUser>
+    <accountManagerUser class="org.kuali.rice.kim.impl.identity.PersonImpl">
+      <principalId>287868</principalId>
+      <principalName>mcf32</principalName>
+      <entityId>287868</entityId>
+      <entityTypeCode>PERSON</entityTypeCode>
+      <firstName>Marnie</firstName>
+      <middleName>FitzMaurice</middleName>
+      <lastName>Cryer</lastName>
+      <name>Cryer, Marnie FitzMaurice</name>
+      <emailAddress>mcf32@cornell.edu</emailAddress>
+      <phoneNumber>607-253-3807</phoneNumber>
+      <suppressName>false</suppressName>
+      <suppressAddress>true</suppressAddress>
+      <suppressPhone>false</suppressPhone>
+      <suppressPersonal>false</suppressPersonal>
+      <suppressEmail>false</suppressEmail>
+      <campusCode>IT</campusCode>
+      <externalIdentifiers>
+        <entry>
+          <string>TAX</string>
+          <string>1834929</string>
+        </entry>
+        <entry>
+          <string>EMPLID</string>
+          <string>1834929</string>
+        </entry>
+      </externalIdentifiers>
+      <employeeStatusCode>A</employeeStatusCode>
+      <employeeTypeCode>P</employeeTypeCode>
+      <primaryDepartmentCode>IT-0415</primaryDepartmentCode>
+      <employeeId>1834929</employeeId>
+      <baseSalaryAmount>
+        <value>5.00</value>
+      </baseSalaryAmount>
+      <active>true</active>
+    </accountManagerUser>
+    <accountGuideline>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <accountExpenseGuidelineText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountExpenseGuidelineText>
+      <accountIncomeGuidelineText>The only income activity on this account should be a college NYS appropriation allocation.</accountIncomeGuidelineText>
+      <accountPurposeText>To accumulate personnel costs related to central administration professional curriculum salary costs.</accountPurposeText>
+      <versionNumber>1</versionNumber>
+      <objectId>736249E2-4FBA-B950-F93E-A359DF0C5878</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountGuideline>
+    <accountDescription>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <versionNumber>1</versionNumber>
+      <objectId>73E6277B-FCBA-BE8B-C004-175FE56C17A7</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </accountDescription>
+    <indirectCostRecoveryAccounts/>
+    <laborBenefitRateCategoryCode>CC</laborBenefitRateCategoryCode>
+    <versionNumber>2</versionNumber>
+    <objectId>8E2E9796-01E4-5457-7453-1F79D56A3164</objectId>
+    <newCollectionRecord>false</newCollectionRecord>
+    <extension class="edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute">
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4504700</accountNumber>
+      <programCode>REGAPP</programCode>
+      <appropriationAccountNumber>40072000</appropriationAccountNumber>
+      <subFundGroupCode>APSTAT</subFundGroupCode>
+      <everify>false</everify>
+      <majorReportingCategoryCode>DEAN</majorReportingCategoryCode>
+      <versionNumber>2</versionNumber>
+      <objectId>0E44B85B-C29C-F171-B97F-FD1AA371CB5F</objectId>
+      <newCollectionRecord>false</newCollectionRecord>
+    </extension>
+  </org.kuali.kfs.coa.businessobject.Account><maintenanceAction>Edit</maintenanceAction>
+  </newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
