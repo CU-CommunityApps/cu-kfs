@@ -89,6 +89,11 @@
         <filter-name>SessionExpirationFilter</filter-name>
         <filter-class>org.kuali.kfs.sys.web.filter.SessionExpirationFilter</filter-class>
     </filter>
+    
+    <filter>
+        <filter-name>ConcurAuthenticationFilter</filter-name>
+        <filter-class>edu.cornell.kfs.concur.rest.authentication.ConcurAuthenticationFilter</filter-class>
+    </filter>
 
     <!--  FILTER MAPPINGS  -->
 
@@ -175,6 +180,11 @@
     <filter-mapping>
         <filter-name>SessionExpirationFilter</filter-name>
         <servlet-name>action</servlet-name>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>ConcurAuthenticationFilter</filter-name>
+        <url-pattern>/systems/v1.0/testconnection</url-pattern>
     </filter-mapping>
 
     <!-- Listeners -->
