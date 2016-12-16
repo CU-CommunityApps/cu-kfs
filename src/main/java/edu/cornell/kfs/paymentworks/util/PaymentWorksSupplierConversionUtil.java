@@ -37,9 +37,12 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
 
 public class PaymentWorksSupplierConversionUtil {
+	
+	private PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
 
 	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(
 			Collection<PaymentWorksVendor> newVendors) {
@@ -53,8 +56,7 @@ public class PaymentWorksSupplierConversionUtil {
 			vendorToCopy = newVendor;
 
 			// copy record from KFS vendor doc if exists
-			PaymentWorksVendor newVendorFromDetail = new PaymentWorksNewVendorConversionUtil()
-					.createPaymentWorksNewVendorFromDetail(newVendor);
+			PaymentWorksVendor newVendorFromDetail = getPaymentWorksNewVendorConversionService().createPaymentWorksVendorFromDetail(newVendor);
 			if (ObjectUtils.isNotNull(newVendorFromDetail)) {
 				vendorToCopy = newVendorFromDetail;
 			}
@@ -83,7 +85,6 @@ public class PaymentWorksSupplierConversionUtil {
 			}
 
 			paymentWorksSupplierUploadDTO.setTin(vendorToCopy.getRequestingCompanyTin());
-			paymentWorksSupplierUploadDTO.setContactEmail(vendorToCopy.getUconnContactEmailAddress());
 
 			paymentWorksSupplierUploadList.add(paymentWorksSupplierUploadDTO);
 		}
@@ -169,6 +170,17 @@ public class PaymentWorksSupplierConversionUtil {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
+	}
+
+	public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
+		if (paymentWorksNewVendorConversionService == null) {
+			paymentWorksNewVendorConversionService = SpringContext.getBean(PaymentWorksNewVendorConversionService.class);
+		}
+		return paymentWorksNewVendorConversionService;
+	}
+
+	public void setPaymentWorksNewVendorConversionService(PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
+		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
 	}
 
 }

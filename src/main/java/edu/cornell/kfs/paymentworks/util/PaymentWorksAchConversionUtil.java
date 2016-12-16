@@ -18,132 +18,61 @@
  */
 package edu.cornell.kfs.paymentworks.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpParameterConstants;
-import org.kuali.kfs.pdp.batch.ExtractAchPaymentsStep;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
-import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public class PaymentWorksAchConversionUtil {
+	
+	PaymentWorksUtilityService paymentWorksUtilityService;
 
 	public PayeeACHAccount createPayeeAchAccount(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumber) {
-
 		PayeeACHAccount payeeAchAccount = new PayeeACHAccount();
-		// PayeeACHAccountExtension payeeAchAccountExtension = new
-		// PayeeACHAccountExtension();
-
-		Map<String, String> fieldChanges = new PaymentWorksUtil()
-				.convertFieldArrayToMap(vendorUpdate.getField_changes());
+		Map<String, String> fieldChanges = getPaymentWorksUtilityService().convertFieldArrayToMap(vendorUpdate.getField_changes());
 
 		payeeAchAccount.setPayeeIdentifierTypeCode(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 		payeeAchAccount.setPayeeIdNumber(vendorNumber);
-		payeeAchAccount.setBankRoutingNumber(fieldChanges.get("Routing num"));
-		payeeAchAccount.setBankAccountNumber(fieldChanges.get("Acct num"));
+		payeeAchAccount.setBankRoutingNumber(fieldChanges.get(PaymentWorksConstants.FieldNames.ROUTING_NUMBER));
+		payeeAchAccount.setBankAccountNumber(fieldChanges.get(PaymentWorksConstants.FieldNames.ACCOUNT_NUMBER));
 		payeeAchAccount.setBankAccountTypeCode(PdpConstants.ACH_TRANSACTION_TYPE_DEFAULT);
-
-		payeeAchAccount.setPayeeEmailAddress(getAchEmailAddress(vendorNumber));
-
 		payeeAchAccount.setAchTransactionType(PdpConstants.DisbursementTypeCodes.ACH);
 		payeeAchAccount.setActive(true);
 		payeeAchAccount.setLastUpdateUserId(PaymentWorksConstants.SOURCE_USER);
 		payeeAchAccount.setLastUpdate(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
-
-		// payeeAchAccountExtension.setBypassFeedUpdateIndicator(false);
-		// payeeAchAccountExtension.setPdpPayeeACHAcctUpdateSource(PmwConstants.SOURCE_USER);
-		// payeeAchAccountExtension.setPdpPayeeACHAcctLastUpdate(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
-
-		// payeeAchAccount.setExtension(payeeAchAccountExtension);
-
 		return payeeAchAccount;
 	}
 
-	/**
-	 * First checks staging table, then grabs from parameter
-	 *
-	 * @param vendorNumber
-	 * @return
-	 */
-	protected String getAchEmailAddress(String vendorNumber) {
-		String achEmailAddress = null;
-
-		// split vendor number if not null and get latest ach email address from
-		// staging table
-		if (StringUtils.isNotEmpty(vendorNumber)) {
-			String[] vendorNumberParts = StringUtils.split(vendorNumber, "-");
-			String headerId = vendorNumberParts[0];
-			String detailId = vendorNumberParts[1];
-
-			Map<String, String> fieldValues = new HashMap<String, String>();
-			fieldValues.put("vendorHeaderGeneratedIdentifier", headerId);
-			fieldValues.put("vendorDetailAssignedIdentifier", detailId);
-			fieldValues.put("transactionType", PaymentWorksConstants.TransactionType.NEW_VENDOR);
-
-			Collection<PaymentWorksVendor> newVendors = SpringContext.getBean(BusinessObjectService.class)
-					.findMatchingOrderBy(PaymentWorksVendor.class, fieldValues, "processTimestamp", false);
-			PaymentWorksVendor vendor = null;
-
-			if (ObjectUtils.isNotNull(newVendors) && !newVendors.isEmpty()) {
-				vendor = newVendors.iterator().next();
-				achEmailAddress = vendor.getAchEmailAddress();
-			}
-
-		}
-
-		// if still null, try param
-		if (ObjectUtils.isNull(achEmailAddress)) {
-			List<String> toAddressList = new ArrayList<String>(SpringContext.getBean(ParameterService.class)
-					.getParameterValuesAsString(ExtractAchPaymentsStep.class,
-							PdpParameterConstants.ACH_SUMMARY_TO_EMAIL_ADDRESS_PARMAETER_NAME));
-			if (ObjectUtils.isNotNull(toAddressList) && !toAddressList.isEmpty()) {
-				achEmailAddress = toAddressList.get(0);
-			}
-		}
-
-		return achEmailAddress;
-	}
-
-	public PayeeACHAccount createPayeeAchAccount(PayeeACHAccount payeeAchAccountOld, String routingNumber,
-			String accountNumber) {
-
+	public PayeeACHAccount createPayeeAchAccount(PayeeACHAccount payeeAchAccountOld, String routingNumber, String accountNumber) {
 		PayeeACHAccount payeeAchAccount = (PayeeACHAccount) ObjectUtils.deepCopy(payeeAchAccountOld);
-		// PayeeACHAccountExtension payeeAchAccountExtension = new
-		// PayeeACHAccountExtension();
-
-		payeeAchAccount.setBankRoutingNumber(
-				StringUtils.defaultIfEmpty(routingNumber, payeeAchAccount.getBankRoutingNumber()));
-		payeeAchAccount.setBankAccountNumber(
-				StringUtils.defaultIfEmpty(accountNumber, payeeAchAccount.getBankAccountNumber()));
-
+		payeeAchAccount.setBankRoutingNumber(StringUtils.defaultIfEmpty(routingNumber, payeeAchAccount.getBankRoutingNumber()));
+		payeeAchAccount.setBankAccountNumber(StringUtils.defaultIfEmpty(accountNumber, payeeAchAccount.getBankAccountNumber()));
 		payeeAchAccount.setObjectId(null);
 		payeeAchAccount.setVersionNumber(null);
 		payeeAchAccount.setAchAccountGeneratedIdentifier(null);
-
 		payeeAchAccount.setActive(true);
 		payeeAchAccount.setLastUpdateUserId(PaymentWorksConstants.SOURCE_USER);
 		payeeAchAccount.setLastUpdate(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
-
-		// payeeAchAccountExtension.setBypassFeedUpdateIndicator(false);
-		// payeeAchAccountExtension.setPdpPayeeACHAcctUpdateSource(PmwConstants.SOURCE_USER);
-		// payeeAchAccountExtension.setPdpPayeeACHAcctLastUpdate(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
-
-		// payeeAchAccount.setExtension(payeeAchAccountExtension);
-
 		return payeeAchAccount;
+	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		if (paymentWorksUtilityService == null) {
+			paymentWorksUtilityService = SpringContext.getBean(PaymentWorksUtilityService.class);
+		}
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
 }

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.cornell.kfs.paymentworks.util;
+package edu.cornell.kfs.paymentworks.service.impl;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -34,15 +34,20 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldsDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
 
-public class PaymentWorksUtil {
-
+public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityService {
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUtilityServiceImpl.class);
+	
 	private DataDictionaryService dataDictionaryService;
-
+	private PhoneNumberService phoneNumberService;
+	private ConfigurationService configurationService;
+	
+	@Override
 	public String getGlobalErrorMessage() {
 		String errorMessage = "";
 
@@ -54,7 +59,8 @@ public class PaymentWorksUtil {
 
 		return errorMessage;
 	}
-
+	
+	@Override
 	public String getAutoPopulatingErrorMessages(Map<String, AutoPopulatingList<ErrorMessage>> errorMap) {
 
 		AutoPopulatingList<ErrorMessage> errorMessages = null;
@@ -71,8 +77,7 @@ public class PaymentWorksUtil {
 				errorMessage = errorMessages.get(i);
 
 				// get error text
-				errorText = SpringContext.getBean(ConfigurationService.class)
-						.getPropertyValueAsString(errorMessage.getErrorKey());
+				errorText = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
 				// apply parameters
 				errorText = MessageFormat.format(errorText, (Object[]) errorMessage.getMessageParameters());
 
@@ -83,13 +88,8 @@ public class PaymentWorksUtil {
 
 		return errorList.toString();
 	}
-
-	/**
-	 * Converts a pojo object into a json string
-	 *
-	 * @param object
-	 * @return
-	 */
+	
+	@Override
 	public String pojoToJsonString(Object object) {
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -104,13 +104,8 @@ public class PaymentWorksUtil {
 		return jsonVendorStatusString;
 	}
 
-	/**
-	 * Utility method to convert custom fields into a map for ease of access
-	 *
-	 * @param customFields
-	 * @return
-	 */
-	protected Map<String, String> convertFieldArrayToMap(PaymentWorksCustomFieldsDTO customFields) {
+	@Override
+	public Map<String, String> convertFieldArrayToMap(PaymentWorksCustomFieldsDTO customFields) {
 
 		Map<String, String> customFieldMap = new HashMap<String, String>();
 
@@ -122,8 +117,9 @@ public class PaymentWorksUtil {
 
 		return customFieldMap;
 	}
-
-	protected Map<String, String> convertFieldArrayToMap(PaymentWorksFieldChangesDTO fieldChanges) {
+	
+	@Override
+	public Map<String, String> convertFieldArrayToMap(PaymentWorksFieldChangesDTO fieldChanges) {
 
 		Map<String, String> customFieldMap = new HashMap<String, String>();
 
@@ -135,8 +131,9 @@ public class PaymentWorksUtil {
 
 		return customFieldMap;
 	}
-
-	protected Map<String, String> convertFieldArrayToMapFromValues(PaymentWorksFieldChangesDTO fieldChanges) {
+	
+	@Override
+	public Map<String, String> convertFieldArrayToMapFromValues(PaymentWorksFieldChangesDTO fieldChanges) {
 
 		Map<String, String> customFieldMap = new HashMap<String, String>();
 
@@ -148,8 +145,9 @@ public class PaymentWorksUtil {
 
 		return customFieldMap;
 	}
-
-	protected String trimFieldToMax(String field, String fieldName) {
+	
+	@Override
+	public String trimFieldToMax(String field, String fieldName) {
 		String returnField = field;
 
 		try {
@@ -161,26 +159,33 @@ public class PaymentWorksUtil {
 
 		return returnField;
 	}
-
-	/*
-	 * KPS-316 format telephone number to xxx-yyy-zzzz
-	 */
-	protected String convertPhoneNumber(String phoneNbr) {
-		// first clear out any non-numeric characters
-		String phone = phoneNbr.replaceAll("[^0-9]", "");
-		StringBuilder p = new StringBuilder(phone.substring(0, 3)).append("-");
-		p.append(phone.substring(3, 6)).append("-");
-		p.append(phone.substring(6, phone.length()));
-		phone = p.toString();
-		return phone;
+	
+	@Override
+	public String convertPhoneNumber(String phoneNumber) {
+		return getPhoneNumberService().formatNumberIfPossible(phoneNumber);
 	}
 
 	protected DataDictionaryService getDataDictionaryService() {
-
-		if (ObjectUtils.isNull(dataDictionaryService)) {
-			dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
-		}
-
 		return dataDictionaryService;
+	}
+
+	public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+		this.dataDictionaryService = dataDictionaryService;
+	}
+
+	public PhoneNumberService getPhoneNumberService() {
+		return phoneNumberService;
+	}
+
+	public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
+		this.phoneNumberService = phoneNumberService;
+	}
+
+	public ConfigurationService getConfigurationService() {
+		return configurationService;
+	}
+
+	public void setConfigurationService(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 }

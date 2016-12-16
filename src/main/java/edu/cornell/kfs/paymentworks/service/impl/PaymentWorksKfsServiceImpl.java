@@ -18,28 +18,23 @@
  */
 package edu.cornell.kfs.paymentworks.service.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpParameterConstants;
-import org.kuali.kfs.pdp.batch.ExtractAchPaymentsStep;
 import org.kuali.kfs.pdp.businessobject.ACHBank;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -57,19 +52,18 @@ import edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveNewVendorStep;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksUploadSuppliersStep;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.util.PaymentWorksAchConversionUtil;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksNewVendorConversionUtil;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksUtil;
 import edu.cornell.kfs.paymentworks.util.PaymentWorksVendorUpdateConversionUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.sys.service.MailMessage;
+import edu.cornell.kfs.vnd.CUVendorConstants;
 
 @Transactional
 public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
-
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(PaymentWorksKfsServiceImpl.class);
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksKfsServiceImpl.class);
 
 	private DocumentService documentService;
 	private MailService mailService;
@@ -77,372 +71,294 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	private ParameterService parameterService;
 	private VendorService vendorService;
 	private BusinessObjectService businessObjectService;
+	private MaintenanceDocumentService maintenanceDocumentService;
+	private PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
+	private PaymentWorksUtilityService paymentWorksUtilityService;
 
 	@Override
 	public boolean routeNewVendor(PaymentWorksVendor paymentWorksVendor) {
-		boolean isRouted = false;
+		boolean routed = false;
+		VendorDetail vendorDetail = getPaymentWorksNewVendorConversionService().createVendorDetail(paymentWorksVendor);
 
-		// create vendor
-		VendorDetail vendorDetail = new PaymentWorksNewVendorConversionUtil().createVendorDetail(paymentWorksVendor);
-
-		// Route Maintenance document
-		MaintenanceDocument vendorMaintDoc = null;
 		try {
-			vendorMaintDoc = (MaintenanceDocument) documentService.getNewDocument("PVEN");
-			vendorMaintDoc.getDocumentHeader().setDocumentDescription(
-					StringUtils.defaultString(paymentWorksVendor.getRequestingCompanyName(), ""));
-			vendorMaintDoc.getDocumentHeader().setExplanation(paymentWorksVendor.getRequestingCompanyDesc());
-			vendorMaintDoc.getOldMaintainableObject().setBusinessObject(new VendorDetail());
-			vendorMaintDoc.getNewMaintainableObject().setBusinessObject(vendorDetail);
-			vendorMaintDoc.getNewMaintainableObject().setMaintenanceAction(KFSConstants.MAINTENANCE_NEW_ACTION);
-
-			boolean isValid = true;
+			MaintenanceDocument vendorMaintDoc = buildVendorMaintenanceDocument(paymentWorksVendor, vendorDetail);
+			boolean valid = true;
 			try {
 				vendorMaintDoc.validateBusinessRules(new RouteDocumentEvent(vendorMaintDoc));
 			} catch (ValidationException ve) {
-				LOG.error("Failed to route Vendor document due to business rule error(s): " + new PaymentWorksUtil()
-						.getAutoPopulatingErrorMessages(GlobalVariables.getMessageMap().getErrorMessages()));
-				isValid = false;
+				LOG.error("Failed to route Vendor document due to business rule error(s): " + getPaymentWorksUtilityService()
+						.getAutoPopulatingErrorMessages(GlobalVariables.getMessageMap().getErrorMessages()), ve);
+				valid = false;
 			}
 
-			if (isValid) {
-				// add note
-				// addNoteForNewVendorResponsesToVendor(vendorMaintDoc.getNewMaintainableObject());
-
-				// route document
+			if (valid) {
 				documentService.routeDocument(vendorMaintDoc, "", new ArrayList());
-
-				isRouted = true;
-
-				// add document number
+				routed = true;
 				paymentWorksVendor.setDocumentNumber(vendorMaintDoc.getDocumentNumber());
 			}
 		} catch (Exception e) {
 			LOG.error("Failed to route Vendor document due to error(s): " + e.getMessage());
 		} finally {
-			// clear errors
-			// GlobalVariables.getMessageMap().clearErrorMessages();
+			GlobalVariables.getMessageMap().clearErrorMessages();
 		}
-
-		return isRouted;
+		return routed;
 	}
 
 	@Override
 	public boolean routeVendorEdit(PaymentWorksVendor paymentWorksVendor) {
-		boolean isRouted = false;
+		boolean routed = false;
 		PaymentWorksVendorUpdateConversionUtil paymentWorksVendorUpdateConversionUtil = new PaymentWorksVendorUpdateConversionUtil();
-
 		String vendorNumberList = paymentWorksVendor.getVendorNumberList();
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
 		StringBuffer documentNumbers = new StringBuffer("");
 
-		// loop through vendors
 		for (String vendorNumber : vendorNumbers) {
-
-			// get two copies of vendor, for old and new. Deep copy has weird
-			// consequences
 			VendorDetail oldVendor = vendorService.getVendorDetail(vendorNumber);
 			VendorDetail newVendor = (VendorDetail) ObjectUtils.deepCopy(oldVendor);
 
 			if (!paymentWorksVendorUpdateConversionUtil.duplicateFieldsOnVendor(newVendor, paymentWorksVendor)) {
-
-				// create vendor for edit
-				VendorDetail vendorDetail = new PaymentWorksVendorUpdateConversionUtil()
-						.createVendorDetailForEdit(newVendor, oldVendor, paymentWorksVendor);
-
-				// Route Maintenance document
-				MaintenanceDocument vendorMaintDoc = null;
-				try {
-					vendorMaintDoc = (MaintenanceDocument) documentService.getNewDocument("PVEN");
-					vendorMaintDoc.getDocumentHeader()
-							.setDocumentDescription(StringUtils.defaultString(paymentWorksVendor.getVendorName()));
-					vendorMaintDoc.getOldMaintainableObject().setBusinessObject(oldVendor);
-					vendorMaintDoc.getNewMaintainableObject().setBusinessObject(vendorDetail);
-					vendorMaintDoc.getNewMaintainableObject()
-							.setMaintenanceAction(KFSConstants.MAINTENANCE_EDIT_ACTION);
-					vendorMaintDoc.getNewMaintainableObject().setDocumentNumber(vendorMaintDoc.getDocumentNumber());
-
-					boolean isVendorLocked = checkForLockingDocument(vendorMaintDoc);
-
-					if (!isVendorLocked) {
-						boolean isValid = true;
-						try {
-							vendorMaintDoc.validateBusinessRules(new RouteDocumentEvent(vendorMaintDoc));
-						} catch (ValidationException ve) {
-							LOG.error("Failed to route Vendor Edit document due to business rule error(s): "
-									+ new PaymentWorksUtil().getAutoPopulatingErrorMessages(
-											GlobalVariables.getMessageMap().getErrorMessages()));
-							isValid = false;
-						}
-
-						if (isValid) {
-							// add note
-							// addNoteForNewVendorResponsesToVendor(vendorMaintDoc.getNewMaintainableObject());
-
-							// route document
-							documentService.routeDocument(vendorMaintDoc, null, null);
-
-							isRouted = true;
-
-							// add document number
-							documentNumbers.append(vendorMaintDoc.getDocumentNumber() + ",");
-						}
-					} else {
-						LOG.error("Failed to route Vendor Edit document due to lock");
-						GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM,
-								"Failed to route Vendor Edit document due to lock");
-						isRouted = false;
-					}
-				} catch (Exception e) {
-					LOG.error("Failed to route Vendor document due to error(s): " + e.getMessage());
-					isRouted = false;
-				}
+				routed = processNonDuplicateVendorDetail(paymentWorksVendor, documentNumbers, oldVendor, newVendor);
 			} else {
-				GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM,
-						"Duplicate vendor update detected");
-				isRouted = false;
+				GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM, "Duplicate vendor update detected");
+				routed = false;
 			}
 		}
 
 		if (documentNumbers.length() > 0) {
-			paymentWorksVendor
-					.setDocumentNumberList(documentNumbers.toString().substring(0, documentNumbers.length() - 1));
+			paymentWorksVendor.setDocumentNumberList(documentNumbers.toString().substring(0, documentNumbers.length() - 1));
 		}
-		return isRouted;
+		return routed;
+	}
+
+	protected boolean processNonDuplicateVendorDetail(PaymentWorksVendor paymentWorksVendor,
+			StringBuffer documentNumbers, VendorDetail oldVendor, VendorDetail newVendor) {
+		boolean routed = false;
+		VendorDetail vendorDetail = new PaymentWorksVendorUpdateConversionUtil().createVendorDetailForEdit(newVendor, oldVendor, paymentWorksVendor);
+		try {
+			MaintenanceDocument vendorMaintDoc = buildVendorMaintenanceDocument(paymentWorksVendor, oldVendor, vendorDetail);
+
+			if (!checkForLockingDocument(vendorMaintDoc)) {
+				routed = processUnlockedVendorMaintenanceDocument(documentNumbers, vendorMaintDoc);
+			} else {
+				LOG.error("Failed to route Vendor Edit document due to lock");
+				GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM, "Failed to route Vendor Edit document due to lock");
+			}
+		} catch (Exception e) {
+			LOG.error("Failed to route Vendor document due to error(s): " + e.getMessage());
+		}
+		return routed;
+	}
+	
+	protected MaintenanceDocument buildVendorMaintenanceDocument(PaymentWorksVendor paymentWorksVendor, VendorDetail vendorDetail) 
+			throws WorkflowException {
+		MaintenanceDocument vendorMaintDoc = buildVendorMaintenanceDocumentBase(vendorDetail, new VendorDetail(), 
+				paymentWorksVendor.getRequestingCompanyName(), KFSConstants.MAINTENANCE_NEW_ACTION);
+		vendorMaintDoc.getDocumentHeader().setExplanation(paymentWorksVendor.getRequestingCompanyDesc());
+		return vendorMaintDoc;
+	}
+	
+	protected MaintenanceDocument buildVendorMaintenanceDocument(PaymentWorksVendor paymentWorksVendor, VendorDetail oldVendor,
+			VendorDetail vendorDetail) throws WorkflowException {
+		MaintenanceDocument vendorMaintDoc = buildVendorMaintenanceDocumentBase(vendorDetail, oldVendor, 
+				paymentWorksVendor.getVendorName(), KFSConstants.MAINTENANCE_EDIT_ACTION);
+		vendorMaintDoc.getNewMaintainableObject().setDocumentNumber(vendorMaintDoc.getDocumentNumber());
+		return vendorMaintDoc;
+	}
+	
+	protected MaintenanceDocument buildVendorMaintenanceDocumentBase(VendorDetail newVendorDetail, VendorDetail oldVendorDetail, 
+			String documentDescription, String doucmentAction) throws WorkflowException {
+		MaintenanceDocument vendorMaintDoc = (MaintenanceDocument) documentService.getNewDocument(CUVendorConstants.VENDOR_DOCUMENT_TYPE_NAME);
+		vendorMaintDoc.getNewMaintainableObject().setBusinessObject(newVendorDetail);
+		vendorMaintDoc.getOldMaintainableObject().setBusinessObject(oldVendorDetail);
+		vendorMaintDoc.getDocumentHeader().setDocumentDescription(StringUtils.defaultIfBlank(documentDescription, StringUtils.EMPTY));
+		vendorMaintDoc.getNewMaintainableObject().setMaintenanceAction(doucmentAction);
+		return vendorMaintDoc;
+	}
+
+	protected boolean processUnlockedVendorMaintenanceDocument(StringBuffer documentNumbers, MaintenanceDocument vendorMaintDoc) throws WorkflowException {
+		boolean routed = false;
+		try {
+			vendorMaintDoc.validateBusinessRules(new RouteDocumentEvent(vendorMaintDoc));
+			documentService.routeDocument(vendorMaintDoc, null, null);
+			routed = true;
+			documentNumbers.append(vendorMaintDoc.getDocumentNumber() + ",");
+		} catch (ValidationException ve) {
+			LOG.error("Failed to route Vendor Edit document due to business rule error(s): "
+					+ getPaymentWorksUtilityService().getAutoPopulatingErrorMessages(GlobalVariables.getMessageMap().getErrorMessages()));
+		}
+		return routed;
 	}
 
 	@Override
 	public boolean directVendorEdit(PaymentWorksVendor paymentWorksVendor) {
-
 		boolean success = true;
 		PaymentWorksVendorUpdateConversionUtil paymentWorksVendorUpdateConversionUtil = new PaymentWorksVendorUpdateConversionUtil();
-
 		String vendorNumberList = paymentWorksVendor.getVendorNumberList();
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
 
-		// loop through vendors
 		for (String vendorNumber : vendorNumbers) {
-
-			// retrieve vendor from kfs
 			VendorDetail vendorDetail = vendorService.getVendorDetail(vendorNumber);
-
 			if (ObjectUtils.isNotNull(vendorDetail)) {
 				if (!paymentWorksVendorUpdateConversionUtil.duplicateFieldsOnVendor(vendorDetail, paymentWorksVendor)) {
-					// set the necessary fields
-					vendorDetail = paymentWorksVendorUpdateConversionUtil.createVendorDetailForEdit(vendorDetail, null,
-							paymentWorksVendor);
-
-					// save to DB, no document
+					vendorDetail = paymentWorksVendorUpdateConversionUtil.createVendorDetailForEdit(vendorDetail, null, paymentWorksVendor);
 					try {
 						businessObjectService.save(vendorDetail);
 					} catch (Exception e) {
-						GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM,
-								e.getCause().getMessage());
+						GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM, e.getCause().getMessage());
 						success = false;
 						break;
 					}
 				} else {
-					GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM,
-							"Duplicate vendor update detected");
+					GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM, "Duplicate vendor update detected");
 					success = false;
 				}
 			}
 		}
-
 		return success;
 	}
-
+	
 	@Override
 	public boolean directAchEdit(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumberList) {
-
-		boolean isSuccessful = false;
-
+		boolean successful = false;
 		String routingNumber = getRoutingNumber(vendorUpdate.getField_changes().getField_changes());
 		String accountNumber = getAccountNumber(vendorUpdate.getField_changes().getField_changes());
-
-		// check if bank exists
-		if (StringUtils.isNotEmpty(routingNumber)) {
-			ACHBank achBank = achBankService.getByPrimaryId(routingNumber);
-
-			if (ObjectUtils.isNull(achBank)) {
-				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
-						"ACH Bank does not exist for routing number");
-				return isSuccessful;
-			}
-		}
-
-		// check if we do not have at least routing or account number
-		// if not, throw an error
-		if (StringUtils.isEmpty(routingNumber) && StringUtils.isEmpty(accountNumber)) {
-			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
-					"Routing number or account number required");
-			return isSuccessful;
+		
+		if (validateRoutingNumberAndAccountNumber(routingNumber, accountNumber)) {
+			return successful;
 		}
 
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
-
-		// loop through vendors
 		for (String vendorNumber : vendorNumbers) {
-
-			PayeeACHAccount payeeAchAccount = this.getActivePayeeAchAccount(PdpConstants.PayeeIdTypeCodes.VENDOR_ID,
-					vendorNumber, PdpConstants.DisbursementTypeCodes.ACH);
-
-			// if existing, deactivate
-			if (ObjectUtils.isNotNull(payeeAchAccount)) {
-				payeeAchAccount.setActive(false);
-				try {
-					payeeAchAccount = businessObjectService.save(payeeAchAccount);
-				} catch (Exception e) {
-					GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
-							e.getCause().getMessage());
-					isSuccessful = false;
-					break;
-				}
-			}
-
-			PayeeACHAccount payeeAchAccountNew = new PayeeACHAccount();
-
-			// check if no existing ach account, and dont' have both fields
-			// coming in (can't create a new record)
-			if (ObjectUtils.isNull(payeeAchAccount)
-					&& (StringUtils.isEmpty(routingNumber) || StringUtils.isEmpty(accountNumber))) {
-				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
-						"No existing Payee ACH Account, routing number and account number required");
-				return isSuccessful;
-			}
-
-			// if we do not have an existing payee ach account by this time,
-			// create new
-			if (ObjectUtils.isNull(payeeAchAccount)) {
-				payeeAchAccountNew = new PaymentWorksAchConversionUtil().createPayeeAchAccount(vendorUpdate,
-						vendorNumber);
-			} else {
-				// if we do have a payee ach account, deep copy, and copy over
-				// the fields
-				payeeAchAccountNew = new PaymentWorksAchConversionUtil().createPayeeAchAccount(payeeAchAccount,
-						routingNumber, accountNumber);
-			}
-
-			// save payee ach account
-			try {
-				payeeAchAccountNew = businessObjectService.save(payeeAchAccountNew);
-			} catch (Exception e) {
-				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
-						e.getCause().getMessage());
-
-				// roll back
-				if (ObjectUtils.isNotNull(payeeAchAccount)) {
-					payeeAchAccount.setActive(true);
-					payeeAchAccount = businessObjectService.save(payeeAchAccount);
-				}
-				isSuccessful = false;
+			PayeeACHAccount payeeAchAccount = this.getActivePayeeAchAccount(PdpConstants.PayeeIdTypeCodes.VENDOR_ID, vendorNumber, PdpConstants.DisbursementTypeCodes.ACH);
+			
+			if (!inactivatePayeeAchAccount(payeeAchAccount)) {
+				successful = false;
 				break;
 			}
-			isSuccessful = true;
+
+			if(!validatePayeeAchAccountExistence(payeeAchAccount, routingNumber, accountNumber)) {
+				return successful;
+			}
+			
+			PayeeACHAccount payeeAchAccountNew = buildPayeeAchAccountNew(vendorUpdate, routingNumber, accountNumber, vendorNumber, payeeAchAccount);
+			if(!processPayeeAchAccountNew(payeeAchAccountNew, payeeAchAccount)) {
+				break;
+			}
+			successful = true;
 		}
 
-		return isSuccessful;
+		return successful;
+	}
+	
+	protected boolean inactivatePayeeAchAccount(PayeeACHAccount payeeAchAccount) {
+		if (ObjectUtils.isNotNull(payeeAchAccount)) {
+			payeeAchAccount.setActive(false);
+			try {
+				payeeAchAccount = businessObjectService.save(payeeAchAccount);
+			} catch (Exception e) {
+				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, e.getCause().getMessage());
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	protected boolean processPayeeAchAccountNew(PayeeACHAccount payeeAchAccountNew, PayeeACHAccount payeeAchAccount) {
+		boolean successful = true;
+		try {
+			payeeAchAccountNew = businessObjectService.save(payeeAchAccountNew);
+		} catch (Exception e) {
+			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, e.getCause().getMessage());
+			if (ObjectUtils.isNotNull(payeeAchAccount)) {
+				payeeAchAccount.setActive(true);
+				payeeAchAccount = businessObjectService.save(payeeAchAccount);
+			}
+			successful = false;
+		}
+		return successful;
+	}
+
+	protected PayeeACHAccount buildPayeeAchAccountNew(PaymentWorksVendorUpdatesDTO vendorUpdate, String routingNumber,
+			String accountNumber, String vendorNumber, PayeeACHAccount payeeAchAccount) {
+		PayeeACHAccount payeeAchAccountNew;
+		if (ObjectUtils.isNull(payeeAchAccount)) {
+			payeeAchAccountNew = new PaymentWorksAchConversionUtil().createPayeeAchAccount(vendorUpdate, vendorNumber);
+		} else {
+			payeeAchAccountNew = new PaymentWorksAchConversionUtil().createPayeeAchAccount(payeeAchAccount, routingNumber, accountNumber);
+		}
+		return payeeAchAccountNew;
+	}
+	
+	protected boolean validatePayeeAchAccountExistence(PayeeACHAccount payeeAchAccount, String routingNumber, String accountNumber) {
+		boolean valid = true;
+		if (ObjectUtils.isNull(payeeAchAccount) && (StringUtils.isBlank(routingNumber) || StringUtils.isBlank(accountNumber))) {
+			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
+					"No existing Payee ACH Account, routing number and account number required");
+			valid = false;
+		}
+		return valid;
+	}
+	
+	protected boolean validateRoutingNumberAndAccountNumber(String routingNumber, String accountNumber) {
+		boolean valid = true;
+		if (StringUtils.isNotBlank(routingNumber)) {
+			ACHBank achBank = achBankService.getByPrimaryId(routingNumber);
+			if (ObjectUtils.isNull(achBank)) {
+				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, "ACH Bank does not exist for routing number");
+				valid = false;
+			}
+		} else if (StringUtils.isBlank(accountNumber)) {
+			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, "Routing number or account number required");
+			valid = false;
+		}
+		return valid;
 	}
 
 	@Override
-	public void sendEmailVendorInitiated(String documentNumber, String vendorName, String contactEmail) {
-
+	public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail) {
 		String fromAddress = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL);
+				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_FROM_ADDRESS);
 		String subject = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class,
 				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_SUBJECT);
+		String body = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class, 
+				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_BODY);
 
 		MailMessage message = new MailMessage();
-
 		message.setFromAddress(fromAddress);
 		message.getToAddresses().add(contactEmail);
 		message.setSubject(subject);
-
-		StringBuffer body = new StringBuffer("");
-		body.append("Hello,\n");
-		body.append(vendorName);
-		body.append(" has submitted their application to become a vendor with the University of Connecticut. ");
-		body.append("The corresponding edoc number is ");
-		body.append(documentNumber);
-		body.append(". Please contact the Vendor Coordinator at ");
-		body.append(fromAddress);
-		body.append(" only if you are not working with this vendor.\n\n");
-		body.append("Thank you,\n");
-		body.append("Accounts Payable");
-
-		message.setMessage(body.toString());
+		message.setMessage(body);
 
 		try {
 			mailService.sendMessage(message);
 		} catch (Exception e) {
-			LOG.error("Failed to send vendor initiated email: " + e + "\n" + body.toString());
+			LOG.error("Failed to send vendor initiated email: " + e);
 		}
 	}
 
 	@Override
-	public void sendEmailVendorApproved(String documentNumber, String vendorNumber, String vendorName,
-			String contactEmail) {
-
+	public void sendVendorApprovedEmail(String vendorNumber, String contactEmail, String vendorName) {
 		String fromAddress = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL);
+				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_FROM_ADRESS);
 		String subject = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class,
 				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_SUBJECT);
+		String body = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class, 
+				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_BODY);
+		body = StringUtils.replace(body, "[VENDOR_NUMBER]", vendorNumber);
+		body = StringUtils.replace(body, "[VENDOR_NAME]", vendorName);
 
 		MailMessage message = new MailMessage();
-
 		message.setFromAddress(fromAddress);
 		message.getToAddresses().add(contactEmail);
 		message.setSubject(subject);
-
-		StringBuffer body = new StringBuffer("");
-		body.append("Hello,\n");
-		body.append("Edoc number ");
-		body.append(documentNumber);
-		body.append(" has been approved. ");
-		body.append(vendorName);
-		body.append(" is now a vendor with the University of Connecticut. The new vendor number is ");
-		body.append(vendorNumber);
-		body.append(".\n\n");
-		body.append("Thank you,\n");
-		body.append("Accounts Payable");
-
-		message.setMessage(body.toString());
+		message.setMessage(body);
 
 		try {
 			mailService.sendMessage(message);
 		} catch (Exception e) {
-			LOG.error("Failed to send vendor approved email: " + e + "\n" + body.toString());
+			LOG.error("Failed to send vendor approved email: " + e);
 		}
 
-	}
-
-	@Override
-	public void sendSummaryEmail(File reportFile, String subject) {
-		if (reportFile == null) {
-			throw new IllegalStateException("No report file to send.");
-		}
-
-		Collection<String> toAddressList = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(
-				ExtractAchPaymentsStep.class, PdpParameterConstants.ACH_SUMMARY_TO_EMAIL_ADDRESS_PARMAETER_NAME);
-		Set<String> toAddressSet = new HashSet<String>(toAddressList);
-
-		Collection<String> ccAddressList = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(
-				ExtractAchPaymentsStep.class, PdpParameterConstants.ACH_SUMMARY_CC_EMAIL_ADDRESSES_PARMAETER_NAME);
-		Set<String> ccAddressSet = new HashSet<String>(ccAddressList);
-
-		MailMessage message = new MailMessage();
-		message.setFromAddress(mailService.getBatchMailingList());
-		message.setToAddresses(toAddressSet);
-		message.setCcAddresses(ccAddressSet);
-		message.setSubject(subject);
-		message.setMessage("Attached is the PaymentWorks summary report.");
-		message.addAttachment(reportFile);
-
-		try {
-			mailService.sendMessage(message);
-		} catch (Exception e) {
-			LOG.error("Failed to send summary email(" + subject + "): " + e);
-		}
 	}
 
 	protected PayeeACHAccount getActivePayeeAchAccount(String payeeIdentifierTypeCode, String payeeIdNumber,
@@ -466,35 +382,29 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	}
 
 	protected String getRoutingNumber(List<PaymentWorksFieldChangeDTO> fieldChanges) {
-
 		String routingNumber = null;
-
 		for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges) {
-			if (fieldChange.getField_name().equals("Routing num")) {
+			if (fieldChange.getField_name().equals(PaymentWorksConstants.FieldNames.ROUTING_NUMBER)) {
 				routingNumber = fieldChange.getTo_value();
 				break;
 			}
 		}
-
 		return routingNumber;
 	}
 
 	protected String getAccountNumber(List<PaymentWorksFieldChangeDTO> fieldChanges) {
-
 		String accountNumber = null;
-
 		for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges) {
-			if (fieldChange.getField_name().equals("Acct num")) {
+			if (fieldChange.getField_name().equals(PaymentWorksConstants.FieldNames.ACCOUNT_NUMBER)) {
 				accountNumber = fieldChange.getTo_value();
 				break;
 			}
 		}
-
 		return accountNumber;
 	}
 
 	protected boolean checkForLockingDocument(MaintenanceDocument document) {
-		String blockingDocId = SpringContext.getBean(MaintenanceDocumentService.class).getLockingDocumentId(document);
+		String blockingDocId = getMaintenanceDocumentService().getLockingDocumentId(document);
 		if (StringUtils.isBlank(blockingDocId)) {
 			return false;
 		} else {
@@ -548,6 +458,31 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
+	}
+
+	public MaintenanceDocumentService getMaintenanceDocumentService() {
+		return maintenanceDocumentService;
+	}
+
+	public void setMaintenanceDocumentService(MaintenanceDocumentService maintenanceDocumentService) {
+		this.maintenanceDocumentService = maintenanceDocumentService;
+	}
+
+	public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
+		return paymentWorksNewVendorConversionService;
+	}
+
+	public void setPaymentWorksNewVendorConversionService(
+			PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
+		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
+	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
 }

@@ -33,11 +33,8 @@ public interface PaymentWorksKfsService {
 
 	public boolean directAchEdit(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumberList);
 
-	public void sendEmailVendorInitiated(String documentNumber, String vendorName, String contactEmail);
+	public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail);
 
-	public void sendEmailVendorApproved(String documentNumber, String vendorNumber, String vendorName,
-			String contactEmail);
-
-	public void sendSummaryEmail(File reportFile, String subject);
+	public void sendVendorApprovedEmail(String vendorNumber, String contactEmail, String vendorName);
 
 }

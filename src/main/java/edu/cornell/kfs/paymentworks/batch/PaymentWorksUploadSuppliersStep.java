@@ -61,9 +61,6 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
 		uploadVendorUpdateApprovedSupplierFile();
 
-		paymentWorksKfsService.sendSummaryEmail(writePaymentWorksSupplierUploadSummaryReport(supplierUploadSummary),
-				"PaymentWorks Supplier Upload Summary Report");
-
 		return true;
 	}
 
@@ -80,7 +77,7 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 					.createPaymentWorksSupplierUploadList(results);
 
 			// upload list of vendors
-			boolean uploaded = paymentWorksWebService.paymentWorksUploadSuppliers(paymentWorksSupplierUploadList);
+			boolean uploaded = paymentWorksWebService.uploadSuppliers(paymentWorksSupplierUploadList);
 
 			if (uploaded) {
 				// loop through list and upload
@@ -113,7 +110,7 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 					.createPaymentWorksSupplierUploadList(results);
 
 			// upload list of vendors
-			boolean uploaded = paymentWorksWebService.paymentWorksUploadSuppliers(paymentWorksSupplierUploadList);
+			boolean uploaded = paymentWorksWebService.uploadSuppliers(paymentWorksSupplierUploadList);
 
 			if (uploaded) {
 				// loop through list and upload
@@ -172,14 +169,6 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
 		if (StringUtils.equals(supplierUploadSummaryType, PaymentWorksConstants.SupplierUploadSummaryTypes.PAYMENT_WORKS_NEW_VENDORS)) {
 			supplierUploadSummary.getPaymentWorksNewVendors().add(summaryLine);
-
-			// send email
-			paymentWorksKfsService.sendEmailVendorApproved(paymentWorksVendor.getDocumentNumber(),
-					paymentWorksVendor.getVendorHeaderGeneratedIdentifier() + "-"
-							+ paymentWorksVendor.getVendorDetailAssignedIdentifier(),
-					paymentWorksVendor.getRequestingCompanyLegalName(),
-					paymentWorksVendor.getUconnContactEmailAddress());
-
 		} else if (StringUtils.equals(supplierUploadSummaryType,
 				PaymentWorksConstants.SupplierUploadSummaryTypes.KFS_NEW_VENDORS)) {
 			supplierUploadSummary.getKfsNewVendors().add(summaryLine);

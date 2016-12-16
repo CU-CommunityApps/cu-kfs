@@ -35,9 +35,9 @@ import edu.cornell.kfs.paymentworks.batch.report.AchUpdateSummary;
 import edu.cornell.kfs.paymentworks.batch.report.AchUpdateSummaryLine;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksUpdateVendorStatus;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -51,6 +51,7 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 	private PaymentWorksVendorService paymentWorksVendorService;
 	private PaymentWorksWebService paymentWorksWebService;
 	private PaymentWorksKfsService paymentWorksKfsService;
+	private PaymentWorksUtilityService paymentWorksUtilityService;
 	private ReportWriterService reportWriterService;
 
 	private AchUpdateSummary achUpdateSummary;
@@ -107,10 +108,6 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 			}
 		}
 
-		// send email summary
-		paymentWorksKfsService.sendSummaryEmail(writePaymentWorksAchUpdateSummaryReport(achUpdateSummary),
-				"PaymentWorks ACH Update Summary Report");
-
 		return true;
 
 	}
@@ -132,7 +129,7 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 		summaryLine.setVendorRequestId(paymentWorksVendor.getVendorRequestId());
 		summaryLine.setVendorName(StringUtils.defaultString(paymentWorksVendor.getVendorName()));
 		summaryLine.setVendorNumber(StringUtils.defaultString(paymentWorksVendor.getVendorNumberList()));
-		summaryLine.setErrorMessage(new PaymentWorksUtil().getGlobalErrorMessage());
+		summaryLine.setErrorMessage(getPaymentWorksUtilityService().getGlobalErrorMessage());
 
 		if (approved) {
 			achUpdateSummary.getApprovedVendors().add(summaryLine);
@@ -254,6 +251,14 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 
 	public void setPaymentWorksKfsService(PaymentWorksKfsService paymentWorksKfsService) {
 		this.paymentWorksKfsService = paymentWorksKfsService;
+	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
 }
