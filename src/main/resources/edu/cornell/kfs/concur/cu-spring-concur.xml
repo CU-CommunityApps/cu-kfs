@@ -15,11 +15,26 @@
 	<bean id="concurModuleConfiguration" parent="concurModuleConfiguration-parentBean" />
 	<bean id="concurModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration"
 		abstract="true">
-		<property name="namespaceCode" value="KFS-CNC" />
-		<property name="initializeDataDictionary" value="true" />
+		<property name="namespaceCode" value="KFS-CNCR" />
+		<property name="initializeDataDictionary" value="false" />
 		<property name="packagePrefixes">
 			<list>
 				<value>edu.cornell.kfs.concur</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list merge="true">
+				<value>edu/cornell/kfs/concur/cu-ojb-concur.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+				<value>concurEventNotificationProcessingBatchJob</value>
+			</list>
+		</property>
+		<property name="batchFileDirectories">
+			<list>
+				<value>${reports.directory}/concur</value>
 			</list>
 		</property>
 
@@ -31,12 +46,44 @@
 		class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl">
 		<property name="moduleConfiguration" ref="concurModuleConfiguration" />
 	</bean>
+	
+	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="concurEventNotificationProcessingStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="concurEventNotificationProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationProcessingStep">
+		<property name="concurEventNotificationProcessingService" ref="concurEventNotificationProcessingService" />
+	</bean>
+	
+	<bean id="concurEventNotificationProcessingService" parent="concurEventNotificationProcessingService-parentBean" />
+	<bean id="concurEventNotificationProcessingService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationProcessingServiceImpl" abstract="true">
+	    <property name="concurAccountValidationService" ref="concurAccountValidationService"/>
+	    <property name="concurEventNotificationService" ref="concurEventNotificationService"/>
+	</bean>
 
 	<bean id="concurAuthenticationService" parent="concurAuthenticationService-parentBean" />
 	<bean id="concurAuthenticationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAuthenticationServiceImpl" abstract="true">
 		<property name="concurToken">
 			<value>${concur.authorization.token}</value>
 		</property>
+	</bean>
+	
+	<bean id="concurEventNotificationService" parent="concurEventNotificationService-parentBean" />
+	<bean id="concurEventNotificationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationServiceImpl" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService"/>
+	</bean>
+	
+	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
+	<bean id="concurAccountValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl" abstract="true">
+	</bean>
+	
+	<bean id="concurEventNotificationConversionService" parent="concurEventNotificationConversionService-parentBean" />
+	<bean id="concurEventNotificationConversionService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationConversionServiceImpl" abstract="true">
+		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 
 </beans>
