@@ -166,8 +166,10 @@
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="fundGroupBudgetAdjustmentRestrictionLevelCode" column="FND_GRP_BA_RSTR_LVL_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="accountRestrictedStatusCode" column="ACCT_RSTRC_STAT_CD" jdbc-type="VARCHAR" />
-    
-    <reference-descriptor name="fundGroup" class-ref="org.kuali.kfs.coa.businessobject.FundGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+
+	<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
+	<reference-descriptor name="fundGroup" class-ref="org.kuali.kfs.coa.businessobject.FundGroup" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
       <foreignkey field-ref="fundGroupCode" />
     </reference-descriptor>
     
@@ -313,6 +315,9 @@
 			jdbc-type="BIGINT" locking="true" />
 		<field-descriptor name="laborBenefitRateCategoryCode"
 			column="LBR_BEN_RT_CAT_CD" jdbc-type="VARCHAR" index="true" />
+		<field-descriptor name="sourceOfFundsTypeCode" column="FUNDS_TYPE_CD" jdbc-type="VARCHAR"/>
+
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
 		<reference-descriptor name="chartOfAccounts"
 			class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true"
@@ -532,6 +537,8 @@
 			column="ACCT_SRCH_CRTA_TXT" jdbc-type="VARCHAR" />
 		<field-descriptor name="laborBenefitRateCategoryCode"
 			column="LBR_BEN_RT_CAT_CD" jdbc-type="VARCHAR" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
 		<field-descriptor name="majorReportingCategoryCode"
 			column="MJR_RPT_CTG_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="accountPhysicalCampusCode"
@@ -875,6 +882,8 @@
 			jdbc-type="VARCHAR" index="true" />
 		<field-descriptor name="versionNumber" column="VER_NBR"
 			jdbc-type="BIGINT" locking="true" />
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
 		<reference-descriptor name="financialBudgetAggregation"
 			class-ref="org.kuali.kfs.coa.businessobject.BudgetAggregationCode"
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
@@ -1083,6 +1092,9 @@
 			column="FIN_FED_FUNDED_CD" jdbc-type="VARCHAR" />
 		<field-descriptor name="nextYearFinancialObjectCode"
 			column="NXT_YR_FIN_OBJ_CD" jdbc-type="VARCHAR" />
+
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
 		<field-descriptor name="sunyObjectCode" column="SUNY_OBJECT_CD"
 			jdbc-type="VARCHAR" />
 		<field-descriptor name="financialObjectCodeDescr"
@@ -1448,12 +1460,14 @@
 		</reference-descriptor>
 	</class-descriptor>
 
-	   <class-descriptor class="edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal" table="CA_ACCT_DELEGATE_GBL_T">
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal" table="CA_ACCT_DELEGATE_GBL_T">
 	    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
 	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
 	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-	    
-	    <collection-descriptor name="accountGlobalDetails" element-class-ref="org.kuali.kfs.coa.businessobject.AccountGlobalDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+
+	   	<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
+		   <collection-descriptor name="accountGlobalDetails" element-class-ref="org.kuali.kfs.coa.businessobject.AccountGlobalDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
 	        <orderby name="chartOfAccountsCode" sort="ASC" />
 	        <orderby name="accountNumber" sort="ASC" />
 	        <inverse-foreignkey field-ref="documentNumber" />
@@ -1484,8 +1498,10 @@
 	    	jdbc-type="BIGINT" locking="true" />
 	    <field-descriptor name="active" column="ROW_ACTV_IND" 
 	    	jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	
-	    <reference-descriptor name="universityBudgetOfficeFunction" 
+
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
+		<reference-descriptor name="universityBudgetOfficeFunction"
 	    	class-ref="org.kuali.kfs.coa.businessobject.UniversityBudgetOfficeFunction" 
 	    	auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 	        <foreignkey field-ref="finUnivBdgtOfficeFunctionCd" />
@@ -1552,9 +1568,9 @@
 	    <field-descriptor name="active" column="ACCT_CLOSED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.coa.util.OjbAccountActiveIndicatorConversion" />
 	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
 	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-	
-	
-	    <reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+
+		<reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 	        <foreignkey field-ref="chartOfAccountsCode" />
 	    </reference-descriptor>
 	
