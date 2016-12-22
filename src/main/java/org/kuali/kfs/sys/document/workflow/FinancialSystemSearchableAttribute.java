@@ -37,6 +37,7 @@ import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.datadictionary.DocumentEntry;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -257,9 +258,11 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         if (LOG.isDebugEnabled()) {
             LOG.debug("validateDocumentAttributeCriteria( " + extensionDefinition + ", " + documentSearchCriteria + " )");
         }
+
+        GlobalVariables.getMessageMap().clearErrorMessages();
+
         // this list is irrelevant. the validation errors are put on the stack in the validationService.
         List<RemotableAttributeError> errors =  super.validateDocumentAttributeCriteria(extensionDefinition, documentSearchCriteria);
-
         DictionaryValidationService validationService = SpringContext.getBean(DictionaryValidationService.class);
         Map<String,List<String>> paramMap = documentSearchCriteria.getDocumentAttributeValues();
         for (String key : paramMap.keySet()) {
