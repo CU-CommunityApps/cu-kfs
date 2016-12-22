@@ -18,13 +18,13 @@
  */
 package edu.cornell.kfs.paymentworks.businessobject;
 
+import java.io.File;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase {
-
-	// requesting company
 	private String requestingCompanyId;
 	private String requestingCompanyTin;
 	private String requestingCompanyTinType;
@@ -40,19 +40,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String requestingCompanyTaxClassificationCode;
 	private String requestingCompanyUrl;
 	private String requestingCompanyW8W9;
-
-	// custom fields
-	private String typeOfBusiness;
-	private boolean studentIndicator;
-	private boolean stateOfConnecticutEmployeeIndicator;
-	private String currentFormerStateOfConnecticutEmployee;
-	private boolean immediateFamilyIndicator;
-	private boolean smallOrMinorityOwnedBusinessIndicator;
-	private String poFaxNumber;
-	private String achEmailAddress;
-	private String uconnContactEmailAddress;
-
-	// remittance address
+	
 	private String remittanceAddressId;
 	private String remittanceAddressName;
 	private String remittanceAddressStreet1;
@@ -62,7 +50,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String remittanceAddressCountry;
 	private String remittanceAddressZipCode;
 
-	// Corp Address
 	private String corpAddressId;
 	private String corpAddressName;
 	private String corpAddressStreet1;
@@ -86,6 +73,80 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String vendorNumberList;
 
 	private transient boolean sendToPaymentWorks;
+	private transient boolean customFieldConversionErrors = false;
+	
+	//custom fields
+	private String businessPurpose;
+	private String servicesProvided;
+	private String vendorType;
+	private String emailAddress;
+	private String initiatorNetId;
+	
+	private boolean invoicing;
+	private String eInvoiceContactName;
+	private String eInvoiceContactPhoneNumber;
+	private String eInvoicePhoneExtension;
+	private String eInvoiceEmail;
+	
+	private String vendorInformationContact;
+	private String vendorInformationContactName;
+	private String vendorInformationPhoneNumber;
+	private String vendorInformationPhoneExtension;
+	private String vendorInformationEmail;
+	
+	private String poAttention;
+	private String poTransmissionMethod;
+	private String poAddress1;
+	private String poAddress2;
+	private String poCity;
+	private String poState;
+	private String poPostalCode;
+	private String poCountry;
+	private String poFaxNumber;
+	private String poCountryName;
+	
+	private boolean conflictOfInterest;
+	private String conflictOfInterestRelationshipToEmployee;
+	private String conflictOfInterestEmployeeName;
+	private String conflictOfInterestEmployeePhoneNumber;
+	
+	private String insurance;
+	private String insuranceContactName;
+	private String insuranceContactPhoneNumber;
+	private String insuranceContactPhoneExtension;
+	private String insuranceContactEmail;
+	
+	private String salesContactName;
+	private String salesContactPhoneNumber;
+	private String salesContactPhoneExtension;
+	private String salesContactEmail;
+	
+	private String accountsReceivableContactName;
+	private String accountsReceivableContactPhone;
+	private String accountsReceivableContactPhoneExtension;
+	private String accountsReceivableContactEmail;
+	
+	private String diversityClassification;
+	private Date veteranCertificationExpirationDate;
+	private Date mbeCertificationExpirationDate;
+	private String womanOwned;
+	private Date wbeCertificationExpirationDate;
+	private String disabledVeteran;
+	private String minorityStatus;
+	
+	private String state;
+	private String australianProvince;
+	private String stateProvince;
+	private String canadianProvince;
+	
+	private boolean seperateLegalEntityProvidingServices;
+	private boolean cornellProvidedTrainingOrEquipmentRequired;
+	private boolean informalMarketing;
+	private boolean diverseBusiness;
+	private boolean currentlyPaidThroughPayroll;
+	private boolean everPaidThroughPayroll;
+	private boolean acceptCreditCards;
+	private boolean servicesProvidedWithoutInsurance;
 
 	public String getRequestingCompanyId() {
 		return requestingCompanyId;
@@ -101,6 +162,22 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 
 	public void setRequestingCompanyTin(String requestingCompanyTin) {
 		this.requestingCompanyTin = requestingCompanyTin;
+	}
+
+	public String getRequestingCompanyTinType() {
+		return requestingCompanyTinType;
+	}
+
+	public void setRequestingCompanyTinType(String requestingCompanyTinType) {
+		this.requestingCompanyTinType = requestingCompanyTinType;
+	}
+
+	public String getRequestingCompanyTaxCountry() {
+		return requestingCompanyTaxCountry;
+	}
+
+	public void setRequestingCompanyTaxCountry(String requestingCompanyTaxCountry) {
+		this.requestingCompanyTaxCountry = requestingCompanyTaxCountry;
 	}
 
 	public String getRequestingCompanyLegalName() {
@@ -119,6 +196,14 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.requestingCompanyName = requestingCompanyName;
 	}
 
+	public String getRequestingCompanyNameOldValue() {
+		return requestingCompanyNameOldValue;
+	}
+
+	public void setRequestingCompanyNameOldValue(String requestingCompanyNameOldValue) {
+		this.requestingCompanyNameOldValue = requestingCompanyNameOldValue;
+	}
+
 	public String getRequestingCompanyDesc() {
 		return requestingCompanyDesc;
 	}
@@ -135,12 +220,36 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.requestingCompanyTelephone = requestingCompanyTelephone;
 	}
 
+	public String getRequestingCompanyTelephoneOldValue() {
+		return requestingCompanyTelephoneOldValue;
+	}
+
+	public void setRequestingCompanyTelephoneOldValue(String requestingCompanyTelephoneOldValue) {
+		this.requestingCompanyTelephoneOldValue = requestingCompanyTelephoneOldValue;
+	}
+
 	public String getRequestingCompanyDuns() {
 		return requestingCompanyDuns;
 	}
 
 	public void setRequestingCompanyDuns(String requestingCompanyDuns) {
 		this.requestingCompanyDuns = requestingCompanyDuns;
+	}
+
+	public String getRequestingCompanyTaxClassificationName() {
+		return requestingCompanyTaxClassificationName;
+	}
+
+	public void setRequestingCompanyTaxClassificationName(String requestingCompanyTaxClassificationName) {
+		this.requestingCompanyTaxClassificationName = requestingCompanyTaxClassificationName;
+	}
+
+	public String getRequestingCompanyTaxClassificationCode() {
+		return requestingCompanyTaxClassificationCode;
+	}
+
+	public void setRequestingCompanyTaxClassificationCode(String requestingCompanyTaxClassificationCode) {
+		this.requestingCompanyTaxClassificationCode = requestingCompanyTaxClassificationCode;
 	}
 
 	public String getRequestingCompanyUrl() {
@@ -157,30 +266,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 
 	public void setRequestingCompanyW8W9(String requestingCompanyW8W9) {
 		this.requestingCompanyW8W9 = requestingCompanyW8W9;
-	}
-
-	public String getTypeOfBusiness() {
-		return typeOfBusiness;
-	}
-
-	public void setTypeOfBusiness(String typeOfBusiness) {
-		this.typeOfBusiness = typeOfBusiness;
-	}
-
-	public String getPoFaxNumber() {
-		return poFaxNumber;
-	}
-
-	public void setPoFaxNumber(String poFaxNumber) {
-		this.poFaxNumber = poFaxNumber;
-	}
-
-	public String getAchEmailAddress() {
-		return achEmailAddress;
-	}
-
-	public void setAchEmailAddress(String achEmailAddress) {
-		this.achEmailAddress = achEmailAddress;
 	}
 
 	public String getRemittanceAddressId() {
@@ -311,54 +396,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.corpAddressZipCode = corpAddressZipCode;
 	}
 
-	public String getRequestStatus() {
-		return requestStatus;
-	}
-
-	public void setRequestStatus(String requestStatus) {
-		this.requestStatus = requestStatus;
-	}
-
-	public Timestamp getProcessTimestamp() {
-		return processTimestamp;
-	}
-
-	public void setProcessTimestamp(Timestamp processTimestamp) {
-		this.processTimestamp = processTimestamp;
-	}
-
-	public Integer getVendorHeaderGeneratedIdentifier() {
-		return vendorHeaderGeneratedIdentifier;
-	}
-
-	public void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier) {
-		this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
-	}
-
-	public Integer getVendorDetailAssignedIdentifier() {
-		return vendorDetailAssignedIdentifier;
-	}
-
-	public void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier) {
-		this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
-	}
-
-	public String getCurrentFormerStateOfConnecticutEmployee() {
-		return currentFormerStateOfConnecticutEmployee;
-	}
-
-	public void setCurrentFormerStateOfConnecticutEmployee(String currentFormerStateOfConnecticutEmployee) {
-		this.currentFormerStateOfConnecticutEmployee = currentFormerStateOfConnecticutEmployee;
-	}
-
-	public String getUconnContactEmailAddress() {
-		return uconnContactEmailAddress;
-	}
-
-	public void setUconnContactEmailAddress(String uconnContactEmailAddress) {
-		this.uconnContactEmailAddress = uconnContactEmailAddress;
-	}
-
 	public String getVendorRequestId() {
 		return vendorRequestId;
 	}
@@ -367,52 +404,12 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.vendorRequestId = vendorRequestId;
 	}
 
-	public String getDocumentNumber() {
-		return documentNumber;
+	public String getRequestStatus() {
+		return requestStatus;
 	}
 
-	public void setDocumentNumber(String documentNumber) {
-		this.documentNumber = documentNumber;
-	}
-
-	public boolean isStudentIndicator() {
-		return studentIndicator;
-	}
-
-	public void setStudentIndicator(boolean studentIndicator) {
-		this.studentIndicator = studentIndicator;
-	}
-
-	public boolean isStateOfConnecticutEmployeeIndicator() {
-		return stateOfConnecticutEmployeeIndicator;
-	}
-
-	public void setStateOfConnecticutEmployeeIndicator(boolean stateOfConnecticutEmployeeIndicator) {
-		this.stateOfConnecticutEmployeeIndicator = stateOfConnecticutEmployeeIndicator;
-	}
-
-	public boolean isImmediateFamilyIndicator() {
-		return immediateFamilyIndicator;
-	}
-
-	public void setImmediateFamilyIndicator(boolean immediateFamilyIndicator) {
-		this.immediateFamilyIndicator = immediateFamilyIndicator;
-	}
-
-	public boolean isSmallOrMinorityOwnedBusinessIndicator() {
-		return smallOrMinorityOwnedBusinessIndicator;
-	}
-
-	public void setSmallOrMinorityOwnedBusinessIndicator(boolean smallOrMinorityOwnedBusinessIndicator) {
-		this.smallOrMinorityOwnedBusinessIndicator = smallOrMinorityOwnedBusinessIndicator;
-	}
-
-	public String getProcessStatus() {
-		return processStatus;
-	}
-
-	public void setProcessStatus(String processStatus) {
-		this.processStatus = processStatus;
+	public void setRequestStatus(String requestStatus) {
+		this.requestStatus = requestStatus;
 	}
 
 	public String getTransactionType() {
@@ -431,52 +428,52 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.groupName = groupName;
 	}
 
-	public String getRequestingCompanyNameOldValue() {
-		return requestingCompanyNameOldValue;
+	public String getProcessStatus() {
+		return processStatus;
 	}
 
-	public void setRequestingCompanyNameOldValue(String requestingCompanyNameOldValue) {
-		this.requestingCompanyNameOldValue = requestingCompanyNameOldValue;
+	public void setProcessStatus(String processStatus) {
+		this.processStatus = processStatus;
 	}
 
-	public String getRequestingCompanyTelephoneOldValue() {
-		return requestingCompanyTelephoneOldValue;
+	public String getVendorName() {
+		return vendorName;
 	}
 
-	public void setRequestingCompanyTelephoneOldValue(String requestingCompanyTelephoneOldValue) {
-		this.requestingCompanyTelephoneOldValue = requestingCompanyTelephoneOldValue;
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
 	}
 
-	public String getRequestingCompanyTinType() {
-		return requestingCompanyTinType;
+	public Timestamp getProcessTimestamp() {
+		return processTimestamp;
 	}
 
-	public void setRequestingCompanyTinType(String requestingCompanyTinType) {
-		this.requestingCompanyTinType = requestingCompanyTinType;
+	public void setProcessTimestamp(Timestamp processTimestamp) {
+		this.processTimestamp = processTimestamp;
 	}
 
-	public String getRequestingCompanyTaxCountry() {
-		return requestingCompanyTaxCountry;
+	public String getDocumentNumber() {
+		return documentNumber;
 	}
 
-	public void setRequestingCompanyTaxCountry(String requestingCompanyTaxCountry) {
-		this.requestingCompanyTaxCountry = requestingCompanyTaxCountry;
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
 	}
 
-	public String getRequestingCompanyTaxClassificationName() {
-		return requestingCompanyTaxClassificationName;
+	public Integer getVendorHeaderGeneratedIdentifier() {
+		return vendorHeaderGeneratedIdentifier;
 	}
 
-	public void setRequestingCompanyTaxClassificationName(String requestingCompanyTaxClassificationName) {
-		this.requestingCompanyTaxClassificationName = requestingCompanyTaxClassificationName;
+	public void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier) {
+		this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
 	}
 
-	public String getRequestingCompanyTaxClassificationCode() {
-		return requestingCompanyTaxClassificationCode;
+	public Integer getVendorDetailAssignedIdentifier() {
+		return vendorDetailAssignedIdentifier;
 	}
 
-	public void setRequestingCompanyTaxClassificationCode(String requestingCompanyTaxClassificationCode) {
-		this.requestingCompanyTaxClassificationCode = requestingCompanyTaxClassificationCode;
+	public void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier) {
+		this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
 	}
 
 	public String getDocumentNumberList() {
@@ -503,12 +500,500 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.sendToPaymentWorks = sendToPaymentWorks;
 	}
 
-	public String getVendorName() {
-		return vendorName;
+	public boolean isCustomFieldConversionErrors() {
+		return customFieldConversionErrors;
 	}
 
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
+	public void setCustomFieldConversionErrors(boolean customFieldConversionErrors) {
+		this.customFieldConversionErrors = customFieldConversionErrors;
+	}
+
+	public String getBusinessPurpose() {
+		return businessPurpose;
+	}
+
+	public void setBusinessPurpose(String businessPurpose) {
+		this.businessPurpose = businessPurpose;
+	}
+
+	public String getServicesProvided() {
+		return servicesProvided;
+	}
+
+	public void setServicesProvided(String servicesProvided) {
+		this.servicesProvided = servicesProvided;
+	}
+
+	public String getVendorType() {
+		return vendorType;
+	}
+
+	public void setVendorType(String vendorType) {
+		this.vendorType = vendorType;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
+	public String getInitiatorNetId() {
+		return initiatorNetId;
+	}
+
+	public void setInitiatorNetId(String initiatorNetId) {
+		this.initiatorNetId = initiatorNetId;
+	}
+
+	public boolean isInvoicing() {
+		return invoicing;
+	}
+
+	public void setInvoicing(boolean invoicing) {
+		this.invoicing = invoicing;
+	}
+
+	public String geteInvoiceContactName() {
+		return eInvoiceContactName;
+	}
+
+	public void seteInvoiceContactName(String eInvoiceContactName) {
+		this.eInvoiceContactName = eInvoiceContactName;
+	}
+
+	public String geteInvoiceContactPhoneNumber() {
+		return eInvoiceContactPhoneNumber;
+	}
+
+	public void seteInvoiceContactPhoneNumber(String eInvoiceContactPhoneNumber) {
+		this.eInvoiceContactPhoneNumber = eInvoiceContactPhoneNumber;
+	}
+
+	public String geteInvoicePhoneExtension() {
+		return eInvoicePhoneExtension;
+	}
+
+	public void seteInvoicePhoneExtension(String eInvoicePhoneExtension) {
+		this.eInvoicePhoneExtension = eInvoicePhoneExtension;
+	}
+
+	public String geteInvoiceEmail() {
+		return eInvoiceEmail;
+	}
+
+	public void seteInvoiceEmail(String eInvoiceEmail) {
+		this.eInvoiceEmail = eInvoiceEmail;
+	}
+
+	public String getVendorInformationContact() {
+		return vendorInformationContact;
+	}
+
+	public void setVendorInformationContact(String vendorInformationContact) {
+		this.vendorInformationContact = vendorInformationContact;
+	}
+
+	public String getVendorInformationContactName() {
+		return vendorInformationContactName;
+	}
+
+	public void setVendorInformationContactName(String vendorInformationContactName) {
+		this.vendorInformationContactName = vendorInformationContactName;
+	}
+
+	public String getVendorInformationPhoneNumber() {
+		return vendorInformationPhoneNumber;
+	}
+
+	public void setVendorInformationPhoneNumber(String vendorInformationPhoneNumber) {
+		this.vendorInformationPhoneNumber = vendorInformationPhoneNumber;
+	}
+
+	public String getVendorInformationPhoneExtension() {
+		return vendorInformationPhoneExtension;
+	}
+
+	public void setVendorInformationPhoneExtension(String vendorInformationPhoneExtension) {
+		this.vendorInformationPhoneExtension = vendorInformationPhoneExtension;
+	}
+
+	public String getVendorInformationEmail() {
+		return vendorInformationEmail;
+	}
+
+	public void setVendorInformationEmail(String vendorInformationEmail) {
+		this.vendorInformationEmail = vendorInformationEmail;
+	}
+
+	public String getPoAttention() {
+		return poAttention;
+	}
+
+	public void setPoAttention(String poAttention) {
+		this.poAttention = poAttention;
+	}
+
+	public String getPoTransmissionMethod() {
+		return poTransmissionMethod;
+	}
+
+	public void setPoTransmissionMethod(String poTransmissionMethod) {
+		this.poTransmissionMethod = poTransmissionMethod;
+	}
+
+	public String getPoAddress1() {
+		return poAddress1;
+	}
+
+	public void setPoAddress1(String poAddress1) {
+		this.poAddress1 = poAddress1;
+	}
+
+	public String getPoAddress2() {
+		return poAddress2;
+	}
+
+	public void setPoAddress2(String poAddress2) {
+		this.poAddress2 = poAddress2;
+	}
+
+	public String getPoCity() {
+		return poCity;
+	}
+
+	public void setPoCity(String poCity) {
+		this.poCity = poCity;
+	}
+
+	public String getPoState() {
+		return poState;
+	}
+
+	public void setPoState(String poState) {
+		this.poState = poState;
+	}
+
+	public String getPoPostalCode() {
+		return poPostalCode;
+	}
+
+	public void setPoPostalCode(String poPostalCode) {
+		this.poPostalCode = poPostalCode;
+	}
+
+	public String getPoCountry() {
+		return poCountry;
+	}
+
+	public void setPoCountry(String poCountry) {
+		this.poCountry = poCountry;
+	}
+
+	public String getPoFaxNumber() {
+		return poFaxNumber;
+	}
+
+	public void setPoFaxNumber(String poFaxNumber) {
+		this.poFaxNumber = poFaxNumber;
+	}
+
+	public String getPoCountryName() {
+		return poCountryName;
+	}
+
+	public void setPoCountryName(String poCountryName) {
+		this.poCountryName = poCountryName;
+	}
+
+	public boolean isConflictOfInterest() {
+		return conflictOfInterest;
+	}
+
+	public void setConflictOfInterest(boolean conflictOfInterest) {
+		this.conflictOfInterest = conflictOfInterest;
+	}
+
+	public String getConflictOfInterestRelationshipToEmployee() {
+		return conflictOfInterestRelationshipToEmployee;
+	}
+
+	public void setConflictOfInterestRelationshipToEmployee(String conflictOfInterestRelationshipToEmployee) {
+		this.conflictOfInterestRelationshipToEmployee = conflictOfInterestRelationshipToEmployee;
+	}
+
+	public String getConflictOfInterestEmployeeName() {
+		return conflictOfInterestEmployeeName;
+	}
+
+	public void setConflictOfInterestEmployeeName(String conflictOfInterestEmployeeName) {
+		this.conflictOfInterestEmployeeName = conflictOfInterestEmployeeName;
+	}
+
+	public String getConflictOfInterestEmployeePhoneNumber() {
+		return conflictOfInterestEmployeePhoneNumber;
+	}
+
+	public void setConflictOfInterestEmployeePhoneNumber(String conflictOfInterestEmployeePhoneNumber) {
+		this.conflictOfInterestEmployeePhoneNumber = conflictOfInterestEmployeePhoneNumber;
+	}
+
+	public String getInsurance() {
+		return insurance;
+	}
+
+	public void setInsurance(String inusrance) {
+		this.insurance = insurance;
+	}
+
+	public String getInsuranceContactName() {
+		return insuranceContactName;
+	}
+
+	public void setInsuranceContactName(String insuranceContactName) {
+		this.insuranceContactName = insuranceContactName;
+	}
+
+	public String getInsuranceContactPhoneNumber() {
+		return insuranceContactPhoneNumber;
+	}
+
+	public void setInsuranceContactPhoneNumber(String insuranceContactPhoneNumber) {
+		this.insuranceContactPhoneNumber = insuranceContactPhoneNumber;
+	}
+
+	public String getInsuranceContactPhoneExtension() {
+		return insuranceContactPhoneExtension;
+	}
+
+	public void setInsuranceContactPhoneExtension(String insuranceContactPhoneExtension) {
+		this.insuranceContactPhoneExtension = insuranceContactPhoneExtension;
+	}
+
+	public String getInsuranceContactEmail() {
+		return insuranceContactEmail;
+	}
+
+	public void setInsuranceContactEmail(String insuranceContactEmail) {
+		this.insuranceContactEmail = insuranceContactEmail;
+	}
+
+	public String getSalesContactName() {
+		return salesContactName;
+	}
+
+	public void setSalesContactName(String salesContactName) {
+		this.salesContactName = salesContactName;
+	}
+
+	public String getSalesContactPhoneNumber() {
+		return salesContactPhoneNumber;
+	}
+
+	public void setSalesContactPhoneNumber(String salesContactPhoneNumber) {
+		this.salesContactPhoneNumber = salesContactPhoneNumber;
+	}
+
+	public String getSalesContactPhoneExtension() {
+		return salesContactPhoneExtension;
+	}
+
+	public void setSalesContactPhoneExtension(String salesContactPhoneExtension) {
+		this.salesContactPhoneExtension = salesContactPhoneExtension;
+	}
+
+	public String getSalesContactEmail() {
+		return salesContactEmail;
+	}
+
+	public void setSalesContactEmail(String salesContactEmail) {
+		this.salesContactEmail = salesContactEmail;
+	}
+
+	public String getAccountsReceivableContactName() {
+		return accountsReceivableContactName;
+	}
+
+	public void setAccountsReceivableContactName(String accountsReceivableContactName) {
+		this.accountsReceivableContactName = accountsReceivableContactName;
+	}
+
+	public String getAccountsReceivableContactPhone() {
+		return accountsReceivableContactPhone;
+	}
+
+	public void setAccountsReceivableContactPhone(String accountsReceivableContactPhone) {
+		this.accountsReceivableContactPhone = accountsReceivableContactPhone;
+	}
+
+	public String getAccountsReceivableContactPhoneExtension() {
+		return accountsReceivableContactPhoneExtension;
+	}
+
+	public void setAccountsReceivableContactPhoneExtension(String accountsReceivableContactPhoneExtension) {
+		this.accountsReceivableContactPhoneExtension = accountsReceivableContactPhoneExtension;
+	}
+
+	public String getAccountsReceivableContactEmail() {
+		return accountsReceivableContactEmail;
+	}
+
+	public void setAccountsReceivableContactEmail(String accountsReceivableContactEmail) {
+		this.accountsReceivableContactEmail = accountsReceivableContactEmail;
+	}
+
+	public String getDiversityClassification() {
+		return diversityClassification;
+	}
+
+	public void setDiversityClassification(String diversityClassification) {
+		this.diversityClassification = diversityClassification;
+	}
+
+	public Date getVeteranCertificationExpirationDate() {
+		return veteranCertificationExpirationDate;
+	}
+
+	public void setVeteranCertificationExpirationDate(Date veteranCertificationExpirationDate) {
+		this.veteranCertificationExpirationDate = veteranCertificationExpirationDate;
+	}
+
+	public Date getMbeCertificationExpirationDate() {
+		return mbeCertificationExpirationDate;
+	}
+
+	public void setMbeCertificationExpirationDate(Date mbeCertificationExpirationDate) {
+		this.mbeCertificationExpirationDate = mbeCertificationExpirationDate;
+	}
+
+	public String getWomanOwned() {
+		return womanOwned;
+	}
+
+	public void setWomanOwned(String womanOwned) {
+		this.womanOwned = womanOwned;
+	}
+
+	public Date getWbeCertificationExpirationDate() {
+		return wbeCertificationExpirationDate;
+	}
+
+	public void setWbeCertificationExpirationDate(Date wbeCertificationExpirationDate) {
+		this.wbeCertificationExpirationDate = wbeCertificationExpirationDate;
+	}
+
+	public String getDisabledVeteran() {
+		return disabledVeteran;
+	}
+
+	public void setDisabledVeteran(String disabledVeteran) {
+		this.disabledVeteran = disabledVeteran;
+	}
+
+	public String getMinorityStatus() {
+		return minorityStatus;
+	}
+
+	public void setMinorityStatus(String minorityStatus) {
+		this.minorityStatus = minorityStatus;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getAustralianProvince() {
+		return australianProvince;
+	}
+
+	public void setAustralianProvince(String australianProvince) {
+		this.australianProvince = australianProvince;
+	}
+
+	public String getStateProvince() {
+		return stateProvince;
+	}
+
+	public void setStateProvince(String stateProvince) {
+		this.stateProvince = stateProvince;
+	}
+
+	public String getCanadianProvince() {
+		return canadianProvince;
+	}
+
+	public void setCanadianProvince(String canadianProvince) {
+		this.canadianProvince = canadianProvince;
+	}
+
+	public boolean isSeperateLegalEntityProvidingServices() {
+		return seperateLegalEntityProvidingServices;
+	}
+
+	public void setSeperateLegalEntityProvidingServices(boolean seperateLegalEntityProvidingServices) {
+		this.seperateLegalEntityProvidingServices = seperateLegalEntityProvidingServices;
+	}
+
+	public boolean isCornellProvidedTrainingOrEquipmentRequired() {
+		return cornellProvidedTrainingOrEquipmentRequired;
+	}
+
+	public void setCornellProvidedTrainingOrEquipmentRequired(boolean cornellProvidedTrainingOrEquipmentRequired) {
+		this.cornellProvidedTrainingOrEquipmentRequired = cornellProvidedTrainingOrEquipmentRequired;
+	}
+
+	public boolean isInformalMarketing() {
+		return informalMarketing;
+	}
+
+	public void setInformalMarketing(boolean informalMarketing) {
+		this.informalMarketing = informalMarketing;
+	}
+
+	public boolean isDiverseBusiness() {
+		return diverseBusiness;
+	}
+
+	public void setDiverseBusiness(boolean diverseBusiness) {
+		this.diverseBusiness = diverseBusiness;
+	}
+
+	public boolean isCurrentlyPaidThroughPayroll() {
+		return currentlyPaidThroughPayroll;
+	}
+
+	public void setCurrentlyPaidThroughPayroll(boolean currentlyPaidThroughPayroll) {
+		this.currentlyPaidThroughPayroll = currentlyPaidThroughPayroll;
+	}
+
+	public boolean isEverPaidThroughPayroll() {
+		return everPaidThroughPayroll;
+	}
+
+	public void setEverPaidThroughPayroll(boolean everPaidThroughPayroll) {
+		this.everPaidThroughPayroll = everPaidThroughPayroll;
+	}
+
+	public boolean isAcceptCreditCards() {
+		return acceptCreditCards;
+	}
+
+	public void setAcceptCreditCards(boolean acceptCreditCards) {
+		this.acceptCreditCards = acceptCreditCards;
+	}
+
+	public boolean isServicesProvidedWithoutInsurance() {
+		return servicesProvidedWithoutInsurance;
+	}
+
+	public void setServicesProvidedWithoutInsurance(boolean servicesProvidedWithoutInsurance) {
+		this.servicesProvidedWithoutInsurance = servicesProvidedWithoutInsurance;
 	}
 
 }

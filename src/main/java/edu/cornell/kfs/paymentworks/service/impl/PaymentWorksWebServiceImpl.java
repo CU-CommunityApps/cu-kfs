@@ -19,27 +19,33 @@
 package edu.cornell.kfs.paymentworks.service.impl;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
 import edu.cornell.kfs.paymentworks.util.PaymentWorksSupplierConversionUtil;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorUpdateVendorStatus;
@@ -66,326 +72,296 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 	private String paymentworksApiUrl;
 	private String paymentworksAuthorizationToken;
 	private String directoryPath;
-	
+
+	private PaymentWorksUtilityService paymentWorksUtilityService;
+
 	protected ClientRequest buildClientRequest(String url) {
-        return buildClientRequest(url, null);
-    }
-	
+		ClientRequest.Builder builder = new ClientRequest.Builder();
+		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
+		builder.accept(MediaType.APPLICATION_XML);
+
+		return builder.build(buildURI(url), HttpMethod.GET);
+	}
+
 	protected ClientRequest buildClientRequest(String url, String jsonString) {
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header("Authorization", "Token " + paymentworksAuthorizationToken);
-        if (ObjectUtils.isNotNull(jsonString)) {
-        	//.put(Entity.entity(jsonString, MediaType.APPLICATION_JSON));
-        	builder.entity(jsonString, MediaType.APPLICATION_JSON);
-        }
-        
-        URI uri;
-        try {
-            uri = new URI(url);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        ClientRequest request = builder.build(uri, CuFPConstants.AmazonWebServiceBillingConstants.HTTP_METHOD_GET_NAME);
-        return request;
-    }
-	
+		ClientRequest.Builder builder = new ClientRequest.Builder();
+		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
+		builder.accept(MediaType.APPLICATION_JSON);
+		builder.entity(jsonString, MediaType.APPLICATION_JSON);
+
+		return builder.build(buildURI(url), HttpMethod.PUT);
+	}
+
+	protected ClientRequest buildClientRequest(String url, MultiPart multiPart) {
+		ClientRequest.Builder builder = new ClientRequest.Builder();
+		builder.accept(MediaType.MULTIPART_FORM_DATA);
+		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
+		builder.entity(multiPart, MediaType.MULTIPART_FORM_DATA);
+
+		return builder.build(buildURI(url), HttpMethod.POST);
+	}
+
+	protected URI buildURI(String url) {
+		LOG.debug("buildURI The passed in URL is: " + url);
+		URI uri;
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException e) {
+			LOG.error("buildURI unable to build a URI object for the URL: '" + url + "' with the error: ", e);
+			throw new RuntimeException("Unable to build URI for the URL: " + url, e);
+		}
+		return uri;
+	}
+
+	protected String buildAuthorizationHeaderString() {
+		return PaymentWorksConstants.TOKEN_HEADER_KEY + paymentworksAuthorizationToken;
+	}
+
 	protected Client buildClient() {
 		ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-        return client;
+		Client client = Client.create(clientConfig);
+		return client;
 	}
 
 	@Override
 	public List<PaymentWorksNewVendorDTO> getPendingNewVendorRequestsFromPaymentWorks() {
-
 		PaymentWorksNewVendorsRootDTO newVendorsRoot = null;
 		List<PaymentWorksNewVendorDTO> newVendors = new ArrayList<PaymentWorksNewVendorDTO>();
 		boolean moreRecords = true;
-		
+
 		Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + NEW_VENDOR_REQUEST_PENDING_VENDORS + "?status=0"));
+		ClientResponse response = client.handle(buildClientRequest(buildPendingNewVendorRequestsFromPaymentWorksURL()));
 
 		while (moreRecords) {
-			// read response
 			newVendorsRoot = response.getEntity(PaymentWorksNewVendorsRootDTO.class);
 
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Status: " + response.getStatus());
-			}
-
-			// if status is ok
-			if (response.getStatus() == 200) {
+			LOG.debug("getPendingNewVendorRequestsFromPaymentWorks, Status: " + response.getStatus());
+			if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 				if (ObjectUtils.isNotNull(newVendorsRoot)) {
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("New Vendor Requests retrieved: " + newVendorsRoot.getCount());
-					}
+					LOG.debug("getPendingNewVendorRequestsFromPaymentWorks, New Vendor Requests retrieved: "
+							+ newVendorsRoot.getCount());
 				}
-
 				if (newVendorsRoot.getCount() > 0) {
-					// add vendors to list
 					newVendors.addAll(newVendorsRoot.getNewVendors().getNewVendorList());
 				}
 
-				// check for next
 				if (StringUtils.isNotEmpty(newVendorsRoot.getNext())) {
 					response = client.handle(buildClientRequest(newVendorsRoot.getNext()));
 				} else {
 					moreRecords = false;
 				}
 			} else {
-				LOG.error("Failed to retrieve Pending New Vendor Requests: " + response.getEntity(String.class));
+				LOG.error(
+						"getPendingNewVendorRequestsFromPaymentWorks, Failed to retrieve Pending New Vendor Requests: "
+								+ response.getEntity(String.class));
 				moreRecords = false;
 			}
 		}
 		return newVendors;
 	}
 
+	protected String buildPendingNewVendorRequestsFromPaymentWorksURL() {
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_PENDING_VENDORS)
+				.append(PaymentWorksConstants.QUESTION_MARK)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.STATUS)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksNewVendorStatus.PENDING)).toString();
+		return URL;
+	}
+
 	@Override
 	public List<PaymentWorksVendorUpdatesDTO> getPendingCompanyVendorUpdatesFromPaymentWorks() {
 		PaymentWorksVendorUpdatesRootDTO updateVendorsRoot = null;
 		List<PaymentWorksVendorUpdatesDTO> vendorUpdates = new ArrayList<PaymentWorksVendorUpdatesDTO>();
+
+		processVendorUpdates(vendorUpdates, buildPendingCompanyVendorUpdatesFromPaymentWorksURL());
+
+		return vendorUpdates;
+	}
+
+	protected void processVendorUpdates(List<PaymentWorksVendorUpdatesDTO> vendorUpdates, String url) {
+		PaymentWorksVendorUpdatesRootDTO updateVendorsRoot;
 		boolean moreRecords = true;
-        Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + VENDOR_UPDATES_PENDING_VENDORS + "?status=0&group_name=company"));
-		
+
+		Client client = buildClient();
+		ClientResponse response = client.handle(buildClientRequest(url));
+
 		while (moreRecords) {
-			// read response
 			updateVendorsRoot = response.getEntity(PaymentWorksVendorUpdatesRootDTO.class);
 
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Status: " + response.getStatus());
-			}
+			LOG.debug("processVendorUpdates, Status: " + response.getStatus());
 
-			// if status is ok
-			if (response.getStatus() == 200) {
+			if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 				if (ObjectUtils.isNotNull(updateVendorsRoot)) {
-					if (LOG.isDebugEnabled()) {
-						LOG.info("Vendor Updates retrieved: " + updateVendorsRoot.getCount());
-					}
+					LOG.info("processVendorUpdates Vendor Updates retrieved: " + updateVendorsRoot.getCount());
 				}
 
 				if (updateVendorsRoot.getCount() > 0) {
-					// add vendors to list
 					vendorUpdates.addAll(updateVendorsRoot.getVendorUpdates().getNewVendorList());
 				}
 
-				// check for next
 				if (StringUtils.isNotEmpty(updateVendorsRoot.getNext())) {
 					response = client.handle(buildClientRequest(updateVendorsRoot.getNext()));
 				} else {
 					moreRecords = false;
 				}
 			} else {
-				LOG.error("Failed to retrieve Pending Vendor Updates: " + response.getEntity(String.class));
+				LOG.error("processVendorUpdates, Failed to retrieve Pending Vendor Updates: "
+						+ response.getEntity(String.class));
 				moreRecords = false;
 			}
 		}
-		
-		return vendorUpdates;
+	}
+
+	protected String buildPendingCompanyVendorUpdatesFromPaymentWorksURL() {
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(VENDOR_UPDATES_PENDING_VENDORS)
+				.append(PaymentWorksConstants.QUESTION_MARK)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.STATUS)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksUpdateStatus.PENDING).append(PaymentWorksConstants.AMPERSAND)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.GROUP_NAME)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksURLGroupNameOptions.COMPANY)).toString();
+		return URL;
 	}
 
 	@Override
 	public List<PaymentWorksVendorUpdatesDTO> getPendingAddressVendorUpdatesFromPaymentWorks() {
 		PaymentWorksVendorUpdatesRootDTO updateVendorsRoot = null;
 		List<PaymentWorksVendorUpdatesDTO> vendorUpdates = new ArrayList<PaymentWorksVendorUpdatesDTO>();
-		boolean moreRecords = true;
-		
-		Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + VENDOR_UPDATES_PENDING_VENDORS + "?status=0&group_name=corporate_address&group_name=remittance_address"));
-		
-		while (moreRecords) {
-			// read response
-			updateVendorsRoot = response.getEntity(PaymentWorksVendorUpdatesRootDTO.class);
 
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Status: " + response.getStatus());
-			}
+		processVendorUpdates(vendorUpdates, buildPendingAddressVendorUpdatesFromPaymentWorksURL());
 
-			// if status is ok
-			if (response.getStatus() == 200) {
-				if (ObjectUtils.isNotNull(updateVendorsRoot)) {
-					if (LOG.isDebugEnabled()) {
-						LOG.info("Vendor Updates retrieved: " + updateVendorsRoot.getCount());
-					}
-				}
-
-				if (updateVendorsRoot.getCount() > 0) {
-					// add vendors to list
-					vendorUpdates.addAll(updateVendorsRoot.getVendorUpdates().getNewVendorList());
-				}
-
-				// check for next
-				if (StringUtils.isNotEmpty(updateVendorsRoot.getNext())) {
-					response = client.handle(buildClientRequest(updateVendorsRoot.getNext()));
-				} else {
-					moreRecords = false;
-				}
-			} else {
-				LOG.error("Failed to retrieve Pending Vendor Updates: " + response.getEntity(String.class));
-				moreRecords = false;
-			}
-		}
-		
 		return vendorUpdates;
+	}
+
+	protected String buildPendingAddressVendorUpdatesFromPaymentWorksURL() {
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(VENDOR_UPDATES_PENDING_VENDORS)
+				.append(PaymentWorksConstants.QUESTION_MARK)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.STATUS)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksUpdateStatus.PENDING).append(PaymentWorksConstants.AMPERSAND)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.GROUP_NAME)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksURLGroupNameOptions.CORPORATE_ADDRESS)
+				.append(PaymentWorksConstants.AMPERSAND)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.GROUP_NAME)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksURLGroupNameOptions.REMITTANCE_ADDRESS)).toString();
+		return URL;
 	}
 
 	@Override
 	public List<PaymentWorksVendorUpdatesDTO> getPendingAchUpdatesFromPaymentWorks() {
 		PaymentWorksVendorUpdatesRootDTO updateVendorsRoot = null;
 		List<PaymentWorksVendorUpdatesDTO> vendorUpdates = new ArrayList<PaymentWorksVendorUpdatesDTO>();
-		boolean moreRecords = true;
-		
-		Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + VENDOR_UPDATES_PENDING_VENDORS + "?status=0&group_name=bank_account"));
 
-		while (moreRecords) {
-			// read response
-			updateVendorsRoot = response.getEntity(PaymentWorksVendorUpdatesRootDTO.class);
+		processVendorUpdates(vendorUpdates, buildPendingAchUpdatesFromPaymentWorksURL());
 
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Status: " + response.getStatus());
-			}
-
-			// if status is ok
-			if (response.getStatus() == 200) {
-				if (ObjectUtils.isNotNull(updateVendorsRoot)) {
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("ACH Updates retrieved: " + updateVendorsRoot.getCount());
-					}
-				}
-
-				if (updateVendorsRoot.getCount() > 0) {
-					// add vendors to list
-					vendorUpdates.addAll(updateVendorsRoot.getVendorUpdates().getNewVendorList());
-				}
-
-				// check for next
-				if (StringUtils.isNotEmpty(updateVendorsRoot.getNext())) {
-					response = client.handle(buildClientRequest(updateVendorsRoot.getNext()));
-				} else {
-					moreRecords = false;
-				}
-			} else {
-				LOG.error("Failed to retrieve Pending ACH Updates: " + response.getEntity(String.class));
-				moreRecords = false;
-			}
-		}
-		
 		return vendorUpdates;
+	}
+
+	protected String buildPendingAchUpdatesFromPaymentWorksURL() {
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(VENDOR_UPDATES_PENDING_VENDORS)
+				.append(PaymentWorksConstants.QUESTION_MARK)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.STATUS)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksUpdateStatus.PENDING).append(PaymentWorksConstants.AMPERSAND)
+				.append(PaymentWorksConstants.PaymentWorksURLParameters.GROUP_NAME)
+				.append(PaymentWorksConstants.EQUALS_SIGN)
+				.append(PaymentWorksConstants.PaymentWorksURLGroupNameOptions.BANK_ACCOUNT)).toString();
+		return URL;
 	}
 
 	@Override
 	public PaymentWorksNewVendorDetailDTO getVendorDetailFromPaymentWorks(String newVendorRequestId) {
-		
 		Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + NEW_VENDOR_REQUEST_DETAILS_PREFIX + "/" + newVendorRequestId + NEW_VENDOR_REQUEST_DETAILS_SUFFIX));
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_DETAILS_PREFIX)
+				.append(PaymentWorksConstants.FORWARD_SLASH).append(newVendorRequestId)
+				.append(PaymentWorksConstants.FORWARD_SLASH).append(NEW_VENDOR_REQUEST_DETAILS_SUFFIX)).toString();
+		ClientResponse response = client.handle(buildClientRequest(URL));
 
+		PaymentWorksNewVendorDetailDTO newVendorDetail = null;
 
-		PaymentWorksNewVendorDetailDTO newVendorDetail = response.getEntity(PaymentWorksNewVendorDetailDTO.class);
-
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Status: " + response.getStatus());
-		}
-
-		if (response.getStatus() == 200) {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("New Vendor Request Detail retrieved");
-			}
+		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+			LOG.debug("getVendorDetailFromPaymentWorks, New Vendor Request Detail retrieved.");
+			newVendorDetail = response.getEntity(PaymentWorksNewVendorDetailDTO.class);
 		} else {
-			LOG.error("Failed to retrieve New Vendor Request Detail for Vendor Request Id(" + newVendorRequestId + "): " + response.getEntity(String.class));
+			LOG.error("Failed to retrieve New Vendor Request Detail for Vendor Request Id(" + newVendorRequestId + "): "
+					+ response.getEntity(String.class));
+			throw new RuntimeException("Unable to get vendor detail information from PaymentWorks");
 		}
-		
+
 		return newVendorDetail;
 	}
 
 	@Override
-	public void updateNewVendorStatusInPaymentWorks(List<PaymentWorksNewVendorUpdateVendorStatus> paymentWorksUpdateNewVendorStatus) {
-		
-		String jsonString = new PaymentWorksUtil().pojoToJsonString(paymentWorksUpdateNewVendorStatus);
+	public void updateNewVendorStatusInPaymentWorks(
+			List<PaymentWorksNewVendorUpdateVendorStatus> paymentWorksUpdateNewVendorStatus) {
+		String jsonString = getPaymentWorksUtilityService().pojoToJsonString(paymentWorksUpdateNewVendorStatus);
 		Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + NEW_VENDOR_REQUEST_UPDATE_STATUS, jsonString ));
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_UPDATE_STATUS)).toString();
+		LOG.info("updateNewVendorStatusInPaymentWorks. json string: " + jsonString);
+		ClientResponse response = client.handle(buildClientRequest(URL, jsonString));
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Status: " + response.getStatus());
-		}
-
-		if (response.getStatus() == 200) {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("New Vendor Request status updated");
-			}
+		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+			LOG.debug("updateNewVendorStatusInPaymentWorks, New Vendor Request status updated");
 		} else {
-			LOG.error("Failed to update New Vendor Request status: " + response.getEntity(String.class));
+			LOG.error("updateNewVendorStatusInPaymentWorks, Failed to update New Vendor Request status: "
+					+ response.getEntity(String.class));
+			throw new RuntimeException("Unable to update new vendor status in PaymentWorks");
 		}
 	}
 
 	@Override
 	public void updateVendorUpdatesStatusInPaymentWorks(
 			List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
-		
-		String jsonString = new PaymentWorksUtil().pojoToJsonString(paymentWorksUpdateVendorStatus);
+		String jsonString = getPaymentWorksUtilityService().pojoToJsonString(paymentWorksUpdateVendorStatus);
 		Client client = buildClient();
-        ClientResponse response = client.handle(buildClientRequest(getPaymentworksApiUrl() + NEW_VENDOR_REQUEST_UPDATE_STATUS, jsonString ));
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_UPDATE_STATUS)).toString();
+		ClientResponse response = client.handle(buildClientRequest(URL, jsonString));
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Status: " + response.getStatus());
-		}
-
-		if (response.getStatus() == 200) {
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Vendor Update status updated");
-			}
+		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
+			LOG.debug("Vendor Update status updated");
 		} else {
 			LOG.error("Failed to update Vendor Update status: " + response.getEntity(String.class));
+			throw new RuntimeException("Unable to update vendor status in PaymentWorks");
 		}
 	}
 
 	@Override
-	public boolean paymentWorksUploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO) {
-
+	public boolean uploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO) {
+		PaymentWorksSupplierConversionUtil paymentWorksSupplierConversionUtil = new PaymentWorksSupplierConversionUtil();
 		boolean isUploaded = false;
-		
-		/*
-		ClientConfig clientConfig = new ClientConfig();
-		clientConfig.register(MultiPartFeature.class);
-		clientConfig.register(LoggingFilter.class);
-		Client client = ClientBuilder.newClient(clientConfig);
-
-		WebTarget webTarget = client.target(getPaymentworksApiUrl()).path(NEW_VENDOR_REQUEST_SUPPLIER_UPLOAD);
 
 		MultiPart multiPart = new MultiPart();
 		multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-		// create supplier upload csv file
-		String supplierUploadFileName = new PaymentworksSupplierConversionUtil()
-				.createSupplierUploadFile(paymentworksSupplierUploadDTO, directoryPath);
+		String supplierUploadFileName = paymentWorksSupplierConversionUtil
+				.createSupplierUploadFile(paymentWorksSupplierUploadDTO, directoryPath);
 
 		FormDataBodyPart fileDataBodyPart = new FileDataBodyPart("suppliers", new File(supplierUploadFileName),
 				MediaType.MULTIPART_FORM_DATA_TYPE);
 		multiPart.bodyPart(fileDataBodyPart);
 
-		Response response = webTarget.request().header("Authorization", "Token " + paymentworksAuthorizationToken)
-				.post(Entity.entity(multiPart, multiPart.getMediaType()));
+		Client client = buildClient();
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_SUPPLIER_UPLOAD)).toString();
+		ClientResponse response = client.handle(buildClientRequest(URL, multiPart));
 
-		// delete supplier upload csv file
-		new PaymentworksSupplierConversionUtil().deleteSupplierUploadFile(supplierUploadFileName);
+		LOG.debug("updateNewVendorStatusInPaymentWorks, Status: " + response.getStatus());
 
-		if (LOG.isDebugEnabled()) {
-			LOG.info("Status: " + response.getStatus());
-		}
+		paymentWorksSupplierConversionUtil.deleteSupplierUploadFile(supplierUploadFileName);
 
-		if (response.getStatus() == 200) {
+		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 			isUploaded = true;
-
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Supplier upload succeeded for " + paymentworksSupplierUploadDTO.size() + " vendor records");
-			}
+			LOG.debug("Supplier upload succeeded for " + paymentWorksSupplierUploadDTO.size() + " vendor records");
 		} else {
 			isUploaded = false;
-			LOG.error("Failed to upload Supplier File for " + paymentworksSupplierUploadDTO.size() + " vendor records: "
-					+ response.readEntity(String.class));
+			LOG.error("Failed to upload Supplier File for " + paymentWorksSupplierUploadDTO.size() + " vendor records: "
+					+ response.getEntity(String.class));
+			throw new RuntimeException("Unable to send supplier file to PaymentWorks");
+
 		}
-		*/
 		return isUploaded;
 	}
 
@@ -413,4 +389,11 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 		this.directoryPath = directoryPath;
 	}
 
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
+	}
 }

@@ -2478,6 +2478,31 @@
                 "component": "VendorTaxDetail"
               }
             }
+          },
+          {
+          	"label": "PaymentWorks Vendor",
+            "businessObjectClass": "edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+              	"namespaceCode": "KFS-PMW",
+                "componentName": "PaymentWorksVendor"
+              }
+            }
+          },
+          {
+          	"label": "PaymentWorks Field Mapping",
+            "businessObjectClass": "edu.cornell.kfs.paymentworks.businessobject.PaymentWorksFieldMapping",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "PMWM"
+              }
+            }
           }
         ],
         "administration": [

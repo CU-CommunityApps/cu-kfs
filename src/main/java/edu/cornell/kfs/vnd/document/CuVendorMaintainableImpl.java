@@ -5,12 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.document.VendorMaintainableImpl;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.FieldRestriction;
@@ -20,6 +23,7 @@ import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.kns.web.ui.Section;
+import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -29,6 +33,12 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
+import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
+import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorUpdateVendorStatus;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
@@ -41,6 +51,10 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
+    
+    private PaymentWorksVendorService paymentWorksVendorService;
+    private PaymentWorksKfsService paymentWorksKfsService;
+    private PaymentWorksWebService paymentWorksWebService;
     
     public void saveBusinessObject() {
         VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
@@ -221,5 +235,97 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
         
     }
+    
+	@Override
+	public void doRouteStatusChange(DocumentHeader header) {
+		super.doRouteStatusChange(header);
+		VendorDetail vendorDetail = (VendorDetail) getBusinessObject();
+		WorkflowDocument workflowDoc = header.getWorkflowDocument();
+		boolean existingPaymentWorksVendor = getPaymentWorksVendorService().isExistingPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
 
+		if (workflowDoc.isProcessed()) {
+			updatePaymentWorks(vendorDetail, existingPaymentWorksVendor);
+		} else if (workflowDoc.isDisapproved()) {
+			if (StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())) {
+				if (existingPaymentWorksVendor) {
+					LOG.debug("Updating new vendor request to vendor disapproved for document number: " + this.getDocumentNumber());
+					getPaymentWorksVendorService().updatePaymentWorksVendorProcessStatusByDocumentNumber(this.getDocumentNumber(), 
+							PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED);
+				}
+			}
+		}
+	}
+
+	protected void updatePaymentWorks(VendorDetail vendorDetail, boolean existingPaymentWorksVendor) {
+		if (existingPaymentWorksVendor) {
+			LOG.debug("Updating new vendor request to vendor approved for document number: " + this.getDocumentNumber());
+			
+			PaymentWorksVendor vendor = getPaymentWorksVendorService().getPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
+
+			vendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
+			vendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
+			vendor.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+			vendor.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+			getPaymentWorksVendorService().updatePaymentWorksVendor(vendor);
+			
+			getPaymentWorksKfsService().sendVendorApprovedEmail(vendorDetail.getVendorNumber(), vendor.getEmailAddress(), vendorDetail.getVendorName());
+			updatePaymentWorksRequestStatus(vendor);
+			
+		} else if (isNewMaintenanceAction()) {
+			LOG.info("Creating new vendor request (from new KFS Vendor) as vendor approved for document number: "+ this.getDocumentNumber());
+			getPaymentWorksVendorService().savePaymentWorksVendorRecord(vendorDetail, this.getDocumentNumber(), 
+					PaymentWorksConstants.TransactionType.NEW_VENDOR);
+		} else if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, this.getMaintenanceAction())) {
+			LOG.info("Creating vendor update (from KFS Vendor Edit) as vendor approved for document number: " + this.getDocumentNumber());
+			getPaymentWorksVendorService().savePaymentWorksVendorRecord(vendorDetail, this.getDocumentNumber(), 
+					PaymentWorksConstants.TransactionType.VENDOR_UPDATE);
+		}
+	}
+
+	protected void updatePaymentWorksRequestStatus(PaymentWorksVendor vendor) {
+		List<PaymentWorksNewVendorUpdateVendorStatus> paymentWorksUpdateNewVendorStatus = new ArrayList<PaymentWorksNewVendorUpdateVendorStatus>();
+		PaymentWorksNewVendorUpdateVendorStatus updateNewVendorStatus = new PaymentWorksNewVendorUpdateVendorStatus();
+		updateNewVendorStatus.setId(new Integer(vendor.getVendorRequestId()));
+		updateNewVendorStatus.setRequest_status(new Integer(PaymentWorksConstants.PaymentWorksNewVendorStatus.PROCESSED));
+		paymentWorksUpdateNewVendorStatus.add(updateNewVendorStatus);
+		getPaymentWorksWebService().updateNewVendorStatusInPaymentWorks(paymentWorksUpdateNewVendorStatus);
+	}
+
+	protected boolean isNewMaintenanceAction() {
+		return StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())
+				|| StringUtils.equals(KFSConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, this.getMaintenanceAction());
+	}
+
+	public PaymentWorksVendorService getPaymentWorksVendorService() {
+		if (paymentWorksVendorService == null) {
+			paymentWorksVendorService = SpringContext.getBean(PaymentWorksVendorService.class);
+		}
+		return paymentWorksVendorService;
+	}
+
+	public void setPaymentWorksVendorService(PaymentWorksVendorService paymentWorksVendorService) {
+		this.paymentWorksVendorService = paymentWorksVendorService;
+	}
+
+	public PaymentWorksKfsService getPaymentWorksKfsService() {
+		if (paymentWorksKfsService == null) {
+			paymentWorksKfsService = SpringContext.getBean(PaymentWorksKfsService.class);
+		}
+		return paymentWorksKfsService;
+	}
+
+	public void setPaymentWorksKfsService(PaymentWorksKfsService paymentWorksKfsService) {
+		this.paymentWorksKfsService = paymentWorksKfsService;
+	}
+
+	public PaymentWorksWebService getPaymentWorksWebService() {
+		if (paymentWorksWebService == null) {
+			paymentWorksWebService = SpringContext.getBean(PaymentWorksWebService.class);
+		}
+		return paymentWorksWebService;
+	}
+
+	public void setPaymentWorksWebService(PaymentWorksWebService paymentWorksWebService) {
+		this.paymentWorksWebService = paymentWorksWebService;
+	}
 }

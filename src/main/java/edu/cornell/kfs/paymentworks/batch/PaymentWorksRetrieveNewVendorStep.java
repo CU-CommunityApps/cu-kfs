@@ -32,9 +32,9 @@ import edu.cornell.kfs.paymentworks.batch.report.NewVendorSummary;
 import edu.cornell.kfs.paymentworks.batch.report.NewVendorSummaryLine;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorUpdateVendorStatus;
@@ -48,40 +48,26 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 	private PaymentWorksVendorService paymentWorksVendorService;
 	private PaymentWorksWebService paymentWorksWebService;
 	private PaymentWorksKfsService paymentWorksKfsService;
+	private PaymentWorksUtilityService paymentWorksUtilityService;
 	private ReportWriterService reportWriterService;
 
 	private NewVendorSummary newVendorSummary;
 
 	@Override
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-
 		newVendorSummary = new NewVendorSummary();
-
 		PaymentWorksNewVendorDetailDTO newVendorDetail = null;
 		PaymentWorksVendor paymentWorksNewVendor = null;
 		boolean routed = false;
-
-		// get list of new pending vendors
+		boolean jobCompletedSuccessfully = true;
 		List<PaymentWorksNewVendorDTO> results = paymentWorksWebService.getPendingNewVendorRequestsFromPaymentWorks();
 
-		// loop through list get detailed records and save them
 		for (PaymentWorksNewVendorDTO newVendor : results) {
-
-			// check if already exists in DB
-			if (!paymentWorksVendorService.isExistingPaymentWorksVendor(newVendor.getId(),
-					PaymentWorksConstants.TransactionType.NEW_VENDOR)) {
-
+			if (!paymentWorksVendorService.isExistingPaymentWorksVendor(newVendor.getId(), PaymentWorksConstants.TransactionType.NEW_VENDOR)) {
 				try {
-					// get detail record
 					newVendorDetail = paymentWorksWebService.getVendorDetailFromPaymentWorks(newVendor.getId());
-
-					// save vendor detail record
 					paymentWorksNewVendor = paymentWorksVendorService.savePaymentWorksVendorRecord(newVendorDetail);
-
-					// route document
 					routed = paymentWorksKfsService.routeNewVendor(paymentWorksNewVendor);
-
-					// process vendor record staging, status, summary and email
 					if (routed) {
 						processVendor(paymentWorksNewVendor, PaymentWorksConstants.PaymentWorksNewVendorStatus.APPROVED,
 								PaymentWorksConstants.PaymentWorksStatusText.APPROVED, PaymentWorksConstants.ProcessStatus.VENDOR_CREATED,
@@ -90,21 +76,22 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 						processVendor(paymentWorksNewVendor, PaymentWorksConstants.PaymentWorksNewVendorStatus.REJECTED,
 								PaymentWorksConstants.PaymentWorksStatusText.REJECTED,
 								PaymentWorksConstants.ProcessStatus.VENDOR_REJECTED, routed);
+						jobCompletedSuccessfully = false;
 					}
-
+					LOG.info("paymentWorksNewVendor.isCustomFieldConversionErrors()" + paymentWorksNewVendor.isCustomFieldConversionErrors());
+					jobCompletedSuccessfully = jobCompletedSuccessfully && !paymentWorksNewVendor.isCustomFieldConversionErrors();
 				} catch (Exception e) {
 					LOG.error("Error processing new vendor(" + newVendor.getId() + "): " + e.getMessage());
 					routed = false;
+					jobCompletedSuccessfully = false;
 					GlobalVariables.getMessageMap().clearErrorMessages();
 				}
 			}
 		}
-
-		// send email summary
-		paymentWorksKfsService.sendSummaryEmail(writePaymentWorksNewVendorSummaryReport(newVendorSummary),
-				"PaymentWorks New Vendor Summary Report");
-
-		return true;
+		if (!jobCompletedSuccessfully) {
+			throw new RuntimeException("There was an error processing new vendors from PaymentWorks");
+		}
+		return jobCompletedSuccessfully;
 	}
 
 	protected void processVendor(PaymentWorksVendor paymentWorksNewVendor, String requestStatus,
@@ -114,23 +101,20 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 		paymentWorksNewVendor = paymentWorksVendorService.updatePaymentWorksVendor(paymentWorksNewVendor);
 
 		updatePaymentWorksVendorStatus(paymentWorksNewVendor.getVendorRequestId(), requestStatus);
-
 		addSummaryLine(paymentWorksNewVendor, routed);
 
 		if (routed) {
-			paymentWorksKfsService.sendEmailVendorInitiated(paymentWorksNewVendor.getDocumentNumber(),
-					paymentWorksNewVendor.getRequestingCompanyLegalName(),
-					paymentWorksNewVendor.getUconnContactEmailAddress());
+			paymentWorksKfsService.sendVendorInitiatedEmail(paymentWorksNewVendor.getDocumentNumber(), 
+					paymentWorksNewVendor.getRequestingCompanyLegalName(), paymentWorksNewVendor.getEmailAddress());
 		}
 	}
 
 	protected void addSummaryLine(PaymentWorksVendor paymentWorksNewVendor, boolean approved) {
-
 		NewVendorSummaryLine summaryLine = new NewVendorSummaryLine();
 		summaryLine.setVendorRequestId(paymentWorksNewVendor.getVendorRequestId());
 		summaryLine.setVendorName(paymentWorksNewVendor.getRequestingCompanyLegalName());
 		summaryLine.setDocumentNumber(StringUtils.defaultString(paymentWorksNewVendor.getDocumentNumber()));
-		summaryLine.setErrorMessage(new PaymentWorksUtil().getGlobalErrorMessage());
+		summaryLine.setErrorMessage(getPaymentWorksUtilityService().getGlobalErrorMessage());
 
 		if (approved) {
 			newVendorSummary.getApprovedVendors().add(summaryLine);
@@ -150,7 +134,6 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 	}
 
 	protected File writePaymentWorksNewVendorSummaryReport(NewVendorSummary newVendorSummary) {
-
 		if (reportWriterService == null) {
 			throw new IllegalStateException("ReportWriterService not configured for PaymentWorks New Vendor service.");
 		} else {
@@ -165,8 +148,7 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 
 		reportWriterService.writeStatisticLine("%d vendor request documents created", approvedVendors.size());
 		reportWriterService.writeStatisticLine("%d vendor requests rejected", rejectedVendors.size());
-		reportWriterService.writeStatisticLine("%d total vendor requests processed",
-				approvedVendors.size() + rejectedVendors.size());
+		reportWriterService.writeStatisticLine("%d total vendor requests processed", approvedVendors.size() + rejectedVendors.size());
 
 		return reportWriterService.getReportFile();
 	}
@@ -175,7 +157,6 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 		String rowFormat = "%-15s %-30s %-14s";
 		String hdrRowFormat = "%-15s %-30s %-14s";
 		Object[] headerArgs = { "Vendor Req ID", "Vendor Name", "Document Number" };
-
 		boolean firstPage = true;
 
 		for (NewVendorSummaryLine newVendorSummaryLine : records) {
@@ -190,16 +171,13 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 			reportWriterService.writeFormattedMessageLine(rowFormat, newVendorSummaryLine.getVendorRequestId(),
 					newVendorSummaryLine.getVendorName(), newVendorSummaryLine.getDocumentNumber());
 		}
-
 		reportWriterService.writeNewLines(1);
-
 	}
 
 	protected void writeNewVendorRejectedSummaryDetailRecords(String subtitle, List<NewVendorSummaryLine> records) {
 		String rowFormat = "%-15s %-30s %s";
 		String hdrRowFormat = "%-15s %-30s %s";
 		Object[] headerArgs = { "Vendor Req ID", "Vendor Name", "Error Msg" };
-
 		boolean firstPage = true;
 
 		for (NewVendorSummaryLine newVendorSummaryLine : records) {
@@ -214,9 +192,7 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 			reportWriterService.writeFormattedMessageLine(rowFormat, newVendorSummaryLine.getVendorRequestId(),
 					newVendorSummaryLine.getVendorName(), newVendorSummaryLine.getErrorMessage());
 		}
-
 		reportWriterService.writeNewLines(1);
-
 	}
 
 	public PaymentWorksVendorService getPaymentWorksVendorService() {
@@ -249,6 +225,14 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 
 	public void setPaymentWorksKfsService(PaymentWorksKfsService paymentWorksKfsService) {
 		this.paymentWorksKfsService = paymentWorksKfsService;
+	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
 }

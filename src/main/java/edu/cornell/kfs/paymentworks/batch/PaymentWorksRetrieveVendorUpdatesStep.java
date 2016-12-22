@@ -35,9 +35,9 @@ import edu.cornell.kfs.paymentworks.batch.report.VendorUpdateSummary;
 import edu.cornell.kfs.paymentworks.batch.report.VendorUpdateSummaryLine;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksUpdateVendorStatus;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -51,6 +51,7 @@ public class PaymentWorksRetrieveVendorUpdatesStep extends AbstractStep {
 	private PaymentWorksVendorService paymentWorksVendorService;
 	private PaymentWorksWebService paymentWorksWebService;
 	private PaymentWorksKfsService paymentWorksKfsService;
+	private PaymentWorksUtilityService paymentWorksUtilityService;
 	private ReportWriterService reportWriterService;
 	private VendorUpdateSummary vendorUpdateSummary;
 
@@ -64,11 +65,6 @@ public class PaymentWorksRetrieveVendorUpdatesStep extends AbstractStep {
 		// that could happen before the direct edit
 		processAddressVendorUpdates();
 		processCompanyVendorUpdates();
-
-		// send email summary
-		paymentWorksKfsService.sendSummaryEmail(writePaymentWorksVendorUpdateSummaryReport(vendorUpdateSummary),
-				"PaymentWorks Vendor Update Summary Report");
-
 		return true;
 	}
 
@@ -213,7 +209,7 @@ public class PaymentWorksRetrieveVendorUpdatesStep extends AbstractStep {
 		summaryLine.setVendorName(StringUtils.defaultString(paymentWorksVendor.getVendorName()));
 		summaryLine.setVendorNumber(StringUtils.defaultString(paymentWorksVendor.getVendorNumberList()));
 		summaryLine.setDocumentNumber(StringUtils.defaultString(paymentWorksVendor.getDocumentNumberList()));
-		summaryLine.setErrorMessage(new PaymentWorksUtil().getGlobalErrorMessage());
+		summaryLine.setErrorMessage(getPaymentWorksUtilityService().getGlobalErrorMessage());
 
 		if (approved) {
 			if (directEdit) {
@@ -343,6 +339,14 @@ public class PaymentWorksRetrieveVendorUpdatesStep extends AbstractStep {
 
 	public void setPaymentWorksKfsService(PaymentWorksKfsService paymentWorksKfsService) {
 		this.paymentWorksKfsService = paymentWorksKfsService;
+	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
 }

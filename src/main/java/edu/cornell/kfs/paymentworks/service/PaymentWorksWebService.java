@@ -61,7 +61,7 @@ public interface PaymentWorksWebService {
 	public List<PaymentWorksVendorUpdatesDTO> getPendingAchUpdatesFromPaymentWorks();
 
 	/**
-	 * Retrieves a single vendor detail record from payment works
+	 * Retrieves a single vendor detail record from PaymentWorks
 	 *
 	 * @return
 	 */
@@ -72,7 +72,7 @@ public interface PaymentWorksWebService {
 	 *
 	 * @return
 	 */
-	public boolean paymentWorksUploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO);
+	public boolean uploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO);
 
 	/**
 	 * Updates new vendor request status (processed or rejected) in PaymentWorks

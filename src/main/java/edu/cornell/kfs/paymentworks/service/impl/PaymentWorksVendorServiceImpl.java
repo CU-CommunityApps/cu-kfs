@@ -36,8 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksNewVendorConversionUtil;
 import edu.cornell.kfs.paymentworks.util.PaymentWorksVendorUpdateConversionUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
@@ -51,12 +51,12 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 	private DateTimeService dateTimeService;
 	private BusinessObjectService businessObjectService;
 	private NoteService noteService;
+	private PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
 
 	@Override
 	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
 
-		PaymentWorksVendor paymentWorksNewVendor = new PaymentWorksNewVendorConversionUtil()
-				.createPaymentWorksNewVendor(paymentWorksNewVendorDetailDTO);
+		PaymentWorksVendor paymentWorksNewVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(paymentWorksNewVendorDetailDTO);
 
 		// other
 		paymentWorksNewVendor.setRequestStatus(paymentWorksNewVendorDetailDTO.getRequest_status());
@@ -90,8 +90,7 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 	public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber,
 			String transactionType) {
 
-		PaymentWorksVendor newVendor = new PaymentWorksNewVendorConversionUtil()
-				.createPaymentWorksNewVendor(vendorDetail, documentNumber);
+		PaymentWorksVendor newVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(vendorDetail, documentNumber);
 
 		newVendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
 		newVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
@@ -259,6 +258,15 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 
 	public void setNoteService(NoteService noteService) {
 		this.noteService = noteService;
+	}
+
+	public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
+		return paymentWorksNewVendorConversionService;
+	}
+
+	public void setPaymentWorksNewVendorConversionService(
+			PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
+		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
 	}
 
 }

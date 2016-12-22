@@ -36,11 +36,14 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorNumberDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class PaymentWorksVendorUpdateConversionUtil {
+	
+	PaymentWorksUtilityService paymentWorksUtilityService;
 
 	/**
 	 * Method that takes a vendor update from PaymentWorks and creates a staging
@@ -53,37 +56,36 @@ public class PaymentWorksVendorUpdateConversionUtil {
 			PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdatesDTO) {
 
 		PaymentWorksVendor paymentWorksVendor = new PaymentWorksVendor();
-		PaymentWorksUtil paymentWorksUtil = new PaymentWorksUtil();
 
-		Map<String, String> fieldChanges = paymentWorksUtil
+		Map<String, String> fieldChanges = paymentWorksUtilityService
 				.convertFieldArrayToMap(paymentWorksVendorUpdatesDTO.getField_changes());
-		Map<String, String> fieldChangesFrom = paymentWorksUtil
+		Map<String, String> fieldChangesFrom = paymentWorksUtilityService
 				.convertFieldArrayToMapFromValues(paymentWorksVendorUpdatesDTO.getField_changes());
 
 		// Requesting company info
 		if (StringUtils.equals(paymentWorksVendorUpdatesDTO.getGroup_name(), PaymentWorksConstants.VendorUpdateGroups.COMPANY)) {
 
 			paymentWorksVendor.setRequestingCompanyName(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Company Name (DBA)"), "requestingCompanyName"));
-			paymentWorksVendor.setRequestingCompanyNameOldValue(paymentWorksUtil
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Company Name (DBA)"), "requestingCompanyName"));
+			paymentWorksVendor.setRequestingCompanyNameOldValue(paymentWorksUtilityService
 					.trimFieldToMax(fieldChangesFrom.get("Company Name (DBA)"), "requestingCompanyOldValue"));
 			paymentWorksVendor.setRequestingCompanyTin(fieldChanges.get("Tax ID"));
 			paymentWorksVendor.setRequestingCompanyTinType(fieldChanges.get("Tax ID Type"));
 			paymentWorksVendor.setRequestingCompanyTaxCountry(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Tax Country"), "requestingCompanyTaxCountry"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Tax Country"), "requestingCompanyTaxCountry"));
 			paymentWorksVendor.setRequestingCompanyTelephone(fieldChanges.get("Telephone"));
 			paymentWorksVendor.setRequestingCompanyTelephoneOldValue(fieldChangesFrom.get("Telephone"));
 			paymentWorksVendor.setRequestingCompanyDesc(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Description"), "requestingCompanyDesc"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Description"), "requestingCompanyDesc"));
 			paymentWorksVendor.setRequestingCompanyLegalName(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Legal Name"), "requestingCompanyLegalName"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Legal Name"), "requestingCompanyLegalName"));
 			paymentWorksVendor.setRequestingCompanyDuns(fieldChanges.get("D-U-N-S"));
 			paymentWorksVendor.setRequestingCompanyTaxClassificationCode(
 					getTaxClassificationCode(fieldChanges.get("Tax Classification")));
 			paymentWorksVendor.setRequestingCompanyW8W9(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("W8/W9"), "requestingCompanyW8W9"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("W8/W9"), "requestingCompanyW8W9"));
 			paymentWorksVendor.setRequestingCompanyUrl(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("URL"), "requestingCompanyUrl"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("URL"), "requestingCompanyUrl"));
 		}
 
 		// remittance address
@@ -91,11 +93,11 @@ public class PaymentWorksVendorUpdateConversionUtil {
 				PaymentWorksConstants.VendorUpdateGroups.REMIT_ADDRESS)) {
 
 			paymentWorksVendor.setRemittanceAddressStreet1(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Street1"), "remittanceAddressStreet1"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Street1"), "remittanceAddressStreet1"));
 			paymentWorksVendor.setRemittanceAddressStreet2(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Street2"), "remittanceAddressStreet2"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Street2"), "remittanceAddressStreet2"));
 			paymentWorksVendor.setRemittanceAddressCity(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("City"), "remittanceAddressCity"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("City"), "remittanceAddressCity"));
 			paymentWorksVendor.setRemittanceAddressState(fieldChanges.get("State"));
 			paymentWorksVendor.setRemittanceAddressCountry(fieldChanges.get("Country"));
 			paymentWorksVendor.setRemittanceAddressZipCode(fieldChanges.get("Zipcode"));
@@ -106,11 +108,11 @@ public class PaymentWorksVendorUpdateConversionUtil {
 				PaymentWorksConstants.VendorUpdateGroups.CORP_ADDRESS)) {
 
 			paymentWorksVendor.setCorpAddressStreet1(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Street1"), "corpAddressStreet1"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Street1"), "corpAddressStreet1"));
 			paymentWorksVendor.setCorpAddressStreet2(
-					paymentWorksUtil.trimFieldToMax(fieldChanges.get("Street2"), "corpAddressStreet2"));
+					paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("Street2"), "corpAddressStreet2"));
 			paymentWorksVendor
-					.setCorpAddressCity(paymentWorksUtil.trimFieldToMax(fieldChanges.get("City"), "corpAddressCity"));
+					.setCorpAddressCity(paymentWorksUtilityService.trimFieldToMax(fieldChanges.get("City"), "corpAddressCity"));
 			paymentWorksVendor.setCorpAddressState(fieldChanges.get("State"));
 			paymentWorksVendor.setCorpAddressCountry(fieldChanges.get("Country"));
 			paymentWorksVendor.setCorpAddressZipCode(fieldChanges.get("Zipcode"));
@@ -120,7 +122,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		paymentWorksVendor.setVendorRequestId(paymentWorksVendorUpdatesDTO.getId());
 		paymentWorksVendor.setGroupName(paymentWorksVendorUpdatesDTO.getGroup_name());
 		paymentWorksVendor.setVendorName(
-				paymentWorksUtil.trimFieldToMax(paymentWorksVendorUpdatesDTO.getVendor_name(), "vendorName"));
+				paymentWorksUtilityService.trimFieldToMax(paymentWorksVendorUpdatesDTO.getVendor_name(), "vendorName"));
 
 		// vendor numbers
 		if (ObjectUtils.isNotNull(paymentWorksVendorUpdatesDTO.getVendor_nums().getVendorNumbers())
@@ -184,15 +186,13 @@ public class PaymentWorksVendorUpdateConversionUtil {
 						vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode());
 
 				ownershipCodesMatch = StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCode(),
-						new PaymentWorksNewVendorConversionUtil()
-								.getOwnershipCode(paymentWorksVendor.getRequestingCompanyTaxClassificationCode()));
+						PaymentWorksConstants.OwnershipTaxClassification.fromTaxClassification(
+								paymentWorksVendor.getRequestingCompanyTaxClassificationCode()).ownershipCode);
 			}
 
 			// check the tin type, translate first
 			if (StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTinType())) {
-				tinTypeMatch = StringUtils.equals(
-						new PaymentWorksNewVendorConversionUtil()
-								.getTaxTypeCode(paymentWorksVendor.getRequestingCompanyTinType()),
+				tinTypeMatch = StringUtils.equals(PaymentWorksConstants.TinType.fromTinCode(paymentWorksVendor.getRequestingCompanyTinType()).taxTypeCode,
 						vendorDetail.getVendorHeader().getVendorTaxTypeCode());
 			}
 
@@ -340,13 +340,12 @@ public class PaymentWorksVendorUpdateConversionUtil {
 								vendorHeader.getVendorOwnershipCategoryCode()));
 
 				// set ownership code
-				vendorHeader.setVendorOwnershipCode(new PaymentWorksNewVendorConversionUtil()
-						.getOwnershipCode(paymentWorksVendor.getRequestingCompanyTaxClassificationCode()));
+				vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.OwnershipTaxClassification.fromTaxClassification(
+						paymentWorksVendor.getRequestingCompanyTaxClassificationCode()).ownershipCode);
 			}
 
 			if (StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTinType())) {
-				vendorHeader.setVendorTaxTypeCode(new PaymentWorksNewVendorConversionUtil()
-						.getTaxTypeCode(paymentWorksVendor.getRequestingCompanyTinType()));
+				vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.TinType.fromTinCode(paymentWorksVendor.getRequestingCompanyTinType()).taxTypeCode);
 			}
 
 			vendorHeader.setVendorCorpCitizenCode(
@@ -617,7 +616,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 			if (!existingValueFound) {
 				VendorPhoneNumber phoneNumber = new VendorPhoneNumber();
 				phoneNumber.setVendorPhoneNumber(paymentWorksVendor.getRequestingCompanyTelephone());
-				phoneNumber.setVendorPhoneTypeCode("PH");
+				phoneNumber.setVendorPhoneTypeCode(PaymentWorksConstants.VENDOR_PHONE_TYPE_CODE_PHONE);
 				phoneNumber.setActive(true);
 				phoneNumber.setNewCollectionRecord(true);
 				vendorPhoneNumbers.add(phoneNumber);
@@ -730,4 +729,16 @@ public class PaymentWorksVendorUpdateConversionUtil {
 
 		return match;
 	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		if (paymentWorksUtilityService == null) {
+			paymentWorksUtilityService = SpringContext.getBean(PaymentWorksUtilityService.class);
+		}
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
+	}
+	
 }
