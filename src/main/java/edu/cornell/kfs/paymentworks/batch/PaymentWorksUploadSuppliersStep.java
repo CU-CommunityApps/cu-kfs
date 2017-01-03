@@ -33,9 +33,9 @@ import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummary;
 import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummaryLine;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksSupplierConversionUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorUpdateVendorStatus;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -45,11 +45,12 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
 			.getLogger(PaymentWorksUploadSuppliersStep.class);
 
-	private PaymentWorksVendorService paymentWorksVendorService;
-	private PaymentWorksWebService paymentWorksWebService;
-	private PaymentWorksKfsService paymentWorksKfsService;
-	private ReportWriterService reportWriterService;
-	private SupplierUploadSummary supplierUploadSummary;
+	protected PaymentWorksVendorService paymentWorksVendorService;
+	protected PaymentWorksWebService paymentWorksWebService;
+	protected PaymentWorksKfsService paymentWorksKfsService;
+	protected ReportWriterService reportWriterService;
+	protected SupplierUploadSummary supplierUploadSummary;
+	protected PaymentWorksSupplierConversionService paymentWorksSupplierConversionService;
 
 	@Override
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
@@ -73,8 +74,7 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 		if (ObjectUtils.isNotNull(results) && !results.isEmpty()) {
 
 			// convert to supplier upload DTO
-			List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = new PaymentWorksSupplierConversionUtil()
-					.createPaymentWorksSupplierUploadList(results);
+			List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = getPaymentWorksSupplierConversionService().createPaymentWorksSupplierUploadList(results);
 
 			// upload list of vendors
 			boolean uploaded = paymentWorksWebService.uploadSuppliers(paymentWorksSupplierUploadList);
@@ -106,8 +106,7 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
 		if (ObjectUtils.isNotNull(results) && !results.isEmpty()) {
 			// convert to supplier upload DTO
-			List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = new PaymentWorksSupplierConversionUtil()
-					.createPaymentWorksSupplierUploadList(results);
+			List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = getPaymentWorksSupplierConversionService().createPaymentWorksSupplierUploadList(results);
 
 			// upload list of vendors
 			boolean uploaded = paymentWorksWebService.uploadSuppliers(paymentWorksSupplierUploadList);
@@ -282,6 +281,15 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
 	public void setPaymentWorksKfsService(PaymentWorksKfsService paymentWorksKfsService) {
 		this.paymentWorksKfsService = paymentWorksKfsService;
+	}
+
+	public PaymentWorksSupplierConversionService getPaymentWorksSupplierConversionService() {
+		return paymentWorksSupplierConversionService;
+	}
+
+	public void setPaymentWorksSupplierConversionService(
+			PaymentWorksSupplierConversionService paymentWorksSupplierConversionService) {
+		this.paymentWorksSupplierConversionService = paymentWorksSupplierConversionService;
 	}
 
 }

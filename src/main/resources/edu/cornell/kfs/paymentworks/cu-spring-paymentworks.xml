@@ -56,8 +56,7 @@
 	</bean>
 
 	<!-- New Vendor Job -->
-	<bean id="paymentWorksRetrieveNewVendorStep" parent="step"
-		class="edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveNewVendorStep">
+	<bean id="paymentWorksRetrieveNewVendorStep" parent="step" class="edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveNewVendorStep">
 		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
 		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
 		<property name="paymentWorksKfsService" ref="paymentWorksKfsService" />
@@ -154,6 +153,7 @@
 		<property name="businessObjectService" ref="businessObjectService" />
 		<property name="noteService" ref="noteService" />
 		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
+		<property name="paymentWorksVendorUpdateConversionService" ref="paymentWorksVendorUpdateConversionService" />
 	</bean>
 
 	<bean id="paymentWorksWebService" parent="paymentWorksWebService-parentBean" />
@@ -168,6 +168,7 @@
 			<value>${staging.directory}/paymentworks/supplier</value>
 		</property>
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
+		<property name="paymentWorksSupplierConversionService" ref="paymentWorksSupplierConversionService" />
 	</bean>
 
 	<bean id="paymentWorksKfsService" parent="paymentWorksKfsService-parentBean" />
@@ -181,6 +182,9 @@
 		<property name="maintenanceDocumentService" ref="maintenanceDocumentService" />
 		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
+		<property name="paymentWorksAchConversionService" ref="paymentWorksAchConversionService" />
+		<property name="paymentWorksSupplierConversionService" ref="paymentWorksSupplierConversionService" />
+		<property name="paymentWorksVendorUpdateConversionService" ref="paymentWorksVendorUpdateConversionService" />
 	</bean>
 	
 	<bean id="paymentWorksNewVendorConversionService" parent="paymentWorksNewVendorConversionService-parentBean" />
@@ -198,6 +202,24 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="phoneNumberService" ref="phoneNumberService" />
 		<property name="configurationService" ref="configurationService" />
+	</bean>
+	
+	<bean id="paymentWorksAchConversionService" parent="paymentWorksAchConversionService-parentBean" />
+	<bean id="paymentWorksAchConversionService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksAchConversionServiceImpl" abstract="true">
+		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+	</bean>
+	
+	<bean id="paymentWorksSupplierConversionService" parent="paymentWorksSupplierConversionService-parentBean" />
+	<bean id="paymentWorksSupplierConversionService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksSupplierConversionServiceImpl" abstract="true">
+		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+	</bean>
+	
+	<bean id="paymentWorksVendorUpdateConversionService" parent="paymentWorksVendorUpdateConversionService-parentBean" />
+	<bean id="paymentWorksVendorUpdateConversionService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksVendorUpdateConversionServiceImpl" abstract="true">
+		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
+		<property name="vendorService" ref="vendorService" />
 	</bean>
 
 </beans>

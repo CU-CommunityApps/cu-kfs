@@ -17,14 +17,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.cornell.kfs.paymentworks.util;
+package edu.cornell.kfs.paymentworks.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorAlias;
@@ -37,23 +36,19 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorNumberDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
-public class PaymentWorksVendorUpdateConversionUtil {
+public class PaymentWorksVendorUpdateConversionServiceImpl implements PaymentWorksVendorUpdateConversionService {
 	
-	PaymentWorksUtilityService paymentWorksUtilityService;
+	protected PaymentWorksUtilityService paymentWorksUtilityService;
+	protected VendorService vendorService;
 
-	/**
-	 * Method that takes a vendor update from PaymentWorks and creates a staging
-	 * table record
-	 *
-	 * @param paymentWorksVendorUpdatesDTO
-	 * @return
-	 */
-	public PaymentWorksVendor createPaymentWorksVendorUpdate(
-			PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdatesDTO) {
+	@Override
+	public PaymentWorksVendor createPaymentWorksVendorUpdate(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdatesDTO) {
 
 		PaymentWorksVendor paymentWorksVendor = new PaymentWorksVendor();
 
@@ -150,14 +145,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		return paymentWorksVendor;
 	}
 
-	/**
-	 * Finds duplicate vendor update for a group where fields match what is on a
-	 * KFS vendor
-	 *
-	 * @param vendorDetail
-	 * @param paymentWorksVendor
-	 * @return
-	 */
+	@Override
 	public boolean duplicateFieldsOnVendor(VendorDetail vendorDetail, PaymentWorksVendor paymentWorksVendor) {
 		boolean isDuplicate = false;
 
@@ -219,7 +207,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		// remittance address
 		if (StringUtils.equals(paymentWorksVendor.getGroupName(), PaymentWorksConstants.VendorUpdateGroups.REMIT_ADDRESS)) {
 
-			VendorAddress address = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+			VendorAddress address = getVendorService().getVendorDefaultAddress(
 					vendorDetail.getVendorAddresses(), VendorConstants.AddressTypes.REMIT, null);
 
 			if (ObjectUtils.isNotNull(address)) {
@@ -255,7 +243,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		// corp address
 		if (StringUtils.equals(paymentWorksVendor.getGroupName(), PaymentWorksConstants.VendorUpdateGroups.CORP_ADDRESS)) {
 
-			VendorAddress address = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+			VendorAddress address = getVendorService().getVendorDefaultAddress(
 					vendorDetail.getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, null);
 
 			if (ObjectUtils.isNotNull(address)) {
@@ -302,14 +290,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		return isDuplicate;
 	}
 
-	/**
-	 * Creates a Vendor Detail record from a KFS record, applying PaymentWorks
-	 * data from the staging table only where we have received data.
-	 *
-	 * @param vendorDetail
-	 * @param paymentWorksVendor
-	 * @return
-	 */
+	@Override
 	public VendorDetail createVendorDetailForEdit(VendorDetail newVendorDetail, VendorDetail oldVendorDetail,
 			PaymentWorksVendor paymentWorksVendor) {
 
@@ -381,7 +362,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		// remittance address
 		if (StringUtils.equals(paymentWorksVendor.getGroupName(), PaymentWorksConstants.VendorUpdateGroups.REMIT_ADDRESS)) {
 
-			VendorAddress address = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+			VendorAddress address = getVendorService().getVendorDefaultAddress(
 					newVendorDetail.getVendorAddresses(), VendorConstants.AddressTypes.REMIT, null);
 			VendorAddress newAddress = new VendorAddress();
 			List<VendorAddress> vendorAddresses = (List<VendorAddress>) ObjectUtils
@@ -450,7 +431,7 @@ public class PaymentWorksVendorUpdateConversionUtil {
 		// corp address
 		if (StringUtils.equals(paymentWorksVendor.getGroupName(), PaymentWorksConstants.VendorUpdateGroups.CORP_ADDRESS)) {
 
-			VendorAddress address = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+			VendorAddress address = getVendorService().getVendorDefaultAddress(
 					newVendorDetail.getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, null);
 			VendorAddress newAddress = new VendorAddress();
 			List<VendorAddress> vendorAddresses = (List<VendorAddress>) ObjectUtils
@@ -731,14 +712,19 @@ public class PaymentWorksVendorUpdateConversionUtil {
 	}
 
 	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
-		if (paymentWorksUtilityService == null) {
-			paymentWorksUtilityService = SpringContext.getBean(PaymentWorksUtilityService.class);
-		}
 		return paymentWorksUtilityService;
 	}
 
 	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
 		this.paymentWorksUtilityService = paymentWorksUtilityService;
+	}
+
+	public VendorService getVendorService() {
+		return vendorService;
+	}
+
+	public void setVendorService(VendorService vendorService) {
+		this.vendorService = vendorService;
 	}
 	
 }
