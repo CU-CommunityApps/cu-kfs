@@ -47,7 +47,7 @@
     <property name="label" value="File Path"/>
     <property name="shortLabel" value="Path"/>
     <property name="control">
-      <bean parent="MultiselectControlDefinition" p:size="15" p:valuesFinderClass="org.kuali.kfs.sys.businessobject.options.BatchFileDirectoryPathValuesFinder"/>
+      <bean parent="MultiselectControlDefinition" p:size="15" p:valuesFinderClass="edu.cornell.kfs.sys.businessobject.options.CuBatchFileDirectoryPathValuesFinder"/>
     </property>
   </bean>
   
