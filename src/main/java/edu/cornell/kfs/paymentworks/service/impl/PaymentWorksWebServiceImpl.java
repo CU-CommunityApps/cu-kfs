@@ -43,9 +43,9 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksSupplierConversionUtil;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorUpdateVendorStatus;
@@ -57,9 +57,7 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesRootDTO;
 
 @Transactional
 public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
-
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(PaymentWorksWebServiceImpl.class);
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksWebServiceImpl.class);
 
 	private static final String NEW_VENDOR_REQUEST_PENDING_VENDORS = "new-vendor-requests/";
 	private static final String NEW_VENDOR_REQUEST_UPDATE_STATUS = "new-vendor-requests/bulk/";
@@ -73,7 +71,8 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 	private String paymentworksAuthorizationToken;
 	private String directoryPath;
 
-	private PaymentWorksUtilityService paymentWorksUtilityService;
+	protected PaymentWorksUtilityService paymentWorksUtilityService;
+	protected PaymentWorksSupplierConversionService paymentWorksSupplierConversionService;
 
 	protected ClientRequest buildClientRequest(String url) {
 		ClientRequest.Builder builder = new ClientRequest.Builder();
@@ -331,14 +330,12 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 
 	@Override
 	public boolean uploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO) {
-		PaymentWorksSupplierConversionUtil paymentWorksSupplierConversionUtil = new PaymentWorksSupplierConversionUtil();
 		boolean isUploaded = false;
 
 		MultiPart multiPart = new MultiPart();
 		multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-		String supplierUploadFileName = paymentWorksSupplierConversionUtil
-				.createSupplierUploadFile(paymentWorksSupplierUploadDTO, directoryPath);
+		String supplierUploadFileName = getPaymentWorksSupplierConversionService().createSupplierUploadFile(paymentWorksSupplierUploadDTO, directoryPath);
 
 		FormDataBodyPart fileDataBodyPart = new FileDataBodyPart("suppliers", new File(supplierUploadFileName),
 				MediaType.MULTIPART_FORM_DATA_TYPE);
@@ -350,7 +347,7 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 
 		LOG.debug("updateNewVendorStatusInPaymentWorks, Status: " + response.getStatus());
 
-		paymentWorksSupplierConversionUtil.deleteSupplierUploadFile(supplierUploadFileName);
+		getPaymentWorksSupplierConversionService().deleteSupplierUploadFile(supplierUploadFileName);
 
 		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 			isUploaded = true;
@@ -395,5 +392,13 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 
 	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
 		this.paymentWorksUtilityService = paymentWorksUtilityService;
+	}
+
+	public PaymentWorksSupplierConversionService getPaymentWorksSupplierConversionService() {
+		return paymentWorksSupplierConversionService;
+	}
+
+	public void setPaymentWorksSupplierConversionService(PaymentWorksSupplierConversionService paymentWorksSupplierConversionService) {
+		this.paymentWorksSupplierConversionService = paymentWorksSupplierConversionService;
 	}
 }

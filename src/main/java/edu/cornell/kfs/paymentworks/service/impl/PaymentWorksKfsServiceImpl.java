@@ -51,11 +51,12 @@ import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveNewVendorStep;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksUploadSuppliersStep;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksAchConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksAchConversionUtil;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksVendorUpdateConversionUtil;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.sys.service.MailMessage;
@@ -65,15 +66,18 @@ import edu.cornell.kfs.vnd.CUVendorConstants;
 public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksKfsServiceImpl.class);
 
-	private DocumentService documentService;
-	private MailService mailService;
-	private AchBankService achBankService;
-	private ParameterService parameterService;
-	private VendorService vendorService;
-	private BusinessObjectService businessObjectService;
-	private MaintenanceDocumentService maintenanceDocumentService;
-	private PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
-	private PaymentWorksUtilityService paymentWorksUtilityService;
+	protected DocumentService documentService;
+	protected MailService mailService;
+	protected AchBankService achBankService;
+	protected ParameterService parameterService;
+	protected VendorService vendorService;
+	protected BusinessObjectService businessObjectService;
+	protected MaintenanceDocumentService maintenanceDocumentService;
+	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
+	protected PaymentWorksUtilityService paymentWorksUtilityService;
+	protected PaymentWorksAchConversionService paymentWorksAchConversionService;
+	protected PaymentWorksSupplierConversionService paymentWorksSupplierConversionService;
+	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
 
 	@Override
 	public boolean routeNewVendor(PaymentWorksVendor paymentWorksVendor) {
@@ -107,7 +111,6 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public boolean routeVendorEdit(PaymentWorksVendor paymentWorksVendor) {
 		boolean routed = false;
-		PaymentWorksVendorUpdateConversionUtil paymentWorksVendorUpdateConversionUtil = new PaymentWorksVendorUpdateConversionUtil();
 		String vendorNumberList = paymentWorksVendor.getVendorNumberList();
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
 		StringBuffer documentNumbers = new StringBuffer("");
@@ -116,7 +119,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 			VendorDetail oldVendor = vendorService.getVendorDetail(vendorNumber);
 			VendorDetail newVendor = (VendorDetail) ObjectUtils.deepCopy(oldVendor);
 
-			if (!paymentWorksVendorUpdateConversionUtil.duplicateFieldsOnVendor(newVendor, paymentWorksVendor)) {
+			if (!getPaymentWorksVendorUpdateConversionService().duplicateFieldsOnVendor(newVendor, paymentWorksVendor)) {
 				routed = processNonDuplicateVendorDetail(paymentWorksVendor, documentNumbers, oldVendor, newVendor);
 			} else {
 				GlobalVariables.getMessageMap().putError("vendorDetail", KFSKeyConstants.ERROR_CUSTOM, "Duplicate vendor update detected");
@@ -133,7 +136,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	protected boolean processNonDuplicateVendorDetail(PaymentWorksVendor paymentWorksVendor,
 			StringBuffer documentNumbers, VendorDetail oldVendor, VendorDetail newVendor) {
 		boolean routed = false;
-		VendorDetail vendorDetail = new PaymentWorksVendorUpdateConversionUtil().createVendorDetailForEdit(newVendor, oldVendor, paymentWorksVendor);
+		VendorDetail vendorDetail = getPaymentWorksVendorUpdateConversionService().createVendorDetailForEdit(newVendor, oldVendor, paymentWorksVendor);
 		try {
 			MaintenanceDocument vendorMaintDoc = buildVendorMaintenanceDocument(paymentWorksVendor, oldVendor, vendorDetail);
 
@@ -192,15 +195,14 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public boolean directVendorEdit(PaymentWorksVendor paymentWorksVendor) {
 		boolean success = true;
-		PaymentWorksVendorUpdateConversionUtil paymentWorksVendorUpdateConversionUtil = new PaymentWorksVendorUpdateConversionUtil();
 		String vendorNumberList = paymentWorksVendor.getVendorNumberList();
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
 
 		for (String vendorNumber : vendorNumbers) {
 			VendorDetail vendorDetail = vendorService.getVendorDetail(vendorNumber);
 			if (ObjectUtils.isNotNull(vendorDetail)) {
-				if (!paymentWorksVendorUpdateConversionUtil.duplicateFieldsOnVendor(vendorDetail, paymentWorksVendor)) {
-					vendorDetail = paymentWorksVendorUpdateConversionUtil.createVendorDetailForEdit(vendorDetail, null, paymentWorksVendor);
+				if (!getPaymentWorksVendorUpdateConversionService().duplicateFieldsOnVendor(vendorDetail, paymentWorksVendor)) {
+					vendorDetail = getPaymentWorksVendorUpdateConversionService().createVendorDetailForEdit(vendorDetail, null, paymentWorksVendor);
 					try {
 						businessObjectService.save(vendorDetail);
 					} catch (Exception e) {
@@ -282,9 +284,9 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 			String accountNumber, String vendorNumber, PayeeACHAccount payeeAchAccount) {
 		PayeeACHAccount payeeAchAccountNew;
 		if (ObjectUtils.isNull(payeeAchAccount)) {
-			payeeAchAccountNew = new PaymentWorksAchConversionUtil().createPayeeAchAccount(vendorUpdate, vendorNumber);
+			payeeAchAccountNew = getPaymentWorksAchConversionService().createPayeeAchAccount(vendorUpdate, vendorNumber);
 		} else {
-			payeeAchAccountNew = new PaymentWorksAchConversionUtil().createPayeeAchAccount(payeeAchAccount, routingNumber, accountNumber);
+			payeeAchAccountNew = getPaymentWorksAchConversionService().createPayeeAchAccount(payeeAchAccount, routingNumber, accountNumber);
 		}
 		return payeeAchAccountNew;
 	}
@@ -483,6 +485,31 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
 		this.paymentWorksUtilityService = paymentWorksUtilityService;
+	}
+
+	public PaymentWorksAchConversionService getPaymentWorksAchConversionService() {
+		return paymentWorksAchConversionService;
+	}
+
+	public void setPaymentWorksAchConversionService(PaymentWorksAchConversionService paymentWorksAchConversionService) {
+		this.paymentWorksAchConversionService = paymentWorksAchConversionService;
+	}
+
+	public PaymentWorksSupplierConversionService getPaymentWorksSupplierConversionService() {
+		return paymentWorksSupplierConversionService;
+	}
+
+	public void setPaymentWorksSupplierConversionService(PaymentWorksSupplierConversionService paymentWorksSupplierConversionService) {
+		this.paymentWorksSupplierConversionService = paymentWorksSupplierConversionService;
+	}
+
+	public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {
+		return paymentWorksVendorUpdateConversionService;
+	}
+
+	public void setPaymentWorksVendorUpdateConversionService(
+			PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
+		this.paymentWorksVendorUpdateConversionService = paymentWorksVendorUpdateConversionService;
 	}
 
 }

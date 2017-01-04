@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.cornell.kfs.paymentworks.util;
+package edu.cornell.kfs.paymentworks.service.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,21 +31,22 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
 
-public class PaymentWorksSupplierConversionUtil {
+public class PaymentWorksSupplierConversionServiceImpl implements PaymentWorksSupplierConversionService {
 	
-	private PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
-
-	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(
-			Collection<PaymentWorksVendor> newVendors) {
+	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
+	protected DateTimeService dateTimeService;
+	
+	@Override
+	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(Collection<PaymentWorksVendor> newVendors) {
 
 		List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = new ArrayList<PaymentWorksSupplierUploadDTO>();
 		PaymentWorksSupplierUploadDTO paymentWorksSupplierUploadDTO = null;
@@ -91,13 +92,13 @@ public class PaymentWorksSupplierConversionUtil {
 
 		return paymentWorksSupplierUploadList;
 	}
-
-	public String createSupplierUploadFile(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,
-			String directoryPath) {
+	
+	@Override
+	public String createSupplierUploadFile(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,String directoryPath) {
 
 		FileWriter fstream = null;
 		String newFileName = directoryPath + File.separator + PaymentWorksConstants.SUPPLIER_FILE_NAME
-				+ buildFileExtensionWithDate(SpringContext.getBean(DateTimeService.class).getCurrentDate());
+				+ buildFileExtensionWithDate(getDateTimeService().getCurrentDate());
 
 		// ensure directory exists
 		checkDirectory(directoryPath);
@@ -157,10 +158,11 @@ public class PaymentWorksSupplierConversionUtil {
 	}
 
 	protected String buildFileExtensionWithDate(java.util.Date date) {
-		String formattedDateTime = SpringContext.getBean(DateTimeService.class).toDateTimeStringForFilename(date);
+		String formattedDateTime = getDateTimeService().toDateTimeStringForFilename(date);
 		return "." + formattedDateTime + ".csv";
 	}
-
+	
+	@Override
 	public void deleteSupplierUploadFile(String fileName) {
 		Path path = Paths.get(fileName);
 
@@ -173,14 +175,19 @@ public class PaymentWorksSupplierConversionUtil {
 	}
 
 	public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
-		if (paymentWorksNewVendorConversionService == null) {
-			paymentWorksNewVendorConversionService = SpringContext.getBean(PaymentWorksNewVendorConversionService.class);
-		}
 		return paymentWorksNewVendorConversionService;
 	}
 
 	public void setPaymentWorksNewVendorConversionService(PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
 		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
+	}
+
+	public DateTimeService getDateTimeService() {
+		return dateTimeService;
+	}
+
+	public void setDateTimeService(DateTimeService dateTimeService) {
+		this.dateTimeService = dateTimeService;
 	}
 
 }

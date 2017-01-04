@@ -1,0 +1,32 @@
+package edu.cornell.kfs.paymentworks.service;
+
+import java.util.Collection;
+import java.util.List;
+
+import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
+
+public interface PaymentWorksSupplierConversionService {
+	
+	/**
+	 * Creates a List of PaymentWorks supplier DTOs to upload to payment works
+	 * @param newVendors
+	 * @return
+	 */
+	List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(Collection<PaymentWorksVendor> newVendors);
+	
+	/**
+	 * Creates an file to uploaded to PaymentWorks and returns the location and file name of the created file.
+	 * @param paymentWorksSupplierUploadList
+	 * @param directoryPath
+	 * @return
+	 */
+	String createSupplierUploadFile(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,String directoryPath);
+	
+	/**
+	 * Deletes the file passed in.
+	 * @param fileName
+	 */
+	void deleteSupplierUploadFile(String fileName);
+
+}

@@ -42,14 +42,13 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(PaymentWorksRetrieveNewVendorStep.class);
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksRetrieveNewVendorStep.class);
 
-	private PaymentWorksVendorService paymentWorksVendorService;
-	private PaymentWorksWebService paymentWorksWebService;
-	private PaymentWorksKfsService paymentWorksKfsService;
-	private PaymentWorksUtilityService paymentWorksUtilityService;
-	private ReportWriterService reportWriterService;
+	protected PaymentWorksVendorService paymentWorksVendorService;
+	protected PaymentWorksWebService paymentWorksWebService;
+	protected PaymentWorksKfsService paymentWorksKfsService;
+	protected PaymentWorksUtilityService paymentWorksUtilityService;
+	protected ReportWriterService reportWriterService;
 
 	private NewVendorSummary newVendorSummary;
 

@@ -38,20 +38,19 @@ import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
-import edu.cornell.kfs.paymentworks.util.PaymentWorksVendorUpdateConversionUtil;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 @Transactional
 public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService {
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorServiceImpl.class);
 
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(PaymentWorksVendorServiceImpl.class);
-
-	private DateTimeService dateTimeService;
-	private BusinessObjectService businessObjectService;
-	private NoteService noteService;
-	private PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
+	protected DateTimeService dateTimeService;
+	protected BusinessObjectService businessObjectService;
+	protected NoteService noteService;
+	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
+	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
 
 	@Override
 	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
@@ -72,8 +71,7 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 	@Override
 	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdateDTO,
 			String processStatus, String transactionType) {
-		PaymentWorksVendor paymentWorksVendorUpdate = new PaymentWorksVendorUpdateConversionUtil()
-				.createPaymentWorksVendorUpdate(paymentWorksVendorUpdateDTO);
+		PaymentWorksVendor paymentWorksVendorUpdate = getPaymentWorksVendorUpdateConversionService().createPaymentWorksVendorUpdate(paymentWorksVendorUpdateDTO);
 
 		// other
 		paymentWorksVendorUpdate.setRequestStatus(paymentWorksVendorUpdateDTO.getStatus());
@@ -269,4 +267,13 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
 	}
 
+	public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {
+		return paymentWorksVendorUpdateConversionService;
+	}
+
+	public void setPaymentWorksVendorUpdateConversionService(
+			PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
+		this.paymentWorksVendorUpdateConversionService = paymentWorksVendorUpdateConversionService;
+	}
+	
 }

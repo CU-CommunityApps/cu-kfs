@@ -16,29 +16,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.cornell.kfs.paymentworks.util;
+package edu.cornell.kfs.paymentworks.service.impl;
 
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksAchConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
-public class PaymentWorksAchConversionUtil {
+public class PaymentWorksAchConversionServiceImpl implements PaymentWorksAchConversionService {
 	
-	PaymentWorksUtilityService paymentWorksUtilityService;
-
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksAchConversionServiceImpl.class);
+	
+	protected PaymentWorksUtilityService paymentWorksUtilityService;
+	protected DateTimeService dateTimeService;
+	
+	@Override
 	public PayeeACHAccount createPayeeAchAccount(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumber) {
 		PayeeACHAccount payeeAchAccount = new PayeeACHAccount();
 		Map<String, String> fieldChanges = getPaymentWorksUtilityService().convertFieldArrayToMap(vendorUpdate.getField_changes());
-
+		logFieldChanges(fieldChanges);
 		payeeAchAccount.setPayeeIdentifierTypeCode(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 		payeeAchAccount.setPayeeIdNumber(vendorNumber);
 		payeeAchAccount.setBankRoutingNumber(fieldChanges.get(PaymentWorksConstants.FieldNames.ROUTING_NUMBER));
@@ -47,10 +51,19 @@ public class PaymentWorksAchConversionUtil {
 		payeeAchAccount.setAchTransactionType(PdpConstants.DisbursementTypeCodes.ACH);
 		payeeAchAccount.setActive(true);
 		payeeAchAccount.setLastUpdateUserId(PaymentWorksConstants.SOURCE_USER);
-		payeeAchAccount.setLastUpdate(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+		payeeAchAccount.setLastUpdate(getDateTimeService().getCurrentTimestamp());
 		return payeeAchAccount;
 	}
+	
+	private void logFieldChanges(Map<String, String> fieldChanges) {
+		if (LOG.isDebugEnabled()) {
+			for (String key : fieldChanges.keySet()) {
+				LOG.debug("logFieldChanges key: '" + key + "'  value: '" + fieldChanges.get(key) + "'");
+			}
+		}
+	}
 
+	@Override
 	public PayeeACHAccount createPayeeAchAccount(PayeeACHAccount payeeAchAccountOld, String routingNumber, String accountNumber) {
 		PayeeACHAccount payeeAchAccount = (PayeeACHAccount) ObjectUtils.deepCopy(payeeAchAccountOld);
 		payeeAchAccount.setBankRoutingNumber(StringUtils.defaultIfEmpty(routingNumber, payeeAchAccount.getBankRoutingNumber()));
@@ -60,19 +73,24 @@ public class PaymentWorksAchConversionUtil {
 		payeeAchAccount.setAchAccountGeneratedIdentifier(null);
 		payeeAchAccount.setActive(true);
 		payeeAchAccount.setLastUpdateUserId(PaymentWorksConstants.SOURCE_USER);
-		payeeAchAccount.setLastUpdate(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+		payeeAchAccount.setLastUpdate(getDateTimeService().getCurrentTimestamp());
 		return payeeAchAccount;
 	}
 
 	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
-		if (paymentWorksUtilityService == null) {
-			paymentWorksUtilityService = SpringContext.getBean(PaymentWorksUtilityService.class);
-		}
 		return paymentWorksUtilityService;
 	}
 
 	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
 		this.paymentWorksUtilityService = paymentWorksUtilityService;
+	}
+
+	public DateTimeService getDateTimeService() {
+		return dateTimeService;
+	}
+
+	public void setDateTimeService(DateTimeService dateTimeService) {
+		this.dateTimeService = dateTimeService;
 	}
 
 }
