@@ -253,5 +253,8 @@
 	<bean id="postalCodeValidationService-parentBean" class="org.kuali.kfs.sys.service.impl.PostalCodeValidationServiceImpl" abstract="true">
 		<property name="stateService" ref="stateService" />
     </bean>
-	
+
+	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean"/>
+	<bean id="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.BatchFileDirectoryServiceImpl"/>
+
 </beans>
