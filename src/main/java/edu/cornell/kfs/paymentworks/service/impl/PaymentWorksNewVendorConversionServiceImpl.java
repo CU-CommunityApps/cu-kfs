@@ -228,7 +228,7 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 		PaymentWorksVendor paymentWorksVendor = new PaymentWorksVendor();
 
 		String sequence = getSequenceAccessorService().getNextAvailableSequenceNumber(PaymentWorksConstants.PAYMENT_WORKS_VENDOR_SEQUENCE_NAME).toString();
-		paymentWorksVendor.setVendorRequestId("KFS" + sequence);
+		paymentWorksVendor.setVendorRequestId(PaymentWorksConstants.VENDOR_REQUEST_ID_KFS_TEMP_ID_STARTER + sequence);
 		
 		paymentWorksVendor.setDocumentNumber(documentNumber);
 		paymentWorksVendor.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
