@@ -32,7 +32,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 
 	@Override
 	public boolean uploadNewVendorApprovedSupplierFile() {
-		Collection<PaymentWorksVendor> approvedVendors = paymentWorksVendorService.getPaymentWorksVendorRecords(
+		Collection<PaymentWorksVendor> approvedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED, null, PaymentWorksConstants.TransactionType.NEW_VENDOR);
 		
 		boolean uploaded = false;
@@ -40,7 +40,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 			List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = 
 					getPaymentWorksSupplierConversionService().createPaymentWorksSupplierUploadList(approvedVendors);
 
-			uploaded = paymentWorksWebService.uploadSuppliers(paymentWorksSupplierUploadList);
+			uploaded = getPaymentWorksWebService().uploadSuppliers(paymentWorksSupplierUploadList);
 
 			if (uploaded) {
 				LOG.info("Supplier was uploaded!");
@@ -67,7 +67,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 
 	@Override
 	public boolean updateNewVendorDisapprovedStatus() {
-		Collection<PaymentWorksVendor> disapprovedVendors = paymentWorksVendorService.getPaymentWorksVendorRecords(
+		Collection<PaymentWorksVendor> disapprovedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED, PaymentWorksConstants.PaymentWorksStatusText.APPROVED,
 				PaymentWorksConstants.TransactionType.NEW_VENDOR);
 
@@ -81,12 +81,12 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 
 	@Override
 	public boolean uploadVendorUpdateApprovedSupplierFile() {
-		Collection<PaymentWorksVendor> approvedVendors = paymentWorksVendorService.getPaymentWorksVendorRecords(
+		Collection<PaymentWorksVendor> approvedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED, null, PaymentWorksConstants.TransactionType.VENDOR_UPDATE);
 		boolean uploaded = false;
 		if (ObjectUtils.isNotNull(approvedVendors) && !approvedVendors.isEmpty()) {
 			List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = getPaymentWorksSupplierConversionService().createPaymentWorksSupplierUploadList(approvedVendors);
-			uploaded = paymentWorksWebService.uploadSuppliers(paymentWorksSupplierUploadList);
+			uploaded = getPaymentWorksWebService().uploadSuppliers(paymentWorksSupplierUploadList);
 
 			if (uploaded) {
 				for (PaymentWorksVendor newVendor : approvedVendors) {
@@ -107,7 +107,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 
 		paymentWorksNewVendor.setRequestStatus(requestStatusText);
 		paymentWorksNewVendor.setProcessStatus(processStatus);
-		paymentWorksNewVendor = paymentWorksVendorService.updatePaymentWorksVendor(paymentWorksNewVendor);
+		paymentWorksNewVendor = getPaymentWorksVendorService().updatePaymentWorksVendor(paymentWorksNewVendor);
 
 		if (updatePaymentWorksStatus) {
 			updatePaymentWorksVendorStatus(paymentWorksNewVendor.getVendorRequestId(), requestStatus);
@@ -149,7 +149,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 		updateNewVendorStatus.setRequest_status(new Integer(requestStatus));
 		updateNewVendorStatusList.add(updateNewVendorStatus);
 
-		paymentWorksWebService.updateNewVendorStatusInPaymentWorks(updateNewVendorStatusList);
+		getPaymentWorksWebService().updateNewVendorStatusInPaymentWorks(updateNewVendorStatusList);
 	}
 
 	protected File writePaymentWorksSupplierUploadSummaryReport(SupplierUploadSummary supplierUploadSummary) {

@@ -126,9 +126,14 @@
 
 	<!-- Upload Suppliers Job -->
 	<bean id="paymentWorksUploadSuppliersStep" parent="step" class="edu.cornell.kfs.paymentworks.batch.PaymentWorksUploadSuppliersStep">
+		<property name="paymentWorksUploadSuppliersService" ref="paymentWorksUploadSuppliersService" />
+	</bean>
+	
+	<bean id="paymentWorksUploadSuppliersService" parent="paymentWorksUploadSuppliersService-parentBean" />
+	<bean id="paymentWorksUploadSuppliersService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksUploadSuppliersServiceImpl" abstract="true">
 		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
 		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
-		<property name="paymentWorksKfsService" ref="paymentWorksKfsService" />
+		<property name="paymentWorksSupplierConversionService" ref="paymentWorksSupplierConversionService" />
 		<property name="reportWriterService" ref="supplierUploadReportWriterService" />
 	</bean>
 

@@ -41,20 +41,17 @@ import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionServic
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
 
 public class PaymentWorksSupplierConversionServiceImpl implements PaymentWorksSupplierConversionService {
-	
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksSupplierConversionServiceImpl.class);
+			
 	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
 	protected DateTimeService dateTimeService;
 	
 	@Override
 	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(Collection<PaymentWorksVendor> newVendors) {
-
 		List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = new ArrayList<PaymentWorksSupplierUploadDTO>();
-		PaymentWorksSupplierUploadDTO paymentWorksSupplierUploadDTO = null;
-		PaymentWorksVendor vendorToCopy = null;
 
 		for (PaymentWorksVendor newVendor : newVendors) {
-			paymentWorksSupplierUploadDTO = new PaymentWorksSupplierUploadDTO();
-			vendorToCopy = newVendor;
+			PaymentWorksVendor vendorToCopy = newVendor;
 
 			// copy record from KFS vendor doc if exists
 			PaymentWorksVendor newVendorFromDetail = getPaymentWorksNewVendorConversionService().createPaymentWorksVendorFromDetail(newVendor);
@@ -62,92 +59,94 @@ public class PaymentWorksSupplierConversionServiceImpl implements PaymentWorksSu
 				vendorToCopy = newVendorFromDetail;
 			}
 
-			paymentWorksSupplierUploadDTO.setVendorNum(vendorToCopy.getVendorHeaderGeneratedIdentifier().toString());
-			paymentWorksSupplierUploadDTO.setSupplierName(vendorToCopy.getRequestingCompanyLegalName());
-			paymentWorksSupplierUploadDTO.setSiteCode(vendorToCopy.getVendorDetailAssignedIdentifier().toString());
-			paymentWorksSupplierUploadDTO.setSendToPaymentWorks(vendorToCopy.isSendToPaymentWorks());
-
-			// use remittance if it exists, otherwise corp
-			if (StringUtils.isNotBlank(vendorToCopy.getRemittanceAddressStreet1())) {
-				paymentWorksSupplierUploadDTO.setAddress1(vendorToCopy.getRemittanceAddressStreet1());
-				paymentWorksSupplierUploadDTO.setAddress2(vendorToCopy.getRemittanceAddressStreet2());
-				paymentWorksSupplierUploadDTO.setCity(vendorToCopy.getRemittanceAddressCity());
-				paymentWorksSupplierUploadDTO.setState(vendorToCopy.getRemittanceAddressState());
-				paymentWorksSupplierUploadDTO.setCountry(vendorToCopy.getRemittanceAddressCountry());
-				paymentWorksSupplierUploadDTO.setZipcode(vendorToCopy.getRemittanceAddressZipCode());
-			} else {
-				paymentWorksSupplierUploadDTO.setAddress1(vendorToCopy.getCorpAddressStreet1());
-				paymentWorksSupplierUploadDTO.setAddress2(vendorToCopy.getCorpAddressStreet2());
-				paymentWorksSupplierUploadDTO.setCity(vendorToCopy.getCorpAddressCity());
-				paymentWorksSupplierUploadDTO.setState(vendorToCopy.getCorpAddressState());
-				paymentWorksSupplierUploadDTO.setCountry(vendorToCopy.getCorpAddressCountry());
-				paymentWorksSupplierUploadDTO.setZipcode(vendorToCopy.getCorpAddressZipCode());
-
-			}
-
-			paymentWorksSupplierUploadDTO.setTin(vendorToCopy.getRequestingCompanyTin());
-
-			paymentWorksSupplierUploadList.add(paymentWorksSupplierUploadDTO);
+			paymentWorksSupplierUploadList.add(buildPaymentWorksSupplierUploadDTO(vendorToCopy));
 		}
 
 		return paymentWorksSupplierUploadList;
 	}
+
+	protected PaymentWorksSupplierUploadDTO buildPaymentWorksSupplierUploadDTO(PaymentWorksVendor vendorToCopy) {
+		PaymentWorksSupplierUploadDTO paymentWorksSupplierUploadDTO = new PaymentWorksSupplierUploadDTO();
+		paymentWorksSupplierUploadDTO.setVendorNum(vendorToCopy.getVendorHeaderGeneratedIdentifier().toString());
+		paymentWorksSupplierUploadDTO.setSupplierName(vendorToCopy.getRequestingCompanyLegalName());
+		paymentWorksSupplierUploadDTO.setSiteCode(vendorToCopy.getVendorDetailAssignedIdentifier().toString());
+		paymentWorksSupplierUploadDTO.setSendToPaymentWorks(vendorToCopy.isSendToPaymentWorks());
+
+		// use remittance if it exists, otherwise corp
+		if (StringUtils.isNotBlank(vendorToCopy.getRemittanceAddressStreet1())) {
+			paymentWorksSupplierUploadDTO.setAddress1(vendorToCopy.getRemittanceAddressStreet1());
+			paymentWorksSupplierUploadDTO.setAddress2(vendorToCopy.getRemittanceAddressStreet2());
+			paymentWorksSupplierUploadDTO.setCity(vendorToCopy.getRemittanceAddressCity());
+			paymentWorksSupplierUploadDTO.setState(vendorToCopy.getRemittanceAddressState());
+			paymentWorksSupplierUploadDTO.setCountry(vendorToCopy.getRemittanceAddressCountry());
+			paymentWorksSupplierUploadDTO.setZipcode(vendorToCopy.getRemittanceAddressZipCode());
+		} else {
+			paymentWorksSupplierUploadDTO.setAddress1(vendorToCopy.getCorpAddressStreet1());
+			paymentWorksSupplierUploadDTO.setAddress2(vendorToCopy.getCorpAddressStreet2());
+			paymentWorksSupplierUploadDTO.setCity(vendorToCopy.getCorpAddressCity());
+			paymentWorksSupplierUploadDTO.setState(vendorToCopy.getCorpAddressState());
+			paymentWorksSupplierUploadDTO.setCountry(vendorToCopy.getCorpAddressCountry());
+			paymentWorksSupplierUploadDTO.setZipcode(vendorToCopy.getCorpAddressZipCode());
+
+		}
+
+		paymentWorksSupplierUploadDTO.setTin(vendorToCopy.getRequestingCompanyTin());
+		return paymentWorksSupplierUploadDTO;
+	}
 	
 	@Override
 	public String createSupplierUploadFile(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,String directoryPath) {
-
-		FileWriter fstream = null;
 		String newFileName = directoryPath + File.separator + PaymentWorksConstants.SUPPLIER_FILE_NAME
 				+ buildFileExtensionWithDate(getDateTimeService().getCurrentDate());
 
-		// ensure directory exists
 		checkDirectory(directoryPath);
 
 		BufferedWriter out = null;
-
+		FileWriter fstream = null;
 		try {
 			fstream = new FileWriter(newFileName);
 			out = new BufferedWriter(fstream);
 
-			// write header
 			out.write(PaymentWorksConstants.SUPPLIER_FILE_HEADER_ROW);
 			out.newLine();
 
-			// write each supplier
-			for (PaymentWorksSupplierUploadDTO supplier : paymentWorksSupplierUploadList) {
-				// only send if marked for submittal
-				if (supplier.isSendToPaymentWorks()) {
-					out.write(supplier.toString());
-					out.newLine();
-				}
-
-			}
+			writeDetailLineForEachUploadDTO(paymentWorksSupplierUploadList, out);
 
 			out.flush();
-
-			// close file
 			out.close();
 			fstream.close();
-
 		} catch (Exception e) {
-			try {
-				out.flush();
-				// close file
-				out.close();
-				fstream.close();
-			} catch (IOException ex1) {
-			}
+			handleFileWritingException(out, fstream, e);
 		}
 
 		return newFileName;
 	}
 
+	protected void handleFileWritingException(BufferedWriter out, FileWriter fstream, Exception e) {
+		LOG.error("handleFileWritingException, there was an error creating the supplier upload file: ", e);
+		try {
+			out.flush();
+			out.close();
+			fstream.close();
+		} catch (IOException ex1) {
+			LOG.error("handleFileWritingException, there was an error closing the buffered writer or the file writer: ", ex1);
+		}
+		throw new RuntimeException(e);
+	}
+
+	protected void writeDetailLineForEachUploadDTO(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,
+			BufferedWriter out) throws IOException {
+		for (PaymentWorksSupplierUploadDTO supplier : paymentWorksSupplierUploadList) {
+			if (supplier.isSendToPaymentWorks()) {
+				out.write(supplier.toString());
+				out.newLine();
+			}
+
+		}
+	}
+
 	protected void checkDirectory(String directoryPath) {
 		try {
-			/**
-			 * Create, if not there
-			 */
-
 			File baseDir = new File(directoryPath);
 			if (!baseDir.exists()) {
 				FileUtils.forceMkdir(new File(directoryPath));
@@ -164,8 +163,8 @@ public class PaymentWorksSupplierConversionServiceImpl implements PaymentWorksSu
 	
 	@Override
 	public void deleteSupplierUploadFile(String fileName) {
+		LOG.info("deleteSupplierUploadFile, about to delete " + fileName);
 		Path path = Paths.get(fileName);
-
 		try {
 			Files.delete(path);
 		} catch (IOException ex) {
