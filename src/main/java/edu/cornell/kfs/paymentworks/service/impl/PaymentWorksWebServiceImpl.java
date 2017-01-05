@@ -43,7 +43,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSupplierService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDTO;
@@ -72,7 +72,7 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 	private String directoryPath;
 
 	protected PaymentWorksUtilityService paymentWorksUtilityService;
-	protected PaymentWorksSupplierConversionService paymentWorksSupplierConversionService;
+	protected PaymentWorksUploadSupplierService paymentWorksUploadSupplierService;
 
 	protected ClientRequest buildClientRequest(String url) {
 		ClientRequest.Builder builder = new ClientRequest.Builder();
@@ -335,7 +335,7 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 		MultiPart multiPart = new MultiPart();
 		multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-		String supplierUploadFileName = getPaymentWorksSupplierConversionService().createSupplierUploadFile(paymentWorksSupplierUploadDTO, directoryPath);
+		String supplierUploadFileName = getPaymentWorksUploadSupplierService().createSupplierUploadFile(paymentWorksSupplierUploadDTO, directoryPath);
 
 		FormDataBodyPart fileDataBodyPart = new FileDataBodyPart("suppliers", new File(supplierUploadFileName),
 				MediaType.MULTIPART_FORM_DATA_TYPE);
@@ -347,7 +347,7 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 
 		LOG.debug("updateNewVendorStatusInPaymentWorks, Status: " + response.getStatus());
 
-		getPaymentWorksSupplierConversionService().deleteSupplierUploadFile(supplierUploadFileName);
+		getPaymentWorksUploadSupplierService().deleteSupplierUploadFile(supplierUploadFileName);
 
 		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 			isUploaded = true;
@@ -394,11 +394,11 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
-	public PaymentWorksSupplierConversionService getPaymentWorksSupplierConversionService() {
-		return paymentWorksSupplierConversionService;
+	public PaymentWorksUploadSupplierService getPaymentWorksUploadSupplierService() {
+		return paymentWorksUploadSupplierService;
 	}
 
-	public void setPaymentWorksSupplierConversionService(PaymentWorksSupplierConversionService paymentWorksSupplierConversionService) {
-		this.paymentWorksSupplierConversionService = paymentWorksSupplierConversionService;
+	public void setPaymentWorksUploadSupplierService(PaymentWorksUploadSupplierService paymentWorksUploadSupplierService) {
+		this.paymentWorksUploadSupplierService = paymentWorksUploadSupplierService;
 	}
 }

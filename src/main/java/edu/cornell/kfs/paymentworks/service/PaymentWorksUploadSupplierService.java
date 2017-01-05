@@ -6,7 +6,7 @@ import java.util.List;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
 
-public interface PaymentWorksSupplierConversionService {
+public interface PaymentWorksUploadSupplierService {
 	
 	/**
 	 * Creates a List of PaymentWorks supplier DTOs to upload to payment works
@@ -28,5 +28,23 @@ public interface PaymentWorksSupplierConversionService {
 	 * @param fileName
 	 */
 	void deleteSupplierUploadFile(String fileName);
+	
+	/**
+	 * Uploads approved suppkiers to PaymentWorks
+	 * @return
+	 */
+	boolean uploadNewVendorApprovedSupplierFile();
+	
+	/**
+	 * Uploads new vendors that have been disapproved to PaymentWorks
+	 * @return
+	 */
+	boolean updateNewVendorDisapprovedStatus();
+	
+	/**
+	 * Uploads supplier updates to PaymentWorks
+	 * @return
+	 */
+	boolean uploadVendorUpdateApprovedSupplierFile();
 
 }

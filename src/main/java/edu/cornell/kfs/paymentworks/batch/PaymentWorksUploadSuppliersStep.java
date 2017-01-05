@@ -22,18 +22,18 @@ import java.util.Date;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
-import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSuppliersService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSupplierService;
 
 public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersStep.class);
 	
-	protected PaymentWorksUploadSuppliersService paymentWorksUploadSuppliersService;
+	protected PaymentWorksUploadSupplierService paymentWorksUploadSupplierService;
 
 	@Override
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		boolean results = getPaymentWorksUploadSuppliersService().uploadNewVendorApprovedSupplierFile();
-		results = getPaymentWorksUploadSuppliersService().updateNewVendorDisapprovedStatus() && results;
-		results = getPaymentWorksUploadSuppliersService().uploadVendorUpdateApprovedSupplierFile() && results;
+		boolean results = getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile();
+		results = getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus() && results;
+		results = getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile() && results;
 		
 		if (!results) {
 			throw new RuntimeException("There was an error uploading files to PaymentWorks.");
@@ -42,12 +42,12 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 		return results;
 	}
 
-	public PaymentWorksUploadSuppliersService getPaymentWorksUploadSuppliersService() {
-		return paymentWorksUploadSuppliersService;
+	public PaymentWorksUploadSupplierService getPaymentWorksUploadSupplierService() {
+		return paymentWorksUploadSupplierService;
 	}
 
-	public void setPaymentWorksUploadSuppliersService(PaymentWorksUploadSuppliersService paymentWorksUploadSuppliersService) {
-		this.paymentWorksUploadSuppliersService = paymentWorksUploadSuppliersService;
+	public void setPaymentWorksUploadSupplierService(PaymentWorksUploadSupplierService paymentWorksUploadSupplierService) {
+		this.paymentWorksUploadSupplierService = paymentWorksUploadSupplierService;
 	}
 
 }

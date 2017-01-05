@@ -126,15 +126,16 @@
 
 	<!-- Upload Suppliers Job -->
 	<bean id="paymentWorksUploadSuppliersStep" parent="step" class="edu.cornell.kfs.paymentworks.batch.PaymentWorksUploadSuppliersStep">
-		<property name="paymentWorksUploadSuppliersService" ref="paymentWorksUploadSuppliersService" />
+		<property name="paymentWorksUploadSupplierService" ref="paymentWorksUploadSupplierService" />
 	</bean>
 	
-	<bean id="paymentWorksUploadSuppliersService" parent="paymentWorksUploadSuppliersService-parentBean" />
-	<bean id="paymentWorksUploadSuppliersService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksUploadSuppliersServiceImpl" abstract="true">
+	<bean id="paymentWorksUploadSupplierService" parent="paymentWorksUploadSupplierService-parentBean" />
+	<bean id="paymentWorksUploadSupplierService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksUploadSupplierServiceImpl" abstract="true">
+		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
+		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="reportWriterService" ref="supplierUploadReportWriterService" />
 		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
 		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
-		<property name="paymentWorksSupplierConversionService" ref="paymentWorksSupplierConversionService" />
-		<property name="reportWriterService" ref="supplierUploadReportWriterService" />
 	</bean>
 
 	<bean id="supplierUploadReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
@@ -173,7 +174,7 @@
 			<value>${staging.directory}/paymentworks/supplier</value>
 		</property>
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
-		<property name="paymentWorksSupplierConversionService" ref="paymentWorksSupplierConversionService" />
+		<property name="paymentWorksUploadSupplierService" ref="paymentWorksUploadSupplierService" />
 	</bean>
 
 	<bean id="paymentWorksKfsService" parent="paymentWorksKfsService-parentBean" />
@@ -188,7 +189,7 @@
 		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="paymentWorksAchConversionService" ref="paymentWorksAchConversionService" />
-		<property name="paymentWorksSupplierConversionService" ref="paymentWorksSupplierConversionService" />
+		<property name="paymentWorksUploadSupplierService" ref="paymentWorksUploadSupplierService" />
 		<property name="paymentWorksVendorUpdateConversionService" ref="paymentWorksVendorUpdateConversionService" />
 	</bean>
 	
@@ -212,12 +213,6 @@
 	<bean id="paymentWorksAchConversionService" parent="paymentWorksAchConversionService-parentBean" />
 	<bean id="paymentWorksAchConversionService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksAchConversionServiceImpl" abstract="true">
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
-		<property name="dateTimeService" ref="dateTimeService" />
-	</bean>
-	
-	<bean id="paymentWorksSupplierConversionService" parent="paymentWorksSupplierConversionService-parentBean" />
-	<bean id="paymentWorksSupplierConversionService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksSupplierConversionServiceImpl" abstract="true">
-		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 	
