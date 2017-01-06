@@ -257,4 +257,6 @@
 	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean"/>
 	<bean id="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.BatchFileDirectoryServiceImpl"/>
 
+	<bean id="batchFileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />
+
 </beans>
