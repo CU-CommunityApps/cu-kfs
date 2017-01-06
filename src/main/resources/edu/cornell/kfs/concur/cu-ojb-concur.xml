@@ -1,0 +1,35 @@
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   - 
+   - Copyright 2005-2014 The Kuali Foundation
+   - 
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   - 
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   - 
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<descriptor-repository version="1.0">
+
+<class-descriptor class="edu.cornell.kfs.concur.businessobjects.ConcurEventNotification" table="CU_CNCR_EVNT_NTFCTN_T">
+    <field-descriptor name="concurEventNotificationId" column="CNCR_EVNT_NTFCTN_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="CU_CNCR_EVNT_NTFCTN_ID_SEQ" autoincrement="true"/>
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="context" column="CNTXT" jdbc-type="VARCHAR" />
+    <field-descriptor name="eventDateTime" column="EVNT_DT" jdbc-type="DATE" />
+    <field-descriptor name="eventType" column="EVNT_TYP" jdbc-type="VARCHAR" />
+    <field-descriptor name="objectURI" column="OBJ_URI" jdbc-type="VARCHAR" /> 
+    <field-descriptor name="inProcess" column="IN_PRCSS" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
+    <field-descriptor name="processed" column="PRCSSD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
+    <field-descriptor name="validationResult" column="VLDTN_RSLT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
+    <field-descriptor name="validationResultMessage" column="VLDTN_RSLT_MSG" jdbc-type="VARCHAR" /> 
+</class-descriptor>
+
+</descriptor-repository>
