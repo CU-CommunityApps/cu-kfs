@@ -259,6 +259,8 @@
 	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean"/>
 	<bean id="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.BatchFileDirectoryServiceImpl"/>
 
+	<bean id="batchFileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />
+
 	<bean id="documentStoreClient" parent="documentStoreClient-parentBean"/>
 	<bean id="documentStoreClient-parentBean" abstract="true" class="${kfs.documentstore.client.class}">
 		<constructor-arg value="${kfs.documentstore.protocol}" type="java.lang.String" />
