@@ -31,20 +31,17 @@ public interface PaymentWorksUploadSupplierService {
 	
 	/**
 	 * Uploads approved suppkiers to PaymentWorks
-	 * @return
 	 */
-	boolean uploadNewVendorApprovedSupplierFile();
+	void uploadNewVendorApprovedSupplierFile();
 	
 	/**
 	 * Uploads new vendors that have been disapproved to PaymentWorks
-	 * @return
 	 */
-	boolean updateNewVendorDisapprovedStatus();
+	void updateNewVendorDisapprovedStatus();
 	
 	/**
 	 * Uploads supplier updates to PaymentWorks
-	 * @return
 	 */
-	boolean uploadVendorUpdateApprovedSupplierFile();
+	void uploadVendorUpdateApprovedSupplierFile();
 
 }

@@ -31,15 +31,12 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
 	@Override
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		boolean results = getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile();
-		results = getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus() && results;
-		results = getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile() && results;
+		getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile();
+		getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus();
+		getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile();
 		
-		if (!results) {
-			throw new RuntimeException("There was an error uploading files to PaymentWorks.");
-		}
-		LOG.debug("execute, the final results of this batch job are: " + results);
-		return results;
+		LOG.debug("execute, the PaymentWorksUploadSupplierStep finished. ");
+		return true;
 	}
 
 	public PaymentWorksUploadSupplierService getPaymentWorksUploadSupplierService() {

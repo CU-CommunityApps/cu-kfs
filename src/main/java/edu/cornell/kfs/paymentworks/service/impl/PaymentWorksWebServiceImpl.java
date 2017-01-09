@@ -91,11 +91,11 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 		return builder.build(buildURI(url), HttpMethod.PUT);
 	}
 
-	protected ClientRequest buildClientRequest(String url, MultiPart multiPart) {
+	protected ClientRequest buildClientRequest(String url, MultiPart MultiPartUploadFile) {
 		ClientRequest.Builder builder = new ClientRequest.Builder();
-		builder.accept(MediaType.MULTIPART_FORM_DATA);
+		builder.accept(MediaType.APPLICATION_JSON);
 		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
-		builder.entity(multiPart, MediaType.MULTIPART_FORM_DATA);
+		builder.entity(MultiPartUploadFile, MediaType.MULTIPART_FORM_DATA);
 
 		return builder.build(buildURI(url), HttpMethod.POST);
 	}
@@ -336,16 +336,17 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 		multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
 		String supplierUploadFileName = getPaymentWorksUploadSupplierService().createSupplierUploadFile(paymentWorksSupplierUploadDTO, directoryPath);
-
+		LOG.info("uploadSuppliers, The file to be uploaded: " + supplierUploadFileName);
 		FormDataBodyPart fileDataBodyPart = new FileDataBodyPart("suppliers", new File(supplierUploadFileName),
 				MediaType.MULTIPART_FORM_DATA_TYPE);
 		multiPart.bodyPart(fileDataBodyPart);
 
 		Client client = buildClient();
 		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_SUPPLIER_UPLOAD)).toString();
+		LOG.info("URL: " + URL);
 		ClientResponse response = client.handle(buildClientRequest(URL, multiPart));
 
-		LOG.debug("updateNewVendorStatusInPaymentWorks, Status: " + response.getStatus());
+		LOG.info("updateNewVendorStatusInPaymentWorks, Status: " + response.getStatus());
 
 		getPaymentWorksUploadSupplierService().deleteSupplierUploadFile(supplierUploadFileName);
 

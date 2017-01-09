@@ -131,6 +131,17 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 
 		return newFileName;
 	}
+	
+	protected void writeDetailLineForEachUploadDTO(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,
+			BufferedWriter out) throws IOException {
+		for (PaymentWorksSupplierUploadDTO supplier : paymentWorksSupplierUploadList) {
+			if (supplier.isSendToPaymentWorks()) {
+				out.write(supplier.toString());
+				out.newLine();
+			}
+
+		}
+	}
 
 	protected void handleFileWritingException(BufferedWriter out, FileWriter fstream, Exception e) {
 		LOG.error("handleFileWritingException, there was an error creating the supplier upload file: ", e);
@@ -142,17 +153,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 			LOG.error("handleFileWritingException, there was an error closing the buffered writer or the file writer: ", ex1);
 		}
 		throw new RuntimeException(e);
-	}
-
-	protected void writeDetailLineForEachUploadDTO(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,
-			BufferedWriter out) throws IOException {
-		for (PaymentWorksSupplierUploadDTO supplier : paymentWorksSupplierUploadList) {
-			if (supplier.isSendToPaymentWorks()) {
-				out.write(supplier.toString());
-				out.newLine();
-			}
-
-		}
 	}
 
 	protected void checkDirectory(String directoryPath) {
@@ -174,17 +174,20 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	@Override
 	public void deleteSupplierUploadFile(String fileName) {
 		LOG.info("deleteSupplierUploadFile, about to delete " + fileName);
+		/*
 		Path path = Paths.get(fileName);
 		try {
 			Files.delete(path);
 		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
+			LOG.error("deleteSupplierUploadFile, Unable to delete the file: " + fileName, ex);
+			/**
+			 * @Todo decide what to do here
 		}
+		 */
 	}
 	
 	@Override
-	public boolean uploadNewVendorApprovedSupplierFile() {
+	public void uploadNewVendorApprovedSupplierFile() {
 		Collection<PaymentWorksVendor> approvedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED, null, PaymentWorksConstants.TransactionType.NEW_VENDOR);
 		
@@ -209,7 +212,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 				LOG.error("uploadNewVendorApprovedSupplierFile, the vendors were not uploaded.");
 			}
 		}
-		return uploaded;
 	}
 		
 	protected String findSupplierStatusType(PaymentWorksVendor newVendor) {
@@ -219,7 +221,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	}
 
 	@Override
-	public boolean updateNewVendorDisapprovedStatus() {
+	public void updateNewVendorDisapprovedStatus() {
 		Collection<PaymentWorksVendor> disapprovedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED, PaymentWorksConstants.PaymentWorksStatusText.APPROVED,
 				PaymentWorksConstants.TransactionType.NEW_VENDOR);
@@ -229,11 +231,10 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 					PaymentWorksConstants.PaymentWorksStatusText.REJECTED, PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED,
 					PaymentWorksConstants.SupplierUploadSummaryTypes.DISAPPROVED_VENDORS, true);
 		}
-		return true;
 	}
 
 	@Override
-	public boolean uploadVendorUpdateApprovedSupplierFile() {
+	public void uploadVendorUpdateApprovedSupplierFile() {
 		Collection<PaymentWorksVendor> approvedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED, null, PaymentWorksConstants.TransactionType.VENDOR_UPDATE);
 		boolean uploaded = false;
@@ -251,7 +252,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 				LOG.error("uploadVendorUpdateApprovedSupplierFile, the vendors were not uploaded.");
 			}
 		}
-		return uploaded;
 	}
 	
 	protected void processVendor(PaymentWorksVendor paymentWorksNewVendor, String requestStatus,
