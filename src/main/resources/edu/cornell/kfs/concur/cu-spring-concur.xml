@@ -57,6 +57,7 @@
 
 	<bean id="concurEventNotificationProcessingStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurEventNotificationProcessingStep">
 		<property name="concurEventNotificationProcessingService" ref="concurEventNotificationProcessingService" />
+		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
 	</bean>
 	
 	<bean id="concurEventNotificationProcessingService" parent="concurEventNotificationProcessingService-parentBean" />
@@ -85,5 +86,12 @@
 	<bean id="concurEventNotificationConversionService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationConversionServiceImpl" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
-
+	
+	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />
+	<bean id="concurAccessTokenService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccessTokenServiceImpl" abstract="true">
+		<property name="concurRefreshAccessTokenURL">
+			<value>${concur.refresh.access.token.url}</value>
+		</property>
+		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
+	</bean>
 </beans>
