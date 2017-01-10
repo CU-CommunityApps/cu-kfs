@@ -26,7 +26,7 @@ import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksSupplierUploadDTO;
 
 public class PaymentWorksUploadSupplierServiceImplTest {
-	
+
 	private static final String VENDOR_1_NAME = "vendor 2 Name";
 	private static final Integer VENDOR_1_SITE_CODE = 0;
 	private static final Integer VENDOR_1_VENDOR_NUMBER = 1242;
@@ -38,23 +38,24 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 	private static final String COUNTRY_ADDRESS = "US";
 	private static final String CITY_ADDRESS = "Ithaca";
 	private static final String STREET_ADDRESS = "street";
-	
+
 	private static final String TEST_FILE_PATH_ROOT = "test";
-    private static final String TEST_FILE_PATH = TEST_FILE_PATH_ROOT + "/outputFiles";
-    private static final String DUMMY_TEST_FILE_NAME = "dummyFileToCreateDirectory.txt";
-    private static final String TEST_PATH_AND_FILE = TEST_FILE_PATH + File.separator + DUMMY_TEST_FILE_NAME;
-	
+	private static final String TEST_FILE_PATH = TEST_FILE_PATH_ROOT + "/outputFiles";
+	private static final String DUMMY_TEST_FILE_NAME = "dummyFileToCreateDirectory.txt";
+	private static final String TEST_PATH_AND_FILE = TEST_FILE_PATH + File.separator + DUMMY_TEST_FILE_NAME;
+
 	private PaymentWorksUploadSupplierServiceImpl paymentWorksUploadSupplierService;
-	
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSupplierServiceImplTest.class);
+
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+			.getLogger(PaymentWorksUploadSupplierServiceImplTest.class);
 
 	@Before
 	public void setUp() throws Exception {
-		Logger.getLogger(PaymentWorksUploadSupplierServiceImpl.class).setLevel(Level.DEBUG);
 		Logger.getLogger(PaymentWorksUploadSupplierServiceImplTest.class).setLevel(Level.DEBUG);
-		
+
 		paymentWorksUploadSupplierService = new PaymentWorksUploadSupplierServiceImpl();
-		paymentWorksUploadSupplierService.setPaymentWorksNewVendorConversionService(new TestablePaymentWorksNewVendorConversionServiceImpl());
+		paymentWorksUploadSupplierService
+				.setPaymentWorksNewVendorConversionService(new TestablePaymentWorksNewVendorConversionServiceImpl());
 		paymentWorksUploadSupplierService.setDateTimeService(new MockDateTimeService());
 		FileUtils.forceMkdir(new File(TEST_PATH_AND_FILE));
 	}
@@ -67,23 +68,25 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 
 	@Test
 	public void createPaymentWorksSupplierUploadList() {
-		List<PaymentWorksSupplierUploadDTO> dtos = paymentWorksUploadSupplierService.createPaymentWorksSupplierUploadList(buildNewVendorCollection());
+		List<PaymentWorksSupplierUploadDTO> dtos = paymentWorksUploadSupplierService
+				.createPaymentWorksSupplierUploadList(buildNewVendorCollection());
 		assertEquals("The size should be 2", 2, dtos.size());
 		PaymentWorksSupplierUploadDTO dto = dtos.get(0);
 		assertDTOValues(dtos.get(0), VENDOR_1_NAME, VENDOR_1_SITE_CODE, VENDOR_1_VENDOR_NUMBER);
 		assertDTOValues(dtos.get(1), VENDOR_2_NAME, VENDOR_2_SITE_CODE, VENDOR_2_VENDOR_NUMBER);
 	}
-	
-	private void assertDTOValues(PaymentWorksSupplierUploadDTO dto, String dtoDescription, Integer siteCode, Integer vendorNumber) {
+
+	private void assertDTOValues(PaymentWorksSupplierUploadDTO dto, String dtoDescription, Integer siteCode,
+			Integer vendorNumber) {
 		assertEquals(dtoDescription, vendorNumber.toString(), dto.getVendorNum());
 		assertEquals(dtoDescription, siteCode.toString(), dto.getSiteCode());
 		assertEquals(dtoDescription, STREET_ADDRESS, dto.getAddress1());
 		assertEquals(dtoDescription, CITY_ADDRESS, dto.getCity());
 	}
-	
+
 	private Collection<PaymentWorksVendor> buildNewVendorCollection() {
 		Collection<PaymentWorksVendor> newVendors = new ArrayList<PaymentWorksVendor>();
-		
+
 		PaymentWorksVendor vendor1 = new PaymentWorksVendor();
 		vendor1.setVendorName(VENDOR_1_NAME);
 		vendor1.setVendorHeaderGeneratedIdentifier(VENDOR_1_VENDOR_NUMBER);
@@ -95,7 +98,7 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		vendor1.setRemittanceAddressZipCode(ZIP_ADDRESS);
 		vendor1.setSendToPaymentWorks(true);
 		newVendors.add(vendor1);
-		
+
 		PaymentWorksVendor vendor2 = new PaymentWorksVendor();
 		vendor2.setVendorName(VENDOR_2_NAME);
 		vendor2.setVendorHeaderGeneratedIdentifier(VENDOR_2_VENDOR_NUMBER);
@@ -107,29 +110,32 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		vendor2.setCorpAddressZipCode(ZIP_ADDRESS);
 		vendor2.setSendToPaymentWorks(true);
 		newVendors.add(vendor2);
-		
+
 		return newVendors;
 	}
-	
+
 	@Test
 	public void createSupplierUploadFile() {
-		List<PaymentWorksSupplierUploadDTO> dtos = paymentWorksUploadSupplierService.createPaymentWorksSupplierUploadList(buildNewVendorCollection());
+		List<PaymentWorksSupplierUploadDTO> dtos = paymentWorksUploadSupplierService
+				.createPaymentWorksSupplierUploadList(buildNewVendorCollection());
 		String newFileName = paymentWorksUploadSupplierService.createSupplierUploadFile(dtos, TEST_FILE_PATH);
-		
+
 		try {
-			BufferedReader inputReader = new BufferedReader(new FileReader(new String (newFileName)));
+			BufferedReader inputReader = new BufferedReader(new FileReader(new String(newFileName)));
 			String lineWeWant = null;
-			for (int i=0; i<3; i++) {
-                lineWeWant = inputReader.readLine();
-                LOG.info("createSupplierUploadFile, the read line: " + lineWeWant);
-            }
-			boolean doesLineHaveTheRightVendorNumber = StringUtils.containsIgnoreCase(lineWeWant, VENDOR_2_VENDOR_NUMBER.toString());
-			assertTrue("The second line should cotain the vendor number " + VENDOR_2_VENDOR_NUMBER, doesLineHaveTheRightVendorNumber);
+			for (int i = 0; i < 3; i++) {
+				lineWeWant = inputReader.readLine();
+				LOG.info("createSupplierUploadFile, the read line: " + lineWeWant);
+			}
+			boolean doesLineHaveTheRightVendorNumber = StringUtils.containsIgnoreCase(lineWeWant,
+					VENDOR_2_VENDOR_NUMBER.toString());
+			assertTrue("The second line should cotain the vendor number " + VENDOR_2_VENDOR_NUMBER,
+					doesLineHaveTheRightVendorNumber);
 		} catch (IOException e) {
 			LOG.error("createSupplierUploadFile, unable to read file: " + newFileName, e);
 			throw new RuntimeException(e);
 		}
-		
+
 		Path path = Paths.get(newFileName);
 		try {
 			Files.delete(path);
@@ -139,20 +145,18 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 			throw new RuntimeException(ex);
 		}
 	}
-	
+
 	private class TestablePaymentWorksNewVendorConversionServiceImpl extends PaymentWorksNewVendorConversionServiceImpl {
 		@Override
 		public PaymentWorksVendor createPaymentWorksVendorFromDetail(PaymentWorksVendor vendor) {
 			return null;
 		}
 	}
-	
+
 	private class MockDateTimeService extends DateTimeServiceImpl {
-
-        public MockDateTimeService() {
-            timestampToStringFormatForFileName = "yyyyMMdd-HH-mm-ss-S";
-        }
-
-    }
+		public MockDateTimeService() {
+			timestampToStringFormatForFileName = "yyyyMMdd-HH-mm-ss-S";
+		}
+	}
 
 }

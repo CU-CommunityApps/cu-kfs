@@ -28,7 +28,7 @@ public class PaymentWorksConstants {
 	public static final String PAYMENT_WORKS_VENDOR_SEQUENCE_NAME = "CU_PAYMENT_WORKS_VNDR_SEQ";
 	public static final String PAYMENT_WORKS_FIELD_MAPPING_SEQUENCE_NAME = "CU_PAYMENT_WORKS_FLD_MAP_SEQ";
 	//public static final String SUPPLIER_FILE_HEADER_ROW = "VENDOR,SiteCode,SupplierName,Address1,Address2,City,State,Country,Zipcode,TIN,ContactEmail";
-	public static final String SUPPLIER_FILE_HEADER_ROW = "Vendor,SiteCode,Name,Address1,Address2,City,State,Country,Zipcode,TIN,ContactEmail";
+	public static final String SUPPLIER_FILE_HEADER_ROW = "Vendor,Site Code,Name,AccountingAddress,Address 2,AccountingCity,AccountingState,Country,AccountingZip,US Tax Number,VI Contact Email";
 	public static final String SUPPLIER_FILE_NAME = "suppliers";
 	public static final String DOUBLE_QUOTE = "\"";
 	public static final String QUESTION_MARK = "?";
