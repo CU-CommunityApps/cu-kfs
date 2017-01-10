@@ -24,12 +24,6 @@ public interface PaymentWorksUploadSupplierService {
 	String createSupplierUploadFile(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,String directoryPath);
 	
 	/**
-	 * Deletes the file passed in.
-	 * @param fileName
-	 */
-	void deleteSupplierUploadFile(String fileName);
-	
-	/**
 	 * Uploads approved suppkiers to PaymentWorks
 	 */
 	void uploadNewVendorApprovedSupplierFile();

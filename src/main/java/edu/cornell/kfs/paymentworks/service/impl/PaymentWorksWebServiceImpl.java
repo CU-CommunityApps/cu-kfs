@@ -348,8 +348,6 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 
 		LOG.info("updateNewVendorStatusInPaymentWorks, Status: " + response.getStatus());
 
-		getPaymentWorksUploadSupplierService().deleteSupplierUploadFile(supplierUploadFileName);
-
 		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
 			isUploaded = true;
 			LOG.debug("Supplier upload succeeded for " + paymentWorksSupplierUploadDTO.size() + " vendor records");

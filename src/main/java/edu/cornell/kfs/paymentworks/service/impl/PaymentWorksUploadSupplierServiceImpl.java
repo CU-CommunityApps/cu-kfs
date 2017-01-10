@@ -59,11 +59,9 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	@Override
 	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(Collection<PaymentWorksVendor> newVendors) {
 		List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList = new ArrayList<PaymentWorksSupplierUploadDTO>();
-
 		for (PaymentWorksVendor newVendor : newVendors) {
 			PaymentWorksVendor vendorToCopy = newVendor;
 
-			// copy record from KFS vendor doc if exists
 			PaymentWorksVendor newVendorFromDetail = getPaymentWorksNewVendorConversionService().createPaymentWorksVendorFromDetail(newVendor);
 			if (ObjectUtils.isNotNull(newVendorFromDetail)) {
 				vendorToCopy = newVendorFromDetail;
@@ -71,7 +69,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 
 			paymentWorksSupplierUploadList.add(buildPaymentWorksSupplierUploadDTO(vendorToCopy));
 		}
-
 		return paymentWorksSupplierUploadList;
 	}
 
@@ -82,7 +79,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 		paymentWorksSupplierUploadDTO.setSiteCode(vendorToCopy.getVendorDetailAssignedIdentifier().toString());
 		paymentWorksSupplierUploadDTO.setSendToPaymentWorks(vendorToCopy.isSendToPaymentWorks());
 
-		// use remittance if it exists, otherwise corp
 		if (StringUtils.isNotBlank(vendorToCopy.getRemittanceAddressStreet1())) {
 			paymentWorksSupplierUploadDTO.setAddress1(vendorToCopy.getRemittanceAddressStreet1());
 			paymentWorksSupplierUploadDTO.setAddress2(vendorToCopy.getRemittanceAddressStreet2());
@@ -169,21 +165,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	protected String buildFileExtensionWithDate(java.util.Date date) {
 		String formattedDateTime = getDateTimeService().toDateTimeStringForFilename(date);
 		return "." + formattedDateTime + ".csv";
-	}
-	
-	@Override
-	public void deleteSupplierUploadFile(String fileName) {
-		LOG.info("deleteSupplierUploadFile, about to delete " + fileName);
-		/*
-		Path path = Paths.get(fileName);
-		try {
-			Files.delete(path);
-		} catch (IOException ex) {
-			LOG.error("deleteSupplierUploadFile, Unable to delete the file: " + fileName, ex);
-			/**
-			 * @Todo decide what to do here
-		}
-		 */
 	}
 	
 	@Override
