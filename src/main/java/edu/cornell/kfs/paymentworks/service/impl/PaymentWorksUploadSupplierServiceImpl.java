@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -55,6 +56,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	protected ReportWriterService reportWriterService;
 	protected PaymentWorksVendorService paymentWorksVendorService;
 	protected PaymentWorksWebService paymentWorksWebService;
+	protected ParameterService parameterService;
 	
 	@Override
 	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(Collection<PaymentWorksVendor> newVendors) {
@@ -74,9 +76,13 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 
 	protected PaymentWorksSupplierUploadDTO buildPaymentWorksSupplierUploadDTO(PaymentWorksVendor vendorToCopy) {
 		PaymentWorksSupplierUploadDTO paymentWorksSupplierUploadDTO = new PaymentWorksSupplierUploadDTO();
-		paymentWorksSupplierUploadDTO.setVendorNum(vendorToCopy.getVendorHeaderGeneratedIdentifier().toString());
+		
+		String vendorNumber = vendorToCopy.getVendorHeaderGeneratedIdentifier() != null ? vendorToCopy.getVendorHeaderGeneratedIdentifier().toString() : StringUtils.EMPTY;
+		String siteCode = vendorToCopy.getVendorDetailAssignedIdentifier() != null ? vendorToCopy.getVendorDetailAssignedIdentifier().toString() : StringUtils.EMPTY;
+		
+		paymentWorksSupplierUploadDTO.setVendorNum(vendorNumber);
+		paymentWorksSupplierUploadDTO.setSiteCode(siteCode);
 		paymentWorksSupplierUploadDTO.setSupplierName(vendorToCopy.getRequestingCompanyLegalName());
-		paymentWorksSupplierUploadDTO.setSiteCode(vendorToCopy.getVendorDetailAssignedIdentifier().toString());
 		paymentWorksSupplierUploadDTO.setSendToPaymentWorks(vendorToCopy.isSendToPaymentWorks());
 
 		if (StringUtils.isNotBlank(vendorToCopy.getRemittanceAddressStreet1())) {
@@ -113,9 +119,8 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 			fstream = new FileWriter(newFileName);
 			out = new BufferedWriter(fstream);
 
-			out.write(PaymentWorksConstants.SUPPLIER_FILE_HEADER_ROW);
+			out.write(findSupplierUpLoadFileHeader());
 			out.newLine();
-
 			writeDetailLineForEachUploadDTO(paymentWorksSupplierUploadList, out);
 
 			out.flush();
@@ -126,6 +131,13 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 		}
 
 		return newFileName;
+	}
+	
+	protected String findSupplierUpLoadFileHeader() {
+		String header = getParameterService().getParameterValueAsString(PaymentWorksConstants.PAYMENT_WORKS_NAMESPACE_CODE, "PaymentWorksUploadSupplierService", 
+				PaymentWorksConstants.PaymentWorksParameters.SUPPLIER_UPLOAD_FILE_HEADER);
+		LOG.info("findSupplierUpLoadFileHeader, the header is " + header);
+		return header;
 	}
 	
 	protected void writeDetailLineForEachUploadDTO(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadList,
@@ -380,6 +392,14 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 
 	public void setPaymentWorksWebService(PaymentWorksWebService paymentWorksWebService) {
 		this.paymentWorksWebService = paymentWorksWebService;
+	}
+
+	public ParameterService getParameterService() {
+		return parameterService;
+	}
+
+	public void setParameterService(ParameterService parameterService) {
+		this.parameterService = parameterService;
 	}
 
 }

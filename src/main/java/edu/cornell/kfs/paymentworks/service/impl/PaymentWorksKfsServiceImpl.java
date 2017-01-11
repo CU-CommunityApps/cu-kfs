@@ -319,11 +319,11 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail) {
 		String fromAddress = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_FROM_ADDRESS);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_FROM_ADDRESS);
 		String subject = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_SUBJECT);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_SUBJECT);
 		String body = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class, 
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_BODY);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_BODY);
 
 		MailMessage message = new MailMessage();
 		message.setFromAddress(fromAddress);
@@ -341,11 +341,11 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public void sendVendorApprovedEmail(String vendorNumber, String contactEmail, String vendorName) {
 		String fromAddress = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_FROM_ADRESS);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_APPROVED_EMAIL_FROM_ADRESS);
 		String subject = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_SUBJECT);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_APPROVED_EMAIL_SUBJECT);
 		String body = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class, 
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_BODY);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_APPROVED_EMAIL_BODY);
 		body = StringUtils.replace(body, "[VENDOR_NUMBER]", vendorNumber);
 		body = StringUtils.replace(body, "[VENDOR_NAME]", vendorName);
 

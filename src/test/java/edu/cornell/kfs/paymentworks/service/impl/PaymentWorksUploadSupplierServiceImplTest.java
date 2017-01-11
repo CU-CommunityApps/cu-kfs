@@ -53,10 +53,10 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 	public void setUp() throws Exception {
 		Logger.getLogger(PaymentWorksUploadSupplierServiceImplTest.class).setLevel(Level.DEBUG);
 
-		paymentWorksUploadSupplierService = new PaymentWorksUploadSupplierServiceImpl();
+		paymentWorksUploadSupplierService = new TestablePaymentWorksUploadSupplierServiceImpl();
 		paymentWorksUploadSupplierService
 				.setPaymentWorksNewVendorConversionService(new TestablePaymentWorksNewVendorConversionServiceImpl());
-		paymentWorksUploadSupplierService.setDateTimeService(new MockDateTimeService());
+		paymentWorksUploadSupplierService.setDateTimeService(new TestableDateTimeService());
 		FileUtils.forceMkdir(new File(TEST_PATH_AND_FILE));
 	}
 
@@ -153,9 +153,16 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		}
 	}
 
-	private class MockDateTimeService extends DateTimeServiceImpl {
-		public MockDateTimeService() {
+	private class TestableDateTimeService extends DateTimeServiceImpl {
+		public TestableDateTimeService() {
 			timestampToStringFormatForFileName = "yyyyMMdd-HH-mm-ss-S";
+		}
+	}
+	
+	private class TestablePaymentWorksUploadSupplierServiceImpl extends PaymentWorksUploadSupplierServiceImpl {
+		@Override
+		protected String findSupplierUpLoadFileHeader() {
+			return "Vendor,Site Code,Name,AccountingAddress,Address 2,AccountingCity,AccountingState,Country,AccountingZip,US Tax Number,VI Contact Email";
 		}
 	}
 

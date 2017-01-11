@@ -27,8 +27,6 @@ public class PaymentWorksConstants {
 	public static final String PAYMENT_WORKS_FIELD_MAPPING_DOCUMENT_TYPE = "PMWM";
 	public static final String PAYMENT_WORKS_VENDOR_SEQUENCE_NAME = "CU_PAYMENT_WORKS_VNDR_SEQ";
 	public static final String PAYMENT_WORKS_FIELD_MAPPING_SEQUENCE_NAME = "CU_PAYMENT_WORKS_FLD_MAP_SEQ";
-	//public static final String SUPPLIER_FILE_HEADER_ROW = "VENDOR,SiteCode,SupplierName,Address1,Address2,City,State,Country,Zipcode,TIN,ContactEmail";
-	public static final String SUPPLIER_FILE_HEADER_ROW = "Vendor,Site Code,Name,AccountingAddress,Address 2,AccountingCity,AccountingState,Country,AccountingZip,US Tax Number,VI Contact Email";
 	public static final String SUPPLIER_FILE_NAME = "suppliers";
 	public static final String DOUBLE_QUOTE = "\"";
 	public static final String QUESTION_MARK = "?";
@@ -48,13 +46,14 @@ public class PaymentWorksConstants {
 		public static final String ACCOUNT_NUMBER = "Acct num";
 	}
 
-	public static class EmailParameters {
-		public static final String PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_SUBJECT = "PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_SUBJECT";
-		public static final String PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_FROM_ADDRESS = "PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_FROM_ADDRESS";
-		public static final String PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_BODY = "PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_BODY";
-		public static final String PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_SUBJECT = "PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_SUBJECT";
-		public static final String PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_FROM_ADRESS = "PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_FROM_ADDRESS";
-		public static final String PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_BODY = "PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_BODY";
+	public static class PaymentWorksParameters {
+		public static final String VENDOR_INITIATED_EMAIL_SUBJECT = "PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_SUBJECT";
+		public static final String VENDOR_INITIATED_EMAIL_FROM_ADDRESS = "PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_FROM_ADDRESS";
+		public static final String VENDOR_INITIATED_EMAIL_BODY = "PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_BODY";
+		public static final String VENDOR_APPROVED_EMAIL_SUBJECT = "PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_SUBJECT";
+		public static final String VENDOR_APPROVED_EMAIL_FROM_ADRESS = "PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_FROM_ADDRESS";
+		public static final String VENDOR_APPROVED_EMAIL_BODY = "PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_BODY";
+		public static final String SUPPLIER_UPLOAD_FILE_HEADER = "PAYMENT_WORKS_SUPPLIER_UPLOAD_FILE_HEADER";
 	}
 
 	public static class VendorUpdateGroups {

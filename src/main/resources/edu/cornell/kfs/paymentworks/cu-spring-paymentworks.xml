@@ -136,6 +136,7 @@
 		<property name="reportWriterService" ref="supplierUploadReportWriterService" />
 		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
 		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
+		<property name="parameterService" ref="parameterService" />
 	</bean>
 
 	<bean id="supplierUploadReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
