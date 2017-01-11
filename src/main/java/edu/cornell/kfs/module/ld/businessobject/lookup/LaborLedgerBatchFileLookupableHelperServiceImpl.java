@@ -1,10 +1,9 @@
 package edu.cornell.kfs.module.ld.businessobject.lookup;
 
-import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl;
-
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
 
-public class LaborLedgerBatchFileLookupableHelperServiceImpl extends BatchFileLookupableHelperServiceImpl {
+public class LaborLedgerBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
 
     /**
      * Override method so that it only returns the /staging/ld/enterpriseFeed directory as selected.
