@@ -54,7 +54,6 @@ import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksAchConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksSupplierConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
@@ -76,7 +75,6 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
 	protected PaymentWorksUtilityService paymentWorksUtilityService;
 	protected PaymentWorksAchConversionService paymentWorksAchConversionService;
-	protected PaymentWorksSupplierConversionService paymentWorksSupplierConversionService;
 	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
 
 	@Override
@@ -319,11 +317,11 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail) {
 		String fromAddress = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_FROM_ADDRESS);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_FROM_ADDRESS);
 		String subject = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_SUBJECT);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_SUBJECT);
 		String body = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class, 
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_INITIATED_EMAIL_BODY);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_BODY);
 
 		MailMessage message = new MailMessage();
 		message.setFromAddress(fromAddress);
@@ -341,11 +339,11 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public void sendVendorApprovedEmail(String vendorNumber, String contactEmail, String vendorName) {
 		String fromAddress = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_FROM_ADRESS);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_APPROVED_EMAIL_FROM_ADRESS);
 		String subject = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class,
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_SUBJECT);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_APPROVED_EMAIL_SUBJECT);
 		String body = parameterService.getParameterValueAsString(PaymentWorksUploadSuppliersStep.class, 
-				PaymentWorksConstants.EmailParameters.PAYMENT_WORKS_VENDOR_APPROVED_EMAIL_BODY);
+				PaymentWorksConstants.PaymentWorksParameters.VENDOR_APPROVED_EMAIL_BODY);
 		body = StringUtils.replace(body, "[VENDOR_NUMBER]", vendorNumber);
 		body = StringUtils.replace(body, "[VENDOR_NAME]", vendorName);
 
@@ -493,14 +491,6 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 	public void setPaymentWorksAchConversionService(PaymentWorksAchConversionService paymentWorksAchConversionService) {
 		this.paymentWorksAchConversionService = paymentWorksAchConversionService;
-	}
-
-	public PaymentWorksSupplierConversionService getPaymentWorksSupplierConversionService() {
-		return paymentWorksSupplierConversionService;
-	}
-
-	public void setPaymentWorksSupplierConversionService(PaymentWorksSupplierConversionService paymentWorksSupplierConversionService) {
-		this.paymentWorksSupplierConversionService = paymentWorksSupplierConversionService;
 	}
 
 	public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {
