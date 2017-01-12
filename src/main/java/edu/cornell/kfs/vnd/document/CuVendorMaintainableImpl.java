@@ -248,6 +248,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             } else if (StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())
                     || StringUtils.equals(KFSConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, this.getMaintenanceAction())) {
             	LOG.debug("doRouteStatusChange, new action");
+            	this.saveBusinessObject();
                 processNewAction(vendorDetail);
             } else if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, this.getMaintenanceAction())) {
             	LOG.debug("doRouteStatusChange, edit action");
