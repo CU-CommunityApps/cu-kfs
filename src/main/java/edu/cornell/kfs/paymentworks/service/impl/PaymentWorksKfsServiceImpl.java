@@ -54,7 +54,6 @@ import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksAchConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSupplierService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
@@ -76,7 +75,6 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
 	protected PaymentWorksUtilityService paymentWorksUtilityService;
 	protected PaymentWorksAchConversionService paymentWorksAchConversionService;
-	protected PaymentWorksUploadSupplierService paymentWorksUploadSupplierService;
 	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
 
 	@Override
@@ -493,14 +491,6 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 	public void setPaymentWorksAchConversionService(PaymentWorksAchConversionService paymentWorksAchConversionService) {
 		this.paymentWorksAchConversionService = paymentWorksAchConversionService;
-	}
-
-	public PaymentWorksUploadSupplierService getPaymentWorksUploadSupplierService() {
-		return paymentWorksUploadSupplierService;
-	}
-
-	public void setPaymentWorksUploadSupplierService(PaymentWorksUploadSupplierService paymentWorksUploadSupplierService) {
-		this.paymentWorksUploadSupplierService = paymentWorksUploadSupplierService;
 	}
 
 	public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {

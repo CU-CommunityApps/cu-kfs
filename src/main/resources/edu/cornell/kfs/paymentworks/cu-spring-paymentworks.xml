@@ -190,7 +190,6 @@
 		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="paymentWorksAchConversionService" ref="paymentWorksAchConversionService" />
-		<property name="paymentWorksUploadSupplierService" ref="paymentWorksUploadSupplierService" />
 		<property name="paymentWorksVendorUpdateConversionService" ref="paymentWorksVendorUpdateConversionService" />
 	</bean>
 	
