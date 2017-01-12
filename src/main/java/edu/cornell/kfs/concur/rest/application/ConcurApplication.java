@@ -8,7 +8,7 @@ import javax.ws.rs.core.Application;
 
 import edu.cornell.kfs.concur.rest.resource.ConcurAccountValidationResource;
 
-@ApplicationPath("/concur/v1.0")
+@ApplicationPath("/ws/concur/v1.0")
 public class ConcurApplication extends Application {
 
     protected Set<Object> singletons = new HashSet<>();

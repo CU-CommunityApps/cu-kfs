@@ -8,7 +8,7 @@ import javax.ws.rs.core.Application;
 
 import edu.cornell.kfs.concur.rest.resource.ConcurTestConnectionResource;
 
-@ApplicationPath("/systems/v1.0")
+@ApplicationPath("/ws/systems/v1.0")
 public class ConcurTestConnectionApplication extends Application {
 
     protected Set<Object> singletons = new HashSet<>();
