@@ -184,7 +184,7 @@
     
     <filter-mapping>
         <filter-name>ConcurAuthenticationFilter</filter-name>
-        <url-pattern>/ws/systems/v1.0/testconnection</url-pattern>
+        <url-pattern>/ws/system/v1.0/testconnection</url-pattern>
         <url-pattern>/ws/concur/v1.0/validate</url-pattern>
     </filter-mapping>
 
