@@ -3,13 +3,13 @@ package edu.cornell.kfs.concur.service;
 
 public interface ConcurAccessTokenService {
     
-    String getConcurAccessToken();
+    String getAccessToken();
     
-    String getConcurRefreshToken();
+    String getRefreshToken();
     
-    String getConcurConsumerKey();
+    String getConsumerKey();
     
-    String getConcurSecretKey();
+    String getSecretKey();
     
     void refreshAccessToken();
 

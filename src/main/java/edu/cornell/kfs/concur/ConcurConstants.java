@@ -3,13 +3,13 @@ package edu.cornell.kfs.concur;
 public class ConcurConstants {
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
     public static final String BASIC_AUTHENTICATION_SCHEME = "Basic";
-    public static final String OAUTH_AUTHENTICATION_SCHEME = "OAuth ";
+    public static final String OAUTH_AUTHENTICATION_SCHEME = "OAuth";
 
     public static final int VALIDATION_RESULT_MESSAGE_MAX_LENGTH = 2000;
 
-    public static final String REFRESH_TOKEN_URL_PARAM = "refresh_token=";
-    public static final String CLIENT_ID_URL_PARAM = "&client_id=";
-    public static final String CLIENT_SECRET_URL_PARAM = "&client_secret=";
+    public static final String REFRESH_TOKEN_URL_PARAM = "refresh_token";
+    public static final String CLIENT_ID_URL_PARAM = "client_id";
+    public static final String CLIENT_SECRET_URL_PARAM = "client_secret";
 
     public static final String CONCUR_ACCESS_TOKEN = "concur.access.token";
     public static final String CONCUR_REFRESH_TOKEN = "concur.refresh.token";
