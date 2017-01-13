@@ -141,4 +141,7 @@ public class CUKFSConstants {
         public static final String EXPENSE = "EX";
     }
 
+    public static final String EQUALS_SIGN = "=";
+    public static final String AMPERSAND = "&";
+
 }

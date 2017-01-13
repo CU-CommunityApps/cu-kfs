@@ -14,5 +14,4 @@ public class ConcurPropertyConstants {
         public static final String VALIDATION_RESULT ="validationResult";
         public static final String VALIDATION_RESULT_MESSAGE = "validationResultMessage";        
     }
-
 }

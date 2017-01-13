@@ -271,5 +271,10 @@
 		<property name="documentStoreClient" ref="documentStoreClient" />
 		<property name="tableNamePrefix" value="${kfs.documentstore.tablename.prefix}" />
 	</bean>
-
+	
+	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
+	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService"/>
+	</bean>
+	
 </beans>
