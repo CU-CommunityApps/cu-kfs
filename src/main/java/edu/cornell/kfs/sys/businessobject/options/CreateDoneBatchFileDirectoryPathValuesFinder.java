@@ -1,33 +1,19 @@
 package edu.cornell.kfs.sys.businessobject.options;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.kuali.kfs.sys.businessobject.options.BatchFileDirectoryPathValuesFinder;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
+import edu.cornell.kfs.sys.service.BatchFileDirectoryService;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.KeyValue;
 
-import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
+import java.io.File;
+import java.util.List;
 
-public class CreateDoneBatchFileDirectoryPathValuesFinder extends BatchFileDirectoryPathValuesFinder {
+public class CreateDoneBatchFileDirectoryPathValuesFinder extends CuBatchFileDirectoryPathValuesFinder {
 	
 	@Override
 	public List<KeyValue> getKeyValues() {
 		List<File> rootDirectories = CuBatchFileUtils.retrieveBatchFileStagingRootDirectories();
-        List<KeyValue> keyValues = new ArrayList<KeyValue>();
-        
-        for (File rootDirectory: rootDirectories) {
-            SubDirectoryWalker walker = new SubDirectoryWalker(keyValues);
-            try {
-                walker.addKeyValues(rootDirectory);
-            }
-            catch (IOException e) {
-                throw new RuntimeException("IOException caught.", e);
-            }
-        }
-        
-        return keyValues;
+        return SpringContext.getBean(BatchFileDirectoryService.class).buildDirectoryKeyValuesList(rootDirectories);
 	}
 
 }

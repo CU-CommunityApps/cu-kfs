@@ -1,13 +1,9 @@
 package edu.cornell.kfs.sys.businessobject.lookup;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
-import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
 import org.kuali.rice.krad.bo.BusinessObject;
@@ -15,9 +11,11 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 
-import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
-public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLookupableHelperServiceImpl {
+public class CreateDoneBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
 	
 	protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService; 
 
