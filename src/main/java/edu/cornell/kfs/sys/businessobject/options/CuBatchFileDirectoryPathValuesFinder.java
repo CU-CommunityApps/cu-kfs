@@ -22,7 +22,7 @@ import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.sys.service.BatchFileDirectoryService;
 import org.kuali.rice.core.api.util.KeyValue;
-import org.kuali.rice.krad.keyvalues.KeyValuesBase;
+import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
 import java.io.File;
 import java.util.List;
