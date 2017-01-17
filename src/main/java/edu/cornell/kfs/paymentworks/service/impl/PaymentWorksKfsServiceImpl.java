@@ -51,7 +51,7 @@ import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveNewVendorStep;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksUploadSuppliersStep;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksAchConversionService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksAchService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
@@ -74,7 +74,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	protected MaintenanceDocumentService maintenanceDocumentService;
 	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
 	protected PaymentWorksUtilityService paymentWorksUtilityService;
-	protected PaymentWorksAchConversionService paymentWorksAchConversionService;
+	protected PaymentWorksAchService paymentWorksAchService;
 	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
 
 	@Override
@@ -282,9 +282,9 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 			String accountNumber, String vendorNumber, PayeeACHAccount payeeAchAccount) {
 		PayeeACHAccount payeeAchAccountNew;
 		if (ObjectUtils.isNull(payeeAchAccount)) {
-			payeeAchAccountNew = getPaymentWorksAchConversionService().createPayeeAchAccount(vendorUpdate, vendorNumber);
+			payeeAchAccountNew = getPaymentWorksAchService().createPayeeAchAccount(vendorUpdate, vendorNumber);
 		} else {
-			payeeAchAccountNew = getPaymentWorksAchConversionService().createPayeeAchAccount(payeeAchAccount, routingNumber, accountNumber);
+			payeeAchAccountNew = getPaymentWorksAchService().createPayeeAchAccount(payeeAchAccount, routingNumber, accountNumber);
 		}
 		return payeeAchAccountNew;
 	}
@@ -485,12 +485,12 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
-	public PaymentWorksAchConversionService getPaymentWorksAchConversionService() {
-		return paymentWorksAchConversionService;
+	public PaymentWorksAchService getPaymentWorksAchService() {
+		return paymentWorksAchService;
 	}
 
-	public void setPaymentWorksAchConversionService(PaymentWorksAchConversionService paymentWorksAchConversionService) {
-		this.paymentWorksAchConversionService = paymentWorksAchConversionService;
+	public void setPaymentWorksAchService(PaymentWorksAchService paymentWorksAchService) {
+		this.paymentWorksAchService = paymentWorksAchService;
 	}
 
 	public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {

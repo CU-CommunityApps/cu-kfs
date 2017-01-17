@@ -103,11 +103,8 @@
 
 	<!-- Ach Updates Job -->
 	<bean id="paymentWorksRetrieveAchUpdatesStep" parent="step" class="edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveAchUpdatesStep">
-		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
 		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
-		<property name="paymentWorksKfsService" ref="paymentWorksKfsService" />
-		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
-		<property name="reportWriterService" ref="achUpdateReportWriterService" />
+		<property name="paymentWorksAchService" ref="paymentWorksAchService" />
 	</bean>
 
 	<bean id="achUpdateReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
@@ -189,7 +186,7 @@
 		<property name="maintenanceDocumentService" ref="maintenanceDocumentService" />
 		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
-		<property name="paymentWorksAchConversionService" ref="paymentWorksAchConversionService" />
+		<property name="paymentWorksAchService" ref="paymentWorksAchService" />
 		<property name="paymentWorksVendorUpdateConversionService" ref="paymentWorksVendorUpdateConversionService" />
 	</bean>
 	
@@ -210,10 +207,14 @@
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 	
-	<bean id="paymentWorksAchConversionService" parent="paymentWorksAchConversionService-parentBean" />
-	<bean id="paymentWorksAchConversionService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksAchConversionServiceImpl" abstract="true">
+	<bean id="paymentWorksAchService" parent="paymentWorksAchService-parentBean" />
+	<bean id="paymentWorksAchService-parentBean" class="edu.cornell.kfs.paymentworks.service.impl.PaymentWorksAchServiceImpl" abstract="true">
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="dateTimeService" ref="dateTimeService" />
+		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
+		<property name="paymentWorksKfsService" ref="paymentWorksKfsService" />
+		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
+		<property name="reportWriterService" ref="achUpdateReportWriterService" />
 	</bean>
 	
 	<bean id="paymentWorksVendorUpdateConversionService" parent="paymentWorksVendorUpdateConversionService-parentBean" />
