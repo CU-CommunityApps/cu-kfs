@@ -14,6 +14,7 @@ import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 
 import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
+import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
@@ -25,6 +26,11 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
     //TRIP INFORMATION FIELDS
     protected String tripAssociationStatusCode;
     protected String tripId;
+    
+    public CuDistributionOfIncomeAndExpenseDocument() {
+        super();
+        tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
+    }
 
     /**
      * Overridden to interact with the Legacy Travel service
@@ -69,7 +75,7 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
     @Override
     public void toCopy() throws WorkflowException {
         super.toCopy();
-        setTripAssociationStatusCode(null);
+        setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
         setTripId(null);
     }
 
