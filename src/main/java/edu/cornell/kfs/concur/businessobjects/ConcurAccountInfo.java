@@ -36,4 +36,32 @@ public class ConcurAccountInfo {
     public String getOrgRefId() {
         return orgRefId;
     }
+
+    public void setChart(String chart) {
+        this.chart = chart;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setSubAccountNumber(String subAccountNumber) {
+        this.subAccountNumber = subAccountNumber;
+    }
+
+    public void setObjectCode(String objectCode) {
+        this.objectCode = objectCode;
+    }
+
+    public void setSubObjectCode(String subObjectCode) {
+        this.subObjectCode = subObjectCode;
+    }
+
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
+    }
+
+    public void setOrgRefId(String orgRefId) {
+        this.orgRefId = orgRefId;
+    }
 }

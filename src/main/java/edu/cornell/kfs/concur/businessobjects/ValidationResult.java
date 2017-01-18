@@ -3,6 +3,8 @@ package edu.cornell.kfs.concur.businessobjects;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.kfs.sys.KFSConstants;
+
 public class ValidationResult {
     protected boolean valid;
     protected List<String> messages;
@@ -14,6 +16,10 @@ public class ValidationResult {
 
     public boolean isValid() {
         return valid;
+    }
+    
+    public boolean isNotValid() {
+        return !valid;
     }
 
     public void setValid(boolean valid) {
@@ -34,6 +40,15 @@ public class ValidationResult {
         }
         messages.add(message);
     }
+    
+    public void addMessages(List<String> messagesToAdd) {
+        if (messages == null) {
+            messages = new ArrayList<String>();
+        }
+        if (messagesToAdd != null) {
+            messages.addAll(messagesToAdd);
+        }
+    }
 
     public String getErrorMessagesAsOneFormattedString() {
         StringBuffer result = new StringBuffer();
@@ -41,9 +56,10 @@ public class ValidationResult {
         if (messages != null && !messages.isEmpty()) {
             for (String message : messages) {
                 result.append(message);
-                result.append("\n");
+                result.append(KFSConstants.NEWLINE);
             }
         }
+        
         return result.toString();
     }
 

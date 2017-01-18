@@ -80,6 +80,12 @@
 	
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
 	<bean id="concurAccountValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl" abstract="true">
+		<property name="accountService" ref="accountService" />
+		<property name="objectCodeService" ref="objectCodeService" />
+		<property name="subAccountService" ref="subAccountService" />
+		<property name="subObjectCodeService" ref="subObjectCodeService" />
+		<property name="projectCodeService" ref="projectCodeService" />
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 	
 	<bean id="concurEventNotificationConversionService" parent="concurEventNotificationConversionService-parentBean" />
