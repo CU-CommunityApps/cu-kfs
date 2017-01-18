@@ -75,7 +75,7 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
     @Override
     public void toCopy() throws WorkflowException {
         super.toCopy();
-        setTripAssociationStatusCode(null);
+        setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
         setTripId(null);
     }
 
