@@ -78,11 +78,6 @@
 		<property name="businessObjectService" ref="businessObjectService"/>
 	</bean>
 	
-	<bean id="errorMessageUtilsService" parent="errorMessageUtilsService-parentBean" />
-	<bean id="errorMessageUtilsService-parentBean" class="edu.cornell.kfs.sys.service.impl.ErrorMessageUtilsServiceImpl" abstract="true">
-		<property name="configurationService" ref="configurationService" />
-	</bean>
-	
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
 	<bean id="concurAccountValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl" abstract="true">
 		<property name="accountService" ref="accountService" />
@@ -90,7 +85,7 @@
 		<property name="subAccountService" ref="subAccountService" />
 		<property name="subObjectCodeService" ref="subObjectCodeService" />
 		<property name="projectCodeService" ref="projectCodeService" />
-		<property name="errorMessageUtilsService" ref="errorMessageUtilsService" />
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 	
 	<bean id="concurEventNotificationConversionService" parent="concurEventNotificationConversionService-parentBean" />

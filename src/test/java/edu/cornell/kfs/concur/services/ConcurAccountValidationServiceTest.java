@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.services;
 
+import java.text.MessageFormat;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +27,7 @@ public class ConcurAccountValidationServiceTest {
         concurAccountValidationService.setSubObjectCodeService(new MockSubObjectCodeService());
         concurAccountValidationService.setProjectCodeService(new MockProjectCodeService());
         concurAccountValidationService.setSubAccountService(new MockSubAccountService());
-        concurAccountValidationService.setErrorMessageUtilsService(new MockErrorMessageUtilsService());
+        concurAccountValidationService.setConfigurationService(new MockConfigurationService());
         concurAccountInfo = buildValidConcurAccountInfo();
     }
     
@@ -58,7 +60,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for null account number",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -68,7 +70,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad account number",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -78,7 +80,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -95,7 +97,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for null object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -105,7 +107,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -115,7 +117,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -132,7 +134,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for null sub account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -142,7 +144,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -152,7 +154,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -162,7 +164,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive sub account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -179,7 +181,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -189,7 +191,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -199,7 +201,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub object",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -209,7 +211,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive sub object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE)+ KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE)+ KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -226,7 +228,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad project code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -236,7 +238,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad project code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -246,7 +248,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive project code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -263,7 +265,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for missing chart",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -274,7 +276,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for missing account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -285,7 +287,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for missing object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -298,9 +300,9 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for missing object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART) + KFSConstants.NEWLINE +
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE +
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART) + KFSConstants.NEWLINE +
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE +
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -311,7 +313,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for bad chart",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -322,7 +324,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for bad account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
    }
     
@@ -333,7 +335,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for inactive account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -343,7 +345,7 @@ public class ConcurAccountValidationServiceTest {
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertEquals(
                 "One error message was expected for bad sub account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -354,7 +356,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for inactive sub account",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -365,8 +367,8 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE
-                + concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE
+                + MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -377,8 +379,8 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for inactive object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE
-                + concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE
+                + MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -389,7 +391,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad sub object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -400,7 +402,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for inactive sub object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -411,7 +413,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for inactive object code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -422,7 +424,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad inactive project code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -437,7 +439,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad account, object, sub account, sub object and project code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
     
@@ -451,10 +453,10 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad  object, sub account, sub object and project code",
-                concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE
-                + concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE
-                + concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE
-                + concurAccountValidationService.getErrorMessageUtilsService().createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
+                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE
+                + MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER) + KFSConstants.NEWLINE
+                + MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE) + KFSConstants.NEWLINE
+                + MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE) + KFSConstants.NEWLINE,
                 validationResult.getErrorMessagesAsOneFormattedString());
     }
 }
