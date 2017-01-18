@@ -5,7 +5,9 @@ import java.text.MessageFormat;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-public class ErrorMessageUtilsServiceImpl {
+import edu.cornell.kfs.sys.service.ErrorMessageUtilsService;
+
+public class ErrorMessageUtilsServiceImpl implements ErrorMessageUtilsService{
     protected ConfigurationService configurationService;
     
     public String createErrorString(String errorKey, String... params) {
