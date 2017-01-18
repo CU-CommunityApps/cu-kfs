@@ -12,11 +12,14 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.rice.core.api.mo.common.active.Inactivatable;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
+import edu.cornell.kfs.sys.service.ErrorMessageUtilsService;
 
 public class ConcurAccountValidationServiceImpl implements ConcurAccountValidationService {
     protected AccountService accountService;
@@ -24,17 +27,17 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     protected SubAccountService subAccountService;
     protected SubObjectCodeService subObjectCodeService;
     protected ProjectCodeService projectCodeService;
+    protected ErrorMessageUtilsService errorMessageUtilsService; 
 
     @Override
     public ValidationResult validateConcurAccountInfo(ConcurAccountInfo concurAccountInfo) {
-        ValidationResult validationResult = checkAccountingString(
+        return checkAccountingString(
                 concurAccountInfo.getChart(),
                 concurAccountInfo.getAccountNumber(),
                 concurAccountInfo.getSubAccountNumber(),
                 concurAccountInfo.getObjectCode(),
                 concurAccountInfo.getSubObjectCode(),
                 concurAccountInfo.getProjectCode());
-        return validationResult;
     }
 
     public ValidationResult checkAccountingString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode) {
@@ -46,35 +49,21 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
             ValidationResult accountValidationResult = checkAccount(chartOfAccountsCode, accountNumber);
             if (accountValidationResult.isNotValid()) {
                 return accountValidationResult;
-            } else {
-                ValidationResult objectCodeValidationResult = checkObjectCode(chartOfAccountsCode, objectCode);
-                ValidationResult subAccountValidationResult = checkSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber);
-                ValidationResult subObjectCodeValidationResult = checkSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode);
-                ValidationResult projectCodeValidationResult = checkProjectCode(projectCode);               
+            } else {           
                 ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
-
-                if (objectCodeValidationResult.isNotValid()) {
-                    validationResult.setValid(false);
-                    validationResult.addMessages(objectCodeValidationResult.getMessages());
-                }
-
-                if (subAccountValidationResult.isNotValid()) {
-                    validationResult.setValid(false);
-                    validationResult.addMessages(subAccountValidationResult.getMessages());
-                }
-
-                if (subObjectCodeValidationResult.isNotValid()) {
-                    validationResult.setValid(false);
-                    validationResult.addMessages(subObjectCodeValidationResult.getMessages());
-                }
-
-                if (projectCodeValidationResult.isNotValid()) {
-                    validationResult.setValid(false);
-                    validationResult.addMessages(projectCodeValidationResult.getMessages());
-                }
-
+                updateValidationResultAndAddErrorMessages(validationResult, checkObjectCode(chartOfAccountsCode, objectCode));
+                updateValidationResultAndAddErrorMessages(validationResult, checkSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber));
+                updateValidationResultAndAddErrorMessages(validationResult, checkSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode));
+                updateValidationResultAndAddErrorMessages(validationResult, checkProjectCode(projectCode));            
                 return validationResult;
             }
+        }
+    }
+    
+    private void updateValidationResultAndAddErrorMessages(ValidationResult validationResult, ValidationResult specificCheckResult){
+        if (specificCheckResult.isNotValid()) {
+            validationResult.setValid(false);
+            validationResult.addMessages(specificCheckResult.getMessages());
         }
     }
 
@@ -82,98 +71,55 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
         if (chartOfAccountsCode == null || chartOfAccountsCode.isEmpty()) {
             validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_CHART_OF_ACCTS_REQUIRED);
-            return validationResult;
-        } else if (accountNumber == null || accountNumber.isEmpty()) {
+            validationResult.addMessage(errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART));           
+        } 
+        if (accountNumber == null || accountNumber.isEmpty()) {
             validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_ACCT_NBR_REQUIRED);
-            return validationResult;
-        } else if (objectCode == null || objectCode.isEmpty()) {
+            validationResult.addMessage(errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER));
+        }
+        if (objectCode == null || objectCode.isEmpty()) {
             validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_OBJ_CD_REQUIRED);
-            return validationResult;
+            validationResult.addMessage(errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE));
         }
 
+        return validationResult;
+    }
+    
+    private ValidationResult checkMissingOrInactive(Inactivatable inactivatableObject, String missingMessage, String inactiveMessage){
+        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        if (inactivatableObject == null || inactivatableObject.toString().isEmpty()) {
+            validationResult.setValid(false);
+            validationResult.addMessage(missingMessage);
+        } else if (!inactivatableObject.isActive()) {
+            validationResult.setValid(false);
+            validationResult.addMessage(inactiveMessage);
+        }       
         return validationResult;
     }
 
     public ValidationResult checkAccount(String chartOfAccountsCode, String accountNumber) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
-
         Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
-
-        if ( account == null || account.toString().isEmpty()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_ACCT_DOES_NOT_EXIST);
-        } else if (!account.isActive()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_ACCT_INACTIVE);
-        } else if (account.isClosed()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_ACCT_CLOSED);
-        }
-        return validationResult;
+        return checkMissingOrInactive(account, errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER), errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER));
     }
 
     public ValidationResult checkObjectCode(String chartOfAccountsCode, String objectCodeParm) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
-        
-        ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);
-    
-        if (objectCode == null || objectCode.toString().isEmpty()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_OBJ_CD_DOES_NOT_EXIST);
-        } else if (!objectCode.isActive()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_OBJ_CD_INACTIVE);
-        }
-    
-        return validationResult;
+        ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);   
+        return checkMissingOrInactive(objectCode, errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE), errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE));       
     }
 
     public ValidationResult checkSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
-
         SubAccount subAccount = subAccountService.getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber);
-
-        if (subAccount == null || subAccount.toString().isEmpty()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_SUB_ACCT_DOES_NOT_EXIST);
-        } else if (!subAccount.isActive()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_SUB_ACCT_INACTIVE);
-        }
-        return validationResult;
+        return checkMissingOrInactive(subAccount, errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER), errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER));
     }
 
     public ValidationResult checkSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCodeParm) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
-
         SubObjectCode subObjectCode = subObjectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
-
-        if (subObjectCode == null || subObjectCode.toString().isEmpty()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_SUB_OBJ_CD_DOES_NOT_EXIST);
-        } else if (!subObjectCode.isActive()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_SUB_OBJ_CD_INACTIVE);
-        }
-        return validationResult;
+        return checkMissingOrInactive(subObjectCode, errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE), errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE));
     }
 
     public ValidationResult checkProjectCode(String projectCodeParm) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
-
         ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeParm);
-
-        if (projectCode == null || projectCode.toString().isEmpty()) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_PRJ_CD_DOES_NOT_EXIST);
-        } else if ((!projectCode.isActive())) {
-            validationResult.setValid(false);
-            validationResult.addMessage(ConcurConstants.AccountingStringValidationErrorMessages.ERROR_PRJ_CD_INACTIVE);
-        }
-        return validationResult;
+        return checkMissingOrInactive(projectCode, errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE), errorMessageUtilsService.createErrorString(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE)); 
     }
 
     public AccountService getAccountService() {
@@ -214,6 +160,15 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
 
     public void setProjectCodeService(ProjectCodeService projectCodeService) {
         this.projectCodeService = projectCodeService;
+    }
+
+    public ErrorMessageUtilsService getErrorMessageUtilsService() {
+        return errorMessageUtilsService;
+    }
+
+    public void setErrorMessageUtilsService(
+            ErrorMessageUtilsService errorMessageUtilsService) {
+        this.errorMessageUtilsService = errorMessageUtilsService;
     }
 
 }
