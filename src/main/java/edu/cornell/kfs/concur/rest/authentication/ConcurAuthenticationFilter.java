@@ -18,6 +18,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.service.ConcurAuthenticationService;
 
 public class ConcurAuthenticationFilter implements Filter {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAuthenticationFilter.class);
 
     @Override
     public void destroy() {
@@ -26,6 +27,7 @@ public class ConcurAuthenticationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        LOG.debug("doFilter() started");
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String authorizationHeader = httpServletRequest.getHeader(ConcurConstants.AUTHORIZATION_PROPERTY);
@@ -39,6 +41,7 @@ public class ConcurAuthenticationFilter implements Filter {
                 httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
+        filterChain.doFilter(servletRequest, response);
     }
 
     @Override
