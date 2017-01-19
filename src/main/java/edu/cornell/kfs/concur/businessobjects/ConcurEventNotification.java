@@ -11,6 +11,7 @@ public class ConcurEventNotification extends PersistableBusinessObjectBase{
     protected String eventType;
     protected String objectType;
     protected String objectURI;
+    protected String notificationURI;
     protected boolean inProcess;
     protected boolean processed;
     protected boolean validationResult;
@@ -94,6 +95,14 @@ public class ConcurEventNotification extends PersistableBusinessObjectBase{
 
     public void setValidationResultMessage(String validationResultMessage) {
         this.validationResultMessage = validationResultMessage;
+    }
+
+    public String getNotificationURI() {
+        return notificationURI;
+    }
+
+    public void setNotificationURI(String notificationURI) {
+        this.notificationURI = notificationURI;
     }
 
 }

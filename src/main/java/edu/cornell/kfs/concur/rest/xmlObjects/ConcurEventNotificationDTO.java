@@ -18,6 +18,8 @@ public class ConcurEventNotificationDTO {
     private String objectType;
     @XmlElement(name = "ObjectURI")
     private String objectURI;
+    @XmlElement(name = "NotificationURI")
+    private String notificationURI;
 
     public String getContext() {
         return context;
@@ -57,5 +59,13 @@ public class ConcurEventNotificationDTO {
 
     public void setObjectURI(String objectURI) {
         this.objectURI = objectURI;
+    }
+
+    public String getNotificationURI() {
+        return notificationURI;
+    }
+
+    public void setNotificationURI(String notificationURI) {
+        this.notificationURI = notificationURI;
     }
 }
