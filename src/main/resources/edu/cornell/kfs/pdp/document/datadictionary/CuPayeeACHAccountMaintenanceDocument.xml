@@ -19,6 +19,7 @@
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
     <property name="workflowAttributes" ref="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean"/>
+    <property name="businessRulesClass" value="edu.cornell.kfs.pdp.document.validation.impl.CUPayeeAchAccountRule"/>
   </bean>
 
   <bean parent="DataDictionaryBeanOverride">
