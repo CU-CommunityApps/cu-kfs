@@ -110,7 +110,9 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	public boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates) {
 		boolean routed = false;
 		for (PaymentWorksVendorUpdatesDTO vendorUpdate : achUpdates) {
+			LOG.info("processACHUpdates, prociessing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
 			if (!getPaymentWorksVendorService().isExistingPaymentWorksVendor(vendorUpdate.getId(), PaymentWorksConstants.TransactionType.ACH_UPDATE)) {
+				LOG.info("processACHUpdates is NOT an existing payment works vendor request for " + vendorUpdate.getId() + ", will process");
 				try {
 					routed = processSingleACHUpdate(vendorUpdate) && routed;
 				} catch (Exception e) {
@@ -118,6 +120,8 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 					routed = false;
 					GlobalVariables.getMessageMap().clearErrorMessages();
 				}
+			} else {
+				LOG.info("processACHUpdates, There is an existing request with the ID of " + vendorUpdate.getId() + " so won't process");
 			}
 		}
 		return routed;

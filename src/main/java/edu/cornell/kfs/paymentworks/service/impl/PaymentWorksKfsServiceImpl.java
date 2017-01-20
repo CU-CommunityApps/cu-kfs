@@ -29,20 +29,27 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.ACHBank;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
+import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.MailService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +65,7 @@ import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
+import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.sys.service.MailMessage;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 
@@ -76,6 +84,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	protected PaymentWorksUtilityService paymentWorksUtilityService;
 	protected PaymentWorksAchService paymentWorksAchService;
 	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
+	protected SequenceAccessorService sequenceAccessorService;
 
 	@Override
 	public boolean routeNewVendor(PaymentWorksVendor paymentWorksVendor) {
@@ -222,97 +231,132 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		boolean successful = false;
 		String routingNumber = getRoutingNumber(vendorUpdate.getField_changes().getField_changes());
 		String accountNumber = getAccountNumber(vendorUpdate.getField_changes().getField_changes());
-		
-		if (validateRoutingNumberAndAccountNumber(routingNumber, accountNumber)) {
-			return successful;
-		}
+		LOG.debug("directAchEdit  routingNumber: " + routingNumber + "  accountNumber: " + accountNumber);
 
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
+		successful = directAchEditByVendorNumbers(vendorUpdate, routingNumber, accountNumber, vendorNumbers);
+
+		return successful;
+	}
+
+	protected boolean directAchEditByVendorNumbers(PaymentWorksVendorUpdatesDTO vendorUpdate, String routingNumber, String accountNumber, List<String> vendorNumbers) {
+		boolean successful = false;
 		for (String vendorNumber : vendorNumbers) {
-			PayeeACHAccount payeeAchAccount = this.getActivePayeeAchAccount(PdpConstants.PayeeIdTypeCodes.VENDOR_ID, vendorNumber, PdpConstants.DisbursementTypeCodes.ACH);
+			vendorNumber = findVendorNumber(vendorNumber);
 			
-			if (!inactivatePayeeAchAccount(payeeAchAccount)) {
-				successful = false;
-				break;
-			}
-
-			if(!validatePayeeAchAccountExistence(payeeAchAccount, routingNumber, accountNumber)) {
-				return successful;
-			}
+			PayeeACHAccount payeeAchAccount = getActivePayeeAchAccount(PdpConstants.PayeeIdTypeCodes.VENDOR_ID, vendorNumber, 
+					PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
 			
-			PayeeACHAccount payeeAchAccountNew = buildPayeeAchAccountNew(vendorUpdate, routingNumber, accountNumber, vendorNumber, payeeAchAccount);
-			if(!processPayeeAchAccountNew(payeeAchAccountNew, payeeAchAccount)) {
-				break;
-			}
-			successful = true;
-		}
-
-		return successful;
-	}
-	
-	protected boolean inactivatePayeeAchAccount(PayeeACHAccount payeeAchAccount) {
-		if (ObjectUtils.isNotNull(payeeAchAccount)) {
-			payeeAchAccount.setActive(false);
-			try {
-				payeeAchAccount = businessObjectService.save(payeeAchAccount);
-			} catch (Exception e) {
-				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, e.getCause().getMessage());
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	protected boolean processPayeeAchAccountNew(PayeeACHAccount payeeAchAccountNew, PayeeACHAccount payeeAchAccount) {
-		boolean successful = true;
-		try {
-			payeeAchAccountNew = businessObjectService.save(payeeAchAccountNew);
-		} catch (Exception e) {
-			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, e.getCause().getMessage());
 			if (ObjectUtils.isNotNull(payeeAchAccount)) {
-				payeeAchAccount.setActive(true);
-				payeeAchAccount = businessObjectService.save(payeeAchAccount);
+				processEditAction(routingNumber, accountNumber, payeeAchAccount);
+			} else {
+				processNewAction(routingNumber, accountNumber, vendorNumber);
 			}
-			successful = false;
 		}
 		return successful;
 	}
 
-	protected PayeeACHAccount buildPayeeAchAccountNew(PaymentWorksVendorUpdatesDTO vendorUpdate, String routingNumber,
-			String accountNumber, String vendorNumber, PayeeACHAccount payeeAchAccount) {
-		PayeeACHAccount payeeAchAccountNew;
-		if (ObjectUtils.isNull(payeeAchAccount)) {
-			payeeAchAccountNew = getPaymentWorksAchService().createPayeeAchAccount(vendorUpdate, vendorNumber);
-		} else {
-			payeeAchAccountNew = getPaymentWorksAchService().createPayeeAchAccount(payeeAchAccount, routingNumber, accountNumber);
+	protected void processNewAction(String routingNumber, String accountNumber, String vendorNumber) {
+		MaintenanceDocument paatDocument = buildNewPayeeACHAccountMaintenanceDocument();
+		PayeeACHAccount achAccount = (PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject();
+		
+		achAccount.setPayeeIdNumber(vendorNumber);
+		achAccount.setPayeeIdentifierTypeCode(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
+		achAccount.setAchAccountGeneratedIdentifier(
+		        new KualiInteger(getSequenceAccessorService().getNextAvailableSequenceNumber(PdpConstants.ACH_ACCOUNT_IDENTIFIER_SEQUENCE_NAME)));
+		achAccount.setAchTransactionType(PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
+		achAccount.setBankRoutingNumber(routingNumber);
+		achAccount.setBankAccountNumber(accountNumber);
+		//achAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
+		//if (StringUtils.isNotBlank(payee.getNameUnmasked())) {
+		//    achAccount.setPayeeName(payee.getNameUnmasked());
+         // }
+		//if (StringUtils.isNotBlank(payee.getEmailAddressUnmasked())) {
+		  //  achAccount.setPayeeEmailAddress(payee.getEmailAddressUnmasked());
+		//}
+		achAccount.setActive(true);
+		
+		addNote(paatDocument, "Automatically generated by PaymentWorks");
+		List<AdHocRouteRecipient> adHocRoutingRecipients = null;
+		String annotation = "New ACH from PaymentWorks";
+		try {
+			getDocumentService().routeDocument(paatDocument, annotation, adHocRoutingRecipients);
+		} catch (WorkflowException e) {
+			LOG.error("directAchEditByVendorNumbers, unable to route new document.", e);
+			throw new RuntimeException(e);
 		}
-		return payeeAchAccountNew;
+	}
+
+	protected void processEditAction(String routingNumber, String accountNumber, PayeeACHAccount payeeAchAccount) {
+		MaintenanceDocument paatDocument = buildEditPayeeACHAccountMaintenanceDocument();
+		
+		paatDocument.getOldMaintainableObject().setBusinessObject(payeeAchAccount);
+		
+		PayeeACHAccount payeeAccountToUpdate = (PayeeACHAccount) ObjectUtils.deepCopy(payeeAchAccount);
+		
+		paatDocument.getNewMaintainableObject().setBusinessObject(payeeAccountToUpdate);
+		
+		payeeAccountToUpdate.setBankRoutingNumber(routingNumber);
+		payeeAccountToUpdate.setBankAccountNumber(accountNumber);
+		
+		
+		addNote(paatDocument, "Automatically generated by PaymentWorks");
+		List<AdHocRouteRecipient> adHocRoutingRecipients = null;
+		String annotation = "ACH Update from PaymentWorks";
+		try {
+			getDocumentService().routeDocument(paatDocument, annotation, adHocRoutingRecipients);
+		} catch (WorkflowException e) {
+			LOG.error("directAchEditByVendorNumbers, unable to route edit document.", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected MaintenanceDocument buildEditPayeeACHAccountMaintenanceDocument() {
+		MaintenanceDocument paatDocument = buildPayeeACHAccountMaintenanceDocument();
+		paatDocument.getDocumentHeader().setDocumentDescription("Edit request from PaymentWorks");
+		
+		PayeeACHAccountMaintainableImpl maintainable = (PayeeACHAccountMaintainableImpl) paatDocument.getNewMaintainableObject();
+		maintainable.setMaintenanceAction(KFSConstants.MAINTENANCE_EDIT_ACTION);
+		return paatDocument;
+	}
+
+	protected MaintenanceDocument buildPayeeACHAccountMaintenanceDocument() {
+		try {
+			return (MaintenanceDocument) getDocumentService().getNewDocument(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE);
+		} catch (WorkflowException e) {
+			LOG.error("buildPayeeACHAccountMaintenanceDocument, Unable to create a PAAT Maintenance Document.", e);
+			throw new RuntimeException(e);
+		}
 	}
 	
-	protected boolean validatePayeeAchAccountExistence(PayeeACHAccount payeeAchAccount, String routingNumber, String accountNumber) {
-		boolean valid = true;
-		if (ObjectUtils.isNull(payeeAchAccount) && (StringUtils.isBlank(routingNumber) || StringUtils.isBlank(accountNumber))) {
-			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM,
-					"No existing Payee ACH Account, routing number and account number required");
-			valid = false;
+	protected MaintenanceDocument buildNewPayeeACHAccountMaintenanceDocument() {
+		MaintenanceDocument paatDocument = buildPayeeACHAccountMaintenanceDocument();
+		paatDocument.getDocumentHeader().setDocumentDescription("New request from PaymentWorks");
+		
+		PayeeACHAccountMaintainableImpl maintainable = (PayeeACHAccountMaintainableImpl) paatDocument.getNewMaintainableObject();
+		maintainable.setMaintenanceAction(KFSConstants.MAINTENANCE_NEW_ACTION);
+		return paatDocument;
+	}
+
+	protected String findVendorNumber(String vendorNumber) {
+		LOG.info("findVendorNumber, Starting vendorNumber: " + vendorNumber);
+		if (StringUtils.contains(vendorNumber, "-")) {
+			String newVendNumber = StringUtils.split(vendorNumber, "-")[0];
+			LOG.info("findVendorNumberm, resetting vendor number to " + newVendNumber);
+			vendorNumber = newVendNumber;
 		}
-		return valid;
+		return vendorNumber;
 	}
 	
-	protected boolean validateRoutingNumberAndAccountNumber(String routingNumber, String accountNumber) {
-		boolean valid = true;
-		if (StringUtils.isNotBlank(routingNumber)) {
-			ACHBank achBank = achBankService.getByPrimaryId(routingNumber);
-			if (ObjectUtils.isNull(achBank)) {
-				GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, "ACH Bank does not exist for routing number");
-				valid = false;
-			}
-		} else if (StringUtils.isBlank(accountNumber)) {
-			GlobalVariables.getMessageMap().putError("payeeAchAccount", KFSKeyConstants.ERROR_CUSTOM, "Routing number or account number required");
-			valid = false;
-		}
-		return valid;
-	}
+	protected void addNote(Document document, String noteText) {
+        Note note = new Note();
+        note.setNoteText(noteText);
+        note.setRemoteObjectIdentifier(document.getObjectId());
+        note.setAuthorUniversalIdentifier( GlobalVariables.getUserSession().getPerson().getPrincipalId());
+        note.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
+        note.setNotePostedTimestampToCurrent();
+        document.addNote(note);
+    }
 
 	@Override
 	public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail) {
@@ -361,19 +405,22 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 	}
 
-	protected PayeeACHAccount getActivePayeeAchAccount(String payeeIdentifierTypeCode, String payeeIdNumber,
-			String achTransactionType) {
-
-		Collection<PayeeACHAccount> payeeAchAccounts = null;
-		PayeeACHAccount payeeAchAccount = null;
+	protected PayeeACHAccount getActivePayeeAchAccount(String payeeIdentifierTypeCode, String payeeIdNumber, String achTransactionType) {
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
 		fieldValues.put("payeeIdentifierTypeCode", payeeIdentifierTypeCode);
 		fieldValues.put("payeeIdNumber", payeeIdNumber);
 		fieldValues.put("achTransactionType", achTransactionType);
 		fieldValues.put("active", true);
+		
+		if (LOG.isInfoEnabled()) {
+			LOG.info(new StringBuilder("getActivePayeeAchAccount, search parameters: payeeIdentifierTypeCode ").append(payeeIdentifierTypeCode)
+					.append("  payeeIdNumber ").append(payeeIdNumber).append("  achTransactionType ").append(achTransactionType).toString());
+		}
 
-		payeeAchAccounts = businessObjectService.findMatching(PayeeACHAccount.class, fieldValues);
-
+		Collection<PayeeACHAccount> payeeAchAccounts = businessObjectService.findMatching(PayeeACHAccount.class, fieldValues);
+		
+		PayeeACHAccount payeeAchAccount = null;
+		
 		if (ObjectUtils.isNotNull(payeeAchAccounts) && !payeeAchAccounts.isEmpty()) {
 			payeeAchAccount = payeeAchAccounts.iterator().next();
 		}
@@ -500,6 +547,14 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	public void setPaymentWorksVendorUpdateConversionService(
 			PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
 		this.paymentWorksVendorUpdateConversionService = paymentWorksVendorUpdateConversionService;
+	}
+
+	public SequenceAccessorService getSequenceAccessorService() {
+		return sequenceAccessorService;
+	}
+
+	public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
+		this.sequenceAccessorService = sequenceAccessorService;
 	}
 
 }
