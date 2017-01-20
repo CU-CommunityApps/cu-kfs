@@ -18,7 +18,7 @@
   <bean id="PayeeACHAccountMaintenanceDocument" parent="PayeeACHAccountMaintenanceDocument-parentBean">
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
-    <property name="workflowAttributes" ref="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes"/>
+    <property name="workflowAttributes" ref="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean"/>
   </bean>
 
   <bean parent="DataDictionaryBeanOverride">
@@ -42,8 +42,7 @@
     </property>
   </bean>
   
-  <bean id="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean" abstract="true" 
-  	parent="PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean">
+  <bean id="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean" parent="PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean">
   	<!-- 
   	<property name="routingTypeDefinitions">
    		<map>

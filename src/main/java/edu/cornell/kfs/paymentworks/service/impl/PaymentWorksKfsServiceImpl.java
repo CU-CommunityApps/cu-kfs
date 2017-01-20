@@ -54,6 +54,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.coa.businessobject.options.CUCheckingSavingsValuesFinder;
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksRetrieveNewVendorStep;
 import edu.cornell.kfs.paymentworks.batch.PaymentWorksUploadSuppliersStep;
@@ -229,17 +230,17 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	@Override
 	public boolean directAchEdit(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumberList) {
 		boolean successful = false;
-		String routingNumber = getRoutingNumber(vendorUpdate.getField_changes().getField_changes());
-		String accountNumber = getAccountNumber(vendorUpdate.getField_changes().getField_changes());
-		LOG.debug("directAchEdit  routingNumber: " + routingNumber + "  accountNumber: " + accountNumber);
+		//String routingNumber = findStringValueFromFieldChanges(vendorUpdate.getField_changes().getField_changes(), PaymentWorksConstants.FieldNames.ROUTING_NUMBER);
+		//String accountNumber = findStringValueFromFieldChanges(vendorUpdate.getField_changes().getField_changes(), PaymentWorksConstants.FieldNames.ACCOUNT_NUMBER);
+		//LOG.debug("directAchEdit  routingNumber: " + routingNumber + "  accountNumber: " + accountNumber);
 
 		List<String> vendorNumbers = Arrays.asList(vendorNumberList.split("\\s*,\\s*"));
-		successful = directAchEditByVendorNumbers(vendorUpdate, routingNumber, accountNumber, vendorNumbers);
+		successful = directAchEditByVendorNumbers(vendorUpdate, vendorNumbers);
 
 		return successful;
 	}
 
-	protected boolean directAchEditByVendorNumbers(PaymentWorksVendorUpdatesDTO vendorUpdate, String routingNumber, String accountNumber, List<String> vendorNumbers) {
+	protected boolean directAchEditByVendorNumbers(PaymentWorksVendorUpdatesDTO vendorUpdate, List<String> vendorNumbers) {
 		boolean successful = false;
 		for (String vendorNumber : vendorNumbers) {
 			vendorNumber = findVendorNumber(vendorNumber);
@@ -248,46 +249,52 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 					PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
 			
 			if (ObjectUtils.isNotNull(payeeAchAccount)) {
-				processEditAction(routingNumber, accountNumber, payeeAchAccount);
+				processEditAction(vendorUpdate, payeeAchAccount);
 			} else {
-				processNewAction(routingNumber, accountNumber, vendorNumber);
+				processNewAction(vendorUpdate, vendorNumber);
 			}
 		}
 		return successful;
 	}
 
-	protected void processNewAction(String routingNumber, String accountNumber, String vendorNumber) {
+	protected void processNewAction(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumber) {
 		MaintenanceDocument paatDocument = buildNewPayeeACHAccountMaintenanceDocument();
-		PayeeACHAccount achAccount = (PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject();
+		PayeeACHAccount payeeACHAccount = (PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject();
 		
-		achAccount.setPayeeIdNumber(vendorNumber);
-		achAccount.setPayeeIdentifierTypeCode(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
-		achAccount.setAchAccountGeneratedIdentifier(
+		payeeACHAccount.setPayeeIdNumber(vendorNumber);
+		payeeACHAccount.setPayeeIdentifierTypeCode(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
+		payeeACHAccount.setAchAccountGeneratedIdentifier(
 		        new KualiInteger(getSequenceAccessorService().getNextAvailableSequenceNumber(PdpConstants.ACH_ACCOUNT_IDENTIFIER_SEQUENCE_NAME)));
-		achAccount.setAchTransactionType(PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
-		achAccount.setBankRoutingNumber(routingNumber);
-		achAccount.setBankAccountNumber(accountNumber);
-		//achAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
-		//if (StringUtils.isNotBlank(payee.getNameUnmasked())) {
-		//    achAccount.setPayeeName(payee.getNameUnmasked());
-         // }
-		//if (StringUtils.isNotBlank(payee.getEmailAddressUnmasked())) {
-		  //  achAccount.setPayeeEmailAddress(payee.getEmailAddressUnmasked());
-		//}
-		achAccount.setActive(true);
+		payeeACHAccount.setAchTransactionType(PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
+		
+		/**
+		 * @todo, eventualy we will be able to set this value from paymentwords, to move forward with testing, 
+		 * we are setting this to corporate checking 
+		 */
+		payeeACHAccount.setBankAccountTypeCode(CUCheckingSavingsValuesFinder.BANK_ACCOUNT_TYPES.CORPORATE_CHECKING);
+		
+		payeeACHAccount.setActive(true);
+		
+		List<PaymentWorksFieldChangeDTO> fieldChanges = vendorUpdate.getField_changes().getField_changes();
+		payeeACHAccount.setBankRoutingNumber(findStringValueFromFieldChanges(fieldChanges, PaymentWorksConstants.FieldNames.ROUTING_NUMBER));
+		payeeACHAccount.setBankAccountNumber(findStringValueFromFieldChanges(fieldChanges, PaymentWorksConstants.FieldNames.ACCOUNT_NUMBER));
+		payeeACHAccount.setPayeeEmailAddress(findStringValueFromFieldChanges(fieldChanges, PaymentWorksConstants.FieldNames.ACH_EMAIL));
+		
+		
 		
 		addNote(paatDocument, "Automatically generated by PaymentWorks");
 		List<AdHocRouteRecipient> adHocRoutingRecipients = null;
 		String annotation = "New ACH from PaymentWorks";
 		try {
-			getDocumentService().routeDocument(paatDocument, annotation, adHocRoutingRecipients);
+			//getDocumentService().routeDocument(paatDocument, annotation, adHocRoutingRecipients);
+			getDocumentService().saveDocument(paatDocument);
 		} catch (WorkflowException e) {
 			LOG.error("directAchEditByVendorNumbers, unable to route new document.", e);
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected void processEditAction(String routingNumber, String accountNumber, PayeeACHAccount payeeAchAccount) {
+	protected void processEditAction(PaymentWorksVendorUpdatesDTO vendorUpdate, PayeeACHAccount payeeAchAccount) {
 		MaintenanceDocument paatDocument = buildEditPayeeACHAccountMaintenanceDocument();
 		
 		paatDocument.getOldMaintainableObject().setBusinessObject(payeeAchAccount);
@@ -296,8 +303,10 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		
 		paatDocument.getNewMaintainableObject().setBusinessObject(payeeAccountToUpdate);
 		
-		payeeAccountToUpdate.setBankRoutingNumber(routingNumber);
-		payeeAccountToUpdate.setBankAccountNumber(accountNumber);
+		List<PaymentWorksFieldChangeDTO> fieldChanges = vendorUpdate.getField_changes().getField_changes();
+		payeeAccountToUpdate.setBankRoutingNumber(findStringValueFromFieldChanges(fieldChanges, PaymentWorksConstants.FieldNames.ROUTING_NUMBER));
+		payeeAccountToUpdate.setBankAccountNumber(findStringValueFromFieldChanges(fieldChanges, PaymentWorksConstants.FieldNames.ACCOUNT_NUMBER));
+		payeeAccountToUpdate.setPayeeEmailAddress(findStringValueFromFieldChanges(fieldChanges, PaymentWorksConstants.FieldNames.ACH_EMAIL));
 		
 		
 		addNote(paatDocument, "Automatically generated by PaymentWorks");
@@ -427,27 +436,21 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 		return payeeAchAccount;
 	}
-
-	protected String getRoutingNumber(List<PaymentWorksFieldChangeDTO> fieldChanges) {
-		String routingNumber = null;
+	
+	protected String findStringValueFromFieldChanges(List<PaymentWorksFieldChangeDTO> fieldChanges, String fieldName) {
+		String fieldValue = null;
+		boolean foundValue = false;
 		for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges) {
-			if (fieldChange.getField_name().equals(PaymentWorksConstants.FieldNames.ROUTING_NUMBER)) {
-				routingNumber = fieldChange.getTo_value();
+			if (fieldChange.getField_name().equals(fieldName)) {
+				fieldValue = fieldChange.getTo_value();
+				foundValue = true;
 				break;
 			}
 		}
-		return routingNumber;
-	}
-
-	protected String getAccountNumber(List<PaymentWorksFieldChangeDTO> fieldChanges) {
-		String accountNumber = null;
-		for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges) {
-			if (fieldChange.getField_name().equals(PaymentWorksConstants.FieldNames.ACCOUNT_NUMBER)) {
-				accountNumber = fieldChange.getTo_value();
-				break;
-			}
+		if (!foundValue) {
+			LOG.error("findStringValueFromFieldChanges, unable to find a value for " + fieldName);
 		}
-		return accountNumber;
+		return fieldValue;
 	}
 
 	protected boolean checkForLockingDocument(MaintenanceDocument document) {

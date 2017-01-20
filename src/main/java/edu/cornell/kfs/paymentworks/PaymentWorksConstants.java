@@ -45,6 +45,7 @@ public class PaymentWorksConstants {
 	public static class FieldNames {
 		public static final String ROUTING_NUMBER = "Routing num";
 		public static final String ACCOUNT_NUMBER = "Acct num";
+		public static final String ACH_EMAIL = "ACH Email";
 	}
 
 	public static class PaymentWorksParameters {

@@ -27,6 +27,13 @@ import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
  */
 @SuppressWarnings("serial")
 public class CUCheckingSavingsValuesFinder extends KeyValuesBase {
+	
+	public static final class BANK_ACCOUNT_TYPES {
+		public static final String PERSONAL_CHECKING = "22PPD";
+		public static final String PERSONAL_SAVINGS = "32PPD";
+		public static final String CORPORATE_CHECKING = "22CTX";
+		public static final String CORPORATE_SAVINGS = "32CTX";
+	}
 
     /**
      * Creates a simple list of static values for either checking or savings
@@ -35,10 +42,10 @@ public class CUCheckingSavingsValuesFinder extends KeyValuesBase {
      */
     public List<KeyValue> getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();
-        keyValues.add(new ConcreteKeyValue("22PPD", "Personal Checking (22PPD)"));
-        keyValues.add(new ConcreteKeyValue("32PPD", "Personal Savings (32PPD)"));
-        keyValues.add(new ConcreteKeyValue("22CTX", "Corporate Checking (22CTX)"));
-        keyValues.add(new ConcreteKeyValue("32CTX", "Corporate Savings (32CTX)"));
+        keyValues.add(new ConcreteKeyValue(BANK_ACCOUNT_TYPES.PERSONAL_CHECKING, "Personal Checking (" + BANK_ACCOUNT_TYPES.PERSONAL_CHECKING +  ")"));
+        keyValues.add(new ConcreteKeyValue(BANK_ACCOUNT_TYPES.PERSONAL_SAVINGS, "Personal Savings (" + BANK_ACCOUNT_TYPES.PERSONAL_SAVINGS +  ")"));
+        keyValues.add(new ConcreteKeyValue(BANK_ACCOUNT_TYPES.CORPORATE_CHECKING, "Corporate Checking (" + BANK_ACCOUNT_TYPES.CORPORATE_CHECKING +  ")"));
+        keyValues.add(new ConcreteKeyValue(BANK_ACCOUNT_TYPES.CORPORATE_SAVINGS, "Corporate Savings (" + BANK_ACCOUNT_TYPES.CORPORATE_SAVINGS +  ")"));
         return keyValues;
     }
 

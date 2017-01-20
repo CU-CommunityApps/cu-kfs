@@ -188,6 +188,7 @@
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="paymentWorksAchService" ref="paymentWorksAchService" />
 		<property name="paymentWorksVendorUpdateConversionService" ref="paymentWorksVendorUpdateConversionService" />
+		<property name="sequenceAccessorService" ref="sequenceAccessorService" />
 	</bean>
 	
 	<bean id="paymentWorksNewVendorConversionService" parent="paymentWorksNewVendorConversionService-parentBean" />
