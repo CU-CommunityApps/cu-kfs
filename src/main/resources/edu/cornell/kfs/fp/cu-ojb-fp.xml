@@ -668,6 +668,7 @@
     <field-descriptor name="displayOnDisbursementVoucherDocument" column="dv_display_ind"     jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="displayOnVendorDocument"              column="vendor_display_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     <field-descriptor name="active"                     column="active_ind" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     <reference-descriptor name="bank" class-ref="org.kuali.kfs.sys.businessobject.Bank" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="bankCode" />
     </reference-descriptor>
@@ -1083,6 +1084,7 @@
     <field-descriptor name="projectCode" column="PROJECT_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="organizationReferenceId" column="ORG_REF_ID" jdbc-type="VARCHAR" />
     <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
     <reference-descriptor name="chartOfAccounts" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="chartOfAccountsCode" />

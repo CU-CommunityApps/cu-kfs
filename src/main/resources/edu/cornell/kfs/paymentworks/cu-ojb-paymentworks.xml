@@ -132,6 +132,7 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="paymentWorksFieldName" column="PMW_FIELD" jdbc-type="VARCHAR" />
     <field-descriptor name="kfsFieldName" column="KFS_FIELD" jdbc-type="VARCHAR" />
+    <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 </class-descriptor>
 
 </descriptor-repository>

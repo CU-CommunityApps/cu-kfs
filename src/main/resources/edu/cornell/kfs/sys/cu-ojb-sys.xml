@@ -142,6 +142,7 @@
     	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
     	<field-descriptor name="userProfileId" column="USER_PROFILE_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="CU_USER_PROFILE_ID_SEQ"/>
     	<field-descriptor name="principalId" column="PRINCIPAL_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
         <collection-descriptor name="favoriteAccounts" proxy="true" element-class-ref="edu.cornell.kfs.sys.businessobject.FavoriteAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
             <inverse-foreignkey field-ref="userProfileId" />
         </collection-descriptor>
