@@ -18,6 +18,7 @@ import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 
 @Path("/validate")
 public class ConcurAccountValidationResource {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccountValidationResource.class);
     protected static volatile ConcurEventNotificationConversionService concurEventNotificationConversionService;
     protected static volatile ConcurEventNotificationService concurEventNotificationService;
     
@@ -28,6 +29,7 @@ public class ConcurAccountValidationResource {
         try {
             concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
         } catch (ParseException e) {
+            LOG.error("validate():" + e.getMessage(), e);
             throw new BadRequestException();
         }
         getConcurEventNotificationService().saveConcurEventNotification(concurEventNotification);
