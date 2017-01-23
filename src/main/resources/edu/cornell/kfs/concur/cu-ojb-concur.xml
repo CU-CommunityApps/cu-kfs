@@ -26,6 +26,7 @@
     <field-descriptor name="eventDateTime" column="EVNT_DT" jdbc-type="DATE" />
     <field-descriptor name="eventType" column="EVNT_TYP" jdbc-type="VARCHAR" />
     <field-descriptor name="objectURI" column="OBJ_URI" jdbc-type="VARCHAR" /> 
+    <field-descriptor name="notificationURI" column="NTFCTN_URI" jdbc-type="VARCHAR" /> 
     <field-descriptor name="inProcess" column="IN_PRCSS" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
     <field-descriptor name="processed" column="PRCSSD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 
     <field-descriptor name="validationResult" column="VLDTN_RSLT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" /> 

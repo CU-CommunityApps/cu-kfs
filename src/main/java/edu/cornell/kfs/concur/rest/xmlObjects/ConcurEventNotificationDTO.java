@@ -1,17 +1,19 @@
 package edu.cornell.kfs.concur.rest.xmlObjects;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Notification")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class ConcurEventNotificationDTO {
     @XmlElement(name = "Context")
     private String context;
     @XmlElement(name = "EventDateTime")
-    private String eventDateTime;
+    private Date eventDateTime;
     @XmlElement(name = "EventType")
     private String eventType;
     @XmlElement(name = "ObjectType")
@@ -20,7 +22,7 @@ public class ConcurEventNotificationDTO {
     private String objectURI;
     @XmlElement(name = "NotificationURI")
     private String notificationURI;
-
+    
     public String getContext() {
         return context;
     }
@@ -29,11 +31,11 @@ public class ConcurEventNotificationDTO {
         this.context = context;
     }
 
-    public String getEventDateTime() {
+    public Date getEventDateTime() {
         return eventDateTime;
     }
 
-    public void setEventDateTime(String eventDateTime) {
+    public void setEventDateTime(Date eventDateTime) {
         this.eventDateTime = eventDateTime;
     }
 

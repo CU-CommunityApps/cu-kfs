@@ -15,7 +15,9 @@ public class ConcurEventNotificationConversionServiceImpl implements ConcurEvent
     public ConcurEventNotification convertConcurEventNotification(ConcurEventNotificationDTO concurEventNotificationDTO) throws ParseException {
         ConcurEventNotification concurEventNotification = new ConcurEventNotification();
         concurEventNotification.setContext(concurEventNotificationDTO.getContext());
-        concurEventNotification.setEventDateTime(dateTimeService.convertToSqlDate(concurEventNotificationDTO.getEventDateTime()));
+        if(concurEventNotificationDTO.getEventDateTime() != null){
+            concurEventNotification.setEventDateTime(new java.sql.Date(concurEventNotificationDTO.getEventDateTime().getTime()));
+        }
         concurEventNotification.setEventType(concurEventNotificationDTO.getEventType());
         concurEventNotification.setObjectType(concurEventNotificationDTO.getObjectType());
         concurEventNotification.setObjectURI(concurEventNotificationDTO.getObjectURI());
