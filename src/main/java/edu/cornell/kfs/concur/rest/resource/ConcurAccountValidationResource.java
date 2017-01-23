@@ -29,7 +29,7 @@ public class ConcurAccountValidationResource {
         try {
             concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
         } catch (ParseException e) {
-            LOG.error(e.getMessage());
+            LOG.error("validate():" + e.getMessage(), e);
             throw new BadRequestException();
         }
         getConcurEventNotificationService().saveConcurEventNotification(concurEventNotification);
