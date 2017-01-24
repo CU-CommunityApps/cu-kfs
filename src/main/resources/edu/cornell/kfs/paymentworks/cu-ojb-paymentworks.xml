@@ -127,8 +127,8 @@
 </class-descriptor>
 
 <class-descriptor class="edu.cornell.kfs.paymentworks.businessobject.PaymentWorksFieldMapping" table="CU_PAYMENT_WORKS_FLD_MAP_T">
-	<field-descriptor name="paymentWorksFieldMappingId" column="ID" jdbc-type="BIGINT" primarykey="true" />
-	<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="paymentWorksFieldMappingId" column="ID" jdbc-type="BIGINT" primarykey="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="paymentWorksFieldName" column="PMW_FIELD" jdbc-type="VARCHAR" />
     <field-descriptor name="kfsFieldName" column="KFS_FIELD" jdbc-type="VARCHAR" />
