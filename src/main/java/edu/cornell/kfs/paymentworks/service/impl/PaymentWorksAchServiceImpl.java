@@ -109,20 +109,29 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	@Override
 	public boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates) {
 		boolean routed = false;
+		boolean hasErrors = false;
 		for (PaymentWorksVendorUpdatesDTO vendorUpdate : achUpdates) {
-			LOG.info("processACHUpdates, prociessing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
-			if (!getPaymentWorksVendorService().isExistingPaymentWorksVendor(vendorUpdate.getId(), PaymentWorksConstants.TransactionType.ACH_UPDATE)) {
-				LOG.info("processACHUpdates is NOT an existing payment works vendor request for " + vendorUpdate.getId() + ", will process");
-				try {
-					routed = processSingleACHUpdate(vendorUpdate) && routed;
-				} catch (Exception e) {
-					LOG.error("Error processing ACH update (" + vendorUpdate.getId() + "): " + e.getMessage());
-					routed = false;
-					GlobalVariables.getMessageMap().clearErrorMessages();
+			try {
+				LOG.info("processACHUpdates, prociessing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
+				if (!getPaymentWorksVendorService().isExistingPaymentWorksVendor(vendorUpdate.getId(), PaymentWorksConstants.TransactionType.ACH_UPDATE)) {
+					LOG.info("processACHUpdates is NOT an existing payment works vendor request for " + vendorUpdate.getId() + ", will process");
+					try {
+						routed = processSingleACHUpdate(vendorUpdate) && routed;
+					} catch (Exception e) {
+						LOG.error("Error processing ACH update (" + vendorUpdate.getId() + "): " + e.getMessage());
+						routed = false;
+						GlobalVariables.getMessageMap().clearErrorMessages();
+					}
+				} else {
+					LOG.info("processACHUpdates, There is an existing request with the ID of " + vendorUpdate.getId() + " so won't process");
 				}
-			} else {
-				LOG.info("processACHUpdates, There is an existing request with the ID of " + vendorUpdate.getId() + " so won't process");
+			} catch (Exception e) {
+				hasErrors = true;
+				LOG.error("processACHUpdates, There was error processing vendor update with ID of " + vendorUpdate.getId(), e);
 			}
+		}
+		if (hasErrors) {
+			throw new RuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
 		}
 		return routed;
 	}
@@ -140,16 +149,16 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 		}
 
 		if (routed) {
-			processVendor(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
+			updateVendorRequestStatus(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
 					PaymentWorksConstants.PaymentWorksStatusText.PROCESSED, PaymentWorksConstants.ProcessStatus.ACH_UPDATE_COMPLETE, routed);
 		} else {
-			processVendor(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
+			updateVendorRequestStatus(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
 					PaymentWorksConstants.PaymentWorksStatusText.PROCESSED, PaymentWorksConstants.ProcessStatus.ACH_UPDATE_REJECTED, routed);
 		}
 		return routed;
 	}
 	
-	protected void processVendor(PaymentWorksVendor paymentWorksNewVendor, String requestStatus,
+	protected void updateVendorRequestStatus(PaymentWorksVendor paymentWorksNewVendor, String requestStatus,
 			String requestStatusText, String processStatus, boolean routed) {
 		paymentWorksNewVendor.setRequestStatus(requestStatusText);
 		paymentWorksNewVendor.setProcessStatus(processStatus);

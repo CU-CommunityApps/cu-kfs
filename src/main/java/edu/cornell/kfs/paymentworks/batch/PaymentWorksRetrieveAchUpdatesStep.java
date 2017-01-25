@@ -56,7 +56,7 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 		List<PaymentWorksVendorUpdatesDTO> pendingACHUpdates = getPaymentWorksWebService().getPendingAchUpdatesFromPaymentWorks();
 		LOG.info("execute, number of ACH Updates retrieved: " + pendingACHUpdates.size());
 		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates);
-		LOG.debug("execute, were all the changes routed:  + routed");
+		LOG.debug("execute, were all the changes routed: " + routed);
 		return routed;
 	}
 
