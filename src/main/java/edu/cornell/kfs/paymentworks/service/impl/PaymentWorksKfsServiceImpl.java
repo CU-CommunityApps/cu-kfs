@@ -414,7 +414,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 
 	}
 
-	protected PayeeACHAccount getActivePayeeAchAccount(String payeeIdentifierTypeCode, String payeeIdNumber, String achTransactionType) {
+	protected PayeeACHAccount getActivePayeeAchAccount  (String payeeIdentifierTypeCode, String payeeIdNumber, String achTransactionType) {
 		Map<String, Object> fieldValues = new HashMap<String, Object>();
 		fieldValues.put("payeeIdentifierTypeCode", payeeIdentifierTypeCode);
 		fieldValues.put("payeeIdNumber", payeeIdNumber);

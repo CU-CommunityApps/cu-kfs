@@ -11,15 +11,14 @@
       <routingVersion>2</routingVersion>
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="pdpProcessorRole"/>
-          <requests name="pdpProcessorRole" />
+          <start name="AdHoc" nextNode="pdpProcessor"/>
+          <role name="pdpProcessor" />
         </routePath>
       </routePaths>
       <routeNodes>
         <start name="AdHoc"/>
-        <role name="pdpProcessorRole">
+        <role name="pdpProcessor">
 			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-			<activationType>P</activationType>
 		</role>
       </routeNodes>
     </documentType>

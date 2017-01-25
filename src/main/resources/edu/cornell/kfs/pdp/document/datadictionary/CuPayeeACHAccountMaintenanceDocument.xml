@@ -18,8 +18,6 @@
   <bean id="PayeeACHAccountMaintenanceDocument" parent="PayeeACHAccountMaintenanceDocument-parentBean">
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
-    <property name="workflowAttributes" ref="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean"/>
-    <property name="businessRulesClass" value="edu.cornell.kfs.pdp.document.validation.impl.CUPayeeAchAccountRule"/>
   </bean>
 
   <bean parent="DataDictionaryBeanOverride">
@@ -42,23 +40,4 @@
       </list>
     </property>
   </bean>
-  
-  <bean id="CU-PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean" parent="PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean">
-  	<!-- 
-  	<property name="routingTypeDefinitions">
-   		<map>
-   			<entry key="pdpProcessorRole" value-ref="CU-PayeeACHAccountMaintenanceDocument-RoutingType-pdpProcessorRole"/>
-   		</map>
-     </property>
-      -->
-  </bean>
-
-<!--   
-  <bean id="CU-PayeeACHAccountMaintenanceDocument-RoutingType-pdpProcessorRole" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
-    	<property name="routingAttributes">						 
-    		<list>
-    		</list>
-    	</property>
-    </bean>
-   -->
 </beans>
