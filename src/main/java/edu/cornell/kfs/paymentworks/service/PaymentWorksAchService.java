@@ -25,5 +25,11 @@ public interface PaymentWorksAchService {
 	 */
 	PayeeACHAccount createPayeeAchAccount(PayeeACHAccount payeeAchAccountOld, String routingNumber, String accountNumber);
 	
+	/**
+	 * Creates maintenance documents and routes them for the update to Payee ACH Account objects.
+	 * @param achUpdates
+	 * @param hasErrors
+	 * @return
+	 */
 	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, boolean hasErrors);
 }
