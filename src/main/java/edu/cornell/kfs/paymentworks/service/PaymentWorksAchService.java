@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 
+import edu.cornell.kfs.paymentworks.PaymentWorksVendorUpdateResults;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public interface PaymentWorksAchService {
@@ -28,8 +29,8 @@ public interface PaymentWorksAchService {
 	/**
 	 * Creates maintenance documents and routes them for the update to Payee ACH Account objects.
 	 * @param achUpdates
-	 * @param hasErrors
+	 * @param resultsDTO TODO
 	 * @return
 	 */
-	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, boolean hasErrors);
+	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, PaymentWorksVendorUpdateResults resultsDTO);
 }

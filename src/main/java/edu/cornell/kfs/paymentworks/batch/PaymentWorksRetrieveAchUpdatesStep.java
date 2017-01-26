@@ -31,6 +31,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
+import edu.cornell.kfs.paymentworks.PaymentWorksVendorUpdateResults;
 import edu.cornell.kfs.paymentworks.batch.report.AchUpdateSummary;
 import edu.cornell.kfs.paymentworks.batch.report.AchUpdateSummaryLine;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
@@ -55,9 +56,9 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 		boolean routed = false;
 		List<PaymentWorksVendorUpdatesDTO> pendingACHUpdates = getPaymentWorksWebService().getPendingAchUpdatesFromPaymentWorks();
 		LOG.info("execute, number of ACH Updates retrieved: " + pendingACHUpdates.size());
-		boolean hasErrors = false;
-		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates, hasErrors);
-		if (hasErrors) {
+		PaymentWorksVendorUpdateResults resultsDTO = new PaymentWorksVendorUpdateResults();
+		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates, resultsDTO);
+		if (resultsDTO.isHasErrors()) {
 			throw new RuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
 		}
 		LOG.debug("execute, were all the changes routed: " + routed);
