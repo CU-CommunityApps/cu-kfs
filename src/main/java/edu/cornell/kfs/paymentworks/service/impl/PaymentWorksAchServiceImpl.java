@@ -50,7 +50,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	private static final String ROW_FORMAT_EDIT_SUMMARY = "%-15s %-30s %-20s";
 	private static final String ROW_FORMAT_REJECT_SUMMARY = ROW_FORMAT_EDIT_SUMMARY + " %s";
 	
-	private class HEADER_ARGUMENTS {
+	private class HeaderArguments {
 		private static final String ERROR_MESSAGE = "Error Msg";
 		private static final String VENDOR_NUMBERS = "Vendor Number(s)";
 		private static final String VENDOR_NAME = "Vendor Name";
@@ -112,7 +112,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	public boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, PaymentWorksVendorUpdateResults resultsDTO) {
 		boolean routed = false;
 		for (PaymentWorksVendorUpdatesDTO vendorUpdate : achUpdates) {
-			LOG.info("processACHUpdates, prociessing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
+			LOG.info("processACHUpdates, processing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
 			if (!getPaymentWorksVendorService().isExistingPaymentWorksVendor(vendorUpdate.getId(), PaymentWorksConstants.TransactionType.ACH_UPDATE)) {
 				LOG.info("processACHUpdates is NOT an existing payment works vendor request for " + vendorUpdate.getId() + ", will process");
 				routed = processSingleACHUpdate(vendorUpdate, resultsDTO) && routed;
@@ -210,7 +210,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	}
 	
 	protected void writeAchUpdateEditSummaryDetailRecords(String subtitle, List<AchUpdateSummaryLine> records) {
-		Object[] headerArgs = {HEADER_ARGUMENTS.VENDOR_REQUEST_ID, HEADER_ARGUMENTS.VENDOR_NAME, HEADER_ARGUMENTS.VENDOR_NUMBERS};
+		Object[] headerArgs = {HeaderArguments.VENDOR_REQUEST_ID, HeaderArguments.VENDOR_NAME, HeaderArguments.VENDOR_NUMBERS};
 		boolean firstPage = true;
 
 		for (AchUpdateSummaryLine vendorUpdateSummaryLine : records) {
@@ -233,7 +233,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	}
 	
 	protected void writeAchUpdateRejectedSummaryDetailRecords(String subtitle, List<AchUpdateSummaryLine> records) {
-		Object[] headerArgs = {HEADER_ARGUMENTS.VENDOR_REQUEST_ID, HEADER_ARGUMENTS.VENDOR_NAME, HEADER_ARGUMENTS.VENDOR_NUMBERS, HEADER_ARGUMENTS.ERROR_MESSAGE};
+		Object[] headerArgs = {HeaderArguments.VENDOR_REQUEST_ID, HeaderArguments.VENDOR_NAME, HeaderArguments.VENDOR_NUMBERS, HeaderArguments.ERROR_MESSAGE};
 		boolean firstPage = true;
 
 		for (AchUpdateSummaryLine vendorUpdateSummaryLine : records) {
