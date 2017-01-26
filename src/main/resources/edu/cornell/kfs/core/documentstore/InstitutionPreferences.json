@@ -2621,11 +2621,11 @@
    "menu": [
     {
       "label": "Feedback",
-      "link": "kr/kualiFeedbackReport.do"
+      "link": "/kfs/kr/kualiFeedbackReport.do"
     },
     {
       "label": "Help",
-      "link": "static/help/default.htm"
+      "link": "/kfs/static/help/default.htm"
     },
     {
       "label": "KFS Help",
