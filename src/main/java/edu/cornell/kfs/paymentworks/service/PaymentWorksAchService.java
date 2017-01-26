@@ -29,7 +29,7 @@ public interface PaymentWorksAchService {
 	/**
 	 * Creates maintenance documents and routes them for the update to Payee ACH Account objects.
 	 * @param achUpdates
-	 * @param resultsDTO TODO
+	 * @param resultsDTO
 	 * @return
 	 */
 	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, PaymentWorksVendorUpdateResults resultsDTO);

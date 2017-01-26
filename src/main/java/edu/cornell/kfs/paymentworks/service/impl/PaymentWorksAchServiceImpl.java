@@ -139,7 +139,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 			resultsDTO.setHasErrors(true);
 			GlobalVariables.getMessageMap().clearErrorMessages();
 			GlobalVariables.getMessageMap().clearErrorPath();
-			LOG.error("processSingleACHUpdate, There was error processing vendor update with ID of " + vendorUpdate.getId() + " because " + e.getMessage());
+			LOG.error("processSingleACHUpdate, There was error processing vendor update with ID of " + vendorUpdate.getId() + " because " + e.getMessage(), e);
 		}
 		if (routed) {
 			updateVendorRequestStatus(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
