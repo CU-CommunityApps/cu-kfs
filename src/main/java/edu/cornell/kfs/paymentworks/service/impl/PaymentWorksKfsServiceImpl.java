@@ -244,7 +244,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 			vendorNumber = findVendorNumber(vendorNumber);
 			
 			PayeeACHAccount payeeAchAccount = getPayeeAchAccount(PdpConstants.PayeeIdTypeCodes.VENDOR_ID, vendorNumber, 
-					PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
+					PaymentWorksConstants.PAYEE_ACH_ACCOUNT_DEFAULT_TRANSACTION_TYPE);
 			
 			if (ObjectUtils.isNotNull(payeeAchAccount)) {
 				processEditAction(vendorUpdate, payeeAchAccount);
@@ -264,7 +264,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		payeeACHAccount.setPayeeIdentifierTypeCode(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 		payeeACHAccount.setAchAccountGeneratedIdentifier(
 		        new KualiInteger(getSequenceAccessorService().getNextAvailableSequenceNumber(PdpConstants.ACH_ACCOUNT_IDENTIFIER_SEQUENCE_NAME)));
-		payeeACHAccount.setAchTransactionType(PaymentWorksConstants.PAYEE_ACH_ACCOUNT_TRANSACTION_TYPE);
+		payeeACHAccount.setAchTransactionType(PaymentWorksConstants.PAYEE_ACH_ACCOUNT_DEFAULT_TRANSACTION_TYPE);
 		
 		setValuesFromPaymentWorks(vendorUpdate, payeeACHAccount);
 		
