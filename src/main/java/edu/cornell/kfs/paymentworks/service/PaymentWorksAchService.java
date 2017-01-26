@@ -25,5 +25,5 @@ public interface PaymentWorksAchService {
 	 */
 	PayeeACHAccount createPayeeAchAccount(PayeeACHAccount payeeAchAccountOld, String routingNumber, String accountNumber);
 	
-	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates);
+	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, boolean hasErrors);
 }

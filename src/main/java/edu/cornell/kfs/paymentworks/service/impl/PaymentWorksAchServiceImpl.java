@@ -28,6 +28,7 @@ import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -107,47 +108,38 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 	}
 	
 	@Override
-	public boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates) {
+	public boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, boolean hasErrors) {
 		boolean routed = false;
-		boolean hasErrors = false;
 		for (PaymentWorksVendorUpdatesDTO vendorUpdate : achUpdates) {
-			try {
-				LOG.info("processACHUpdates, prociessing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
-				if (!getPaymentWorksVendorService().isExistingPaymentWorksVendor(vendorUpdate.getId(), PaymentWorksConstants.TransactionType.ACH_UPDATE)) {
-					LOG.info("processACHUpdates is NOT an existing payment works vendor request for " + vendorUpdate.getId() + ", will process");
-					try {
-						routed = processSingleACHUpdate(vendorUpdate) && routed;
-					} catch (Exception e) {
-						LOG.error("Error processing ACH update (" + vendorUpdate.getId() + "): " + e.getMessage());
-						routed = false;
-						GlobalVariables.getMessageMap().clearErrorMessages();
-					}
-				} else {
-					LOG.info("processACHUpdates, There is an existing request with the ID of " + vendorUpdate.getId() + " so won't process");
-				}
-			} catch (Exception e) {
-				hasErrors = true;
-				LOG.error("processACHUpdates, There was error processing vendor update with ID of " + vendorUpdate.getId(), e);
+			LOG.info("processACHUpdates, prociessing " + vendorUpdate.getVendor_name() + " with an ID of " + vendorUpdate.getId());
+			if (!getPaymentWorksVendorService().isExistingPaymentWorksVendor(vendorUpdate.getId(), PaymentWorksConstants.TransactionType.ACH_UPDATE)) {
+				LOG.info("processACHUpdates is NOT an existing payment works vendor request for " + vendorUpdate.getId() + ", will process");
+				routed = processSingleACHUpdate(vendorUpdate, hasErrors) && routed;
+			} else {
+				LOG.info("processACHUpdates, There is an existing request with the ID of " + vendorUpdate.getId() + " so won't process");
 			}
-		}
-		if (hasErrors) {
-			throw new RuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
 		}
 		return routed;
 	}
 
-	protected boolean processSingleACHUpdate(PaymentWorksVendorUpdatesDTO vendorUpdate) {
+	protected boolean processSingleACHUpdate(PaymentWorksVendorUpdatesDTO vendorUpdate, boolean hasErrors) {
 		boolean routed;
 		PaymentWorksVendor paymentWorksVendor = getPaymentWorksVendorService().savePaymentWorksVendorRecord(
 				vendorUpdate, PaymentWorksConstants.ProcessStatus.ACH_UPDATE_COMPLETE, PaymentWorksConstants.TransactionType.ACH_UPDATE);
-
-		if (ObjectUtils.isNotNull(vendorUpdate.getField_changes().getField_changes())) {
-			routed = getPaymentWorksKfsService().directAchEdit(vendorUpdate, paymentWorksVendor.getVendorNumberList());
-		} else {
-			GlobalVariables.getMessageMap().putError("vendorRequestId", KFSKeyConstants.ERROR_CUSTOM, "No field changes provided by PaymentWorks");
+		
+		try {
+			if (ObjectUtils.isNotNull(vendorUpdate.getField_changes().getField_changes())) {
+				routed = getPaymentWorksKfsService().directAchEdit(vendorUpdate, paymentWorksVendor.getVendorNumberList());
+			} else {
+				throw new ValidationException("No field changes provided by PaymentWorks");
+			}
+		} catch (Exception e) {
+			hasErrors = true;
 			routed = false;
+			GlobalVariables.getMessageMap().clearErrorMessages();
+			GlobalVariables.getMessageMap().clearErrorPath();
+			LOG.error("processSingleACHUpdate, There was error processing vendor update with ID of " + vendorUpdate.getId() + " because " + e.getMessage());
 		}
-
 		if (routed) {
 			updateVendorRequestStatus(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
 					PaymentWorksConstants.PaymentWorksStatusText.PROCESSED, PaymentWorksConstants.ProcessStatus.ACH_UPDATE_COMPLETE, routed);
@@ -155,6 +147,8 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 			updateVendorRequestStatus(paymentWorksVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
 					PaymentWorksConstants.PaymentWorksStatusText.PROCESSED, PaymentWorksConstants.ProcessStatus.ACH_UPDATE_REJECTED, routed);
 		}
+		
+		LOG.debug("processSingleACHUpdate, returning " + routed);
 		return routed;
 	}
 	
@@ -175,7 +169,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
 		updateNewVendorStatus.setId(new Integer(vendorRequestId));
 		updateNewVendorStatus.setStatus(new Integer(requestStatus));
 		updateNewVendorStatusList.add(updateNewVendorStatus);
-		getPaymentWorksWebService().updateVendorUpdatesStatusInPaymentWorks(updateNewVendorStatusList);
+		getPaymentWorksWebService().updateExistingVendorUpdatesStatusInPaymentWorks(updateNewVendorStatusList);
 	}
 	
 	protected void addSummaryLine(PaymentWorksVendor paymentWorksVendor, boolean approved) {

@@ -315,27 +315,27 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 	}
 
 	@Override
-	public void updateVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
+	public void updateNewVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
+		updateVendorStatus(paymentWorksUpdateVendorStatus, NEW_VENDOR_REQUEST_UPDATE_STATUS);
+	}
+	
+	@Override
+	public void updateExistingVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
+		updateVendorStatus(paymentWorksUpdateVendorStatus, VENDOR_UPDATES_UPDATE_STATUS);
+	}
+	
+	protected void updateVendorStatus (List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus, String updateURLSection) {
 		String jsonString = getPaymentWorksUtilityService().pojoToJsonString(paymentWorksUpdateVendorStatus);
-		LOG.info("updateVendorUpdatesStatusInPaymentWorks, the jsonString = " + jsonString);
-		
-		LOG.error("calling the web service is temporarily disabled");
-		 /**
-		  * @todo re-enable this
-		  */
-		
-		/*
 		Client client = buildClient();
-		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_UPDATE_STATUS)).toString();
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(updateURLSection)).toString();
 		ClientResponse response = client.handle(buildClientRequest(URL, jsonString));
 
 		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
-			LOG.debug("Vendor Update status updated");
+			LOG.debug("updateVendorStatus, Vendor Update status updated");
 		} else {
-			LOG.error("Failed to update Vendor Update status: " + response.getEntity(String.class));
+			LOG.error("updateVendorStatus, Failed to update Vendor Update status: " + response.getEntity(String.class));
 			throw new RuntimeException("Unable to update vendor status in PaymentWorks");
 		}
-		*/
 	}
 
 	@Override

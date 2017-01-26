@@ -82,6 +82,11 @@ public interface PaymentWorksWebService {
 	/**
 	 * Updates new vendor update status (processed or rejected) in PaymentWorks
 	 */
-	public void updateVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
+	public void updateNewVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
+	
+	/**
+	 * Updates existing vendor update status (processed or rejected) in PaymentWorks
+	 */
+	public void updateExistingVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
 
 }

@@ -55,7 +55,11 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 		boolean routed = false;
 		List<PaymentWorksVendorUpdatesDTO> pendingACHUpdates = getPaymentWorksWebService().getPendingAchUpdatesFromPaymentWorks();
 		LOG.info("execute, number of ACH Updates retrieved: " + pendingACHUpdates.size());
-		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates);
+		boolean hasErrors = false;
+		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates, hasErrors);
+		if (hasErrors) {
+			throw new RuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
+		}
 		LOG.debug("execute, were all the changes routed: " + routed);
 		return routed;
 	}
