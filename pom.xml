@@ -24,8 +24,8 @@
 
         <kfs.version>2016-12-15</kfs.version>
         <rice.version>2.5.19</rice.version>
-        <cynergy.version>2.5.x</cynergy.version>
-        <cynergy.version.suffix>SNAPSHOT</cynergy.version.suffix>
+        <cynergy.version>2.5.19</cynergy.version>
+        <cynergy.version.suffix>current</cynergy.version.suffix>
 
         <aws-java-sdk-dynamodb.version>1.10.21</aws-java-sdk-dynamodb.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
