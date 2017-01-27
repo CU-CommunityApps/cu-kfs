@@ -40,10 +40,12 @@ public class PaymentWorksConstants {
 	public static final String VENDOR_PHONE_TYPE_CODE_PHONE = "PH";
 	public static final String SOURCE_USER = "PaymentWorks";
 	public static final String VENDOR_REQUEST_ID_KFS_TEMP_ID_STARTER = "KFS";
+	public static final String PAYEE_ACH_ACCOUNT_DEFAULT_TRANSACTION_TYPE = "PRAP";
 	
 	public static class FieldNames {
 		public static final String ROUTING_NUMBER = "Routing num";
 		public static final String ACCOUNT_NUMBER = "Acct num";
+		public static final String ACH_EMAIL = "ACH Email";
 	}
 
 	public static class PaymentWorksParameters {

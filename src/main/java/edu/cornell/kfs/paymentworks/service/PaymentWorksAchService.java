@@ -1,10 +1,13 @@
 package edu.cornell.kfs.paymentworks.service;
 
+import java.util.List;
+
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 
+import edu.cornell.kfs.paymentworks.PaymentWorksVendorUpdateResults;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
-public interface PaymentWorksAchConversionService {
+public interface PaymentWorksAchService {
 	
 	/**
 	 * Creates a Payee ACH Account object based on a DTO pulled in from PaymentWorks
@@ -22,4 +25,12 @@ public interface PaymentWorksAchConversionService {
 	 * @return
 	 */
 	PayeeACHAccount createPayeeAchAccount(PayeeACHAccount payeeAchAccountOld, String routingNumber, String accountNumber);
+	
+	/**
+	 * Creates maintenance documents and routes them for the update to Payee ACH Account objects.
+	 * @param achUpdates
+	 * @param resultsDTO
+	 * @return
+	 */
+	boolean processACHUpdates(List<PaymentWorksVendorUpdatesDTO> achUpdates, PaymentWorksVendorUpdateResults resultsDTO);
 }

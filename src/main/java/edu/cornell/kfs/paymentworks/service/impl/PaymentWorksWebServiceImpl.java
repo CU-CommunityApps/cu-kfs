@@ -73,16 +73,17 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 
 	protected PaymentWorksUtilityService paymentWorksUtilityService;
 	protected PaymentWorksUploadSupplierService paymentWorksUploadSupplierService;
-
+	
 	protected ClientRequest buildClientRequest(String url) {
+		LOG.info("buildClientRequest1 URL: " + url);
 		ClientRequest.Builder builder = new ClientRequest.Builder();
 		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
 		builder.accept(MediaType.APPLICATION_XML);
-
 		return builder.build(buildURI(url), HttpMethod.GET);
 	}
 
 	protected ClientRequest buildClientRequest(String url, String jsonString) {
+		LOG.info("buildClientRequest2 URL: " + url + "  jsonString: " + jsonString);
 		ClientRequest.Builder builder = new ClientRequest.Builder();
 		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
 		builder.accept(MediaType.APPLICATION_JSON);
@@ -92,6 +93,7 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 	}
 
 	protected ClientRequest buildClientRequest(String url, MultiPart MultiPartUploadFile) {
+		LOG.info("buildClientRequest3 URL: " + url);
 		ClientRequest.Builder builder = new ClientRequest.Builder();
 		builder.accept(MediaType.APPLICATION_JSON);
 		builder.header(PaymentWorksConstants.AUTHORIZATION_HEADER_KEY, buildAuthorizationHeaderString());
@@ -313,17 +315,25 @@ public class PaymentWorksWebServiceImpl implements PaymentWorksWebService {
 	}
 
 	@Override
-	public void updateVendorUpdatesStatusInPaymentWorks(
-			List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
+	public void updateNewVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
+		updateVendorStatus(paymentWorksUpdateVendorStatus, NEW_VENDOR_REQUEST_UPDATE_STATUS);
+	}
+	
+	@Override
+	public void updateExistingVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus) {
+		updateVendorStatus(paymentWorksUpdateVendorStatus, VENDOR_UPDATES_UPDATE_STATUS);
+	}
+	
+	protected void updateVendorStatus (List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus, String updateURLSection) {
 		String jsonString = getPaymentWorksUtilityService().pojoToJsonString(paymentWorksUpdateVendorStatus);
 		Client client = buildClient();
-		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(NEW_VENDOR_REQUEST_UPDATE_STATUS)).toString();
+		String URL = (new StringBuilder(getPaymentworksApiUrl()).append(updateURLSection)).toString();
 		ClientResponse response = client.handle(buildClientRequest(URL, jsonString));
 
 		if (response.getStatus() == HttpURLConnection.HTTP_OK) {
-			LOG.debug("Vendor Update status updated");
+			LOG.debug("updateVendorStatus, Vendor Update status updated");
 		} else {
-			LOG.error("Failed to update Vendor Update status: " + response.getEntity(String.class));
+			LOG.error("updateVendorStatus, Failed to update Vendor Update status: " + response.getEntity(String.class));
 			throw new RuntimeException("Unable to update vendor status in PaymentWorks");
 		}
 	}

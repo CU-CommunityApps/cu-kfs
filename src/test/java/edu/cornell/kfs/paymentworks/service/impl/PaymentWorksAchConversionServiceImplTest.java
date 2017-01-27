@@ -20,7 +20,7 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public class PaymentWorksAchConversionServiceImplTest {
 	
-	private PaymentWorksAchConversionServiceImpl paymentWorksAchConversionServiceImpl;
+	private PaymentWorksAchServiceImpl paymentWorksAchConversionServiceImpl;
 	
 	private static final String VENDOR_NUMBER = "1244532";
 	private static final String ROUTING_NUMBER = "routingNum";
@@ -28,8 +28,8 @@ public class PaymentWorksAchConversionServiceImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Logger.getLogger(PaymentWorksAchConversionServiceImpl.class).setLevel(Level.DEBUG);
-		paymentWorksAchConversionServiceImpl = new PaymentWorksAchConversionServiceImpl();
+		Logger.getLogger(PaymentWorksAchServiceImpl.class).setLevel(Level.DEBUG);
+		paymentWorksAchConversionServiceImpl = new PaymentWorksAchServiceImpl();
 		paymentWorksAchConversionServiceImpl.setPaymentWorksUtilityService(new PaymentWorksUtilityServiceImpl());
 		paymentWorksAchConversionServiceImpl.setDateTimeService(new DateTimeServiceImpl());
 	}

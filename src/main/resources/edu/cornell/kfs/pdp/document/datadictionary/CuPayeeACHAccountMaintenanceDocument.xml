@@ -16,10 +16,8 @@
 -->
 
   <bean id="PayeeACHAccountMaintenanceDocument" parent="PayeeACHAccountMaintenanceDocument-parentBean">
-
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
-    
   </bean>
 
   <bean parent="DataDictionaryBeanOverride">
@@ -42,5 +40,4 @@
       </list>
     </property>
   </bean>
-
 </beans>

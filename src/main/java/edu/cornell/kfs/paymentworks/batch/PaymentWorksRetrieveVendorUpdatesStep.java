@@ -229,7 +229,7 @@ public class PaymentWorksRetrieveVendorUpdatesStep extends AbstractStep {
 		updateNewVendorStatus.setStatus(new Integer(requestStatus));
 		updateNewVendorStatusList.add(updateNewVendorStatus);
 
-		paymentWorksWebService.updateVendorUpdatesStatusInPaymentWorks(updateNewVendorStatusList);
+		getPaymentWorksWebService().updateNewVendorUpdatesStatusInPaymentWorks(updateNewVendorStatusList);
 	}
 
 	protected File writePaymentWorksVendorUpdateSummaryReport(VendorUpdateSummary vendorUpdateSummary) {
