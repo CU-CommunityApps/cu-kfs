@@ -18,33 +18,17 @@
  */
 package edu.cornell.kfs.paymentworks.batch;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.springframework.transaction.annotation.Transactional;
+import org.kuali.rice.core.framework.persistence.jta.NoRollbackRuntimeException;
 
-import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.PaymentWorksVendorUpdateResults;
-import edu.cornell.kfs.paymentworks.batch.report.AchUpdateSummary;
-import edu.cornell.kfs.paymentworks.batch.report.AchUpdateSummaryLine;
-import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksAchService;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksKfsService;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
-import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
-import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksUpdateVendorStatus;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
-import edu.cornell.kfs.sys.service.ReportWriterService;
 
-@Transactional
 public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksRetrieveAchUpdatesStep.class);
 
@@ -59,7 +43,7 @@ public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
 		PaymentWorksVendorUpdateResults resultsDTO = new PaymentWorksVendorUpdateResults();
 		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates, resultsDTO);
 		if (resultsDTO.isHasErrors()) {
-			throw new RuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
+			throw new NoRollbackRuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
 		}
 		LOG.debug("execute, were all the changes routed: " + routed);
 		return routed;
