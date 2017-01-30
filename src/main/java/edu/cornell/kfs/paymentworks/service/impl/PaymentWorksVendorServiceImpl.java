@@ -20,19 +20,15 @@ package edu.cornell.kfs.paymentworks.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.krad.bo.Note;
+import org.kuali.rice.core.framework.persistence.jta.TransactionalNoValidationExceptionRollback;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
@@ -42,7 +38,7 @@ import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionSe
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
-@Transactional
+@TransactionalNoValidationExceptionRollback
 public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorServiceImpl.class);
 
@@ -54,108 +50,102 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 
 	@Override
 	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+		PaymentWorksVendor paymentWorksVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(paymentWorksNewVendorDetailDTO);
+		paymentWorksVendor.setRequestStatus(paymentWorksNewVendorDetailDTO.getRequest_status());
+		paymentWorksVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_REQUESTED);
+		paymentWorksVendor.setTransactionType(PaymentWorksConstants.TransactionType.NEW_VENDOR);
 
-		PaymentWorksVendor paymentWorksNewVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(paymentWorksNewVendorDetailDTO);
-
-		// other
-		paymentWorksNewVendor.setRequestStatus(paymentWorksNewVendorDetailDTO.getRequest_status());
-		paymentWorksNewVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_REQUESTED);
-		paymentWorksNewVendor.setTransactionType(PaymentWorksConstants.TransactionType.NEW_VENDOR);
-
-		// create business object
-		paymentWorksNewVendor = this.updatePaymentWorksVendor(paymentWorksNewVendor);
-
-		return paymentWorksNewVendor;
+		paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
+		
+		return paymentWorksVendor;
 	}
 
 	@Override
-	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdateDTO,
-			String processStatus, String transactionType) {
-		PaymentWorksVendor paymentWorksVendorUpdate = getPaymentWorksVendorUpdateConversionService().createPaymentWorksVendorUpdate(paymentWorksVendorUpdateDTO);
+	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdateDTO, String processStatus, String transactionType) {
+		PaymentWorksVendor paymentWorksVendor = getPaymentWorksVendorUpdateConversionService().createPaymentWorksVendorUpdate(paymentWorksVendorUpdateDTO);
+		paymentWorksVendor.setRequestStatus(paymentWorksVendorUpdateDTO.getStatus());
+		paymentWorksVendor.setProcessStatus(processStatus);
+		paymentWorksVendor.setTransactionType(transactionType);
 
-		// other
-		paymentWorksVendorUpdate.setRequestStatus(paymentWorksVendorUpdateDTO.getStatus());
-		paymentWorksVendorUpdate.setProcessStatus(processStatus);
-		paymentWorksVendorUpdate.setTransactionType(transactionType);
+		paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
 
-		// create business object
-		paymentWorksVendorUpdate = this.updatePaymentWorksVendor(paymentWorksVendorUpdate);
-
-		return paymentWorksVendorUpdate;
+		return paymentWorksVendor;
 	}
 
 	@Override
-	public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber,
-			String transactionType) {
+	public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber, String transactionType) {
+		PaymentWorksVendor paymentWorksVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(vendorDetail, documentNumber);
+		paymentWorksVendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
+		paymentWorksVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
+		paymentWorksVendor.setTransactionType(transactionType);
+		paymentWorksVendor.setVendorName(vendorDetail.getVendorName());
 
-		PaymentWorksVendor newVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(vendorDetail, documentNumber);
+		paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
 
-		newVendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
-		newVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
-		newVendor.setTransactionType(transactionType);
-		newVendor.setVendorName(vendorDetail.getVendorName());
-
-		// create business object
-		newVendor = this.updatePaymentWorksVendor(newVendor);
-
-		return newVendor;
+		return paymentWorksVendor;
 	}
 
 	@Override
-	public PaymentWorksVendor updatePaymentWorksVendor(PaymentWorksVendor newVendor) {
-
-		if (ObjectUtils.isNotNull(newVendor)) {
-			newVendor.setProcessTimestamp(dateTimeService.getCurrentTimestamp());
-			newVendor = businessObjectService.save(newVendor);
+	public PaymentWorksVendor updatePaymentWorksVendor(PaymentWorksVendor paymentWorksVendor) {
+		LOG.debug("updatePaymentWorksVendor, Entering");
+		
+		if (ObjectUtils.isNotNull(paymentWorksVendor)) {
+			paymentWorksVendor.setProcessTimestamp(dateTimeService.getCurrentTimestamp());
+			paymentWorksVendor = getBusinessObjectService().save(paymentWorksVendor);
+			
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("updatePaymentWorksVendor, saving payment works vendor with ID " + paymentWorksVendor.getVendorRequestId() + 
+						" and a  request status of " + paymentWorksVendor.getRequestStatus() + " and a process status of " + 
+						paymentWorksVendor.getProcessStatus());
+			}
+		} else {
+			LOG.error("updatePaymentWorksVendor a NULL paymentWorksVendor was supplied.");
 		}
 
-		return newVendor;
+		return paymentWorksVendor;
 	}
 
 	@Override
 	public void updatePaymentWorksVendorProcessStatusByDocumentNumber(String documentNumber, String processStatus) {
-
 		Map<String, String> fieldValues = new HashMap<String, String>();
 		fieldValues.put("documentNumber", documentNumber);
 
-		Collection<PaymentWorksVendor> newVendors = businessObjectService.findMatching(PaymentWorksVendor.class,
-				fieldValues);
+		Collection<PaymentWorksVendor> newVendors = businessObjectService.findMatching(PaymentWorksVendor.class, fieldValues);
 
 		if (!newVendors.isEmpty()) {
 			PaymentWorksVendor newVendor = newVendors.iterator().next();
 
 			newVendor.setProcessStatus(processStatus);
-
-			// update
-			this.updatePaymentWorksVendor(newVendor);
+			updatePaymentWorksVendor(newVendor);
 		}
 
 	}
 
 	@Override
 	public boolean isExistingPaymentWorksVendor(String vendorRequestId, String transactionType) {
-		boolean isExists = false;
-
 		Map<String, String> fieldValues = new HashMap<String, String>();
 		fieldValues.put("vendorRequestId", vendorRequestId);
 		fieldValues.put("transactionType", transactionType);
-
-		if (businessObjectService.countMatching(PaymentWorksVendor.class, fieldValues) > 0) {
-			isExists = true;
+		
+		boolean isExists = getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0;
+		
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("isExistingPaymentWorksVendor, vendorRequestId: " + vendorRequestId + " transactionType: " + transactionType + 
+					".  Is it an esiting PaymentWorksVendor: " + isExists);
 		}
-
+		
 		return isExists;
 	}
 
 	@Override
 	public boolean isExistingPaymentWorksVendorByDocumentNumber(String documentNumber) {
-		boolean isExists = false;
-
 		Map<String, String> fieldValues = new HashMap<String, String>();
 		fieldValues.put("documentNumber", documentNumber);
+		
+		boolean isExists = getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0;
 
-		if (businessObjectService.countMatching(PaymentWorksVendor.class, fieldValues) > 0) {
-			isExists = true;
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("isExistingPaymentWorksVendorByDocumentNumber, documentNumber: " + documentNumber + ".  Is it an esiting PaymentWorksVendor: " + isExists);
 		}
 
 		return isExists;
@@ -167,7 +157,7 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 		Map<String, String> fieldValues = new HashMap<String, String>();
 		fieldValues.put("documentNumber", documentNumber);
 
-		newVendorCollection = businessObjectService.findMatching(PaymentWorksVendor.class, fieldValues);
+		newVendorCollection = getBusinessObjectService().findMatching(PaymentWorksVendor.class, fieldValues);
 
 		if (!newVendorCollection.isEmpty()) {
 			return newVendorCollection.iterator().next();
@@ -178,9 +168,7 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 	}
 
 	@Override
-	public Collection<PaymentWorksVendor> getPaymentWorksVendorRecords(String processStatus, String requestStatus,
-			String transactionType) {
-		Collection<PaymentWorksVendor> newVendorCollection = null;
+	public Collection<PaymentWorksVendor> getPaymentWorksVendorRecords(String processStatus, String requestStatus, String transactionType) {
 		Map<String, String> fieldValues = new HashMap<String, String>();
 
 		if (StringUtils.isNotEmpty(processStatus)) {
@@ -195,14 +183,13 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 			fieldValues.put("transactionType", transactionType);
 		}
 
-		newVendorCollection = businessObjectService.findMatching(PaymentWorksVendor.class, fieldValues);
+		Collection<PaymentWorksVendor> newVendorCollection = getBusinessObjectService().findMatching(PaymentWorksVendor.class, fieldValues);
 
 		return newVendorCollection;
 	}
 
 	@Override
 	public boolean isVendorUpdateEligibleForRouting(PaymentWorksVendor paymentWorksVendor) {
-
 		boolean isEligibleForRouting = false;
 
 		if (StringUtils.equals(paymentWorksVendor.getGroupName(), "Company")
@@ -216,22 +203,6 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 		}
 
 		return isEligibleForRouting;
-	}
-
-	protected void addNoteForNewVendorResponsesToVendor(Maintainable maintainable) {
-		Note newBONote = new Note();
-		newBONote.setNoteText("Test Note: Add detail");
-		try {
-
-			newBONote = noteService.createNote(newBONote, maintainable.getBusinessObject(),
-					GlobalVariables.getUserSession().getPrincipalId());
-			newBONote.setNotePostedTimestampToCurrent();
-		} catch (Exception e) {
-			throw new RuntimeException("Caught Exception While Trying To Add Note to Vendor", e);
-		}
-		List<Note> noteList = noteService.getByRemoteObjectId(maintainable.getBusinessObject().getObjectId());
-		noteList.add(newBONote);
-		noteService.saveNoteList(noteList);
 	}
 
 	public DateTimeService getDateTimeService() {
@@ -250,20 +221,11 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 		this.businessObjectService = businessObjectService;
 	}
 
-	public NoteService getNoteService() {
-		return noteService;
-	}
-
-	public void setNoteService(NoteService noteService) {
-		this.noteService = noteService;
-	}
-
 	public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
 		return paymentWorksNewVendorConversionService;
 	}
 
-	public void setPaymentWorksNewVendorConversionService(
-			PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
+	public void setPaymentWorksNewVendorConversionService(PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
 		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
 	}
 
@@ -271,8 +233,7 @@ public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService 
 		return paymentWorksVendorUpdateConversionService;
 	}
 
-	public void setPaymentWorksVendorUpdateConversionService(
-			PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
+	public void setPaymentWorksVendorUpdateConversionService(PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
 		this.paymentWorksVendorUpdateConversionService = paymentWorksVendorUpdateConversionService;
 	}
 	

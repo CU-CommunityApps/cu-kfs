@@ -18,13 +18,14 @@
  */
 package edu.cornell.kfs.paymentworks.businessobject;
 
-import java.io.File;
 import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase {
+	private static final long serialVersionUID = -4431128959859612352L;
+	
 	private String requestingCompanyId;
 	private String requestingCompanyTin;
 	private String requestingCompanyTinType;
