@@ -75,7 +75,7 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 		
 		vendorDetail.setTaxableIndicator(isVendorTaxable(paymentWorksVendor));
 
-		vendorDetail.setExtension(buildVendorDetailExtension(paymentWorksVendor));
+		vendorDetail.setExtension(buildVendorDetailExtension());
 
 		vendorDetail.setVendorDunsNumber(paymentWorksVendor.getRequestingCompanyDuns());
 		vendorDetail.setVendorUrlAddress(paymentWorksVendor.getRequestingCompanyUrl());
@@ -193,7 +193,7 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 		return !isNonTaxable;
 	}
 	
-	protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor paymentWorksVendor) {
+	protected VendorDetailExtension buildVendorDetailExtension() {
 		VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
 		vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
 		return vendorDetailExtension;
@@ -403,7 +403,7 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 							| NoSuchMethodException e) {
 						paymentWorksNewVendor.setCustomFieldConversionErrors(true);
 						LOG.error("extractCustomFields Unable to set kfs field '" + fieldMapping.getKfsFieldName() + "' with a value of '" + 
-							propertyValueForSetter.toString() + "'  Due to the error: " +  e.getMessage());
+							propertyValueForSetter.toString() + "'  Due to the error: " +  e.getMessage(), e);
 					}
 				}
 				

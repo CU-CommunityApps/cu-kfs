@@ -335,7 +335,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		LOG.info("findVendorNumber, Starting vendorNumber: " + vendorNumber);
 		if (StringUtils.contains(vendorNumber, "-")) {
 			String newVendNumber = StringUtils.split(vendorNumber, "-")[0];
-			LOG.info("findVendorNumberm, resetting vendor number to " + newVendNumber);
+			LOG.info("findVendorNumber, resetting vendor number to " + newVendNumber);
 			vendorNumber = newVendNumber;
 		}
 		return vendorNumber;
