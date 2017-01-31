@@ -36,6 +36,7 @@ public class CUKFSConstants {
     public static class ParameterNamespaces {
         public static final String ENDOWMENT = "KFS-ENDOW";
         public static final String PURCHASING = "KFS-PURAP";
+        public static final String CONCUR = "KFS-CNCR";
     }
     public static class DocumentTypeAttributes {
         public static final String ACCOUNTING_DOCUMENT_TYPE_NAME = "ACCT";
@@ -143,5 +144,9 @@ public class CUKFSConstants {
 
     public static final String EQUALS_SIGN = "=";
     public static final String AMPERSAND = "&";
+    public static final String LEFT_PARENTHESIS = "(";
+    public static final String RIGHT_PARENTHESIS = ")";
+    public static final String COLON = ":";
+    public static final String SLASH = "/";
 
 }

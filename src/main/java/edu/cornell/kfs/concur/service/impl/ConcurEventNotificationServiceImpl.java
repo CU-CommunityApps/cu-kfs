@@ -33,6 +33,16 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
 
         return concurEventNotifications;
     }
+    
+    @Override
+    public void updateConcurEventNotificationFlagsAndValidationMessage(ConcurEventNotification concurEventNotification, boolean inProcess, boolean processed, boolean validationResult, String validationResultMessages) {
+        concurEventNotification.setInProcess(inProcess);
+        concurEventNotification.setProcessed(processed);
+        concurEventNotification.setValidationResult(validationResult);
+        concurEventNotification.setValidationResultMessage(validationResultMessages);
+        saveConcurEventNotification(concurEventNotification);
+    }
+
 
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
