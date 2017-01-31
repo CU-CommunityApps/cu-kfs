@@ -53,7 +53,8 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	@Override
 	public void initialize() {
 		try {
-			this.fullFilePath = generateFullFilePath();
+			fullFilePath = generateFullFilePath();
+			LOG.debug("initialize, fullFilePath: " + fullFilePath);
 			printStream = new PrintStream(fullFilePath);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
@@ -143,11 +144,11 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	@Override
 	public void writeFormattedMessageLine(String format, Object... args) {
 		super.writeFormattedMessageLine(format, args);
-		if (LOG.isInfoEnabled()) {
-			LOG.info("writeFormattedMessageLine, the format: " + format);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("writeFormattedMessageLine, the format: " + format);
 			int i = 0;
 			for (Object arg : args) {
-				LOG.info("writeFormattedMessageLine, the " + i + " arg is " + arg.toString());
+				LOG.debug("writeFormattedMessageLine, the " + i + " arg is " + arg.toString());
 				i++;
 			}
 		}
