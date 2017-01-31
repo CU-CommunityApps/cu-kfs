@@ -133,6 +133,7 @@
 		<property name="reportWriterService" ref="supplierUploadReportWriterService" />
 		<property name="paymentWorksVendorService" ref="paymentWorksVendorService" />
 		<property name="paymentWorksWebService" ref="paymentWorksWebService" />
+		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
@@ -205,6 +206,7 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService" />
 		<property name="phoneNumberService" ref="phoneNumberService" />
 		<property name="configurationService" ref="configurationService" />
+		<property name="vendorService" ref="vendorService" />
 	</bean>
 	
 	<bean id="paymentWorksAchService" parent="paymentWorksAchService-parentBean" />

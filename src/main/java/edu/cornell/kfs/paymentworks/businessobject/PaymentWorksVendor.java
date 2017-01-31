@@ -73,7 +73,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String documentNumberList;
 	private String vendorNumberList;
 
-	private transient boolean sendToPaymentWorks;
 	private transient boolean customFieldConversionErrors = false;
 	
 	//custom fields
@@ -491,14 +490,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 
 	public void setVendorNumberList(String vendorNumberList) {
 		this.vendorNumberList = vendorNumberList;
-	}
-
-	public boolean isSendToPaymentWorks() {
-		return sendToPaymentWorks;
-	}
-
-	public void setSendToPaymentWorks(boolean sendToPaymentWorks) {
-		this.sendToPaymentWorks = sendToPaymentWorks;
 	}
 
 	public boolean isCustomFieldConversionErrors() {

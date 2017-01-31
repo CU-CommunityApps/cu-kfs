@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
@@ -46,6 +48,7 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 	private DataDictionaryService dataDictionaryService;
 	private PhoneNumberService phoneNumberService;
 	private ConfigurationService configurationService;
+	private VendorService vendorService;
 	
 	@Override
 	public String getGlobalErrorMessage() {
@@ -164,6 +167,32 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 	public String convertPhoneNumber(String phoneNumber) {
 		return getPhoneNumberService().formatNumberIfPossible(phoneNumber);
 	}
+	
+	@Override
+	public boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail) {
+		boolean sendToPaymentWorks = vendorDetail.isActiveIndicator()
+				&& !(StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "US")
+						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "NU")
+						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "SE")
+						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "UE")
+						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "AE"));
+		
+		LOG.debug("shouldVendorBeSentToPaymentWorks1, sendToPaymentWorks: " + sendToPaymentWorks);
+		return sendToPaymentWorks;
+	}
+	
+	@Override
+	public boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor) {
+		Integer vendorNumber = paymentWorksVendor.getVendorHeaderGeneratedIdentifier();
+		Integer vendorParentChildNumber = paymentWorksVendor.getVendorDetailAssignedIdentifier();
+		VendorDetail vendorDetail = getVendorService().getVendorDetail(vendorNumber, vendorParentChildNumber);
+		if (ObjectUtils.isNotNull(vendorDetail)) {
+			return shouldVendorBeSentToPaymentWorks(vendorDetail);
+		} else {
+			LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by " + vendorNumber + " and " + vendorParentChildNumber);
+		}
+		return false;
+	}
 
 	protected DataDictionaryService getDataDictionaryService() {
 		return dataDictionaryService;
@@ -187,5 +216,13 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+
+	public VendorService getVendorService() {
+		return vendorService;
+	}
+
+	public void setVendorService(VendorService vendorService) {
+		this.vendorService = vendorService;
 	}
 }
