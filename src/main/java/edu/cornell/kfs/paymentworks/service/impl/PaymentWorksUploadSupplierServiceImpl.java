@@ -264,7 +264,6 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	}
 	
 	protected void addSummaryLine(PaymentWorksVendor paymentWorksVendor, String supplierUploadSummaryType, SupplierUploadSummary supplierUploadSummary) {
-		//SupplierUploadSummary supplierUploadSummary = new SupplierUploadSummary();
 		SupplierUploadSummaryLine summaryLine = new SupplierUploadSummaryLine();
 		summaryLine.setVendorRequestId(paymentWorksVendor.getVendorRequestId());
 		summaryLine.setVendorName(paymentWorksVendor.getRequestingCompanyLegalName());

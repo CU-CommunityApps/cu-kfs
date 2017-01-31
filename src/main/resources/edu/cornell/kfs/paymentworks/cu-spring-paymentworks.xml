@@ -169,7 +169,7 @@
 			<value>${paymentworks.api.url}</value>
 		</property>
 		<property name="directoryPath">
-			<value>${staging.directory}/pmw/supplier</value>
+			<value>${staging.directory}/pmw/upload_vendors</value>
 		</property>
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="paymentWorksUploadSupplierService" ref="paymentWorksUploadSupplierService" />

@@ -27,19 +27,19 @@ public interface PaymentWorksUploadSupplierService {
 	
 	/**
 	 * Uploads approved suppkiers to PaymentWorks
-	 * @param supplierUploadSummary TODO
+	 * @param supplierUploadSummary
 	 */
 	void uploadNewVendorApprovedSupplierFile(SupplierUploadSummary supplierUploadSummary);
 	
 	/**
 	 * Uploads new vendors that have been disapproved to PaymentWorks
-	 * @param supplierUploadSummary TODO
+	 * @param supplierUploadSummary
 	 */
 	void updateNewVendorDisapprovedStatus(SupplierUploadSummary supplierUploadSummary);
 	
 	/**
 	 * Uploads supplier updates to PaymentWorks
-	 * @param supplierUploadSummary TODO
+	 * @param supplierUploadSummary
 	 */
 	void uploadVendorUpdateApprovedSupplierFile(SupplierUploadSummary supplierUploadSummary);
 	
