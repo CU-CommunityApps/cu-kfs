@@ -43,7 +43,7 @@
 		</property>
 		<property name="batchFileDirectories">
 			<list>
-				<value>${reports.directory}/paymentworks</value>
+				<value>${reports.directory}/pmw</value>
 			</list>
 		</property>
 	</bean>
@@ -65,7 +65,7 @@
 	</bean>
 
 	<bean id="newVendorReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
-		<property name="filePath" value="${reports.directory}/paymentworks" />
+		<property name="filePath" value="${reports.directory}/pmw" />
 		<property name="fileNamePrefix" value="PaymentWorksNewVendorReport." />
 		<property name="title" value="PaymentWorks New Vendor Summary Report" />
 	</bean>
@@ -88,7 +88,7 @@
 	</bean>
 
 	<bean id="vendorUpdateReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
-		<property name="filePath" value="${reports.directory}/paymentworks" />
+		<property name="filePath" value="${reports.directory}/pmw" />
 		<property name="fileNamePrefix" value="PaymentWorksVendorUpdateReport" />
 		<property name="title" value="PaymentWorks Vendor Update Summary Report" />
 	</bean>
@@ -108,7 +108,7 @@
 	</bean>
 
 	<bean id="achUpdateReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
-		<property name="filePath" value="${reports.directory}/paymentworks" />
+		<property name="filePath" value="${reports.directory}/pmw" />
 		<property name="fileNamePrefix" value="PaymentWorksAchUpdateReport" />
 		<property name="title" value="PaymentWorks ACH Update Summary Report" />
 	</bean>
@@ -137,7 +137,7 @@
 	</bean>
 
 	<bean id="supplierUploadReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
-		<property name="filePath" value="${reports.directory}/paymentworks" />
+		<property name="filePath" value="${reports.directory}/pmw" />
 		<property name="fileNamePrefix" value="PaymentWorksSupplierUploadReport." />
 		<property name="title" value="PaymentWorks Supplier Upload Summary Report" />
 	</bean>
@@ -168,7 +168,7 @@
 			<value>${paymentworks.api.url}</value>
 		</property>
 		<property name="directoryPath">
-			<value>${staging.directory}/paymentworks/supplier</value>
+			<value>${staging.directory}/pmw/supplier</value>
 		</property>
 		<property name="paymentWorksUtilityService" ref="paymentWorksUtilityService" />
 		<property name="paymentWorksUploadSupplierService" ref="paymentWorksUploadSupplierService" />
