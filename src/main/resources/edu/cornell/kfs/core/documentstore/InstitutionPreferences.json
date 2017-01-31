@@ -1452,8 +1452,16 @@
             "linkType": "kfs"
           },
           {
-            "documentTypeCode": "ST",
-            "linkType": "kfs"
+            "label": "Salary Expense Transfer",
+            "link": "laborSalaryExpenseTransfer.do?methodToCall=docHandler&command=initiate&docTypeName=ST",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "ST"
+              }
+            }
           },
           {
             "documentTypeCode": "YEBT",
