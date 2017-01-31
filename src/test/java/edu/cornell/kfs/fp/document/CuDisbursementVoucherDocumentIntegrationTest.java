@@ -49,6 +49,12 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
 
     @Test
     public void testToCopy() throws WorkflowException {
+        MessageList messageList = KNSGlobalVariables.getMessageList();
+        System.err.println("KNSGlobalVariables.getMessageList().size(): " + messageList.size());
+        for (ErrorMessage errorMessage: messageList) {
+            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
+        }
+
         String payeeidNumber = cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
 
         cuDisbursementVoucherDocument.toCopy();

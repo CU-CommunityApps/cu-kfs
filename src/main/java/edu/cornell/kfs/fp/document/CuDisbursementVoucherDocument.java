@@ -658,6 +658,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
      * Might be related to OJB and proxy objects or something like that.
      * Hopefully we can contribute a fix to base code and eliminate this duplicate method in the future.
      */
+    @Override
     protected void clearInvalidPayee() {
         // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
         if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
