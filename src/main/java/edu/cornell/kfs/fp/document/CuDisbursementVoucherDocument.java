@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.Bank;
@@ -639,7 +641,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         super.toCopy();
 
-        KNSGlobalVariables.getMessageList().clear();
         getDvPayeeDetail().setDisbVchrPayeeIdNumber(payeeidNumber);
     }
 
@@ -650,6 +651,26 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         super.clearFieldsThatShouldNotBeCopied();
         setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
         setTripId(null);
+    }
+
+    /**
+     * This overrides the code in the parent base class because of an issue where vendorDetail is null when it shouldn't be.
+     * Might be related to OJB and proxy objects or something like that.
+     * Hopefully we can contribute a fix to base code and eliminate this duplicate method in the future.
+     */
+    protected void clearInvalidPayee() {
+        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
+        if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
+            VendorDetail vendorDetail = getVendorService().getVendorDetail(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger(), getDvPayeeDetail().getDisbVchrVendorDetailAssignedIdNumberAsInteger());
+            if (vendorDetail == null) {
+                clearPayee(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
+            } else {
+                DisbursementPayee payee = getDisbursementVoucherPayeeService().getPayeeFromVendor(vendorDetail);
+                if (!getDisbursementVoucherPaymentReasonService().isPayeeQualifiedForPayment(payee, getDvPayeeDetail().getDisbVchrPaymentReasonCode())) {
+                    clearPayee(KFSKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED);
+                }
+            }
+        }
     }
 
     protected void clearPayee(String messageKey) {

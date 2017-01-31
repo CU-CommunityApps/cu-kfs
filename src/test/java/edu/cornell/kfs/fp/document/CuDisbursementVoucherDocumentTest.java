@@ -1,21 +1,10 @@
 package edu.cornell.kfs.fp.document;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
+import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
@@ -26,10 +15,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
+import org.kuali.kfs.fp.businessobject.PaymentReasonCode;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPaymentReasonService;
+import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.DocumentPresentationController;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
@@ -45,22 +45,22 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
-import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
-import org.kuali.kfs.kns.document.authorization.DocumentPresentationController;
-import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
-import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
-import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
-import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
-import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class CuDisbursementVoucherDocumentTest {
 
@@ -84,6 +84,7 @@ public class CuDisbursementVoucherDocumentTest {
     private static VendorService vendorService;
     private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
     private static TestDocumentHelperService documentHelperService;
+    private static DisbursementVoucherPaymentReasonService disbursementVoucherPaymentReasonService;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -108,10 +109,12 @@ public class CuDisbursementVoucherDocumentTest {
         vendorService = new TestVendorService();
         disbursementVoucherPayeeService = new TestDisbursementVoucherPayeeService();
         documentHelperService = new TestDocumentHelperService();
+        disbursementVoucherPaymentReasonService = new TestDisbursementVoucherPaymentReasonService();
 
         cuDisbursementVoucherDocument.setVendorService(vendorService);
         cuDisbursementVoucherDocument.setDisbursementVoucherPayeeService(disbursementVoucherPayeeService);
         cuDisbursementVoucherDocument.setDocumentHelperService(documentHelperService);
+        cuDisbursementVoucherDocument.setDisbursementVoucherPaymentReasonService(disbursementVoucherPaymentReasonService);
     }
 
     @AfterClass
@@ -146,6 +149,35 @@ public class CuDisbursementVoucherDocumentTest {
         documentHelperService.setPresentationEditModes(new HashSet<String>());
         documentHelperService.setAuthorizationEditModes(new HashSet<String>());
         documentHelperService.setupMockObjects();
+    }
+
+    @Test
+    public void testClearInvalidPayeeValidPayeeVendor() throws Exception {
+        setupPayeeDetail("0", "12345");
+
+        cuDisbursementVoucherDocument.clearInvalidPayee();
+        assertTrue("Should be valid and have no error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 0);
+        assertEquals("DV Payee ID Number should not be cleared", "12345-0", cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
+    }
+
+    @Test
+    public void testClearInvalidPayeeInvalidPayeeEmployee() throws Exception {
+        setupPayeeDetail("1", "23456");
+
+        cuDisbursementVoucherDocument.clearInvalidPayee();
+        assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
+        assertEquals("The error message isn't what we expected.", KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
+        assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
+    }
+
+    @Test
+    public void testClearInvalidPayeeInvalidPayeeVendor() throws Exception {
+        setupPayeeDetail("1", "12345");
+
+        cuDisbursementVoucherDocument.clearInvalidPayee();
+        assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
+        assertEquals("The error message isn't what we expected.", KFSKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
+        assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
     }
 
     @Test
@@ -594,8 +626,6 @@ public class CuDisbursementVoucherDocumentTest {
             return authorizer;
         }
 
-
-
         @Override
         public DocumentAuthorizer getDocumentAuthorizer(String documentType) {
             if (DisbursementVoucherConstants.DOCUMENT_TYPE_CODE.equals(documentType)) {
@@ -628,4 +658,87 @@ public class CuDisbursementVoucherDocumentTest {
             return null;
         }
     }
+
+    private static class TestDisbursementVoucherPaymentReasonService implements DisbursementVoucherPaymentReasonService {
+
+        @Override
+        public boolean isPayeeQualifiedForPayment(DisbursementPayee disbursementPayee, String s) {
+            if (disbursementPayee.getPayeeIdNumber().equals("12345-1")) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        public boolean isPayeeQualifiedForPayment(DisbursementPayee disbursementPayee, String s, Collection<String> collection) {
+            return false;
+        }
+
+        @Override
+        public boolean isNonEmployeeTravelPaymentReason(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isMovingPaymentReason(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isPrepaidTravelPaymentReason(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isResearchPaymentReason(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isRevolvingFundPaymentReason(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isDecedentCompensationPaymentReason(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isPaymentReasonOfType(String s, String s1) {
+            return false;
+        }
+
+        @Override
+        public String getReserchNonVendorPayLimit() {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getPayeeTypesByPaymentReason(String s) {
+            return null;
+        }
+
+        @Override
+        public PaymentReasonCode getPaymentReasonByPrimaryId(String s) {
+            return null;
+        }
+
+        @Override
+        public void postPaymentReasonCodeUsage(String paymentReasonCode, org.kuali.kfs.kns.util.MessageList messageList) {
+
+        }
+
+        @Override
+        public boolean isTaxReviewRequired(String s) {
+            return false;
+        }
+
+        @Override
+        public Collection<String> getVendorOwnershipTypesByPaymentReason(String s) {
+            return null;
+        }
+    }
+
 }
