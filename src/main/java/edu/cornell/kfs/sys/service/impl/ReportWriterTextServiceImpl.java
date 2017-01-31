@@ -34,7 +34,6 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
  * report.
  *
  * @author Dave Raines
- * @version $Revision$
  */
 public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl
 		implements ReportWriterService {
@@ -51,9 +50,6 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		ccAddresses = new HashSet<String>();
 	}
 
-	/**
-	 * @see org.kuali.kfs.sys.batch.service.WrappingBatchService#initialize()
-	 */
 	@Override
 	public void initialize() {
 		try {
@@ -104,67 +100,56 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		return fullFilePath;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public String getFromAddress() {
 		return fromAddress;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void setFromAddress(String fromAddress) {
 		this.fromAddress = fromAddress;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public Set<String> getCcAddresses() {
 		return ccAddresses;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void setCcAddresses(Set<String> ccAddressList) {
 		this.ccAddresses = ccAddressList;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public String getMessageBody() {
 		return messageBody;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void setMessageBody(String messageBody) {
 		this.messageBody = messageBody;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public RoleService getRoleService() {
 		return roleService;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void setRoleService(RoleService roleService) {
 		this.roleService = roleService;
+	}
+	
+	@Override
+	public void writeFormattedMessageLine(String format, Object... args) {
+		super.writeFormattedMessageLine(format, args);
+		if (LOG.isInfoEnabled()) {
+			LOG.info("writeFormattedMessageLine, the format: " + format);
+			int i = 0;
+			for (Object arg : args) {
+				LOG.info("writeFormattedMessageLine, the " + i + " arg is " + arg.toString());
+				i++;
+			}
+		}
 	}
 }
