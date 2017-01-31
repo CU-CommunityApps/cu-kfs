@@ -1,7 +1,6 @@
 package edu.cornell.kfs.fp.document;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
@@ -38,10 +37,6 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         documentService = SpringContext.getBean(DocumentService.class);
         vendorService = SpringContext.getBean(VendorService.class);
         cuDisbursementVoucherDocument = setupCuDisbursementVoucherDocument();
-    }
-
-    @Before
-    public void clearMessages() {
         KNSGlobalVariables.getMessageList().clear();
     }
 
