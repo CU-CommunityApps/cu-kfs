@@ -99,7 +99,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         assertNull(cuDisbursementVoucherDocument.getCancelDate());
         assertEquals(KFSConstants.DocumentStatusCodes.INITIATED, cuDisbursementVoucherDocument.getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode());
 
-        MessageList messageList = KNSGlobalVariables.getMessageList();
+        messageList = KNSGlobalVariables.getMessageList();
         System.err.println("KNSGlobalVariables.getMessageList().size(): " + messageList.size());
         for (ErrorMessage errorMessage: messageList) {
             System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
