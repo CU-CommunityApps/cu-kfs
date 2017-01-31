@@ -44,13 +44,23 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
 
     @Before
     public void clearMessages() {
+        MessageList messageList = KNSGlobalVariables.getMessageList();
+        System.err.println("before clear - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
+        for (ErrorMessage errorMessage: messageList) {
+            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
+        }
         KNSGlobalVariables.getMessageList().clear();
+        messageList = KNSGlobalVariables.getMessageList();
+        System.err.println("after clear - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
+        for (ErrorMessage errorMessage: messageList) {
+            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
+        }
     }
 
     @Test
     public void testToCopy() throws WorkflowException {
         MessageList messageList = KNSGlobalVariables.getMessageList();
-        System.err.println("KNSGlobalVariables.getMessageList().size(): " + messageList.size());
+        System.err.println("start testToCopy - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
         for (ErrorMessage errorMessage: messageList) {
             System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
         }
@@ -100,7 +110,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         assertEquals(KFSConstants.DocumentStatusCodes.INITIATED, cuDisbursementVoucherDocument.getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode());
 
         messageList = KNSGlobalVariables.getMessageList();
-        System.err.println("KNSGlobalVariables.getMessageList().size(): " + messageList.size());
+        System.err.println("end testToCopy - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
         for (ErrorMessage errorMessage: messageList) {
             System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
         }
