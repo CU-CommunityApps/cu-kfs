@@ -1,14 +1,11 @@
 package edu.cornell.kfs.fp.document;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.kns.util.MessageList;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
@@ -40,31 +37,11 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         documentService = SpringContext.getBean(DocumentService.class);
         vendorService = SpringContext.getBean(VendorService.class);
         cuDisbursementVoucherDocument = setupCuDisbursementVoucherDocument();
-    }
-
-    @Before
-    public void clearMessages() {
-        MessageList messageList = KNSGlobalVariables.getMessageList();
-        System.err.println("before clear - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
-        for (ErrorMessage errorMessage: messageList) {
-            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
-        }
         KNSGlobalVariables.getMessageList().clear();
-        messageList = KNSGlobalVariables.getMessageList();
-        System.err.println("after clear - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
-        for (ErrorMessage errorMessage: messageList) {
-            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
-        }
     }
 
     @Test
     public void testToCopy() throws WorkflowException {
-        MessageList messageList = KNSGlobalVariables.getMessageList();
-        System.err.println("start testToCopy - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
-        for (ErrorMessage errorMessage: messageList) {
-            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
-        }
-
         String payeeidNumber = cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
 
         cuDisbursementVoucherDocument.toCopy();
@@ -108,12 +85,6 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         assertNull(cuDisbursementVoucherDocument.getPaidDate());
         assertNull(cuDisbursementVoucherDocument.getCancelDate());
         assertEquals(KFSConstants.DocumentStatusCodes.INITIATED, cuDisbursementVoucherDocument.getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode());
-
-        messageList = KNSGlobalVariables.getMessageList();
-        System.err.println("end testToCopy - KNSGlobalVariables.getMessageList().size(): " + messageList.size());
-        for (ErrorMessage errorMessage: messageList) {
-            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
-        }
 
         assertEquals(0, KNSGlobalVariables.getMessageList().size());
         assertEquals(payeeidNumber, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());

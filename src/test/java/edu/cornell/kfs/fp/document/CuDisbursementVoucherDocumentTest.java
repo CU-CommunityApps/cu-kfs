@@ -121,6 +121,7 @@ public class CuDisbursementVoucherDocumentTest {
     public static void tearDown() {
         cuDisbursementVoucherDocument.setVendorService(null);
         cuDisbursementVoucherDocument.setDocumentHelperService(null);
+        KNSGlobalVariables.getMessageList().clear();
     }
 
     protected static UserSession createMockUserSession(Person person) {
