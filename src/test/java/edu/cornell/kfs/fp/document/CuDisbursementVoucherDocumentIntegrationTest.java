@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.kns.util.MessageList;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
@@ -90,6 +92,12 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiTestBase 
         assertNull(cuDisbursementVoucherDocument.getPaidDate());
         assertNull(cuDisbursementVoucherDocument.getCancelDate());
         assertEquals(KFSConstants.DocumentStatusCodes.INITIATED, cuDisbursementVoucherDocument.getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode());
+
+        MessageList messageList = KNSGlobalVariables.getMessageList();
+        System.err.println("KNSGlobalVariables.getMessageList().size(): " + messageList.size());
+        for (ErrorMessage errorMessage: messageList) {
+            System.err.println("errorMessage.getErrorKey(): " + errorMessage.getErrorKey());
+        }
 
         assertEquals(0, KNSGlobalVariables.getMessageList().size());
         assertEquals(payeeidNumber, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
