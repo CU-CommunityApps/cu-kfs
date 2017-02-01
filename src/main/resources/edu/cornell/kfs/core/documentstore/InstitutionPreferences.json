@@ -2624,6 +2624,18 @@
           }
         ]
       }
+    },
+    {
+      "label": "Accounting Custom Document Searches",
+      "links": {
+        "reference": [
+          {
+            "label": "Financial Transactions",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=KFST",
+            "linkType": "rice"
+          }
+        ]
+      }
     }
   ],
    "menu": [
