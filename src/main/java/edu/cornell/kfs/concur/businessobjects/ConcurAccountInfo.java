@@ -79,7 +79,7 @@ public class ConcurAccountInfo {
     
     @Override
     public String toString() {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("Concur Account info: ");
         result.append(KFSConstants.NEWLINE);
         result.append("Chart: " + this.chart);

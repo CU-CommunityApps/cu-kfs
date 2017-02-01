@@ -10,6 +10,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl;
@@ -58,7 +59,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountNull(){
         ValidationResult validationResult = concurAccountValidationService.checkAccount(ConcurAccountValidationTestConstants.VALID_CHART, null);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + null;
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, null);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for null account number",
@@ -69,7 +70,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountBad(){
         ValidationResult validationResult = concurAccountValidationService.checkAccount(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_ACCT_NBR);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_ACCT_NBR;        
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_ACCT_NBR);        
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad account number",
@@ -80,7 +81,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountInactive(){
         ValidationResult validationResult = concurAccountValidationService.checkAccount(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR;
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive account",
@@ -98,7 +99,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isObjectCodeNull(){
         ValidationResult validationResult = concurAccountValidationService.checkObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, null);
-        String objectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA +  null;
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, null);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for null object code",
@@ -109,7 +110,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isObjectCodeBad(){
         ValidationResult validationResult = concurAccountValidationService.checkObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_OBJ_CD);
-        String objectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA +  ConcurAccountValidationTestConstants.BAD_OBJ_CD;
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_OBJ_CD);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad object code",
@@ -120,7 +121,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isObjectCodeInactive(){
         ValidationResult validationResult = concurAccountValidationService.checkObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD);
-        String objectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA +  ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD;
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive object code",
@@ -144,7 +145,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isSubAccountBad(){
         ValidationResult validationResult = concurAccountValidationService.checkSubAccount(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_SUB_ACCT);
-        String subAccountErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_SUB_ACCT;
+        String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_SUB_ACCT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub account",
@@ -155,7 +156,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isSubAccountAccountBad(){
         ValidationResult validationResult = concurAccountValidationService.checkSubAccount(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_SUB_ACCT);
-        String subAccountErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_SUB_ACCT;
+        String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_SUB_ACCT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub account",
@@ -166,7 +167,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isSubAccountInactive(){
         ValidationResult validationResult = concurAccountValidationService.checkSubAccount(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT);
-        String subAccountErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT;      
+        String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT);      
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive sub account",
@@ -184,7 +185,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isSubObjectCodeBad(){
         ValidationResult validationResult = concurAccountValidationService.checkSubObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD, ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_SUB_OBJECT;
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD, ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub object code",
@@ -201,7 +202,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isSubObjectCodeObjectBad(){
         ValidationResult validationResult = concurAccountValidationService.checkSubObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_OBJ_CD, ConcurAccountValidationTestConstants.VALID_SUB_OBJECT);
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_SUB_OBJECT;
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_OBJ_CD, ConcurAccountValidationTestConstants.VALID_SUB_OBJECT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad sub object",
@@ -212,7 +213,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isSubObjectCodeInactive(){
         ValidationResult validationResult = concurAccountValidationService.checkSubObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD, ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT);
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT;
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD, ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive sub object code",
@@ -236,7 +237,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isProjectCodeBad(){
         ValidationResult validationResult = concurAccountValidationService.checkProjectCode(ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
-        String  projectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.PROJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.BAD_PROJECT_CODE;
+        String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for bad project code",
@@ -247,7 +248,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isProjectCodeInactive(){
         ValidationResult validationResult = concurAccountValidationService.checkProjectCode(ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE);
-        String  projectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.PROJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE;
+        String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error message was expected for inactive project code",
@@ -313,7 +314,7 @@ public class ConcurAccountValidationServiceTest {
     public void isAccountingStringChartBad(){
         concurAccountInfo.setChart(ConcurAccountValidationTestConstants.BAD_CHART);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.BAD_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR;                        
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.BAD_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR);                        
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "One error message was expected for bad chart",
@@ -324,7 +325,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountingStringAccountBad(){
         concurAccountInfo.setAccountNumber(ConcurAccountValidationTestConstants.BAD_ACCT_NBR);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_ACCT_NBR;        
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_ACCT_NBR);        
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
@@ -336,7 +337,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountingStringAccountInactive(){
         concurAccountInfo.setAccountNumber(ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR;        
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR);        
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
@@ -348,7 +349,7 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountingStringSubAccountBad(){
         concurAccountInfo.setSubAccountNumber(ConcurAccountValidationTestConstants.BAD_SUB_ACCT);
-        String subAccountErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_SUB_ACCT;
+        String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_SUB_ACCT);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertEquals(
                 "One error message was expected for bad sub account",
@@ -371,8 +372,8 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountingStringObjectCodeBad(){
         concurAccountInfo.setObjectCode(ConcurAccountValidationTestConstants.BAD_OBJ_CD);
-        String objectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA +  ConcurAccountValidationTestConstants.BAD_OBJ_CD;
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_SUB_OBJECT;
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART,  ConcurAccountValidationTestConstants.BAD_OBJ_CD);
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_OBJ_CD, ConcurAccountValidationTestConstants.VALID_SUB_OBJECT);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
@@ -385,8 +386,8 @@ public class ConcurAccountValidationServiceTest {
     @Test
     public void isAccountingStringObjectCodeInactive(){
         concurAccountInfo.setObjectCode(ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD);
-        String objectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA +  ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD;
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_SUB_OBJECT;
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD);
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD, ConcurAccountValidationTestConstants.VALID_SUB_OBJECT);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
@@ -400,7 +401,7 @@ public class ConcurAccountValidationServiceTest {
     public void isAccountingStringSubObjectCodeBad(){
         concurAccountInfo.setSubObjectCode(ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_SUB_OBJECT;
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD, ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad sub object code",
@@ -412,7 +413,7 @@ public class ConcurAccountValidationServiceTest {
     public void isAccountingStringSubObjectCodeInactive(){
         concurAccountInfo.setSubObjectCode(ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT;
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD, ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for inactive sub object code",
@@ -424,7 +425,7 @@ public class ConcurAccountValidationServiceTest {
     public void isAccountingStringProjectCodeBad(){
         concurAccountInfo.setProjectCode(ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        String  projectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.PROJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.BAD_PROJECT_CODE;
+        String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for inactive object code",
@@ -436,7 +437,7 @@ public class ConcurAccountValidationServiceTest {
     public void isAccountingStringProjectCodeInactive(){
         concurAccountInfo.setProjectCode(ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        String  projectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.PROJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE;
+        String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad inactive project code",
@@ -451,7 +452,7 @@ public class ConcurAccountValidationServiceTest {
         concurAccountInfo.setObjectCode(ConcurAccountValidationTestConstants.BAD_OBJ_CD);
         concurAccountInfo.setSubObjectCode(ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
         concurAccountInfo.setProjectCode(ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
-        String  accountErrorMessageString = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_ACCT_NBR;        
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_ACCT_NBR);        
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
@@ -467,10 +468,10 @@ public class ConcurAccountValidationServiceTest {
         concurAccountInfo.setSubObjectCode(ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
         concurAccountInfo.setProjectCode(ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        String objectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA +  ConcurAccountValidationTestConstants.BAD_OBJ_CD;
-        String subAccountErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_SUB_ACCT;
-        String subObjectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.VALID_CHART + KFSConstants.COMMA + ConcurAccountValidationTestConstants.VALID_ACCT_NBR + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_OBJ_CD + KFSConstants.COMMA + ConcurAccountValidationTestConstants.BAD_SUB_OBJECT;
-        String  projectCodeErrorMessageString = ConcurConstants.AccountingStringFieldNames.PROJECT_CODE + CUKFSConstants.COLON + ConcurAccountValidationTestConstants.BAD_PROJECT_CODE;
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.BAD_OBJ_CD);
+        String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_SUB_ACCT);
+        String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, ConcurAccountValidationTestConstants.VALID_CHART, ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.BAD_OBJ_CD, ConcurAccountValidationTestConstants.BAD_SUB_OBJECT);
+        String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, ConcurAccountValidationTestConstants.BAD_PROJECT_CODE);
         Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
         Assert.assertEquals(
                 "Error messages expected for bad  object, sub account, sub object and project code",
