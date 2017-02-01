@@ -144,6 +144,10 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	@Override
 	public void writeFormattedMessageLine(String format, Object... args) {
 		super.writeFormattedMessageLine(format, args);
+		debugWriteFormattedMessageLine(format, args);
+	}
+
+	protected void debugWriteFormattedMessageLine(String format, Object... args) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("writeFormattedMessageLine, the format: " + format);
 			int i = 0;

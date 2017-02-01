@@ -45,10 +45,10 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
 public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityService {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUtilityServiceImpl.class);
 	
-	private DataDictionaryService dataDictionaryService;
-	private PhoneNumberService phoneNumberService;
-	private ConfigurationService configurationService;
-	private VendorService vendorService;
+	protected DataDictionaryService dataDictionaryService;
+	protected PhoneNumberService phoneNumberService;
+	protected ConfigurationService configurationService;
+	protected VendorService vendorService;
 	
 	@Override
 	public String getGlobalErrorMessage() {
@@ -188,9 +188,8 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 		VendorDetail vendorDetail = getVendorService().getVendorDetail(vendorNumber, vendorParentChildNumber);
 		if (ObjectUtils.isNotNull(vendorDetail)) {
 			return shouldVendorBeSentToPaymentWorks(vendorDetail);
-		} else {
-			LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by " + vendorNumber + " and " + vendorParentChildNumber);
 		}
+		LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by " + vendorNumber + " and " + vendorParentChildNumber);
 		return false;
 	}
 

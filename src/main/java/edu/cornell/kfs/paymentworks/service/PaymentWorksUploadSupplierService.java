@@ -44,9 +44,9 @@ public interface PaymentWorksUploadSupplierService {
 	void uploadVendorUpdateApprovedSupplierFile(SupplierUploadSummary supplierUploadSummary);
 	
 	/**
-	 * Write a summary file for the results of uploading suppliers.
+	 * Writes a summary file for the results of uploading suppliers.
 	 * @param supplierUploadSummary
-	 * @return
+	 * @return File
 	 */
 	File writePaymentWorksSupplierUploadSummaryReport(SupplierUploadSummary supplierUploadSummary);
 
