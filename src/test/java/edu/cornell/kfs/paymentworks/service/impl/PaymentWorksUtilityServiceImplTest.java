@@ -11,12 +11,15 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
 import edu.cornell.kfs.paymentworks.service.impl.PaymentWorksUtilityServiceImpl;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldsDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
+import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksUtilityServiceImplTest {
 	
@@ -70,6 +73,44 @@ public class PaymentWorksUtilityServiceImplTest {
 	public void convertFieldArrayToMapFromValues() {
 		Map<String, String> results = paymentworksService.convertFieldArrayToMapFromValues(buildPaymentWorksFieldChangesDTO());
 		assertEquals("the value was not what we expected", PAYMENT_WORKS_FIELD_FROM_VALUE, results.get(PAYMENT_WORKS_FIELD_NAME));
+	}
+	
+	@Test
+	public void shouldVendorBeSentToPaymentWorks1() {
+		VendorDetail vendorDetail = buildVendorDetail();
+		vendorDetail.setActiveIndicator(true);
+		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_DV);
+		assertTrue(paymentworksService.shouldVendorBeSentToPaymentWorks(vendorDetail));
+	}
+	
+	@Test
+	public void shouldVendorBeSentToPaymentWorks2() {
+		VendorDetail vendorDetail = buildVendorDetail();
+		vendorDetail.setActiveIndicator(true);
+		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_PO);
+		assertTrue(paymentworksService.shouldVendorBeSentToPaymentWorks(vendorDetail));
+	}
+	
+	@Test
+	public void shouldVendorBeSentToPaymentWorks3() {
+		VendorDetail vendorDetail = buildVendorDetail();
+		vendorDetail.setActiveIndicator(true);
+		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_PCARD);
+		assertFalse(paymentworksService.shouldVendorBeSentToPaymentWorks(vendorDetail));
+	}
+	
+	@Test
+	public void shouldVendorBeSentToPaymentWorks4() {
+		VendorDetail vendorDetail = buildVendorDetail();
+		vendorDetail.setActiveIndicator(false);
+		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_PO);
+		assertFalse(paymentworksService.shouldVendorBeSentToPaymentWorks(vendorDetail));
+	}
+	
+	private VendorDetail buildVendorDetail() {
+		VendorDetail vendorDetail = new VendorDetail();
+		vendorDetail.setVendorHeader(new VendorHeader());
+		return vendorDetail;
 	}
 	
 	private PaymentWorksFieldChangesDTO buildPaymentWorksFieldChangesDTO() {

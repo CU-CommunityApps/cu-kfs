@@ -41,6 +41,7 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldsDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
+import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityService {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUtilityServiceImpl.class);
@@ -171,25 +172,26 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 	@Override
 	public boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail) {
 		boolean sendToPaymentWorks = vendorDetail.isActiveIndicator()
-				&& !(StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "US")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "NU")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "SE")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "UE")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "AE"));
+				&& isVendorTypeSendableToPaymentWorks(vendorDetail.getVendorHeader().getVendorTypeCode());
 		
 		LOG.debug("shouldVendorBeSentToPaymentWorks1, sendToPaymentWorks: " + sendToPaymentWorks);
 		return sendToPaymentWorks;
 	}
 	
+	protected boolean isVendorTypeSendableToPaymentWorks(String vendorTypeCode) {
+		return StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_DV) ||
+				StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_PO);
+	}
+	
 	@Override
 	public boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor) {
-		Integer vendorNumber = paymentWorksVendor.getVendorHeaderGeneratedIdentifier();
-		Integer vendorParentChildNumber = paymentWorksVendor.getVendorDetailAssignedIdentifier();
-		VendorDetail vendorDetail = getVendorService().getVendorDetail(vendorNumber, vendorParentChildNumber);
+		Integer headerId = paymentWorksVendor.getVendorHeaderGeneratedIdentifier();
+		Integer detailId = paymentWorksVendor.getVendorDetailAssignedIdentifier();
+		VendorDetail vendorDetail = getVendorService().getVendorDetail(headerId, detailId);
 		if (ObjectUtils.isNotNull(vendorDetail)) {
 			return shouldVendorBeSentToPaymentWorks(vendorDetail);
 		}
-		LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by " + vendorNumber + " and " + vendorParentChildNumber);
+		LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by headerId: " + headerId + " and detailId: " + detailId);
 		return false;
 	}
 
