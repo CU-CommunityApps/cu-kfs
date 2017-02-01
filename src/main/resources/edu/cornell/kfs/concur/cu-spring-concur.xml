@@ -64,6 +64,8 @@
 	<bean id="concurEventNotificationProcessingService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationProcessingServiceImpl" abstract="true">
 	    <property name="concurAccountValidationService" ref="concurAccountValidationService"/>
 	    <property name="concurEventNotificationService" ref="concurEventNotificationService"/>
+	    <property name="concurReportsService" ref="concurReportsService"/>
+	    <property name="configurationService" ref="configurationService" />
 	</bean>
 
 	<bean id="concurAuthenticationService" parent="concurAuthenticationService-parentBean" />
@@ -91,6 +93,12 @@
 	<bean id="concurEventNotificationConversionService" parent="concurEventNotificationConversionService-parentBean" />
 	<bean id="concurEventNotificationConversionService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationConversionServiceImpl" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
+	</bean>
+    
+    <bean id="concurReportsService" parent="concurReportsService-parentBean" />
+	<bean id="concurReportsService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurReportsServiceImpl" abstract="true">
+		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
+		<property name="parameterService" ref="parameterService" />
 	</bean>
 	
 	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />
