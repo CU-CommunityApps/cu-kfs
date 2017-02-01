@@ -35,6 +35,30 @@
             "linkType": "kfs"
           },
           {
+            "label": "Disbursement Voucher",
+            "link": "financialDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=DV",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "DV"
+              }
+            }
+          },
+          {
+            "label": "Recurring Disbursement Voucher",
+            "link": "financialRecurringDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=RCDV",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "RCDV"
+              }
+            }
+          },
+          {
             "label": "Distribution Of Income And Expense",
             "link": "financialDistributionOfIncomeAndExpense.do?methodToCall=docHandler&command=initiate&docTypeName=DI",
             "linkType": "kfs",
@@ -1959,30 +1983,6 @@
       "label": "Reimbursements",
       "links": {
         "activities": [
-          {
-            "label": "Disbursement Voucher",
-            "link": "financialDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=DV",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-SYS",
-              "templateName": "Initiate Document",
-              "details": {
-                "documentTypeName": "DV"
-              }
-            }
-          },
-          {
-            "label": "Recurring Disbursement Voucher",
-            "link": "financialRecurringDisbursementVoucher.do?methodToCall=docHandler&command=initiate&docTypeName=RCDV",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-SYS",
-              "templateName": "Initiate Document",
-              "details": {
-                "documentTypeName": "RCDV"
-              }
-            }
-          },
           {
             "documentTypeCode": "ENT",
             "linkType": "kfs"
