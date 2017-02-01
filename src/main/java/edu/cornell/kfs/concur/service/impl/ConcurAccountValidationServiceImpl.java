@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.service.impl;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
@@ -18,6 +19,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.mo.common.active.Inactivatable;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
@@ -92,7 +94,8 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
 
     public ValidationResult checkAccount(String chartOfAccountsCode, String accountNumber) {
         Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
-        return checkMissingOrInactive(account, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER));
+        String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, chartOfAccountsCode, accountNumber);
+        return checkMissingOrInactive(account, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), accountErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), accountErrorMessageString));
     }
     
     private ValidationResult checkMissingOrInactive(Inactivatable inactivatableObject, String missingMessage, String inactiveMessage){
@@ -109,22 +112,38 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
 
     public ValidationResult checkObjectCode(String chartOfAccountsCode, String objectCodeParm) {
         ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, objectCodeParm);   
-        return checkMissingOrInactive(objectCode, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE));       
+        String objectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, chartOfAccountsCode, objectCodeParm);
+        return checkMissingOrInactive(objectCode, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE),  objectCodeErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), objectCodeErrorMessageString));       
     }
 
     public ValidationResult checkSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) {
-        SubAccount subAccount = subAccountService.getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber);
-        return checkMissingOrInactive(subAccount, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER));
+        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        if(StringUtils.isNotBlank(subAccountNumber)){
+            SubAccount subAccount = subAccountService.getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber);
+            String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, chartOfAccountsCode, accountNumber, subAccountNumber);
+            validationResult = checkMissingOrInactive(subAccount, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), subAccountErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), subAccountErrorMessageString));
+        }
+        return validationResult;
     }
 
     public ValidationResult checkSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCodeParm) {
-        SubObjectCode subObjectCode = subObjectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
-        return checkMissingOrInactive(subObjectCode, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE));
+        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        if(StringUtils.isNotBlank(subObjectCodeParm)){
+            SubObjectCode subObjectCode = subObjectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
+            String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
+            validationResult = checkMissingOrInactive(subObjectCode, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), subObjectCodeErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), subObjectCodeErrorMessageString));
+        }
+        return validationResult;    
     }
 
     public ValidationResult checkProjectCode(String projectCodeParm) {
-        ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeParm);
-        return checkMissingOrInactive(projectCode, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), ConcurConstants.AccountingStringFieldNames.PROJECT_CODE)); 
+        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        if(StringUtils.isNotBlank(projectCodeParm)){
+            ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeParm);
+            String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, projectCodeParm);
+            validationResult = checkMissingOrInactive(projectCode, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), projectCodeErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), projectCodeErrorMessageString));    
+        }
+        return validationResult;
     }
 
     public AccountService getAccountService() {

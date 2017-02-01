@@ -25,5 +25,10 @@ public class ConcurConstants {
     public static final String CONCUR_CONSUMER_KEY = "concur.consumer.key";
     public static final String CONCUR_SECRET_KEY = "concur.secret.key";
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
+    
+    public static final String EXPENSE_REPORT_URI_INDICATOR = "/expense/expensereport/";
+    public static final String TRAVEL_REQUEST_URI_INDICATOR = "/travelrequest/";
+    
+    public static final String DEFAULT_TRAVEL_REQUEST_OBJECT_CODE_PARAMETER_NAME = "DEFAULT_TRAVEL_REQUEST_OBJECT_CODE";
 
 }
