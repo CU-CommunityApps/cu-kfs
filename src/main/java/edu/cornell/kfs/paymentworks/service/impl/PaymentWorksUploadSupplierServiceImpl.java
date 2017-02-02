@@ -42,6 +42,7 @@ import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummaryLine;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSupplierService;
+import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorUpdateVendorStatus;
@@ -57,6 +58,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	protected PaymentWorksVendorService paymentWorksVendorService;
 	protected PaymentWorksWebService paymentWorksWebService;
 	protected ParameterService parameterService;
+	protected PaymentWorksUtilityService paymentWorksUtilityService;
 	
 	@Override
 	public List<PaymentWorksSupplierUploadDTO> createPaymentWorksSupplierUploadList(Collection<PaymentWorksVendor> newVendors) {
@@ -83,7 +85,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 		paymentWorksSupplierUploadDTO.setVendorNum(vendorNumber);
 		paymentWorksSupplierUploadDTO.setSiteCode(siteCode);
 		paymentWorksSupplierUploadDTO.setSupplierName(vendorToCopy.getRequestingCompanyLegalName());
-		paymentWorksSupplierUploadDTO.setSendToPaymentWorks(vendorToCopy.isSendToPaymentWorks());
+		paymentWorksSupplierUploadDTO.setSendToPaymentWorks(getPaymentWorksUtilityService().shouldVendorBeSentToPaymentWorks(vendorToCopy));
 
 		if (StringUtils.isNotBlank(vendorToCopy.getRemittanceAddressStreet1())) {
 			paymentWorksSupplierUploadDTO.setAddress1(vendorToCopy.getRemittanceAddressStreet1());
@@ -180,7 +182,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	}
 	
 	@Override
-	public void uploadNewVendorApprovedSupplierFile() {
+	public void uploadNewVendorApprovedSupplierFile(SupplierUploadSummary supplierUploadSummary) {
 		Collection<PaymentWorksVendor> approvedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED, null, PaymentWorksConstants.TransactionType.NEW_VENDOR);
 		
@@ -199,7 +201,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 
 					processVendor(newVendor, PaymentWorksConstants.PaymentWorksNewVendorStatus.PROCESSED,
 							PaymentWorksConstants.PaymentWorksStatusText.PROCESSED, PaymentWorksConstants.ProcessStatus.SUPPLIER_UPLOADED,
-							supplierStatusType, updateStatus);
+							supplierStatusType, updateStatus, supplierUploadSummary);
 				}
 			} else {
 				LOG.error("uploadNewVendorApprovedSupplierFile, the vendors were not uploaded.");
@@ -214,7 +216,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	}
 
 	@Override
-	public void updateNewVendorDisapprovedStatus() {
+	public void updateNewVendorDisapprovedStatus(SupplierUploadSummary supplierUploadSummary) {
 		Collection<PaymentWorksVendor> disapprovedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED, PaymentWorksConstants.PaymentWorksStatusText.APPROVED,
 				PaymentWorksConstants.TransactionType.NEW_VENDOR);
@@ -222,12 +224,12 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 		for (PaymentWorksVendor newVendor : disapprovedVendors) {
 			processVendor(newVendor, PaymentWorksConstants.PaymentWorksNewVendorStatus.REJECTED,
 					PaymentWorksConstants.PaymentWorksStatusText.REJECTED, PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED,
-					PaymentWorksConstants.SupplierUploadSummaryTypes.DISAPPROVED_VENDORS, true);
+					PaymentWorksConstants.SupplierUploadSummaryTypes.DISAPPROVED_VENDORS, true, supplierUploadSummary);
 		}
 	}
 
 	@Override
-	public void uploadVendorUpdateApprovedSupplierFile() {
+	public void uploadVendorUpdateApprovedSupplierFile(SupplierUploadSummary supplierUploadSummary) {
 		Collection<PaymentWorksVendor> approvedVendors = getPaymentWorksVendorService().getPaymentWorksVendorRecords(
 				PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED, null, PaymentWorksConstants.TransactionType.VENDOR_UPDATE);
 		boolean uploaded = false;
@@ -239,7 +241,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 				for (PaymentWorksVendor newVendor : approvedVendors) {
 					processVendor(newVendor, PaymentWorksConstants.PaymentWorksUpdateStatus.PROCESSED,
 							PaymentWorksConstants.PaymentWorksStatusText.PROCESSED, PaymentWorksConstants.ProcessStatus.SUPPLIER_UPLOADED,
-							PaymentWorksConstants.SupplierUploadSummaryTypes.VENDOR_UPDATES, false);
+							PaymentWorksConstants.SupplierUploadSummaryTypes.VENDOR_UPDATES, false, supplierUploadSummary);
 				}
 			} else {
 				LOG.error("uploadVendorUpdateApprovedSupplierFile, the vendors were not uploaded.");
@@ -248,8 +250,9 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 	}
 	
 	protected void processVendor(PaymentWorksVendor paymentWorksNewVendor, String requestStatus,
-			String requestStatusText, String processStatus, String supplierUploadSummaryType, boolean updatePaymentWorksStatus) {
-		addSummaryLine(paymentWorksNewVendor, supplierUploadSummaryType);
+			String requestStatusText, String processStatus, String supplierUploadSummaryType, boolean updatePaymentWorksStatus, 
+			SupplierUploadSummary supplierUploadSummary) {
+		addSummaryLine(paymentWorksNewVendor, supplierUploadSummaryType, supplierUploadSummary);
 
 		paymentWorksNewVendor.setRequestStatus(requestStatusText);
 		paymentWorksNewVendor.setProcessStatus(processStatus);
@@ -260,15 +263,15 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 		}
 	}
 	
-	protected void addSummaryLine(PaymentWorksVendor paymentWorksVendor, String supplierUploadSummaryType) {
-		SupplierUploadSummary supplierUploadSummary = new SupplierUploadSummary();
+	protected void addSummaryLine(PaymentWorksVendor paymentWorksVendor, String supplierUploadSummaryType, SupplierUploadSummary supplierUploadSummary) {
 		SupplierUploadSummaryLine summaryLine = new SupplierUploadSummaryLine();
 		summaryLine.setVendorRequestId(paymentWorksVendor.getVendorRequestId());
 		summaryLine.setVendorName(paymentWorksVendor.getRequestingCompanyLegalName());
 		summaryLine.setDocumentNumber(paymentWorksVendor.getDocumentNumber());
 		summaryLine.setVendorNumber(paymentWorksVendor.getVendorHeaderGeneratedIdentifier() + KFSConstants.DASH
 				+ paymentWorksVendor.getVendorDetailAssignedIdentifier());
-		summaryLine.setSendToPaymentWorks(paymentWorksVendor.isSendToPaymentWorks());
+		boolean shouldBeSentToPaymentWorks = getPaymentWorksUtilityService().shouldVendorBeSentToPaymentWorks(paymentWorksVendor);
+		summaryLine.setSendToPaymentWorks(shouldBeSentToPaymentWorks);
 
 		if (StringUtils.equals(supplierUploadSummaryType, PaymentWorksConstants.SupplierUploadSummaryTypes.PAYMENT_WORKS_NEW_VENDORS)) {
 			supplierUploadSummary.getPaymentWorksNewVendors().add(summaryLine);
@@ -283,7 +286,7 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 			supplierUploadSummary.getNewVendorDisapproved().add(summaryLine);
 		}
 
-		if (paymentWorksVendor.isSendToPaymentWorks()) {
+		if (shouldBeSentToPaymentWorks) {
 			supplierUploadSummary.getUploadedVendors().add(summaryLine);
 		}
 	}
@@ -298,7 +301,8 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 		getPaymentWorksWebService().updateNewVendorStatusInPaymentWorks(updateNewVendorStatusList);
 	}
 
-	protected File writePaymentWorksSupplierUploadSummaryReport(SupplierUploadSummary supplierUploadSummary) {
+	@Override
+	public File writePaymentWorksSupplierUploadSummaryReport(SupplierUploadSummary supplierUploadSummary) {
 		if (reportWriterService == null) {
 			throw new IllegalStateException("ReportWriterService not configured for PaymentWorks Supplier Upload service.");
 		} else {
@@ -400,6 +404,14 @@ public class PaymentWorksUploadSupplierServiceImpl implements PaymentWorksUpload
 
 	public void setParameterService(ParameterService parameterService) {
 		this.parameterService = parameterService;
+	}
+
+	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+		return paymentWorksUtilityService;
+	}
+
+	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+		this.paymentWorksUtilityService = paymentWorksUtilityService;
 	}
 
 }

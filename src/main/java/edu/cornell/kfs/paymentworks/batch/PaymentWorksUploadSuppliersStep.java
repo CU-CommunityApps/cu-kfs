@@ -22,6 +22,7 @@ import java.util.Date;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
+import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummary;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSupplierService;
 
 public class PaymentWorksUploadSuppliersStep extends AbstractStep {
@@ -31,9 +32,13 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
 	@Override
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile();
-		getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus();
-		getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile();
+		SupplierUploadSummary supplierUploadSummary = new SupplierUploadSummary();
+		
+		getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile(supplierUploadSummary);
+		getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus(supplierUploadSummary);
+		getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile(supplierUploadSummary);
+		
+		getPaymentWorksUploadSupplierService().writePaymentWorksSupplierUploadSummaryReport(supplierUploadSummary);
 		
 		LOG.debug("execute, the PaymentWorksUploadSupplierStep finished. ");
 		return true;

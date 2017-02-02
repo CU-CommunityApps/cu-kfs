@@ -54,9 +54,9 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		Logger.getLogger(PaymentWorksUploadSupplierServiceImplTest.class).setLevel(Level.DEBUG);
 
 		paymentWorksUploadSupplierService = new TestablePaymentWorksUploadSupplierServiceImpl();
-		paymentWorksUploadSupplierService
-				.setPaymentWorksNewVendorConversionService(new TestablePaymentWorksNewVendorConversionServiceImpl());
+		paymentWorksUploadSupplierService.setPaymentWorksNewVendorConversionService(new TestablePaymentWorksNewVendorConversionServiceImpl());
 		paymentWorksUploadSupplierService.setDateTimeService(new TestableDateTimeService());
+		paymentWorksUploadSupplierService.setPaymentWorksUtilityService(new TestablePaymentWorksUtilitySerice());
 		FileUtils.forceMkdir(new File(TEST_PATH_AND_FILE));
 	}
 
@@ -96,7 +96,6 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		vendor1.setRemittanceAddressCountry(COUNTRY_ADDRESS);
 		vendor1.setRemittanceAddressState(STATE_ADDRESS);
 		vendor1.setRemittanceAddressZipCode(ZIP_ADDRESS);
-		vendor1.setSendToPaymentWorks(true);
 		newVendors.add(vendor1);
 
 		PaymentWorksVendor vendor2 = new PaymentWorksVendor();
@@ -108,7 +107,6 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		vendor2.setCorpAddressCountry(COUNTRY_ADDRESS);
 		vendor2.setCorpAddressState(STATE_ADDRESS);
 		vendor2.setCorpAddressZipCode(ZIP_ADDRESS);
-		vendor2.setSendToPaymentWorks(true);
 		newVendors.add(vendor2);
 
 		return newVendors;
@@ -163,6 +161,13 @@ public class PaymentWorksUploadSupplierServiceImplTest {
 		@Override
 		protected String findSupplierUpLoadFileHeader() {
 			return "Vendor,Site Code,Name,AccountingAddress,Address 2,AccountingCity,AccountingState,Country,AccountingZip,US Tax Number,VI Contact Email";
+		}
+	}
+	
+	private class TestablePaymentWorksUtilitySerice extends PaymentWorksUtilityServiceImpl {
+		@Override
+		public boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor) {
+			return true;
 		}
 	}
 

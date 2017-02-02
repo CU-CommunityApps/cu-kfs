@@ -3,8 +3,10 @@ package edu.cornell.kfs.paymentworks.service;
 import java.util.Map;
 
 import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.util.AutoPopulatingList;
 
+import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldsDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
 
@@ -35,4 +37,8 @@ public interface PaymentWorksUtilityService {
 	 * @return
 	 */
 	String pojoToJsonString(Object object);
+	
+	boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail);
+	
+	boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor);
 }

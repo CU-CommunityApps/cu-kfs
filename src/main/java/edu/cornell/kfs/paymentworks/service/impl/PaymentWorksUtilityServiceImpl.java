@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
@@ -39,13 +41,15 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCustomFieldsDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
+import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityService {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUtilityServiceImpl.class);
 	
-	private DataDictionaryService dataDictionaryService;
-	private PhoneNumberService phoneNumberService;
-	private ConfigurationService configurationService;
+	protected DataDictionaryService dataDictionaryService;
+	protected PhoneNumberService phoneNumberService;
+	protected ConfigurationService configurationService;
+	protected VendorService vendorService;
 	
 	@Override
 	public String getGlobalErrorMessage() {
@@ -164,6 +168,32 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 	public String convertPhoneNumber(String phoneNumber) {
 		return getPhoneNumberService().formatNumberIfPossible(phoneNumber);
 	}
+	
+	@Override
+	public boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail) {
+		boolean sendToPaymentWorks = vendorDetail.isActiveIndicator()
+				&& isVendorTypeSendableToPaymentWorks(vendorDetail.getVendorHeader().getVendorTypeCode());
+		
+		LOG.debug("shouldVendorBeSentToPaymentWorks1, sendToPaymentWorks: " + sendToPaymentWorks);
+		return sendToPaymentWorks;
+	}
+	
+	protected boolean isVendorTypeSendableToPaymentWorks(String vendorTypeCode) {
+		return StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_DV) ||
+				StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_PO);
+	}
+	
+	@Override
+	public boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor) {
+		Integer headerId = paymentWorksVendor.getVendorHeaderGeneratedIdentifier();
+		Integer detailId = paymentWorksVendor.getVendorDetailAssignedIdentifier();
+		VendorDetail vendorDetail = getVendorService().getVendorDetail(headerId, detailId);
+		if (ObjectUtils.isNotNull(vendorDetail)) {
+			return shouldVendorBeSentToPaymentWorks(vendorDetail);
+		}
+		LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by headerId: " + headerId + " and detailId: " + detailId);
+		return false;
+	}
 
 	protected DataDictionaryService getDataDictionaryService() {
 		return dataDictionaryService;
@@ -187,5 +217,13 @@ public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityServic
 
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+
+	public VendorService getVendorService() {
+		return vendorService;
+	}
+
+	public void setVendorService(VendorService vendorService) {
+		this.vendorService = vendorService;
 	}
 }
