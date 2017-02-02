@@ -23,7 +23,6 @@
         <bean parent="ReferenceDefinition" p:attributeName="proposal" p:attributeToHighlightOnFail="proposalNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="proposalAwardType" p:attributeToHighlightOnFail="proposalAwardTypeCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="awardStatus" p:attributeToHighlightOnFail="awardStatusCode"/>
-        <bean parent="ReferenceDefinition" p:attributeName="letterOfCreditFundCode" p:attributeToHighlightOnFail="letterOfCreditFundCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="grantDescription" p:attributeToHighlightOnFail="grantDescriptionCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="agency" p:attributeToHighlightOnFail="agencyNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="federalPassThroughAgency" p:attributeToHighlightOnFail="federalPassThroughAgencyNumber"/>

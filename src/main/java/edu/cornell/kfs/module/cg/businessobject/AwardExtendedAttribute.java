@@ -20,7 +20,7 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	private boolean finalFinancialReportRequired;
 	private Date finalFiscalReportDate;
 	private String locAccountId;
-	private Long proposalNumber;
+	private String proposalNumber;
 	private Date budgetBeginningDate;
 	private Date budgetEndingDate;
 	private KualiDecimal budgetTotalAmount;
@@ -58,11 +58,11 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 		this.locAccountId = locAccountId;
 	}
 
-	public Long getProposalNumber() {
+	public String getProposalNumber() {
 		return proposalNumber;
 	}
 
-	public void setProposalNumber(Long proposalNumber) {
+	public void setProposalNumber(String proposalNumber) {
 		this.proposalNumber = proposalNumber;
 	}
 
