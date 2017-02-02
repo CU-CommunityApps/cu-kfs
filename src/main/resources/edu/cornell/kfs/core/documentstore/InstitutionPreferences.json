@@ -2624,6 +2624,104 @@
           }
         ]
       }
+    },
+    {
+      "label": "Accounting Custom Document Searches",
+      "links": {
+        "reference": [
+          {
+            "label": "Financial Transactions",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=KFST",
+            "linkType": "rice"
+          },
+          {
+            "label": "Disbursement Vouchers",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=DV",
+            "linkType": "rice"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Accounts Receivable Custom Document Searches",
+      "links": {
+        "reference": [
+          {
+            "label": "Customer Invoices",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=INV",
+            "linkType": "rice"
+          },
+          {
+            "label": "Customer Credit Memos",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=CRM",
+            "linkType": "rice"
+          },
+          {
+            "label": "Customer Invoice Writeoffs",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=INVW",
+            "linkType": "rice"
+          },
+          {
+            "label": "Cash Controls",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=CTRL",
+            "linkType": "rice"
+          },
+          {
+            "label": "Payment Applications",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=APP",
+            "linkType": "rice"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Capital Asset Management Custom Document Searches",
+      "links": {
+        "reference": [
+          {
+            "label": "Asset Maintenance",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=CAMM",
+            "linkType": "rice"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Orders Custom Document Searches",
+      "links": {
+        "reference": [
+          {
+            "label": "Electronic Invoice Rejects",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=EIRT",
+            "linkType": "rice"
+          },
+          {
+            "label": "Payment Requests",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=PREQ",
+            "linkType": "rice"
+          },
+          {
+            "label": "Purchase Orders",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=PO",
+            "linkType": "rice"
+          },
+          {
+            "label": "Receiving",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=RCV",
+            "linkType": "rice"
+          },
+          {
+            "label": "Requisitions",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=REQS",
+            "linkType": "rice"
+          },
+          {
+            "label": "Vendor Credit Memos",
+            "link": "/kew/DocumentSearch.do?docFormKey=88888888&hideReturnLink=true&documentTypeName=CM",
+            "linkType": "rice"
+          }
+        ]
+      }
     }
   ],
    "menu": [
