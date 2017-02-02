@@ -38,17 +38,7 @@ public interface PaymentWorksUtilityService {
 	 */
 	String pojoToJsonString(Object object);
 	
-	/**
-	 * Determines if the vendor should be uploaded to PaymentWorks
-	 * @param vendorDetail
-	 * @return
-	 */
 	boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail);
 	
-	/**
-	 * Determines if the vendor should be uploaded to PaymentWorks
-	 * @param paymentWorksVendor
-	 * @return
-	 */
 	boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor);
 }

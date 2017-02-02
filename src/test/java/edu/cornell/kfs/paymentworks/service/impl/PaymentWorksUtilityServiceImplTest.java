@@ -76,7 +76,7 @@ public class PaymentWorksUtilityServiceImplTest {
 	}
 	
 	@Test
-	public void shouldVendorBeSentToPaymentWorks1() {
+	public void activeDVVendorShouldBeSentToPaymentWorks() {
 		VendorDetail vendorDetail = buildVendorDetail();
 		vendorDetail.setActiveIndicator(true);
 		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_DV);
@@ -84,7 +84,7 @@ public class PaymentWorksUtilityServiceImplTest {
 	}
 	
 	@Test
-	public void shouldVendorBeSentToPaymentWorks2() {
+	public void activePOVendorShouldNotBeSentToPaymentWorks() {
 		VendorDetail vendorDetail = buildVendorDetail();
 		vendorDetail.setActiveIndicator(true);
 		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_PO);
@@ -92,7 +92,7 @@ public class PaymentWorksUtilityServiceImplTest {
 	}
 	
 	@Test
-	public void shouldVendorBeSentToPaymentWorks3() {
+	public void activePcardVendorShouldNotBeSentToPaymentWorks() {
 		VendorDetail vendorDetail = buildVendorDetail();
 		vendorDetail.setActiveIndicator(true);
 		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_PCARD);
@@ -100,7 +100,7 @@ public class PaymentWorksUtilityServiceImplTest {
 	}
 	
 	@Test
-	public void shouldVendorBeSentToPaymentWorks4() {
+	public void inactivePOVendorShouldNotBeSentToPaymentWorks() {
 		VendorDetail vendorDetail = buildVendorDetail();
 		vendorDetail.setActiveIndicator(false);
 		vendorDetail.getVendorHeader().setVendorTypeCode(CUVendorConstants.PROC_METHOD_PO);
