@@ -1,0 +1,9 @@
+<documentType>
+	<name>APDT</name>
+	<parent>CMSM</parent>
+	<label>Asset Payment Document Type</label>
+	<helpDefinitionURL>default.htm?turl=WordDocuments%2Fassetpaymentdocument.htm
+	</helpDefinitionURL>
+	<active>true</active>
+	<routingVersion>2</routingVersion>
+</documentType>
