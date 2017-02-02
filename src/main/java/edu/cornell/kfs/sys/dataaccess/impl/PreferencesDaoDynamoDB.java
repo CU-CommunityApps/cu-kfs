@@ -1,18 +1,20 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.dataaccess.PreferencesDao;
+
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.dataaccess.PreferencesDao;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PreferencesDaoDynamoDB implements PreferencesDao {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PreferencesDaoDynamoDB.class);
@@ -22,6 +24,9 @@ public class PreferencesDaoDynamoDB implements PreferencesDao {
     public static final String INSTITUTION_PREFERENCES_CACHE = "InstitutionPreferencesCache";
     public static final String INSTITUTION_PREFERENCES_CACHE_LENGTH = "InstitutionPreferencesCacheLength";
     public static final String CACHE_LENGTH = "cacheLength";
+    public static final String DEFAULT_CHART_CODE = "defaultFinancialsChartOfAccountsCode";
+    public static final String DEFAULT_ORG_CODE = "defaultOrganizationCode";
+    public static final String DEFAULT_ACCOUNTS = "defaultAccounts";
 
     public static final String USER_PREFERENCES = "UserPreferences";
     public static final String PRINCIPAL_NAME_KEY = "principalName";
@@ -177,6 +182,8 @@ public class PreferencesDaoDynamoDB implements PreferencesDao {
         Item item = Item.fromJSON(preferences);
         item = item.withString(PRINCIPAL_NAME_KEY, principalName);
 
+        removeAttributesIfEmpty(item, DEFAULT_CHART_CODE, DEFAULT_ORG_CODE, DEFAULT_ACCOUNTS);
+
         Table table = retrieveTable(USER_PREFERENCES);
         PutItemOutcome outcome = table.putItem(item);
         LOG.debug("Saved user preferences: " + outcome);
@@ -199,6 +206,21 @@ public class PreferencesDaoDynamoDB implements PreferencesDao {
             tableName = tableNamePrefix + tableName;
         }
         return dynamoDB.getTable(tableName);
+    }
+
+    protected void removeAttributesIfEmpty(Item item, String... attributeNames) {
+        for (String attributeName : attributeNames) {
+            removeAttributeIfEmpty(item, attributeName);
+        }
+    }
+
+    protected void removeAttributeIfEmpty(Item item, String attributeName) {
+        Object value = item.get(attributeName);
+        if (value == null
+                || (value instanceof String && StringUtils.isBlank((String) value))
+                || (value instanceof Collection && ((Collection<?>) value).isEmpty())) {
+            item.removeAttribute(attributeName);
+        }
     }
 
     public void setDocumentStoreClient(DynamoDBClient documentStoreClient) {

@@ -1,5 +1,20 @@
 package edu.cornell.kfs.sys.dataaccess.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DeleteItemOutcome;
@@ -8,17 +23,6 @@ import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class PreferencesDaoDynamoDBTest {
 
@@ -117,10 +121,43 @@ public class PreferencesDaoDynamoDBTest {
         validateUserPreferences("Bryan's new user preferences");
     }
 
+    @Test
+    public void saveUserPreferencesStringWithEmptyDefaults() throws Exception {
+        String userPreferences = String.format("{\"user preferences\": \"More preferences\",  \"%s\": \"\", \"%s\": \"\", \"%s\": [] }",
+                PreferencesDaoDynamoDB.DEFAULT_CHART_CODE, PreferencesDaoDynamoDB.DEFAULT_ORG_CODE, PreferencesDaoDynamoDB.DEFAULT_ACCOUNTS);
+        
+        preferencesDaoDynamoDB.saveUserPreferences(PRINCIPAL_NAME, userPreferences);
+        validateUserPreferences("More preferences");
+        validateEmptyDefaultPreferencesWereRemoved(
+                PreferencesDaoDynamoDB.DEFAULT_CHART_CODE, PreferencesDaoDynamoDB.DEFAULT_ORG_CODE, PreferencesDaoDynamoDB.DEFAULT_ACCOUNTS);
+    }
+
+    @Test
+    public void saveUserPreferencesMapWithEmptyDefaults() throws Exception {
+        Map<String, Object> userPreferences = new HashMap<>();
+        userPreferences.put("user preferences", "Even more preferences");
+        userPreferences.put(PreferencesDaoDynamoDB.DEFAULT_CHART_CODE, StringUtils.EMPTY);
+        userPreferences.put(PreferencesDaoDynamoDB.DEFAULT_ORG_CODE, StringUtils.EMPTY);
+        userPreferences.put(PreferencesDaoDynamoDB.DEFAULT_ACCOUNTS, new ArrayList<Object>());
+        
+        preferencesDaoDynamoDB.saveUserPreferences(PRINCIPAL_NAME, userPreferences);
+        validateUserPreferences("Even more preferences");
+        validateEmptyDefaultPreferencesWereRemoved(
+                PreferencesDaoDynamoDB.DEFAULT_CHART_CODE, PreferencesDaoDynamoDB.DEFAULT_ORG_CODE, PreferencesDaoDynamoDB.DEFAULT_ACCOUNTS);
+    }
+
     private void validateUserPreferences(String expectedUserPreferences) {
         Map<String, Object> savedUserPreferences = preferencesDaoDynamoDB.getUserPreferences(PRINCIPAL_NAME);
         assertNotNull("UserPreferences should not be null", savedUserPreferences);
         assertEquals("User Preferences are not what we expected", expectedUserPreferences, savedUserPreferences.get("user preferences"));
+    }
+
+    private void validateEmptyDefaultPreferencesWereRemoved(String... attributeNames) throws Exception {
+        Map<String, Object> savedUserPreferences = preferencesDaoDynamoDB.getUserPreferences(PRINCIPAL_NAME);
+        for (String attributeName : attributeNames) {
+            assertFalse("Found an attribute that should have been removed due to empty content: " + attributeName,
+                    savedUserPreferences.containsKey(attributeName));
+        }
     }
 
     private class MockPreferencesDaoDynamodDB extends PreferencesDaoDynamoDB {
