@@ -87,6 +87,7 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 				}
 			}
 		}
+		writePaymentWorksNewVendorSummaryReport();
 		if (!jobCompletedSuccessfully) {
 			throw new RuntimeException("There was an error processing new vendors from PaymentWorks");
 		}
@@ -132,7 +133,7 @@ public class PaymentWorksRetrieveNewVendorStep extends AbstractStep {
 		paymentWorksWebService.updateNewVendorStatusInPaymentWorks(updateNewVendorStatusList);
 	}
 
-	protected File writePaymentWorksNewVendorSummaryReport(NewVendorSummary newVendorSummary) {
+	protected File writePaymentWorksNewVendorSummaryReport() {
 		if (reportWriterService == null) {
 			throw new IllegalStateException("ReportWriterService not configured for PaymentWorks New Vendor service.");
 		} else {

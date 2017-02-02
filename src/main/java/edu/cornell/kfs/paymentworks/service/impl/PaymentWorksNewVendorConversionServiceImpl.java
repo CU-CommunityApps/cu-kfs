@@ -235,7 +235,6 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 		paymentWorksVendor.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
 		paymentWorksVendor.setRequestingCompanyLegalName(vendorDetail.getVendorName());
 		paymentWorksVendor.setRequestingCompanyTin(vendorDetail.getVendorHeader().getVendorTaxNumber());
-		paymentWorksVendor.setSendToPaymentWorks((shouldVendorBeSentToPaymentWorks(vendorDetail)));
 
 		setPOAddressOnPaymentWorksVendor(vendorDetail, paymentWorksVendor);
 
@@ -287,15 +286,6 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 		}
 	}
 
-	protected boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail) {
-		return vendorDetail.isActiveIndicator()
-				&& !(StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "US")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "NU")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "SE")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "UE")
-						|| StringUtils.equals(vendorDetail.getVendorHeader().getVendorOwnershipCategoryCode(), "AE"));
-	}
-	
 	@Override
 	public PaymentWorksVendor createPaymentWorksVendor(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
 		PaymentWorksVendor paymentWorksNewVendor = new PaymentWorksVendor();
