@@ -32,14 +32,13 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 	 */
 	@Override
 	public Collection<String> getDocumentRequeueValues() {
-		String sql = buildRequeueSqlCriteria();
+		String requeueSqlQuery = buildRequeueSqlQuery();
+		List<Map<String, Object>> results = getSimpleJdbcTemplate().queryForList(requeueSqlQuery);
 
-		List<Map<String, Object>> results = getSimpleJdbcTemplate().queryForList(sql);
-
-		return convertResultsToList(results);
+		return convertResultsMapListToListOfDocumentIds(results);
 	}
 
-	private String buildRequeueSqlCriteria() {
+	private String buildRequeueSqlQuery() {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select DOC_HDR_ID from CYNERGY.KREW_DOC_HDR_T where ");
@@ -79,10 +78,10 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 		return sql.toString();
 	}
 	
-	private List<String> convertResultsToList(List<Map<String, Object>> results) {
+	private List<String> convertResultsMapListToListOfDocumentIds(List<Map<String, Object>> resultsMapList) {
 		ArrayList<String> documentIds = new ArrayList<String>();
 
-		for (Map<String, Object> resultMap : results) {
+		for (Map<String, Object> resultMap : resultsMapList) {
 			documentIds.add((String)resultMap.get(retrieveColumnNameFromAnnotations(DocumentRouteHeaderValue.class, WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY)));
 		}
 

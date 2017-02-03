@@ -82,7 +82,9 @@
 		</property>
 	</bean>
 	
-	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step"/>
+	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
+		<property name="documentMaintenanceService" ref="documentMaintenanceService" />
+	</bean>
 	
 	<bean id="documentReindexerJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
