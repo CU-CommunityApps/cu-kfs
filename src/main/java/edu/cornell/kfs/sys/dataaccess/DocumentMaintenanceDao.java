@@ -1,27 +1,14 @@
-/**
- * 
- */
 package edu.cornell.kfs.sys.dataaccess;
 
 import java.util.Collection;
-import java.util.List;
 
-/**
- * @author Admin-dwf5
- *
- */
 public interface DocumentMaintenanceDao {
 
 	/**
-	 * 
-	 * @return
+	 * Obtains and returns a list of documentIds for documents to requeue.
+	 *
+	 * @return list of documentIds
 	 */
-	public Collection<String> getDocumentRequeueValues();
+	Collection<String> getDocumentRequeueValues();
 
-	/**
-	 * 
-	 * @return
-	 */
-	public List<String> getDocumentReindexValues();
-	
 }
