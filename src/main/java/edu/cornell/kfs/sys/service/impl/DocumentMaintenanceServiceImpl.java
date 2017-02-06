@@ -11,23 +11,23 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentMaintenanceServiceImpl.class);
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentMaintenanceServiceImpl.class);
+
+	public static final int WAIT_TIME_NO_WAIT = 0;
 
 	private DocumentMaintenanceDao documentMaintenanceDao;
 
 	@Transactional
 	public boolean requeueDocuments() {
-		boolean result = true;
 		Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
-		LOG.info("Total number of documents flagged for requeuing: "+docIds.size());
+		LOG.info("Total number of documents flagged for requeuing: " + docIds.size());
 
-		for (Iterator<String> it = docIds.iterator(); it.hasNext(); ) {
-			Long id = new Long(it.next());
-			DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), id.toString(), 0 /*no wait*/);
-			documentRequeuer.refreshDocument(id.toString());
+		for (String docId: docIds) {
+			DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), docId, WAIT_TIME_NO_WAIT);
+			documentRequeuer.refreshDocument(docId);
 		}
 
-		return result;
+		return true;
 	}
 
 	public DocumentMaintenanceDao getDocumentMaintenanceDao() {
