@@ -1,34 +1,33 @@
 package edu.cornell.kfs.module.cab.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
-import org.kuali.kfs.module.cab.CabParameterConstants;
-import org.kuali.kfs.module.cab.service.impl.CapitalAssetBuilderModuleServiceImpl;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsKeyConstants;
+import org.kuali.kfs.module.cam.CamsParameterConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetType;
+import org.kuali.kfs.module.cam.service.impl.CapitalAssetManagementModuleServiceImpl;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Building;
 import org.kuali.kfs.sys.businessobject.Room;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.location.api.campus.Campus;
 
-import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetBuilderModuleServiceImpl {
+public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetManagementModuleServiceImpl {
 
     protected boolean checkNewCapitalAssetFieldsExist(CapitalAssetInformation capitalAssetInformation, AccountingDocument accountingDocument, int caLineIndex) {
         boolean valid = true;
@@ -47,7 +46,7 @@ public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetBuilderM
 
         //VENDOR_IS_REQUIRED_FOR_NON_MOVEABLE_ASSET parameter determines if we need to check
         //vendor name entered.
-        String vendorNameRequired = getParameterService().getParameterValueAsString(Asset.class, CabParameterConstants.CapitalAsset.VENDOR_REQUIRED_FOR_NON_MOVEABLE_ASSET_IND);
+        String vendorNameRequired = getParameterService().getParameterValueAsString(Asset.class, CamsParameterConstants.CapitalAsset.VENDOR_REQUIRED_FOR_NON_MOVEABLE_ASSET_IND);
 
         if ("Y".equalsIgnoreCase(vendorNameRequired)) {
         // skip vendor name required validation for procurement card document
@@ -64,7 +63,7 @@ public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetBuilderM
 
         //MANUFACTURER_IS_REQUIRED_FOR_NON_MOVEABLE_ASSET parameter determines if we need to check
         //vendor name entered.
-        String manufacturerNameRequired = getParameterService().getParameterValueAsString(Asset.class, CabParameterConstants.CapitalAsset.MANUFACTURER_REQUIRED_FOR_NON_MOVEABLE_ASSET_IND);
+        String manufacturerNameRequired = getParameterService().getParameterValueAsString(Asset.class, CamsParameterConstants.CapitalAsset.MANUFACTURER_REQUIRED_FOR_NON_MOVEABLE_ASSET_IND);
 
         if ("Y".equalsIgnoreCase(manufacturerNameRequired)) {
             if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetManufacturerName())) {

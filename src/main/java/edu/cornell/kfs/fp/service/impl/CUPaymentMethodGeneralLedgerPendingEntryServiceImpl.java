@@ -15,29 +15,22 @@
  */
 package edu.cornell.kfs.fp.service.impl;
 
-import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
-import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
-import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
+import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.query.Criteria;
-import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.businessobject.Entry;
-
-import org.kuali.kfs.module.cab.CabPropertyConstants;
-import org.kuali.kfs.module.cab.businessobject.BatchParameters;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.service.PurapGeneralLedgerService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -57,16 +50,17 @@ import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.cache.annotation.Cacheable;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
-import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
-import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
-import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
+import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
+import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
 @NonTransactional
 public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPaymentMethodGeneralLedgerPendingEntryService {
@@ -117,7 +111,13 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
      * 
      * Return true if GLPE's are generated successfully (i.e. there are either 0 GLPE's or 1 GLPE in disbursement voucher document)
      * 
-     * @param financialDocument submitted financial document
+     * @param document submitted financial document
+     * @param paymentMethodCode
+     * @param bankCode
+     * @param bankCodePropertyName
+     * @param templatePendingEntry
+     * @param feesWaived
+     * @param reverseCharge
      * @param sequenceHelper helper class to keep track of GLPE sequence
      * @return true if GLPE's are generated successfully
      */

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2016 The Kuali Foundation
+ * Copyright 2005-2017 Kuali, Inc.
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,7 +18,7 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
-import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
+import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -31,7 +31,7 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPayableNewIndividualItemValidation {
 
     private BusinessObjectService businessObjectService;
-    private CapitalAssetBuilderModuleService capitalAssetBuilderModuleService;
+    private CapitalAssetManagementModuleService capitalAssetManagementModuleService;
     private PurchasingUnitOfMeasureValidation unitOfMeasureValidation;
     private PurchasingItemUnitPriceValidation itemUnitPriceValidation;
     private PurchasingItemDescriptionValidation itemDescriptionValidation;
@@ -48,7 +48,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         String recurringPaymentTypeCode = purDoc.getRecurringPaymentTypeCode();
         //Capital asset validations are only done on line items (not additional charge items).
         if (!getItemForValidation().getItemType().isAdditionalChargeIndicator()) {
-            valid &= capitalAssetBuilderModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode, getItemForValidation(), false);
+            valid &= capitalAssetManagementModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode, getItemForValidation(), false);
         }
         unitOfMeasureValidation.setItemForValidation(getItemForValidation());
         valid &= unitOfMeasureValidation.validate(event);
@@ -117,12 +117,12 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         this.businessObjectService = businessObjectService;
     }
 
-    public CapitalAssetBuilderModuleService getCapitalAssetBuilderModuleService() {
-        return capitalAssetBuilderModuleService;
+    public CapitalAssetManagementModuleService getCapitalAssetManagementModuleService() {
+        return capitalAssetManagementModuleService;
     }
 
-    public void setCapitalAssetBuilderModuleService(CapitalAssetBuilderModuleService capitalAssetBuilderModuleService) {
-        this.capitalAssetBuilderModuleService = capitalAssetBuilderModuleService;
+    public void setCapitalAssetManagementModuleService(CapitalAssetManagementModuleService capitalAssetManagementModuleService) {
+        this.capitalAssetManagementModuleService = capitalAssetManagementModuleService;
     }
 
     public PurchasingUnitOfMeasureValidation getUnitOfMeasureValidation() {

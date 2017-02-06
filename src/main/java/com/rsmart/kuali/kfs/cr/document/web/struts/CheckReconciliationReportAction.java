@@ -15,6 +15,24 @@
  */
 package com.rsmart.kuali.kfs.cr.document.web.struts;
 
+import com.rsmart.kuali.kfs.cr.CRConstants;
+import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
+import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService;
+import net.sf.jasperreports.engine.JRParameter;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.kns.util.WebUtils;
+import org.kuali.kfs.kns.web.struts.action.KualiAction;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.ReportGenerationService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -24,28 +42,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JRParameter;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.module.bc.BCConstants;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.ReportGenerationService;
-import org.kuali.kfs.kns.util.WebUtils;
-import org.kuali.kfs.kns.web.struts.action.KualiAction;
-import org.kuali.kfs.krad.util.GlobalVariables;
-
-import com.rsmart.kuali.kfs.cr.CRConstants;
-import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
-import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService;
 
 /**
  * Check Reconciliation Action
@@ -157,7 +153,7 @@ public class CheckReconciliationReportAction extends KualiAction {
                 // build pdf and stream back
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
        
-                ResourceBundle resourceBundle = ResourceBundle.getBundle(BCConstants.Report.REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
+                ResourceBundle resourceBundle = ResourceBundle.getBundle(CRConstants.BC_REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
                 Map<String, Object> reportData = new HashMap<String, Object>();
                 reportData.put(JRParameter.REPORT_RESOURCE_BUNDLE, resourceBundle);
                 reportData.put("REPORT_END_DATE", new SimpleDateFormat("MM/dd/yyyy").format(crForm.getEndDate()));
