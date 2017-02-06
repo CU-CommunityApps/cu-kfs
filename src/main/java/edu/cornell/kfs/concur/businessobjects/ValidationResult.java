@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.concur.ConcurConstants;
+
 public class ValidationResult {
     protected boolean valid;
     protected List<String> messages;
@@ -17,7 +19,7 @@ public class ValidationResult {
     public boolean isValid() {
         return valid;
     }
-    
+
     public boolean isNotValid() {
         return !valid;
     }
@@ -40,7 +42,7 @@ public class ValidationResult {
         }
         messages.add(message);
     }
-    
+
     public void addMessages(List<String> messagesToAdd) {
         if (messages == null) {
             messages = new ArrayList<String>();
@@ -59,8 +61,28 @@ public class ValidationResult {
                 result.append(KFSConstants.NEWLINE);
             }
         }
-        
-        return result.toString();
+
+        return addMessageHeaderAndTruncate(result.toString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+    }
+
+    private String addMessageHeaderAndTruncate(String message, int maxLength) {
+        String errorMessagesString = addMessageHeader(message);
+        errorMessagesString = truncateMessageLength(errorMessagesString, maxLength);
+        return errorMessagesString;
+    }
+
+    private String addMessageHeader(String message) {
+        if (message.length() > 0) {
+            message = ConcurConstants.ERROR_MESSAGE_HEADER + message;
+        }
+        return message;
+    }
+
+    private String truncateMessageLength(String message, int maxLength) {
+        if (message.length() > maxLength) {
+            message = message.substring(0, maxLength + 1);
+        }
+        return message;
     }
 
 }

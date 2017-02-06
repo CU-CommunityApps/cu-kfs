@@ -18,6 +18,9 @@ public class ExpenseEntryDTO {
 
     @XmlElement(name = "OrgUnit6")
     private String orgUnit6;
+      
+    @XmlElement(name = "Allocations")
+    List<AllocationsDTO> allocations;
 
     public List<ItemizationEntryDTO> getItemizationsList() {
         return itemizationsList;
@@ -33,6 +36,14 @@ public class ExpenseEntryDTO {
 
     public void setOrgUnit6(String orgUnit6) {
         this.orgUnit6 = orgUnit6;
+    }
+    
+    public List<AllocationsDTO> getAllocations() {
+        return allocations;
+    }
+
+    public void setAllocations(List<AllocationsDTO> allocations) {
+        this.allocations = allocations;
     }
 
 }

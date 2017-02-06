@@ -45,5 +45,9 @@ public class ConcurUtils {
 
         return formattedString;
     }
+    
+    public static boolean isConcurReportStatusAwaitingExternalValidation(String statusCode){
+        return ConcurConstants.EXPENSE_AWAIRING_EXTERNAL_VALIDATION_STATUS_CODE.equalsIgnoreCase(statusCode) || ConcurConstants.REQUEST_AWAIRING_EXTERNAL_VALIDATION_STATUS_CODE.equalsIgnoreCase(statusCode);
+    }
 
 }

@@ -15,19 +15,19 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
-import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
 import edu.cornell.kfs.concur.businessobjects.ConcurReport;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.xmlObjects.AllocationsDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseEntryDTO;
-import edu.cornell.kfs.concur.rest.xmlObjects.ItemizationEntryDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseReportDetailsDTO;
+import edu.cornell.kfs.concur.rest.xmlObjects.ItemizationEntryDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.TravelRequestDetailsDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
@@ -35,6 +35,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurReportsServiceImpl implements ConcurReportsService {
+    
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportsServiceImpl.class);
     protected ConcurAccessTokenService concurAccessTokenService;
     protected ParameterService parameterService;
     
@@ -55,13 +57,13 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ExpenseReportDetailsDTO expenseReportDetailsDTO = retrieveExpenseReportDetails(reportURI);
         List<ConcurAccountInfo> concurAccountInfos = extractAccountInfoFromExpenseReportDetails(expenseReportDetailsDTO);
         
-        return new ConcurReport(expenseReportDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
+        return new ConcurReport(expenseReportDetailsDTO.getConcurStatusCode(), expenseReportDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
     }
     
     protected ConcurReport extractConcurReportFromTravelRequestDetails(String reportURI){
         TravelRequestDetailsDTO travelRequestDetailsDTO = retrieveTravelRequestDetails(reportURI);
         List<ConcurAccountInfo> concurAccountInfos = extractAccountInfoFromTravelRequestDetails(travelRequestDetailsDTO);
-        return new ConcurReport(travelRequestDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
+        return new ConcurReport(travelRequestDetailsDTO.getConcurStatucCode(), travelRequestDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
 
     }
 
@@ -121,6 +123,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
                         accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocations(), orgRefId));
                     }
                 }
+                
+                accountInfoList.addAll(extractConcurAccountInfoFromAllocations(expenseEntry.getAllocations(), orgRefId));
             }
         }
 
@@ -166,9 +170,38 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
     @Override
     public void updateExpenseReportStatusInConcur(String workflowURI, ValidationResult validationResult) {
+        if(validationResult.isValid()){
+            buildUpdateReportOutput(workflowURI, ConcurConstants.APPROVE_ACTION, ConcurConstants.APPROVE_COMMENT);  
+        }
+        else{
+            buildUpdateReportOutput(workflowURI, ConcurConstants.SEND_BACK_TO_EMPLOYEE_ACTION, validationResult.getErrorMessagesAsOneFormattedString());  
+        }          
+    }
+    
+    protected void buildUpdateReportOutput(String workflowURI, String action, String comment) {
+        ClientConfig clientConfig = new DefaultClientConfig();
+        Client client = Client.create(clientConfig);
+        WebResource resource = client.resource(workflowURI);
+      
+        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
+
+        response.bufferEntity();
+        String result = response.getEntity(String.class);
+        LOG.info("Update workflow response: " + result);
 
     }
 
+    private String buildWorkflowUpdateXML(String workflowURI, String action, String comment) {
+        String xml = "<WorkflowAction xmlns=\"" + getNamespace(workflowURI)
+                + "\"><Action>" + action + "</Action><Comment>" + comment
+                + "</Comment></WorkflowAction>";
+        return xml;
+    }
+    
+    private String getNamespace(String workflowURI){
+        return ConcurUtils.isExpenseReportURI(workflowURI)? ConcurConstants.EXPENSE_WORKFLOW_UPDATE_NAMESPACE: ConcurConstants.REQUEST_WORKFLOW_UPDATE_NAMESPACE;
+    }
+    
     public ConcurAccessTokenService getConcurAccessTokenService() {
         return concurAccessTokenService;
     }
