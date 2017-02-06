@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.cab.service.impl;
+package edu.cornell.kfs.module.cam.service.impl;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CuCapitalAssetBuilderModuleServiceImpl extends CapitalAssetManagementModuleServiceImpl {
+public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManagementModuleServiceImpl {
 
     protected boolean checkNewCapitalAssetFieldsExist(CapitalAssetInformation capitalAssetInformation, AccountingDocument accountingDocument, int caLineIndex) {
         boolean valid = true;

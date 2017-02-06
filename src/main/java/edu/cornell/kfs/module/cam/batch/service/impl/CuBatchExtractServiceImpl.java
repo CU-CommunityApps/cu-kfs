@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.cab.batch.service.impl;
+package edu.cornell.kfs.module.cam.batch.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -254,7 +254,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                          *      that means the original charges and trade-in/discounts are combined together,
                          *      while the reversed charges and trade-in/discounts are combined together;
                          *      So: original charge + original trade-in/discount -> debit, reversed charge + reversed trade-in/discount -> credit
-                         * 3.   On top of these, we ensure that the final cab GL entries created is a debit if the consolidated amount is positive, and vice versa.
+                         * 3.   On top of these, we ensure that the final capital asset GL entries created is a debit if the consolidated amount is positive, and vice versa.
                          *      Note: In general, the consolidated amount for debit entry should already be positive, and vice versa. But there could be special cases,
                          *      for ex, in the case of 2.2, if the revision is only on discount, then the credit entry for the reverse would come out as positive, so we need
                          *      to swap it into a debit entry. This means, we will have 2 debit entries, one for the original lines, the other for the reversed discount line.

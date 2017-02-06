@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.bc.businessobject;
+package edu.cornell.kfs.module.ld.businessobject;
 import java.sql.Date;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;

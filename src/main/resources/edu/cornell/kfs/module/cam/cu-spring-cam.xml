@@ -59,4 +59,8 @@
         <property name="cuAssetSubAccountService" ref="cuAssetSubAccountService" />
     </bean>
 
+	<bean id="capitalAssetManagementModuleService" parent="capitalAssetManagementModuleService-parentBean" class="edu.cornell.kfs.module.cam.service.impl.CuCapitalAssetManagementModuleServiceImpl" />
+
+	<bean id="batchExtractService" parent="batchExtractService-parentBean" class="edu.cornell.kfs.module.cam.batch.service.impl.CuBatchExtractServiceImpl" />
+
 </beans>
