@@ -1625,7 +1625,7 @@
             "label": "e-SHOP",
             "link": "b2b.do?methodToCall=shopCatalogs",
             "linkType": "kfs",
-            "newTarget": true,
+            "newTarget": "true",
             "permission": {
               "templateNamespace": "KR-NS",
               "templateName": "Use Screen",
@@ -2011,7 +2011,7 @@
             "label": "Financials Configuration Viewer",
             "link": "ksb/ConfigViewer.do",
             "linkType": "kfs",
-            "newTarget": true,
+            "newTarget": "true",
             "permission": {
               "templateNamespace": "KR-NS",
               "templateName": "Use Screen",
