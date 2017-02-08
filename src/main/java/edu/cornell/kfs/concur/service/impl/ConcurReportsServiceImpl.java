@@ -39,6 +39,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportsServiceImpl.class);
     protected ConcurAccessTokenService concurAccessTokenService;
     protected ParameterService parameterService;
+    private String concurExpenseWorkflowUpdateNamespace;
+    private String concurRequestWorkflowUpdateNamespace;
     
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
@@ -199,7 +201,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     }
     
     private String getNamespace(String workflowURI){
-        return ConcurUtils.isExpenseReportURI(workflowURI)? ConcurConstants.EXPENSE_WORKFLOW_UPDATE_NAMESPACE: ConcurConstants.REQUEST_WORKFLOW_UPDATE_NAMESPACE;
+        return ConcurUtils.isExpenseReportURI(workflowURI)? concurExpenseWorkflowUpdateNamespace: concurRequestWorkflowUpdateNamespace;
     }
     
     public ConcurAccessTokenService getConcurAccessTokenService() {
@@ -216,6 +218,24 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public String getConcurExpenseWorkflowUpdateNamespace() {
+        return concurExpenseWorkflowUpdateNamespace;
+    }
+
+    public void setConcurExpenseWorkflowUpdateNamespace(
+            String concurExpenseWorkflowUpdateNamespace) {
+        this.concurExpenseWorkflowUpdateNamespace = concurExpenseWorkflowUpdateNamespace;
+    }
+
+    public String getConcurRequestWorkflowUpdateNamespace() {
+        return concurRequestWorkflowUpdateNamespace;
+    }
+
+    public void setConcurRequestWorkflowUpdateNamespace(
+            String concurRequestWorkflowUpdateNamespace) {
+        this.concurRequestWorkflowUpdateNamespace = concurRequestWorkflowUpdateNamespace;
     }
 
 }

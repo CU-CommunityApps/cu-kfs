@@ -20,7 +20,7 @@ public class ExpenseReportDetailsDTO {
 
     @XmlElementWrapper(name = "Entries")
     @XmlElement(name = "ExpenseEntry")
-    List<ExpenseEntryDTO> entries;
+    private List<ExpenseEntryDTO> entries;
 
     public String getWorkflowActionURL() {
         return workflowActionURL;

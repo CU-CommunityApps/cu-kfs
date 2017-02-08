@@ -7,6 +7,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationProcessingService;
@@ -59,7 +60,7 @@ public class ConcurEventNotificationProcessingServiceImpl implements ConcurEvent
                 }
                 
                 LOG.info("Update ConcurEventNotification flags and validationMessage in KFS database: " + validationResult.isValid() + "," + validationResult.getErrorMessagesAsOneFormattedString());
-                concurEventNotificationService.updateConcurEventNotificationFlagsAndValidationMessage(concurEventNotification, false, true, validationResult.isValid(), validationResult.getErrorMessagesAsOneFormattedString());           
+                concurEventNotificationService.updateConcurEventNotificationFlagsAndValidationMessage(concurEventNotification, ConcurConstants.EVENT_NOTIFICATION_NOT_IN_PROCESS, ConcurConstants.EVENT_NOTIFICATION_PROCESSED, validationResult.isValid(), validationResult.getErrorMessagesAsOneFormattedString());           
             }
         } catch (Exception e) {
             LOG.error("An exception occured while processing this request: id " + concurEventNotification.getConcurEventNotificationId() + ", object URI" + concurEventNotification.getObjectURI() + ", error: " + e.getMessage(), e);

@@ -31,14 +31,17 @@ public class ConcurConstants {
 
     public static final String DEFAULT_TRAVEL_REQUEST_OBJECT_CODE_PARAMETER_NAME = "DEFAULT_TRAVEL_REQUEST_OBJECT_CODE";
 
-    public static final String EXPENSE_AWAIRING_EXTERNAL_VALIDATION_STATUS_CODE = "A_EXTV";
-    public static final String REQUEST_AWAIRING_EXTERNAL_VALIDATION_STATUS_CODE = "Q_EXTV";
+    public static final String EXPENSE_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE = "A_EXTV";
+    public static final String REQUEST_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE = "Q_EXTV";
 
     public static final String APPROVE_ACTION = "Approve";
     public static final String SEND_BACK_TO_EMPLOYEE_ACTION = "Send Back To Employee";
     public static final String APPROVE_COMMENT = "Approved via Concur Connect";
-    public static final String EXPENSE_WORKFLOW_UPDATE_NAMESPACE = "http://www.concursolutions.com/api/expense/expensereport/2011/03";
-    public static final String REQUEST_WORKFLOW_UPDATE_NAMESPACE = "http://www.concursolutions.com/api/travelrequest/2012/06";
 
     public static final String ERROR_MESSAGE_HEADER = "Please resubmit your Report.\n\nThe Report is being returned due to an error. Please make the necessary corrections.\n\nError:\n";
+    
+    public static final boolean EVENT_NOTIFICATION_IN_PROCESS = true;
+    public static final boolean EVENT_NOTIFICATION_NOT_IN_PROCESS = false;
+    public static final boolean EVENT_NOTIFICATION_PROCESSED = true;
+    public static final boolean EVENT_NOTIFICATION_NOT_PROCESSED = false;
 }

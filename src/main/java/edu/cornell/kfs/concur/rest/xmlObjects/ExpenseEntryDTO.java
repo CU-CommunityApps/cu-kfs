@@ -20,7 +20,7 @@ public class ExpenseEntryDTO {
     private String orgUnit6;
       
     @XmlElement(name = "Allocations")
-    List<AllocationsDTO> allocations;
+    private List<AllocationsDTO> allocations;
 
     public List<ItemizationEntryDTO> getItemizationsList() {
         return itemizationsList;
