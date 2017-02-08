@@ -14,11 +14,11 @@ public class ItemizationEntryDTO {
     
     @XmlElementWrapper(name="AllocationsList")
     @XmlElement(name = "Allocations")
-    List<AllocationsDTO> allocationsList;
+    private List<AllocationsDTO> allocationsList;
     
     @XmlElementWrapper(name="Allocations")
     @XmlElement(name = "Allocations")
-    List<AllocationsDTO> allocations;
+    private List<AllocationsDTO> allocations;
 
     public List<AllocationsDTO> getAllocationsList() {
         return allocationsList;

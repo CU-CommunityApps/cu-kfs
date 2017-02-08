@@ -11,13 +11,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "ReportDetails")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ExpenseReportDetailsDTO {
-
+    
+    @XmlElement(name = "ApsKey")
+    private String concurStatusCode;
+    
     @XmlElement(name = "WorkflowActionURL")
     private String workflowActionURL;
 
     @XmlElementWrapper(name = "Entries")
     @XmlElement(name = "ExpenseEntry")
-    List<ExpenseEntryDTO> entries;
+    private List<ExpenseEntryDTO> entries;
 
     public String getWorkflowActionURL() {
         return workflowActionURL;
@@ -33,6 +36,14 @@ public class ExpenseReportDetailsDTO {
 
     public void setEntries(List<ExpenseEntryDTO> entries) {
         this.entries = entries;
+    }
+
+    public String getConcurStatusCode() {
+        return concurStatusCode;
+    }
+
+    public void setConcurStatusCode(String concurStatusCode) {
+        this.concurStatusCode = concurStatusCode;
     }
 
 }

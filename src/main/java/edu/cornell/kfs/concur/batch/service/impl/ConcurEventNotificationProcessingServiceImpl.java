@@ -7,7 +7,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationProcessingService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
@@ -35,33 +37,47 @@ public class ConcurEventNotificationProcessingServiceImpl implements ConcurEvent
         }
     }
     
-    protected void processConcurEventNotification(ConcurEventNotification concurEventNotification){
+    protected void processConcurEventNotification(ConcurEventNotification concurEventNotification) {
         try {
             ValidationResult validationResult = new ValidationResult(false, new ArrayList<String>());
 
             LOG.info("Extract concur report with objectURI: " + concurEventNotification.getObjectURI());
 
             ConcurReport concurReport = concurReportsService.extractConcurReport(concurEventNotification.getObjectURI());
+
             if (concurReport != null) {
-                if (concurReport.getAccountInfos() != null) {
-                    LOG.info("Validate account info: " + KFSConstants.NEWLINE);
-                    for (ConcurAccountInfo concurAccountInfo : concurReport.getAccountInfos()) {
-                        LOG.info(concurAccountInfo.toString());
-                        validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-                        LOG.info("Validation Result: " + validationResult.isValid() + ", validation messages: " + validationResult.getErrorMessagesAsOneFormattedString());
+                LOG.info("Concur report status code from Concur: " + concurReport.getConcurStatusCode() + ", workflow URI: " + concurReport.getWorkflowURI());
+                if (ConcurUtils.isConcurReportStatusAwaitingExternalValidation(concurReport.getConcurStatusCode())) {
+                    LOG.info("Validate report accounting info");
+                    validateAccountInfo(validationResult, concurReport);
+                    
+                    LOG.info("Update report status in Concur");
+                    concurReportsService.updateExpenseReportStatusInConcur(concurReport.getWorkflowURI(), validationResult);
                     }
-                } else {
-                    LOG.info("No account info present.");
-                    validationResult.addMessage(configurationService.getPropertyValueAsString(ConcurKeyConstants.CONCUR_ACCOUNT_INFO_IS_REQUIRED));
+                else{
+                    LOG.info("Concur Report not in Awaiting External Validation status");
+                    validationResult.addMessage(configurationService.getPropertyValueAsString(ConcurKeyConstants.INCORRECT_CONCUR_STATUS_CODE));
                 }
                 
-                LOG.info("Update report status in Concur");
-                concurReportsService.updateExpenseReportStatusInConcur(concurReport.getWorkflowURI(), validationResult);  
-                LOG.info("Update ConcurEventNotification flags and validationMessage in KFS database");
-                concurEventNotificationService.updateConcurEventNotificationFlagsAndValidationMessage(concurEventNotification, false, true, validationResult.isValid(), validationResult.getErrorMessagesAsOneFormattedString());
+                LOG.info("Update ConcurEventNotification flags and validationMessage in KFS database: " + validationResult.isValid() + "," + validationResult.getErrorMessagesAsOneFormattedString());
+                concurEventNotificationService.updateConcurEventNotificationFlagsAndValidationMessage(concurEventNotification, ConcurConstants.EVENT_NOTIFICATION_NOT_IN_PROCESS, ConcurConstants.EVENT_NOTIFICATION_PROCESSED, validationResult.isValid(), validationResult.getErrorMessagesAsOneFormattedString());           
             }
         } catch (Exception e) {
             LOG.error("An exception occured while processing this request: id " + concurEventNotification.getConcurEventNotificationId() + ", object URI" + concurEventNotification.getObjectURI() + ", error: " + e.getMessage(), e);
+        }
+    }
+    
+    private void validateAccountInfo(ValidationResult validationResult, ConcurReport concurReport){
+        if (concurReport.getAccountInfos() != null && concurReport.getAccountInfos().size() > 0) {
+            LOG.info("Validate account info: " + KFSConstants.NEWLINE);
+            for (ConcurAccountInfo concurAccountInfo : concurReport.getAccountInfos()) {
+                LOG.info(concurAccountInfo.toString());
+                validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
+                LOG.info("Validation Result: " + validationResult.isValid() + ", validation messages: " + validationResult.getErrorMessagesAsOneFormattedString());
+            }
+        } else {
+            LOG.info("No account info present.");
+            validationResult.addMessage(configurationService.getPropertyValueAsString(ConcurKeyConstants.CONCUR_ACCOUNT_INFO_IS_REQUIRED));
         }
     }
 
