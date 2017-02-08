@@ -99,6 +99,12 @@
 	<bean id="concurReportsService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurReportsServiceImpl" abstract="true">
 		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
 		<property name="parameterService" ref="parameterService" />
+		<property name="concurExpenseWorkflowUpdateNamespace">
+			<value>{concur.expense.workflow.update.namespace}</value>
+		</property>
+		<property name="concurRequestWorkflowUpdateNamespace">
+			<value>{concur.request.workflow.update.namespace}</value>
+		</property>
 	</bean>
 	
 	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />

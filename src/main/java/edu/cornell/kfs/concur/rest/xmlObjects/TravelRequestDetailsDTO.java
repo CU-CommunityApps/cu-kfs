@@ -8,7 +8,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(namespace = "http://www.concursolutions.com/api/travelrequest/2012/06", name = "TravelRequestDetails")
 @XmlAccessorType(XmlAccessType.NONE)
 public class TravelRequestDetailsDTO {
-
+    
+    @XmlElement(name = "ApprovalStatusKey")
+    private String concurStatucCode;
+    
     @XmlElement(name = "WorkflowActionURL")
     private String workflowActionURL;
 
@@ -84,5 +87,13 @@ public class TravelRequestDetailsDTO {
 
     public void setWorkflowActionURL(String workflowActionURL) {
         this.workflowActionURL = workflowActionURL;
+    }
+
+    public String getConcurStatucCode() {
+        return concurStatucCode;
+    }
+
+    public void setConcurStatucCode(String concurStatucCode) {
+        this.concurStatucCode = concurStatucCode;
     }
 }
