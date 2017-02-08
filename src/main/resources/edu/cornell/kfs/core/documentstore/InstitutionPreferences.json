@@ -23,6 +23,18 @@
             }
           },
           {
+            "label": "Budget Adjustment",
+            "link": "financialBudgetAdjustment.do?methodToCall=docHandler&command=initiate&docTypeName=BA",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-SYS",
+              "templateName": "Initiate Document",
+              "details": {
+                "documentTypeName": "BA"
+              }
+            }
+          },
+          {
             "documentTypeCode": "CMD",
             "linkType": "kfs"
           },
@@ -120,6 +132,10 @@
           },
           {
             "documentTypeCode": "TF",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "YEBA",
             "linkType": "kfs"
           },
           {
@@ -573,104 +589,15 @@
       }
     },
     {
-      "label": "Budget",
-      "links": {
-        "activities": [
-          {
-            "label": "Budget Adjustment",
-            "link": "financialBudgetAdjustment.do?methodToCall=docHandler&command=initiate&docTypeName=BA",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-SYS",
-              "templateName": "Initiate Document",
-              "details": {
-                "documentTypeName": "BA"
-              }
-            }
-          },
-          {
-            "label": "Budget Construction Selection",
-            "link": "budgetBudgetConstructionSelection.do?methodToCall=loadExpansionScreen",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Use Screen",
-              "details": {
-                "namespaceCode": "KFS-BC"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "YEBA",
-            "linkType": "kfs"
-          }
-        ],
-        "administration": [
-          {
-            "documentTypeCode": "BCAR",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "DURA",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "BCRC",
-            "linkType": "kfs"
-          },
-          {
-            "label": "Budget Construction Position",
-            "link": "budgetTempListLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.bc.businessobject.BudgetConstructionPosition&docFormKey=88888888&hideReturnLink=true",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Look Up Records",
-              "details": {
-                "namespaceCode": "KFS-BC"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "CSFO",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "BFYC",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "BFNC",
-            "linkType": "kfs"
-          },
-          {
-            "label": "Intended Incumbent",
-            "link": "budgetTempListLookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.module.bc.businessobject.BudgetConstructionIntendedIncumbent&docFormKey=88888888&hideReturnLink=true",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Look Up Records",
-              "details": {
-                "namespaceCode": "KFS-BC"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "BCOR",
-            "linkType": "kfs"
-          }
-        ]
-      }
-    },
-    {
       "label": "Capital Assets",
       "links": {
         "activities": [
           {
-            "businessObjectClass": "org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry",
+            "businessObjectClass": "org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry",
             "linkType": "kfs"
           },
           {
-            "businessObjectClass": "org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableProcessingReport",
+            "businessObjectClass": "org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableProcessingReport",
             "linkType": "kfs"
           }
         ],
@@ -956,6 +883,14 @@
           },
           {
             "documentTypeCode": "FFC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BFYC",
+            "linkType": "kfs"
+          },
+          {
+            "documentTypeCode": "BFNC",
             "linkType": "kfs"
           },
           {
@@ -1983,14 +1918,6 @@
       "label": "Reimbursements",
       "links": {
         "activities": [
-          {
-            "documentTypeCode": "ENT",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "RELO",
-            "linkType": "kfs"
-          }
         ]
       }
     },
@@ -2081,18 +2008,6 @@
             }
           },
           {
-            "label": "Data Mapping Field Definition",
-            "link": "kr/lookup.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.sys.businessobject.DataMappingFieldDefinition&docFormKey=88888888&hideReturnLink=true",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Look Up Records",
-              "details": {
-                "namespaceCode": "KFS*"
-              }
-            }
-          },
-          {
             "label": "Financials Configuration Viewer",
             "link": "ksb/ConfigViewer.do",
             "linkType": "kfs",
@@ -2160,10 +2075,6 @@
                 "namespaceCode": "KFS*"
               }
             }
-          },
-          {
-            "documentTypeCode": "FFD",
-            "linkType": "kfs"
           },
           {
             "label": "Institution Configuration",
@@ -2271,193 +2182,6 @@
                 "beanName": "bulkTransactionOverrideFileType"
               }
             }
-          }
-        ]
-      }
-    },
-    {
-      "label": "Travel",
-      "links": {
-        "activities": [
-          {
-            "documentTypeCode": "CCAP",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "CCIE",
-            "linkType": "kfs"
-          },
-          {
-            "businessObjectClass": "org.kuali.kfs.module.tem.businessobject.CreditCardStagingData",
-            "linkType": "kfs"
-          },
-          {
-            "label": "CTS Card Application",
-            "link": "temCTSCardApplication.do?methodToCall=checkExistingCard&docTypeName=CTAP",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-SYS",
-              "templateName": "Initiate Document",
-              "details": {
-                "documentTypeName": "CTAP"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "TAAR",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TTA",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TA",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TR",
-            "linkType": "kfs"
-          }
-        ],
-        "reference": [
-          {
-            "businessObjectClass": "org.kuali.kfs.module.tem.businessobject.TemProfileAccount",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TTP",
-            "linkType": "kfs"
-          }
-        ],
-        "administration": [
-          {
-            "documentTypeCode": "TAT",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TAPR",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TASF",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TAS",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TCOS",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TCRT",
-            "linkType": "kfs"
-          },
-          {
-            "label": "Credit Card Data Upload",
-            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=creditCardDataXmlInputFileType",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Upload Batch Input File(s)",
-              "details": {
-                "beanName": "creditCardDataXmlInputFileType"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "TCCA",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TPUR",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "ETC",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "ETOC",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TJC",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TMR",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TPD",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TPDB",
-            "linkType": "kfs"
-          },
-          {
-            "label": "Per Diem TXT Batch Upload",
-            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemTxtInputFileType",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Upload Batch Input File(s)",
-              "details": {
-                "beanName": "perDiemTxtInputFileType"
-              }
-            }
-          },
-          {
-            "label": "Per Diem XML Batch Upload",
-            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=perDiemXmlInputFileType",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Upload Batch Input File(s)",
-              "details": {
-                "beanName": "perDiemXmlInputFileType"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "TRR",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TSCQ",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TTM",
-            "linkType": "kfs"
-          },
-          {
-            "label": "Travel Agency Data Upload",
-            "link": "batchUpload.do?methodToCall=start&batchUpload.batchInputTypeName=agencyDataXmlInputFileType",
-            "linkType": "kfs",
-            "permission": {
-              "templateNamespace": "KR-NS",
-              "templateName": "Upload Batch Input File(s)",
-              "details": {
-                "beanName": "agencyDataXmlInputFileType"
-              }
-            }
-          },
-          {
-            "documentTypeCode": "TCT",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TTYT",
-            "linkType": "kfs"
-          },
-          {
-            "documentTypeCode": "TTRT",
-            "linkType": "kfs"
           }
         ]
       }
