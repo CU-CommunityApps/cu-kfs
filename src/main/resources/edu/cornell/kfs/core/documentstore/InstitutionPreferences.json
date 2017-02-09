@@ -1757,7 +1757,7 @@
               "templateNamespace": "KR-NS",
               "templateName": "Use Screen",
               "details": {
-                "namespaceCode": "KFS*"
+                "actionClass": "edu.cornell.kfs.module.purap.document.web.struts.CuElectronicInvoiceTestAction"
               }
             }
           },
