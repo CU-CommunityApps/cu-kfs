@@ -1,9 +1,5 @@
-package edu.cornell.kfs.module.cab.fixture;
+package edu.cornell.kfs.module.cam.fixture;
 
-import java.util.List;
-
-import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
-import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.CapitalAssetInformationDocumentBase;
 import org.kuali.kfs.sys.document.AccountingDocument;
 

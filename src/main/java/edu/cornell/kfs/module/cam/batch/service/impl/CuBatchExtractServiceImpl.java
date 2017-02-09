@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.cab.batch.service.impl;
+package edu.cornell.kfs.module.cam.batch.service.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,16 +7,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.kfs.module.cab.CabConstants;
-import org.kuali.kfs.module.cab.CabPropertyConstants;
-import org.kuali.kfs.module.cab.batch.ExtractProcessLog;
-import org.kuali.kfs.module.cab.batch.service.ReconciliationService;
-import org.kuali.kfs.module.cab.batch.service.impl.BatchExtractServiceImpl;
-import org.kuali.kfs.module.cab.businessobject.GeneralLedgerEntry;
-import org.kuali.kfs.module.cab.businessobject.GlAccountLineGroup;
-import org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableDocument;
-import org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableItemAsset;
-import org.kuali.kfs.module.cab.businessobject.PurchasingAccountsPayableLineAssetAccount;
+import org.kuali.kfs.module.cam.CamsConstants;
+import org.kuali.kfs.module.cam.CamsPropertyConstants;
+import org.kuali.kfs.module.cam.batch.ExtractProcessLog;
+import org.kuali.kfs.module.cam.batch.service.ReconciliationService;
+import org.kuali.kfs.module.cam.batch.service.impl.BatchExtractServiceImpl;
+import org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry;
+import org.kuali.kfs.module.cam.businessobject.GlAccountLineGroup;
+import org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableDocument;
+import org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableItemAsset;
+import org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableLineAssetAccount;
 import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
@@ -43,7 +43,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     protected VendorCreditMemoDocument findCreditMemoDocument(Entry entry) {
         VendorCreditMemoDocument creditMemoDocument = null;
         Map<String, String> keys = new LinkedHashMap<String, String>();
-        keys.put(CabPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
+        keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
         DataDictionaryService dDS = SpringContext.getBean(DataDictionaryService.class);
         Class docClass = dDS.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
         
@@ -64,7 +64,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     protected PaymentRequestDocument findPaymentRequestDocument(Entry entry) {
         PaymentRequestDocument paymentRequestDocument = null;
         Map<String, String> keys = new LinkedHashMap<String, String>();
-        keys.put(CabPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());        
+        keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
         Collection<PaymentRequestDocument> matchingPreqs = (Collection<PaymentRequestDocument>)businessObjectService.findMatching(
                 SpringContext.getBean(DataDictionaryService.class)
                         .getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT), keys);
@@ -76,20 +76,20 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
 
 
 	 /**
-     * @see org.kuali.kfs.module.cab.batch.service.BatchExtractService#separatePOLines(java.util.List, java.util.List,
+     * @see org.kuali.kfs.module.cam.batch.service.BatchExtractService#separatePOLines(java.util.List, java.util.List,
      *      java.util.Collection)
      */
     public void separatePOLines(List<Entry> fpLines, List<Entry> purapLines, Collection<Entry> elgibleGLEntries) {
         for (Entry entry : elgibleGLEntries) {
-            if (CabConstants.PREQ.equals(entry.getFinancialDocumentTypeCode())) {
+            if (CamsConstants.PREQ.equals(entry.getFinancialDocumentTypeCode())) {
                 purapLines.add(entry);
             }
-            else if (!CabConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
+            else if (!CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
                 fpLines.add(entry);
             }
-            else if (CabConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
+            else if (CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
                 Map<String, String> fieldValues = new HashMap<String, String>();
-                fieldValues.put(CabPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, entry.getDocumentNumber());
+                fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, entry.getDocumentNumber());
                 // check if vendor credit memo, then include as FP line
                 Collection<VendorCreditMemoDocument> matchingCreditMemos = (Collection<VendorCreditMemoDocument>)businessObjectService.findMatching(
                         SpringContext.getBean(DataDictionaryService.class)
@@ -107,7 +107,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     }
     
     /**
-     * @see org.kuali.kfs.module.cab.batch.service.BatchExtractService#savePOLines(java.util.List)
+     * @see org.kuali.kfs.module.cam.batch.service.BatchExtractService#savePOLines(List, ExtractProcessLog)
      */
     @Transactional
     @Override
@@ -182,7 +182,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 papdMap.put(entry.getDocumentNumber(), cabPurapDoc);
 
                 // we only deal with PREQ or CM, so isPREQ = !isCM, isCM = !PREQ
-                boolean isPREQ = CabConstants.PREQ.equals(entry.getFinancialDocumentTypeCode());
+                boolean isPREQ = CamsConstants.PREQ.equals(entry.getFinancialDocumentTypeCode());
                 boolean hasRevisionWithMixedLines = isPREQ && hasRevisionWithMixedLines(matchedPurApAcctLines);
 
                 for (PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
@@ -254,7 +254,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                          *      that means the original charges and trade-in/discounts are combined together,
                          *      while the reversed charges and trade-in/discounts are combined together;
                          *      So: original charge + original trade-in/discount -> debit, reversed charge + reversed trade-in/discount -> credit
-                         * 3.   On top of these, we ensure that the final cab GL entries created is a debit if the consolidated amount is positive, and vice versa.
+                         * 3.   On top of these, we ensure that the final capital asset GL entries created is a debit if the consolidated amount is positive, and vice versa.
                          *      Note: In general, the consolidated amount for debit entry should already be positive, and vice versa. But there could be special cases,
                          *      for ex, in the case of 2.2, if the revision is only on discount, then the credit entry for the reverse would come out as positive, so we need
                          *      to swap it into a debit entry. This means, we will have 2 debit entries, one for the original lines, the other for the reversed discount line.

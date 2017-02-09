@@ -166,7 +166,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl {
             //consolidate all the modified object codes during summary generation.
             List<PurApItem> clonedTradeInItems = new ArrayList<PurApItem>();
             Collection<String> objectSubTypesRequiringQty = new ArrayList<String>( SpringContext.getBean(ParameterService.class).getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.OBJECT_SUB_TYPES_REQUIRING_QUANTITY) );
-            Collection<String> purchasingObjectSubTypes = new ArrayList<String>( SpringContext.getBean(ParameterService.class).getParameterValuesAsString( KfsParameterConstants.CAPITAL_ASSET_BUILDER_DOCUMENT.class, PurapParameterConstants.PURCHASING_OBJECT_SUB_TYPES) );
+            Collection<String> purchasingObjectSubTypes = new ArrayList<String>( SpringContext.getBean(ParameterService.class).getParameterValuesAsString( KfsParameterConstants.CAPITAL_ASSETS_BATCH.class, PurapParameterConstants.PURCHASING_OBJECT_SUB_TYPES) );
 
              String tradeInCapitalObjectCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_ASSET");
              String tradeInCapitalLeaseObjCd = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_LEASE");

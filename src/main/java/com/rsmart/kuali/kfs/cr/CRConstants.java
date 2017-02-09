@@ -103,6 +103,7 @@ public class CRConstants {
     public static final String ACCOUNT_NUM = "CR_ACCOUNT_NUMBER";
     public static final String SRC_NOT_FOUND = "CR_SOURCE_FOR_NOT_FOUND";
     public static final String BNK_CD_NOT_FOUND = "CR_NOT_FOUND_BANK_CD";
-    
-    
+
+    public static final String BC_REPORT_TEMPLATE_CLASSPATH = "org/kuali/kfs/module/bc/report/";
+    public static final String BC_REPORT_MESSAGES_CLASSPATH = BC_REPORT_TEMPLATE_CLASSPATH + "BudgetOrgReport";
 }
