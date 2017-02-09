@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  * 
- * Copyright 2005-2016 The Kuali Foundation
+ * Copyright 2005-2017 Kuali, Inc.
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -30,7 +30,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetInformationDetail;
 import org.kuali.kfs.fp.document.CapitalAccountingLinesDocumentBase;
 import org.kuali.kfs.fp.document.CapitalAssetEditable;
 import org.kuali.kfs.fp.document.CapitalAssetInformationDocumentBase;
-import org.kuali.kfs.integration.cab.CapitalAssetBuilderModuleService;
+import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
 import org.kuali.kfs.integration.cam.businessobject.Asset;
 import org.kuali.kfs.kns.util.WebUtils;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
@@ -73,7 +73,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * selected asset numbers, the system control amount is redistributed equally among the assets
      * when the distribution method is "distribute cost equally".
      *
-     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
+     * @see org.kuali.rice.kns.web.struts.action.KualiAction#refresh(org.apache.struts.action.ActionMapping,
      *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
@@ -161,6 +161,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
     /**
      * Remove if and any blank capital asset modify lines.
+     *
      * @param capitalAssetInformation
      */
     protected void removeEmptyCapitalAssetModify(List<CapitalAssetInformation> capitalAssetInformation) {
@@ -260,7 +261,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param form
      */
     protected void redistributeCostEquallyForModifiedAssets(ActionForm form) {
@@ -290,7 +290,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param accountingLine
      * @param capitalAssetInformation
      * @param remainingAmountToDistribute
@@ -331,6 +330,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
     /**
      * for modified assets the amount is distributed
+     *
      * @param selectedCapitalAccountingLines
      * @param capitalAssetInformation
      */
@@ -426,6 +426,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * Gets the amount on the capital assets line for the selected capital accounting line by
      * finding the group accounting line.  When group accounting line is found in the selected
      * capital accounting lines, the amount from that capital accounting line is returned.
+     *
      * @param selectedCapitalAccountingLines
      * @param groupAccountLine
      * @return lineAmount
@@ -448,7 +449,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLines
      * @param capitalAssetInformation
      */
@@ -541,7 +541,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLines
      * @param capitalAssetInformation
      */
@@ -556,7 +555,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param selectedCapitalAccountingLines
      * @param capitalAsset
      */
@@ -583,7 +581,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param selectedCapitalAccountingLines
      * @param groupAccountLine
      * @param totalCapitalAccountsAmount
@@ -604,7 +601,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLines
      * @param capitalAssetInformation
      * @param remainingAmountToDistribute
@@ -644,7 +640,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param selectedCapitalAccountingLines
      * @param capitalAssetInformation
      * @return createAssetsCount count of create assets
@@ -666,7 +661,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param selectedCapitalAccountingLines
      * @param capitalAssetInformation
      * @return createAssetsCount count of create assets
@@ -690,7 +684,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param selectedCapitalAccountingLines
      * @param capitalAssetInformation
      * @return modifiedAssetsCount number of modified assets
@@ -978,6 +971,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * process any remaining capital asset info in the list to check and calculate the
      * remaining distributed amount.  Also checks to make sure if "select Lines" is to be
      * checked on/off
+     *
      * @param form
      * @param capitalAssetInformation
      */
@@ -1036,6 +1030,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     /**
      * reset the nonkey fields of the given capital asset information
      * removes the corresponding capital asset information detail record from the list.
+     *
      * @param capitalAssetInformation the given capital asset information
      */
     protected void resetCapitalAssetInfo(CapitalAssetInformation capitalAssetInformation) {
@@ -1066,7 +1061,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
     /**
      * Overridden to guarantee that form of copied document is set to whatever the entry mode of the document is
-     * @see org.kuali.kfs.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     *
+     * @see org.kuali.rice.kns.web.struts.action.KualiTransactionalDocumentActionBase#copy(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1152,7 +1148,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLines
      * @return
      */
@@ -1269,8 +1264,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
-     *
      * @param capitalAccountingLine
      * @param capitalAsset
      */
@@ -1311,7 +1304,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * Finds a Capital Asset Information that matches the given capitalAccountingLine.
      *
      * @param capitalAccountingLine
@@ -1342,7 +1334,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLine
      * @param capitalAssetInformation
      * @return capitalAsset
@@ -1365,7 +1356,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLine
      * @param capitalAssetInformation
      * @return modify capital asset
@@ -1399,7 +1389,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
 
     /**
-     *
      * @param capitalAssetInformation
      * @param existingCapitalAssetInformation
      * @return
@@ -1414,7 +1403,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param kadfb
      * @param existingCapitalAsset
      * @return true if accounting line amount equals to capital asset amount, else false.
@@ -1432,9 +1420,9 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * Checks to see if all the capital assets' distributed amount is the same as
      * the capital accounting lines (there is only one lines, of course).
+     *
      * @param kadfb
      * @param capitalAssetsInformation
      * @return true if accounting line amount equals to capital asset amount, else false.
@@ -1451,7 +1439,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * Returns the amount of the group accounting line from the capital asset information that
      * matches the capital accounting lines (only one lines, of course). If none exists, zero is returned.
      *
@@ -1497,6 +1484,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
     /**
      * creates a new tag/location details record and adds to the collection for capital asset
+     *
      * @param capitalAsset
      */
     protected void createCapitalAssetInformationDetail(CapitalAssetInformation capitalAsset) {
@@ -1580,7 +1568,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         List<CapitalAssetInformation> currentCapitalAssetInformation =  this.getCurrentCapitalAssetInformationObject(kadfb);
 
-        SpringContext.getBean(CapitalAssetBuilderModuleService.class).filterNonCapitalAssets(currentCapitalAssetInformation);
+        SpringContext.getBean(CapitalAssetManagementModuleService.class).filterNonCapitalAssets(currentCapitalAssetInformation);
 
         calfb.setCreatedAssetsControlAmount(KualiDecimal.ZERO);
         calfb.setSystemControlAmount(KualiDecimal.ZERO);
@@ -1681,7 +1669,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLinesFormBase
      * @return true if a capital asset with capital asset action indicator = 'C' else false;
      */
@@ -1702,7 +1689,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLinesFormBase
      * @return true if a capital asset with capital asset action indicator = 'C' else false;
      */
@@ -1722,7 +1708,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param mapping
      * @param form
      * @param request
@@ -1763,6 +1748,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
     /**
      * redistributes the capital asset amount for the modify capital asset lines.
+     *
      * @param mapping
      * @param form
      * @param request
@@ -1842,6 +1828,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     /**
      * Removes any matching accounting line in capital asset records
      * whenever an accounting line is removed.
+     *
      * @param financialDocumentForm
      * @param line
      */
@@ -2013,8 +2000,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
-     *
      * @param capitalAccountingLine
      * @param capitalAssetInformation
      * @param actionTypeCode
@@ -2033,7 +2018,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     *
      * @param capitalAccountingLine
      * @param lastCapitalAsset
      * @param difference
@@ -2056,6 +2040,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     /**
      * when the user user hits refresh button, takes the amount in the amount field and
      * distributes to the group capital accounting lines for that asset only.
+     *
      * @param capitalAssetInformation
      * @param selectedCapitalAccountingLines
      */

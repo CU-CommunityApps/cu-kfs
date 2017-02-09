@@ -1,7 +1,7 @@
 
 <descriptor-repository version="1.0">
 
-<class-descriptor class="edu.cornell.kfs.module.bc.businessobject.PositionDataExtentedAttribute" table="PS_POSITION_DATA_TX">
+<class-descriptor class="edu.cornell.kfs.module.ld.businessobject.PositionDataExtentedAttribute" table="PS_POSITION_DATA_TX">
     <field-descriptor name="positionNumber" column="POSITION_NBR" jdbc-type="VARCHAR"  primarykey="true" index="true" />
     <field-descriptor name="effectiveDate" column="EFFDT" jdbc-type="DATE" primarykey="true" index="true" />
     <field-descriptor name="orgCode" column="ORG_CD" jdbc-type="VARCHAR" primarykey="false" index="false" />
@@ -29,7 +29,7 @@
     <field-descriptor name="positionSalaryPlanDefault" column="POS_SAL_PLAN_DFLT" jdbc-type="VARCHAR"/>
     <field-descriptor name="positionGradeDefault" column="POS_GRADE_DFLT" jdbc-type="VARCHAR"/>
     
-    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.bc.businessobject.PositionDataExtentedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.ld.businessobject.PositionDataExtentedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
         <foreignkey field-ref="positionNumber" />
         <foreignkey field-ref="effectiveDate" />
     </reference-descriptor>

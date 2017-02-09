@@ -1,19 +1,18 @@
-package edu.cornell.kfs.module.cab.batch.service.impl;
+package edu.cornell.kfs.module.cam.batch.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import edu.cornell.kfs.module.cam.fixture.EntryFixture;
 import org.kuali.kfs.gl.businessobject.Entry;
-import org.kuali.kfs.module.cab.batch.service.BatchExtractService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.module.cam.batch.service.BatchExtractService;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
-import edu.cornell.kfs.module.cab.fixture.EntryFixture;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @ConfigureContext
 public class CuBatchExtractServiceImplTest extends KualiTestBase {

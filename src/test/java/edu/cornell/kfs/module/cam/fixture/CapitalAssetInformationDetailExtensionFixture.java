@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.cab.fixture;
+package edu.cornell.kfs.module.cam.fixture;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 
