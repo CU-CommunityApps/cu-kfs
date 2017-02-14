@@ -2207,7 +2207,7 @@
               "templateName": "Look Up Records",
               "details": {
                 "namespaceCode": "KFS-VND",
-                "component": "VendorTaxDetail"
+                "componentName": "VendorTaxDetail"
               }
             }
           },
