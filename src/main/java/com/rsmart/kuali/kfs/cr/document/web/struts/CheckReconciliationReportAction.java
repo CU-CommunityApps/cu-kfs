@@ -19,6 +19,8 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
 import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService;
 import net.sf.jasperreports.engine.JRParameter;
+
+import org.apache.log4j.Level;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -51,6 +53,7 @@ import java.util.ResourceBundle;
  */
 @SuppressWarnings("deprecation")
 public class CheckReconciliationReportAction extends KualiAction {
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CheckReconciliationReportAction.class);
 
     private static String COMMA = ",";
     
@@ -69,6 +72,11 @@ public class CheckReconciliationReportAction extends KualiAction {
         
         CheckReconciliationReportService serv = SpringContext.getBean(CheckReconciliationReportService.class);
         List<CheckReconciliationReport> reportSet = serv.buildReports(crForm.getStartDate(),crForm.getEndDate());
+        
+        if(LOG.isDebugEnabled()) {
+        	int reportSize = reportSet != null ? reportSet.size() : 0;
+        	LOG.debug("performReport, the size of the report: " + reportSize);
+        }
         
         if( reportSet != null && reportSet.isEmpty() ) {
             GlobalVariables.getMessageMap().putError("startDate", KFSKeyConstants.ERROR_CUSTOM, "No Check Records Found");
@@ -153,7 +161,7 @@ public class CheckReconciliationReportAction extends KualiAction {
                 // build pdf and stream back
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
        
-                ResourceBundle resourceBundle = ResourceBundle.getBundle(CRConstants.BC_REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
+                ResourceBundle resourceBundle = ResourceBundle.getBundle(CRConstants.REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
                 Map<String, Object> reportData = new HashMap<String, Object>();
                 reportData.put(JRParameter.REPORT_RESOURCE_BUNDLE, resourceBundle);
                 reportData.put("REPORT_END_DATE", new SimpleDateFormat("MM/dd/yyyy").format(crForm.getEndDate()));
