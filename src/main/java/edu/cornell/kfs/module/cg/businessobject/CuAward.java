@@ -11,6 +11,7 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
 import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.AwardSubcontractor;
+import org.kuali.kfs.module.cg.businessobject.LetterOfCreditFundGroup;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.businessobject.ProposalOrganization;
 import org.kuali.kfs.module.cg.businessobject.ProposalProjectDirector;
@@ -19,10 +20,14 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuAward extends Award {
 
+    private String letterOfCreditFundGroupCode;
+
+    private LetterOfCreditFundGroup letterOfCreditFundGroup;
+
     public CuAward() {
-        super(); 
+        super();
     }
-    
+
     public CuAward(Proposal proposal) {
         this();
         populateFromProposal(proposal);
@@ -31,7 +36,7 @@ public class CuAward extends Award {
     /**
      * This method takes all the applicable attributes from the associated proposal object and sets those attributes into their
      * corresponding award attributes.
-     * 
+     *
      * @param proposal The associated proposal that the award will be linked to.
      */
     public void populateFromProposal(Proposal proposal) {
@@ -95,6 +100,22 @@ public class CuAward extends Award {
                 }
             }
         }
+    }
+
+    public String getLetterOfCreditFundGroupCode() {
+        return letterOfCreditFundGroupCode;
+    }
+
+    public void setLetterOfCreditFundGroupCode(String letterOfCreditFundGroupCode) {
+        this.letterOfCreditFundGroupCode = letterOfCreditFundGroupCode;
+    }
+
+    public LetterOfCreditFundGroup getLetterOfCreditFundGroup() {
+        return letterOfCreditFundGroup;
+    }
+
+    public void setLetterOfCreditFundGroup(LetterOfCreditFundGroup letterOfCreditFundGroup) {
+        this.letterOfCreditFundGroup = letterOfCreditFundGroup;
     }
 
 }

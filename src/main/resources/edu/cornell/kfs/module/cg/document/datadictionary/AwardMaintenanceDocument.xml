@@ -23,6 +23,7 @@
         <bean parent="ReferenceDefinition" p:attributeName="proposal" p:attributeToHighlightOnFail="proposalNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="proposalAwardType" p:attributeToHighlightOnFail="proposalAwardTypeCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="awardStatus" p:attributeToHighlightOnFail="awardStatusCode"/>
+        <bean parent="ReferenceDefinition" p:attributeName="letterOfCreditFundGroup" p:attributeToHighlightOnFail="letterOfCreditFundGroupCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="grantDescription" p:attributeToHighlightOnFail="grantDescriptionCode"/>
         <bean parent="ReferenceDefinition" p:attributeName="agency" p:attributeToHighlightOnFail="agencyNumber"/>
         <bean parent="ReferenceDefinition" p:attributeName="federalPassThroughAgency" p:attributeToHighlightOnFail="federalPassThroughAgencyNumber"/>
@@ -41,11 +42,12 @@
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
                    <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="letterOfCreditFundCode" />
+                       <bean parent="MaintainableFieldDefinition" p:name="awardAddendumNumber" />
                    </property>
                    <property name="insertAfter">
                        <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="extension.locAccountId"/>
+                           <bean parent="MaintainableFieldDefinition" p:name="letterOfCreditFundGroupCode"/>
+                           <bean parent="MaintainableFieldDefinition" p:name="extension.locAccountId"/>
                        </list>
                    </property>
                </bean>
