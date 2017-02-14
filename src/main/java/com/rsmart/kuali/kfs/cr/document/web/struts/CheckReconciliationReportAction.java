@@ -161,7 +161,7 @@ public class CheckReconciliationReportAction extends KualiAction {
                 // build pdf and stream back
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
        
-                ResourceBundle resourceBundle = ResourceBundle.getBundle(CRConstants.CHECK_RECONCILIATION_REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
+                ResourceBundle resourceBundle = ResourceBundle.getBundle(CRConstants.REPORT_MESSAGES_CLASSPATH, Locale.getDefault());
                 Map<String, Object> reportData = new HashMap<String, Object>();
                 reportData.put(JRParameter.REPORT_RESOURCE_BUNDLE, resourceBundle);
                 reportData.put("REPORT_END_DATE", new SimpleDateFormat("MM/dd/yyyy").format(crForm.getEndDate()));
