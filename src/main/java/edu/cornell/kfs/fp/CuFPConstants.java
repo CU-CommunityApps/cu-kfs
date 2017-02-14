@@ -61,6 +61,10 @@ public class CuFPConstants {
     public static final String ADVANCE_DEPOSIT_DEFAULT_CAMPUS_CODE = "IT";
     public static final String ADVANCE_DEPOSIT_NOTE_FILE_PREFIX = "advancedeposit_note_";
     public static final String BATCH_DETAIL_TYPE = "Batch";
+    public static final String ENCUMBRANCE_AUTOMATIC_PARTIAL_DIS_ENCUMBRANCES_TITLE = "Encumbrance Automatic Partial Dis-Encumbrances";
+    public static final String GENERAL_LEDGER_PENDING_ENTRIES_TITLE = "General Ledger Pending Entries";
+    public static final String LEFT_PARENTHESIS = "(";
+    public static final String RIGHT_PARENTHESIS = ")";
 
     public static class AchIncomeFileGroup {
         public static final String GROUP_FUNCTIONAL_IDENTIFIER_CD_RA = "RA";
