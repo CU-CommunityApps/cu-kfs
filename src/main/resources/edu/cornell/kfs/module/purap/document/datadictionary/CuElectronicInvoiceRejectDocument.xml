@@ -17,8 +17,6 @@
 
   <bean id="ElectronicInvoiceRejectDocument" parent="ElectronicInvoiceRejectDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuElectronicInvoiceRejectDocument"/>
-   <!--   <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.ElectronicInvoiceRejectDocument"/> --> 
- 
   </bean>
 
   <!-- Added currency-related config to this property, in order for EIRT doc searches to work correctly. -->
