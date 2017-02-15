@@ -86,7 +86,7 @@
 	<!-- ******************************************************************* -->
 
 	<bean id="SubAccountValidationPattern" parent="AnyCharacterValidation" p:maxLength="5" />
-	<bean id="SubAccountTextControl" parent="TextControlDefinition" p:size="5" />
+	<bean id="SubAccountTextControl" parent="TextControlDefinition" p:size="8"/>
 
 	<bean id="SubAccountAttribute" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="subAccountNumber" />
@@ -115,7 +115,7 @@
 	</bean>
 
 	<bean id="ObjectCodeValidationPattern" parent="AlphaNumericValidation" />
-	<alias alias="ObjectCodeTextControl" name="FourCharacterTextControl" />
+	<bean id="ObjectCodeTextControl" parent="TextControlDefinition" p:size="6"/>
 
 	<!-- ******************************************************************* -->
 	<!-- SUB OBJECT CODE -->
@@ -133,14 +133,14 @@
 	</bean>
 
 	<bean id="SubObjectValidationPattern" parent="AnyCharacterWithWhitespaceValidation" />
-	<bean id="SubObjectTextControl" parent="TextControlDefinition" p:size="3" />
+	<bean id="SubObjectTextControl" parent="TextControlDefinition" p:size="6"/>
 
 	<!-- ******************************************************************* -->
 	<!-- PROJECT CODE -->
 	<!-- ******************************************************************* -->
 
 	<bean id="ProjectCodeValidationPattern" parent="AnyCharacterWithWhitespaceValidation" />
-	<bean id="ProjectCodeTextControl" parent="TextControlDefinition" p:size="10" />
+	<bean id="ProjectCodeTextControl" parent="TextControlDefinition" p:size="14"/>
 
 	<bean id="ProjectCodeAttribute" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="projectCode" />
