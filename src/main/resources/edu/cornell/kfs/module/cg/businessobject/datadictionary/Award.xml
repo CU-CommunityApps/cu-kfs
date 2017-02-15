@@ -1,144 +1,155 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-<!--
- Copyright 2006-2009 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    <!--
+     Copyright 2006-2009 The Kuali Foundation
 
-<bean id="Award" parent="Award-parentBean">
-<property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
-<property name="attributes">
-      <list merge="true">
-        <ref bean="Award-letterOfCreditFundGroupCode"/>
-        <ref bean="Award-extension-costShareRequired"/>
-        <ref bean="Award-extension-finalFiscalReportDate"/>
-        <ref bean="Award-extension-finalFinancialReportRequired"/>
-        <ref bean="Award-extension-everify"/>
-        <ref bean="Award-extension-locAccountId"/>
-        <ref bean="Award-extension-budgetBeginningDate"/>
-        <ref bean="Award-extension-budgetEndingDate"/>
-        <ref bean="Award-extension-budgetTotalAmount"/>
-     </list>
-     </property>  
-</bean>
+     Licensed under the Educational Community License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
 
-    <bean id="Award-letterOfCreditFundGroupCode" parent="Award-letterOfCreditFundGroupCode-parentBean" />
+     http://www.opensource.org/licenses/ecl2.php
 
-    <bean id="Award-letterOfCreditFundGroupCode-parentBean" abstract="true" parent="LetterOfCreditFundGroup-letterOfCreditFundGroupCode">
-        <property name="name" value="letterOfCreditFundGroupCode" />
-        <property name="label" value="Letter Of Credit Fund Group" />
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+    -->
+
+    <bean id="Award" parent="Award-parentBean">
+        <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="Award-letterOfCreditFundGroupCode"/>
+                <ref bean="Award-extension-costShareRequired"/>
+                <ref bean="Award-extension-finalFiscalReportDate"/>
+                <ref bean="Award-extension-finalFinancialReportRequired"/>
+                <ref bean="Award-extension-everify"/>
+                <ref bean="Award-extension-locAccountId"/>
+                <ref bean="Award-extension-budgetBeginningDate"/>
+                <ref bean="Award-extension-budgetEndingDate"/>
+                <ref bean="Award-extension-budgetTotalAmount"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Award-letterOfCreditFundGroupCode" parent="Award-letterOfCreditFundGroupCode-parentBean"/>
+
+    <bean id="Award-letterOfCreditFundGroupCode-parentBean" abstract="true"
+          parent="LetterOfCreditFundGroup-letterOfCreditFundGroupCode">
+        <property name="name" value="letterOfCreditFundGroupCode"/>
+        <property name="label" value="Letter Of Credit Fund Group"/>
         <property name="control">
             <bean parent="SelectControlDefinition"
                   p:valuesFinderClass="org.kuali.kfs.module.ar.businessobject.options.LetterOfCreditFundGroupValuesFinder"
-                  p:includeKeyInLabel="false" />
+                  p:includeKeyInLabel="false"/>
         </property>
     </bean>
 
     <bean id="Award-extension-costShareRequired" parent="Award-extension-costShareRequired-parentBean"/>
-  
-  <bean id="Award-extension-costShareRequired-parentBean" abstract="true" parent="AwardExtendedAttribute-costShareRequired">
-  	<property name="name" value="extension.costShareRequired"/>
-  </bean>
-  
-  <bean id="Award-extension-finalFinancialReportRequired" parent="Award-extension-finalFinancialReportRequired-parentBean"/>
-  
-  <bean id="Award-extension-finalFinancialReportRequired-parentBean" abstract="true" parent="AwardExtendedAttribute-finalFinancialReportRequired">
-	<property name="name" value="extension.finalFinancialReportRequired"/>
-  </bean>
-  
-  <bean id="Award-extension-finalFiscalReportDate" parent="Award-extension-finalFiscalReportDate-parentBean"/>
-  
-  <bean id="Award-extension-finalFiscalReportDate-parentBean" abstract="true" parent="AwardExtendedAttribute-finalFiscalReportDate">
-  	<property name="name" value="extension.finalFiscalReportDate"/>
-  </bean>
-  
-  <bean id="Award-extension-everify" parent="Award-extension-everify-parentBean"/>
-  
-  <bean id="Award-extension-everify-parentBean" abstract="true" parent="AwardExtendedAttribute-everify">
-	<property name="name" value="extension.everify"/>
-  </bean>
-  
-  <bean id="Award-extension-locAccountId" parent="Award-extension-locAccountId-parentBean"/>
-  
-  <bean id="Award-extension-locAccountId-parentBean" abstract="true" parent="AwardExtendedAttribute-locAccountId">
-  	<property name="name" value="extension.locAccountId"/>
-  </bean>
-  
-  <bean id="Award-extension-budgetBeginningDate" parent="Award-extension-budgetBeginningDate-parentBean"/>
 
-  <bean id="Award-extension-budgetBeginningDate-parentBean" abstract="true" parent="AwardExtendedAttribute-budgetBeginningDate">
-  	<property name="name" value="extension.budgetBeginningDate"/>
-  </bean>
+    <bean id="Award-extension-costShareRequired-parentBean" abstract="true"
+          parent="AwardExtendedAttribute-costShareRequired">
+        <property name="name" value="extension.costShareRequired"/>
+    </bean>
 
-  <bean id="Award-extension-budgetEndingDate" parent="Award-extension-budgetEndingDate-parentBean"/>
+    <bean id="Award-extension-finalFinancialReportRequired"
+          parent="Award-extension-finalFinancialReportRequired-parentBean"/>
 
-  <bean id="Award-extension-budgetEndingDate-parentBean" abstract="true" parent="AwardExtendedAttribute-budgetEndingDate">
-  	<property name="name" value="extension.budgetEndingDate"/>
-  </bean>
+    <bean id="Award-extension-finalFinancialReportRequired-parentBean" abstract="true"
+          parent="AwardExtendedAttribute-finalFinancialReportRequired">
+        <property name="name" value="extension.finalFinancialReportRequired"/>
+    </bean>
 
-  <bean id="Award-extension-budgetTotalAmount" parent="Award-extension-budgetTotalAmount-parentBean"/>
+    <bean id="Award-extension-finalFiscalReportDate" parent="Award-extension-finalFiscalReportDate-parentBean"/>
 
-  <bean id="Award-extension-budgetTotalAmount-parentBean" abstract="true" parent="AwardExtendedAttribute-budgetTotalAmount">
-  	<property name="name" value="extension.budgetTotalAmount"/>
-  </bean>
+    <bean id="Award-extension-finalFiscalReportDate-parentBean" abstract="true"
+          parent="AwardExtendedAttribute-finalFiscalReportDate">
+        <property name="name" value="extension.finalFiscalReportDate"/>
+    </bean>
+
+    <bean id="Award-extension-everify" parent="Award-extension-everify-parentBean"/>
+
+    <bean id="Award-extension-everify-parentBean" abstract="true" parent="AwardExtendedAttribute-everify">
+        <property name="name" value="extension.everify"/>
+    </bean>
+
+    <bean id="Award-extension-locAccountId" parent="Award-extension-locAccountId-parentBean"/>
+
+    <bean id="Award-extension-locAccountId-parentBean" abstract="true" parent="AwardExtendedAttribute-locAccountId">
+        <property name="name" value="extension.locAccountId"/>
+    </bean>
+
+    <bean id="Award-extension-budgetBeginningDate" parent="Award-extension-budgetBeginningDate-parentBean"/>
+
+    <bean id="Award-extension-budgetBeginningDate-parentBean" abstract="true"
+          parent="AwardExtendedAttribute-budgetBeginningDate">
+        <property name="name" value="extension.budgetBeginningDate"/>
+    </bean>
+
+    <bean id="Award-extension-budgetEndingDate" parent="Award-extension-budgetEndingDate-parentBean"/>
+
+    <bean id="Award-extension-budgetEndingDate-parentBean" abstract="true"
+          parent="AwardExtendedAttribute-budgetEndingDate">
+        <property name="name" value="extension.budgetEndingDate"/>
+    </bean>
+
+    <bean id="Award-extension-budgetTotalAmount" parent="Award-extension-budgetTotalAmount-parentBean"/>
+
+    <bean id="Award-extension-budgetTotalAmount-parentBean" abstract="true"
+          parent="AwardExtendedAttribute-budgetTotalAmount">
+        <property name="name" value="extension.budgetTotalAmount"/>
+    </bean>
 
     <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="Award-inquirySectionDefinition-awardDetails" />
-      <property name="fieldOverrides">
-          <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="analystTelephoneNumber" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="letterOfCreditFundGroupCode" />
-                          <bean parent="FieldDefinition" p:attributeName="extension.locAccountId"/>
-                          <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
-                          <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
-                          <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
-                          <bean parent="FieldDefinition" p:attributeName="extension.everify"/>
-                      </list>
-                  </property>
-              </bean>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="awardEndingDate" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.budgetBeginningDate"/>
-                          <bean parent="FieldDefinition" p:attributeName="extension.budgetEndingDate"/>
-                      </list>
-                  </property>
-              </bean>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="awardTotalAmount" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.budgetTotalAmount"/>
-                      </list>
-                  </property>
-              </bean>
-          </list>
-      </property>
-  </bean>
+        <property name="beanName" value="Award-inquirySectionDefinition-awardDetails"/>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="analystTelephoneNumber"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="letterOfCreditFundGroupCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="extension.locAccountId"/>
+                            <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
+                            <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
+                            <bean parent="FieldDefinition" p:attributeName="extension.finalFinancialReportRequired"/>
+                            <bean parent="FieldDefinition" p:attributeName="extension.everify"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="awardEndingDate"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.budgetBeginningDate"/>
+                            <bean parent="FieldDefinition" p:attributeName="extension.budgetEndingDate"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquiryFields"/>
+                    <property name="propertyNameForElementCompare" value="attributeName"/>
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="awardTotalAmount"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.budgetTotalAmount"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 </beans>
