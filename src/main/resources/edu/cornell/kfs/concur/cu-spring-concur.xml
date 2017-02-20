@@ -30,6 +30,7 @@
 		<property name="jobNames">
 			<list>
 				<value>concurEventNotificationProcessingBatchJob</value>
+				<value>concurRequestExtractCreatePdpImportJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
@@ -114,4 +115,32 @@
 		</property>
 		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
 	</bean>
+
+	<!-- Request Extract File Conversion to  PDP Import File Job -->
+	<bean id="concurRequestExtractCreatePdpImportJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="concurRequestExtractCreatePdpImportStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="concurRequestExtractCreatePdpImportStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurRequestExtractCreatePdpImportStep">
+		<property name="concurRequestExtractCreatePdpImportService" ref="concurRequestExtractCreatePdpImportService" />
+	</bean>
+
+	<bean id="concurRequestExtractCreatePdpImportService" parent="concurRequestExtractCreatePdpImportService-parentBean" />
+	<bean id="concurRequestExtractCreatePdpImportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpImportServiceImpl" abstract="true">
+	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
+	</bean>
+
+	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
+	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
+	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
+	</bean>
+
+	<bean id="concurRequestExtractFileValidationService" parent="concurRequestExtractFileValidationService-parentBean" />
+	<bean id="concurRequestExtractFileValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileValidationServiceImpl" abstract="true">
+	</bean>
+
 </beans>
