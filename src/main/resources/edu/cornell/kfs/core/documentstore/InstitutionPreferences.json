@@ -190,7 +190,15 @@
           },
           {
             "businessObjectClass": "org.kuali.kfs.gl.businessobject.CurrentAccountBalance",
-            "linkType": "kfs"
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS-GL",
+                "componentName": "CurrentAccountBalance"
+              }
+            }
           },
           {
             "label": "General Ledger Balance",
