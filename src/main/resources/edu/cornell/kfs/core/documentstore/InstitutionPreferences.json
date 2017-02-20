@@ -211,7 +211,7 @@
               "templateNamespace": "KR-NS",
               "templateName": "Look Up Records",
               "details": {
-              	"namespaceCode": "KFS-GL",
+                "namespaceCode": "KFS-GL",
                 "componentName": "CurrentAccountBalance"
               }
             }
