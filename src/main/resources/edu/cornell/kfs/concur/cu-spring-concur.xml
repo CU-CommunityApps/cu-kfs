@@ -30,7 +30,7 @@
 		<property name="jobNames">
 			<list>
 				<value>concurEventNotificationProcessingBatchJob</value>
-				<value>concurRequestExtractCreatePdpImportJob</value>
+				<value>concurRequestExtractCreatePdpFeedJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
@@ -117,30 +117,37 @@
 	</bean>
 
 	<!-- Request Extract File Conversion to  PDP Import File Job -->
-	<bean id="concurRequestExtractCreatePdpImportJob" parent="unscheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="concurRequestExtractCreatePdpImportStep" />
-			</list>
-		</property>
+	<bean id="concurRequestExtractCreatePdpFeedJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="concurRequestExtractCreatePdpFeedStep" />
+            </list>
+        </property>
 	</bean>
 
-	<bean id="concurRequestExtractCreatePdpImportStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurRequestExtractCreatePdpImportStep">
-		<property name="concurRequestExtractCreatePdpImportService" ref="concurRequestExtractCreatePdpImportService" />
+	<bean id="concurRequestExtractCreatePdpFeedStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurRequestExtractCreatePdpFeedStep">
+		<property name="concurRequestExtractCreatePdpFeedService" ref="concurRequestExtractCreatePdpFeedService" />
 	</bean>
 
-	<bean id="concurRequestExtractCreatePdpImportService" parent="concurRequestExtractCreatePdpImportService-parentBean" />
-	<bean id="concurRequestExtractCreatePdpImportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpImportServiceImpl" abstract="true">
+	<bean id="concurRequestExtractCreatePdpFeedService" parent="concurRequestExtractCreatePdpFeedService-parentBean" />
+	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
 	</bean>
 
 	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
 	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
+	    <property name="incomingDirectoryName" value="${staging.directory}/concur/requestExtract"/>
+	    <property name="failureDirectoryName" value="${staging.directory}/concur/requestExtract/failures"/>
 	</bean>
 
 	<bean id="concurRequestExtractFileValidationService" parent="concurRequestExtractFileValidationService-parentBean" />
 	<bean id="concurRequestExtractFileValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileValidationServiceImpl" abstract="true">
+	</bean>
+
+	<bean id="concurCashAdvancePdpFeedFileService" parent="concurCashAdvancePdpFeedFileService-parentBean" />
+	<bean id="concurCashAdvancePdpFeedFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurCashAdvancePdpFeedFileServiceImpl" abstract="true">
+	    <property name="outgoingDirectoryName" value="${staging.directory}/concur/cashAdvance"/>
 	</bean>
 
 </beans>
