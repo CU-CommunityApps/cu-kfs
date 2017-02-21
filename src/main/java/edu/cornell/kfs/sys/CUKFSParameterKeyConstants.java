@@ -32,6 +32,8 @@ public class CUKFSParameterKeyConstants {
     }
 
     public static class GlParameterConstants {
+        public static final String CURRENT_ASSET_OBJECT_TYPE_CODE = "CURRENT_ASSET_OBJECT_TYPE_CODE";
+        public static final String CURRENT_LIABILITY_OBJECT_TYPE_CODE = "CURRENT_LIABILITY_OBJECT_TYPE_CODE";
         public static final String EXCLUDE_CB_PERIOD = "EXCLUDE_CB_PERIOD";
     }
 
