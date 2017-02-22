@@ -31,6 +31,7 @@
 			<list>
 				<value>concurEventNotificationProcessingBatchJob</value>
 				<value>concurRequestExtractToPdpFeedJob</value>
+				<value>concurStandardAccountingExtractToPDPBatchJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
@@ -50,6 +51,30 @@
 	<bean id="concurModuleService-parent" abstract="true"
 		class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl">
 		<property name="moduleConfiguration" ref="concurModuleConfiguration" />
+	</bean>
+	
+	<bean id="concurStandardAccountingExtractToPDPBatchJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="concurStandardAccountingExtractToPDPStep" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="concurStandardAccountingExtractToPDPStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurStandardAccountingExtractToPDPStep">
+		<property name="directoryPath">
+			<value>${staging.directory}/concur/standardAccountingExtract/</value>
+		</property>
+	</bean>
+	
+	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />
+	<bean id="concurStandardAccountingExtractService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractServiceImpl" abstract="true">
+		<property name="reimbursementFeedDirectory">
+			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/value>
+		</property>
+		<property name="collectorFeedDirectory">
+			<value>${staging.directory}/concur/standardAccountingExtract/collector/</value>
+		</property>
 	</bean>
 	
 	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">
