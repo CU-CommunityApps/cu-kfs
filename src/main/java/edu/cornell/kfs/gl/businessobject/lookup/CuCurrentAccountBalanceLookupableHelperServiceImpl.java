@@ -21,171 +21,249 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
  * effectively turning the results into Current Fund Balances instead. Another change
  * is using object type code to perform Current Asset/Liability calculations instead,
  * and there are associated parameters to go along with that. Some miscellaneous
- * clean-up has been done as well.
+ * clean-up and refactoring has been done as well.
  */
 public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentAccountBalanceLookupableHelperServiceImpl {
 
     private static final long serialVersionUID = 2542719296293895780L;
 
     /**
-     * This override copies the superclass's version of the method, and tweaks it to add the CB exclusion option
-     * and to use object type code for Current Asset/Liability checking.
-     * It also fixes a comparison bug in the Current Budget calculation that was getting the right value from the wrong constant.
+     * This override constructs and uses a custom helper class to execute the superclass's processing.
      * 
      * @see org.kuali.kfs.gl.businessobject.lookup.CurrentAccountBalanceLookupableHelperServiceImpl#updateCurrentBalance(
      * org.kuali.kfs.gl.businessobject.CurrentAccountBalance, org.kuali.kfs.gl.businessobject.Balance, java.lang.String)
      */
-    @SuppressWarnings("deprecation")
     @Override
     protected void updateCurrentBalance(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
-        Collection<String> cashBudgetRecordLevelCodes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, KFSParameterKeyConstants.GlParameterConstants.CASH_BUDGET_RECORD_LEVEL);
-        Collection<String> expenseObjectTypeCodes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, KFSParameterKeyConstants.GlParameterConstants.EXPENSE_OBJECT_TYPE);
-        Collection<String> fundBalanceObjCodes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, KFSParameterKeyConstants.GlParameterConstants.FUND_BALANCE_OBJECT_CODE);
-        Collection<String> currentAssetObjTypeCodes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, CUKFSParameterKeyConstants.GlParameterConstants.CURRENT_ASSET_OBJECT_TYPE_CODE);
-        Collection<String> currentLiabilityObjTypeCodes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, CUKFSParameterKeyConstants.GlParameterConstants.CURRENT_LIABILITY_OBJECT_TYPE_CODE);
-        Collection<String> incomeObjTypeCodes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, KFSParameterKeyConstants.GlParameterConstants.INCOME_OBJECT_TYPE);
-        Collection<String> encumbranceBalTypes = this.getParameterService().getParameterValuesAsString(
-                CurrentAccountBalance.class, KFSParameterKeyConstants.GlParameterConstants.ENCUMBRANCE_BALANCE_TYPE);
-        boolean excludeCBPeriod = getParameterService().getParameterValueAsBoolean(
-                CurrentAccountBalance.class, CUKFSParameterKeyConstants.GlParameterConstants.EXCLUDE_CB_PERIOD, Boolean.FALSE)
-                .booleanValue();
-        String balanceTypeCode = balance.getBalanceTypeCode();
-        String objectTypeCode = balance.getObjectTypeCode();
-        String objectCode = balance.getObjectCode();
+        new BalanceUpdater(currentBalance, balance, fiscalPeriod)
+                .updateCurrentBalance();
+    }
 
-        /*
-         * TODO: The existing version of this method in KFS is using the new SystemOptions approach in some areas
-         * while using the deprecated balance type constants elsewhere. If newer versions of KFS update this method
-         * to only use the former, then this override should be updated accordingly. (A similar thing applies
-         * to the Current Budget calculations below, which were grabbing the "CB" type from the wrong constant in base code
-         * but are using the correct deprecated constant in this override.)
+    /**
+     * Helper class for encapsulating and splitting up the logic
+     * of the updateCurrentBalance() method.
+     */
+    @SuppressWarnings("deprecation")
+    protected class BalanceUpdater {
+
+        protected final CurrentAccountBalance currentBalance;
+        protected final Balance balance;
+        protected final String fiscalPeriod;
+        protected final Collection<String> cashBudgetRecordLevelCodes;
+        protected final Collection<String> expenseObjectTypeCodes;
+        protected final Collection<String> fundBalanceObjCodes;
+        protected final Collection<String> currentAssetObjTypeCodes;
+        protected final Collection<String> currentLiabilityObjTypeCodes;
+        protected final Collection<String> incomeObjTypeCodes;
+        protected final Collection<String> encumbranceBalTypes;
+        protected final Collection<String> assetLiabilityFundBalanceTypeCodes;
+        protected final boolean excludeCBPeriod;
+        protected final String balanceTypeCode;
+        protected final String objectTypeCode;
+        protected final String objectCode;
+        protected final Account replacementAccount;
+        protected final boolean isCashBudgetRecording;
+        
+        public BalanceUpdater(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
+            this.currentBalance = currentBalance;
+            this.balance = balance;
+            this.fiscalPeriod = fiscalPeriod;
+            
+            this.cashBudgetRecordLevelCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.CASH_BUDGET_RECORD_LEVEL);
+            this.expenseObjectTypeCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.EXPENSE_OBJECT_TYPE);
+            this.fundBalanceObjCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.FUND_BALANCE_OBJECT_CODE);
+            this.currentAssetObjTypeCodes = getParameterValuesAsString(CUKFSParameterKeyConstants.GlParameterConstants.CURRENT_ASSET_OBJECT_TYPE_CODE);
+            this.currentLiabilityObjTypeCodes = getParameterValuesAsString(CUKFSParameterKeyConstants.GlParameterConstants.CURRENT_LIABILITY_OBJECT_TYPE_CODE);
+            this.incomeObjTypeCodes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.INCOME_OBJECT_TYPE);
+            this.encumbranceBalTypes = getParameterValuesAsString(KFSParameterKeyConstants.GlParameterConstants.ENCUMBRANCE_BALANCE_TYPE);
+            this.excludeCBPeriod = getParameterValueAsBoolean(CUKFSParameterKeyConstants.GlParameterConstants.EXCLUDE_CB_PERIOD, Boolean.FALSE)
+                    .booleanValue();
+            
+            SystemOptions options = getOptionsService().getCurrentYearOptions();
+            this.assetLiabilityFundBalanceTypeCodes = Arrays.asList(options.getFinancialObjectTypeAssetsCd(),  // AS
+                options.getFinObjectTypeLiabilitiesCode(), // LI
+                options.getFinObjectTypeFundBalanceCd());  // FB
+            
+            this.balanceTypeCode = balance.getBalanceTypeCode();
+            this.objectTypeCode = balance.getObjectTypeCode();
+            this.objectCode = balance.getObjectCode();
+            
+            Account account = balance.getAccount();
+            if (ObjectUtils.isNull(account)) {
+                account = getAccountService().getByPrimaryId(balance.getChartOfAccountsCode(), balance.getAccountNumber());
+                this.replacementAccount = account;
+            } else {
+                this.replacementAccount = null;
+            }
+
+            this.isCashBudgetRecording = cashBudgetRecordLevelCodes.contains(account.getBudgetRecordingLevelCode());
+        }
+        
+        protected Collection<String> getParameterValuesAsString(String parameterName) {
+            return getParameterService().getParameterValuesAsString(CurrentAccountBalance.class, parameterName);
+        }
+        
+        protected Boolean getParameterValueAsBoolean(String parameterName, Boolean defaultValue) {
+            return getParameterService().getParameterValueAsBoolean(CurrentAccountBalance.class, parameterName, defaultValue);
+        }
+        
+        /**
+         * Executes the balance-updating logic from the lookupable superclass's updateCurrentBalance() method.
+         * Updates the CurrentAccountBalance object that was passed to the constructor, and also updates
+         * the account reference on the constructor-given Balance object if it was originally null.
          */
-        SystemOptions options = getOptionsService().getCurrentYearOptions();
-        Collection<String> assetLiabilityFundBalanceTypeCodes = Arrays.asList(options.getFinancialObjectTypeAssetsCd(),  // AS
-            options.getFinObjectTypeLiabilitiesCode(), // LI
-            options.getFinObjectTypeFundBalanceCd());  // FB
-
-        Account account = balance.getAccount();
-        if (ObjectUtils.isNull(account)) {
-            account = getAccountService().getByPrimaryId(balance.getChartOfAccountsCode(), balance.getAccountNumber());
-            balance.setAccount(account);
-            currentBalance.setAccount(account);
-        }
-
-        boolean isCashBudgetRecording = cashBudgetRecordLevelCodes.contains(account.getBudgetRecordingLevelCode());
-        currentBalance.setUniversityFiscalPeriodCode(fiscalPeriod);
-
-        // Current Budget (A)
-        if (isCashBudgetRecording) {
-            currentBalance.setCurrentBudget(KualiDecimal.ZERO);
-        } else {
-            if (KFSConstants.BALANCE_TYPE_CURRENT_BUDGET.equals(balanceTypeCode) && expenseObjectTypeCodes.contains(objectTypeCode)) {
-                currentBalance.setCurrentBudget(
-                        add(currentBalance.getCurrentBudget(),
-                                add(accumulateMonthlyAmounts(balance, fiscalPeriod),
-                                        accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE))));
+        public void updateCurrentBalance() {
+            if (ObjectUtils.isNotNull(replacementAccount)) {
+                balance.setAccount(replacementAccount);
+                currentBalance.setAccount(replacementAccount);
             }
+            currentBalance.setUniversityFiscalPeriodCode(fiscalPeriod);
+            
+            updateCurrentBudget();
+            updateBeginningFundBalance();
+            updateBeginningCurrentAssets();
+            updateBeginningCurrentLiabilities();
+            updateTotalIncome();
+            updateTotalExpense();
+            updateEncumbrances();
+            updateBudgetBalanceAvailable();
+            updateCashExpenditureAuthority();
+            updateCurrentFundBalance();
         }
-
-        // Beginning Fund Balance (B)
-        if (isCashBudgetRecording) {
-            if (fundBalanceObjCodes.contains(objectCode)) {
-                currentBalance.setBeginningFundBalance(
-                        add(currentBalance.getBeginningFundBalance(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
-            }
-        } else {
-            currentBalance.setBeginningFundBalance(KualiDecimal.ZERO);
-        }
-
-        // Beginning Current Assets (C)
-        if (isCashBudgetRecording) {
-            if (currentAssetObjTypeCodes.contains(objectTypeCode)) {
-                currentBalance.setBeginningCurrentAssets(
-                        add(currentBalance.getBeginningCurrentAssets(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
-            }
-        } else {
-            currentBalance.setBeginningCurrentAssets(KualiDecimal.ZERO);
-        }
-
-        // Beginning Current Liabilities (D)
-        if (isCashBudgetRecording) {
-            if (currentLiabilityObjTypeCodes.contains(objectTypeCode)) {
-                currentBalance.setBeginningCurrentLiabilities(
-                        add(currentBalance.getBeginningCurrentLiabilities(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
-            }
-        } else {
-            currentBalance.setBeginningCurrentLiabilities(KualiDecimal.ZERO);
-        }
-
-        // Total Income (E)
-        if (isCashBudgetRecording) {
-            if (incomeObjTypeCodes.contains(objectTypeCode) && KFSConstants.BALANCE_TYPE_ACTUAL.equals(balanceTypeCode)) {
-                currentBalance.setTotalIncome(
-                        add(currentBalance.getTotalIncome(), accumulateMonthlyAmounts(balance, fiscalPeriod)));
-                if (!excludeCBPeriod) {
-                    currentBalance.setTotalIncome(
-                            add(currentBalance.getTotalIncome(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE)));
+        
+        /*
+         * NOTE: Base KFS grabs the "CB" balance type from the wrong constant. This has been corrected below.
+         */
+        protected void updateCurrentBudget() {
+            if (isCashBudgetRecording) {
+                currentBalance.setCurrentBudget(KualiDecimal.ZERO);
+            } else {
+                if (KFSConstants.BALANCE_TYPE_CURRENT_BUDGET.equals(balanceTypeCode) && expenseObjectTypeCodes.contains(objectTypeCode)) {
+                    currentBalance.setCurrentBudget(
+                            add(currentBalance.getCurrentBudget(),
+                                    add(accumulateMonthlyAmounts(balance, fiscalPeriod),
+                                            accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE))));
                 }
             }
-        } else {
-            currentBalance.setTotalIncome(KualiDecimal.ZERO);
         }
-
-        // Total Expense (F)
-        if (expenseObjectTypeCodes.contains(objectTypeCode) && KFSConstants.BALANCE_TYPE_ACTUAL.equals(balanceTypeCode)) {
-            currentBalance.setTotalExpense(
-                    add(currentBalance.getTotalExpense(), accumulateMonthlyAmounts(balance, fiscalPeriod)));
-            if (!excludeCBPeriod) {
-                currentBalance.setTotalExpense(
-                        add(currentBalance.getTotalExpense(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE)));
+        
+        protected void updateBeginningFundBalance() {
+            if (isCashBudgetRecording) {
+                if (fundBalanceObjCodes.contains(objectCode)) {
+                    currentBalance.setBeginningFundBalance(
+                            add(currentBalance.getBeginningFundBalance(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
+                }
+            } else {
+                currentBalance.setBeginningFundBalance(KualiDecimal.ZERO);
             }
         }
-
-        // Encumbrances (G)
-        if (encumbranceBalTypes.contains(balanceTypeCode)
-                && (expenseObjectTypeCodes.contains(objectTypeCode) || incomeObjTypeCodes.contains(objectTypeCode))
-                && !assetLiabilityFundBalanceTypeCodes.contains(objectTypeCode)) {
-            currentBalance.setEncumbrances(add(currentBalance.getEncumbrances(), accumulateMonthlyAmounts(balance, fiscalPeriod)));
+        
+        /*
+         * NOTE: Base KFS does Current Asset checks based on object code,
+         * but this version checks object type code instead.
+         */
+        protected void updateBeginningCurrentAssets() {
+            if (isCashBudgetRecording) {
+                if (currentAssetObjTypeCodes.contains(objectTypeCode)) {
+                    currentBalance.setBeginningCurrentAssets(
+                            add(currentBalance.getBeginningCurrentAssets(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
+                }
+            } else {
+                currentBalance.setBeginningCurrentAssets(KualiDecimal.ZERO);
+            }
         }
-
-        // Budget Balance Available (H)
-        if (isCashBudgetRecording) {
-            currentBalance.setBudgetBalanceAvailable(KualiDecimal.ZERO);
-        } else {
-            currentBalance.setBudgetBalanceAvailable(
-                    currentBalance.getCurrentBudget()
-                            .subtract(currentBalance.getTotalExpense())
-                            .subtract(currentBalance.getEncumbrances()));
+        
+        /*
+         * NOTE: Base KFS does Current Liability checks based on object code,
+         * but this version checks object type code instead.
+         */
+        protected void updateBeginningCurrentLiabilities() {
+            if (isCashBudgetRecording) {
+                if (currentLiabilityObjTypeCodes.contains(objectTypeCode)) {
+                    currentBalance.setBeginningCurrentLiabilities(
+                            add(currentBalance.getBeginningCurrentLiabilities(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_BEGINNING_BALANCE)));
+                }
+            } else {
+                currentBalance.setBeginningCurrentLiabilities(KualiDecimal.ZERO);
+            }
         }
-
-        // Cash Expenditure Authority (I)
-        if (isCashBudgetRecording) {
-            currentBalance.setCashExpenditureAuthority(
-                    currentBalance.getBeginningCurrentAssets()
-                            .subtract(currentBalance.getBeginningCurrentLiabilities())
-                            .add(currentBalance.getTotalIncome())
-                            .subtract(currentBalance.getTotalExpense())
-                            .subtract(currentBalance.getEncumbrances()));
-        } else {
-            currentBalance.setCashExpenditureAuthority(KualiDecimal.ZERO);
+        
+        /*
+         * NOTE: This version of the code adds an option for excluding "CB" period amounts.
+         */
+        protected void updateTotalIncome() {
+            if (isCashBudgetRecording) {
+                if (incomeObjTypeCodes.contains(objectTypeCode) && KFSConstants.BALANCE_TYPE_ACTUAL.equals(balanceTypeCode)) {
+                    currentBalance.setTotalIncome(
+                            add(currentBalance.getTotalIncome(), accumulateMonthlyAmounts(balance, fiscalPeriod)));
+                    if (!excludeCBPeriod) {
+                        currentBalance.setTotalIncome(
+                                add(currentBalance.getTotalIncome(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE)));
+                    }
+                }
+            } else {
+                currentBalance.setTotalIncome(KualiDecimal.ZERO);
+            }
         }
-
-        // Current Fund Balance (J)
-        if (isCashBudgetRecording) {
-            currentBalance.setCurrentFundBalance(
-                    currentBalance.getBeginningFundBalance()
-                            .add(currentBalance.getTotalIncome())
-                            .subtract(currentBalance.getTotalExpense()));
-        } else {
-            currentBalance.setCurrentFundBalance(KualiDecimal.ZERO);
+        
+        /*
+         * NOTE: This version of the code adds an option for excluding "CB" period amounts.
+         */
+        protected void updateTotalExpense() {
+            if (expenseObjectTypeCodes.contains(objectTypeCode) && KFSConstants.BALANCE_TYPE_ACTUAL.equals(balanceTypeCode)) {
+                currentBalance.setTotalExpense(
+                        add(currentBalance.getTotalExpense(), accumulateMonthlyAmounts(balance, fiscalPeriod)));
+                if (!excludeCBPeriod) {
+                    currentBalance.setTotalExpense(
+                            add(currentBalance.getTotalExpense(), accumulateMonthlyAmounts(balance, KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE)));
+                }
+            }
         }
-
+        
+        protected void updateEncumbrances() {
+            if (encumbranceBalTypes.contains(balanceTypeCode)
+                    && (expenseObjectTypeCodes.contains(objectTypeCode) || incomeObjTypeCodes.contains(objectTypeCode))
+                    && !assetLiabilityFundBalanceTypeCodes.contains(objectTypeCode)) {
+                currentBalance.setEncumbrances(
+                        add(currentBalance.getEncumbrances(), accumulateMonthlyAmounts(balance, fiscalPeriod)));
+            }
+        }
+        
+        protected void updateBudgetBalanceAvailable() {
+            if (isCashBudgetRecording) {
+                currentBalance.setBudgetBalanceAvailable(KualiDecimal.ZERO);
+            } else {
+                currentBalance.setBudgetBalanceAvailable(
+                        currentBalance.getCurrentBudget()
+                                .subtract(currentBalance.getTotalExpense())
+                                .subtract(currentBalance.getEncumbrances()));
+            }
+        }
+        
+        protected void updateCashExpenditureAuthority() {
+            if (isCashBudgetRecording) {
+                currentBalance.setCashExpenditureAuthority(
+                        currentBalance.getBeginningCurrentAssets()
+                                .subtract(currentBalance.getBeginningCurrentLiabilities())
+                                .add(currentBalance.getTotalIncome())
+                                .subtract(currentBalance.getTotalExpense())
+                                .subtract(currentBalance.getEncumbrances()));
+            } else {
+                currentBalance.setCashExpenditureAuthority(KualiDecimal.ZERO);
+            }
+        }
+        
+        protected void updateCurrentFundBalance() {
+            if (isCashBudgetRecording) {
+                currentBalance.setCurrentFundBalance(
+                        currentBalance.getBeginningFundBalance()
+                                .add(currentBalance.getTotalIncome())
+                                .subtract(currentBalance.getTotalExpense()));
+            } else {
+                currentBalance.setCurrentFundBalance(KualiDecimal.ZERO);
+            }
+        }
+        
     }
 
 }
