@@ -30,7 +30,13 @@ public class CUKFSParameterKeyConstants {
     public static class YearEndAutoDisapprovalConstants {
 		public static final String YEAR_END_AUTO_DISAPPROVE_START_DATE = "YEAR_END_AUTO_DISAPPROVE_START_DATE";
     }
-    
+
+    public static class GlParameterConstants {
+        public static final String CURRENT_ASSET_OBJECT_TYPE_CODE = "CURRENT_ASSET_OBJECT_TYPE_CODE";
+        public static final String CURRENT_LIABILITY_OBJECT_TYPE_CODE = "CURRENT_LIABILITY_OBJECT_TYPE_CODE";
+        public static final String EXCLUDE_CB_PERIOD = "EXCLUDE_CB_PERIOD";
+    }
+
     public static class LdParameterConstants {
         // KFSPTS-1627
         public static final String VALIDATE_TRANSFER_ACCOUNT_TYPES_IND = "VALIDATE_TRANSFER_ACCOUNT_TYPES_IND";

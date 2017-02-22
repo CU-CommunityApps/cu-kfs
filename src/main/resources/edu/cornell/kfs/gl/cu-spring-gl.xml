@@ -300,5 +300,19 @@
 		<property name="persistenceStructureService">
 			<ref bean="persistenceStructureService" />
 		</property>
-	</bean> 	 
+	</bean>
+
+	<bean id="glCurrentAccountBalanceLookupableHelperService"
+				class="edu.cornell.kfs.gl.businessobject.lookup.CuCurrentAccountBalanceLookupableHelperServiceImpl" scope="prototype">
+		<property name="personService" ref="personService"/>
+		<property name="balanceService" ref="glBalanceService"/>
+		<property name="parameterService" ref="parameterService"/>
+		<property name="generalLedgerPendingEntryService" ref="generalLedgerPendingEntryService"/>
+		<property name="postBalance" ref="glPostBalance"/>
+		<property name="accountingPeriodService" ref="accountingPeriodService"/>
+		<property name="lookupService" ref="lookupService"/>
+		<property name="accountService" ref="accountService"/>
+		<property name="optionsService" ref="optionsService"/>
+	</bean>
+
 </beans>
