@@ -35,16 +35,12 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
      */
     @Override
     protected void updateCurrentBalance(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
-        new BalanceUpdater(currentBalance, balance, fiscalPeriod)
+        new BalanceUpdaterHelper(currentBalance, balance, fiscalPeriod)
                 .updateCurrentBalance();
     }
 
-    /**
-     * Helper class for encapsulating and splitting up the logic
-     * of the updateCurrentBalance() method.
-     */
     @SuppressWarnings("deprecation")
-    protected class BalanceUpdater {
+    protected class BalanceUpdaterHelper {
 
         protected final CurrentAccountBalance currentBalance;
         protected final Balance balance;
@@ -64,7 +60,7 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
         protected final Account replacementAccount;
         protected final boolean isCashBudgetRecording;
         
-        public BalanceUpdater(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
+        public BalanceUpdaterHelper(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
             this.currentBalance = currentBalance;
             this.balance = balance;
             this.fiscalPeriod = fiscalPeriod;
@@ -80,9 +76,9 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
                     .booleanValue();
             
             SystemOptions options = getOptionsService().getCurrentYearOptions();
-            this.assetLiabilityFundBalanceTypeCodes = Arrays.asList(options.getFinancialObjectTypeAssetsCd(),  // AS
-                options.getFinObjectTypeLiabilitiesCode(), // LI
-                options.getFinObjectTypeFundBalanceCd());  // FB
+            this.assetLiabilityFundBalanceTypeCodes = Arrays.asList(options.getFinancialObjectTypeAssetsCd(),
+                options.getFinObjectTypeLiabilitiesCode(),
+                options.getFinObjectTypeFundBalanceCd());
             
             this.balanceTypeCode = balance.getBalanceTypeCode();
             this.objectTypeCode = balance.getObjectTypeCode();
@@ -133,6 +129,7 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
         
         /*
          * NOTE: Base KFS grabs the "CB" balance type from the wrong constant. This has been corrected below.
+         * The KFSPTS-7867 ticket will handle contributing this fix (and other related fixes) back to KualiCo.
          */
         protected void updateCurrentBudget() {
             if (isCashBudgetRecording) {
