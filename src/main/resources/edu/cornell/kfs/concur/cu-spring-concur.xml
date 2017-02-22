@@ -65,12 +65,13 @@
 		<property name="directoryPath">
 			<value>${staging.directory}/concur/standardAccountingExtract/</value>
 		</property>
+		<property name="concurStandardAccountingExtractService" ref="concurStandardAccountingExtractService" />
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />
 	<bean id="concurStandardAccountingExtractService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractServiceImpl" abstract="true">
 		<property name="reimbursementFeedDirectory">
-			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/value>
+			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
 		</property>
 		<property name="collectorFeedDirectory">
 			<value>${staging.directory}/concur/standardAccountingExtract/collector/</value>
