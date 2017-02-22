@@ -30,12 +30,16 @@
 		<property name="jobNames">
 			<list>
 				<value>concurEventNotificationProcessingBatchJob</value>
-				<value>concurRequestExtractCreatePdpFeedJob</value>
+				<value>concurRequestExtractToPdpFeedJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
 			<list>
 				<value>${reports.directory}/concur</value>
+				<value>${staging.directory}/concur/cashAdvance</value>
+				<value>${staging.directory}/concur/requestExtract</value>
+				<value>${staging.directory}/concur/requestExtract/accepted</value>
+				<value>${staging.directory}/concur/requestExtract/rejected</value>
 			</list>
 		</property>
 
@@ -117,7 +121,7 @@
 	</bean>
 
 	<!-- Request Extract File Conversion to  PDP Import File Job -->
-	<bean id="concurRequestExtractCreatePdpFeedJob" parent="unscheduledJobDescriptor">
+	<bean id="concurRequestExtractToPdpFeedJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
                 <ref bean="concurRequestExtractCreatePdpFeedStep" />
@@ -132,13 +136,15 @@
 	<bean id="concurRequestExtractCreatePdpFeedService" parent="concurRequestExtractCreatePdpFeedService-parentBean" />
 	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
+	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
 	</bean>
 
 	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
 	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
 	    <property name="incomingDirectoryName" value="${staging.directory}/concur/requestExtract"/>
-	    <property name="failureDirectoryName" value="${staging.directory}/concur/requestExtract/failures"/>
+	    <property name="acceptedDirectoryName" value="${staging.directory}/concur/requestExtract/accepted"/>
+	    <property name="rejectedDirectoryName" value="${staging.directory}/concur/requestExtract/rejected"/>
 	</bean>
 
 	<bean id="concurRequestExtractFileValidationService" parent="concurRequestExtractFileValidationService-parentBean" />
