@@ -26,7 +26,11 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
 		File folder = new File(directoryPath);
 		File[] listOfFiles = folder.listFiles();
-		LOG.debug("execute started, directoryPath: " + directoryPath + " number of files found to process: " + listOfFiles.length);
+		
+		if(LOG.isDebugEnabled()) {
+			String numberOfFiles = listOfFiles != null ? String.valueOf(listOfFiles.length) : "NULL";
+			LOG.debug("execute started, directoryPath: " + directoryPath + " number of files found to process: " + numberOfFiles);
+		}
 
 		boolean success = true;
 		for (int i = 0; i < listOfFiles.length; i++) {
