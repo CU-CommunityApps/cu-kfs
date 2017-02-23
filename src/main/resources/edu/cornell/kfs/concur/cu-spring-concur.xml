@@ -38,8 +38,8 @@
 				<value>${reports.directory}/concur</value>
 				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
-				<value>${staging.directory}/concur/requestExtract/accepted</value>
-				<value>${staging.directory}/concur/requestExtract/rejected</value>
+				<value>${staging.directory}/concur/requestExtract/accept</value>
+				<value>${staging.directory}/concur/requestExtract/reject</value>
 			</list>
 		</property>
 
@@ -130,7 +130,7 @@
 	</bean>
 
 	<bean id="concurRequestExtractCreatePdpFeedStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurRequestExtractCreatePdpFeedStep">
-		<property name="concurRequestExtractCreatePdpFeedService" ref="concurRequestExtractCreatePdpFeedService" />
+	    <property name="concurRequestExtractCreatePdpFeedService" ref="concurRequestExtractCreatePdpFeedService" />
 	</bean>
 
 	<bean id="concurRequestExtractCreatePdpFeedService" parent="concurRequestExtractCreatePdpFeedService-parentBean" />
@@ -143,8 +143,8 @@
 	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
 	    <property name="incomingDirectoryName" value="${staging.directory}/concur/requestExtract"/>
-	    <property name="acceptedDirectoryName" value="${staging.directory}/concur/requestExtract/accepted"/>
-	    <property name="rejectedDirectoryName" value="${staging.directory}/concur/requestExtract/rejected"/>
+	    <property name="acceptedDirectoryName" value="${staging.directory}/concur/requestExtract/accept"/>
+	    <property name="rejectedDirectoryName" value="${staging.directory}/concur/requestExtract/reject"/>
 	</bean>
 
 	<bean id="concurRequestExtractFileValidationService" parent="concurRequestExtractFileValidationService-parentBean" />
