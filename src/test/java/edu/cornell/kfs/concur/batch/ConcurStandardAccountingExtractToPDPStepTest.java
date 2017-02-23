@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.krad.exception.ValidationException;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 
@@ -95,12 +96,12 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 	}
 
 	protected void prepFile(String fileName) throws IOException {
-		File dataFileDest = new File(BATCH_DIRECTORY + "/" + fileName);
+		File dataFileDest = new File(BATCH_DIRECTORY + fileName);
 		FileUtils.copyFile(dataFileSrc, dataFileDest);
 	}
 
 	public void assertNumberOfFilesAccepted(int numberOfExpectedFiles) {
-		File acceptedDirectory = new File(BATCH_DIRECTORY + "/accepted/");
+		File acceptedDirectory = new File(BATCH_DIRECTORY + ConcurConstants.ACCEPT_SUB_FOLDER_NAME + ConcurConstants.FORWARD_SLASH);
 		if (!acceptedDirectory.exists()) {
 			acceptedDirectory.mkdir();
 		}
@@ -110,7 +111,7 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 	}
 
 	public void assertNumberOfFilesRejected(int numberOfExpectedFiles) {
-		File rejectedDirectory = new File(BATCH_DIRECTORY + "/rejected/");
+		File rejectedDirectory = new File(BATCH_DIRECTORY + ConcurConstants.REJECT_SUB_FOLDER_NAME + ConcurConstants.FORWARD_SLASH);
 		if (!rejectedDirectory.exists()) {
 			rejectedDirectory.mkdir();
 		}

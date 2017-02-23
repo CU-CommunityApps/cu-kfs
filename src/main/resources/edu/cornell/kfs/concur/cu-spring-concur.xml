@@ -73,9 +73,6 @@
 		<property name="reimbursementFeedDirectory">
 			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
 		</property>
-		<property name="collectorFeedDirectory">
-			<value>${staging.directory}/concur/standardAccountingExtract/collector/</value>
-		</property>
 	</bean>
 	
 	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">

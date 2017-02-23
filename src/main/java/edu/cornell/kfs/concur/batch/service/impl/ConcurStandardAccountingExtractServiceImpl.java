@@ -12,20 +12,13 @@ import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
 
 	private String reimbursementFeedDirectory;
-	private String collectorFeedDirectory;
 
 	public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFile(File standardAccountingExtractFile) throws ValidationException {
-		/**
-		 * @Todo implement this function
-		 */
 		List<ConcurStandardAccountingExtractDTO> dtos = new ArrayList<ConcurStandardAccountingExtractDTO>();
 		return dtos;
 	}
 
 	public boolean proccessConcurStandardAccountExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
-		/**
-		 * @todo implement this function
-		 */
 		return true;
 	}
 
@@ -35,14 +28,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
 	public void setReimbursementFeedDirectory(String reimbursementFeedDirectory) {
 		this.reimbursementFeedDirectory = reimbursementFeedDirectory;
-	}
-
-	public String getCollectorFeedDirectory() {
-		return collectorFeedDirectory;
-	}
-
-	public void setCollectorFeedDirectory(String collectorFeedDirectory) {
-		this.collectorFeedDirectory = collectorFeedDirectory;
 	}
 
 }

@@ -9,10 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import com.google.common.io.Files;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
@@ -37,20 +39,7 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 		boolean success = true;
 		for (int i = 0; i < listOfFiles.length; i++) {
 			File currentFile = listOfFiles[i];
-			if (!currentFile.isDirectory()) {
-				LOG.debug("Execute current File: " + currentFile.getName());
-				try {
-					List<ConcurStandardAccountingExtractDTO> dtos = getConcurStandardAccountingExtractService()
-					        .parseStandardAccoutingExtractFile(currentFile);
-					success = getConcurStandardAccountingExtractService().proccessConcurStandardAccountExtractDTOs(dtos)
-					        && success;
-					moveFile(currentFile, "accepted");
-				} catch (ValidationException ve) {
-					success = false;
-					moveFile(currentFile, "rejected");
-					LOG.error("There was a validation error processing " + currentFile.getName(), ve);
-				}
-			}
+			success = processCurrentFileAndExtractPdpFeedFromSAEFile(currentFile) && success;
 		}
 
 		if (!success) {
@@ -60,14 +49,32 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 		return success;
 	}
 
+	protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(File currentFile) {
+		boolean success = true;
+		if (!currentFile.isDirectory()) {
+			LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + currentFile.getName());
+			try {
+				List<ConcurStandardAccountingExtractDTO> dtos = getConcurStandardAccountingExtractService()
+				        .parseStandardAccoutingExtractFile(currentFile);
+				success = getConcurStandardAccountingExtractService().proccessConcurStandardAccountExtractDTOs(dtos);
+				moveFile(currentFile, ConcurConstants.ACCEPT_SUB_FOLDER_NAME);
+			} catch (ValidationException ve) {
+				success = false;
+				moveFile(currentFile, ConcurConstants.REJECT_SUB_FOLDER_NAME);
+				LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing " + currentFile.getName(), ve);
+			}
+		}
+		return success;
+	}
+
 	protected void moveFile(File currentFile, String subPath) {
-		File dropDirectory = new File(directoryPath + subPath + "/");
+		File dropDirectory = new File(directoryPath + subPath + ConcurConstants.FORWARD_SLASH);
 		if (!dropDirectory.exists()) {
 			dropDirectory.mkdir();
 		}
 
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-		String newFileName = dropDirectory.getAbsolutePath() + "/" + currentFile.getName() + "."
+		DateFormat df = new SimpleDateFormat(ConcurConstants.CONCUR_PROCESSED_FILE_DATE_FORMAT);
+		String newFileName = dropDirectory.getAbsolutePath() + ConcurConstants.FORWARD_SLASH + currentFile.getName() + KFSConstants.DELIMITER
 		        + df.format(Calendar.getInstance().getTimeInMillis());
 		LOG.debug("moveFile, moving " + currentFile.getAbsolutePath() + " to " + newFileName);
 
@@ -91,8 +98,7 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 		return concurStandardAccountingExtractService;
 	}
 
-	public void setConcurStandardAccountingExtractService(
-	        ConcurStandardAccountingExtractService concurStandardAccountingExtractService) {
+	public void setConcurStandardAccountingExtractService(ConcurStandardAccountingExtractService concurStandardAccountingExtractService) {
 		this.concurStandardAccountingExtractService = concurStandardAccountingExtractService;
 	}
 
