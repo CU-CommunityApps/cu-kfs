@@ -9,8 +9,8 @@ import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 
 public interface ConcurStandardAccountingExtractService {
 
-	List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFile(File standardAccountingExtractFile) throws ValidationException;
+	List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(File standardAccountingExtractFile) throws ValidationException;
 
-	boolean proccessConcurStandardAccountExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs);
+	boolean extractPdpFeedFromStandardAccounitngExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs);
 
 }

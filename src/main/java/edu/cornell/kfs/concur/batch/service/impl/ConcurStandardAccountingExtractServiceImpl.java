@@ -13,12 +13,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
 	private String reimbursementFeedDirectory;
 
-	public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFile(File standardAccountingExtractFile) throws ValidationException {
+	public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(File standardAccountingExtractFile) throws ValidationException {
 		List<ConcurStandardAccountingExtractDTO> dtos = new ArrayList<ConcurStandardAccountingExtractDTO>();
 		return dtos;
 	}
 
-	public boolean proccessConcurStandardAccountExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
+	public boolean extractPdpFeedFromStandardAccounitngExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
 		return true;
 	}
 

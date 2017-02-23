@@ -55,8 +55,8 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 			LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + currentFile.getName());
 			try {
 				List<ConcurStandardAccountingExtractDTO> dtos = getConcurStandardAccountingExtractService()
-				        .parseStandardAccoutingExtractFile(currentFile);
-				success = getConcurStandardAccountingExtractService().proccessConcurStandardAccountExtractDTOs(dtos);
+				        .parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(currentFile);
+				success = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtractDTOs(dtos);
 				moveFile(currentFile, ConcurConstants.ACCEPT_SUB_FOLDER_NAME);
 			} catch (ValidationException ve) {
 				success = false;

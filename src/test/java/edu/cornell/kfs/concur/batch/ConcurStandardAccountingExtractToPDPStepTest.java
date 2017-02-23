@@ -125,7 +125,7 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 		private boolean shouldThrowValidationExcpetion = false;
 
 		@Override
-		public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFile(
+		public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(
 		        File standardAccountingExtractFile) throws ValidationException {
 			if (shouldThrowValidationExcpetion) {
 				throw new ValidationException("A validation exception");
@@ -135,7 +135,7 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 		}
 
 		@Override
-		public boolean proccessConcurStandardAccountExtractDTOs(
+		public boolean extractPdpFeedFromStandardAccounitngExtractDTOs(
 		        List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
 			return shouldProccessSucceed;
 		}
