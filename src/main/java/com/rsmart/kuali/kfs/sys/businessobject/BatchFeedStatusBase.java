@@ -15,6 +15,8 @@
  */
 package com.rsmart.kuali.kfs.sys.businessobject;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +57,9 @@ public abstract class BatchFeedStatusBase {
         Map<String, Object> reportData = new HashMap<String, Object>();
 
         reportData.put(REPORT_DATA_STATISTICS_KEY, getStatistics());
-        reportData.put(REPORT_DATA_XML_MESSAGE_KEY, getXmlParseExceptionMessage());
+        if (StringUtils.isNotBlank(getXmlParseExceptionMessage())) {
+            reportData.put(REPORT_DATA_XML_MESSAGE_KEY, getXmlParseExceptionMessage());
+        }
 
         return reportData;
     }
