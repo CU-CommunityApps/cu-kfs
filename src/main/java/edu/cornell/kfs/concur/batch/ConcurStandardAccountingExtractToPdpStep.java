@@ -19,8 +19,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 
 public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-	        .getLogger(ConcurStandardAccountingExtractToPdpStep.class);
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class);
 	protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
 	private String directoryPath;
 
