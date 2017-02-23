@@ -6,19 +6,20 @@ import java.util.List;
 
 import org.kuali.kfs.krad.exception.ValidationException;
 
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
-import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
 
 	private String reimbursementFeedDirectory;
-
-	public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(File standardAccountingExtractFile) throws ValidationException {
-		List<ConcurStandardAccountingExtractDTO> dtos = new ArrayList<ConcurStandardAccountingExtractDTO>();
-		return dtos;
+	
+	@Override
+	public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(File standardAccountingExtractFile) throws ValidationException {
+		return new ConcurStandardAccountingExtractFile();
 	}
-
-	public boolean extractPdpFeedFromStandardAccounitngExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
+	
+	@Override
+	public boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
 		return true;
 	}
 

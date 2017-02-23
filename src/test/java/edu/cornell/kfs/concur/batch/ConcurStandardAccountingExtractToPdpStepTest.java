@@ -17,24 +17,24 @@ import org.junit.Test;
 import org.kuali.kfs.krad.exception.ValidationException;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
-import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 
-public class ConcurStandardAccountingExtractToPDPStepTest {
+public class ConcurStandardAccountingExtractToPdpStepTest {
 	private static final String BATCH_DIRECTORY = "test/opt/work/staging/concur/standardAccountingExtract/";
 	private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/concur/batch/fixture/ConcurStandardAccountingExtract.txt";
 
-	private ConcurStandardAccountingExtractToPDPStep concurStandardAccountingExtractToPDPStep;
+	private ConcurStandardAccountingExtractToPdpStep concurStandardAccountingExtractToPdpStep;
 	private File batchDirectoryFile;
 	private File dataFileSrc;
 
 	@Before
 	public void setUp() throws Exception {
-		Logger.getLogger(ConcurStandardAccountingExtractToPDPStep.class).setLevel(Level.DEBUG);
-		concurStandardAccountingExtractToPDPStep = new ConcurStandardAccountingExtractToPDPStep();
-		concurStandardAccountingExtractToPDPStep
+		Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class).setLevel(Level.DEBUG);
+		concurStandardAccountingExtractToPdpStep = new ConcurStandardAccountingExtractToPdpStep();
+		concurStandardAccountingExtractToPdpStep
 		        .setConcurStandardAccountingExtractService(new TestableConcurStandardAccountingExtractService());
-		concurStandardAccountingExtractToPDPStep.setDirectoryPath(BATCH_DIRECTORY);
+		concurStandardAccountingExtractToPdpStep.setDirectoryPath(BATCH_DIRECTORY);
 
 		batchDirectoryFile = new File(BATCH_DIRECTORY);
 		batchDirectoryFile.mkdir();
@@ -44,13 +44,13 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 
 	@After
 	public void tearDown() throws Exception {
-		concurStandardAccountingExtractToPDPStep = null;
+		concurStandardAccountingExtractToPdpStep = null;
 		FileUtils.deleteDirectory(batchDirectoryFile);
 	}
 
 	@Test
 	public void executeGoodNoFiles() throws InterruptedException {
-		assertTrue(concurStandardAccountingExtractToPDPStep.execute("standardAccountExtractJob",
+		assertTrue(concurStandardAccountingExtractToPdpStep.execute("standardAccountExtractJob",
 		        Calendar.getInstance().getTime()));
 	}
 
@@ -58,7 +58,7 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 	public void executeGood1File() throws InterruptedException, IOException {
 		prepFile("test1.txt");
 
-		assertTrue(concurStandardAccountingExtractToPDPStep.execute("standardAccountExtractJob",
+		assertTrue(concurStandardAccountingExtractToPdpStep.execute("standardAccountExtractJob",
 		        Calendar.getInstance().getTime()));
 		assertNumberOfFilesAccepted(1);
 		assertNumberOfFilesRejected(0);
@@ -72,7 +72,7 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 		prepFile("test4.txt");
 		prepFile("test5.txt");
 
-		assertTrue(concurStandardAccountingExtractToPDPStep.execute("standardAccountExtractJob",
+		assertTrue(concurStandardAccountingExtractToPdpStep.execute("standardAccountExtractJob",
 		        Calendar.getInstance().getTime()));
 		assertNumberOfFilesAccepted(5);
 		assertNumberOfFilesRejected(0);
@@ -80,13 +80,13 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 
 	@Test
 	public void executeBad1File() throws InterruptedException, IOException {
-		TestableConcurStandardAccountingExtractService service = (TestableConcurStandardAccountingExtractService) concurStandardAccountingExtractToPDPStep
+		TestableConcurStandardAccountingExtractService service = (TestableConcurStandardAccountingExtractService) concurStandardAccountingExtractToPdpStep
 		        .getConcurStandardAccountingExtractService();
 		service.setShouldThrowValidationExcpetion(true);
 
 		prepFile("test1.txt");
 		try {
-			assertFalse(concurStandardAccountingExtractToPDPStep.execute("standardAccountExtractJob",
+			assertFalse(concurStandardAccountingExtractToPdpStep.execute("standardAccountExtractJob",
 			        Calendar.getInstance().getTime()));
 		} catch (RuntimeException re) {
 			assertTrue("We expected a runtime exception", true);
@@ -125,18 +125,16 @@ public class ConcurStandardAccountingExtractToPDPStepTest {
 		private boolean shouldThrowValidationExcpetion = false;
 
 		@Override
-		public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(
+		public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(
 		        File standardAccountingExtractFile) throws ValidationException {
 			if (shouldThrowValidationExcpetion) {
 				throw new ValidationException("A validation exception");
 			}
-			List<ConcurStandardAccountingExtractDTO> dtos = new ArrayList<ConcurStandardAccountingExtractDTO>();
-			return dtos;
+			return new ConcurStandardAccountingExtractFile();
 		}
 
 		@Override
-		public boolean extractPdpFeedFromStandardAccounitngExtractDTOs(
-		        List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
+		public boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
 			return shouldProccessSucceed;
 		}
 

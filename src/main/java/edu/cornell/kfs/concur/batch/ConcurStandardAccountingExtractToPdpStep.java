@@ -15,13 +15,12 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import com.google.common.io.Files;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
-import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
-import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 
-public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
+public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-	        .getLogger(ConcurStandardAccountingExtractToPDPStep.class);
+	        .getLogger(ConcurStandardAccountingExtractToPdpStep.class);
 	protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
 	private String directoryPath;
 
@@ -42,10 +41,6 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 			success = processCurrentFileAndExtractPdpFeedFromSAEFile(currentFile) && success;
 		}
 
-		if (!success) {
-			throw new RuntimeException("This job did not complete successfully");
-		}
-
 		return success;
 	}
 
@@ -54,9 +49,9 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 		if (!currentFile.isDirectory()) {
 			LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + currentFile.getName());
 			try {
-				List<ConcurStandardAccountingExtractDTO> dtos = getConcurStandardAccountingExtractService()
-				        .parseStandardAccoutingExtractFileToStandardAccountingExtractDTO(currentFile);
-				success = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtractDTOs(dtos);
+				ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
+						.parseStandardAccoutingExtractFileToStandardAccountingExtractFile(currentFile);
+				success = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
 				moveFile(currentFile, ConcurConstants.ACCEPT_SUB_FOLDER_NAME);
 			} catch (ValidationException ve) {
 				success = false;
