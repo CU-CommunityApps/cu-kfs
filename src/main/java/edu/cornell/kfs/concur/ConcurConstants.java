@@ -31,4 +31,8 @@ public class ConcurConstants {
     
     public static final String DEFAULT_TRAVEL_REQUEST_OBJECT_CODE_PARAMETER_NAME = "DEFAULT_TRAVEL_REQUEST_OBJECT_CODE";
 
+    public static final String ACCEPT_SUB_FOLDER_NAME = "accept";
+    public static final String REJECT_SUB_FOLDER_NAME = "reject";
+    public static final String FORWARD_SLASH = "/";
+    public static final String CONCUR_PROCESSED_FILE_DATE_FORMAT = "yyyy-MM-dd-HHmmss";
 }
