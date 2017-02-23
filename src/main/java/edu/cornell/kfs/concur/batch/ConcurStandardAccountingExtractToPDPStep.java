@@ -18,7 +18,8 @@ import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 
 public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPDPStep.class);
+	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
+	        .getLogger(ConcurStandardAccountingExtractToPDPStep.class);
 	protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
 	private String directoryPath;
 
@@ -26,20 +27,23 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
 		File folder = new File(directoryPath);
 		File[] listOfFiles = folder.listFiles();
-		
-		if(LOG.isDebugEnabled()) {
+
+		if (LOG.isDebugEnabled()) {
 			String numberOfFiles = listOfFiles != null ? String.valueOf(listOfFiles.length) : "NULL";
-			LOG.debug("execute started, directoryPath: " + directoryPath + " number of files found to process: " + numberOfFiles);
+			LOG.debug("execute started, directoryPath: " + directoryPath + " number of files found to process: "
+			        + numberOfFiles);
 		}
 
 		boolean success = true;
 		for (int i = 0; i < listOfFiles.length; i++) {
 			File currentFile = listOfFiles[i];
-			if(!currentFile.isDirectory()) {
+			if (!currentFile.isDirectory()) {
 				LOG.debug("Execute current File: " + currentFile.getName());
 				try {
-					List<ConcurStandardAccountingExtractDTO> dtos = getConcurStandardAccountingExtractService().parseStandardAccoutingExtractFile(currentFile);
-					success = getConcurStandardAccountingExtractService().proccessConcurStandardAccountExtractDTOs(dtos) && success;
+					List<ConcurStandardAccountingExtractDTO> dtos = getConcurStandardAccountingExtractService()
+					        .parseStandardAccoutingExtractFile(currentFile);
+					success = getConcurStandardAccountingExtractService().proccessConcurStandardAccountExtractDTOs(dtos)
+					        && success;
 					moveFile(currentFile, "accepted");
 				} catch (ValidationException ve) {
 					success = false;
@@ -48,24 +52,25 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 				}
 			}
 		}
-		
+
 		if (!success) {
 			throw new RuntimeException("This job did not complete successfully");
 		}
-		
+
 		return success;
 	}
-	
+
 	protected void moveFile(File currentFile, String subPath) {
-		File dropDirectory = new File(directoryPath +  subPath + "/");
+		File dropDirectory = new File(directoryPath + subPath + "/");
 		if (!dropDirectory.exists()) {
 			dropDirectory.mkdir();
 		}
-		
+
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-		String newFileName = dropDirectory.getAbsolutePath() + "/" + currentFile.getName() + "." + df.format(Calendar.getInstance().getTimeInMillis());
+		String newFileName = dropDirectory.getAbsolutePath() + "/" + currentFile.getName() + "."
+		        + df.format(Calendar.getInstance().getTimeInMillis());
 		LOG.debug("moveFile, moving " + currentFile.getAbsolutePath() + " to " + newFileName);
-		
+
 		try {
 			Files.move(currentFile, new File(newFileName));
 		} catch (IOException e) {
@@ -87,7 +92,7 @@ public class ConcurStandardAccountingExtractToPDPStep extends AbstractStep {
 	}
 
 	public void setConcurStandardAccountingExtractService(
-			ConcurStandardAccountingExtractService concurStandardAccountingExtractService) {
+	        ConcurStandardAccountingExtractService concurStandardAccountingExtractService) {
 		this.concurStandardAccountingExtractService = concurStandardAccountingExtractService;
 	}
 

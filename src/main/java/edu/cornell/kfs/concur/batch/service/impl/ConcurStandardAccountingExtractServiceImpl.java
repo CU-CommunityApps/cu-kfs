@@ -10,18 +10,18 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractServi
 import edu.cornell.kfs.concur.dto.ConcurStandardAccountingExtractDTO;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
-	
+
 	private String reimbursementFeedDirectory;
 	private String collectorFeedDirectory;
-	
-	public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFile(File standardAccountingExtractFile) throws ValidationException{
+
+	public List<ConcurStandardAccountingExtractDTO> parseStandardAccoutingExtractFile(File standardAccountingExtractFile) throws ValidationException {
 		/**
 		 * @Todo implement this function
 		 */
 		List<ConcurStandardAccountingExtractDTO> dtos = new ArrayList<ConcurStandardAccountingExtractDTO>();
 		return dtos;
 	}
-	
+
 	public boolean proccessConcurStandardAccountExtractDTOs(List<ConcurStandardAccountingExtractDTO> concurStandardAccountingExtractDTOs) {
 		/**
 		 * @todo implement this function
