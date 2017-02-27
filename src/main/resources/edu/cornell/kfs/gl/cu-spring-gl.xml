@@ -16,8 +16,10 @@
             </list>
         </property>
         
-        <property name="dataDictionaryPackages">
-			<list/>
+		<property name="dataDictionaryPackages">
+			<list merge="true">
+				<value>classpath:edu/cornell/kfs/gl/businessobject/datadictionary/*.xml</value>
+			</list>
 		</property>
 		
 		<property name="databaseRepositoryFilePaths">
