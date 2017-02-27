@@ -41,6 +41,9 @@
 				<value>${staging.directory}/concur/requestExtract</value>
 				<value>${staging.directory}/concur/requestExtract/accept</value>
 				<value>${staging.directory}/concur/requestExtract/reject</value>
+				<value>${staging.directory}/concur/standardAccountingExtract</value>
+				<value>${staging.directory}/concur/standardAccountingExtract/accept</value>
+				<value>${staging.directory}/concur/standardAccountingExtract/reject</value>
 			</list>
 		</property>
 
@@ -74,6 +77,72 @@
 			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
 		</property>
 	</bean>
+	
+	<bean id="standardAccountExtractFileType" parent="FlatFileParser">
+        <property name="flatFileSpecification">
+            <bean class="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFileSpecification">
+                <property name="delimiter" value="|"/>
+                <property name="objectSpecifications">
+                    <list>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="EXTRACT" p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="1" p:propertyName="headerType"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="batchDate"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="recordCount"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="journalAmountTotal"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="5" p:propertyName="batchId"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="DETAIL"
+                              p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine"
+                              p:parentBusinessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile"
+                              p:parentTargetProperty="concurStandardAccountingExtractDetailLines">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="1" p:propertyName="detailType"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="batchID"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="batchDate"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="sequenceNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="5" p:propertyName="employeeId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="6" p:propertyName="employeeLastName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="7" p:propertyName="employeeFirstName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="8" p:propertyName="employeeMiddleInitital"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="9" p:propertyName="employeeGroupId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="19" p:propertyName="reportId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="41" p:propertyName="reportCustom1"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="127" p:propertyName="paymentCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="journalAccountCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="allocationCustom1"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="192" p:propertyName="allocationCustom2"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="193" p:propertyName="allocationCustom3"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="allocationCustom4"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="allocationCustom5"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="196" p:propertyName="allocationCustom6"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <!-- 
+        <property name="directoryPath">
+            <value>${staging.directory}/fp/achIncome</value>
+        </property>
+        <property name="fileExtension">
+            <value>txt</value>
+        </property>
+        <property name="fileNamePrefix" value="achIncome_"/>
+        <property name="fileTypeIdentifier" value="achIncomeInputFileType"/>
+        <property name="titleKey" value="message.batchUpload.title.achIncome"/>
+        <property name="processor" ref="advanceDepositService"/>
+         -->
+    </bean>
+	
 	
 	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
