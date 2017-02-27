@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.FlatFileInformation;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl;
@@ -46,7 +50,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         } catch (org.kuali.kfs.sys.exception.ParseException e) {
             LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Error parsing batch file: " + e.getMessage());
         }
-	    
+        validateConcureStandardAccountExtractFile(parsedObject);
 		return parsedObject;
 	}
 	
@@ -57,20 +61,55 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         try {
             fileContents = new FileInputStream(file);
         } catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fileName + "]. " + e1.getMessage());
+            LOG.error("safelyLoadFileBytes, Batch file not found [" + fileName + "]. " + e1.getMessage(), e1);
             throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
         }
         try {
             fileByteContent = IOUtils.toByteArray(fileContents);
         } catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
+            LOG.error("safelyLoadFileBytes, IO Exception loading: [" + fileName + "]. " + e1.getMessage(), e1);
             throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
         } finally {
             IOUtils.closeQuietly(fileContents);
         }
-
         return fileByteContent;
     }
+	
+	protected void validateConcureStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+	    validateBatchDate(concurStandardAccountingExtractFile.getBatchDate());
+	    validateDetailCount(concurStandardAccountingExtractFile);
+	    validateAmounts(concurStandardAccountingExtractFile);
+	}
+	
+	protected void validateBatchDate(String batchDate) throws ValidationException{
+	    DateFormat df = new SimpleDateFormat(ConcurConstants.CONCUR_DATE_FORMAT);
+	    String errorMessage = "Unable to convert " + batchDate + " to a date";
+	    try {
+            Object date = df.parseObject(batchDate);
+            if (date instanceof java.util.Date) {
+                LOG.debug("Successuflly converted " + batchDate + " to a date object");
+            } else {
+                throw new ValidationException(errorMessage);
+            }
+        } catch (ParseException e) {
+            throw new ValidationException(errorMessage, e);
+        }
+	}
+	
+	protected void validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+	    int numberOfDetailsInHeader = Integer.parseInt(concurStandardAccountingExtractFile.getRecordCount());
+	    int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().size();
+	    if (numberOfDetailsInHeader == actualNumberOfDetails) {
+	        LOG.debug("Number of detail ines is what we expected.");
+	    } else {
+	        throw new ValidationException("The header said there were " + numberOfDetailsInHeader + " the but the actual number of details was " +  actualNumberOfDetails);
+	    }
+	    
+	}
+	
+	protected void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+	    
+	}
 	
 	@Override
 	public boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {

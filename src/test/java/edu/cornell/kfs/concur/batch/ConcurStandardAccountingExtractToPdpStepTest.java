@@ -89,6 +89,16 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
         assertNumberOfFilesAccepted(0);
         assertNumberOfFilesRejected(1);
     }
+    
+    @Test
+    public void executeNoTextFiles() throws InterruptedException, IOException {
+        prepFile("foo.bar");
+        prepFile("some_excel_file.xls");
+
+        assertTrue(concurStandardAccountingExtractToPdpStep.execute("standardAccountExtractJob", Calendar.getInstance().getTime()));
+        assertNumberOfFilesAccepted(0);
+        assertNumberOfFilesRejected(0);
+    }
 
     protected void prepFile(String fileName) throws IOException {
         File dataFileDest = new File(BATCH_DIRECTORY + fileName);

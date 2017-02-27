@@ -132,18 +132,9 @@
             </bean>
         </property>
         <property name="fileTypeIdentifier" value="standardAccountExtractFileType"/>
-        <!-- 
-        <property name="directoryPath">
-            <value>${staging.directory}/fp/achIncome</value>
-        </property>
         <property name="fileExtension">
             <value>txt</value>
         </property>
-        <property name="fileNamePrefix" value="achIncome_"/>
-        
-        <property name="titleKey" value="message.batchUpload.title.achIncome"/>
-        <property name="processor" ref="advanceDepositService"/>
-         -->
     </bean>
 	
 	
