@@ -1,22 +1,20 @@
 package edu.cornell.kfs.concur.batch.businessobject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConcurStandardAccountingExtractFile {
     
-    private String headerType; 
     private String batchDate; 
     private String recordCount; 
     private String journalAmountTotal; 
     private String batchId; 
     private List<ConcurStandardAccountingExtractDetailLine> concurStandardAccountingExtractDetailLines;
     
-    public String getHeaderType() {
-        return headerType;
+    public ConcurStandardAccountingExtractFile() {
+        concurStandardAccountingExtractDetailLines = new ArrayList<ConcurStandardAccountingExtractDetailLine>();
     }
-    public void setHeaderType(String headerType) {
-        this.headerType = headerType;
-    }
+    
     public String getBatchDate() {
         return batchDate;
     }
@@ -50,8 +48,7 @@ public class ConcurStandardAccountingExtractFile {
     }
     
     public String getDebugInformation() {
-        StringBuilder sb = new StringBuilder("headerType: ").append(headerType);
-        sb.append(" batchDate: ").append(batchDate).append(" recordCount: ").append(recordCount);
+        StringBuilder sb = new StringBuilder(" batchDate: ").append(batchDate).append(" recordCount: ").append(recordCount);
         sb.append(" journalAmountTotal: ").append(journalAmountTotal).append(" batchId: ").append(batchId);
         return sb.toString();
     }

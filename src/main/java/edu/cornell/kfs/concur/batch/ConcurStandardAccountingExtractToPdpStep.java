@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
@@ -14,6 +15,7 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import com.google.common.io.Files;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 
@@ -44,11 +46,12 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
 
     protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(File currentFile) {
         boolean success = true;
-        if (!currentFile.isDirectory()) {
+        if (!currentFile.isDirectory() && isTextFile(currentFile)) {
             LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + currentFile.getName());
             try {
                 ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                         .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(currentFile);
+                debugConcurStandardAccountingExtractFile(concurStandardAccoutingExtractFile);
                 success = getConcurStandardAccountingExtractService()
                         .extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
                 moveFile(currentFile, ConcurConstants.ACCEPT_SUB_FOLDER_NAME);
@@ -60,6 +63,28 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
             }
         }
         return success;
+    }
+    
+    protected boolean isTextFile(File file) {
+        String fileName = file.getName();
+        return StringUtils.endsWith(fileName, ".txt");
+    }
+    
+    protected void debugConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
+        if (saeFile != null) {
+            LOG.info(saeFile.getDebugInformation());
+            if (saeFile.getConcurStandardAccountingExtractDetailLines() != null) {
+                LOG.info("Number of line items: " + saeFile.getConcurStandardAccountingExtractDetailLines().size());
+                for (ConcurStandardAccountingExtractDetailLine line : saeFile.getConcurStandardAccountingExtractDetailLines()) {
+                    LOG.info(line.getDebugInformation());
+                }
+            } else {
+                LOG.info("The getConcurStandardAccountingExtractDetailLines is null");
+            }
+            
+        } else {
+            LOG.info("The SAE file is null");
+        }
     }
 
     protected void moveFile(File currentFile, String subPath) {
