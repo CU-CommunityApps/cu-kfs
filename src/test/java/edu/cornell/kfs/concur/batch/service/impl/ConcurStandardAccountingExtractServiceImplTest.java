@@ -2,13 +2,18 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import static org.junit.Assert.*;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 
@@ -26,41 +31,6 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     public void tearDown() throws Exception {
         concurStandardAccountingExtractService = null;
     }
-
-    @Test
-    public void validateBatchDateGood() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
-        try {
-            concurStandardAccountingExtractService.validateBatchDate(file.getBatchDate());
-            assertTrue("We successfully converted the batch date.", true);
-        } catch (ValidationException ve) {
-            assertTrue("We should have been able to conver this date.", false);
-        }
-    }
-    
-    @Test
-    public void validateBatchDateBadAlphaDate() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
-        file.setBatchDate("Foo");
-        try {
-            concurStandardAccountingExtractService.validateBatchDate(file.getBatchDate());
-            assertTrue("Foo is not a date, should should have a validation error.", false);
-        } catch (ValidationException ve) {
-            assertTrue("Successfully had a validation exception on Foo", true);
-        }
-    }
-    
-    @Test
-    public void validateBatchDateBadNumbericDate() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
-        file.setBatchDate("20170227");
-        try {
-            concurStandardAccountingExtractService.validateBatchDate(file.getBatchDate());
-            assertTrue("20170227 is not formatted correctly, so it should have thrown a validation error.", false);
-        } catch (ValidationException ve) {
-            assertTrue("Successfully errored on 20170227", true);
-        }
-    }
     
     @Test
     public void validateDetailCountGood() {
@@ -76,7 +46,7 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     @Test
     public void validateDetailCountIncorrectMatch() {
         ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
-        file.setRecordCount("5");
+        file.setRecordCount(new Integer(5));
         try {
             concurStandardAccountingExtractService.validateDetailCount(file);
             assertTrue("The counts should not be equal", false);
@@ -85,30 +55,22 @@ public class ConcurStandardAccountingExtractServiceImplTest {
         }
     }
     
-    @Test
-    public void validateDetailCountInvalidNumberBad() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
-        file.setRecordCount("foo");
-        try {
-            concurStandardAccountingExtractService.validateDetailCount(file);
-            assertTrue("Should not have been able to convert to an integer", false);
-        } catch (ValidationException ve) {
-            assertTrue("We successfully validated counts.", true);
-        }
-    }
-    
     protected ConcurStandardAccountingExtractFile buildConcurStandardAccountingExtractFile() {
         ConcurStandardAccountingExtractFile file = new ConcurStandardAccountingExtractFile();
-        file.setBatchDate("2017-02-27");
-        file.setRecordCount("3");
-        file.setJournalAmountTotal("100");
-        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine("DEBIT", "100"));
-        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine("DEBIT", "50"));
-        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine("CREDIT", "50"));
+        Date today = new Date(Calendar.getInstance().getTimeInMillis());
+        file.setBatchDate(today);
+        file.setRecordCount(new Integer(3));
+        file.setJournalAmountTotal(new KualiDecimal(100));
+        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
+                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(100)));
+        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
+                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(50)));
+        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
+                ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(50)));
         return file;
     }
     
-    protected ConcurStandardAccountingExtractDetailLine buildConcurStandardAccountingExtractDetailLine(String debitCredit, String amount) {
+    protected ConcurStandardAccountingExtractDetailLine buildConcurStandardAccountingExtractDetailLine(String debitCredit, KualiDecimal amount) {
         ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
         line.setJounalDebitCredit(debitCredit);
         line.setJournalAmount(amount);

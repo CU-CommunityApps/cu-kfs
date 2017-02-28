@@ -53,7 +53,7 @@ public class ConcurConstants {
     public static final String PDP_XML_NAMESPACE = "http://www.kuali.org/kfs/pdp/payment";
     
     public class ConcurPdpConstants {
-        public static final String CREDIT = "credit";
-        public static final String DEBIT = "debit";
+        public static final String CREDIT = "CR";
+        public static final String DEBIT = "DR";
     }
 }

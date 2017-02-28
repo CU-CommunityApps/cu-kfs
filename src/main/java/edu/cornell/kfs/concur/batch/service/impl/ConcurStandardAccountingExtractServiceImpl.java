@@ -18,6 +18,7 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.FlatFileInformation;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
@@ -51,7 +52,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         } catch (org.kuali.kfs.sys.exception.ParseException e) {
             LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Error parsing batch file: " + e.getMessage());
         }
-        validateConcureStandardAccountExtractFile(parsedObject);
+        //validateConcureStandardAccountExtractFile(parsedObject);
 		return parsedObject;
 	}
 	
@@ -77,30 +78,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
 	
 	protected void validateConcureStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-	    validateBatchDate(concurStandardAccountingExtractFile.getBatchDate());
 	    validateDetailCount(concurStandardAccountingExtractFile);
 	    validateAmounts(concurStandardAccountingExtractFile);
 	}
 	
-	protected void validateBatchDate(String batchDate) throws ValidationException{
-	    DateFormat df = new SimpleDateFormat(ConcurConstants.CONCUR_DATE_FORMAT);
-	    String errorMessage = "Unable to convert " + batchDate + " to a date";
-	    try {
-            Object date = df.parseObject(batchDate);
-            if (date instanceof java.util.Date) {
-                LOG.debug("Successuflly converted " + batchDate + " to a date object");
-            } else {
-                throw new ValidationException(errorMessage);
-            }
-        } catch (ParseException e) {
-            throw new ValidationException(errorMessage, e);
-        }
-	}
-	
 	protected void validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-	    long numberOfDetailsInHeader = parseLong(concurStandardAccountingExtractFile.getRecordCount());
+	    Integer numberOfDetailsInHeader = concurStandardAccountingExtractFile.getRecordCount();
 	    int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().size();
-	    if (numberOfDetailsInHeader == actualNumberOfDetails) {
+	    if (numberOfDetailsInHeader.intValue() == actualNumberOfDetails) {
 	        LOG.debug("Number of detail ines is what we expected.");
 	    } else {
 	        throw new ValidationException("The header said there were " + numberOfDetailsInHeader + " the but the actual number of details was " +  actualNumberOfDetails);
@@ -109,24 +94,24 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 	}
 	
 	protected void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-	    long journalTotal = parseLong(concurStandardAccountingExtractFile.getJournalAmountTotal());
+	    KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
 	    long detailTotal = 0;
 	    
 	    for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines() ) {
-	        long lineAmount = parseLong(line.getJournalAmount());
+	        KualiDecimal lineAmount = line.getJournalAmount();
 	        
 	        String debitCredit = line.getJounalDebitCredit();
 	        if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT)) {
-	            detailTotal = Math.subtractExact(detailTotal, lineAmount);
+	            detailTotal = Math.subtractExact(detailTotal, lineAmount.longValue());
 	        } else if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT)) {
-	            detailTotal = Math.addExact(detailTotal, lineAmount);
+	            detailTotal = Math.addExact(detailTotal, lineAmount.longValue());
 	        } else {
 	            throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
 	        }
 	            
 	    }
 	    
-	    if (journalTotal != detailTotal) {
+	    if (journalTotal.doubleValue() != detailTotal) {
 	        throw new ValidationException("The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
 	    }
 	}

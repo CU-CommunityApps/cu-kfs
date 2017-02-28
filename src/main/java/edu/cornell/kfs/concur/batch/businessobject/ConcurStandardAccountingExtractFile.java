@@ -1,13 +1,16 @@
 package edu.cornell.kfs.concur.batch.businessobject;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 public class ConcurStandardAccountingExtractFile {
     
-    private String batchDate; 
-    private String recordCount; 
-    private String journalAmountTotal; 
+    private Date batchDate; 
+    private Integer recordCount; 
+    private KualiDecimal journalAmountTotal; 
     private String batchId; 
     private List<ConcurStandardAccountingExtractDetailLine> concurStandardAccountingExtractDetailLines;
     
@@ -15,22 +18,22 @@ public class ConcurStandardAccountingExtractFile {
         concurStandardAccountingExtractDetailLines = new ArrayList<ConcurStandardAccountingExtractDetailLine>();
     }
     
-    public String getBatchDate() {
+    public Date getBatchDate() {
         return batchDate;
     }
-    public void setBatchDate(String batchDate) {
+    public void setBatchDate(Date batchDate) {
         this.batchDate = batchDate;
     }
-    public String getRecordCount() {
+    public Integer getRecordCount() {
         return recordCount;
     }
-    public void setRecordCount(String recordCount) {
+    public void setRecordCount(Integer recordCount) {
         this.recordCount = recordCount;
     }
-    public String getJournalAmountTotal() {
+    public KualiDecimal getJournalAmountTotal() {
         return journalAmountTotal;
     }
-    public void setJournalAmountTotal(String journalAmountTotal) {
+    public void setJournalAmountTotal(KualiDecimal journalAmountTotal) {
         this.journalAmountTotal = journalAmountTotal;
     }
     public String getBatchId() {
