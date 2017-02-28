@@ -102,9 +102,9 @@ public class ConcurStandardAccountingExtractServiceImplTest {
         file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
                 ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(100.75)));
         file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(50)));
+                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(50.45)));
         file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(-50)));
+                ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(-50.45)));
         return file;
     }
     

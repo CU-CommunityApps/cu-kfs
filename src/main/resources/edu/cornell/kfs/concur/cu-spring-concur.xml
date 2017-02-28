@@ -77,7 +77,7 @@
 			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
 		</property>
 		<property name="batchInputFileService" ref="batchInputFileService"/>
-        <property name="batchInputFileType" ref="standardAccountExtractFileType"/>
+		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 	</bean>
 	
 	<bean id="standardAccountExtractFileType" parent="FlatFileParser">

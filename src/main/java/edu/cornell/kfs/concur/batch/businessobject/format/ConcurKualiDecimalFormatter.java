@@ -11,9 +11,9 @@ public class ConcurKualiDecimalFormatter extends KualiDecimalFormatter {
     @Override
     protected Object convertToObject(String target) {
         if (StringUtils.startsWith(target, "+")) {
-            LOG.info("convertToObject, the orginal target: " + target);
+            LOG.debug("convertToObject, the orginal target: " + target);
             target = StringUtils.remove(target, "+");
-            LOG.info("convertToObject, the converted target: " + target);
+            LOG.debug("convertToObject, the converted target: " + target);
         }
         return super.convertToObject(target);
     }
