@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.mail.MailMessage;
-import org.kuali.kfs.krad.service.MailService;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 public class CUTransactionFilter implements Filter {
@@ -74,13 +74,13 @@ public class CUTransactionFilter implements Filter {
 					LOG.error("ERROR Found!  Sending an email...");
 					
         
-					MailMessage mm = new MailMessage();
+					BodyMailMessage mm = new BodyMailMessage();
 					mm.addToAddress("kwk43@cornell.edu");
 					mm.setFromAddress("kwk43@cornell.edu");
 					mm.setSubject("There might be a closed connection problem.  Please check the logs. Seach for the following phrase: SOOO BAD");
 					mm.setMessage("Request URL which had the problem: " + httpReq.getRequestURL() + "    errorText = " + errorText);
 
-					SpringContext.getBean(MailService.class).sendMessage(mm);
+					SpringContext.getBean(EmailService.class).sendMessage(mm, false);
 					
 				} catch (Throwable t) {
 					LOG.error("Error sending email.", t);

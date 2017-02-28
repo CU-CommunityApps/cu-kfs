@@ -15,13 +15,12 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.pdp.service.impl.PdpEmailServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.web.format.CurrencyFormatter;
 import org.kuali.rice.core.web.format.DateFormatter;
 import org.kuali.rice.core.web.format.Formatter;
 import org.kuali.rice.core.web.format.IntegerFormatter;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
@@ -81,8 +80,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         if (shouldBundleAchPayments) {
         	//Send out one email to the payee listing all the payment details for the specified payment group
         	
-        	MailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
-        	KFSMailMessage bundledPdpMessage = new KFSMailMessage(bundledMessage);
+                BodyMailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
         	
         	//create the formatted body
    			// this seems wasteful, but since the total net amount is needed in the message body before the payment details...it's needed
@@ -151,16 +149,16 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
    
         	}//for-loop
         	
-        	bundledPdpMessage.setMessage(bundledBody.toString());
+        	bundledMessage.setMessage(bundledBody.toString());
         	if (!adviceIsForDV) {
         		//only create the attachment file when the payments are NOT for DV's
         		Formatter integerFormatter = new IntegerFormatter();
             	String attachmentFileName = new String("paymentDetailsForDisbursement_" + (String)integerFormatter.formatForPresentation(paymentGroup.getDisbursementNbr()) + ".csv");
-            	bundledPdpMessage.setAttachmentFilename(attachmentFileName);
-            	bundledPdpMessage.setAttachmentContent(bundledAtachmentData.toString());
-            	bundledPdpMessage.setAttachmentMimeType(new String("text/csv"));
+            	bundledMessage.setAttachmentFileName(attachmentFileName);
+            	bundledMessage.setAttachmentContent(bundledAtachmentData.toString().getBytes());
+            	bundledMessage.setAttachmentContentType(new String("text/csv"));
         	}        	
-        	sendFormattedAchAdviceEmail(bundledPdpMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);        	
+        	sendFormattedAchAdviceEmail(bundledMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);        	
         }
         else {
         	//Maintain original spec of sending the payee an email for each payment detail in the payment group
@@ -168,7 +166,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	//so that the appropriate mail "send" is invoked based on the message type that we created and passed.
         	for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
         		numPayments = paymentGroup.getPaymentDetails().size();
-        		MailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+        		BodyMailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
         		StringBuffer nonBundledBody =  createAdviceMessageBody(paymentGroup, customer, paymentDetail.getNetPaymentAmount(), numPayments);
         		nonBundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE));
         		nonBundledBody.append(customer.getAdviceHeaderText());
@@ -186,9 +184,9 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     * KFSPTS-1460: New method. created from code in sendAchAdviceEmail.
     * @return
     */
-    private MailMessage createAdviceMessageAndPopulateHeader(PaymentGroup paymentGroup, CustomerProfile customer, String productionEnvironmentCode, String environmentCode) {
+    private BodyMailMessage createAdviceMessageAndPopulateHeader(PaymentGroup paymentGroup, CustomerProfile customer, String productionEnvironmentCode, String environmentCode) {
     	LOG.debug("createAdviceMessageAndPopulateHeader() starting");
-    	MailMessage message = new MailMessage();
+    	BodyMailMessage message = new BodyMailMessage();
         	
     	String fromAddress = customer.getAdviceReturnEmailAddr();	
 		if ((fromAddress == null) || (fromAddress.isEmpty())) {
@@ -204,9 +202,9 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             message.setSubject(customer.getAdviceSubjectLine());
         }
         else {
-            message.addToAddress(mailService.getBatchMailingList());
-            message.addCcAddress(mailService.getBatchMailingList());
-            message.addBccAddress(mailService.getBatchMailingList());
+            message.addToAddress(emailService.getDefaultFromAddress());
+            message.addCcAddress(emailService.getDefaultFromAddress());
+            message.addBccAddress(emailService.getDefaultFromAddress());
             message.setFromAddress(fromAddress);
             message.setSubject(environmentCode + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
         }        
@@ -388,50 +386,9 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
      * KFSPTS-1460: broke this logic out of sendAchAdviceEmail
      * 
      */
-    private void sendFormattedAchAdviceEmail(MailMessage message, CustomerProfile customer, PaymentGroup paymentGroup, String productionEnvironmentCode, String environmentCode) {
+    private void sendFormattedAchAdviceEmail(BodyMailMessage message, CustomerProfile customer, PaymentGroup paymentGroup, String productionEnvironmentCode, String environmentCode) {
     	LOG.debug("sendFormattedAchAdviceEmail() starting");
-    	
-    	if (message instanceof KFSMailMessage) {
-    		//send a PdpMailMessage which MailMessage with the addition of attachment data.
-    		KFSMailMessage mimeMessage = (KFSMailMessage)message;
-    		kfsMailMessageService.send(mimeMessage);    		
-    	}
-    	else {
-    		//send the message using the KSB  		
-	        //send the email we just created
-	        try {
-	            mailService.sendMessage(message);
-	        }
-	        catch (InvalidAddressException e) {
-	            LOG.error("sendAchAdviceEmail() Invalid email address. Sending message to " + customer.getAdviceReturnEmailAddr(), e);
-	
-	            // send notification to advice return address with payment details
-	            if (StringUtils.equals(productionEnvironmentCode, environmentCode)) {
-	                message.addToAddress(customer.getAdviceReturnEmailAddr());
-	            }
-	            else {
-	                message.addToAddress(mailService.getBatchMailingList());
-	            }
-	            
-	            message.setFromAddress(mailService.getBatchMailingList());
-	            message.setSubject(getMessage(PdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_INVALID_EMAIL_ADDRESS));
-	
-	            LOG.debug("bouncing email to " + customer.getAdviceReturnEmailAddr() + " for disb # " + paymentGroup.getDisbursementNbr());
-	            try {
-	                mailService.sendMessage(message);
-	            }
-	            catch (InvalidAddressException e1) {
-	                LOG.error("Could not send email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr(), e1);
-	                throw new RuntimeException("Could not send email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr());
-	            } catch (MessagingException e1) {
-	            	LOG.error("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr(), e1);
-	                throw new RuntimeException("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr());
-				}
-	        } catch (MessagingException e) {
-	        	LOG.error("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr(), e);
-                throw new RuntimeException("An exception occurred while sending email to advice return email address on customer profile: " + customer.getAdviceReturnEmailAddr());
-			}
-        }
+    	emailService.sendMessage(message, false);
     }
     
     /**

@@ -87,7 +87,7 @@
 
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl">
         <property name="vendorService" ref="vendorService" />
-        <property name="mailService" ref="mailService" />
+        <property name="emailService" ref="emailService" />
     </bean>
 
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
@@ -137,7 +137,7 @@
     <bean id="payeeACHAccountExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService" />
         <property name="parameterService" ref="parameterService" />
-        <property name="mailService" ref="mailService" />
+        <property name="emailService" ref="emailService"/>
         <property name="documentService" ref="documentService" />
         <property name="dataDictionaryService" ref="dataDictionaryService" />
         <property name="personService" ref="personService" />

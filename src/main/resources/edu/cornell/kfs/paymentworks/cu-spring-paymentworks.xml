@@ -181,7 +181,7 @@
 		<property name="documentService" ref="documentService" />
 		<property name="vendorService" ref="vendorService" />
 		<property name="parameterService" ref="parameterService" />
-		<property name="mailService" ref="mailService" />
+		<property name="emailService" ref="emailService"/>
 		<property name="achBankService" ref="pdpAchBankService" />
 		<property name="maintenanceDocumentService" ref="maintenanceDocumentService" />
 		<property name="paymentWorksNewVendorConversionService" ref="paymentWorksNewVendorConversionService" />

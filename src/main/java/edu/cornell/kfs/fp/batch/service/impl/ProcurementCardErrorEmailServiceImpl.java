@@ -12,10 +12,10 @@ import java.util.Set;
 
 import javax.mail.MessagingException;
 
-import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.exception.InvalidAddressException;
-import org.kuali.kfs.krad.service.MailService;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 
 import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 
@@ -23,25 +23,19 @@ public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErro
 
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardErrorEmailServiceImpl.class);
 	
-	private MailService mailService;
+	private EmailService emailService;
 	private ParameterService parameterService;
 	
 	public void sendErrorEmail(ArrayList<String> errorMessages) {
-		MailMessage message = new MailMessage();
-		
-		message.setFromAddress(mailService.getBatchMailingList());
-		message.setSubject("Error occurred during PCard batch upload process");
-		message.setToAddresses(getToAddresses());
-		message.setMessage(generateBody(errorMessages));
-		
-        try {
-            mailService.sendMessage(message);
-        }
-        catch (InvalidAddressException e) {
-            LOG.error("sendErrorEmail() Invalid email address.  Message not sent", e);
-        } catch (MessagingException e) {
-            LOG.error("sendErrorEmail() unable to send msessage.  Message not sent", e);
-		}
+        BodyMailMessage message = new BodyMailMessage();
+
+        message.setFromAddress(emailService.getDefaultFromAddress());
+        message.setSubject("Error occurred during PCard batch upload process");
+        message.setToAddresses(getToAddresses());
+        message.setMessage(generateBody(errorMessages));
+
+        emailService.sendMessage(message, false);
+
 	}
 	
 	private Set<String> getToAddresses() {
@@ -62,12 +56,12 @@ public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErro
 		return sb.toString();
 	}
 
-	public MailService getMailService() {
-		return mailService;
+	public EmailService getEmailService() {
+		return emailService;
 	}
 
-	public void setMailService(MailService mailService) {
-		this.mailService = mailService;
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 
 	public ParameterService getParameterService() {
