@@ -20,6 +20,7 @@ import org.kuali.kfs.sys.batch.FlatFileInformation;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl;
@@ -97,7 +98,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 	}
 	
 	protected void validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-	    int numberOfDetailsInHeader = Integer.parseInt(concurStandardAccountingExtractFile.getRecordCount());
+	    long numberOfDetailsInHeader = parseLong(concurStandardAccountingExtractFile.getRecordCount());
 	    int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().size();
 	    if (numberOfDetailsInHeader == actualNumberOfDetails) {
 	        LOG.debug("Number of detail ines is what we expected.");
@@ -108,7 +109,36 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 	}
 	
 	protected void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+	    long journalTotal = parseLong(concurStandardAccountingExtractFile.getJournalAmountTotal());
+	    long detailTotal = 0;
 	    
+	    for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines() ) {
+	        long lineAmount = parseLong(line.getJournalAmount());
+	        
+	        String debitCredit = line.getJounalDebitCredit();
+	        if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT)) {
+	            detailTotal = Math.subtractExact(detailTotal, lineAmount);
+	        } else if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT)) {
+	            detailTotal = Math.addExact(detailTotal, lineAmount);
+	        } else {
+	            throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
+	        }
+	            
+	    }
+	    
+	    if (journalTotal != detailTotal) {
+	        throw new ValidationException("The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
+	    }
+	}
+	
+	private long parseLong(String longNumber) {
+	    long longAmount;
+        try {
+            longAmount = Long.parseLong(longNumber);
+        } catch (NumberFormatException nfe) {
+            throw new ValidationException("Unable to convert " + longNumber + " to a number: ", nfe);
+        }
+        return longAmount;
 	}
 	
 	@Override

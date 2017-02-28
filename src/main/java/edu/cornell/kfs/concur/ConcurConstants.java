@@ -51,4 +51,9 @@ public class ConcurConstants {
     public static final String CONCUR_PROCESSED_FILE_DATE_FORMAT = "yyyy-MM-dd-HHmmss";
     
     public static final String PDP_XML_NAMESPACE = "http://www.kuali.org/kfs/pdp/payment";
+    
+    public class ConcurPdpConstants {
+        public static final String CREDIT = "credit";
+        public static final String DEBIT = "debit";
+    }
 }

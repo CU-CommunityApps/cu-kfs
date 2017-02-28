@@ -74,7 +74,7 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     }
     
     @Test
-    public void validateDetailCountBad() {
+    public void validateDetailCountIncorrectMatch() {
         ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         file.setRecordCount("5");
         try {
@@ -84,13 +84,14 @@ public class ConcurStandardAccountingExtractServiceImplTest {
             assertTrue("We successfully validated counts.", true);
         }
     }
+    
     @Test
     public void validateDetailCountInvalidNumberBad() {
         ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         file.setRecordCount("foo");
         try {
             concurStandardAccountingExtractService.validateDetailCount(file);
-            assertTrue("The counts should not be equal", false);
+            assertTrue("Should not have been able to convert to an integer", false);
         } catch (ValidationException ve) {
             assertTrue("We successfully validated counts.", true);
         }
