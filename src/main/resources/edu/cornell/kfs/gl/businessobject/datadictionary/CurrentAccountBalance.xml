@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - The Kuali Financial System, a comprehensive financial management system for higher education.
+   -
+   - Copyright 2005-2017 Kuali, Inc.
+   -
+   - This program is free software: you can redistribute it and/or modify
+   - it under the terms of the GNU Affero General Public License as
+   - published by the Free Software Foundation, either version 3 of the
+   - License, or (at your option) any later version.
+   -
+   - This program is distributed in the hope that it will be useful,
+   - but WITHOUT ANY WARRANTY; without even the implied warranty of
+   - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   - GNU Affero General Public License for more details.
+   -
+   - You should have received a copy of the GNU Affero General Public License
+   - along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:dd="http://rice.kuali.org/dd"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="CurrentAccountBalance-cashExpenditureAuthority" parent="CurrentAccountBalance-cashExpenditureAuthority-parentBean">
+        <property name="label" value="Fund Balance Including Encumbrances"/>
+        <property name="shortLabel" value="Fund Balance Including Encumbrances"/>
+    </bean>
+
+    <bean id="CurrentAccountBalance-lookupDefinition-FieldOverrideForResultFieldDelete" abstract="true" parent="FieldOverrideForListElementDelete">
+        <property name="propertyName" value="resultFields"/>
+        <property name="propertyNameForElementCompare" value="attributeName"/>
+    </bean>
+
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="CurrentAccountBalance-lookupDefinition"/>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="CurrentAccountBalance-lookupDefinition-FieldOverrideForResultFieldDelete">
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="currentBudget"/>
+                    </property>
+                </bean>
+                <bean parent="CurrentAccountBalance-lookupDefinition-FieldOverrideForResultFieldDelete">
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="beginningCurrentAssets"/>
+                    </property>
+                </bean>
+                <bean parent="CurrentAccountBalance-lookupDefinition-FieldOverrideForResultFieldDelete">
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="beginningCurrentLiabilities"/>
+                    </property>
+                </bean>
+                <bean parent="CurrentAccountBalance-lookupDefinition-FieldOverrideForResultFieldDelete">
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="budgetBalanceAvailable"/>
+                    </property>
+                </bean>
+             </list>
+        </property>
+    </bean>
+
+</beans>
