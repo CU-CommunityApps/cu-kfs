@@ -71,19 +71,21 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
     }
     
     protected void debugConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
-        if (saeFile != null) {
-            LOG.info(saeFile.getDebugInformation());
-            if (saeFile.getConcurStandardAccountingExtractDetailLines() != null) {
-                LOG.info("Number of line items: " + saeFile.getConcurStandardAccountingExtractDetailLines().size());
-                for (ConcurStandardAccountingExtractDetailLine line : saeFile.getConcurStandardAccountingExtractDetailLines()) {
-                    LOG.info(line.getDebugInformation());
+        if (LOG.isDebugEnabled()) {
+            if (saeFile != null) {
+                LOG.debug("debugConcurStandardAccountingExtractFile, " + saeFile.getDebugInformation());
+                if (saeFile.getConcurStandardAccountingExtractDetailLines() != null) {
+                    LOG.debug("debugConcurStandardAccountingExtractFile, Number of line items: " + saeFile.getConcurStandardAccountingExtractDetailLines().size());
+                    for (ConcurStandardAccountingExtractDetailLine line : saeFile.getConcurStandardAccountingExtractDetailLines()) {
+                        LOG.debug("debugConcurStandardAccountingExtractFile, " + line.getDebugInformation());
+                    }
+                } else {
+                    LOG.debug("debugConcurStandardAccountingExtractFile, The getConcurStandardAccountingExtractDetailLines is null");
                 }
+                
             } else {
-                LOG.info("The getConcurStandardAccountingExtractDetailLines is null");
+                LOG.debug("debugConcurStandardAccountingExtractFile, The SAE file is null");
             }
-            
-        } else {
-            LOG.info("The SAE file is null");
         }
     }
 

@@ -55,18 +55,56 @@ public class ConcurStandardAccountingExtractServiceImplTest {
         }
     }
     
+    @Test
+    public void validateAmountsGood() {
+        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
+        String message = "The amounts should equal";
+        try {
+            concurStandardAccountingExtractService.validateAmounts(file);
+            assertTrue(message, true);
+        } catch (ValidationException ve) {
+            assertTrue(message, false);
+        }
+    }
+    
+    @Test
+    public void validateAmountsAmountMismatch() {
+        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
+        file.getConcurStandardAccountingExtractDetailLines().get(0).setJournalAmount(new KualiDecimal(200));
+        String message = "The amounts should NOT equal and throw a validation error";
+        try {
+            concurStandardAccountingExtractService.validateAmounts(file);
+            assertTrue(message, false);
+        } catch (ValidationException ve) {
+            assertTrue(message, true);
+        }
+    }
+    
+    @Test
+    public void validateAmountsIncorrectDebitCredit() {
+        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
+        file.getConcurStandardAccountingExtractDetailLines().get(0).setJounalDebitCredit("foo");
+        String message = "The should throw an error due to incorrect debitCredit field";
+        try {
+            concurStandardAccountingExtractService.validateAmounts(file);
+            assertTrue(message, false);
+        } catch (ValidationException ve) {
+            assertTrue(message, true);
+        }
+    }
+    
     protected ConcurStandardAccountingExtractFile buildConcurStandardAccountingExtractFile() {
         ConcurStandardAccountingExtractFile file = new ConcurStandardAccountingExtractFile();
         Date today = new Date(Calendar.getInstance().getTimeInMillis());
         file.setBatchDate(today);
         file.setRecordCount(new Integer(3));
-        file.setJournalAmountTotal(new KualiDecimal(100));
+        file.setJournalAmountTotal(new KualiDecimal(100.75));
         file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(100)));
+                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(100.75)));
         file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
                 ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(50)));
         file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(50)));
+                ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(-50)));
         return file;
     }
     

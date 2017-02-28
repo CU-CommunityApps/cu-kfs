@@ -5,10 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -16,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
-import org.kuali.kfs.sys.batch.FlatFileInformation;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -24,7 +19,6 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
-import edu.cornell.kfs.fp.batch.service.impl.AdvanceDepositServiceImpl;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
@@ -35,12 +29,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 	
 	@Override
 	public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(File standardAccountingExtractFile) throws ValidationException {
-	    
 	    byte[] fileByteContent = safelyLoadFileBytes(standardAccountingExtractFile);
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Attempting to parse the file ");
-        }
+	    LOG.debug("Attempting to parse the file ");
+	    
         ConcurStandardAccountingExtractFile parsedObject = null;
 
         try {
@@ -52,8 +43,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         } catch (org.kuali.kfs.sys.exception.ParseException e) {
             LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Error parsing batch file: " + e.getMessage());
         }
-        //validateConcureStandardAccountExtractFile(parsedObject);
-		return parsedObject;
+        
+        validateConcureStandardAccountExtractFile(parsedObject);
+		
+        return parsedObject;
 	}
 	
 	protected byte[] safelyLoadFileBytes(File file) {
@@ -95,35 +88,24 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 	
 	protected void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
 	    KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
-	    long detailTotal = 0;
+	    double detailTotal = 0;
 	    
 	    for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines() ) {
-	        KualiDecimal lineAmount = line.getJournalAmount();
-	        
 	        String debitCredit = line.getJounalDebitCredit();
-	        if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT)) {
-	            detailTotal = Math.subtractExact(detailTotal, lineAmount.longValue());
-	        } else if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT)) {
-	            detailTotal = Math.addExact(detailTotal, lineAmount.longValue());
+	        if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) ||
+	                (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT))) {
+	            detailTotal = line.getJournalAmount().doubleValue() + detailTotal;
 	        } else {
 	            throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
 	        }
 	            
 	    }
-	    
-	    if (journalTotal.doubleValue() != detailTotal) {
+	    KualiDecimal detailTatotlKualiDecimal = new KualiDecimal(detailTotal);
+	    if (journalTotal.doubleValue() != detailTatotlKualiDecimal.doubleValue()) {
 	        throw new ValidationException("The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
+	    } else {
+	        LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTatotlKualiDecimal.doubleValue() + " do match.");
 	    }
-	}
-	
-	private long parseLong(String longNumber) {
-	    long longAmount;
-        try {
-            longAmount = Long.parseLong(longNumber);
-        } catch (NumberFormatException nfe) {
-            throw new ValidationException("Unable to convert " + longNumber + " to a number: ", nfe);
-        }
-        return longAmount;
 	}
 	
 	@Override
