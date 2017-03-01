@@ -258,11 +258,9 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         if (LOG.isDebugEnabled()) {
             LOG.debug("validateDocumentAttributeCriteria( " + extensionDefinition + ", " + documentSearchCriteria + " )");
         }
-
-        GlobalVariables.getMessageMap().clearErrorMessages();
-
         // this list is irrelevant. the validation errors are put on the stack in the validationService.
         List<RemotableAttributeError> errors =  super.validateDocumentAttributeCriteria(extensionDefinition, documentSearchCriteria);
+
         DictionaryValidationService validationService = SpringContext.getBean(DictionaryValidationService.class);
         Map<String,List<String>> paramMap = documentSearchCriteria.getDocumentAttributeValues();
         for (String key : paramMap.keySet()) {
