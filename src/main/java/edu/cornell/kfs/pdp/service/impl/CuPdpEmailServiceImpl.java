@@ -27,16 +27,13 @@ import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuPdpEmailService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
-import edu.cornell.kfs.sys.mail.KFSMailMessage;
-import edu.cornell.kfs.sys.mail.service.KFSMailMessageService;
 
 public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpEmailService{
 	
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPdpEmailServiceImpl.class);
 	
     private AchBundlerHelperService achBundlerHelperService;
-    private KFSMailMessageService kfsMailMessageService;               //KFSPTS-1460 - added
-	
+    
 	/**
 	 * Sends advice notification email to the payee receiving an ACH payment
 	 * 
@@ -404,16 +401,5 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
         this.achBundlerHelperService = achBundlerHelperService;
     }  
-    
-    //KFSPTS-1460 -- added
-    /**
-     * Sets the kfsMailMessageService attribute value.
-     * 
-     * @param mailService The mailService to set.
-     */
-    public void setKfsMailMessageService(KFSMailMessageService kfsMailMessageService) {
-        this.kfsMailMessageService = kfsMailMessageService;
-    }
-    
 
 }

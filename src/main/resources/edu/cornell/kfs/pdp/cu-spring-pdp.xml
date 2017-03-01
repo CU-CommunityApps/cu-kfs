@@ -68,10 +68,6 @@
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>
     <bean id="pdpFormatPaymentDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.CuFormatPaymentDaoOjb"/>
     
-     <bean id="kfsMailMessageService" class="edu.cornell.kfs.sys.mail.service.impl.KFSMailMessageServiceImpl">  
-        <property name="kualiConfigurationService" ref="kualiConfigurationService" />
-    </bean>
-    
     <bean id="paymentInputFileType" parent="paymentInputFileType-parentBean">
         <property name="digestorRulesFileName">
            <value>edu/cornell/kfs/pdp/batch/paymentDigesterRules.xml</value>
