@@ -39,7 +39,7 @@ public class TestPdpMarshal {
         PdpFile pdpFile = buildPdpFile();
         JAXBContext jaxbContext = JAXBContext.newInstance(PdpFile.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-        // jaxbMarshaller.marshal( pdpFile, System.out );
+        jaxbMarshaller.marshal( pdpFile, System.out );
 
         File marchalledXml = new File(batchDirectoryFile.getAbsolutePath() + "generatedXML.xml");
         FileUtils.touch(marchalledXml);

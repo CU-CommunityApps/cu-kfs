@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur.batch.xmlObjects;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,17 +58,17 @@ public class Detail {
     @XmlSchemaType(name = "normalizedString")
     protected String invoiceDate;
     @XmlElement(name = "orig_invoice_amt", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    protected BigDecimal origInvoiceAmt;
+    protected Double origInvoiceAmt;
     @XmlElement(name = "net_payment_amt", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    protected BigDecimal netPaymentAmt;
+    protected Double netPaymentAmt;
     @XmlElement(name = "invoice_tot_discount_amt", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    protected BigDecimal invoiceTotDiscountAmt;
+    protected Double invoiceTotDiscountAmt;
     @XmlElement(name = "invoice_tot_ship_amt", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    protected BigDecimal invoiceTotShipAmt;
+    protected Double invoiceTotShipAmt;
     @XmlElement(name = "invoice_tot_other_debits", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    protected BigDecimal invoiceTotOtherDebits;
+    protected Double invoiceTotOtherDebits;
     @XmlElement(name = "invoice_tot_other_credits", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    protected BigDecimal invoiceTotOtherCredits;
+    protected Double invoiceTotOtherCredits;
     @XmlElement(name = "fs_origin_cd", namespace = "http://www.kuali.org/kfs/pdp/payment")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -133,51 +132,51 @@ public class Detail {
         this.invoiceDate = value;
     }
 
-    public BigDecimal getOrigInvoiceAmt() {
+    public Double getOrigInvoiceAmt() {
         return origInvoiceAmt;
     }
 
-    public void setOrigInvoiceAmt(BigDecimal value) {
+    public void setOrigInvoiceAmt(Double value) {
         this.origInvoiceAmt = value;
     }
 
-    public BigDecimal getNetPaymentAmt() {
+    public Double getNetPaymentAmt() {
         return netPaymentAmt;
     }
 
-    public void setNetPaymentAmt(BigDecimal value) {
+    public void setNetPaymentAmt(Double value) {
         this.netPaymentAmt = value;
     }
 
-    public BigDecimal getInvoiceTotDiscountAmt() {
+    public Double getInvoiceTotDiscountAmt() {
         return invoiceTotDiscountAmt;
     }
 
-    public void setInvoiceTotDiscountAmt(BigDecimal value) {
+    public void setInvoiceTotDiscountAmt(Double value) {
         this.invoiceTotDiscountAmt = value;
     }
 
-    public BigDecimal getInvoiceTotShipAmt() {
+    public Double getInvoiceTotShipAmt() {
         return invoiceTotShipAmt;
     }
 
-    public void setInvoiceTotShipAmt(BigDecimal value) {
+    public void setInvoiceTotShipAmt(Double value) {
         this.invoiceTotShipAmt = value;
     }
 
-    public BigDecimal getInvoiceTotOtherDebits() {
+    public Double getInvoiceTotOtherDebits() {
         return invoiceTotOtherDebits;
     }
 
-    public void setInvoiceTotOtherDebits(BigDecimal value) {
+    public void setInvoiceTotOtherDebits(Double value) {
         this.invoiceTotOtherDebits = value;
     }
 
-    public BigDecimal getInvoiceTotOtherCredits() {
+    public Double getInvoiceTotOtherCredits() {
         return invoiceTotOtherCredits;
     }
 
-    public void setInvoiceTotOtherCredits(BigDecimal value) {
+    public void setInvoiceTotOtherCredits(Double value) {
         this.invoiceTotOtherCredits = value;
     }
 
