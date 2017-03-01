@@ -46,10 +46,10 @@ public class AutoCancelBatchStep extends AbstractStep {
     @Transactional
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("Started AutoCancelBatchStep @ " + (new Date()).toString());
-        boolean results = true;
+
         try {
             LOG.info("Started AutoCancelBatchStep : Canceling FYIs and Acknowledgements @ " + (new Date()).toString());
-        	results = autoCancelBatchDao.cancelFYIsAndAcknowledgements();
+        	autoCancelBatchDao.cancelFYIsAndAcknowledgements();
             LOG.info("Completed AutoCancelBatchStep : Canceling FYIs and Acknowledgements @ " + (new Date()).toString());
             LOG.info("Started AutoCancelBatchStep : Canceling stale documents @ " + (new Date()).toString());
         	autoCancelBatchDao.cancelDocuments();

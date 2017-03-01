@@ -116,13 +116,25 @@ public class DbmsOutput {
 	 * statement on the stack and it is going to go out of scope -- 
 	 * just as you would with any callable statement, result set
 	 * and so on.
-	 * 
-	 * @throws SQLException
 	 */
-	public void close() throws SQLException {
-	    enable_stmt.close();
-	    disable_stmt.close();
-	    show_stmt.close();
+	public void close() {
+		try {
+			enable_stmt.close();
+		} catch (SQLException e) {
+			LOG.error("Could not close enable_stmt");
+		}
+
+		try {
+			disable_stmt.close();
+		} catch (SQLException e) {
+			LOG.error("Could not close disable_stmt");
+		}
+
+		try {
+			show_stmt.close();
+		} catch (SQLException e) {
+			LOG.error("Could not close show_stmt");
+		}
 	}
 }
 
