@@ -25,7 +25,6 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/concur/batch/fixture/ConcurStandardAccountingExtract.txt";
 
     private ConcurStandardAccountingExtractToPdpStep concurStandardAccountingExtractToPdpStep;
-    //private File batchDirectoryFile;
     private File dataFileSrc;
 
     @Before
@@ -33,10 +32,8 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
         Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class).setLevel(Level.DEBUG);
         concurStandardAccountingExtractToPdpStep = new ConcurStandardAccountingExtractToPdpStep();
         concurStandardAccountingExtractToPdpStep.setConcurStandardAccountingExtractService(new TestableConcurStandardAccountingExtractService());
-        //concurStandardAccountingExtractToPdpStep.setDirectoryPath(BATCH_DIRECTORY);
         setupDirectories();
 
-        setupDirectories();
         dataFileSrc = new File(DATA_FILE_PATH);
     }
 
