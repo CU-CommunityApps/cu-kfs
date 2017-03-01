@@ -2161,6 +2161,50 @@
           {
             "documentTypeCode": "DVWT",
             "linkType": "kfs"
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.sec.businessobject.SecurityAttribute",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS-SEC"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.sec.businessobject.SecurityDefinition",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS-SEC"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.sec.businessobject.SecurityModel",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS-SEC"
+              }
+            }
+          },
+          {
+            "businessObjectClass": "org.kuali.kfs.sec.businessobject.SecurityPrincipal",
+            "linkType": "kfs",
+            "permission": {
+              "templateNamespace": "KR-NS",
+              "templateName": "Look Up Records",
+              "details": {
+                "namespaceCode": "KFS-SEC"
+              }
+            }
           }
         ]
       }
