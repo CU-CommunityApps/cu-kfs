@@ -43,10 +43,8 @@ public class Group {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String payeeName;
-    @XmlElement(name = "payee_id", namespace = "http://www.kuali.org/kfs/pdp/payment")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String payeeId;
+    @XmlElement(name = "payee_id", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    protected PayeeId payeeId;
     @XmlElement(name = "payee_own_cd", namespace = "http://www.kuali.org/kfs/pdp/payment")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -134,11 +132,11 @@ public class Group {
         this.payeeName = value;
     }
 
-    public String getPayeeId() {
+    public PayeeId getPayeeId() {
         return payeeId;
     }
 
-    public void setPayeeId(String value) {
+    public void setPayeeId(PayeeId value) {
         this.payeeId = value;
     }
 

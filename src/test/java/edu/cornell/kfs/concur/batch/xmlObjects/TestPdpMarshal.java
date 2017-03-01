@@ -65,10 +65,12 @@ public class TestPdpMarshal {
         
         Group group = new Group();
         group.setPayeeName("Doe, John, Q");
-        /**
-         * @todo fix this
-         */
-        //group.setPayeeId(value);
+
+        PayeeId payeeId = new PayeeId();
+        payeeId.setIdType("E");
+        payeeId.setContent("3660172");
+        group.setPayeeId(payeeId);
+        
         group.setPaymentDate("03/01/2017");
         group.setCombineGroupInd("Y");
         group.setBankCode("DISB");
