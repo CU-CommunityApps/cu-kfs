@@ -38,7 +38,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             return true;
         }
         else {
-            LOG.error("Header amount validation failed. Header amount was =" +requestExtractFile.getTotalApprovedAmount().toString()+"= while file calculate amount was =" +requestExtractFile.getTotalApprovedAmount().toString()+ "=");
+            LOG.error("Header amount validation failed. Header amount was =" +requestExtractFile.getTotalApprovedAmount().toString()+"= while file calculated amount was =" +detailLinesAmountSumKualiDecimal.toString()+ "=");
             return false;
         }
     }
