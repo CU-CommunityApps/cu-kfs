@@ -1,7 +1,5 @@
 package edu.cornell.kfs.concur.batch.xmlObjects;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -17,23 +15,23 @@ import javax.xml.bind.annotation.XmlType;
 public class Trailer {
 
     @XmlElement(name = "detail_count", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected BigInteger detailCount;
+    protected Integer detailCount;
     @XmlElement(name = "detail_tot_amt", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected BigDecimal detailTotAmt;
+    protected Double detailTotAmt;
 
-    public BigInteger getDetailCount() {
+    public Integer getDetailCount() {
         return detailCount;
     }
 
-    public void setDetailCount(BigInteger value) {
+    public void setDetailCount(Integer value) {
         this.detailCount = value;
     }
 
-    public BigDecimal getDetailTotAmt() {
+    public Double getDetailTotAmt() {
         return detailTotAmt;
     }
 
-    public void setDetailTotAmt(BigDecimal value) {
+    public void setDetailTotAmt(Double value) {
         this.detailTotAmt = value;
     }
 
