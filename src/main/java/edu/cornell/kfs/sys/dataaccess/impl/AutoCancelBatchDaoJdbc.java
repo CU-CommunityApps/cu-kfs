@@ -40,6 +40,7 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
     private WorkflowDocumentService workflowDocumentService;
 
     private Collection<String> cancelDocumentTypes = Collections.emptySet();
+    private Map<String, DocumentType> docTypes = new HashMap<>();
 
     /**
      * @see AutoCancelBatchDao#cancelFYIsAndAcknowledgements()
@@ -62,11 +63,7 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
             throw new RuntimeException("Issue encountered with cancelFYIsAndAcknowledgements", e);
         } finally {
             if (dbmsOutput != null) {
-                try {
-                    dbmsOutput.close();
-                } catch (SQLException e) {
-                    LOG.error("cancelFYIsAndAcknowledgements: Could not close DbmsOutput");
-                }
+                dbmsOutput.close();
             }
 
             if (cs != null) {
@@ -148,7 +145,6 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
     }
 
     private boolean canAutoCancelDocType(String docTypeId) {
-        Map<String, DocumentType> docTypes = new HashMap<String, DocumentType>();
         DocumentType docType = docTypes.get(docTypeId);
 
         if (ObjectUtils.isNull(docType)) {
