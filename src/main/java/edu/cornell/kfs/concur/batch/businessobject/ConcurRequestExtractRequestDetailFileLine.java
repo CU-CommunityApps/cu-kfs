@@ -4,10 +4,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-public class ConcurRequestExtractRequestDetailFileLine extends TransientBusinessObjectBase {
+public class ConcurRequestExtractRequestDetailFileLine {
     private boolean lineValid;
     private Date batchDate;
     private String employeeId;

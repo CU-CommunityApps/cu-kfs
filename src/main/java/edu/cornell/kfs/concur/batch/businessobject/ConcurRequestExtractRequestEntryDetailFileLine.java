@@ -2,9 +2,7 @@ package edu.cornell.kfs.concur.batch.businessobject;
 
 import java.util.ArrayList;
 
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
-
-public class ConcurRequestExtractRequestEntryDetailFileLine extends TransientBusinessObjectBase {
+public class ConcurRequestExtractRequestEntryDetailFileLine {
     private Integer sequenceNumber;
     private String requestId;
     
