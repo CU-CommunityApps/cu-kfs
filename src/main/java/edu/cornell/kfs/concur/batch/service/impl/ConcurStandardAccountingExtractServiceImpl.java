@@ -103,11 +103,11 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             }
 
         }
-        KualiDecimal detailTatotlKualiDecimal = new KualiDecimal(detailTotal);
-        if (journalTotal.doubleValue() != detailTatotlKualiDecimal.doubleValue()) {
+        KualiDecimal detailTotalKualiDecimal = new KualiDecimal(detailTotal);
+        if (journalTotal.doubleValue() != detailTotalKualiDecimal.doubleValue()) {
             throw new ValidationException("The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
         } else {
-            LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTatotlKualiDecimal.doubleValue() + " do match.");
+            LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotalKualiDecimal.doubleValue() + " do match.");
         }
     }
 

@@ -25,7 +25,7 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/concur/batch/fixture/ConcurStandardAccountingExtract.txt";
 
     private ConcurStandardAccountingExtractToPdpStep concurStandardAccountingExtractToPdpStep;
-    private File batchDirectoryFile;
+    //private File batchDirectoryFile;
     private File dataFileSrc;
 
     @Before
@@ -33,22 +33,34 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
         Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class).setLevel(Level.DEBUG);
         concurStandardAccountingExtractToPdpStep = new ConcurStandardAccountingExtractToPdpStep();
         concurStandardAccountingExtractToPdpStep.setConcurStandardAccountingExtractService(new TestableConcurStandardAccountingExtractService());
-        concurStandardAccountingExtractToPdpStep.setDirectoryPath(BATCH_DIRECTORY);
+        //concurStandardAccountingExtractToPdpStep.setDirectoryPath(BATCH_DIRECTORY);
+        setupDirectories();
 
-        setupBatchDirectory();
+        setupDirectories();
         dataFileSrc = new File(DATA_FILE_PATH);
     }
 
-    private void setupBatchDirectory() throws IOException {
-        batchDirectoryFile = new File(BATCH_DIRECTORY);
-        FileUtils.deleteDirectory(batchDirectoryFile);
-        batchDirectoryFile.mkdir();
+    protected void setupDirectories() {
+        concurStandardAccountingExtractToPdpStep.setIncomingDirectoryName(BATCH_DIRECTORY);
+        concurStandardAccountingExtractToPdpStep.setAcceptedDirectoryName(BATCH_DIRECTORY + "/accept");
+        concurStandardAccountingExtractToPdpStep.setRejectedDirectoryName(BATCH_DIRECTORY + "/reject");
+        
+        makeDirectoryIfNotExist(concurStandardAccountingExtractToPdpStep.getIncomingDirectoryName());
+        makeDirectoryIfNotExist(concurStandardAccountingExtractToPdpStep.getAcceptedDirectoryName());
+        makeDirectoryIfNotExist(concurStandardAccountingExtractToPdpStep.getRejectedDirectoryName());
+    }
+    
+    private void makeDirectoryIfNotExist(String path) {
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
     }
 
     @After
     public void tearDown() throws Exception {
+        FileUtils.deleteDirectory(new File(concurStandardAccountingExtractToPdpStep.getIncomingDirectoryName()));
         concurStandardAccountingExtractToPdpStep = null;
-        FileUtils.deleteDirectory(batchDirectoryFile);
     }
 
     @Test
@@ -106,11 +118,7 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
     }
 
     public void assertNumberOfFilesAccepted(int numberOfExpectedFiles) {
-        File acceptedDirectory = new File(
-                BATCH_DIRECTORY + ConcurConstants.ACCEPT_SUB_FOLDER_NAME + ConcurConstants.FORWARD_SLASH);
-        if (!acceptedDirectory.exists()) {
-            acceptedDirectory.mkdir();
-        }
+        File acceptedDirectory = new File(concurStandardAccountingExtractToPdpStep.getAcceptedDirectoryName());
         File[] listOfFiles = acceptedDirectory.listFiles();
         String message = "The number of files expected in the accept directory is not what we expected ";
         for (File file : listOfFiles) {
@@ -120,11 +128,7 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
     }
 
     public void assertNumberOfFilesRejected(int numberOfExpectedFiles) {
-        File rejectedDirectory = new File(
-                BATCH_DIRECTORY + ConcurConstants.REJECT_SUB_FOLDER_NAME + ConcurConstants.FORWARD_SLASH);
-        if (!rejectedDirectory.exists()) {
-            rejectedDirectory.mkdir();
-        }
+        File rejectedDirectory = new File(concurStandardAccountingExtractToPdpStep.getRejectedDirectoryName());
         File[] listOfFiles = rejectedDirectory.listFiles();
         String message = "The number of files expected in the reject directory is not what we expected ";
         for (File file : listOfFiles) {
@@ -147,8 +151,7 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
         }
 
         @Override
-        public boolean extractPdpFeedFromStandardAccounitngExtract(
-                ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        public boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
             return shouldProccessSucceed;
         }
 

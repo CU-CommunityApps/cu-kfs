@@ -45,8 +45,6 @@ public class ConcurConstants {
     public static final boolean EVENT_NOTIFICATION_PROCESSED = true;
     public static final boolean EVENT_NOTIFICATION_NOT_PROCESSED = false;
 
-    public static final String ACCEPT_SUB_FOLDER_NAME = "accept";
-    public static final String REJECT_SUB_FOLDER_NAME = "reject";
     public static final String FORWARD_SLASH = "/";
     public static final String CONCUR_PROCESSED_FILE_DATE_FORMAT = "yyyy-MM-dd-HHmmss";
     
