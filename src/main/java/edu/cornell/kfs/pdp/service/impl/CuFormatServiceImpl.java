@@ -36,9 +36,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         LOG.debug("startFormatProcess() started");
 
         for (CustomerProfile element : customers) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("startFormatProcess() Customer: " + element);
-            }
+            LOG.debug("startFormatProcess() Customer: " + element);
         }
 
         // Create the process
@@ -71,15 +69,14 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         c.set(Calendar.AM_PM, Calendar.PM);
         Timestamp paydateTs = new Timestamp(c.getTime().getTime());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("startFormatProcess() last update = " + now);
-            LOG.debug("startFormatProcess() entered paydate = " + paydate);
-            LOG.debug("startFormatProcess() actual paydate = " + paydateTs);
-        }
+        LOG.debug("startFormatProcess() last update = " + now);
+        LOG.debug("startFormatProcess() entered paydate = " + paydate);
+        LOG.debug("startFormatProcess() actual paydate = " + paydateTs);
+
         PaymentStatus format = this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.FORMAT);
 
         List customerIds = new ArrayList();
-        for (Iterator iter = customers.iterator(); iter.hasNext();) {
+        for (Iterator iter = customers.iterator(); iter.hasNext(); ) {
             CustomerProfile element = (CustomerProfile) iter.next();
             customerIds.add(element.getId());
         }
@@ -108,7 +105,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         // if no payments found for format clear the format process
         if (preFormatProcessSummary.getProcessSummaryList().size() == 0) {
             LOG.debug("startFormatProcess() No payments to process.  Format process ending");
-            clearUnfinishedFormat(paymentProcess.getId().intValue());
+            clearUnfinishedFormat(paymentProcess.getId().intValue());// ?? maybe call end format process
         }
 
         return preFormatProcessSummary;
