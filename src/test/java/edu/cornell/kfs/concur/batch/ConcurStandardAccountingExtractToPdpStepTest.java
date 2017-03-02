@@ -35,10 +35,14 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
         concurStandardAccountingExtractToPdpStep.setConcurStandardAccountingExtractService(new TestableConcurStandardAccountingExtractService());
         concurStandardAccountingExtractToPdpStep.setDirectoryPath(BATCH_DIRECTORY);
 
-        batchDirectoryFile = new File(BATCH_DIRECTORY);
-        batchDirectoryFile.mkdir();
-
+        setupBatchDirectory();
         dataFileSrc = new File(DATA_FILE_PATH);
+    }
+
+    private void setupBatchDirectory() throws IOException {
+        batchDirectoryFile = new File(BATCH_DIRECTORY);
+        FileUtils.deleteDirectory(batchDirectoryFile);
+        batchDirectoryFile.mkdir();
     }
 
     @After
