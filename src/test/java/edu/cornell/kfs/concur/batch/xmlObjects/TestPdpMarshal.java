@@ -36,8 +36,8 @@ public class TestPdpMarshal {
 
     @Test
     public void test() throws JAXBException, IOException, SAXException {
-        PdpFile pdpFile = buildPdpFile();
-        JAXBContext jaxbContext = JAXBContext.newInstance(PdpFile.class);
+        PdpFeedFileBaseEntry pdpFile = buildPdpFile();
+        JAXBContext jaxbContext = JAXBContext.newInstance(PdpFeedFileBaseEntry.class);
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.marshal( pdpFile, System.out );
 
@@ -48,8 +48,8 @@ public class TestPdpMarshal {
         assertTrue("The marshalled XML should be greater than 0", FileUtils.sizeOf(marchalledXml) > 0);
     }
 
-    private PdpFile buildPdpFile() {
-        PdpFile pdpFile = new PdpFile();
+    private PdpFeedFileBaseEntry buildPdpFile() {
+        PdpFeedFileBaseEntry pdpFile = new PdpFeedFileBaseEntry();
         pdpFile.setHeader(buildHeader());
         pdpFile.setVersion("1");
         pdpFile.setTrailer(buildTrailer());

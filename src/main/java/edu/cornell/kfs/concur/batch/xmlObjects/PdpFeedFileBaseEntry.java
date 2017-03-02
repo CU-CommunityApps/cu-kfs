@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
     "trailer"
 })
 @XmlRootElement(name = "pdp_file", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class PdpFile {
+public class PdpFeedFileBaseEntry {
 
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
     protected PdpFeedHeaderEntry header;
