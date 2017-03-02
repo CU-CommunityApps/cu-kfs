@@ -15,7 +15,7 @@ public class PdpFeedFileBaseEntryFixture {
     public static PdpFeedFileBaseEntry buildPdpFile() {
         PdpFeedFileBaseEntry pdpFile = new PdpFeedFileBaseEntry();
         pdpFile.setHeader(buildHeader());
-        pdpFile.setVersion("1");
+        pdpFile.setVersion("1.0");
         pdpFile.setTrailer(buildTrailer());
         pdpFile.setGroup(buildGroups());
         return pdpFile;
@@ -24,8 +24,8 @@ public class PdpFeedFileBaseEntryFixture {
     private static PdpFeedHeaderEntry buildHeader() {
         PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
         header.setChart("IT");
-        header.setCreationDate("03/01/2017");
-        header.setSubUnit("CNCR");
+        header.setCreationDate("02/17/2017");
+        header.setSubUnit("CLIF");
         header.setUnit("CRNL");
         return header;
     }
@@ -33,14 +33,13 @@ public class PdpFeedFileBaseEntryFixture {
     private static PdpFeedTrailerEntry buildTrailer() {
         PdpFeedTrailerEntry trailer = new PdpFeedTrailerEntry();
         trailer.setDetailCount(new Integer(1));
-        trailer.setDetailTotAmt(new Double(500.23));
+        trailer.setDetailTotAmt(new Double(96.95));
         return trailer;
     }
 
     private static List<PdpFeedGroupEntry> buildGroups() {
         List<PdpFeedGroupEntry> groups = new ArrayList();
-        groups.add(buildGroup("Doe, John, Q"));
-        groups.add(buildGroup("Doe, Jane, S"));
+        groups.add(buildGroup("Bimbo Foods Inc"));
         return groups;
     }
     
@@ -49,11 +48,13 @@ public class PdpFeedFileBaseEntryFixture {
         group.setPayeeName(payeeName);
 
         PdpFeedPayeeIdEntry payeeId = new PdpFeedPayeeIdEntry();
-        payeeId.setIdType("E");
-        payeeId.setContent("3660172");
+        payeeId.setIdType("V");
+        payeeId.setContent("13086-0");
         group.setPayeeId(payeeId);
-
-        group.setPaymentDate("03/01/2017");
+        group.setPayeeOwnCd("xyz");
+        group.setCustomerInstitutionIdentifier("18901");
+        
+        group.setPaymentDate("02/03/2017");
         group.setCombineGroupInd("Y");
         group.setBankCode("DISB");
         group.setDetail(buildDetails());
@@ -64,9 +65,12 @@ public class PdpFeedFileBaseEntryFixture {
         List<PdpFeedDetailEntry> details = new ArrayList();
 
         PdpFeedDetailEntry detail = new PdpFeedDetailEntry();
-        detail.setSourceDocNbr("abc123");
-        detail.setFsOriginCd("Z6");
-        detail.setFdocTypCd("APTR");
+        detail.setSourceDocNbr("C16326");
+        detail.setInvoiceNbr("66432520714");
+        detail.setInvoiceDate("02/03/2017");
+        detail.setOrigInvoiceAmt(new Double(105.28));
+        detail.setFsOriginCd("Z1");
+        detail.setFdocTypCd("APCL");
         detail.setAccounting(buildAccounting());
 
         details.add(detail);
@@ -78,15 +82,20 @@ public class PdpFeedFileBaseEntryFixture {
 
         PdpFeedAccountingEntry accounting = new PdpFeedAccountingEntry();
         accounting.setCoaCd("IT");
-        accounting.setAccountNbr("G234715");
-        accounting.setSubAccountNbr("subA1");
-        accounting.setObjectCd("6666");
-        accounting.setSubObjectCd("subO1");
-        accounting.setOrgRefId("orgRef");
-        accounting.setProjectCd("proj1");
-        accounting.setAmount("500.23");
+        accounting.setAccountNbr("H833810");
+        accounting.setObjectCd("6000");
+        accounting.setSubObjectCd("365");
+        accounting.setAmount("25.50");
+        
+        PdpFeedAccountingEntry accounting2 = new PdpFeedAccountingEntry();
+        accounting2.setCoaCd("IT");
+        accounting2.setAccountNbr("H833810");
+        accounting2.setObjectCd("6000");
+        accounting2.setSubObjectCd("350");
+        accounting2.setAmount("71.45");
 
         accountings.add(accounting);
+        accountings.add(accounting2);
         return accountings;
     }
 }

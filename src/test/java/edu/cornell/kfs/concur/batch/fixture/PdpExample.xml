@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<pdp_file xmlns="http://www.kuali.org/kfs/pdp/payment" version="1.0">
+	<header>
+		<chart>IT</chart>
+		<unit>CRNL</unit>
+		<sub_unit>CLIF</sub_unit>
+		<creation_date>02/17/2017</creation_date>
+	</header>
+	<group>
+		<payee_name>Bimbo Foods Inc</payee_name>
+		<payee_id id_type="V">13086-0</payee_id>
+		<payee_own_cd>xyz</payee_own_cd>
+		<customer_institution_identifier>18901
+		</customer_institution_identifier>
+		<payment_date>02/03/2017</payment_date>
+		<combine_group_ind>Y</combine_group_ind>
+		<bank_code>DISB</bank_code>
+		<detail>
+			<source_doc_nbr>C16326</source_doc_nbr>
+			<invoice_nbr>66432520714</invoice_nbr>
+			<invoice_date>02/03/2017</invoice_date>
+			<orig_invoice_amt>105.28</orig_invoice_amt>
+			<fs_origin_cd>Z1</fs_origin_cd>
+			<fdoc_typ_cd>APCL</fdoc_typ_cd>
+			<accounting>
+				<coa_cd>IT</coa_cd>
+				<account_nbr>H833810</account_nbr>
+				<object_cd>6000</object_cd>
+				<sub_object_cd>365</sub_object_cd>
+				<amount>25.50</amount>
+			</accounting>
+			<accounting>
+				<coa_cd>IT</coa_cd>
+				<account_nbr>H833810</account_nbr>
+				<object_cd>6000</object_cd>
+				<sub_object_cd>350</sub_object_cd>
+				<amount>71.45</amount>
+			</accounting>
+		</detail>
+	</group>
+	<trailer>
+		<detail_count>1</detail_count>
+		<detail_tot_amt>96.95</detail_tot_amt>
+	</trailer>
+</pdp_file>
