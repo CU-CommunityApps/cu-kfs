@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "payee_id", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class PayeeId {
+public class PdpFeedPayeeIdEntry {
     
     @XmlValue 
     private String content;

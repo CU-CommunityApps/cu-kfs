@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "amount"
 })
 @XmlRootElement(name = "accounting", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class Accounting {
+public class PdpFeedAccountingEntry {
 
     @XmlElement(name = "coa_cd", namespace = "http://www.kuali.org/kfs/pdp/payment")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

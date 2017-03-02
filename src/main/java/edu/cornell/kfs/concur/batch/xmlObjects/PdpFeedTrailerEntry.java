@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
     "detailTotAmt"
 })
 @XmlRootElement(name = "trailer", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class Trailer {
+public class PdpFeedTrailerEntry {
 
     @XmlElement(name = "detail_count", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
     protected Integer detailCount;

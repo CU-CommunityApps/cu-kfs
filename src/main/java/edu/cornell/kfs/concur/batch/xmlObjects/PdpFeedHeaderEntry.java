@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "creationDate"
 })
 @XmlRootElement(name = "header", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class Header {
+public class PdpFeedHeaderEntry {
 
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

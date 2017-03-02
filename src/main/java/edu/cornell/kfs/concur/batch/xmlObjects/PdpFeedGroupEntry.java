@@ -37,14 +37,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "detail"
 })
 @XmlRootElement(name = "group", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class Group {
+public class PdpFeedGroupEntry {
 
     @XmlElement(name = "payee_name", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String payeeName;
     @XmlElement(name = "payee_id", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected PayeeId payeeId;
+    protected PdpFeedPayeeIdEntry payeeId;
     @XmlElement(name = "payee_own_cd", namespace = "http://www.kuali.org/kfs/pdp/payment")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -122,7 +122,7 @@ public class Group {
     @XmlSchemaType(name = "normalizedString")
     protected String bankCode;
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected List<Detail> detail;
+    protected List<PdpFeedDetailEntry> detail;
 
     public String getPayeeName() {
         return payeeName;
@@ -132,11 +132,11 @@ public class Group {
         this.payeeName = value;
     }
 
-    public PayeeId getPayeeId() {
+    public PdpFeedPayeeIdEntry getPayeeId() {
         return payeeId;
     }
 
-    public void setPayeeId(PayeeId value) {
+    public void setPayeeId(PdpFeedPayeeIdEntry value) {
         this.payeeId = value;
     }
 
@@ -292,14 +292,14 @@ public class Group {
         this.bankCode = value;
     }
 
-    public List<Detail> getDetail() {
+    public List<PdpFeedDetailEntry> getDetail() {
         if (detail == null) {
-            detail = new ArrayList<Detail>();
+            detail = new ArrayList<PdpFeedDetailEntry>();
         }
         return this.detail;
     }
 
-    public void setDetail(List<Detail> detail) {
+    public void setDetail(List<PdpFeedDetailEntry> detail) {
         this.detail = detail;
     }
 

@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "paymentText"
 })
 @XmlRootElement(name = "detail", namespace = "http://www.kuali.org/kfs/pdp/payment")
-public class Detail {
+public class PdpFeedDetailEntry {
 
     @XmlElement(name = "source_doc_nbr", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -78,7 +78,7 @@ public class Detail {
     @XmlSchemaType(name = "normalizedString")
     protected String fdocTypCd;
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected List<Accounting> accounting;
+    protected List<PdpFeedAccountingEntry> accounting;
     @XmlElement(name = "payment_text", namespace = "http://www.kuali.org/kfs/pdp/payment")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -196,14 +196,14 @@ public class Detail {
         this.fdocTypCd = value;
     }
     
-    public List<Accounting> getAccounting() {
+    public List<PdpFeedAccountingEntry> getAccounting() {
         if (accounting == null) {
-            accounting = new ArrayList<Accounting>();
+            accounting = new ArrayList<PdpFeedAccountingEntry>();
         }
         return this.accounting;
     }
 
-    public void setAccounting(List<Accounting> accounting) {
+    public void setAccounting(List<PdpFeedAccountingEntry> accounting) {
         this.accounting = accounting;
     }
 

@@ -57,8 +57,8 @@ public class TestPdpMarshal {
         return pdpFile;
     }
 
-    private Header buildHeader() {
-        Header header = new Header();
+    private PdpFeedHeaderEntry buildHeader() {
+        PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
         header.setChart("IT");
         header.setCreationDate("03/01/2017");
         header.setSubUnit("CNCR");
@@ -66,20 +66,25 @@ public class TestPdpMarshal {
         return header;
     }
 
-    private Trailer buildTrailer() {
-        Trailer trailer = new Trailer();
+    private PdpFeedTrailerEntry buildTrailer() {
+        PdpFeedTrailerEntry trailer = new PdpFeedTrailerEntry();
         trailer.setDetailCount(new Integer(1));
         trailer.setDetailTotAmt(new Double(500.23));
         return trailer;
     }
 
-    private List<Group> buildGroups() {
-        List<Group> groups = new ArrayList();
+    private List<PdpFeedGroupEntry> buildGroups() {
+        List<PdpFeedGroupEntry> groups = new ArrayList();
+        groups.add(buildGroup("Doe, John, Q"));
+        groups.add(buildGroup("Doe, Jane, S"));
+        return groups;
+    }
+    
+    private PdpFeedGroupEntry buildGroup(String payeeName){
+        PdpFeedGroupEntry group = new PdpFeedGroupEntry();
+        group.setPayeeName(payeeName);
 
-        Group group = new Group();
-        group.setPayeeName("Doe, John, Q");
-
-        PayeeId payeeId = new PayeeId();
+        PdpFeedPayeeIdEntry payeeId = new PdpFeedPayeeIdEntry();
         payeeId.setIdType("E");
         payeeId.setContent("3660172");
         group.setPayeeId(payeeId);
@@ -88,15 +93,13 @@ public class TestPdpMarshal {
         group.setCombineGroupInd("Y");
         group.setBankCode("DISB");
         group.setDetail(buildDetails());
-
-        groups.add(group);
-        return groups;
+        return group;
     }
 
-    private List<Detail> buildDetails() {
-        List<Detail> details = new ArrayList();
+    private List<PdpFeedDetailEntry> buildDetails() {
+        List<PdpFeedDetailEntry> details = new ArrayList();
 
-        Detail detail = new Detail();
+        PdpFeedDetailEntry detail = new PdpFeedDetailEntry();
         detail.setSourceDocNbr("abc123");
         detail.setFsOriginCd("Z6");
         detail.setFdocTypCd("APTR");
@@ -106,10 +109,10 @@ public class TestPdpMarshal {
         return details;
     }
 
-    private List<Accounting> buildAccounting() {
-        List<Accounting> accountings = new ArrayList();
+    private List<PdpFeedAccountingEntry> buildAccounting() {
+        List<PdpFeedAccountingEntry> accountings = new ArrayList();
 
-        Accounting accounting = new Accounting();
+        PdpFeedAccountingEntry accounting = new PdpFeedAccountingEntry();
         accounting.setCoaCd("IT");
         accounting.setAccountNbr("G234715");
         accounting.setSubAccountNbr("subA1");

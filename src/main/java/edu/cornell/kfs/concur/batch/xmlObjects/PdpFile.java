@@ -19,38 +19,38 @@ import javax.xml.bind.annotation.XmlType;
 public class PdpFile {
 
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected Header header;
+    protected PdpFeedHeaderEntry header;
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected List<Group> group;
+    protected List<PdpFeedGroupEntry> group;
     @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
-    protected Trailer trailer;
+    protected PdpFeedTrailerEntry trailer;
     @XmlAttribute(name = "version", required = true)
     protected String version;
 
-    public Header getHeader() {
+    public PdpFeedHeaderEntry getHeader() {
         return header;
     }
 
-    public void setHeader(Header value) {
+    public void setHeader(PdpFeedHeaderEntry value) {
         this.header = value;
     }
 
-    public List<Group> getGroup() {
+    public List<PdpFeedGroupEntry> getGroup() {
         if (group == null) {
-            group = new ArrayList<Group>();
+            group = new ArrayList<PdpFeedGroupEntry>();
         }
         return this.group;
     }
 
-    public void setGroup(List<Group> group) {
+    public void setGroup(List<PdpFeedGroupEntry> group) {
         this.group = group;
     }
 
-    public Trailer getTrailer() {
+    public PdpFeedTrailerEntry getTrailer() {
         return trailer;
     }
 
-    public void setTrailer(Trailer value) {
+    public void setTrailer(PdpFeedTrailerEntry value) {
         this.trailer = value;
     }
 
