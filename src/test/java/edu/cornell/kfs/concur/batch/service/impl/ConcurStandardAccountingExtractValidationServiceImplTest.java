@@ -16,26 +16,31 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.fixture.ConcurStandardAccountingExtractFileFixture;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
-    ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractService;
-
+    private ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractService;
+    private ConcurStandardAccountingExtractFile file;
     @Before
     public void setUp() throws Exception {
         Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class).setLevel(Level.DEBUG);
         concurStandardAccountingExtractService = new ConcurStandardAccountingExtractValidationServiceImpl();
+
+        double[] debits = {100.75, -50.45};
+        double[] credits  = {50.45};
+        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits);
     }
 
     @After
     public void tearDown() throws Exception {
         concurStandardAccountingExtractService = null;
+        file = null;
     }
     
     @Test
     public void validateDetailCountGood() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         try {
             concurStandardAccountingExtractService.validateDetailCount(file);
             assertTrue("We successfully validated counts.", true);
@@ -46,7 +51,6 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateDetailCountIncorrectMatch() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         file.setRecordCount(new Integer(5));
         try {
             concurStandardAccountingExtractService.validateDetailCount(file);
@@ -58,7 +62,6 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateAmountsGood() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         String message = "The amounts should equal";
         try {
             concurStandardAccountingExtractService.validateAmounts(file);
@@ -70,7 +73,6 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateAmountsAmountMismatch() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         file.getConcurStandardAccountingExtractDetailLines().get(0).setJournalAmount(new KualiDecimal(200));
         String message = "The amounts should NOT equal and throw a validation error";
         try {
@@ -83,7 +85,6 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateAmountsIncorrectDebitCredit() {
-        ConcurStandardAccountingExtractFile file = buildConcurStandardAccountingExtractFile();
         file.getConcurStandardAccountingExtractDetailLines().get(0).setJounalDebitCredit("foo");
         String message = "The should throw an error due to incorrect debitCredit field";
         try {
@@ -116,28 +117,6 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         } catch (ValidationException ve) {
             assertTrue(message, true);
         }
-    }
-    
-    protected ConcurStandardAccountingExtractFile buildConcurStandardAccountingExtractFile() {
-        ConcurStandardAccountingExtractFile file = new ConcurStandardAccountingExtractFile();
-        Date today = new Date(Calendar.getInstance().getTimeInMillis());
-        file.setBatchDate(today);
-        file.setRecordCount(new Integer(3));
-        file.setJournalAmountTotal(new KualiDecimal(100.75));
-        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(100.75)));
-        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(50.45)));
-        file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(-50.45)));
-        return file;
-    }
-    
-    protected ConcurStandardAccountingExtractDetailLine buildConcurStandardAccountingExtractDetailLine(String debitCredit, KualiDecimal amount) {
-        ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
-        line.setJounalDebitCredit(debitCredit);
-        line.setJournalAmount(amount);
-        return line;
     }
 
 }
