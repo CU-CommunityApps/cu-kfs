@@ -6,17 +6,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import edu.cornell.kfs.concur.ConcurConstants;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "detailCount",
     "detailTotAmt"
 })
-@XmlRootElement(name = "trailer", namespace = "http://www.kuali.org/kfs/pdp/payment")
+@XmlRootElement(name = "trailer", namespace = ConcurConstants.PDP_XML_NAMESPACE)
 public class PdpFeedTrailerEntry {
 
-    @XmlElement(name = "detail_count", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "detail_count", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected Integer detailCount;
-    @XmlElement(name = "detail_tot_amt", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "detail_tot_amt", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected Double detailTotAmt;
 
     public Integer getDetailCount() {

@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import edu.cornell.kfs.concur.ConcurConstants;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "chart",
@@ -16,22 +18,22 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "subUnit",
     "creationDate"
 })
-@XmlRootElement(name = "header", namespace = "http://www.kuali.org/kfs/pdp/payment")
+@XmlRootElement(name = "header", namespace = ConcurConstants.PDP_XML_NAMESPACE)
 public class PdpFeedHeaderEntry {
 
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String chart;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String unit;
-    @XmlElement(name = "sub_unit", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "sub_unit", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String subUnit;
-    @XmlElement(name = "creation_date", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "creation_date", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String creationDate;

@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import edu.cornell.kfs.concur.ConcurConstants;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "payeeName",
@@ -36,92 +38,92 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "bankCode",
     "detail"
 })
-@XmlRootElement(name = "group", namespace = "http://www.kuali.org/kfs/pdp/payment")
+@XmlRootElement(name = "group", namespace = ConcurConstants.PDP_XML_NAMESPACE)
 public class PdpFeedGroupEntry {
 
-    @XmlElement(name = "payee_name", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "payee_name", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String payeeName;
-    @XmlElement(name = "payee_id", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "payee_id", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected PdpFeedPayeeIdEntry payeeId;
-    @XmlElement(name = "payee_own_cd", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "payee_own_cd", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String payeeOwnCd;
-    @XmlElement(name = "customer_institution_identifier", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "customer_institution_identifier", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String customerInstitutionIdentifier;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String address1;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String address2;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String address3;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String address4;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String city;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String state;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String zip;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String country;
-    @XmlElement(name = "campus_address_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "campus_address_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String campusAddressInd;
-    @XmlElement(name = "payment_date", namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(name = "payment_date", namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String paymentDate;
-    @XmlElement(name = "attachment_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "attachment_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String attachmentInd;
-    @XmlElement(name = "immediate_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "immediate_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String immediateInd;
-    @XmlElement(name = "special_handling_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "special_handling_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String specialHandlingInd;
-    @XmlElement(name = "taxable_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "taxable_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String taxableInd;
-    @XmlElement(name = "nra_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "nra_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String nraInd;
-    @XmlElement(name = "combine_group_ind", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "combine_group_ind", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String combineGroupInd;
-    @XmlElement(name = "bank_code", namespace = "http://www.kuali.org/kfs/pdp/payment")
+    @XmlElement(name = "bank_code", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     protected String bankCode;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected List<PdpFeedDetailEntry> detail;
 
     public String getPayeeName() {

@@ -9,20 +9,22 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import edu.cornell.kfs.concur.ConcurConstants;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "header",
     "group",
     "trailer"
 })
-@XmlRootElement(name = "pdp_file", namespace = "http://www.kuali.org/kfs/pdp/payment")
+@XmlRootElement(name = "pdp_file", namespace = ConcurConstants.PDP_XML_NAMESPACE)
 public class PdpFeedFileBaseEntry {
 
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected PdpFeedHeaderEntry header;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected List<PdpFeedGroupEntry> group;
-    @XmlElement(namespace = "http://www.kuali.org/kfs/pdp/payment", required = true)
+    @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     protected PdpFeedTrailerEntry trailer;
     @XmlAttribute(name = "version", required = true)
     protected String version;
