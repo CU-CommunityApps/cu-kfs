@@ -215,8 +215,8 @@
         <property name="parameterService">
             <ref bean="parameterService"/>
         </property>
-        <property name="mailService">
-            <ref bean="mailService"/>
+        <property name="emailService">
+            <ref bean="emailService"/>
         </property>
     </bean>
     

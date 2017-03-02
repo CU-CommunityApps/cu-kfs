@@ -89,7 +89,7 @@
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     
-    <bean id="pdpExtractPaymentService" parent="PdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
+    <bean id="pdpExtractPaymentService" parent="pdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" /> 
     </bean>
     
@@ -105,7 +105,6 @@
     
     <bean id="pdpEmailService" parent="pdpEmailService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   
-        <property name="kfsMailMessageService" ref="kfsMailMessageService" />          
     </bean>
     
     <bean id="achPayeeLookupableHelperService" parent="achPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" />
