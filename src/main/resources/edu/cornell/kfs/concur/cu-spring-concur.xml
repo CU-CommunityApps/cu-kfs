@@ -96,7 +96,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="recordCount"
                                     	p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="journalAmountTotal"
-                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurKualiDecimalFormatter"/>
+                                    	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="batchId"/>
                                 </list>
                             </property>
@@ -124,7 +124,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="jounalDebitCredit"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
-                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurKualiDecimalFormatter"/>
+                                    	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="190" p:propertyName="chartOfAccountsCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="192" p:propertyName="subAccountNumber"/>

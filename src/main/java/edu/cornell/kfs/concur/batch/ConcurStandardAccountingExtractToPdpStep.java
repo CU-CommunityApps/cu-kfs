@@ -24,6 +24,9 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
     private String incomingDirectoryName;
     private String acceptedDirectoryName;
     private String rejectedDirectoryName;
+    
+    private static final boolean MOVE_FILE_TO_ACCEPT_FOLDER = true;
+    private static final boolean MOVE_FILE_TO_REJECT_FOLDER = false;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
@@ -52,13 +55,13 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
             try {
                 ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                         .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(currentFile);
-                debugConcurStandardAccountingExtractFile(concurStandardAccoutingExtractFile);
+                logDetailedInfoForConcurStandardAccountingExtractFile(concurStandardAccoutingExtractFile);
                 success = getConcurStandardAccountingExtractService()
                         .extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
-                moveFile(currentFile, true);
+                moveFile(currentFile, MOVE_FILE_TO_ACCEPT_FOLDER);
             } catch (ValidationException ve) {
                 success = false;
-                moveFile(currentFile, false);
+                moveFile(currentFile, MOVE_FILE_TO_REJECT_FOLDER);
                 LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing "
                         + currentFile.getName(), ve);
             }
@@ -71,7 +74,7 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
         return StringUtils.endsWith(fileName, ".txt");
     }
     
-    protected void debugConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
+    protected void logDetailedInfoForConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
         if (LOG.isDebugEnabled()) {
             if (saeFile != null) {
                 LOG.debug("debugConcurStandardAccountingExtractFile, " + saeFile.getDebugInformation());
@@ -91,16 +94,17 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
     }
 
     protected void moveFile(File currentFile, boolean accepted) {
-        String moveToBaseDirectoryPath;
+        String destinationDirectory;
         if (accepted) {
-            moveToBaseDirectoryPath = getAcceptedDirectoryName();
+            destinationDirectory = getAcceptedDirectoryName();
         } else {
-            moveToBaseDirectoryPath = getRejectedDirectoryName();
+            destinationDirectory = getRejectedDirectoryName();
         }
 
         DateFormat df = new SimpleDateFormat(ConcurConstants.CONCUR_PROCESSED_FILE_DATE_FORMAT);
-        String newFileName = moveToBaseDirectoryPath + ConcurConstants.FORWARD_SLASH + currentFile.getName()
-                + KFSConstants.DELIMITER + df.format(Calendar.getInstance().getTimeInMillis());
+        String processedTime = df.format(Calendar.getInstance().getTimeInMillis());
+        String newFileName = destinationDirectory + ConcurConstants.FORWARD_SLASH + currentFile.getName()
+                + KFSConstants.DELIMITER + processedTime;
         LOG.debug("moveFile, moving " + currentFile.getAbsolutePath() + " to " + newFileName);
 
         try {

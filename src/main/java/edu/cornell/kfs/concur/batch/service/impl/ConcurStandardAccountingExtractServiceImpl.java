@@ -33,22 +33,24 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         byte[] fileByteContent = safelyLoadFileBytes(standardAccountingExtractFile);
         LOG.debug("Attempting to parse the file ");
 
-        ConcurStandardAccountingExtractFile parsedObject = null;
+        ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = null;
 
         try {
             List parsed = (List) batchInputFileService.parse(batchInputFileType, fileByteContent);
             if (parsed == null || parsed.size() != 1) {
-                throw new org.kuali.kfs.sys.exception.ParseException(
+                LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Unable to parse the file into exactly 1 POJO");
+                throw new ValidationException(
                         "parseStandardAccoutingExtractFileToStandardAccountingExtractFile, did not parse the file into exactly 1 parse file ");
             }
-            parsedObject = (ConcurStandardAccountingExtractFile) parsed.get(0);
+            concurStandardAccountingExtractFile = (ConcurStandardAccountingExtractFile) parsed.get(0);
         } catch (org.kuali.kfs.sys.exception.ParseException e) {
             LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Error parsing batch file: " + e.getMessage());
+            throw new ValidationException(e.getMessage());
         }
 
-        validateConcureStandardAccountExtractFile(parsedObject);
+        validateConcurStandardAccountExtractFile(concurStandardAccountingExtractFile);
 
-        return parsedObject;
+        return concurStandardAccountingExtractFile;
     }
 
     protected byte[] safelyLoadFileBytes(File file) {
@@ -72,7 +74,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return fileByteContent;
     }
 
-    protected void validateConcureStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+    protected void validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
         validateDetailCount(concurStandardAccountingExtractFile);
         validateAmounts(concurStandardAccountingExtractFile);
     }
@@ -82,7 +84,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()
                 .size();
         if (numberOfDetailsInHeader.intValue() == actualNumberOfDetails) {
-            LOG.debug("Number of detail ines is what we expected.");
+            LOG.debug("Number of detail lines is what we expected.");
         } else {
             throw new ValidationException("The header said there were " + numberOfDetailsInHeader + " the but the actual number of details was " + actualNumberOfDetails);
         }
@@ -90,24 +92,25 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     protected void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
         KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
-        double detailTotal = 0;
+        KualiDecimal detailTotal = KualiDecimal.ZERO;
 
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile
                 .getConcurStandardAccountingExtractDetailLines()) {
-            String debitCredit = line.getJounalDebitCredit();
-            if (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT)
-                    || (StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT))) {
-                detailTotal = line.getJournalAmount().doubleValue() + detailTotal;
-            } else {
-                throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
-            }
+            validateDebitCreditField(line.getJounalDebitCredit());
+            detailTotal = detailTotal.add(line.getJournalAmount());
 
         }
-        KualiDecimal detailTotalKualiDecimal = new KualiDecimal(detailTotal);
-        if (journalTotal.doubleValue() != detailTotalKualiDecimal.doubleValue()) {
+        if (journalTotal.doubleValue() != detailTotal.doubleValue()) {
             throw new ValidationException("The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
         } else {
-            LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotalKualiDecimal.doubleValue() + " do match.");
+            LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
+        }
+    }
+    
+    protected void validateDebitCreditField(String debitCredit) {
+        if(!StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) && 
+                !StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT)) {
+            throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
         }
     }
 
