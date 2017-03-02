@@ -19,13 +19,19 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
+/**
+ * @author jdh34
+ *
+ */
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
 
     protected String reimbursementFeedDirectory;
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType batchInputFileType;
+    protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(
@@ -75,43 +81,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
 
     protected void validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-        validateDetailCount(concurStandardAccountingExtractFile);
-        validateAmounts(concurStandardAccountingExtractFile);
-    }
-
-    protected void validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-        Integer numberOfDetailsInHeader = concurStandardAccountingExtractFile.getRecordCount();
-        int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()
-                .size();
-        if (numberOfDetailsInHeader.intValue() == actualNumberOfDetails) {
-            LOG.debug("Number of detail lines is what we expected.");
-        } else {
-            throw new ValidationException("The header said there were " + numberOfDetailsInHeader + " the but the actual number of details was " + actualNumberOfDetails);
-        }
-    }
-
-    protected void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-        KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
-        KualiDecimal detailTotal = KualiDecimal.ZERO;
-
-        for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile
-                .getConcurStandardAccountingExtractDetailLines()) {
-            validateDebitCreditField(line.getJounalDebitCredit());
-            detailTotal = detailTotal.add(line.getJournalAmount());
-
-        }
-        if (journalTotal.doubleValue() != detailTotal.doubleValue()) {
-            throw new ValidationException("The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
-        } else {
-            LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
-        }
-    }
-    
-    protected void validateDebitCreditField(String debitCredit) {
-        if(!StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) && 
-                !StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT)) {
-            throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
-        }
+        getConcurStandardAccountingExtractValidationService().validateDetailCount(concurStandardAccountingExtractFile);
+        getConcurStandardAccountingExtractValidationService().validateAmounts(concurStandardAccountingExtractFile);
+        getConcurStandardAccountingExtractValidationService().validateDate(concurStandardAccountingExtractFile.getBatchDate());
     }
 
     @Override
@@ -141,6 +113,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setBatchInputFileType(BatchInputFileType batchInputFileType) {
         this.batchInputFileType = batchInputFileType;
+    }
+
+    public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
+        return concurStandardAccountingExtractValidationService;
+    }
+
+    public void setConcurStandardAccountingExtractValidationService(ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService) {
+        this.concurStandardAccountingExtractValidationService = concurStandardAccountingExtractValidationService;
     }
 
 }

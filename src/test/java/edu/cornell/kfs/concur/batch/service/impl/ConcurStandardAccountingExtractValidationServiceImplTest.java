@@ -16,15 +16,16 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
-public class ConcurStandardAccountingExtractServiceImplTest {
+public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
-    ConcurStandardAccountingExtractServiceImpl concurStandardAccountingExtractService;
+    ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractService;
 
     @Before
     public void setUp() throws Exception {
-        Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class).setLevel(Level.DEBUG);
-        concurStandardAccountingExtractService = new ConcurStandardAccountingExtractServiceImpl();
+        Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class).setLevel(Level.DEBUG);
+        concurStandardAccountingExtractService = new ConcurStandardAccountingExtractValidationServiceImpl();
     }
 
     @After
@@ -87,6 +88,30 @@ public class ConcurStandardAccountingExtractServiceImplTest {
         String message = "The should throw an error due to incorrect debitCredit field";
         try {
             concurStandardAccountingExtractService.validateAmounts(file);
+            assertTrue(message, false);
+        } catch (ValidationException ve) {
+            assertTrue(message, true);
+        }
+    }
+    
+    @Test
+    public void valdiateDateGood() {
+        Date testDate = new Date(Calendar.getInstance().getTimeInMillis());
+        String message = "The date should be valid.";
+        try {
+            concurStandardAccountingExtractService.validateDate(testDate);
+            assertTrue(message, true);
+        } catch (ValidationException ve) {
+            assertTrue(message, false);
+        }
+    }
+    
+    @Test
+    public void valdiateDateBad() {
+        Date testDate = null;
+        String message = "The date should NOT be valid.";
+        try {
+            concurStandardAccountingExtractService.validateDate(testDate);
             assertTrue(message, false);
         } catch (ValidationException ve) {
             assertTrue(message, true);
