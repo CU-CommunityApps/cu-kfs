@@ -46,8 +46,7 @@ public class ConcurConstants {
     public static final boolean EVENT_NOTIFICATION_NOT_PROCESSED = false;
 
     public static final String FORWARD_SLASH = "/";
-    public static final String CONCUR_PROCESSED_FILE_DATE_FORMAT = "yyyy-MM-dd-HHmmss";
-    
+
     public static final String PDP_XML_NAMESPACE = "http://www.kuali.org/kfs/pdp/payment";
     
     public class ConcurPdpConstants {

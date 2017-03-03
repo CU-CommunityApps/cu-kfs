@@ -42,8 +42,7 @@
 				<value>${staging.directory}/concur/requestExtract/accept</value>
 				<value>${staging.directory}/concur/requestExtract/reject</value>
 				<value>${staging.directory}/concur/standardAccountingExtract</value>
-				<value>${staging.directory}/concur/standardAccountingExtract/accept</value>
-				<value>${staging.directory}/concur/standardAccountingExtract/reject</value>
+				<value>${staging.directory}/concur/standardAccountingExtract/reimbursement</value>
 			</list>
 		</property>
 
@@ -65,10 +64,9 @@
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractToPdpStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurStandardAccountingExtractToPdpStep">
-		<property name="incomingDirectoryName" value="${staging.directory}/concur/standardAccountingExtract"/>
-		<property name="acceptedDirectoryName" value="${staging.directory}/concur/standardAccountingExtract/accept"/>
-		<property name="rejectedDirectoryName" value="${staging.directory}/concur/standardAccountingExtract/reject"/>
 		<property name="concurStandardAccountingExtractService" ref="concurStandardAccountingExtractService" />
+		<property name="batchInputFileService" ref="batchInputFileService"/>
+		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />
@@ -147,6 +145,10 @@
         <property name="fileExtension">
             <value>txt</value>
         </property>
+        <property name="directoryPath">
+        	<value>${staging.directory}/concur/standardAccountingExtract</value>
+        </property>
+        <property name="fileNamePrefix" value="extract_CES_SAE_v3_"/>
     </bean>
 	
 	

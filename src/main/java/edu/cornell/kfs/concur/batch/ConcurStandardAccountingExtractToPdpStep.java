@@ -1,19 +1,14 @@
 package edu.cornell.kfs.concur.batch;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
+import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
@@ -21,28 +16,25 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractServi
 public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class);
     protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
-    private String incomingDirectoryName;
-    private String acceptedDirectoryName;
-    private String rejectedDirectoryName;
-    
-    private static final boolean MOVE_FILE_TO_ACCEPT_FOLDER = true;
-    private static final boolean MOVE_FILE_TO_REJECT_FOLDER = false;
+    protected BatchInputFileService batchInputFileService;
+    protected BatchInputFileType batchInputFileType;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        File folder = new File(incomingDirectoryName);
-        File[] listOfFiles = folder.listFiles();
+        List<String> listOfFileNames = getBatchInputFileService().listInputFileNamesWithDoneFile(getBatchInputFileType());
 
         if (LOG.isDebugEnabled()) {
-            String numberOfFiles = listOfFiles != null ? String.valueOf(listOfFiles.length) : "NULL";
-            LOG.debug("execute started, directoryPath: " + incomingDirectoryName + " number of files found to process: "
-                    + numberOfFiles);
+            String numberOfFiles = listOfFileNames != null ? String.valueOf(listOfFileNames.size()) : "NULL";
+            LOG.debug("execute started, directoryPath: number of files found to process: " + numberOfFiles);
         }
 
         boolean success = true;
-        for (int i = 0; i < listOfFiles.length; i++) {
-            File currentFile = listOfFiles[i];
+        for (String fileName : listOfFileNames) {
+            LOG.info("execute, processing: " + fileName);
+            
+            File currentFile = new File(fileName);
             success = processCurrentFileAndExtractPdpFeedFromSAEFile(currentFile) && success;
+            
         }
 
         return success;
@@ -50,28 +42,19 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
 
     protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(File currentFile) {
         boolean success = true;
-        if (!currentFile.isDirectory() && isTextFile(currentFile)) {
-            LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + currentFile.getName());
-            try {
-                ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
-                        .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(currentFile);
-                logDetailedInfoForConcurStandardAccountingExtractFile(concurStandardAccoutingExtractFile);
-                success = getConcurStandardAccountingExtractService()
-                        .extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
-                moveFile(currentFile, MOVE_FILE_TO_ACCEPT_FOLDER);
-            } catch (ValidationException ve) {
-                success = false;
-                moveFile(currentFile, MOVE_FILE_TO_REJECT_FOLDER);
-                LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing "
-                        + currentFile.getName(), ve);
-            }
+        LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + currentFile.getName());
+        try {
+            ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
+                    .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(currentFile);
+            logDetailedInfoForConcurStandardAccountingExtractFile(concurStandardAccoutingExtractFile);
+            success = getConcurStandardAccountingExtractService()
+                    .extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
+        } catch (ValidationException ve) {
+            success = false;
+            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing "
+                    + currentFile.getName(), ve);
         }
         return success;
-    }
-    
-    protected boolean isTextFile(File file) {
-        String fileName = file.getName();
-        return StringUtils.endsWith(fileName, ".txt");
     }
     
     protected void logDetailedInfoForConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
@@ -93,58 +76,27 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
         }
     }
 
-    protected void moveFile(File currentFile, boolean accepted) {
-        String destinationDirectory;
-        if (accepted) {
-            destinationDirectory = getAcceptedDirectoryName();
-        } else {
-            destinationDirectory = getRejectedDirectoryName();
-        }
-
-        DateFormat df = new SimpleDateFormat(ConcurConstants.CONCUR_PROCESSED_FILE_DATE_FORMAT);
-        String processedTime = df.format(Calendar.getInstance().getTimeInMillis());
-        String newFileName = destinationDirectory + ConcurConstants.FORWARD_SLASH + currentFile.getName()
-                + KFSConstants.DELIMITER + processedTime;
-        LOG.debug("moveFile, moving " + currentFile.getAbsolutePath() + " to " + newFileName);
-
-        try {
-            FileUtils.moveFile(currentFile, new File(newFileName));
-        } catch (IOException e) {
-            LOG.error("moveFile, unable to move file from " + currentFile.getAbsolutePath() + " to " + newFileName, e);
-            throw new RuntimeException(e);
-        }
-    }
-
     public ConcurStandardAccountingExtractService getConcurStandardAccountingExtractService() {
         return concurStandardAccountingExtractService;
-    }
-
-    public String getIncomingDirectoryName() {
-        return incomingDirectoryName;
-    }
-
-    public void setIncomingDirectoryName(String incomingDirectoryName) {
-        this.incomingDirectoryName = incomingDirectoryName;
-    }
-
-    public String getAcceptedDirectoryName() {
-        return acceptedDirectoryName;
-    }
-
-    public void setAcceptedDirectoryName(String acceptedDirectoryName) {
-        this.acceptedDirectoryName = acceptedDirectoryName;
-    }
-
-    public String getRejectedDirectoryName() {
-        return rejectedDirectoryName;
-    }
-
-    public void setRejectedDirectoryName(String rejectedDirectoryName) {
-        this.rejectedDirectoryName = rejectedDirectoryName;
     }
 
     public void setConcurStandardAccountingExtractService(ConcurStandardAccountingExtractService concurStandardAccountingExtractService) {
         this.concurStandardAccountingExtractService = concurStandardAccountingExtractService;
     }
 
+    public BatchInputFileService getBatchInputFileService() {
+        return batchInputFileService;
+    }
+
+    public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
+        this.batchInputFileService = batchInputFileService;
+    }
+
+    public BatchInputFileType getBatchInputFileType() {
+        return batchInputFileType;
+    }
+
+    public void setBatchInputFileType(BatchInputFileType batchInputFileType) {
+        this.batchInputFileType = batchInputFileType;
+    }
 }
