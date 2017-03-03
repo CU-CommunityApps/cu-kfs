@@ -1,5 +1,6 @@
 package edu.cornell.kfs.concur.batch;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -17,22 +18,19 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        List<String> listOfFileNames = getConcurStandardAccountingExtractService().buildListOfFileNamesToBeProcessed();
-
+        List<String> listOfSaeFileNames = getConcurStandardAccountingExtractService().buildListOfFileNamesToBeProcessed();
         boolean success = true;
-        for (String fileName : listOfFileNames) {
-            LOG.info("execute, processing: " + fileName);
-            
+        for (String saeFileName : listOfSaeFileNames) {
+            LOG.info("execute, processing: " + saeFileName);
             try {
-                success = processCurrentFileAndExtractPdpFeedFromSAEFile(fileName) && success;
+                success = processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName) && success;
             } catch (Exception e) {
                 success = false;
                 LOG.error("execute, there was an error processing a file: ", e);
+            } finally {
+                getFileStorageService().removeDoneFiles(Collections.singletonList(saeFileName));
             }
         }
-        
-        getFileStorageService().removeDoneFiles(listOfFileNames);
-
         return success;
     }
 
