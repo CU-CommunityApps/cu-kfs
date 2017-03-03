@@ -28,7 +28,7 @@ public class CuJobListener extends JobListener  {
                 mailMessage.addToAddress(jobExecutionContext.getMergedJobDataMap().getString(REQUESTOR_EMAIL_ADDRESS_KEY));
             }
             if (SchedulerService.FAILED_JOB_STATUS_CODE.equals(jobStatus) || SchedulerService.CANCELLED_JOB_STATUS_CODE.equals(jobStatus)) {
-                mailMessage.addToAddress(emailService.getDefaultFromAddress());
+                mailMessage.addToAddress(emailService.getDefaultToAddress());
             }
             String url = SpringContext.getBean(ParameterService.class).getParameterValueAsString("KFS-SYS", "Batch", "BATCH_REPORTS_URL");         
             mailMessageSubject.append(": ").append(jobStatus);

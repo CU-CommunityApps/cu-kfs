@@ -199,9 +199,9 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
             message.setSubject(customer.getAdviceSubjectLine());
         }
         else {
-            message.addToAddress(emailService.getDefaultFromAddress());
-            message.addCcAddress(emailService.getDefaultFromAddress());
-            message.addBccAddress(emailService.getDefaultFromAddress());
+            message.addToAddress(emailService.getDefaultToAddress());
+            message.addCcAddress(emailService.getDefaultToAddress());
+            message.addBccAddress(emailService.getDefaultToAddress());
             message.setFromAddress(fromAddress);
             message.setSubject(environmentCode + ": " + customer.getAdviceSubjectLine() + ":" + paymentGroup.getAdviceEmailAddress());
         }        
