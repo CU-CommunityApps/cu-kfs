@@ -65,8 +65,7 @@
 	
 	<bean id="concurStandardAccountingExtractToPdpStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurStandardAccountingExtractToPdpStep">
 		<property name="concurStandardAccountingExtractService" ref="concurStandardAccountingExtractService" />
-		<property name="batchInputFileService" ref="batchInputFileService"/>
-		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
+		<property name="fileStorageService" ref="fileStorageService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />

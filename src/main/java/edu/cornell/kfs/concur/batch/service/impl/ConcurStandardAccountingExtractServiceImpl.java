@@ -8,23 +8,16 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
-/**
- * @author jdh34
- *
- */
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
 
@@ -35,9 +28,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(
-            File standardAccountingExtractFile) throws ValidationException {
+            String standardAccountingExtractFileName) throws ValidationException {
+        File standardAccountingExtractFile = new File(standardAccountingExtractFileName);
         byte[] fileByteContent = safelyLoadFileBytes(standardAccountingExtractFile);
-        LOG.debug("Attempting to parse the file ");
+        LOG.debug("Attempting to parse the file " + standardAccountingExtractFileName);
 
         ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = null;
 
@@ -53,7 +47,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Error parsing batch file: " + e.getMessage());
             throw new ValidationException(e.getMessage());
         }
-
+        logDetailedInfoForConcurStandardAccountingExtractFile(concurStandardAccountingExtractFile);
         validateConcurStandardAccountExtractFile(concurStandardAccountingExtractFile);
 
         return concurStandardAccountingExtractFile;
@@ -79,11 +73,40 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         }
         return fileByteContent;
     }
+    
+    protected void logDetailedInfoForConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
+        if (LOG.isDebugEnabled()) {
+            if (saeFile != null) {
+                LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, " + saeFile.getDebugInformation());
+                if (saeFile.getConcurStandardAccountingExtractDetailLines() != null) {
+                    LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, Number of line items: " + saeFile.getConcurStandardAccountingExtractDetailLines().size());
+                    for (ConcurStandardAccountingExtractDetailLine line : saeFile.getConcurStandardAccountingExtractDetailLines()) {
+                        LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, " + line.getDebugInformation());
+                    }
+                } else {
+                    LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, The getConcurStandardAccountingExtractDetailLines is null");
+                }
+                
+            } else {
+                LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, The SAE file is null");
+            }
+        }
+    }
 
     protected void validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
         getConcurStandardAccountingExtractValidationService().validateDetailCount(concurStandardAccountingExtractFile);
         getConcurStandardAccountingExtractValidationService().validateAmounts(concurStandardAccountingExtractFile);
         getConcurStandardAccountingExtractValidationService().validateDate(concurStandardAccountingExtractFile.getBatchDate());
+    }
+    
+    @Override
+    public List<String> buildListOfFileNamesToBeProcessed() {
+        List<String> listOfFileNames = getBatchInputFileService().listInputFileNamesWithDoneFile(getBatchInputFileType());
+        if (LOG.isDebugEnabled()) {
+            String numberOfFiles = listOfFileNames != null ? String.valueOf(listOfFileNames.size()) : "NULL";
+            LOG.debug("buildListOfFileNamesToBeProcessed number of files found to process: " + numberOfFiles);
+        }
+        return listOfFileNames;
     }
 
     @Override
