@@ -35,10 +35,14 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
         concurStandardAccountingExtractToPdpStep.setConcurStandardAccountingExtractService(new TestableConcurStandardAccountingExtractService());
         concurStandardAccountingExtractToPdpStep.setDirectoryPath(BATCH_DIRECTORY);
 
-        batchDirectoryFile = new File(BATCH_DIRECTORY);
-        batchDirectoryFile.mkdir();
-
+        setupBatchDirectory();
         dataFileSrc = new File(DATA_FILE_PATH);
+    }
+
+    private void setupBatchDirectory() throws IOException {
+        batchDirectoryFile = new File(BATCH_DIRECTORY);
+        FileUtils.deleteDirectory(batchDirectoryFile);
+        batchDirectoryFile.mkdir();
     }
 
     @After
@@ -98,8 +102,11 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
             acceptedDirectory.mkdir();
         }
         File[] listOfFiles = acceptedDirectory.listFiles();
-        assertEquals("The number of files expected in the accept directory is not what we expected",
-                numberOfExpectedFiles, listOfFiles.length);
+        String message = "The number of files expected in the accept directory is not what we expected ";
+        for (File file : listOfFiles) {
+            message = message + "  File: " + file.getAbsolutePath();
+        }
+        assertEquals(message, numberOfExpectedFiles, listOfFiles.length);
     }
 
     public void assertNumberOfFilesRejected(int numberOfExpectedFiles) {
@@ -109,8 +116,11 @@ public class ConcurStandardAccountingExtractToPdpStepTest {
             rejectedDirectory.mkdir();
         }
         File[] listOfFiles = rejectedDirectory.listFiles();
-        assertEquals("The number of files expected in the accept directory is not what we expected",
-                numberOfExpectedFiles, listOfFiles.length);
+        String message = "The number of files expected in the reject directory is not what we expected ";
+        for (File file : listOfFiles) {
+            message = message + "  File: " + file.getAbsolutePath();
+        }
+        assertEquals(message, numberOfExpectedFiles, listOfFiles.length);
     }
 
     private class TestableConcurStandardAccountingExtractService implements ConcurStandardAccountingExtractService {
