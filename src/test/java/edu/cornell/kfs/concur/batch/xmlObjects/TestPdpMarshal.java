@@ -5,20 +5,17 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.concur.batch.fixture.PdpFeedFileBaseEntryFixture;
-import junit.framework.Assert;
+import edu.cornell.kfs.sys.service.CUMarshalService;
+import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class TestPdpMarshal {
 
@@ -26,9 +23,11 @@ public class TestPdpMarshal {
     private static final String EXAMPLE_PDP_FILE_PATH = "src/test/java/edu/cornell/kfs/concur/batch/fixture/PdpExample.xml";
 
     private File batchDirectoryFile;
+    private CUMarshalService cUMarshalService;
 
     @Before
     public void setUp() throws Exception {
+        cUMarshalService = new CUMarshalServiceImpl();
         batchDirectoryFile = new File(BATCH_DIRECTORY);
         batchDirectoryFile.mkdir();
     }
@@ -37,24 +36,16 @@ public class TestPdpMarshal {
     public void tearDown() throws Exception {
         FileUtils.deleteDirectory(batchDirectoryFile);
     }
-
+    
     @Test
-    public void test() throws JAXBException, IOException, SAXException, ParserConfigurationException {
-        PdpFeedFileBaseEntry pdpFile = PdpFeedFileBaseEntryFixture.buildPdpFile();
-        JAXBContext jaxbContext = JAXBContext.newInstance(PdpFeedFileBaseEntry.class);
-        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-        jaxbMarshaller.marshal( pdpFile, System.out );
-
-        File marchalledXml = new File(batchDirectoryFile.getAbsolutePath() + "generatedXML.xml");
-        FileUtils.touch(marchalledXml);
-        jaxbMarshaller.marshal(pdpFile, marchalledXml);
-
-        assertTrue("The marshalled XML should be greater than 0", FileUtils.sizeOf(marchalledXml) > 0);
-
-        String marshalledXml = convertFileToFomattedString(marchalledXml);
+    public void verifyConcurPDPFileCanBeMarshalled() throws JAXBException, IOException {
+        File marshalledXMLFile = cUMarshalService.marshalObjectToXML(PdpFeedFileBaseEntryFixture.buildPdpFile(), 
+                batchDirectoryFile.getAbsolutePath() + "generatedXML.xml");
+        assertTrue("The marshalled XML should be greater than 0", FileUtils.sizeOf(marshalledXMLFile) > 0);
+        
+        String marshalledXml = convertFileToFomattedString(marshalledXMLFile);
         String exampleXml = convertFileToFomattedString(new File(EXAMPLE_PDP_FILE_PATH));
         assertTrue("The XML should be equal", marshalledXml.equalsIgnoreCase(exampleXml));
-                
     }
 
     private String convertFileToFomattedString(File file) throws IOException {
