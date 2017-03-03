@@ -68,10 +68,6 @@
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>
     <bean id="pdpFormatPaymentDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.CuFormatPaymentDaoOjb"/>
     
-     <bean id="kfsMailMessageService" class="edu.cornell.kfs.sys.mail.service.impl.KFSMailMessageServiceImpl">  
-        <property name="kualiConfigurationService" ref="kualiConfigurationService" />
-    </bean>
-    
     <bean id="paymentInputFileType" parent="paymentInputFileType-parentBean">
         <property name="digestorRulesFileName">
            <value>edu/cornell/kfs/pdp/batch/paymentDigesterRules.xml</value>
@@ -87,13 +83,13 @@
 
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl">
         <property name="vendorService" ref="vendorService" />
-        <property name="mailService" ref="mailService" />
+        <property name="emailService" ref="emailService" />
     </bean>
 
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     
-    <bean id="pdpExtractPaymentService" parent="PdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
+    <bean id="pdpExtractPaymentService" parent="pdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" /> 
     </bean>
     
@@ -109,7 +105,6 @@
     
     <bean id="pdpEmailService" parent="pdpEmailService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   
-        <property name="kfsMailMessageService" ref="kfsMailMessageService" />          
     </bean>
     
     <bean id="achPayeeLookupableHelperService" parent="achPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" />
@@ -137,7 +132,7 @@
     <bean id="payeeACHAccountExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService" />
         <property name="parameterService" ref="parameterService" />
-        <property name="mailService" ref="mailService" />
+        <property name="emailService" ref="emailService"/>
         <property name="documentService" ref="documentService" />
         <property name="dataDictionaryService" ref="dataDictionaryService" />
         <property name="personService" ref="personService" />

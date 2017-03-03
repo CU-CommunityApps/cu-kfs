@@ -29,7 +29,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.FlatFileParserBase;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.service.impl.DevelopmentMailServiceImpl;
+import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.rice.krad.bo.BusinessObject;
@@ -390,7 +390,7 @@ public class AdvanceDepositServiceImplTest {
         EasyMock.expect(batchInputFileService.parse(EasyMock.isA(BatchInputFileType.class), EasyMock.isA(byte[].class))).andReturn(setupAchIncomeFilesGood()).andThrow(new RuntimeException()).andReturn(setupAchIncomeFilesGood());
         EasyMock.replay(batchInputFileService);
         advanceDepositService.setBatchInputFileService(batchInputFileService);
-        advanceDepositService.setMailService(new DevelopmentMailServiceImpl());
+        advanceDepositService.setEmailService(new EmailServiceImpl());
 
         achIncomeInputFileType = new FlatFileParserBase();
         achIncomeInputFileType.setDirectoryPath(BATCH_DIRECTORY);

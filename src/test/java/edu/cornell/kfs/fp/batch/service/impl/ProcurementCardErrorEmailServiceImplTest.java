@@ -1,28 +1,33 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
-import junit.framework.TestCase;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.service.impl.DevelopmentMailServiceImpl;
+import org.junit.Before;
+import org.junit.Test;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 
 import java.util.ArrayList;
 
-@ConfigureContext
-public class ProcurementCardErrorEmailServiceImplTest extends TestCase {
-	private ProcurementCardErrorEmailServiceImpl procurementCardErrorEmailService;
+public class ProcurementCardErrorEmailServiceImplTest {
+    private ProcurementCardErrorEmailServiceImpl procurementCardErrorEmailService;
 
-	@Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         procurementCardErrorEmailService = new ProcurementCardErrorEmailServiceImpl();
-		procurementCardErrorEmailService.setMailService(new DevelopmentMailServiceImpl());
-		procurementCardErrorEmailService.setParameterService(new MockParameterServiceImpl());
+
+        EmailServiceImpl emailService = new EmailServiceImpl();
+        ParameterService parameterService = new MockParameterServiceImpl();
+
+        emailService.setParameterService(parameterService);
+        procurementCardErrorEmailService.setEmailService(emailService);
+        procurementCardErrorEmailService.setParameterService(parameterService);
     }
-	
-	public void testProcurementCardErrorEmailService(){
-		ArrayList<String> errorMessages = new ArrayList<String>();
-		errorMessages.add("TEST ERROR FOR PROCUREMENT CARD");
-		procurementCardErrorEmailService.sendErrorEmail(errorMessages);
-	}
+
+    @Test
+    public void testProcurementCardErrorEmailService() {
+        ArrayList<String> errorMessages = new ArrayList<String>();
+        errorMessages.add("TEST ERROR FOR PROCUREMENT CARD");
+        procurementCardErrorEmailService.sendErrorEmail(errorMessages);
+    }
 
 }

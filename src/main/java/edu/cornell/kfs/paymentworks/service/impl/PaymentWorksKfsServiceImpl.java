@@ -34,6 +34,8 @@ import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
@@ -48,7 +50,6 @@ import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MailService;
 import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -69,7 +70,6 @@ import edu.cornell.kfs.paymentworks.service.PaymentWorksVendorUpdateConversionSe
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangeDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 import edu.cornell.kfs.pdp.CUPdpConstants;
-import edu.cornell.kfs.sys.service.MailMessage;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 
 @Transactional
@@ -77,7 +77,7 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksKfsServiceImpl.class);
 
 	protected DocumentService documentService;
-	protected MailService mailService;
+	protected EmailService emailService;
 	protected AchBankService achBankService;
 	protected ParameterService parameterService;
 	protected VendorService vendorService;
@@ -360,14 +360,14 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		String body = parameterService.getParameterValueAsString(PaymentWorksRetrieveNewVendorStep.class, 
 				PaymentWorksConstants.PaymentWorksParameters.VENDOR_INITIATED_EMAIL_BODY);
 
-		MailMessage message = new MailMessage();
+		BodyMailMessage message = new BodyMailMessage();
 		message.setFromAddress(fromAddress);
 		message.getToAddresses().add(contactEmail);
 		message.setSubject(subject);
 		message.setMessage(body);
 
 		try {
-			mailService.sendMessage(message);
+			emailService.sendMessage(message, false);
 		} catch (Exception e) {
 			LOG.error("Failed to send vendor initiated email: " + e);
 		}
@@ -384,14 +384,14 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		body = StringUtils.replace(body, "[VENDOR_NUMBER]", vendorNumber);
 		body = StringUtils.replace(body, "[VENDOR_NAME]", vendorName);
 
-		MailMessage message = new MailMessage();
+		BodyMailMessage message = new BodyMailMessage();
 		message.setFromAddress(fromAddress);
 		message.getToAddresses().add(contactEmail);
 		message.setSubject(subject);
 		message.setMessage(body);
 
 		try {
-			mailService.sendMessage(message);
+			emailService.sendMessage(message, false);
 		} catch (Exception e) {
 			LOG.error("Failed to send vendor approved email: " + e);
 		}
@@ -461,12 +461,12 @@ public class PaymentWorksKfsServiceImpl implements PaymentWorksKfsService {
 		this.achBankService = achBankService;
 	}
 
-	public MailService getMailService() {
-		return mailService;
+	public EmailService getEmailService() {
+		return emailService;
 	}
 
-	public void setMailService(MailService mailService) {
-		this.mailService = mailService;
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 
 	public ParameterService getParameterService() {

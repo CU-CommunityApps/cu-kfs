@@ -95,7 +95,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
         @SuppressWarnings("rawtypes")
         Map primaryKeys = new HashMap();
         primaryKeys.put(PdpPropertyConstants.PaymentProcess.PAYMENT_PROCESS_ID, processId);
-        PaymentProcess paymentProcess = (PaymentProcess) getBusinessObjectService().findByPrimaryKey(PaymentProcess.class, primaryKeys);
+        PaymentProcess paymentProcess = (PaymentProcess) businessObjectService.findByPrimaryKey(PaymentProcess.class, primaryKeys);
         if (paymentProcess == null) {
             LOG.error("performFormat() Invalid proc ID " + processId);
             throw new RuntimeException("Invalid proc ID");
@@ -117,7 +117,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
             }
 
             // save payment group
-            getBusinessObjectService().save(paymentGroup);
+            businessObjectService.save(paymentGroup);
 
             // Add to summary information
             postFormatProcessSummary.add(paymentGroup);
@@ -151,7 +151,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
 
         // step 4 set formatted indicator to true and save in the db
         paymentProcess.setFormattedIndicator(true);
-        getBusinessObjectService().save(paymentProcess);
+        businessObjectService.save(paymentProcess);
 
         // step 5 end the format process for this campus
         LOG.debug("performFormat() End the format process for this campus");
@@ -263,7 +263,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
                 throw new IllegalArgumentException("Payment group " + paymentGroup.getId() + " must be Check or ACH");
             }
 
-            getBusinessObjectService().save(paymentGroup);
+            businessObjectService.save(paymentGroup);
 
             // Generate a GL entry for CHCK & ACH
             SpringContext.getBean(PendingTransactionService.class).generatePaymentGeneralLedgerPendingEntry(paymentGroup); 
@@ -271,7 +271,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
             // Update all the ranges
             LOG.debug("assignDisbursementNumbers() Save ranges");
             for (DisbursementNumberRange element : disbursementRanges) {
-                getBusinessObjectService().save(element);
+                businessObjectService.save(element);
             }
         }
 

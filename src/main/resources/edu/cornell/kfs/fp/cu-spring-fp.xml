@@ -215,8 +215,8 @@
         <property name="parameterService">
             <ref bean="parameterService"/>
         </property>
-        <property name="mailService">
-            <ref bean="mailService"/>
+        <property name="emailService">
+            <ref bean="emailService"/>
         </property>
     </bean>
     
@@ -404,7 +404,7 @@
         <property name="businessObjectService" ref="businessObjectService"/>
         <property name="dateTimeService" ref="dateTimeService"/>
         <property name="documentService" ref="documentService"/>
-        <property name="mailService" ref="mailService"/>
+        <property name="emailService" ref="emailService"/>
         <property name="noteService" ref="noteService"/>
         <property name="parameterService" ref="parameterService"/>
         <property name="personService" ref="personService"/>
