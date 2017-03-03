@@ -269,5 +269,9 @@
 	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
 	</bean>
+	
+	<bean id="cuMarshalService" parent="cuMarshalService-parentBean" />
+	<bean id="cuMarshalService-parentBean" class="edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl" abstract="true">
+	</bean>
 
 </beans>
