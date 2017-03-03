@@ -31,11 +31,12 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.BankService;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -55,7 +56,6 @@ import org.kuali.kfs.krad.exception.InvalidAddressException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MailService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -92,7 +92,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     private BusinessObjectService businessObjectService;
     private PersonService personService;
     private FinancialSystemUserService financialSystemUserService;
-    private MailService mailService;
+    private EmailService emailService;
     private PersistenceService persistenceService;
     private DocumentService documentService;
 
@@ -207,17 +207,9 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#sendDocumentFinalizedMessage(edu.cornell.kfs.module.purap.document.IWantDocument)
      */
     public void sendDocumentFinalizedMessage(IWantDocument iWantDocument) {
-        MailMessage message = buildDocumentFinalizedMessage(iWantDocument);
+        BodyMailMessage message = buildDocumentFinalizedMessage(iWantDocument);
 
-        try {
-            mailService.sendMessage(message);
-        } catch (InvalidAddressException e) {
-            // Don't stop the show if the email has problem, log it and continue.
-            LOG.error("iWantDocumentService: email address problem. Message not sent.", e);
-        } catch (MessagingException e) {
-            // Don't stop the show if the email has problem, log it and continue.
-            LOG.error("iWantDocumentService: email problem. Message not sent.", e);
-        }
+        emailService.sendMessage(message, false);
     }
 
     /**
@@ -226,7 +218,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @param iWantDocument
      * @return an email message to be sent when the input document has been finalized
      */
-    private MailMessage buildDocumentFinalizedMessage(IWantDocument iWantDocument) {
+    private BodyMailMessage buildDocumentFinalizedMessage(IWantDocument iWantDocument) {
 
         WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
         String initiator = workflowDocument.getInitiatorPrincipalId();
@@ -234,7 +226,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         Person initiatorPerson = personService.getPerson(initiator);
         String initiatorEmail = initiatorPerson.getEmailAddressUnmasked();
 
-        MailMessage message = new MailMessage();
+        BodyMailMessage message = new BodyMailMessage();
 
         message.addToAddress(initiatorEmail);
         message.setFromAddress(initiatorEmail);
@@ -1029,21 +1021,21 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 
     
     /**
-     * Gets the mailService.
+     * Gets the emailService.
      * 
-     * @return mailService
+     * @return emailService
      */
-    public MailService getMailService() {
-        return mailService;
+    public EmailService getEmailService() {
+        return emailService;
     }
 
     /**
-     * Sets the mailService.
+     * Sets the emailService.
      * 
-     * @param mailService
+     * @param emailService
      */
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
     
     public PersistenceService getPersistenceService() {

@@ -26,10 +26,9 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
     
     @Override
     public boolean cancelDisbursement(Integer paymentGroupId, Integer paymentDetailId, String note, Person user) {
+        LOG.debug("cancelDisbursement() started");
+
         // All actions must be performed on entire group not individual detail record
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("cancelDisbursement() Enter method to cancel disbursement with id = " + paymentGroupId);
-        }
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
             LOG.warn("cancelDisbursement() User " + user.getPrincipalId() + " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
@@ -54,9 +53,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
         if (!(PdpConstants.PaymentStatusCodes.CANCEL_DISBURSEMENT.equals(paymentStatus))) {
             if (((PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)) && (ObjectUtils.isNotNull(paymentGroup.getDisbursementDate()))) || (PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus))) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("cancelDisbursement() Payment status is " + paymentStatus + "; continue with cancel.");
-                }
+                LOG.debug("cancelDisbursement() Payment status is " + paymentStatus + "; continue with cancel.");
 
                 List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
 
@@ -83,15 +80,14 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
                     // set primary cancel indicator for EPIC to use
                     // these payment details will be canceled when running processPdpCancelAndPaidJOb
-                    Map<String, KualiInteger> primaryKeys = new HashMap<String, KualiInteger>();
-                    // KFSCNTRB-1705: use PAYMENT_DETAIL_PAYMENT_GROUP_ID instead of PAYMENT_ID since now we're starting to have Payment Group ID
-                    // values assigned in PDP whose values just happen to not have identical values in the Payment Detail ID field.
+                    Map<String, KualiInteger> primaryKeys = new HashMap<>();
+
                     primaryKeys.put(PdpPropertyConstants.PaymentDetail.PAYMENT_DETAIL_PAYMENT_GROUP_ID, element.getId());
 
                     // cancel all  payment details for payment group
                     List<PaymentDetail> pds = (List<PaymentDetail>) this.businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
                     if (pds != null && !pds.isEmpty()) {
-                        for(PaymentDetail pd : pds) {
+                        for (PaymentDetail pd : pds) {
                             pd.setPrimaryCancelledPayment(Boolean.TRUE);
                             this.businessObjectService.save(pd);
                         }
@@ -100,8 +96,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                 }
 
                 LOG.debug("cancelDisbursement() Disbursement cancelled; exit method.");
-            }
-            else {
+            } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("cancelDisbursement() Payment status is " + paymentStatus + " and disbursement date is " + paymentGroup.getDisbursementDate() + "; cannot cancel payment in this status");
                 }
@@ -109,8 +104,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                 GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_INVALID_TO_CANCEL);
                 return false;
             }
-        }
-        else {
+        } else {
             LOG.debug("cancelDisbursement() Disbursement has already been cancelled; exit method.");
         }
         return true;
@@ -118,10 +112,9 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
     @Override
     public boolean cancelReissueDisbursement(Integer paymentGroupId, String note, Person user) {
+        LOG.debug("cancelReissueDisbursement() started");
+
         // All actions must be performed on entire group not individual detail record
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("cancelReissueDisbursement() Enter method to cancel disbursement with id = " + paymentGroupId);
-        }
 
         if (!pdpAuthorizationService.hasCancelPaymentPermission(user.getPrincipalId())) {
             LOG.warn("cancelReissueDisbursement() User " + user.getPrincipalId() + " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
@@ -173,9 +166,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
                     glPendingTransactionService.generateReissueGeneralLedgerPendingEntry(pg);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("cancelReissueDisbursement() Status is '" + paymentStatus + "; delete row from AchAccountNumber table.");
-                    }
+                    LOG.debug("cancelReissueDisbursement() Status is '" + paymentStatus + "; delete row from AchAccountNumber table.");
 
                     AchAccountNumber achAccountNumber = pg.getAchAccountNumber();
 
@@ -204,17 +195,13 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                 }
 
                 LOG.debug("cancelReissueDisbursement() Disbursement cancelled and reissued; exit method.");
-            }
-            else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("cancelReissueDisbursement() Payment status is " + paymentStatus + " and disbursement date is " + paymentGroup.getDisbursementDate() + "; cannot cancel payment");
-                }
+            } else {
+                LOG.debug("cancelReissueDisbursement() Payment status is " + paymentStatus + " and disbursement date is " + paymentGroup.getDisbursementDate() + "; cannot cancel payment");
 
                 GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_INVALID_TO_CANCEL_AND_REISSUE);
                 return false;
             }
-        }
-        else {
+        } else {
             LOG.debug("cancelReissueDisbursement() Disbursement already cancelled and reissued; exit method.");
         }
         return true;

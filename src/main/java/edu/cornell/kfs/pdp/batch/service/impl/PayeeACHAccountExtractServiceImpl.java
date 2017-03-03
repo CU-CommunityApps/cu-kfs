@@ -29,9 +29,10 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -48,7 +49,6 @@ import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MailService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -70,7 +70,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private List<BatchInputFileType> batchInputFileTypes;
     private ConfigurationService configurationService;
     private ParameterService parameterService;
-    private MailService mailService;
+    private EmailService emailService;
     private DocumentService documentService;
     private DataDictionaryService dataDictionaryService;
     private PersonService personService;
@@ -550,7 +550,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         }
         
         // Construct mail message, and replace property placeholders and literal "\n" strings in the email body accordingly.
-        MailMessage message = new MailMessage();
+        BodyMailMessage message = new BodyMailMessage();
         message.setFromAddress(parameterService.getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM));
         message.setSubject(emailSubject);
@@ -558,13 +558,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         message.addToAddress(payee.getEmailAddressUnmasked());
         
         // Send the message.
-        try {
-            mailService.sendMessage(message);
-        } catch (InvalidAddressException e) {
-            LOG.error("Invalid email address for notification of ACH account add/update. Message not sent.", e);
-        } catch (MessagingException e) {
-            LOG.error("Unexpected error sending notification email for ACH account add/update. Message not sent.", e);
-        }
+        emailService.sendMessage(message, false);        
     }
 
     /**
@@ -757,8 +751,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         this.parameterService = parameterService;
     }
 
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     public void setDocumentService(DocumentService documentService) {

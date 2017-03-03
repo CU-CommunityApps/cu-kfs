@@ -32,7 +32,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.kfs.sys.service.impl.DevelopmentMailServiceImpl;
+import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
@@ -123,7 +123,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setBatchInputFileService(new BatchInputFileServiceImpl());
         payeeACHAccountExtractService.setBatchInputFileTypes(Collections.<BatchInputFileType>singletonList(getBatchInputFileType()));
         payeeACHAccountExtractService.setParameterService(new MockParameterServiceImpl());
-        payeeACHAccountExtractService.setMailService(new DevelopmentMailServiceImpl());
+        payeeACHAccountExtractService.setEmailService(new EmailServiceImpl());
         payeeACHAccountExtractService.setDocumentService(createMockDocumentService());
         payeeACHAccountExtractService.setDataDictionaryService(createMockDataDictionaryService());
         payeeACHAccountExtractService.setPersonService(createMockPersonService());

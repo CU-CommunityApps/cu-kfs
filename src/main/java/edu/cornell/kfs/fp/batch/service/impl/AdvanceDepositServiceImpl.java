@@ -38,9 +38,10 @@ import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.service.BankService;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.util.GlobalVariablesUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.web.format.FormatException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -62,7 +63,6 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MailService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -131,7 +131,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
     protected BusinessObjectService businessObjectService;
     protected DateTimeService dateTimeService;
     protected DocumentService documentService;
-    protected MailService mailService;
+    protected EmailService emailService;
     protected NoteService noteService;
     protected ParameterService parameterService;
     protected PersonService personService;
@@ -725,11 +725,11 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("sendEmail() starting");
         }
-        MailMessage message = new MailMessage();
+        BodyMailMessage message = new BodyMailMessage();
 
         String returnAddress = parameterService.getParameterValueAsString(LoadAchIncomeFileStep.class, CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_FROM_EMAIL_ADDRESS);
         if (StringUtils.isEmpty(returnAddress)) {
-            returnAddress = mailService.getBatchMailingList();
+            returnAddress = emailService.getDefaultFromAddress();
         }
         message.setFromAddress(returnAddress);
         String subject = parameterService.getParameterValueAsString(LoadAchIncomeFileStep.class, CuFPParameterConstants.AchIncome.ACH_INCOME_SUMMARY_EMAIL_SUBJECT);
@@ -740,14 +740,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         String body = composeAchIncomeSummaryEmailBody(fileInformation);
         message.setMessage(body);
 
-        try {
-            mailService.sendMessage(message);
-        } catch (InvalidAddressException e) {
-            LOG.error("sendErrorEmail() Invalid email address. Message not sent", e);
-        } catch (MessagingException me) {
-            throw new RuntimeException("Could not send mail", me);
-        }
-
+        emailService.sendMessage(message, false);
     }
 
     private String composeAchIncomeSummaryEmailBody(FlatFileInformation flatFileInformation) {
@@ -1238,8 +1231,8 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     public void setParameterService(ParameterService parameterService) {

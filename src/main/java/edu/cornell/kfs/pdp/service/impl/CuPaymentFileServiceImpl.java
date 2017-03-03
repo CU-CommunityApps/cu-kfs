@@ -24,12 +24,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.exception.ParseException;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.rice.core.api.mail.MailMessage;
 import org.kuali.kfs.krad.exception.InvalidAddressException;
-import org.kuali.kfs.krad.service.MailService;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -40,7 +40,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
     
     private VendorService vendorService;
-    private MailService mailService;
+    private EmailService emailService;
     
     public CuPaymentFileServiceImpl() {
         super();
@@ -275,7 +275,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      * @param messageText The text to use as the body of the email message.
      */
     private void sendInactiveVendorsMessage(CustomerProfile customer, String messageText) {
-        MailMessage message = new MailMessage();
+        BodyMailMessage message = new BodyMailMessage();
         message.setFromAddress(parameterService.getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM));
         message.setSubject("Inactive vendors detected in PDP feed for customer: " + customer.getCustomerDescription());
@@ -285,22 +285,15 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 KfsParameterConstants.BATCH_COMPONENT, CUPdpParameterConstants.WARNING_INACTIVE_VENDOR_TO_EMAIL_ADDRESSES)));
         message.addToAddress(customer.getProcessingEmailAddr());
         
-        // Attempt to send the email. If an error occurs, just log it and allow execution to continue.
-        try {
-            mailService.sendMessage(message);
-        } catch (InvalidAddressException e) {
-            LOG.error("Invalid email address(es) for inactive vendor warning. Message not sent.", e);
-        } catch (MessagingException e) {
-            LOG.error("Unexpected error sending inactive vendor warning email. Message not sent.", e);
-        }
+        emailService.sendMessage(message, false);
     }
 
     public void setVendorService(VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
 }
