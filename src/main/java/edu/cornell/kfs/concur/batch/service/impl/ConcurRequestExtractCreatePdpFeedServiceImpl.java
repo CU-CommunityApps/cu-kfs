@@ -2,16 +2,20 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import org.kuali.kfs.sys.batch.PhysicalFlatFileInformation;
+import org.kuali.kfs.sys.service.FileStorageService;
 
+import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractCreatePdpFeedService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
 
 public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurRequestExtractCreatePdpFeedService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
+    protected FileStorageService fileStorageService;
     protected ConcurRequestExtractFileService concurRequestExtractFileService;
     protected ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService;
 
@@ -26,20 +30,11 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
             for (String requestExtractFileName : filesToProcess) {
                 try {
                     LOG.info("Begin processing for filename: " + requestExtractFileName + ".");
-                    createPdpFeedFromRequestExtract(requestExtractFileName);
+                    getConcurRequestExtractFileService().processFile(requestExtractFileName);
                 } finally {
-                    getConcurRequestExtractFileService().performDoneFileTasks(requestExtractFileName);
+                    getFileStorageService().removeDoneFiles(Collections.singletonList(requestExtractFileName));
                 }
             }
-        }
-    }
-
-    private void createPdpFeedFromRequestExtract(String requestExtractFileName) {
-        if (getConcurRequestExtractFileService().processFile(requestExtractFileName)) {
-
-            getConcurRequestExtractFileService().performAcceptedRequestExtractFileTasks(requestExtractFileName);
-        } else {
-            getConcurRequestExtractFileService().performRejectedRequestExtractFileTasks(requestExtractFileName);
         }
     }
 
@@ -58,4 +53,13 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
     public ConcurRequestExtractFileValidationService getConcurRequestExtractFileValidationService() {
         return concurRequestExtractFileValidationService;
     }
+
+    public void setFileStorageService(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
+    }
+
+    public FileStorageService getFileStorageService() {
+        return fileStorageService;
+    }
+
 }

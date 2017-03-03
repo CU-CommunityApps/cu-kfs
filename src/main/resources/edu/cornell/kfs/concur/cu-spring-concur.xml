@@ -39,8 +39,6 @@
 				<value>${reports.directory}/concur</value>
 				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
-				<value>${staging.directory}/concur/requestExtract/accept</value>
-				<value>${staging.directory}/concur/requestExtract/reject</value>
 			</list>
 		</property>
 
@@ -160,13 +158,12 @@
 	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
+	    <property name="fileStorageService" ref="fileStorageService" />
 	</bean>
 
 	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
 	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
-	    <property name="acceptedDirectoryName" value="${staging.directory}/concur/requestExtract/accept" />
-	    <property name="rejectedDirectoryName" value="${staging.directory}/concur/requestExtract/reject" />
 	    <property name="batchInputFileService" ref="batchInputFileService" />
 	    <property name="batchInputFileType" ref="concurRequestExtractInputFileType" />
 	</bean>
@@ -296,7 +293,7 @@
         </property>
         <property name="fileNamePrefix" value="Standard_Travel_Request_Extract_"/>
         <property name="fileTypeIdentifier" value="concurRequestExtractInputFileType"/>
-        <property name="titleKey" value="message.batchUpload.title.achIncome"/>
+        <property name="titleKey" value="message.concur.requestExtract.title.createPdpFeedFile"/>
         <property name="processor" ref="concurRequestExtractFileService"/>
 	</bean>
 

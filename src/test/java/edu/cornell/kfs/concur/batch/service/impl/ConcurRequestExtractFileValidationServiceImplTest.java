@@ -17,6 +17,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEntryDetailFileLine;
+import edu.cornell.kfs.concur.batch.fixture.ConcurRequestExtractFileFixture;
 
 public class ConcurRequestExtractFileValidationServiceImplTest {
     private ConcurRequestExtractFileValidationServiceImpl concurRequestExtractFileValidationService;
@@ -34,80 +35,26 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
     
     @Test
     public void testHeaderAmountMatches() {
-        ConcurRequestExtractFile testFile = buildConcurRequestExtractFile();
-        if (concurRequestExtractFileValidationService.fileApprovedAmountsMatchHeaderApprovedAmount(testFile)) {
-            assertTrue("Valid: Header amount matched sum of row amounts from file.", true);
-        }
-        else {
-            assertTrue("Invalid: Header amount did NOT match sum of row amounts from file.", false);
-        } 
+        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.GOOD_FILE.createConcurRequestExtractFile();
+        assertTrue("Expected Result: Header amount SHOULD match sum of row amounts from file.", concurRequestExtractFileValidationService.fileApprovedAmountsMatchHeaderApprovedAmount(testFile));
     }
     
     @Test
     public void testHeaderAmountDoesNotMatch() {
-        ConcurRequestExtractFile testFile = buildConcurRequestExtractFile();
-        testFile.setTotalApprovedAmount(new KualiDecimal(9.87));
-        if (concurRequestExtractFileValidationService.fileApprovedAmountsMatchHeaderApprovedAmount(testFile)) {
-            assertTrue("Invalid: Header amount matched row sum. They should NOT have matched.", false);
-        }
-        else {
-            assertTrue("Valid: Header amount did NOT match sum of row amounts from file.", true);
-        } 
+        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_REQUEST_AMOUNT_FILE.createConcurRequestExtractFile();
+        assertFalse("Expected Result: Header amount should NOT match sum of row amounts from file.", concurRequestExtractFileValidationService.fileApprovedAmountsMatchHeaderApprovedAmount(testFile));
     }
-    
+
     @Test
     public void testHeaderRowCountMatches() {
-        ConcurRequestExtractFile testFile = buildConcurRequestExtractFile();
-        if (concurRequestExtractFileValidationService.fileRowCountMatchesHeaderRowCount(testFile)) {
-            assertTrue("Valid: Header row count file row count.", true);
-        }
-        else {
-            assertTrue("Invalid: Header should NOT have matched file row count", false);
-        } 
+        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.GOOD_FILE.createConcurRequestExtractFile();
+        assertTrue("ExpectedResult: Header row count should MATCH file row count.", concurRequestExtractFileValidationService.fileRowCountMatchesHeaderRowCount(testFile));
     }
-    
+
     @Test
     public void testHeaderRowCountDoesNotMatch() {
-        ConcurRequestExtractFile testFile = buildConcurRequestExtractFile();
-        testFile.setRecordCount(new Integer(3));
-        if (concurRequestExtractFileValidationService.fileRowCountMatchesHeaderRowCount(testFile)) {
-            assertTrue("Invalid: Header row count matched file row count. They should NOT have matched.", false);
-        }
-        else {
-            assertTrue("Valid: Header row count did NOT match file row count.", true);
-        } 
+        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_FILE_COUNT_FILE.createConcurRequestExtractFile();
+        assertFalse("Expected Result: Header row count should NOT match file row count.", concurRequestExtractFileValidationService.fileRowCountMatchesHeaderRowCount(testFile));
     }
-    
-    protected ConcurRequestExtractFile buildConcurRequestExtractFile() {
-        ConcurRequestExtractFile testFile = new ConcurRequestExtractFile();
-        Date today = new Date(Calendar.getInstance().getTimeInMillis());
-        testFile.setBatchDate(today);
-        testFile.setRecordCount(13);
-        testFile.setTotalApprovedAmount(new KualiDecimal(5253.33));
-        testFile.getRequestDetails().add(buildConcurRequestExtractRequestDetailFileLine(today, new String("34YA"), new KualiDecimal(10.00), 1));
-        testFile.getRequestDetails().add(buildConcurRequestExtractRequestDetailFileLine(today, new String("34YE"), new KualiDecimal(40.00), 2));
-        testFile.getRequestDetails().add(buildConcurRequestExtractRequestDetailFileLine(today, new String("34YH"), new KualiDecimal(200.00), 1));
-        testFile.getRequestDetails().add(buildConcurRequestExtractRequestDetailFileLine(today, new String("34YK"), new KualiDecimal(3.33), 3));
-        testFile.getRequestDetails().add(buildConcurRequestExtractRequestDetailFileLine(today, new String("34YN"), new KualiDecimal(5000.00), 1));
-        return testFile;
-    }
-    
-    protected ConcurRequestExtractRequestDetailFileLine buildConcurRequestExtractRequestDetailFileLine(Date batchDate, String requestId, KualiDecimal requestAmount, int numberOfEntryDetails) {
-        ConcurRequestExtractRequestDetailFileLine detailLine = new ConcurRequestExtractRequestDetailFileLine();
-        detailLine.setBatchDate(batchDate);
-        detailLine.setRequestId(requestId);
-        detailLine.setRequestAmount(requestAmount);
-        for (int i=1; i<=numberOfEntryDetails; i++) {
-            detailLine.getRequestEntryDetails().add(buildConcurRequestExtractRequestEntryDetailFileLine(new Integer(numberOfEntryDetails), requestId));
-        }
-        return detailLine;
-    }
-    
-    
-    protected ConcurRequestExtractRequestEntryDetailFileLine buildConcurRequestExtractRequestEntryDetailFileLine(Integer sequenceNumber, String requestId) {
-        ConcurRequestExtractRequestEntryDetailFileLine entryDetailLine = new ConcurRequestExtractRequestEntryDetailFileLine();
-        entryDetailLine.setSequenceNumber(sequenceNumber);
-        entryDetailLine.setRequestId(requestId);
-        return entryDetailLine;
-    }
+
 }

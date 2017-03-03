@@ -10,9 +10,4 @@ public interface ConcurRequestExtractFileService extends FlatFileDataHandler {
 
     boolean processFile(String requestExtractFileName);
 
-    void performDoneFileTasks(String requestExtractFileName);
-
-    void performRejectedRequestExtractFileTasks(String fileName);
-
-    void performAcceptedRequestExtractFileTasks(String fileName);
 }

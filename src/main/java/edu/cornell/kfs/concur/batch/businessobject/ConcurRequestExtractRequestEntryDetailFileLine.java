@@ -1,7 +1,5 @@
 package edu.cornell.kfs.concur.batch.businessobject;
 
-import java.util.ArrayList;
-
 public class ConcurRequestExtractRequestEntryDetailFileLine {
     private Integer sequenceNumber;
     private String requestId;

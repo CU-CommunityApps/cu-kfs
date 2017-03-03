@@ -23,8 +23,6 @@ import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationSe
 
 public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtractFileService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileServiceImpl.class);
-    protected String acceptedDirectoryName;
-    protected String rejectedDirectoryName;
     protected BatchInputFileType batchInputFileType;
     protected BatchInputFileService batchInputFileService;
     protected ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService;
@@ -36,9 +34,8 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
 
     public boolean processFile(String requestExtractFileName) {
         boolean processingSuccess = true;
-        Object parsedFile;
         try {
-            parsedFile = loadFile(requestExtractFileName);
+            Object parsedFile = loadFile(requestExtractFileName);
             processingSuccess = requestExtractHeaderRowValidatesToFileContents(parsedFile);
         } catch (RuntimeException re) {
             LOG.error("Caught exception trying to load: " + requestExtractFileName, re);
@@ -62,32 +59,6 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
         return headerValidationPassed;
     }
 
-    public void performRejectedRequestExtractFileTasks(String pathAndFileName) {
-        moveFile(pathAndFileName, getRejectedDirectoryName());
-    }
-
-    public void performAcceptedRequestExtractFileTasks(String pathAndFileName) {
-        moveFile(pathAndFileName, getAcceptedDirectoryName());
-    }
-
-    public void performDoneFileTasks(String requestExtractFileName) {
-        File doneFile = new File(StringUtils.substringBeforeLast(requestExtractFileName, ".") + ".done");
-        if (doneFile.exists()) {
-            doneFile.delete();
-        }
-    }
-
-    private void moveFile(String currentPathAndFile, String newPath) {
-        String newPathFileNameAndExtension = new String(newPath + ConcurConstants.FORWARD_SLASH + (StringUtils.substringAfterLast(currentPathAndFile, ConcurConstants.FORWARD_SLASH)));
-        LOG.info("Moving file From=" +currentPathAndFile+ "=   To=" +newPathFileNameAndExtension+ "=");
-        try {
-            FileUtils.moveFile(new File(currentPathAndFile), new File(newPathFileNameAndExtension));
-        } catch (IOException e) {
-            LOG.error("Unable to move file From=" + currentPathAndFile + "=  To=" + newPathFileNameAndExtension, e);
-            throw new RuntimeException(e);
-        }
-    }
-
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
     }
@@ -104,22 +75,6 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
         return batchInputFileType;
     }
 
-    public void setAcceptedDirectoryName(String acceptedDirectoryName) {
-        this.acceptedDirectoryName = acceptedDirectoryName;
-    }
-
-    public String getAcceptedDirectoryName() {
-        return this.acceptedDirectoryName;
-    }
-
-    public void setRejectedDirectoryName(String rejectedDirectoryName) {
-        this.rejectedDirectoryName = rejectedDirectoryName;
-    }
-
-    public String getRejectedDirectoryName() {
-        return this.rejectedDirectoryName;
-    }
-
     public void setConcurRequestExtractFileValidationService(ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService) {
         this.concurRequestExtractFileValidationService = concurRequestExtractFileValidationService;
     }
@@ -130,8 +85,7 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
 
     private Object loadFile(String fileName) {
         byte[] fileByteContent = safelyLoadFileBytes(fileName);
-        Object parsedObject;
-        parsedObject = getBatchInputFileService().parse(getBatchInputFileType(), fileByteContent);
+        Object parsedObject = getBatchInputFileService().parse(getBatchInputFileType(), fileByteContent);
         return parsedObject;
     }
 
