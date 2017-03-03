@@ -26,7 +26,7 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
                 success = processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName) && success;
             } catch (Exception e) {
                 success = false;
-                LOG.error("execute, there was an error processing a file: ", e);
+                LOG.error("execute, there was an unexpected error processing a file: ", e);
             } finally {
                 getFileStorageService().removeDoneFiles(Collections.singletonList(saeFileName));
             }
@@ -34,17 +34,17 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
         return success;
     }
 
-    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String fileName) {
+    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFileName) {
         boolean success = true;
-        LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + fileName);
+        LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFileName);
         try {
             ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
-                    .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(fileName);
+                    .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(saeFileName);
             success = getConcurStandardAccountingExtractService()
                     .extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
         } catch (ValidationException ve) {
             success = false;
-            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing " + fileName, ve);
+            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing " + saeFileName, ve);
         }
         return success;
     }
