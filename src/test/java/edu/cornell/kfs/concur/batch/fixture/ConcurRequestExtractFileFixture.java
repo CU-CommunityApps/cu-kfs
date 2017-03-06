@@ -46,4 +46,9 @@ public enum ConcurRequestExtractFileFixture {
         return testFile;
     }
     
+    public List<ConcurRequestExtractFile> createConcurRequestExtractFiles() {
+        List<ConcurRequestExtractFile> requestExtractFiles = new ArrayList<ConcurRequestExtractFile>();
+        requestExtractFiles.add(createConcurRequestExtractFile());
+        return requestExtractFiles;
+    }
 }

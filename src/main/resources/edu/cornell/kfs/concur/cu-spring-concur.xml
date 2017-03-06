@@ -39,6 +39,8 @@
 				<value>${reports.directory}/concur</value>
 				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
+				<value>${staging.directory}/concur/standardAccountingExtract</value>
+				<value>${staging.directory}/concur/standardAccountingExtract/reimbursement</value>
 			</list>
 		</property>
 
@@ -157,7 +159,6 @@
 	<bean id="concurRequestExtractCreatePdpFeedService" parent="concurRequestExtractCreatePdpFeedService-parentBean" />
 	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
-	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
 	    <property name="fileStorageService" ref="fileStorageService" />
 	</bean>
 

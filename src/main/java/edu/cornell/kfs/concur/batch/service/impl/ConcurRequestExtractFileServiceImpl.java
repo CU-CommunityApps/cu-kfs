@@ -34,29 +34,10 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
 
     public boolean processFile(String requestExtractFileName) {
         boolean processingSuccess = true;
-        try {
-            Object parsedFile = loadFile(requestExtractFileName);
-            processingSuccess = requestExtractHeaderRowValidatesToFileContents(parsedFile);
-        } catch (RuntimeException re) {
-            LOG.error("Caught exception trying to load: " + requestExtractFileName, re);
-            processingSuccess = false;
-        }
-        return processingSuccess;
-    }
-
-    public boolean requestExtractHeaderRowValidatesToFileContents(Object parsedFile) {
-        boolean headerValidationPassed = false;
+        Object parsedFile = loadFile(requestExtractFileName);
         List<ConcurRequestExtractFile> requestExtractFiles = (ArrayList<ConcurRequestExtractFile>) parsedFile;
-        if (requestExtractFiles.isEmpty() || requestExtractFiles.size() != 1) {
-            LOG.error("Header validation should have received single parsed file. More or less than one parsed file was detected.");
-        }
-        else {
-            ConcurRequestExtractFile requestExtractFile = requestExtractFiles.get(0);
-            LOG.info("batchDate=" + requestExtractFile.getBatchDate() + "=   recordCount=" + requestExtractFile.getRecordCount() + "=     totalApprovedAmount=" + requestExtractFile.getTotalApprovedAmount() + "=");
-            headerValidationPassed = (getConcurRequestExtractFileValidationService().fileRowCountMatchesHeaderRowCount(requestExtractFile) &&
-                                      getConcurRequestExtractFileValidationService().fileApprovedAmountsMatchHeaderApprovedAmount(requestExtractFile));
-        }
-        return headerValidationPassed;
+        processingSuccess = getConcurRequestExtractFileValidationService().requestExtractHeaderRowValidatesToFileContents(requestExtractFiles);
+        return processingSuccess;
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {

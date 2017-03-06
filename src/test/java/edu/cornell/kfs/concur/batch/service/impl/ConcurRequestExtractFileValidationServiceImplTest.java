@@ -3,7 +3,9 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -34,27 +36,21 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
     }
     
     @Test
-    public void testHeaderAmountMatches() {
-        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.GOOD_FILE.createConcurRequestExtractFile();
-        assertTrue("Expected Result: Header amount SHOULD match sum of row amounts from file.", concurRequestExtractFileValidationService.fileApprovedAmountsMatchHeaderApprovedAmount(testFile));
+    public void testHeaderAmountAndHeaderRowCountsMatch() {
+        List<ConcurRequestExtractFile> testFiles = ConcurRequestExtractFileFixture.GOOD_FILE.createConcurRequestExtractFiles();
+        assertTrue("Expected Result: Header amount SHOULD match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFiles));
     }
     
     @Test
     public void testHeaderAmountDoesNotMatch() {
-        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_REQUEST_AMOUNT_FILE.createConcurRequestExtractFile();
-        assertFalse("Expected Result: Header amount should NOT match sum of row amounts from file.", concurRequestExtractFileValidationService.fileApprovedAmountsMatchHeaderApprovedAmount(testFile));
-    }
-
-    @Test
-    public void testHeaderRowCountMatches() {
-        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.GOOD_FILE.createConcurRequestExtractFile();
-        assertTrue("ExpectedResult: Header row count should MATCH file row count.", concurRequestExtractFileValidationService.fileRowCountMatchesHeaderRowCount(testFile));
+        List<ConcurRequestExtractFile> testFiles = ConcurRequestExtractFileFixture.BAD_REQUEST_AMOUNT_FILE.createConcurRequestExtractFiles();
+        assertFalse("Expected Result: Header amount should NOT match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFiles));
     }
 
     @Test
     public void testHeaderRowCountDoesNotMatch() {
-        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_FILE_COUNT_FILE.createConcurRequestExtractFile();
-        assertFalse("Expected Result: Header row count should NOT match file row count.", concurRequestExtractFileValidationService.fileRowCountMatchesHeaderRowCount(testFile));
+        List<ConcurRequestExtractFile> testFiles = ConcurRequestExtractFileFixture.BAD_FILE_COUNT_FILE.createConcurRequestExtractFiles();
+        assertFalse("Expected Result: Header row count should NOT match file row count.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFiles));
     }
 
 }

@@ -17,7 +17,6 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
     protected FileStorageService fileStorageService;
     protected ConcurRequestExtractFileService concurRequestExtractFileService;
-    protected ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService;
 
     @Override
     public void createPdpFeedsFromRequestExtracts() {
@@ -44,14 +43,6 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
 
     public ConcurRequestExtractFileService getConcurRequestExtractFileService() {
         return concurRequestExtractFileService;
-    }
-
-    public void setConcurRequestExtractFileValidationService(ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService) {
-        this.concurRequestExtractFileValidationService = concurRequestExtractFileValidationService;
-    }
-
-    public ConcurRequestExtractFileValidationService getConcurRequestExtractFileValidationService() {
-        return concurRequestExtractFileValidationService;
     }
 
     public void setFileStorageService(FileStorageService fileStorageService) {

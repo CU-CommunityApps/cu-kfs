@@ -1,5 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
@@ -13,7 +14,20 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
 
-    public boolean fileRowCountMatchesHeaderRowCount(ConcurRequestExtractFile requestExtractFile) {
+    public boolean requestExtractHeaderRowValidatesToFileContents(List<ConcurRequestExtractFile> requestExtractFiles) {
+        boolean headerValidationPassed = false;
+        if (requestExtractFiles.isEmpty() || requestExtractFiles.size() != 1) {
+            LOG.error("Header validation should have received single parsed file. More or less than one parsed file was detected.");
+        }
+        else {
+            ConcurRequestExtractFile requestExtractFile = requestExtractFiles.get(0);
+            LOG.info("batchDate=" + requestExtractFile.getBatchDate() + "=   recordCount=" + requestExtractFile.getRecordCount() + "=     totalApprovedAmount=" + requestExtractFile.getTotalApprovedAmount() + "=");
+            headerValidationPassed = (fileRowCountMatchesHeaderRowCount(requestExtractFile) && fileApprovedAmountsMatchHeaderApprovedAmount(requestExtractFile));
+        }
+        return headerValidationPassed;
+    }
+
+    private boolean fileRowCountMatchesHeaderRowCount(ConcurRequestExtractFile requestExtractFile) {
         int fileLineCount = getTotalRequestFileRowCount(requestExtractFile);
         if (fileLineCount == requestExtractFile.getRecordCount()) {
             return true;
@@ -24,7 +38,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         }
     }
 
-    public boolean fileApprovedAmountsMatchHeaderApprovedAmount(ConcurRequestExtractFile requestExtractFile) {
+    private boolean fileApprovedAmountsMatchHeaderApprovedAmount(ConcurRequestExtractFile requestExtractFile) {
         KualiDecimal detailLinesAmountSumKualiDecimal = getTotalRequestFileRequestAmount(requestExtractFile);
         if (detailLinesAmountSumKualiDecimal.equals(requestExtractFile.getTotalApprovedAmount())) {
             return true;
