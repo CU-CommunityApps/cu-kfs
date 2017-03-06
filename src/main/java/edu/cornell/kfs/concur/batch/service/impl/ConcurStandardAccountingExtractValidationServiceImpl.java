@@ -17,7 +17,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         boolean valid = validateDetailCount(concurStandardAccountingExtractFile);
-        valid = validateAmounts(concurStandardAccountingExtractFile) && valid;
+        valid = validateAmountsAndDebitCreditCode(concurStandardAccountingExtractFile) && valid;
         valid = validateDate(concurStandardAccountingExtractFile.getBatchDate()) && valid;
         if (LOG.isDebugEnabled() && valid) {
             LOG.debug("validateConcurStandardAccountExtractFile, passed file level validation, the record counts, batch date, and journal totals are all correct.");
@@ -35,15 +35,15 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         if (valid) {
             LOG.debug("validateDetailCount, Number of detail lines is what we expected: " + actualNumberOfDetails);
         } else {
-            LOG.error("validateDetailCount, The header said there were " + numberOfDetailsInHeader + 
-                    " the but the actual number of details was " + actualNumberOfDetails);
+            LOG.error("validateDetailCount, The header said there were (" + numberOfDetailsInHeader + 
+                    ") detail lines expected, but the actual number of details were (" + actualNumberOfDetails + ")");
         }
         
         return valid;
     }
 
     @Override
-    public boolean validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+    public boolean validateAmountsAndDebitCreditCode(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
         KualiDecimal detailTotal = KualiDecimal.ZERO;
         boolean debbitCreditValid = true;
@@ -82,7 +82,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         if (valid) {
             LOG.debug("validateDate, found a valid date: " + date);
         } else {
-            LOG.error("validateDate, founda a null date.");
+            LOG.error("validateDate, found a a null date.");
         }
         return valid;
     }

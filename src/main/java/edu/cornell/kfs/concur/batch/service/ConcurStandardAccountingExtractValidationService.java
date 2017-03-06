@@ -10,7 +10,7 @@ public interface ConcurStandardAccountingExtractValidationService {
     
     boolean validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     
-    boolean validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+    boolean validateAmountsAndDebitCreditCode(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     
     boolean validateDebitCreditField(String debitCredit);
     
