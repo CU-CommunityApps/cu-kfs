@@ -159,6 +159,8 @@
 	    <property name="autoCancelBatchDao" ref="autoCancelBatchDao"/>
 	</bean>
 
+	<bean id="moveFileStep" class="edu.cornell.kfs.sys.batch.MoveFileStep" abstract="true" parent="step"/>
+
 <bean id="FlatFileObjectSpecification" abstract="true" class="org.kuali.kfs.sys.batch.FlatFilePrefixObjectSpecification" />
 
 	
