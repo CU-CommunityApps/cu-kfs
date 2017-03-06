@@ -2,18 +2,18 @@ package edu.cornell.kfs.concur.batch.service;
 
 import java.sql.Date;
 
-import org.kuali.kfs.krad.exception.ValidationException;
-
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 
 public interface ConcurStandardAccountingExtractValidationService {
     
-    void validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException;
+    boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     
-    void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException;
+    boolean validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     
-    void validateDebitCreditField(String debitCredit) throws ValidationException;
+    boolean validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     
-    void validateDate(Date date) throws ValidationException;
+    boolean validateDebitCreditField(String debitCredit);
+    
+    boolean validateDate(Date date);
 
 }

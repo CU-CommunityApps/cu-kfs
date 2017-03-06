@@ -11,24 +11,24 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 
 public class ConcurStandardAccountingExtractFileFixture {
     
-    public static ConcurStandardAccountingExtractFile buildConcurStandardAccountingExtractFile(double[] debits, double[] credits) {
+    public static ConcurStandardAccountingExtractFile buildConcurStandardAccountingExtractFile(KualiDecimal[] debits, KualiDecimal[] credits) {
         ConcurStandardAccountingExtractFile file = new ConcurStandardAccountingExtractFile();
         Date today = new Date(Calendar.getInstance().getTimeInMillis());
         file.setBatchDate(today);
         file.setRecordCount(new Integer(debits.length + credits.length));
         
-        double journalTotal = 0;
-        for (double debitAmount : debits) {
-            journalTotal += debitAmount;
+        KualiDecimal journalTotal = KualiDecimal.ZERO;
+        for (KualiDecimal debitAmount : debits) {
+            journalTotal = journalTotal.add(debitAmount);
             file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                    ConcurConstants.ConcurPdpConstants.DEBIT, new KualiDecimal(debitAmount)));
+                    ConcurConstants.ConcurPdpConstants.DEBIT, debitAmount));
         }
-        for (double creditAmount : credits) {
-            journalTotal += creditAmount;
+        for (KualiDecimal creditAmount : credits) {
+            journalTotal = journalTotal.add(creditAmount);
             file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                    ConcurConstants.ConcurPdpConstants.CREDIT, new KualiDecimal(creditAmount)));
+                    ConcurConstants.ConcurPdpConstants.CREDIT, creditAmount));
         }
-        file.setJournalAmountTotal(new KualiDecimal(journalTotal));
+        file.setJournalAmountTotal(journalTotal);
 
         return file;
     }

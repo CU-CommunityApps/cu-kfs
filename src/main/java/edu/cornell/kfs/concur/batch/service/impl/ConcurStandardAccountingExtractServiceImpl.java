@@ -16,7 +16,6 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
-import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
@@ -24,28 +23,18 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected String reimbursementFeedDirectory;
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType batchInputFileType;
-    protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
 
     @Override
-    public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(
-            String standardAccountingExtractFileName) throws ValidationException {
-        LOG.debug("Attempting to parse the file " + standardAccountingExtractFileName);
+    public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
+        LOG.debug("parseStandardAccoutingExtractFile, Attempting to parse the file " + standardAccountingExtractFileName);
 
-        ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = null;
-
-        try {
-            concurStandardAccountingExtractFile = buildConcurStandardAccountingExtractFile(standardAccountingExtractFileName);
-        } catch (org.kuali.kfs.sys.exception.ParseException e) {
-            LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Error parsing batch file: " + e.getMessage());
-            throw new ValidationException(e.getMessage());
-        }
+        ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = loadConcurStandardAccountingExtractFile(standardAccountingExtractFileName);
         logDetailedInfoForConcurStandardAccountingExtractFile(concurStandardAccountingExtractFile);
-        validateConcurStandardAccountExtractFile(concurStandardAccountingExtractFile);
 
         return concurStandardAccountingExtractFile;
     }
 
-    private ConcurStandardAccountingExtractFile buildConcurStandardAccountingExtractFile(String standardAccountingExtractFileName) {
+    private ConcurStandardAccountingExtractFile loadConcurStandardAccountingExtractFile(String standardAccountingExtractFileName) {
         ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile;
         File standardAccountingExtractFile = new File(standardAccountingExtractFileName);
         List parsed = (List) batchInputFileService.parse(batchInputFileType, safelyLoadFileBytes(standardAccountingExtractFile));
@@ -97,13 +86,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             }
         }
     }
-
-    protected void validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
-        getConcurStandardAccountingExtractValidationService().validateDetailCount(concurStandardAccountingExtractFile);
-        getConcurStandardAccountingExtractValidationService().validateAmounts(concurStandardAccountingExtractFile);
-        getConcurStandardAccountingExtractValidationService().validateDate(concurStandardAccountingExtractFile.getBatchDate());
-        LOG.info("validateConcurStandardAccountExtractFile, passed file levele validation, the record counts, batch date, and journal totals are all correct.");
-    }
     
     @Override
     public List<String> buildListOfFileNamesToBeProcessed() {
@@ -142,14 +124,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setBatchInputFileType(BatchInputFileType batchInputFileType) {
         this.batchInputFileType = batchInputFileType;
-    }
-
-    public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
-        return concurStandardAccountingExtractValidationService;
-    }
-
-    public void setConcurStandardAccountingExtractValidationService(ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService) {
-        this.concurStandardAccountingExtractValidationService = concurStandardAccountingExtractValidationService;
     }
 
 }

@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -14,67 +13,78 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValid
 
 public class ConcurStandardAccountingExtractValidationServiceImpl implements ConcurStandardAccountingExtractValidationService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class);
+    
+    @Override
+    public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        boolean valid = validateDetailCount(concurStandardAccountingExtractFile);
+        valid = validateAmounts(concurStandardAccountingExtractFile) && valid;
+        valid = validateDate(concurStandardAccountingExtractFile.getBatchDate()) && valid;
+        if (LOG.isDebugEnabled() && valid) {
+            LOG.debug("validateConcurStandardAccountExtractFile, passed file level validation, the record counts, batch date, and journal totals are all correct.");
+        }
+        return valid;
+    }
 
     @Override
-    public void validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+    public boolean validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         Integer numberOfDetailsInHeader = concurStandardAccountingExtractFile.getRecordCount();
         int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().size();
-        if (numberOfDetailsInHeader.intValue() != actualNumberOfDetails) {
-            String message = "The header said there were " + numberOfDetailsInHeader + " the but the actual number of details was " + actualNumberOfDetails;
-            LOG.debug("validateDetailCount, " + message);
-            throw new ValidationException(message);
+        
+        boolean valid = numberOfDetailsInHeader.intValue() == actualNumberOfDetails;
+        
+        if (valid) {
+            LOG.debug("validateDetailCount, Number of detail lines is what we expected: " + actualNumberOfDetails);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("validateDetailCount, Number of detail lines is what we expected.");
-            }
+            LOG.error("validateDetailCount, The header said there were " + numberOfDetailsInHeader + 
+                    " the but the actual number of details was " + actualNumberOfDetails);
         }
+        
+        return valid;
     }
 
     @Override
-    public void validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) throws ValidationException {
+    public boolean validateAmounts(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
         KualiDecimal detailTotal = KualiDecimal.ZERO;
-
+        boolean debbitCreditValid = true;
+        
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile
                 .getConcurStandardAccountingExtractDetailLines()) {
-            validateDebitCreditField(line.getJounalDebitCredit());
             detailTotal = detailTotal.add(line.getJournalAmount());
-
+            debbitCreditValid &= validateDebitCreditField(line.getJounalDebitCredit());
         }
-        if (journalTotal.doubleValue() != detailTotal.doubleValue()) {
-            String message = "The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")";
-            LOG.debug("validateAmounts, " + message);
-            throw new ValidationException(message);
+        
+        boolean journalTotalValidation = journalTotal.equals(detailTotal);
+        if (journalTotalValidation) {
+            LOG.debug("validateAmounts, journal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("validateAmounts, jornal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
-            }
+            LOG.error("validateAmounts, The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
         }
-
+        return journalTotalValidation && debbitCreditValid;
     }
 
     @Override
-    public void validateDebitCreditField(String debitCredit) throws ValidationException {
-        if(!StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) && 
-                !StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT)) {
-            LOG.debug("validateDebitCreditField, invalid debit or credit: " + debitCredit);
-            throw new ValidationException(debitCredit + " is not a valid valuee for the debit or credit field.");
-        } else {
+    public boolean validateDebitCreditField(String debitCredit) {
+        boolean valid = StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) || 
+                StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT);
+        
+        if (valid) {
             LOG.debug("validateDebitCreditField, found a valid debit/credit.");
+        } else {
+            LOG.error("validateDebitCreditField, invalid debit or credit: " + debitCredit);
         }
+        return valid;
     }
 
     @Override
-    public void validateDate(Date date) throws ValidationException {
-        if (date == null) { 
-            String message = "The Date must not be null.";
-            LOG.debug("validateDate, " + message);
-            throw new ValidationException(message);
+    public boolean validateDate(Date date) {
+        boolean valid = date != null;
+        if (valid) {
+            LOG.debug("validateDate, found a valid date: " + date);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("validateDate, found a valid date: " + date);
-            }
+            LOG.error("validateDate, founda a null date.");
         }
+        return valid;
     }
 
 }

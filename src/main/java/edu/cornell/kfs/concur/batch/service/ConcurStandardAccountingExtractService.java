@@ -8,7 +8,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 
 public interface ConcurStandardAccountingExtractService {
 
-    ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFileToStandardAccountingExtractFile(String standardAccountingExtractFileName) throws ValidationException;
+    ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException;
     
     List<String> buildListOfFileNamesToBeProcessed();
 

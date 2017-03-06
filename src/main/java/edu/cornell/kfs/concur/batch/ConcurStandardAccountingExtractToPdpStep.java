@@ -4,16 +4,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.FileStorageService;
 
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class);
     protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
+    protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     protected FileStorageService fileStorageService;
 
     @Override
@@ -37,14 +38,13 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
     protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFileName) {
         boolean success = true;
         LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFileName);
-        try {
-            ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
-                    .parseStandardAccoutingExtractFileToStandardAccountingExtractFile(saeFileName);
-            success = getConcurStandardAccountingExtractService()
-                    .extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
-        } catch (ValidationException ve) {
+        ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
+                .parseStandardAccoutingExtractFile(saeFileName);
+        if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
+            success = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
+        } else {
             success = false;
-            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, There was a validation error processing " + saeFileName, ve);
+            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, the SAE file failed high level validation.");
         }
         return success;
     }
@@ -59,6 +59,15 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
 
     public FileStorageService getFileStorageService() {
         return fileStorageService;
+    }
+
+    public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
+        return concurStandardAccountingExtractValidationService;
+    }
+
+    public void setConcurStandardAccountingExtractValidationService(
+            ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService) {
+        this.concurStandardAccountingExtractValidationService = concurStandardAccountingExtractValidationService;
     }
 
     public void setFileStorageService(FileStorageService fileStorageService) {
