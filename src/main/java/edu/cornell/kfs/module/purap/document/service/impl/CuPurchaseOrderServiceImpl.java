@@ -179,7 +179,7 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
      */
     @Override
     public List<Note> getPurchaseOrderNotes(Integer id) {
-        List<Note> notes = new ArrayList<Note>();
+        List<Note> notes = new ArrayList<>();
         PurchaseOrderDocument po = getPurchaseOrderByDocumentNumber(purchaseOrderDao.getOldestPurchaseOrderDocumentNumber(id));
 
         if (ObjectUtils.isNotNull(po)) {

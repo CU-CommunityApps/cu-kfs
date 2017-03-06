@@ -21,8 +21,6 @@
 <struts-config>
     <form-beans>
 
-        <form-bean name="SipImportForm"
-            type="edu.cornell.kfs.module.bc.document.web.struts.SipImportForm" />
                             <!-- Check Recon Form -->
         <form-bean name="CheckReconciliationReportForm"
             type="com.rsmart.kuali.kfs.cr.document.web.struts.CheckReconciliationReportForm" /> 
@@ -79,16 +77,6 @@
             <forward name="basic"
                 path="/jsp/sys/KualiBatchInputFileSet.jsp" />
         </action>     
-        
-        <action path="/budgetSipImport" name="SipImportForm"
-            input="/jsp/module/bc/SipImport.jsp"
-            type="edu.cornell.kfs.module.bc.document.web.struts.SipImportAction"
-            scope="session" parameter="methodToCall" validate="true"
-            attribute="KualiForm">
-            <set-property property="cancellable" value="true" />
-            <forward name="basic" path="/jsp/module/bc/SipImport.jsp" />
-            <forward name="lostSessionReturning" path="/jsp/module/bc/LostSessionReturning.jsp" />
-        </action>
         
 		<action path="/disencumbranceBatchUploadFileSet"
 			name="DisencumbranceKualiBatchInputFileSetForm" scope="request"

@@ -98,32 +98,14 @@
 			<property name="stagingDirectory" value="${staging.directory}/sys"/>
 	</bean>
 	
-	<bean id="jobListener" parent="jobListener-parentBean"/>
-	<bean id="jobListener-parentBean" class="edu.cornell.kfs.sys.batch.CuJobListener" abstract="true">
-		<property name="configurationService" ref="kualiConfigurationService" />
-		<property name="mailService" ref="mailService" />
-		<property name="dateTimeService" ref="dateTimeService" />
-	</bean>
-	
-	<!--  UPGRADE-911
-	<bean id="securityRequestOrganizationRoleTypeService" class="org.kuali.kfs.sys.identity.SecurityRequestOrganizationRoleTypeServiceImpl"/>
-    <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
-     <property name="serviceDefinition">
-       <bean parent="kfsService"
-         p:service-ref="securityRequestOrganizationRoleTypeService"
-         p:localServiceName="securityRequestOrganizationRoleTypeService" />
-     </property>
-    </bean>   
-	-->
-	
-	
+	<bean id="jobListener" class="edu.cornell.kfs.sys.batch.CuJobListener" parent="jobListener-parentBean"/>
+
 	<bean id="documentMaintenanceService" parent="documentMaintenanceService-parentBean"/>
 
     <bean id="documentMaintenanceService-parentBean" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl">
 	    <property name="documentMaintenanceDao" ref="documentMaintenanceDao"/>
     </bean>
 
- 	
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
 
     <bean id="documentReindexFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentReindexFlatFileInputType">
@@ -146,20 +128,19 @@
 	    </property>
 	</bean>
 
- 
-	<bean id="documentMaintenanceDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentMaintenanceDaoJdbc" >
+ 	<bean id="documentMaintenanceDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentMaintenanceDaoJdbc" >
 	    <property name="dataSource" ref="dataSource" />
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
-
 	<bean id="autoCancelBatchDao" parent="autoCancelBatchDao-parentBean"/>
 
-    <bean id="autoCancelBatchDao-parentBean" parent="platformAwareDao" class="edu.cornell.kfs.sys.dataaccess.impl.AutoCancelBatchDaoOjb">
-	    <property name="jcdAlias" value="kewDataSource" />
-    	<property name="documentService"><ref bean="documentService" /></property>
-    	<property name="businessObjectService"><ref bean="businessObjectService" /></property>
-    	<property name="parameterService"><ref bean="parameterService" /></property>
+    <bean id="autoCancelBatchDao-parentBean" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.sys.dataaccess.impl.AutoCancelBatchDaoJdbc">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="documentService" ref="documentService" />
+        <property name="parameterService" ref="parameterService" />
+        <property name="sessionDocumentService" ref="sessionDocumentService"/>
+        <property name="workflowDocumentService" ref="workflowDocumentService"/>
     </bean>
     
     	<bean id="fiscalYearMakersDao" parent="platformAwareDao" class="edu.cornell.kfs.sys.batch.dataaccess.impl.CuFiscalYearMakerDaoOjb" >
@@ -282,6 +263,10 @@
 	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
 	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
+	</bean>
+	
+	<bean id="cuMarshalService" parent="cuMarshalService-parentBean" />
+	<bean id="cuMarshalService-parentBean" class="edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl" abstract="true">
 	</bean>
 
 </beans>

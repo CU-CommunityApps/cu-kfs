@@ -109,8 +109,8 @@
 		<property name="financialSystemUserService">
 			<ref bean="financialSystemUserService" />
 		</property>
-		<property name="mailService">
-			<ref bean="mailService" />
+		<property name="emailService">
+			<ref bean="emailService" />
 		</property>
 		<property name="persistenceService">
 			<ref bean="persistenceService" />

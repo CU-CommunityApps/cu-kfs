@@ -117,6 +117,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
 
     public ElectronicInvoiceLoad loadElectronicInvoices() {
+        LOG.debug("loadElectronicInvoices() started");
 
         //add a step to check for directory paths
         prepareDirectories(getRequiredDirectoryNames());
@@ -128,11 +129,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         int failedCnt = 0;
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Invoice Base Directory - " + electronicInvoiceInputFileType.getDirectoryPath());
-            LOG.info("Invoice Accept Directory - " + acceptDirName);
-            LOG.info("Invoice Reject Directory - " + rejectDirName);
-        }
+        LOG.info("Invoice Base Directory - " + electronicInvoiceInputFileType.getDirectoryPath());
+        LOG.info("Invoice Accept Directory - " + acceptDirName);
+        LOG.info("Invoice Reject Directory - " + rejectDirName);
 
         if (StringUtils.isBlank(rejectDirName)) {
             throw new RuntimeException("Reject directory name should not be empty");
@@ -163,9 +162,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
         try {
-            /**
-             * Create, if not there
-             */
             FileUtils.forceMkdir(new File(acceptDirName));
             FileUtils.forceMkdir(new File(rejectDirName));
             FileUtils.forceMkdir(new File(extractFailureDirName));
@@ -173,12 +169,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             throw new RuntimeException(e);
         }
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info(filesToBeProcessed.length + " file(s) available for processing");
-        }
+        LOG.info(filesToBeProcessed.length + " file(s) available for processing");
 
         StringBuilder emailMsg = new StringBuilder();
-        // Process einvoice files
+
         for (File xmlFile : filesToBeProcessed) {
 
             LOG.info("Processing " + xmlFile.getName() + "....");
@@ -245,9 +239,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         sendSummary(finalText);
 
         clearLoadCounts(); // Need to clear the counts after each run, so the totals don't show cumulative counts with each subsequent run.
-         LOG.info("Processing completed");
+        LOG.info("Processing completed");
 
-         return eInvoiceLoad;
+        return eInvoiceLoad;
     }
 
 	private static String describeStackTraceElement(StackTraceElement element) {
@@ -267,12 +261,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		return description.toString();
 	}
 
-	protected void processAboveTheLineItem(PaymentRequestItem purapItem,
-			ElectronicInvoiceOrderHolder orderHolder) {
-
-		if (LOG.isInfoEnabled()) {
-			LOG.info("Processing above the line item");
-		}
+	protected void processAboveTheLineItem(PaymentRequestItem purapItem, ElectronicInvoiceOrderHolder orderHolder) {
+		LOG.info("Processing above the line item");
 
 		ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(purapItem.getItemLineNumber().intValue());
         // KFSPTS-1719 : investigation
@@ -280,60 +270,42 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         	itemHolder = ((CuElectronicInvoiceOrderHolder)orderHolder).getMisMatchItem();
         }
 		if (itemHolder == null) {
-			LOG.info("Electronic Invoice does not have item with Ref Item Line number "
-					+ purapItem.getItemLineNumber());
+			LOG.info("Electronic Invoice does not have item with Ref Item Line number " + purapItem.getItemLineNumber());
 			return;
 		}
 
 		purapItem.setItemUnitPrice(itemHolder.getInvoiceItemUnitPrice());
-		purapItem.setItemQuantity(new KualiDecimal(itemHolder
-				.getInvoiceItemQuantity()));
+		purapItem.setItemQuantity(new KualiDecimal(itemHolder.getInvoiceItemQuantity()));
 		purapItem.setItemTaxAmount(new KualiDecimal(itemHolder.getTaxAmount()));
-		purapItem
-				.setItemCatalogNumber(itemHolder.getInvoiceItemCatalogNumber());
+		purapItem.setItemCatalogNumber(itemHolder.getInvoiceItemCatalogNumber());
 		purapItem.setItemDescription(itemHolder.getInvoiceItemDescription());
 
 		// KFSUPGRADE-478
 		if (itemHolder.getSubTotalAmount() != null) {
 			purapItem.setExtendedPrice(itemHolder.getSubTotalAmount());
-
 		} else {
-
 			if (purapItem.getItemQuantity() != null) {
-				if (LOG.isInfoEnabled()) {
-					LOG.info("Item number " + purapItem.getItemLineNumber() + " needs calculation of extended " + "price from quantity "
-							+ purapItem.getItemQuantity() + " and unit cost " + purapItem.getItemUnitPrice());
-				}
+				LOG.info("Item number " + purapItem.getItemLineNumber() + " needs calculation of extended " + "price from quantity " + purapItem.getItemQuantity() + " and unit cost " + purapItem.getItemUnitPrice());
 				purapItem.setExtendedPrice(purapItem.getItemQuantity().multiply(new KualiDecimal(purapItem.getItemUnitPrice())));
 			} else {
-				if (LOG.isInfoEnabled()) {
-					LOG.info("Item number " + purapItem.getItemLineNumber() + " has no quantity so extended price "
-							+ "equals unit price of " + purapItem.getItemUnitPrice());
-				}
+				LOG.info("Item number " + purapItem.getItemLineNumber() + " has no quantity so extended price " + "equals unit price of " + purapItem.getItemUnitPrice());
 				purapItem.setExtendedPrice(new KualiDecimal(purapItem.getItemUnitPrice()));
 			}
 		}
-
 	}
 
-	protected void processItemsForDiscount(PaymentRequestDocument preqDocument,
-			ElectronicInvoiceOrderHolder orderHolder) {
-
-		if (LOG.isInfoEnabled()) {
-			LOG.info("Processing payment request items for discount");
-		}
+	protected void processItemsForDiscount(PaymentRequestDocument preqDocument, ElectronicInvoiceOrderHolder orderHolder) {
+		LOG.info("Processing payment request items for discount");
 
 		if (!orderHolder.isItemTypeAvailableInItemMapping(ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT)) {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("Skipping discount processing since there is no mapping of discount type for this vendor");
-			}
+			LOG.info("Skipping discount processing since there is no mapping of discount type for this vendor");
 			return;
 		}
 
-		if (orderHolder.getInvoiceDiscountAmount() == null || orderHolder.getInvoiceDiscountAmount() == BigDecimal.ZERO) {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("Skipping discount processing since there is no discount amount found in the invoice file");
-			}
+		if (orderHolder.getInvoiceDiscountAmount() == null ||
+            orderHolder.getInvoiceDiscountAmount() == BigDecimal.ZERO) {
+			LOG.info("Skipping discount processing since there is no discount amount found in the invoice file");
+
 			return;
 		}
 
@@ -343,47 +315,34 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		boolean alreadyProcessedInvoiceDiscount = false;
 		boolean hasKualiPaymentTermsDiscountItem = false;
 
-		// if e-invoice amount is negative... it is a penalty and we must pay
-		// extra
+		// if e-invoice amount is negative... it is a penalty and we must pay extra
 		for (int i = 0; i < preqItems.size(); i++) {
 
 			PaymentRequestItem preqItem = preqItems.get(i);
 
-			hasKualiPaymentTermsDiscountItem = hasKualiPaymentTermsDiscountItem
-					|| (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE, preqItem.getItemTypeCode()));
+			hasKualiPaymentTermsDiscountItem = hasKualiPaymentTermsDiscountItem || (StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE, preqItem.getItemTypeCode()));
 
 			if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT,orderHolder)) {
 
 				alreadyProcessedInvoiceDiscount = true;
 
 				if (StringUtils.equals(preqItem.getItemTypeCode(),PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE)) {
-					// Item is kuali payment terms discount item... must perform
-					// calculation
-					// if discount item exists on PREQ and discount dollar
-					// amount exists... use greater amount
-					if (LOG.isInfoEnabled()) {
-						LOG.info("Discount Check - E-Invoice matches PREQ item type '" + preqItem.getItemTypeCode() + "'... now checking for amount");
-					}
+					// Item is kuali payment terms discount item... must perform calculation
+					// if discount item exists on PREQ and discount dollar amount exists... use greater amount
+					LOG.info("Discount Check - E-Invoice matches PREQ item type '" + preqItem.getItemTypeCode() + "'... now checking for amount");
 
-					KualiDecimal preqExtendedPrice = preqItem
-							.getExtendedPrice() == null ? KualiDecimal.ZERO
-							: preqItem.getExtendedPrice();
+					KualiDecimal preqExtendedPrice = preqItem.getExtendedPrice() == null ? KualiDecimal.ZERO : preqItem.getExtendedPrice();
 					if ((discountValueToUse.compareTo(preqExtendedPrice)) < 0) {
-						if (LOG.isInfoEnabled()) {
-							LOG.info("Discount Check - Using E-Invoice amount (" + discountValueToUse
-									+ ") as it is more discount than current payment terms amount " + preqExtendedPrice);
-						}
+						LOG.info("Discount Check - Using E-Invoice amount (" + discountValueToUse + ") as it is more discount than current payment terms amount " + preqExtendedPrice);
 						preqItem.setItemUnitPrice(discountValueToUse.bigDecimalValue());
 						preqItem.setExtendedPrice(discountValueToUse);
 					}
 				} else {
 					// item is not payment terms discount item... just add value
-					// if discount item exists on PREQ and discount dollar
-					// amount exists... use greater amount
-					if (LOG.isInfoEnabled()) {
-						LOG.info("Discount Check - E-Invoice matches PREQ item type '" + preqItem.getItemTypeCode() + "'");
-						LOG.info("Discount Check - Using E-Invoice amount (" + discountValueToUse + ") as it is greater than payment terms amount");
-					}
+					// if discount item exists on PREQ and discount dollar amount exists... use greater amount
+                    LOG.info("Discount Check - E-Invoice matches PREQ item type '" + preqItem.getItemTypeCode() + "'");
+                    LOG.info("Discount Check - Using E-Invoice amount (" + discountValueToUse + ") as it is greater than payment terms amount");
+
 					preqItem.addToUnitPrice(discountValueToUse.bigDecimalValue());
 					preqItem.addToExtendedPrice(discountValueToUse);
 				}
@@ -400,21 +359,19 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
 		if (!alreadyProcessedInvoiceDiscount) {
 			String itemTypeRequired = PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE;
-			// if we already have a PMT TERMS DISC item but the e-invoice
-			// discount wasn't processed... error out
-			// if the item mapping for e-invoice discount item is not PMT TERMS
-			// DISC item and we haven't processed it... error out
+			// if we already have a PMT TERMS DISC item but the e-invoice  discount wasn't processed... error out
+			// if the item mapping for e-invoice discount item is not PMT TERMS DISC item and we haven't processed it... error out
 
-			if (hasKualiPaymentTermsDiscountItem || !orderHolder.isItemTypeAvailableInItemMapping(ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT)) {
-				ElectronicInvoiceRejectReason rejectReason = matchingService
-						.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_DISCOUNT_ERROR, null, orderHolder.getFileName());
+			if (hasKualiPaymentTermsDiscountItem ||
+                !orderHolder.isItemTypeAvailableInItemMapping(ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT)) {
+				ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_DISCOUNT_ERROR, null, orderHolder.getFileName());
 				orderHolder.addInvoiceOrderRejectReason(rejectReason);
 				return;
 			} else if (discountValueToUse.isNonZero()) {
 				PaymentRequestItem newItem = new PaymentRequestItem();
 				newItem.setItemUnitPrice(discountValueToUse.bigDecimalValue());
 				// KFSUPGRADE-473
-			//	newItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE);
+			    //	newItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE);
                 newItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE);
                 newItem.setItemDescription(CUPurapConstants.ElectronicInvoice.DISCOUNT_DESCRIPTION);
 				newItem.setExtendedPrice(discountValueToUse);
@@ -423,10 +380,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			}
 		}
 
-		if (LOG.isInfoEnabled()) {
-			LOG.info("Completed processing payment request items for discount");
-		}
-
+		LOG.info("Completed processing payment request items for discount");
 	}
 
     protected void removeEmptyItems(List<PurApItem> preqItems) {
@@ -466,9 +420,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             }
 
             if (vendorDetail != null) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Vendor match found - " + vendorDetail.getVendorNumber());
-                }
+                LOG.info("Vendor match found - " + vendorDetail.getVendorNumber());
                 eInvoice.setVendorHeaderID(vendorDetail.getVendorHeaderGeneratedIdentifier());
                 eInvoice.setVendorDetailID(vendorDetail.getVendorDetailAssignedIdentifier());
                 eInvoice.setVendorName(vendorDetail.getVendorName());
@@ -499,9 +451,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             }
 
             if (vendorDetail != null) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Vendor [" + vendorDetail.getVendorNumber() + "] match found for the DUNS - " + rejectDocument.getVendorDunsNumber());
-                }
+                LOG.info("Vendor [" + vendorDetail.getVendorNumber() + "] match found for the DUNS - " + rejectDocument.getVendorDunsNumber());
                 rejectDocument.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
                 rejectDocument.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
                 rejectDocument.setVendorDetail(vendorDetail);
@@ -567,40 +517,27 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
         
         //Collections.reverse(documentIdList);
-        if ( LOG.isInfoEnabled() ) {
-            LOG.info("EIRTs to Route: "+documentIdList);
-        }
-        
+        LOG.info("EIRTs to Route: "+documentIdList);
+
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
         WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         
         for (String eirtDocumentId: documentIdList) {
             try {
-            	if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Retrieving EIRT document # " + eirtDocumentId + ".");
-                }
+                LOG.info("Retrieving EIRT document # " + eirtDocumentId + ".");
                 ElectronicInvoiceRejectDocument eirtDocument = (ElectronicInvoiceRejectDocument)documentService.getByDocumentHeaderId(eirtDocumentId);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Routing EIRT document # " + eirtDocumentId + ".");
-                }
+                LOG.info("Routing EIRT document # " + eirtDocumentId + ".");
                 documentService.prepareWorkflowDocument(eirtDocument);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("EIRT document # " + eirtDocumentId + " prepared for workflow.");
-                }
+                LOG.info("EIRT document # " + eirtDocumentId + " prepared for workflow.");
                 // calling workflow service to bypass business rule checks
                 workflowDocumentService.route(eirtDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("EIRT document # " + eirtDocumentId + " routed.");
-                }
-            }
-            catch (WorkflowException e) {
+                LOG.info("EIRT document # " + eirtDocumentId + " routed.");
+            } catch (WorkflowException e) {
                 LOG.error("Error routing document # " + eirtDocumentId + " " + e.getMessage());
                 throw new RuntimeException(e.getMessage(),e);
             }
         }
 
-  
-    	
     	return true;
     }
     
@@ -621,41 +558,29 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
         
         //Collections.reverse(documentIdList);
-        if ( LOG.isInfoEnabled() ) {
-            LOG.info("PREQs to Route: "+documentIdList);
-        }
-        
+        LOG.info("PREQs to Route: "+documentIdList);
+
         DocumentService documentService = SpringContext.getBean(DocumentService.class);
         WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         
         for (String preqDocumentId: documentIdList) {
             try {
-            	if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Retrieving PREQ document # " + preqDocumentId + ".");
-                }
+                LOG.info("Retrieving PREQ document # " + preqDocumentId + ".");
             	PaymentRequestDocument preqDocument = (PaymentRequestDocument)documentService.getByDocumentHeaderId(preqDocumentId);
-                if ( LOG.isInfoEnabled() ) {
-                    LOG.info("Routing PREQ document # " + preqDocumentId + ".");
-                }
-                
+                LOG.info("Routing PREQ document # " + preqDocumentId + ".");
+
                 if (preqDocument.getPaymentRequestElectronicInvoiceIndicator()) {
                 	documentService.prepareWorkflowDocument(preqDocument);
-                	if ( LOG.isInfoEnabled() ) {
-                		LOG.info("PREQ document # " + preqDocumentId + " prepared for workflow.");
-                	}
+             		LOG.info("PREQ document # " + preqDocumentId + " prepared for workflow.");
                 	// calling workflow service to bypass business rule checks
                 	workflowDocumentService.route(preqDocument.getDocumentHeader().getWorkflowDocument(), "Routed by electronic invoice batch job", null);
-                	if ( LOG.isInfoEnabled() ) {
-                		LOG.info("PREQ document # " + preqDocumentId + " routed.");
-                	}
+              		LOG.info("PREQ document # " + preqDocumentId + " routed.");
                 }
-            }
-            catch (WorkflowException e) {
+            } catch (WorkflowException e) {
                 LOG.error("Error routing document # " + preqDocumentId + " " + e.getMessage());
                 throw new RuntimeException(e.getMessage(),e);
             }
         }
-
     	
     	return true;
     }
@@ -745,13 +670,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
          * Even if there is an exception in the reject doc routing, all the files marked as reject will
          * be moved to the reject dir
          */
-      //  moveFileList(eInvoiceLoad.getRejectFilesToMove());
+        //  moveFileList(eInvoiceLoad.getRejectFilesToMove());
 
         return summaryMessage;
     }
 
-    protected void saveRejectDocument(ElectronicInvoiceRejectDocument rejectDoc,
-                                     Map savedLoadSummariesMap) {
+    protected void saveRejectDocument(ElectronicInvoiceRejectDocument rejectDoc, Map savedLoadSummariesMap) {
 
         LOG.info("Saving Invoice Reject for DUNS '" + rejectDoc.getVendorDunsNumber() + "'");
 
@@ -772,10 +696,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected PaymentRequestDocument createPaymentRequest(ElectronicInvoiceOrderHolder orderHolder) {
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Creating Payment Request document");
-        }
+        LOG.info("Creating Payment Request document");
 
         KNSGlobalVariables.getMessageList().clear();
 
@@ -995,9 +916,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     // KFSUPGRADE-480/KFSUPGRADE-484
     
     @Transactional
-    protected boolean processElectronicInvoice(ElectronicInvoiceLoad eInvoiceLoad,
-                                             File invoiceFile,
-                                             byte[] xmlAsBytes) {
+    protected boolean processElectronicInvoice(ElectronicInvoiceLoad eInvoiceLoad, File invoiceFile, byte[] xmlAsBytes) {
 
         // Checks parameter to see if files should be moved to the accept/reject folders after load
         boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
@@ -1173,27 +1092,21 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         boolean success = true;
         if(moveFiles) {
         	if(isExtractFailure) {
-	            if (LOG.isInfoEnabled()) {
-	                LOG.info(invoiceFile.getName() + " has caused a batch extract failure.");
-	            }
+                LOG.info(invoiceFile.getName() + " has caused a batch extract failure.");
 	        	success = this.moveFile(invoiceFile, getExtractFailureDirName());
 	            if (!success) {
 	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
 	                throw new PurError(errorMessage);
 	            }
         	} else if(isCompleteFailure || (ObjectUtils.isNotNull(eInvoice) && eInvoice.isFileRejected())) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info(invoiceFile.getName() + " has been rejected.");
-                }
+                LOG.info(invoiceFile.getName() + " has been rejected.");
 	        	success = this.moveFile(invoiceFile, getRejectDirName());
 	            if (!success) {
 	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
 	                throw new PurError(errorMessage);
 	            }
 	        } else {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info(invoiceFile.getName() + " has been accepted");
-                }
+                LOG.info(invoiceFile.getName() + " has been accepted");
 	        	success = this.moveFile(invoiceFile, getAcceptDirName());
 	            if (!success) {
 	                String errorMessage = "File with name '" + invoiceFile.getName() + "' could not be moved";
@@ -1233,15 +1146,11 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
     
     public ElectronicInvoiceRejectDocument createRejectDocument(ElectronicInvoice eInvoice, ElectronicInvoiceOrder electronicInvoiceOrder, ElectronicInvoiceLoad eInvoiceLoad) {
-
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Creating reject document [DUNS=" + eInvoice.getDunsNumber() + ",POID=" + electronicInvoiceOrder.getInvoicePurchaseOrderID() + "]");
-        }
+        LOG.info("Creating reject document [DUNS=" + eInvoice.getDunsNumber() + ",POID=" + electronicInvoiceOrder.getInvoicePurchaseOrderID() + "]");
 
         ElectronicInvoiceRejectDocument eInvoiceRejectDocument;
 
         try {
-
             eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) SpringContext.getBean(DocumentService.class).getNewDocument("EIRT");
 
             eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
@@ -1252,21 +1161,17 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             eInvoiceRejectDocument.setFileLevelData(eInvoice);
             eInvoiceRejectDocument.setInvoiceOrderLevelData(eInvoice, electronicInvoiceOrder);
 
-            //MSU fix
             SpringContext.getBean(DocumentService.class).saveDocument(eInvoiceRejectDocument);
 
             String noteText = "Invoice file";
             attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
 
             eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
-
         } catch (WorkflowException e) {
             throw new RuntimeException(e);
         }
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Reject document has been created (DocNo=" + eInvoiceRejectDocument.getDocumentNumber() + ")");
-        }
+        LOG.info("Reject document has been created (DocNo=" + eInvoiceRejectDocument.getDocumentNumber() + ")");
 
         emailTextErrorList.append("DUNS Number - " + eInvoice.getDunsNumber() + " " +eInvoice.getVendorName()+ ":\n");
         emailTextErrorList.append("An e-invoice from file '" + eInvoice.getFileName() + "' has been rejected due to the following error(s):\n");
@@ -1291,12 +1196,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             emailTextErrorList.append("    - " + reason.getInvoiceRejectReasonDescription() + "\n");
             emailTextErrorList.append("    - PO  " + eInvoiceRejectDocument.getPurchaseOrderIdentifier() + "\n");
             emailTextErrorList.append("    - EIRT  " + eInvoiceRejectDocument.getDocumentNumber() + "\n");
-          //  addRejectReasonsToNote("Reject Reason " + index + ". " + reason.getInvoiceRejectReasonDescription(), eInvoiceRejectDocument);
+            //  addRejectReasonsToNote("Reject Reason " + index + ". " + reason.getInvoiceRejectReasonDescription(), eInvoiceRejectDocument);
             rejectReason = " " + index + ". " + reason.getInvoiceRejectReasonDescription() + "\n";
             if (rejectReasonNote.length() + rejectReason.length() > noteTextMaxLength) {
-          	  rejectReasonNotes.add(rejectReasonNote);
-          	  rejectReasonNote = new StringBuffer();
-          	  rejectReasonNote.append("Reject document creation reasons continued:\n");
+          	    rejectReasonNotes.add(rejectReasonNote);
+          	    rejectReasonNote = new StringBuffer();
+          	    rejectReasonNote.append("Reject document creation reasons continued:\n");
             }
             rejectReasonNote.append(rejectReason);
             index++;
@@ -1506,7 +1411,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                     rejectReasonsToDelete.add(rejectReason);
                 }
             }
-     }
+        }
 
         //  remove the flagged reject reasons
         if (!rejectReasonsToDelete.isEmpty()) {
@@ -1760,7 +1665,5 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             LOG.error("Error creating reject reason note - " + e.getMessage());
         }
     }
-
-
 
 }
