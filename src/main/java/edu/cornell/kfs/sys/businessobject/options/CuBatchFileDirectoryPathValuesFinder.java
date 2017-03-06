@@ -8,12 +8,15 @@ import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class CuBatchFileDirectoryPathValuesFinder extends KeyValuesBase {
 
     public List<KeyValue> getKeyValues() {
-        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
-        return SpringContext.getBean(BatchFileDirectoryService.class).buildDirectoryKeyValuesList(rootDirectories);
+//        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
+//        return SpringContext.getBean(BatchFileDirectoryService.class).buildDirectoryKeyValuesList(rootDirectories);
+        return SpringContext.getBean(BatchFileDirectoryService.class).buildStagingAndReportsDirectories();
     }
 
 }

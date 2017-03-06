@@ -7,13 +7,15 @@ import org.kuali.rice.core.api.util.KeyValue;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class CreateDoneBatchFileDirectoryPathValuesFinder extends CuBatchFileDirectoryPathValuesFinder {
 	
 	@Override
 	public List<KeyValue> getKeyValues() {
-		List<File> rootDirectories = CuBatchFileUtils.retrieveBatchFileStagingRootDirectories();
-        return SpringContext.getBean(BatchFileDirectoryService.class).buildDirectoryKeyValuesList(rootDirectories);
+//		List<File> rootDirectories = CuBatchFileUtils.retrieveBatchFileStagingRootDirectories();
+//        return SpringContext.getBean(BatchFileDirectoryService.class).buildDirectoryKeyValuesList(rootDirectories);
+		return SpringContext.getBean(BatchFileDirectoryService.class).buildStagingDirectories();
 	}
 
 }
