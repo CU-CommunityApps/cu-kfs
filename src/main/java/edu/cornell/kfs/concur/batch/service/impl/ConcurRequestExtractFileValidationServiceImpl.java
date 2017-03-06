@@ -26,7 +26,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
 
     public boolean fileApprovedAmountsMatchHeaderApprovedAmount(ConcurRequestExtractFile requestExtractFile) {
         KualiDecimal detailLinesAmountSumKualiDecimal = getTotalRequestFileRequestAmount(requestExtractFile);
-        if (detailLinesAmountSumKualiDecimal.doubleValue() == requestExtractFile.getTotalApprovedAmount().doubleValue()) {
+        if (detailLinesAmountSumKualiDecimal.equals(requestExtractFile.getTotalApprovedAmount())) {
             return true;
         }
         else {
@@ -60,16 +60,16 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     }
 
     private KualiDecimal getTotalRequestFileRequestAmount(ConcurRequestExtractFile requestExtractFile) {
-        double detailLinesApprovedAmountSum = 0;
+        KualiDecimal detailLinesApprovedAmountSum = KualiDecimal.ZERO;
         if ( (requestExtractFile.getRequestDetails() == null) || (requestExtractFile.getRequestDetails().isEmpty()) ) {
-            return new KualiDecimal(detailLinesApprovedAmountSum);
+            return detailLinesApprovedAmountSum;
         }
         else {
             List<ConcurRequestExtractRequestDetailFileLine> requestDetailLines = requestExtractFile.getRequestDetails();
             for (ConcurRequestExtractRequestDetailFileLine detailLine : requestDetailLines) {
-                detailLinesApprovedAmountSum = detailLinesApprovedAmountSum + detailLine.getRequestAmount().doubleValue();
+                detailLinesApprovedAmountSum = detailLinesApprovedAmountSum.add(detailLine.getRequestAmount());
             }
-            return new KualiDecimal(detailLinesApprovedAmountSum);
+            return detailLinesApprovedAmountSum;
         }
     }
 

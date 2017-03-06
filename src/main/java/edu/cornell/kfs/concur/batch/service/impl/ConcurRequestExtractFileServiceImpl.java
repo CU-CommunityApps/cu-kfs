@@ -109,18 +109,4 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
         return fileByteContent;
     }
 
-    public void process(String fileName, Object parsedFileContents) {
-        LOG.error("process(String fileName, Object parsedFileContents) invoked but not implemented in extended class.");
-    }
-
-    public boolean validate(Object parsedFileContents) {
-        LOG.error("validate(Object parsedFileContents) invoked but not implemented in extended class.");
-        return false;
-    }
-
-    public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
-        LOG.error("getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) invoked but not implemented in extended class.");
-        return null;
-    }
-
 }

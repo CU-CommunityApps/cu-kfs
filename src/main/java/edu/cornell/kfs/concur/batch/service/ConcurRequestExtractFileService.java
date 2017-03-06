@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.kuali.kfs.sys.batch.FlatFileDataHandler;
 
-public interface ConcurRequestExtractFileService extends FlatFileDataHandler {
+public interface ConcurRequestExtractFileService {
 
     List<String> getUnprocessedRequestExtractFiles();
 

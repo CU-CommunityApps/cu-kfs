@@ -294,7 +294,6 @@
         <property name="fileNamePrefix" value="Standard_Travel_Request_Extract_"/>
         <property name="fileTypeIdentifier" value="concurRequestExtractInputFileType"/>
         <property name="titleKey" value="message.concur.requestExtract.title.createPdpFeedFile"/>
-        <property name="processor" ref="concurRequestExtractFileService"/>
 	</bean>
 
 </beans>
