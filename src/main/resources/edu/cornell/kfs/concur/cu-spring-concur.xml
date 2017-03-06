@@ -74,6 +74,8 @@
 		</property>
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
+		<property name="cuMarshalService" ref="cuMarshalService"/>
+		<property name="dataDictionaryService" ref="dataDictionaryService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
