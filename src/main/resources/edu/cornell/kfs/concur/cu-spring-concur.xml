@@ -41,6 +41,8 @@
 				<value>${staging.directory}/concur/requestExtract</value>
 				<value>${staging.directory}/concur/requestExtract/accept</value>
 				<value>${staging.directory}/concur/requestExtract/reject</value>
+				<value>${staging.directory}/concur/standardAccountingExtract</value>
+				<value>${staging.directory}/concur/standardAccountingExtract/reimbursement</value>
 			</list>
 		</property>
 
@@ -62,10 +64,9 @@
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractToPdpStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurStandardAccountingExtractToPdpStep">
-		<property name="directoryPath">
-			<value>${staging.directory}/concur/standardAccountingExtract/</value>
-		</property>
 		<property name="concurStandardAccountingExtractService" ref="concurStandardAccountingExtractService" />
+		<property name="fileStorageService" ref="fileStorageService"/>
+		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />
@@ -73,7 +74,82 @@
 		<property name="reimbursementFeedDirectory">
 			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
 		</property>
+		<property name="batchInputFileService" ref="batchInputFileService"/>
+		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 	</bean>
+	
+	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
+	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">
+	</bean>
+	
+	<bean id="standardAccountExtractFileType" parent="FlatFileParser">
+        <property name="flatFileSpecification">
+            <bean class="org.kuali.kfs.sys.batch.DelimitedFlatFileSpecification">
+                <property name="delimiter" value="|"/>
+                <property name="objectSpecifications">
+                    <list>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="EXTRACT" p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="1" p:propertyName="batchDate"
+                                    	p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
+                                    	p:dateFormat="yyyy-MM-dd"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="recordCount"
+                                    	p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="journalAmountTotal"
+                                    	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="batchId"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:linePrefix="DETAIL"
+                              p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine"
+                              p:parentBusinessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile"
+                              p:parentTargetProperty="concurStandardAccountingExtractDetailLines">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="1" p:propertyName="batchID"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="batchDate"
+                                    	p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
+                                    	p:dateFormat="yyyy-MM-dd"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="sequenceNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="employeeId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="5" p:propertyName="employeeLastName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="6" p:propertyName="employeeFirstName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="7" p:propertyName="employeeMiddleInitital"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="8" p:propertyName="employeeGroupId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="18" p:propertyName="reportId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="40" p:propertyName="employeeStatus"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="126" p:propertyName="paymentCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="jounalDebitCredit"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
+                                    	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="190" p:propertyName="chartOfAccountsCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="192" p:propertyName="subAccountNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="193" p:propertyName="subObjectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="orgRefId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="projectCode"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="fileTypeIdentifier" value="standardAccountExtractFileType"/>
+        <property name="fileExtension">
+            <value>txt</value>
+        </property>
+        <property name="directoryPath">
+        	<value>${staging.directory}/concur/standardAccountingExtract</value>
+        </property>
+        <property name="fileNamePrefix" value="extract_CES_SAE_v3_"/>
+    </bean>
+	
 	
 	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
