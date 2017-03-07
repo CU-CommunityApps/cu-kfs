@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface BatchFileDirectoryService {
 
-    @Cacheable(value= SystemOptions.CACHE_NAME, key="'buildStagingDirectories'")
+    @Cacheable(value= SystemOptions.CACHE_NAME, key="'buildBatchFileStagingDirectories'")
     List<KeyValue> buildBatchFileStagingDirectories();
 
-    @Cacheable(value= SystemOptions.CACHE_NAME, key="'buildStagingAndReportsDirectories'")
+    @Cacheable(value= SystemOptions.CACHE_NAME, key="'buildBatchFileLookupDirectories'")
     List<KeyValue> buildBatchFileLookupDirectories();
 
 }

@@ -18,18 +18,18 @@ public class BatchFileDirectoryServiceImpl implements BatchFileDirectoryService 
 
     @Override
     public List<KeyValue> buildBatchFileStagingDirectories() {
-        LOG.debug("Starting BatchFileDirectoryServiceImpl.buildStagingDirectories().");
+        LOG.debug("Starting BatchFileDirectoryServiceImpl.buildBatchFileStagingDirectories().");
         List<KeyValue> directoryKeyValueList = buildDirectoryKeyValuesList(CuBatchFileUtils.retrieveBatchFileStagingRootDirectories());
-        LOG.debug("Finished BatchFileDirectoryServiceImpl.buildStagingDirectories().");
+        LOG.debug("Finished BatchFileDirectoryServiceImpl.buildBatchFileStagingDirectories().");
 
         return directoryKeyValueList;
     }
 
     @Override
     public List<KeyValue> buildBatchFileLookupDirectories() {
-        LOG.debug("Starting BatchFileDirectoryServiceImpl.buildStagingAndReportsDirectories().");
+        LOG.debug("Starting BatchFileDirectoryServiceImpl.buildBatchFileLookupDirectories().");
         List<KeyValue> directoryKeyValueList = buildDirectoryKeyValuesList(BatchFileUtils.retrieveBatchFileLookupRootDirectories());
-        LOG.debug("Finished BatchFileDirectoryServiceImpl.buildStagingAndReportsDirectories().");
+        LOG.debug("Finished BatchFileDirectoryServiceImpl.buildBatchFileLookupDirectories().");
 
         return directoryKeyValueList;
     }
