@@ -53,4 +53,18 @@ public class ConcurConstants {
         public static final String CREDIT = "CR";
         public static final String DEBIT = "DR";
     }
+    
+    public class StandardAccountingExtractPdpConstants {
+        public static final String PAYMENT_CODE_CASH = "CASH";
+        public static final String COMBINDED_GROUP_INDICATOR = "Y";
+        public static final String BANK_CODE = "DISB";
+        public static final String FS_ORIGIN_CODE = "Z6";
+        public static final String DOCUMENT_TYPE = "APTR";
+        public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
+        public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
+        public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y"; 
+        public static final String DEFAULT_CHART_CODE = "IT";
+        public static final String DEFAULT_UNIT = "CRNL";
+        public static final String DEFAULT_SUB_UNIT = "CNCR";
+    }
 }
