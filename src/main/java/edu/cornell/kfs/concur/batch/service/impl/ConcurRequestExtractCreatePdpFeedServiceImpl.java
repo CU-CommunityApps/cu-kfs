@@ -1,43 +1,40 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import org.kuali.kfs.sys.service.FileStorageService;
+
+import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractCreatePdpFeedService;
-import edu.cornell.kfs.concur.service.ConcurRequestExtractFileService;
-import edu.cornell.kfs.concur.service.ConcurRequestExtractFileValidationService;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
 
 public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurRequestExtractCreatePdpFeedService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
+    protected FileStorageService fileStorageService;
     protected ConcurRequestExtractFileService concurRequestExtractFileService;
-    protected ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService;
 
     @Override
     public void createPdpFeedsFromRequestExtracts() {
-        List<String> filesToProcess = getUnprocessedRequestExtractFiles();
+        List<String> filesToProcess = getConcurRequestExtractFileService().getUnprocessedRequestExtractFiles();
         if (filesToProcess.isEmpty()) {
             LOG.info("No Request Extract files found to process.");
         } else {
+            LOG.info("Found " + filesToProcess.size() + " file(s) to process.");
+
             for (String requestExtractFileName : filesToProcess) {
-                createPdpFeedFromRequestExtract(requestExtractFileName);
-                LOG.info("Request Extract File " + requestExtractFileName + " was processed.");
+                try {
+                    LOG.info("Begin processing for filename: " + requestExtractFileName + ".");
+                    getConcurRequestExtractFileService().processFile(requestExtractFileName);
+                } finally {
+                    getFileStorageService().removeDoneFiles(Collections.singletonList(requestExtractFileName));
+                }
             }
         }
-    }
-
-    private void createPdpFeedFromRequestExtract(String requestExtractFileName) {
-        if (getConcurRequestExtractFileService().requestExtractHeaderRowValidatesToFileContents(requestExtractFileName)) {
-            LOG.debug("Request Extract file " + requestExtractFileName + "passed header row validation.");
-            getConcurRequestExtractFileService().processRequestExtractFile(requestExtractFileName);
-            getConcurRequestExtractFileService().performAcceptedRequestExtractFileTasks(requestExtractFileName);
-        } else {
-            LOG.error("Request Extract file " + requestExtractFileName + "header row does not match file contents.");
-            getConcurRequestExtractFileService().performRejectedRequestExtractFileTasks(requestExtractFileName);
-        }
-    }
-
-    private List<String> getUnprocessedRequestExtractFiles() {
-        return new ArrayList<String>();
     }
 
     public void setConcurRequestExtractFileService(ConcurRequestExtractFileService concurRequestExtractFileService) {
@@ -48,12 +45,12 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
         return concurRequestExtractFileService;
     }
 
-    public void setConcurRequestExtractFileValidationService(
-            ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService) {
-        this.concurRequestExtractFileValidationService = concurRequestExtractFileValidationService;
+    public void setFileStorageService(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
     }
 
-    public ConcurRequestExtractFileValidationService getConcurRequestExtractFileValidationService() {
-        return concurRequestExtractFileValidationService;
+    public FileStorageService getFileStorageService() {
+        return fileStorageService;
     }
+
 }

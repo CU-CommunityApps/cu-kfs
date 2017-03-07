@@ -1,4 +1,4 @@
-package edu.cornell.kfs.concur.service;
+package edu.cornell.kfs.concur.batch.service;
 
 import org.kuali.kfs.sys.batch.InitiateDirectory;
 

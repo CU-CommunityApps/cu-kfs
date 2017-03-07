@@ -1,10 +1,11 @@
-package edu.cornell.kfs.concur.service.impl;
+package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.sys.batch.InitiateDirectoryBase;
-import edu.cornell.kfs.concur.service.ConcurCashAdvancePdpFeedFileService;
+
+import edu.cornell.kfs.concur.batch.service.ConcurCashAdvancePdpFeedFileService;
 
 public class ConcurCashAdvancePdpFeedFileServiceImpl extends InitiateDirectoryBase implements ConcurCashAdvancePdpFeedFileService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurCashAdvancePdpFeedFileServiceImpl.class);

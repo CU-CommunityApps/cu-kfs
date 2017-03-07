@@ -39,8 +39,6 @@
 				<value>${reports.directory}/concur</value>
 				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
-				<value>${staging.directory}/concur/requestExtract/accept</value>
-				<value>${staging.directory}/concur/requestExtract/reject</value>
 				<value>${staging.directory}/concur/standardAccountingExtract</value>
 				<value>${staging.directory}/concur/standardAccountingExtract/reimbursement</value>
 			</list>
@@ -235,24 +233,142 @@
 	<bean id="concurRequestExtractCreatePdpFeedService" parent="concurRequestExtractCreatePdpFeedService-parentBean" />
 	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
-	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
+	    <property name="fileStorageService" ref="fileStorageService" />
 	</bean>
 
 	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
-	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
+	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
-	    <property name="incomingDirectoryName" value="${staging.directory}/concur/requestExtract"/>
-	    <property name="acceptedDirectoryName" value="${staging.directory}/concur/requestExtract/accept"/>
-	    <property name="rejectedDirectoryName" value="${staging.directory}/concur/requestExtract/reject"/>
+	    <property name="batchInputFileService" ref="batchInputFileService" />
+	    <property name="batchInputFileType" ref="concurRequestExtractInputFileType" />
 	</bean>
 
 	<bean id="concurRequestExtractFileValidationService" parent="concurRequestExtractFileValidationService-parentBean" />
-	<bean id="concurRequestExtractFileValidationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurRequestExtractFileValidationServiceImpl" abstract="true">
+	<bean id="concurRequestExtractFileValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractFileValidationServiceImpl" abstract="true">
 	</bean>
 
 	<bean id="concurCashAdvancePdpFeedFileService" parent="concurCashAdvancePdpFeedFileService-parentBean" />
-	<bean id="concurCashAdvancePdpFeedFileService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurCashAdvancePdpFeedFileServiceImpl" abstract="true">
+	<bean id="concurCashAdvancePdpFeedFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurCashAdvancePdpFeedFileServiceImpl" abstract="true">
 	    <property name="outgoingDirectoryName" value="${staging.directory}/concur/cashAdvance"/>
+	</bean>
+
+	<bean id="concurRequestExtractInputFileType" parent="FlatFileParser">
+        <property name="flatFileSpecification">
+            <bean parent="DelimitedFlatFileSpecification" p:delimiter="|" p:defaultBusinessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile">
+                <property name="objectSpecifications">
+                    <list>
+                        <bean parent="FlatFileObjectSpecification"
+                              p:linePrefix="EXTRACT"
+                              p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
+                                          p:dateFormat="yyyy-MM-dd"
+                                          p:propertyName="batchDate"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2"
+                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"
+                                          p:propertyName="recordCount"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="3"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"
+                                          p:propertyName="totalApprovedAmount"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFileObjectSpecification"
+                              p:linePrefix="REQUEST DETAIL"
+                              p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine"
+                              p:parentBusinessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile"
+                              p:parentTargetProperty="requestDetails">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
+                                          p:dateFormat="yyyy-MM-dd"
+                                          p:propertyName="batchDate"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="4"
+                                          p:propertyName="employeeId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="5"
+                                          p:propertyName="lastName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="6"
+                                          p:propertyName="firstName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="7"
+                                          p:propertyName="middleInitial"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="60"
+                                          p:propertyName="payeeIdType"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="38"
+                                          p:propertyName="requestId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="189"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"
+                                          p:propertyName="requestAmount"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="94"
+                                          p:propertyName="requestEntryDescription"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="225"
+                                          p:propertyName="expenseReportId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="164"
+                                          p:propertyName="chart"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="165"
+                                          p:propertyName="accountNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="166"
+                                          p:propertyName="subAccountNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="167"
+                                          p:propertyName="subObjectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="168"
+                                          p:propertyName="projectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="169"
+                                          p:propertyName="orgRefId"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFileObjectSpecification"
+                              p:linePrefix="REQUEST ENTRY DETAIL"
+                              p:businessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEntryDetailFileLine"
+                              p:parentBusinessObjectClass="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine"
+                              p:parentTargetProperty="requestEntryDetails">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="1"
+                                          p:formatterClass="org.kuali.rice.core.web.format.IntegerFormatter"
+                                          p:propertyName="sequenceNumber"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="2"
+                                          p:propertyName="requestId"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="directoryPath">
+            <value>${staging.directory}/concur/requestExtract</value>
+        </property>
+        <property name="fileExtension">
+            <value>txt</value>
+        </property>
+        <property name="fileNamePrefix" value="Standard_Travel_Request_Extract_"/>
+        <property name="fileTypeIdentifier" value="concurRequestExtractInputFileType"/>
+        <property name="titleKey" value="message.concur.requestExtract.title.createPdpFeedFile"/>
 	</bean>
 
 </beans>
