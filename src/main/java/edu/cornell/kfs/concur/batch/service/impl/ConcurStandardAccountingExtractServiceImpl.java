@@ -24,6 +24,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
@@ -135,7 +136,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             PdpFeedAccountingEntry currentAccountingEntry = new PdpFeedAccountingEntry();
             KualiDecimal pdpTotal = KualiDecimal.ZERO;
             for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
-                if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), "CASH")) {
+                if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
                     if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), currentGroup.getPayeeId().getContent())) {
                         if (StringUtils.isNotBlank(currentGroup.getPayeeId().getContent())) {
                             currentDetailEntry.getAccounting().add(currentAccountingEntry);
@@ -149,8 +150,8 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                                 line.getEmployeeMiddleInitital()));
                         currentGroup.setPayeeId(buildPayeeIdEntry(line));
                         currentGroup.setPaymentDate(line.getBatchDate().toString());
-                        currentGroup.setCombineGroupInd("Y");
-                        currentGroup.setBankCode("DISB");
+                        currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
+                        currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
                     }
                     if (!StringUtils.equalsIgnoreCase(currentDetailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
                         if (StringUtils.isNotBlank(currentDetailEntry.getSourceDocNbr())) {
@@ -160,8 +161,8 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                         }
                         currentDetailEntry = new PdpFeedDetailEntry();
                         currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
-                        currentDetailEntry.setFsOriginCd("Z6");
-                        currentDetailEntry.setFdocTypCd("APTR");
+                        currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
+                        currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
                     }
                     if (!isCurrentAccountingEntrySameAsLineDetail(currentAccountingEntry, line)) {
                         if (StringUtils.isNotBlank(currentAccountingEntry.getAccountNbr())) {
@@ -174,7 +175,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                         currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
                         currentAccountingEntry.setOrgRefId(line.getOrgRefId());
                         currentAccountingEntry.setProjectCd(line.getProjectCode());
-                        currentAccountingEntry.setAmount("0");
+                        currentAccountingEntry.setAmount(KualiDecimal.ZERO.toString());
                     }
                     pdpTotal = pdpTotal.add(line.getJournalAmount());
                     currentAccountingEntry.setAmount(addAmounts(currentAccountingEntry.getAmount(), line.getJournalAmount()));
@@ -217,17 +218,17 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected String buildSourceDocumentNumber(String reportId) {
-        String sourceDocNumber = "APTR" + StringUtils.substring(reportId, 0, 19);
+        String sourceDocNumber = ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE + StringUtils.substring(reportId, 0, 19);
         return sourceDocNumber;
     }
 
     private PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedPayeeIdEntry payeeIdEntry = new PdpFeedPayeeIdEntry();
         payeeIdEntry.setContent(line.getEmployeeId());
-        if (StringUtils.equalsIgnoreCase(line.getEmployeeStatus(), "EMPLOYEE")) {
-            payeeIdEntry.setIdType("E");
+        if (StringUtils.equalsIgnoreCase(line.getEmployeeStatus(), ConcurConstants.StandardAccountingExtractPdpConstants.EMPLOYEE_STATUS_CODE)) {
+            payeeIdEntry.setIdType(ConcurConstants.StandardAccountingExtractPdpConstants.EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
         } else {
-            payeeIdEntry.setIdType("Y");
+            payeeIdEntry.setIdType(ConcurConstants.StandardAccountingExtractPdpConstants.NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
         }
         return payeeIdEntry;
     }
