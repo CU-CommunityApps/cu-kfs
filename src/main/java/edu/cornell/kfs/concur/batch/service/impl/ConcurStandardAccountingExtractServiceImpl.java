@@ -134,44 +134,51 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             PdpFeedDetailEntry currentDetailEntry = new PdpFeedDetailEntry();
             PdpFeedAccountingEntry currentAccountingEntry = new PdpFeedAccountingEntry();
             KualiDecimal pdpTotal = KualiDecimal.ZERO;
-            for (ConcurStandardAccountingExtractDetailLine line : 
-                concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
-                if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), currentGroup.getPayeeId().getContent())) {
-                    if (StringUtils.isNotBlank(currentGroup.getPayeeId().getContent())) {
-                        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
+            for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
+                if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), "CASH")) {
+                    if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), currentGroup.getPayeeId().getContent())) {
+                        if (StringUtils.isNotBlank(currentGroup.getPayeeId().getContent())) {
+                            currentDetailEntry.getAccounting().add(currentAccountingEntry);
+                            currentGroup.getDetail().add(currentDetailEntry);
+                            pdpFeedFileBaseEntry.getGroup().add(currentGroup);
+                            currentAccountingEntry =  new PdpFeedAccountingEntry();
+                            currentDetailEntry = new PdpFeedDetailEntry();
+                        }
+                        currentGroup = new PdpFeedGroupEntry();
+                        currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
+                                line.getEmployeeMiddleInitital()));
+                        currentGroup.setPayeeId(buildPayeeIdEntry(line));
+                        currentGroup.setPaymentDate(line.getBatchDate().toString());
+                        currentGroup.setCombineGroupInd("Y");
+                        currentGroup.setBankCode("DISB");
                     }
-                    currentGroup = new PdpFeedGroupEntry();
-                    currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
-                            line.getEmployeeMiddleInitital()));
-                    currentGroup.setPayeeId(buildPayeeIdEntry(line));
-                    currentGroup.setPaymentDate(line.getBatchDate().toString());
-                    currentGroup.setCombineGroupInd("Y");
-                    currentGroup.setBankCode("DISB");
-                }
-                if (!StringUtils.equalsIgnoreCase(currentDetailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
-                    if (StringUtils.isNotBlank(currentDetailEntry.getSourceDocNbr())) {
-                        currentGroup.getDetail().add(currentDetailEntry);
+                    if (!StringUtils.equalsIgnoreCase(currentDetailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
+                        if (StringUtils.isNotBlank(currentDetailEntry.getSourceDocNbr())) {
+                            pdpFeedFileBaseEntry.getGroup().add(currentGroup);
+                            currentGroup.getDetail().add(currentDetailEntry);
+                            currentAccountingEntry =  new PdpFeedAccountingEntry();
+                        }
+                        currentDetailEntry = new PdpFeedDetailEntry();
+                        currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
+                        currentDetailEntry.setFsOriginCd("Z6");
+                        currentDetailEntry.setFdocTypCd("APTR");
                     }
-                    currentDetailEntry = new PdpFeedDetailEntry();
-                    currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
-                    currentDetailEntry.setFsOriginCd("Z6");
-                    currentDetailEntry.setFdocTypCd("APTR");
-                }
-                if (!isCurrentAccountingEntrySameAsLineDetail(currentAccountingEntry, line)) {
-                    if (StringUtils.isNotBlank(currentAccountingEntry.getAccountNbr())) {
-                        currentDetailEntry.getAccounting().add(currentAccountingEntry);
+                    if (!isCurrentAccountingEntrySameAsLineDetail(currentAccountingEntry, line)) {
+                        if (StringUtils.isNotBlank(currentAccountingEntry.getAccountNbr())) {
+                            currentDetailEntry.getAccounting().add(currentAccountingEntry);
+                        }
+                        currentAccountingEntry =  new PdpFeedAccountingEntry();
+                        currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
+                        currentAccountingEntry.setAccountNbr(line.getAccountNumber());
+                        currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
+                        currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
+                        currentAccountingEntry.setOrgRefId(line.getOrgRefId());
+                        currentAccountingEntry.setProjectCd(line.getProjectCode());
+                        currentAccountingEntry.setAmount("0");
                     }
-                    currentAccountingEntry =  new PdpFeedAccountingEntry();
-                    currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
-                    currentAccountingEntry.setAccountNbr(line.getAccountNumber());
-                    currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
-                    currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
-                    currentAccountingEntry.setOrgRefId(line.getOrgRefId());
-                    currentAccountingEntry.setProjectCd(line.getProjectCode());
-                    currentAccountingEntry.setAmount("0");
+                    pdpTotal = pdpTotal.add(line.getJournalAmount());
+                    currentAccountingEntry.setAmount(addAmounts(currentAccountingEntry.getAmount(), line.getJournalAmount()));
                 }
-                pdpTotal = pdpTotal.add(line.getJournalAmount());
-                currentAccountingEntry.setAmount(addAmounts(currentAccountingEntry.getAmount(), line.getJournalAmount()));
             }
             currentDetailEntry.getAccounting().add(currentAccountingEntry);
             currentGroup.getDetail().add(currentDetailEntry);
