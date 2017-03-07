@@ -127,70 +127,91 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         boolean success = true;
         
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
-            PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
-            pdpFeedFileBaseEntry.setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
-            
-            PdpFeedGroupEntry currentGroup = new PdpFeedGroupEntry();
-            currentGroup.setPayeeId(new PdpFeedPayeeIdEntry());
-            PdpFeedDetailEntry currentDetailEntry = new PdpFeedDetailEntry();
-            PdpFeedAccountingEntry currentAccountingEntry = new PdpFeedAccountingEntry();
-            KualiDecimal pdpTotal = KualiDecimal.ZERO;
-            for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
-                if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
-                    if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), currentGroup.getPayeeId().getContent())) {
-                        if (StringUtils.isNotBlank(currentGroup.getPayeeId().getContent())) {
-                            currentDetailEntry.getAccounting().add(currentAccountingEntry);
-                            currentGroup.getDetail().add(currentDetailEntry);
-                            pdpFeedFileBaseEntry.getGroup().add(currentGroup);
-                            currentAccountingEntry =  new PdpFeedAccountingEntry();
-                            currentDetailEntry = new PdpFeedDetailEntry();
-                        }
-                        currentGroup = new PdpFeedGroupEntry();
-                        currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
-                                line.getEmployeeMiddleInitital()));
-                        currentGroup.setPayeeId(buildPayeeIdEntry(line));
-                        currentGroup.setPaymentDate(line.getBatchDate().toString());
-                        currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
-                        currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
-                    }
-                    if (!StringUtils.equalsIgnoreCase(currentDetailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
-                        if (StringUtils.isNotBlank(currentDetailEntry.getSourceDocNbr())) {
-                            pdpFeedFileBaseEntry.getGroup().add(currentGroup);
-                            currentGroup.getDetail().add(currentDetailEntry);
-                            currentAccountingEntry =  new PdpFeedAccountingEntry();
-                        }
-                        currentDetailEntry = new PdpFeedDetailEntry();
-                        currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
-                        currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
-                        currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
-                    }
-                    if (!isCurrentAccountingEntrySameAsLineDetail(currentAccountingEntry, line)) {
-                        if (StringUtils.isNotBlank(currentAccountingEntry.getAccountNbr())) {
-                            currentDetailEntry.getAccounting().add(currentAccountingEntry);
-                        }
-                        currentAccountingEntry =  new PdpFeedAccountingEntry();
-                        currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
-                        currentAccountingEntry.setAccountNbr(line.getAccountNumber());
-                        currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
-                        currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
-                        currentAccountingEntry.setOrgRefId(line.getOrgRefId());
-                        currentAccountingEntry.setProjectCd(line.getProjectCode());
-                        currentAccountingEntry.setAmount(KualiDecimal.ZERO.toString());
-                    }
-                    pdpTotal = pdpTotal.add(line.getJournalAmount());
-                    currentAccountingEntry.setAmount(addAmounts(currentAccountingEntry.getAmount(), line.getJournalAmount()));
-                }
-            }
-            currentDetailEntry.getAccounting().add(currentAccountingEntry);
-            currentGroup.getDetail().add(currentDetailEntry);
-            pdpFeedFileBaseEntry.getGroup().add(currentGroup);
-            pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
-            
+            PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile);
             String outputFilePath = getReimbursementFeedDirectory() + "foo.xml";
             success = marshalPdpFeedFle(pdpFeedFileBaseEntry, outputFilePath);
         }
         
         return success;
+    }
+
+    private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
+        pdpFeedFileBaseEntry.setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
+        PdpFeedGroupEntry currentGroup = new PdpFeedGroupEntry();
+        currentGroup.setPayeeId(new PdpFeedPayeeIdEntry());
+        PdpFeedDetailEntry currentDetailEntry = new PdpFeedDetailEntry();
+        PdpFeedAccountingEntry currentAccountingEntry = new PdpFeedAccountingEntry();
+        KualiDecimal pdpTotal = KualiDecimal.ZERO;
+        for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
+            if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
+                if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), currentGroup.getPayeeId().getContent())) {
+                    if (StringUtils.isNotBlank(currentGroup.getPayeeId().getContent())) {
+                        currentDetailEntry.getAccounting().add(currentAccountingEntry);
+                        currentGroup.getDetail().add(currentDetailEntry);
+                        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
+                        currentAccountingEntry =  new PdpFeedAccountingEntry();
+                        currentDetailEntry = new PdpFeedDetailEntry();
+                    }
+                    currentGroup = buildPdpFeedGroupEntry(line);
+                }
+                if (!StringUtils.equalsIgnoreCase(currentDetailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
+                    if (StringUtils.isNotBlank(currentDetailEntry.getSourceDocNbr())) {
+                        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
+                        currentGroup.getDetail().add(currentDetailEntry);
+                        currentAccountingEntry =  new PdpFeedAccountingEntry();
+                    }
+                    currentDetailEntry = buildPdpFeedDetailEntry(line);
+                }
+                if (!isCurrentAccountingEntrySameAsLineDetail(currentAccountingEntry, line)) {
+                    if (StringUtils.isNotBlank(currentAccountingEntry.getAccountNbr())) {
+                        currentDetailEntry.getAccounting().add(currentAccountingEntry);
+                    }
+                    currentAccountingEntry = buildPdpFeedAccountingEntry(line);
+                }
+                pdpTotal = pdpTotal.add(line.getJournalAmount());
+                currentAccountingEntry.setAmount(addAmounts(currentAccountingEntry.getAmount(), line.getJournalAmount()));
+            }
+        }
+        currentDetailEntry.getAccounting().add(currentAccountingEntry);
+        currentGroup.getDetail().add(currentDetailEntry);
+        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
+        pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
+        return pdpFeedFileBaseEntry;
+    }
+
+    private PdpFeedGroupEntry buildPdpFeedGroupEntry(ConcurStandardAccountingExtractDetailLine line) {
+        PdpFeedGroupEntry currentGroup;
+        currentGroup = new PdpFeedGroupEntry();
+        currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
+                line.getEmployeeMiddleInitital()));
+        currentGroup.setPayeeId(buildPayeeIdEntry(line));
+        currentGroup.setPaymentDate(line.getBatchDate().toString());
+        currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
+        currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
+        return currentGroup;
+    }
+
+    private PdpFeedDetailEntry buildPdpFeedDetailEntry(ConcurStandardAccountingExtractDetailLine line) {
+        PdpFeedDetailEntry currentDetailEntry;
+        currentDetailEntry = new PdpFeedDetailEntry();
+        currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
+        currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
+        currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
+        return currentDetailEntry;
+    }
+
+    private PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurStandardAccountingExtractDetailLine line) {
+        PdpFeedAccountingEntry currentAccountingEntry;
+        currentAccountingEntry =  new PdpFeedAccountingEntry();
+        currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
+        currentAccountingEntry.setAccountNbr(line.getAccountNumber());
+        currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
+        currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
+        currentAccountingEntry.setOrgRefId(line.getOrgRefId());
+        currentAccountingEntry.setProjectCd(line.getProjectCode());
+        currentAccountingEntry.setAmount(KualiDecimal.ZERO.toString());
+        return currentAccountingEntry;
     }
 
     private PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal) {
@@ -235,10 +256,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     protected PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry value = new PdpFeedHeaderEntry();
-        value.setChart("IT");
+        value.setChart(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_CHART_CODE);
         value.setCreationDate(batchDate.toString());
-        value.setSubUnit("CNCR");
-        value.setUnit("CRNL");
+        value.setSubUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_SUB_UNIT);
+        value.setUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_UNIT);
         return value;
     }
     
