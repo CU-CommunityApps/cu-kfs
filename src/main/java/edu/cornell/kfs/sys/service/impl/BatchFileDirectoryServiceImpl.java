@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.service.BatchFileDirectoryService;
 import edu.cornell.kfs.sys.util.SubDirectoryWalker;
+import org.apache.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.rice.core.api.util.KeyValue;
 
@@ -10,40 +11,30 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class BatchFileDirectoryServiceImpl implements BatchFileDirectoryService {
 
+    private static final Logger LOG = Logger.getLogger(BatchFileDirectoryServiceImpl.class);
+
     @Override
-    public void init() {
-        CompletableFuture.supplyAsync(this::buildStagingDirectories);
-        CompletableFuture.supplyAsync(this::buildStagingAndReportsDirectories);
+    public List<KeyValue> buildBatchFileStagingDirectories() {
+        LOG.debug("Starting BatchFileDirectoryServiceImpl.buildStagingDirectories().");
+        List<KeyValue> directoryKeyValueList = buildDirectoryKeyValuesList(CuBatchFileUtils.retrieveBatchFileStagingRootDirectories());
+        LOG.debug("Finished BatchFileDirectoryServiceImpl.buildStagingDirectories().");
+
+        return directoryKeyValueList;
     }
 
     @Override
-    public List<KeyValue> buildStagingDirectories() {
-        List<File> rootDirectories = CuBatchFileUtils.retrieveBatchFileStagingRootDirectories();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return buildDirectoryKeyValuesList(rootDirectories);
+    public List<KeyValue> buildBatchFileLookupDirectories() {
+        LOG.debug("Starting BatchFileDirectoryServiceImpl.buildStagingAndReportsDirectories().");
+        List<KeyValue> directoryKeyValueList = buildDirectoryKeyValuesList(BatchFileUtils.retrieveBatchFileLookupRootDirectories());
+        LOG.debug("Finished BatchFileDirectoryServiceImpl.buildStagingAndReportsDirectories().");
+
+        return directoryKeyValueList;
     }
 
-    @Override
-    public List<KeyValue> buildStagingAndReportsDirectories() {
-        List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return buildDirectoryKeyValuesList(rootDirectories);
-    }
-
-    @Override
-    public List<KeyValue> buildDirectoryKeyValuesList(List<File> rootDirectories) {
+    private List<KeyValue> buildDirectoryKeyValuesList(List<File> rootDirectories) {
         List<KeyValue> keyValues = new ArrayList<>();
 
         for (File rootDirectory : rootDirectories) {
