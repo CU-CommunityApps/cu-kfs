@@ -15,9 +15,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.plexus.util.StringUtils;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -137,59 +135,58 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         KualiDecimal pdpTotal = KualiDecimal.ZERO;
-        ConcurStandardAccountingExtractPdpFeedFileHelper feedFileHelper = new ConcurStandardAccountingExtractPdpFeedFileHelper();
-        feedFileHelper.getPdpFeedFileBaseEntry().setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
+        PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
+        pdpFeedFileBaseEntry.setVersion("1.0");
+        pdpFeedFileBaseEntry.setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
-                processGroup(feedFileHelper, line);
-                processDetail(feedFileHelper, line);
-                pdpTotal = processAccounting(pdpTotal, feedFileHelper, line);
+                PdpFeedGroupEntry currentGroup = getGroupForLine(pdpFeedFileBaseEntry, line);
+                PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
+                PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
+                
+                pdpTotal = pdpTotal.add(line.getJournalAmount());
+                String newAmount = addAmounts(currentAccounting.getAmount(), line.getJournalAmount());
+                currentAccounting.setAmount(newAmount);
             }
         }
-        feedFileHelper.addCurrentAccountingToDetailAndReset();
-        feedFileHelper.addCurrentDetailToGroupAndReset();
-        feedFileHelper.addCurrentGroupToPdpFeedFileAndReset();
-
-        feedFileHelper.getPdpFeedFileBaseEntry().setTrailer(buildPdpFeedTrailerEntry(feedFileHelper.getPdpFeedFileBaseEntry(), pdpTotal));
-        return feedFileHelper.getPdpFeedFileBaseEntry();
+        pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
+        return pdpFeedFileBaseEntry;
     }
-
-    private KualiDecimal processAccounting(KualiDecimal pdpTotal, ConcurStandardAccountingExtractPdpFeedFileHelper feedFileContainer,
-            ConcurStandardAccountingExtractDetailLine line) {
-        if (!isCurrentAccountingEntrySameAsLineDetail(feedFileContainer.getCurrentAccountingEntry(), line)) {
-            if (StringUtils.isNotBlank(feedFileContainer.getCurrentAccountingEntry().getAccountNbr())) {
-                feedFileContainer.addCurrentAccountingToDetailAndReset();
+    
+    private PdpFeedGroupEntry getGroupForLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
+        for (PdpFeedGroupEntry groupEntry : pdpFeedFileBaseEntry.getGroup()) {
+            if (StringUtils.equalsIgnoreCase(line.getEmployeeId(), groupEntry.getPayeeId().getContent())) {
+                return groupEntry;
             }
-            feedFileContainer.setCurrentAccountingEntry(buildPdpFeedAccountingEntry(line));
         }
-        pdpTotal = pdpTotal.add(line.getJournalAmount());
-        
-        String newAmount = addAmounts(feedFileContainer.getCurrentAccountingEntry().getAmount(), line.getJournalAmount());
-        feedFileContainer.getCurrentAccountingEntry().setAmount(newAmount);
-        return pdpTotal;
+        PdpFeedGroupEntry group = buildPdpFeedGroupEntry(line);
+        pdpFeedFileBaseEntry.getGroup().add(group);
+        return group;
     }
-
-    private void processDetail(ConcurStandardAccountingExtractPdpFeedFileHelper feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
-        if (!StringUtils.equalsIgnoreCase(feedFileContainer.getCurrentDetailEntry().getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
-            if (StringUtils.isNotBlank(feedFileContainer.getCurrentDetailEntry().getSourceDocNbr())) {
-                feedFileContainer.addCurrentDetailToGroupAndReset();
-                feedFileContainer.addCurrentAccountingToDetailAndReset();
+    
+    private PdpFeedDetailEntry getDetailEntryForLine(PdpFeedGroupEntry groupEntry, ConcurStandardAccountingExtractDetailLine line) {
+        for (PdpFeedDetailEntry detailEntry : groupEntry.getDetail()) {
+            if (StringUtils.equalsIgnoreCase(detailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
+                return detailEntry;
             }
-            feedFileContainer.setCurrentDetailEntry(buildPdpFeedDetailEntry(line));
         }
+        PdpFeedDetailEntry detailEntry = buildPdpFeedDetailEntry(line);
+        groupEntry.getDetail().add(detailEntry);
+        return detailEntry;
     }
-
-    private void processGroup(ConcurStandardAccountingExtractPdpFeedFileHelper feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
-        if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), feedFileContainer.getCurrentGroup().getPayeeId().getContent())) {
-            if (StringUtils.isNotBlank(feedFileContainer.getCurrentGroup().getPayeeId().getContent())) {
-                feedFileContainer.addCurrentAccountingToDetailAndReset();
-                feedFileContainer.addCurrentDetailToGroupAndReset();
-                feedFileContainer.addCurrentGroupToPdpFeedFileAndReset();
+    
+    private PdpFeedAccountingEntry getAccountingEntryForLine(PdpFeedDetailEntry detailEntry, ConcurStandardAccountingExtractDetailLine line) {
+        for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
+            if (isCurrentAccountingEntrySameAsLineDetail(accountingEntry, line)) {
+                return accountingEntry;
             }
-            feedFileContainer.setCurrentGroup(buildPdpFeedGroupEntry(line));
         }
+        PdpFeedAccountingEntry accountingEntry = buildPdpFeedAccountingEntry(line);
+        detailEntry.getAccounting().add(accountingEntry);
+        return accountingEntry;
     }
+    
 
     private PdpFeedGroupEntry buildPdpFeedGroupEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedGroupEntry currentGroup;
@@ -209,6 +206,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
         currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
         currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
+        currentDetailEntry.setInvoiceNbr(line.getReportId());
+        currentDetailEntry.setInvoiceDate(line.getBatchDate().toString());
+        currentDetailEntry.setOrigInvoiceAmt(new Double(0));
         return currentDetailEntry;
     }
 
