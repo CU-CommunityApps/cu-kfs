@@ -1,12 +1,18 @@
-package edu.cornell.kfs.concur.batch.xmlObjects;
+package edu.cornell.kfs.concur.batch.service.impl;
 
-public class PdpFeedFileContainer {
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
+
+public class ConcurStandardAccountingExtractPdpFeedFileHelper {
     private PdpFeedFileBaseEntry pdpFeedFileBaseEntry;
     private PdpFeedGroupEntry currentGroup;
     private PdpFeedDetailEntry currentDetailEntry;
     PdpFeedAccountingEntry currentAccountingEntry;
     
-    public PdpFeedFileContainer() {
+    public ConcurStandardAccountingExtractPdpFeedFileHelper() {
         pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
         currentGroup = new PdpFeedGroupEntry();
         currentGroup.setPayeeId(new PdpFeedPayeeIdEntry());
