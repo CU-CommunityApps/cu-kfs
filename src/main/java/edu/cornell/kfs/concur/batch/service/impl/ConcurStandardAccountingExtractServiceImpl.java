@@ -31,6 +31,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractServi
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileContainer;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
@@ -136,48 +137,59 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
 
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
-        PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
-        pdpFeedFileBaseEntry.setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
-        PdpFeedGroupEntry currentGroup = new PdpFeedGroupEntry();
-        currentGroup.setPayeeId(new PdpFeedPayeeIdEntry());
-        PdpFeedDetailEntry currentDetailEntry = new PdpFeedDetailEntry();
-        PdpFeedAccountingEntry currentAccountingEntry = new PdpFeedAccountingEntry();
         KualiDecimal pdpTotal = KualiDecimal.ZERO;
+        PdpFeedFileContainer feedFileContainer = new PdpFeedFileContainer();
+        feedFileContainer.getPdpFeedFileBaseEntry().setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
+        
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
-                if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), currentGroup.getPayeeId().getContent())) {
-                    if (StringUtils.isNotBlank(currentGroup.getPayeeId().getContent())) {
-                        currentDetailEntry.getAccounting().add(currentAccountingEntry);
-                        currentGroup.getDetail().add(currentDetailEntry);
-                        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
-                        currentAccountingEntry =  new PdpFeedAccountingEntry();
-                        currentDetailEntry = new PdpFeedDetailEntry();
-                    }
-                    currentGroup = buildPdpFeedGroupEntry(line);
-                }
-                if (!StringUtils.equalsIgnoreCase(currentDetailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
-                    if (StringUtils.isNotBlank(currentDetailEntry.getSourceDocNbr())) {
-                        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
-                        currentGroup.getDetail().add(currentDetailEntry);
-                        currentAccountingEntry =  new PdpFeedAccountingEntry();
-                    }
-                    currentDetailEntry = buildPdpFeedDetailEntry(line);
-                }
-                if (!isCurrentAccountingEntrySameAsLineDetail(currentAccountingEntry, line)) {
-                    if (StringUtils.isNotBlank(currentAccountingEntry.getAccountNbr())) {
-                        currentDetailEntry.getAccounting().add(currentAccountingEntry);
-                    }
-                    currentAccountingEntry = buildPdpFeedAccountingEntry(line);
-                }
-                pdpTotal = pdpTotal.add(line.getJournalAmount());
-                currentAccountingEntry.setAmount(addAmounts(currentAccountingEntry.getAmount(), line.getJournalAmount()));
+                processGroup(feedFileContainer, line);
+                processDetail(feedFileContainer, line);
+                pdpTotal = processAccounting(pdpTotal, feedFileContainer, line);
             }
         }
-        currentDetailEntry.getAccounting().add(currentAccountingEntry);
-        currentGroup.getDetail().add(currentDetailEntry);
-        pdpFeedFileBaseEntry.getGroup().add(currentGroup);
-        pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
-        return pdpFeedFileBaseEntry;
+        feedFileContainer.addCurrentAccountingToDetailAndReset();
+        feedFileContainer.addCurrentDetailToGroupAndReset();
+        feedFileContainer.addCurrentGroupToPdpFeedFileAndReset();
+
+        feedFileContainer.getPdpFeedFileBaseEntry().setTrailer(buildPdpFeedTrailerEntry(feedFileContainer.getPdpFeedFileBaseEntry(), pdpTotal));
+        return feedFileContainer.getPdpFeedFileBaseEntry();
+    }
+
+    private KualiDecimal processAccounting(KualiDecimal pdpTotal, PdpFeedFileContainer feedFileContainer,
+            ConcurStandardAccountingExtractDetailLine line) {
+        if (!isCurrentAccountingEntrySameAsLineDetail(feedFileContainer.getCurrentAccountingEntry(), line)) {
+            if (StringUtils.isNotBlank(feedFileContainer.getCurrentAccountingEntry().getAccountNbr())) {
+                feedFileContainer.addCurrentAccountingToDetailAndReset();
+            }
+            feedFileContainer.setCurrentAccountingEntry(buildPdpFeedAccountingEntry(line));
+        }
+        pdpTotal = pdpTotal.add(line.getJournalAmount());
+        
+        String newAmount = addAmounts(feedFileContainer.getCurrentAccountingEntry().getAmount(), line.getJournalAmount());
+        feedFileContainer.getCurrentAccountingEntry().setAmount(newAmount);
+        return pdpTotal;
+    }
+
+    private void processDetail(PdpFeedFileContainer feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
+        if (!StringUtils.equalsIgnoreCase(feedFileContainer.getCurrentDetailEntry().getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
+            if (StringUtils.isNotBlank(feedFileContainer.getCurrentDetailEntry().getSourceDocNbr())) {
+                feedFileContainer.addCurrentDetailToGroupAndReset();
+                feedFileContainer.addCurrentAccountingToDetailAndReset();
+            }
+            feedFileContainer.setCurrentDetailEntry(buildPdpFeedDetailEntry(line));
+        }
+    }
+
+    private void processGroup(PdpFeedFileContainer feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
+        if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), feedFileContainer.getCurrentGroup().getPayeeId().getContent())) {
+            if (StringUtils.isNotBlank(feedFileContainer.getCurrentGroup().getPayeeId().getContent())) {
+                feedFileContainer.addCurrentAccountingToDetailAndReset();
+                feedFileContainer.addCurrentDetailToGroupAndReset();
+                feedFileContainer.addCurrentGroupToPdpFeedFileAndReset();
+            }
+            feedFileContainer.setCurrentGroup(buildPdpFeedGroupEntry(line));
+        }
     }
 
     private PdpFeedGroupEntry buildPdpFeedGroupEntry(ConcurStandardAccountingExtractDetailLine line) {
@@ -346,7 +358,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         if (payeeNameFieldSize == null) {
             payeeNameFieldSize = getDataDictionaryService().getAttributeMaxLength(PaymentGroup.class, PdpConstants.PaymentDetail.PAYEE_NAME);
         }
-        LOG.info("getPayeeNameFieldSizem return " + payeeNameFieldSize.intValue());
         return payeeNameFieldSize;
     }
 
