@@ -70,9 +70,9 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     
     @Test
     public void formatDate() {
-        Date testDate = new Date(2017-1900, 0, 2);
+        Date testDate = new Date(2017-1900, 1, 7);
         String results = concurStandardAccountingExtractServiceImpl.formatDate(testDate);
-        assertEquals("The dates should format as expected", "01/02/2017", results);
+        assertEquals("The dates should format as expected", "02/07/2017", results);
     }
 
 }

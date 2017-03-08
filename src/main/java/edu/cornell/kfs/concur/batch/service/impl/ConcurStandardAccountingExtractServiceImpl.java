@@ -28,6 +28,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
@@ -45,6 +46,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected CUMarshalService cuMarshalService;
     protected DataDictionaryService dataDictionaryService;
     protected BatchInputFileType batchInputFileType;
+    protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     
     private Integer payeeNameFieldSize;
 
@@ -143,13 +145,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
-                PdpFeedGroupEntry currentGroup = getGroupForLine(pdpFeedFileBaseEntry, line);
-                PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
-                PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
-                
-                pdpTotal = pdpTotal.add(line.getJournalAmount());
-                String newAmount = addAmounts(currentAccounting.getAmount(), line.getJournalAmount());
-                currentAccounting.setAmount(newAmount);
+                if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
+                    PdpFeedGroupEntry currentGroup = getGroupForLine(pdpFeedFileBaseEntry, line);
+                    PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
+                    PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
+                    
+                    pdpTotal = pdpTotal.add(line.getJournalAmount());
+                    String newAmount = addAmounts(currentAccounting.getAmount(), line.getJournalAmount());
+                    currentAccounting.setAmount(newAmount);
+                }
             }
         }
         pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
@@ -314,7 +318,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected String formatDate(Date date) {
-       DateFormat df = new SimpleDateFormat(ConcurConstants.DATE_FORMAT);
+        DateFormat df = new SimpleDateFormat(ConcurConstants.DATE_FORMAT);
         return df.format(date);
     }
 
@@ -372,6 +376,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
         this.payeeNameFieldSize = payeeNameFieldSize;
+    }
+
+    public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
+        return concurStandardAccountingExtractValidationService;
+    }
+
+    public void setConcurStandardAccountingExtractValidationService(
+            ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService) {
+        this.concurStandardAccountingExtractValidationService = concurStandardAccountingExtractValidationService;
     }
 
 }

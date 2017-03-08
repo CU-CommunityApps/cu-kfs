@@ -76,10 +76,16 @@
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 		<property name="cuMarshalService" ref="cuMarshalService"/>
 		<property name="dataDictionaryService" ref="dataDictionaryService"/>
+		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">
+		<property name="accountService" ref="accountService"/>
+		<property name="subAccountService" ref="subAccountService"/>
+		<property name="objectCodeService" ref="objectCodeService"/>
+		<property name="subObjectCodeService" ref="subObjectCodeService"/>
+		<property name="projectCodeService" ref="projectCodeService"/>
 	</bean>
 	
 	<bean id="standardAccountExtractFileType" parent="FlatFileParser">
