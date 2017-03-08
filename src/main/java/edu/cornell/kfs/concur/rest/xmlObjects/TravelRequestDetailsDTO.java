@@ -8,6 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(namespace = "http://www.concursolutions.com/api/travelrequest/2012/06", name = "TravelRequestDetails")
 @XmlAccessorType(XmlAccessType.NONE)
 public class TravelRequestDetailsDTO {
+
+    @XmlElement(name = "RequestID")
+    private String requestID;
     
     @XmlElement(name = "ApprovalStatusKey")
     private String concurStatucCode;
@@ -95,5 +98,13 @@ public class TravelRequestDetailsDTO {
 
     public void setConcurStatucCode(String concurStatucCode) {
         this.concurStatucCode = concurStatucCode;
+    }
+
+    public String getRequestID() {
+        return requestID;
+    }
+
+    public void setRequestID(String requestID) {
+        this.requestID = requestID;
     }
 }

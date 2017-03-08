@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
-import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationDTO;
-import edu.cornell.kfs.concur.service.ConcurEventNotificationConversionService;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 
 public class ConcurEventNotificationServiceImpl implements ConcurEventNotificationService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurEventNotificationServiceImpl.class);
+    
     protected BusinessObjectService businessObjectService;
 
     @Override
@@ -36,6 +36,7 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     
     @Override
     public void updateConcurEventNotificationFlagsAndValidationMessage(ConcurEventNotification concurEventNotification, boolean inProcess, boolean processed, boolean validationResult, String validationResultMessages) {
+        LOG.info("Update ConcurEventNotification flags and validationMessage in KFS database: " + validationResult + "," + validationResultMessages);
         concurEventNotification.setInProcess(inProcess);
         concurEventNotification.setProcessed(processed);
         concurEventNotification.setValidationResult(validationResult);

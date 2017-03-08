@@ -44,6 +44,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
+        LOG.info("Extract concur report with objectURI: " + reportURI);
+        
         if (ConcurUtils.isExpenseReportURI(reportURI)) {
             return extractConcurReportFromExpenseDetails(reportURI);
         }
@@ -59,13 +61,13 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ExpenseReportDetailsDTO expenseReportDetailsDTO = retrieveExpenseReportDetails(reportURI);
         List<ConcurAccountInfo> concurAccountInfos = extractAccountInfoFromExpenseReportDetails(expenseReportDetailsDTO);
         
-        return new ConcurReport(expenseReportDetailsDTO.getConcurStatusCode(), expenseReportDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
+        return new ConcurReport(expenseReportDetailsDTO.getReportId(), expenseReportDetailsDTO.getConcurStatusCode(), expenseReportDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
     }
     
     protected ConcurReport extractConcurReportFromTravelRequestDetails(String reportURI){
         TravelRequestDetailsDTO travelRequestDetailsDTO = retrieveTravelRequestDetails(reportURI);
         List<ConcurAccountInfo> concurAccountInfos = extractAccountInfoFromTravelRequestDetails(travelRequestDetailsDTO);
-        return new ConcurReport(travelRequestDetailsDTO.getConcurStatucCode(), travelRequestDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
+        return new ConcurReport(travelRequestDetailsDTO.getRequestID(), travelRequestDetailsDTO.getConcurStatucCode(), travelRequestDetailsDTO.getWorkflowActionURL(), concurAccountInfos);
 
     }
 
@@ -172,15 +174,18 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
     @Override
     public void updateExpenseReportStatusInConcur(String workflowURI, ValidationResult validationResult) {
+        LOG.info("updateExpenseReportStatusInConcur()");
+        
         if(validationResult.isValid()){
             buildUpdateReportOutput(workflowURI, ConcurConstants.APPROVE_ACTION, ConcurConstants.APPROVE_COMMENT);  
         }
         else{
-            buildUpdateReportOutput(workflowURI, ConcurConstants.SEND_BACK_TO_EMPLOYEE_ACTION, validationResult.getErrorMessagesAsOneFormattedString());  
+            buildUpdateReportOutput(workflowURI, ConcurConstants.SEND_BACK_TO_EMPLOYEE_ACTION, addConcurMessageHeaderAndTruncate(validationResult.getErrorMessagesAsOneFormattedString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH));  
         }          
     }
     
     protected void buildUpdateReportOutput(String workflowURI, String action, String comment) {
+        LOG.info("buildUpdateReportOutput()");
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
         WebResource resource = client.resource(workflowURI);
@@ -197,7 +202,30 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         String xml = "<WorkflowAction xmlns=\"" + getNamespace(workflowURI)
                 + "\"><Action>" + action + "</Action><Comment>" + comment
                 + "</Comment></WorkflowAction>";
+        
+        LOG.info("buildWorkflowUpdateXML(): Update workflow xml: " + xml);
         return xml;
+    }
+    
+
+    private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
+        String errorMessagesString = addMessageHeader(message);
+        errorMessagesString = truncateMessageLength(errorMessagesString, maxLength);
+        return errorMessagesString;
+    }
+
+    private String addMessageHeader(String message) {
+        if (message.length() > 0) {
+            message = ConcurConstants.ERROR_MESSAGE_HEADER + message;
+        }
+        return message;
+    }
+
+    private String truncateMessageLength(String message, int maxLength) {
+        if (message.length() > maxLength) {
+            message = message.substring(0, maxLength + 1);
+        }
+        return message;
     }
     
     private String getNamespace(String workflowURI){

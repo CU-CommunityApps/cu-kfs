@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ExpenseReportDetailsDTO {
     
+    @XmlElement(name = "ReportId")
+    private String reportId;
+    
     @XmlElement(name = "ApsKey")
     private String concurStatusCode;
     
@@ -44,6 +47,14 @@ public class ExpenseReportDetailsDTO {
 
     public void setConcurStatusCode(String concurStatusCode) {
         this.concurStatusCode = concurStatusCode;
+    }
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
     }
 
 }

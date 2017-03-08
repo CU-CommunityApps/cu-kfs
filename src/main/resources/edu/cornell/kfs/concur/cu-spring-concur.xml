@@ -202,10 +202,10 @@
 		<property name="concurAccessTokenService" ref="concurAccessTokenService" />
 		<property name="parameterService" ref="parameterService" />
 		<property name="concurExpenseWorkflowUpdateNamespace">
-			<value>{concur.expense.workflow.update.namespace}</value>
+			<value>${concur.expense.workflow.update.namespace}</value>
 		</property>
 		<property name="concurRequestWorkflowUpdateNamespace">
-			<value>{concur.request.workflow.update.namespace}</value>
+			<value>${concur.request.workflow.update.namespace}</value>
 		</property>
 	</bean>
 	
