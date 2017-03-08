@@ -31,7 +31,6 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractServi
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileContainer;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
@@ -138,25 +137,25 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         KualiDecimal pdpTotal = KualiDecimal.ZERO;
-        PdpFeedFileContainer feedFileContainer = new PdpFeedFileContainer();
-        feedFileContainer.getPdpFeedFileBaseEntry().setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
+        ConcurStandardAccountingExtractPdpFeedFileHelper feedFileHelper = new ConcurStandardAccountingExtractPdpFeedFileHelper();
+        feedFileHelper.getPdpFeedFileBaseEntry().setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
-                processGroup(feedFileContainer, line);
-                processDetail(feedFileContainer, line);
-                pdpTotal = processAccounting(pdpTotal, feedFileContainer, line);
+                processGroup(feedFileHelper, line);
+                processDetail(feedFileHelper, line);
+                pdpTotal = processAccounting(pdpTotal, feedFileHelper, line);
             }
         }
-        feedFileContainer.addCurrentAccountingToDetailAndReset();
-        feedFileContainer.addCurrentDetailToGroupAndReset();
-        feedFileContainer.addCurrentGroupToPdpFeedFileAndReset();
+        feedFileHelper.addCurrentAccountingToDetailAndReset();
+        feedFileHelper.addCurrentDetailToGroupAndReset();
+        feedFileHelper.addCurrentGroupToPdpFeedFileAndReset();
 
-        feedFileContainer.getPdpFeedFileBaseEntry().setTrailer(buildPdpFeedTrailerEntry(feedFileContainer.getPdpFeedFileBaseEntry(), pdpTotal));
-        return feedFileContainer.getPdpFeedFileBaseEntry();
+        feedFileHelper.getPdpFeedFileBaseEntry().setTrailer(buildPdpFeedTrailerEntry(feedFileHelper.getPdpFeedFileBaseEntry(), pdpTotal));
+        return feedFileHelper.getPdpFeedFileBaseEntry();
     }
 
-    private KualiDecimal processAccounting(KualiDecimal pdpTotal, PdpFeedFileContainer feedFileContainer,
+    private KualiDecimal processAccounting(KualiDecimal pdpTotal, ConcurStandardAccountingExtractPdpFeedFileHelper feedFileContainer,
             ConcurStandardAccountingExtractDetailLine line) {
         if (!isCurrentAccountingEntrySameAsLineDetail(feedFileContainer.getCurrentAccountingEntry(), line)) {
             if (StringUtils.isNotBlank(feedFileContainer.getCurrentAccountingEntry().getAccountNbr())) {
@@ -171,7 +170,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return pdpTotal;
     }
 
-    private void processDetail(PdpFeedFileContainer feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
+    private void processDetail(ConcurStandardAccountingExtractPdpFeedFileHelper feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
         if (!StringUtils.equalsIgnoreCase(feedFileContainer.getCurrentDetailEntry().getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
             if (StringUtils.isNotBlank(feedFileContainer.getCurrentDetailEntry().getSourceDocNbr())) {
                 feedFileContainer.addCurrentDetailToGroupAndReset();
@@ -181,7 +180,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         }
     }
 
-    private void processGroup(PdpFeedFileContainer feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
+    private void processGroup(ConcurStandardAccountingExtractPdpFeedFileHelper feedFileContainer, ConcurStandardAccountingExtractDetailLine line) {
         if (!StringUtils.equalsIgnoreCase(line.getEmployeeId(), feedFileContainer.getCurrentGroup().getPayeeId().getContent())) {
             if (StringUtils.isNotBlank(feedFileContainer.getCurrentGroup().getPayeeId().getContent())) {
                 feedFileContainer.addCurrentAccountingToDetailAndReset();
