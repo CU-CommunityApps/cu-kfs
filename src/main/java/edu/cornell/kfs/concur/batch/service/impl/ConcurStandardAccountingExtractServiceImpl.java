@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -194,7 +196,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
                 line.getEmployeeMiddleInitital()));
         currentGroup.setPayeeId(buildPayeeIdEntry(line));
-        currentGroup.setPaymentDate(line.getBatchDate().toString());
+        currentGroup.setPaymentDate(formatDate(line.getBatchDate()));
         currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
         currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
         return currentGroup;
@@ -206,8 +208,11 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
         currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
         currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
+        /**
+         * @todo verify these three, not in the documentation, but looks like needed
+         */
         currentDetailEntry.setInvoiceNbr(line.getReportId());
-        currentDetailEntry.setInvoiceDate(line.getBatchDate().toString());
+        currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
         currentDetailEntry.setOrigInvoiceAmt(new Double(0));
         return currentDetailEntry;
     }
@@ -268,7 +273,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry value = new PdpFeedHeaderEntry();
         value.setChart(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_CHART_CODE);
-        value.setCreationDate(batchDate.toString());
+        value.setCreationDate(formatDate(batchDate));
         value.setSubUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_SUB_UNIT);
         value.setUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_UNIT);
         return value;
@@ -306,6 +311,11 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             success = false;
         }
         return success;
+    }
+    
+    protected String formatDate(Date date) {
+       DateFormat df = new SimpleDateFormat(ConcurConstants.DATE_FORMAT);
+        return df.format(date);
     }
 
     @Override

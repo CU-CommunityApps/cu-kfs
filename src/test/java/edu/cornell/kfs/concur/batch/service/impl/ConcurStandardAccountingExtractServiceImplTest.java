@@ -2,6 +2,8 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import static org.junit.Assert.*;
 
+import java.sql.Date;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +66,13 @@ public class ConcurStandardAccountingExtractServiceImplTest {
         String results = concurStandardAccountingExtractServiceImpl.addAmounts(starting, addAmount);
         String expected = "600.45";
         assertEquals("The amounts should be the same", expected, results);
+    }
+    
+    @Test
+    public void formatDate() {
+        Date testDate = new Date(2017-1900, 0, 2);
+        String results = concurStandardAccountingExtractServiceImpl.formatDate(testDate);
+        assertEquals("The dates should format as expected", "01/02/2017", results);
     }
 
 }
