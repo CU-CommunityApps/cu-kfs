@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.rice.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
