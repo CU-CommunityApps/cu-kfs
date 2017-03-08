@@ -8,10 +8,14 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 
 public interface ConcurStandardAccountingExtractService {
 
-    ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException;
+    ConcurStandardAccountingExtractFile parseStandardAccountingExtractFile(String standardAccountingExtractFileName) throws ValidationException;
     
     List<String> buildListOfFileNamesToBeProcessed();
 
-    boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+    // TODO: This needs to be refactored by KFSPTS-8040 to implement proper reporting.
+    boolean extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+
+    // TODO: This needs to be refactored by KFSPTS-8040 and/or KFSPTS-7912 to implement proper reporting.
+    boolean extractCollectorFileFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
 
 }

@@ -25,7 +25,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected BatchInputFileType batchInputFileType;
 
     @Override
-    public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
+    public ConcurStandardAccountingExtractFile parseStandardAccountingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
         LOG.debug("parseStandardAccoutingExtractFile, Attempting to parse the file " + standardAccountingExtractFileName);
 
         ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = loadConcurStandardAccountingExtractFile(standardAccountingExtractFileName);
@@ -97,8 +97,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return listOfFileNames;
     }
 
+    // TODO: This needs to be refactored by KFSPTS-8040 to implement proper reporting.
     @Override
-    public boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+    public boolean extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        return true;
+    }
+
+    // TODO: This needs to be refactored by KFSPTS-8040 and/or KFSPTS-7912 to implement proper reporting.
+    @Override
+    public boolean extractCollectorFileFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         return true;
     }
 
