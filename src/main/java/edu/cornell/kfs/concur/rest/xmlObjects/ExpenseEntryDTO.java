@@ -18,7 +18,8 @@ public class ExpenseEntryDTO {
 
     @XmlElement(name = "OrgUnit6")
     private String orgUnit6;
-      
+    
+    @XmlElementWrapper(name = "Allocations")
     @XmlElement(name = "Allocations")
     private List<AllocationsDTO> allocations;
 

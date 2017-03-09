@@ -8,6 +8,11 @@ import org.kuali.kfs.sys.KFSConstants;
 public class ValidationResult {
     protected boolean valid;
     protected List<String> messages;
+    
+    public ValidationResult(){
+        this.valid = true;
+        this.messages = new ArrayList<String>();
+    }
 
     public ValidationResult(boolean valid, List<String> messages) {
         this.valid = valid;
@@ -61,6 +66,11 @@ public class ValidationResult {
         }
         
         return result.toString();
-    }      
+    }   
+    
+    public void add(ValidationResult validationResult){
+        this.valid &= validationResult.isValid();
+        this.addMessages(validationResult.getMessages());
+    }
 
 }
