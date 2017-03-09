@@ -14,4 +14,6 @@ public interface ConcurStandardAccountingExtractService {
 
     boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
 
+    boolean extractCollectorFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+
 }
