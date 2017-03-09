@@ -58,7 +58,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         if (accountValidationResult.isNotValid()) {
             return accountValidationResult;
         } else {           
-            ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+            ValidationResult validationResult = new ValidationResult();
             updateValidationResultAndAddErrorMessages(validationResult, checkObjectCode(chartOfAccountsCode, objectCode));
             updateValidationResultAndAddErrorMessages(validationResult, checkSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber));
             updateValidationResultAndAddErrorMessages(validationResult, checkSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode));
@@ -75,7 +75,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     }
 
     public ValidationResult checkRequiredAccountInfo(String chartOfAccountsCode, String accountNumber, String objectCode) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        ValidationResult validationResult = new ValidationResult();
         if (chartOfAccountsCode == null || chartOfAccountsCode.isEmpty()) {
             validationResult.setValid(false);
             validationResult.addMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART));           
@@ -99,7 +99,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     }
     
     private ValidationResult checkMissingOrInactive(Inactivatable inactivatableObject, String missingMessage, String inactiveMessage){
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        ValidationResult validationResult = new ValidationResult();
         if (inactivatableObject == null || inactivatableObject.toString().isEmpty()) {
             validationResult.setValid(false);
             validationResult.addMessage(missingMessage);
@@ -117,7 +117,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     }
 
     public ValidationResult checkSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        ValidationResult validationResult = new ValidationResult();
         if(StringUtils.isNotBlank(subAccountNumber)){
             SubAccount subAccount = subAccountService.getByPrimaryId(chartOfAccountsCode, accountNumber, subAccountNumber);
             String subAccountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, chartOfAccountsCode, accountNumber, subAccountNumber);
@@ -127,7 +127,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     }
 
     public ValidationResult checkSubObjectCode(String chartOfAccountsCode, String accountNumber, String objectCode, String subObjectCodeParm) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        ValidationResult validationResult = new ValidationResult();
         if(StringUtils.isNotBlank(subObjectCodeParm)){
             SubObjectCode subObjectCode = subObjectCodeService.getByPrimaryIdForCurrentYear(chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
             String subObjectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, chartOfAccountsCode, accountNumber, objectCode, subObjectCodeParm);
@@ -137,7 +137,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     }
 
     public ValidationResult checkProjectCode(String projectCodeParm) {
-        ValidationResult validationResult = new ValidationResult(true, new ArrayList<String>());
+        ValidationResult validationResult = new ValidationResult();
         if(StringUtils.isNotBlank(projectCodeParm)){
             ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeParm);
             String  projectCodeErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, projectCodeParm);

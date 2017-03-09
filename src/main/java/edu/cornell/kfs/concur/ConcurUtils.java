@@ -1,7 +1,5 @@
 package edu.cornell.kfs.concur;
 
-import java.util.Collection;
-
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 

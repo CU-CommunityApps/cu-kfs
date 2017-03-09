@@ -5,11 +5,14 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.concur.ConcurConstants;
-
 public class ValidationResult {
     protected boolean valid;
     protected List<String> messages;
+    
+    public ValidationResult(){
+        this.valid = true;
+        this.messages = new ArrayList<String>();
+    }
 
     public ValidationResult(boolean valid, List<String> messages) {
         this.valid = valid;
@@ -61,28 +64,13 @@ public class ValidationResult {
                 result.append(KFSConstants.NEWLINE);
             }
         }
-
-        return addMessageHeaderAndTruncate(result.toString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
-    }
-
-    private String addMessageHeaderAndTruncate(String message, int maxLength) {
-        String errorMessagesString = addMessageHeader(message);
-        errorMessagesString = truncateMessageLength(errorMessagesString, maxLength);
-        return errorMessagesString;
-    }
-
-    private String addMessageHeader(String message) {
-        if (message.length() > 0) {
-            message = ConcurConstants.ERROR_MESSAGE_HEADER + message;
-        }
-        return message;
-    }
-
-    private String truncateMessageLength(String message, int maxLength) {
-        if (message.length() > maxLength) {
-            message = message.substring(0, maxLength + 1);
-        }
-        return message;
+        
+        return result.toString();
+    }   
+    
+    public void add(ValidationResult validationResult){
+        this.valid &= validationResult.isValid();
+        this.addMessages(validationResult.getMessages());
     }
 
 }
