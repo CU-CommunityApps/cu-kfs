@@ -225,7 +225,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
     private String truncateMessageLength(String message, int maxLength) {
         if (message.length() > maxLength) {
-            message = message.substring(0, maxLength + 1);
+            message = message.substring(0, maxLength);
         }
         return message;
     }
