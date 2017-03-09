@@ -51,6 +51,8 @@ public class ConcurConstants {
     
     public static final String DATE_FORMAT = "MM/dd/YYYY";
     
+    public static final String EMPLOYEE_GROUP_ID = "CORNELL";
+    
     public class ConcurPdpConstants {
         public static final String CREDIT = "CR";
         public static final String DEBIT = "DR";

@@ -65,11 +65,12 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
         KualiDecimal detailTotal = KualiDecimal.ZERO;
         boolean debbitCreditValid = true;
-        
+        boolean employeeGroupIdValid = true;
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile
                 .getConcurStandardAccountingExtractDetailLines()) {
             detailTotal = detailTotal.add(line.getJournalAmount());
             debbitCreditValid &= validateDebitCreditField(line.getJounalDebitCredit());
+            employeeGroupIdValid &= validateEmployeeGroupId(line.getEmployeeGroupId());
         }
         
         boolean journalTotalValidation = journalTotal.equals(detailTotal);
@@ -78,18 +79,28 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         } else {
             LOG.error("validateAmounts, The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
         }
-        return journalTotalValidation && debbitCreditValid;
+        return journalTotalValidation && debbitCreditValid && employeeGroupIdValid;
     }
 
     @Override
     public boolean validateDebitCreditField(String debitCredit) {
         boolean valid = StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) || 
                 StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT);
-        
         if (valid) {
             LOG.debug("validateDebitCreditField, found a valid debit/credit.");
         } else {
             LOG.error("validateDebitCreditField, invalid debit or credit: " + debitCredit);
+        }
+        return valid;
+    }
+    
+    @Override
+    public boolean validateEmployeeGroupId(String employeeGroupId) {
+        boolean valid = StringUtils.equalsIgnoreCase(employeeGroupId, ConcurConstants.EMPLOYEE_GROUP_ID);
+        if (valid) {
+            LOG.debug("Found a valid employee group id.");
+        } else {
+            LOG.error("Found an invalid employee group id: " + employeeGroupId);
         }
         return valid;
     }

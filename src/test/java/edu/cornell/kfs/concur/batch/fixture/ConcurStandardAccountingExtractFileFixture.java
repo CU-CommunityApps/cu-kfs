@@ -37,6 +37,7 @@ public class ConcurStandardAccountingExtractFileFixture {
         ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
         line.setJounalDebitCredit(debitCredit);
         line.setJournalAmount(amount);
+        line.setEmployeeGroupId(ConcurConstants.EMPLOYEE_GROUP_ID);
         return line;
     }
 
