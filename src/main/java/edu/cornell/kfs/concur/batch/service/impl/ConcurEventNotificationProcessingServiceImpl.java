@@ -64,9 +64,8 @@ public class ConcurEventNotificationProcessingServiceImpl implements ConcurEvent
         LOG.info("validateReportAccountInfo()");
         if (concurReport.getAccountInfos() != null && concurReport.getAccountInfos().size() > 0) {            
             for (ConcurAccountInfo concurAccountInfo : concurReport.getAccountInfos()) {
-                LOG.info(concurAccountInfo.toString());
-                ValidationResult acctInfoValidationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);             
-                reportValidationResult.add(acctInfoValidationResult);            
+                LOG.info(concurAccountInfo.toString());            
+                reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo));            
             }
         } else {
             LOG.info("No account info present.");
