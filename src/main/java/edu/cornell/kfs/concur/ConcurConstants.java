@@ -62,11 +62,7 @@ public class ConcurConstants {
         public static final String PAYMENT_CODE_CASH = "CASH";
         public static final String COMBINDED_GROUP_INDICATOR = "Y";
         public static final String BANK_CODE = "DISB";
-        /**
-         * @todo, figure this origin code out
-         */
-        //public static final String FS_ORIGIN_CODE = "Z6";
-        public static final String FS_ORIGIN_CODE = "Z1";
+        public static final String FS_ORIGIN_CODE = "Z6";
         public static final String DOCUMENT_TYPE = "APTR";
         public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
         public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";

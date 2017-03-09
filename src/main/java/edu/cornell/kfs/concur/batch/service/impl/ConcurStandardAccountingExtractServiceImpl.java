@@ -203,6 +203,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         currentGroup.setPaymentDate(formatDate(line.getBatchDate()));
         currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
         currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
+        currentGroup.setCustomerInstitutionIdentifier("");
         return currentGroup;
     }
 
@@ -215,9 +216,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         /**
          * @todo verify these three, not in the documentation, but looks like needed
          */
-        currentDetailEntry.setInvoiceNbr(line.getReportId());
+        currentDetailEntry.setInvoiceNbr("");
+        currentDetailEntry.setPoNbr("");
         currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
-        currentDetailEntry.setOrigInvoiceAmt(new Double(0));
         return currentDetailEntry;
     }
 
@@ -309,8 +310,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             File pdpFeedFile = getCuMarshalService().marshalObjectToXML(cdpFeedFileBaseEntry, outputFilePath);
             success = true;
         } catch (JAXBException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
             LOG.error("There was an error marshalling the PDP feed file.", e);
             success = false;
         }
