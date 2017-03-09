@@ -102,6 +102,11 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return true;
     }
 
+    @Override
+    public boolean extractCollectorFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        return true;
+    }
+
     public String getReimbursementFeedDirectory() {
         return reimbursementFeedDirectory;
     }
