@@ -11,8 +11,8 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
-public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpStep.class);
+public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends AbstractStep {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpAndCollectorStep.class);
     protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     protected FileStorageService fileStorageService;
@@ -42,6 +42,10 @@ public class ConcurStandardAccountingExtractToPdpStep extends AbstractStep {
                 .parseStandardAccoutingExtractFile(saeFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
             success = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
+            if (success) {
+                success &= getConcurStandardAccountingExtractService()
+                        .extractCollectorFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
+            }
         } else {
             success = false;
             LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, the SAE file failed high level validation.");

@@ -31,7 +31,7 @@
 			<list>
 				<value>concurEventNotificationProcessingBatchJob</value>
 				<value>concurRequestExtractToPdpFeedJob</value>
-				<value>concurStandardAccountingExtractToPdpBatchJob</value>
+				<value>concurStandardAccountingExtractToPdpAndCollectorBatchJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
@@ -53,15 +53,15 @@
 		<property name="moduleConfiguration" ref="concurModuleConfiguration" />
 	</bean>
 	
-	<bean id="concurStandardAccountingExtractToPdpBatchJob" parent="unscheduledJobDescriptor">
+	<bean id="concurStandardAccountingExtractToPdpAndCollectorBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
 			<list>
-				<ref bean="concurStandardAccountingExtractToPdpStep" />
+				<ref bean="concurStandardAccountingExtractToPdpAndCollectorStep" />
 			</list>
 		</property>
 	</bean>
 	
-	<bean id="concurStandardAccountingExtractToPdpStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurStandardAccountingExtractToPdpStep">
+	<bean id="concurStandardAccountingExtractToPdpAndCollectorStep" parent="step" class="edu.cornell.kfs.concur.batch.ConcurStandardAccountingExtractToPdpAndCollectorStep">
 		<property name="concurStandardAccountingExtractService" ref="concurStandardAccountingExtractService" />
 		<property name="fileStorageService" ref="fileStorageService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
