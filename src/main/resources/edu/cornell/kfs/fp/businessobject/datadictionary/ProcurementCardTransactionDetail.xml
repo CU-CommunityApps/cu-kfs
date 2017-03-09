@@ -37,14 +37,12 @@
   <bean id="ProcurementCardTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition-parentBean"
         parent="InquirySectionDefinition" abstract="true">
          <property name="title" value="Purchasing Data" />
-         <property name="numberOfColumns" value="1" />
          <property name="inquiryFields">
            <list>
              <bean parent="InquiryCollectionDefinition">
                <property name="attributeName" value="extension.purchasingDataDetails" />
                <property name="businessObjectClass"
                  value="edu.cornell.kfs.fp.businessobject.PurchasingDataDetail" />
-               <property name="numberOfColumns" value="2" />
                <property name="inquiryFields">
                  <list>
                    <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
