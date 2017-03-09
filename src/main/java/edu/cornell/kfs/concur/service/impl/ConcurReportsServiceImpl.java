@@ -141,8 +141,10 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         if (allocations != null) {
             for (AllocationsDTO allocation : allocations) {
                 ConcurAccountInfo concurAccountInfo = extractConcurAccountInfoFromAllocation(allocation);
-                concurAccountInfo.setOrgRefId(orgRefId);
-                accountInfos.add(concurAccountInfo);
+                if(StringUtils.isNotBlank(concurAccountInfo.getChart()) && StringUtils.isNotBlank(concurAccountInfo.getAccountNumber()) && StringUtils.isNotBlank(concurAccountInfo.getObjectCode())){
+                    concurAccountInfo.setOrgRefId(orgRefId);
+                    accountInfos.add(concurAccountInfo);
+                }
             }
         }
         return accountInfos;
