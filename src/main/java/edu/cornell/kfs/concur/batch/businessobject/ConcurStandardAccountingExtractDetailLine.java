@@ -26,6 +26,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String projectCode; 
     private String jounalDebitCredit;
     private KualiDecimal journalAmount;
+    private Date reportEndDate;
     
     public String getBatchID() {
         return batchID;
@@ -187,6 +188,14 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.journalAmount = journalAmount;
     }
 
+    public Date getReportEndDate() {
+        return reportEndDate;
+    }
+
+    public void setReportEndDate(Date reportEndDate) {
+        this.reportEndDate = reportEndDate;
+    }
+
     public String getDebugInformation() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
@@ -198,6 +207,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" subAccountNumber: ").append(subAccountNumber).append(" subObjectCode: ").append(subObjectCode);
         sb.append(" orgRefId: ").append(orgRefId).append(" projectCode: ").append(projectCode);
         sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
+        sb.append(" reportEndDate: ").append(reportEndDate);
         return sb.toString();
     }
 
