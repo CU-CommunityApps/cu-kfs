@@ -15,6 +15,8 @@ public interface ConcurStandardAccountingExtractValidationService {
     
     boolean validateDebitCreditField(String debitCredit);
     
+    boolean validateEmployeeGroupId(String employeeGroupId);
+    
     boolean validateDate(Date date);
     
     boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line);

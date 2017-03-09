@@ -105,6 +105,31 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         assertFalse("General validation should be false, bad line count.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
     }
     
+    @Test 
+    public void validateEmployeeGroupIdGood() {
+        assertTrue("This should be a good group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0).getEmployeeGroupId()));
+    }
+    
+    @Test 
+    public void validateEmployeeGroupIdNull() {
+        assertFalse("This should be a bad group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId(null));
+    }
+    
+    @Test 
+    public void validateEmployeeGroupIdWrongValue() {
+        assertFalse("This should be a bad group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId("foo"));
+    }
+    
+    @Test
+    public void validateGeneralValidationBadEmoployeeGroup() {
+        file.getConcurStandardAccountingExtractDetailLines().get(0).setEmployeeGroupId("testMe");
+        assertFalse("General validation should be false, bad employee group id.", 
+                concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+    }
+    
     private void setBadJournalTotal() {
         file.getConcurStandardAccountingExtractDetailLines().get(0).setJournalAmount(new KualiDecimal(200));
     }
