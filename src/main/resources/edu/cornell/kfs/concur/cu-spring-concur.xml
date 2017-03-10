@@ -137,11 +137,12 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="192" p:propertyName="subAccountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="193" p:propertyName="subObjectCode"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="orgRefId"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="projectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="projectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="orgRefId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="324" p:propertyName="reportEndDate"
                                             p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
                                             p:dateFormat="yyyy-MM-dd"/>
+                                    
                                 </list>
                             </property>
                         </bean>

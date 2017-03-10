@@ -13,8 +13,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.plexus.util.StringUtils;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.pdp.PdpConstants;

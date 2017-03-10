@@ -1,8 +1,15 @@
 package edu.cornell.kfs.pdp.service.impl;
 
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpKeyConstants;
+import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
+import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
+import org.kuali.kfs.pdp.businessobject.PaymentAccountHistory;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -11,14 +18,19 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.springframework.util.AutoPopulatingList;
+import org.kuali.kfs.krad.bo.KualiCodeBase;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
+    private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        LOG.debug("starting processGroupValidation");
         int groupCount = 0;
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             groupCount++;
@@ -115,5 +127,36 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
 
+    @Override
+    public void doHardEdits(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.doHardEdits(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After doHardEdits: " + printErrorMap(errorMap));
+        }
+    }
+    
+    public String printErrorMap(MessageMap errorMap) {
+        StringBuilder sb = new StringBuilder();
+        Set<String> keys = errorMap.getErrorMessages().keySet();
+        if (keys.size() > 0) {
+            for (String key : keys) {
+                AutoPopulatingList<ErrorMessage> errors = errorMap.getErrorMessages().get(key);
+                for (ErrorMessage error : errors) {
+                    sb.append("  Key: ").append(key).append("  error: ").append(error.toString());
+                }
+            }
+        } else {
+            sb.append("No errors");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    protected void processHeaderValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.processHeaderValidation(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After processHeaderValidation: " + printErrorMap(errorMap));
+        }
+    }
 
 }
