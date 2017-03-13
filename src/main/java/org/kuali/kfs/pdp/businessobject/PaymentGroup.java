@@ -1107,21 +1107,22 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
     
     public void validateVendorIdAndCustomerInstitutionIdentifier() {
-        
-        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-        Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put("vendorAddressGeneratedIdentifier", customerInstitutionNumber);
-        String[] headerDetails = payeeId.split("-");
-        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
-        fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
-        
-        List<VendorAddress> addrs = (List<VendorAddress>)bos.findMatching(VendorAddress.class, fieldValues);
-        if (addrs.size() == 1) {
-            VendorAddress addr = (VendorAddress) addrs.get(0);
-            setVendorAddress(addr);
-        } else {
-            throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
-            // Need to handle bad data.
+        if (payeeId.split("-").length > 1) {
+            BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+            Map<String, String> fieldValues = new HashMap<String, String>();
+            fieldValues.put("vendorAddressGeneratedIdentifier", customerInstitutionNumber);
+            String[] headerDetails = payeeId.split("-");
+            fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
+            fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
+            
+            List<VendorAddress> addrs = (List<VendorAddress>)bos.findMatching(VendorAddress.class, fieldValues);
+            if (addrs.size() == 1) {
+                VendorAddress addr = (VendorAddress) addrs.get(0);
+                setVendorAddress(addr);
+            } else {
+                throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
+                // Need to handle bad data.
+            }
         }
     }
 

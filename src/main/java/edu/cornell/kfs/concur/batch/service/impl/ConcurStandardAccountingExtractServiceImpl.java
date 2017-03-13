@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -41,7 +42,7 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
 
-    protected String reimbursementFeedDirectory;
+    protected String paymentImportDirectory;
     protected BatchInputFileService batchInputFileService;
     protected CUMarshalService cuMarshalService;
     protected DataDictionaryService dataDictionaryService;
@@ -49,6 +50,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     
     private Integer payeeNameFieldSize;
+    private Integer customPaymentDocumentNumberFieldSize;
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
@@ -130,7 +132,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile);
-            String outputFilePath = getReimbursementFeedDirectory() + "foo.xml";
+            String outputFilePath = getPaymentImportDirectory() + "foo.xml";
             success = marshalPdpFeedFle(pdpFeedFileBaseEntry, outputFilePath);
         }
         
@@ -213,9 +215,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
         currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
         currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
-        /**
-         * @todo verify these three, not in the documentation, but looks like needed
-         */
         currentDetailEntry.setInvoiceNbr("");
         currentDetailEntry.setPoNbr("");
         currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
@@ -260,10 +259,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected String buildSourceDocumentNumber(String reportId) {
-        String sourceDocNumber = ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE + StringUtils.substring(reportId, 0, 19);
-        return sourceDocNumber;
+        String sourceDocNumber = ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE + reportId;
+        return StringUtils.substring(sourceDocNumber, 0, getCustomPaymentDocumentNumberFieldSize().intValue());
     }
-
+    
     private PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedPayeeIdEntry payeeIdEntry = new PdpFeedPayeeIdEntry();
         payeeIdEntry.setContent(line.getEmployeeId());
@@ -326,12 +325,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return true;
     }
 
-    public String getReimbursementFeedDirectory() {
-        return reimbursementFeedDirectory;
+    public String getPaymentImportDirectory() {
+        return paymentImportDirectory;
     }
 
-    public void setReimbursementFeedDirectory(String reimbursementFeedDirectory) {
-        this.reimbursementFeedDirectory = reimbursementFeedDirectory;
+    public void setPaymentImportDirectory(String paymentImportDirectory) {
+        this.paymentImportDirectory = paymentImportDirectory;
     }
 
     public BatchInputFileService getBatchInputFileService() {
@@ -375,6 +374,18 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
         this.payeeNameFieldSize = payeeNameFieldSize;
+    }
+
+    public Integer getCustomPaymentDocumentNumberFieldSize() {
+        if (customPaymentDocumentNumberFieldSize == null) {
+            customPaymentDocumentNumberFieldSize = getDataDictionaryService().getAttributeMaxLength(PaymentDetail.class, ConcurConstants.CUSTOM_PAYMEMT_DOC_NUMBER_FIELD_NAME);
+        }
+        LOG.info("getCustomPaymentDocumentNumberFieldSize returning " + customPaymentDocumentNumberFieldSize);
+        return customPaymentDocumentNumberFieldSize;
+    }
+
+    public void setCustomPaymentDocumentNumberFieldSize(Integer customPaymentDocumentNumberFieldSize) {
+        this.customPaymentDocumentNumberFieldSize = customPaymentDocumentNumberFieldSize;
     }
 
     public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {

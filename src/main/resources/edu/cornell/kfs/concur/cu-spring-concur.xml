@@ -40,7 +40,6 @@
 				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
 				<value>${staging.directory}/concur/standardAccountingExtract</value>
-				<value>${staging.directory}/concur/standardAccountingExtract/reimbursement</value>
 			</list>
 		</property>
 
@@ -69,8 +68,8 @@
 	
 	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />
 	<bean id="concurStandardAccountingExtractService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractServiceImpl" abstract="true">
-		<property name="reimbursementFeedDirectory">
-			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
+		<property name="paymentImportDirectory">
+			<value>${staging.directory}/pdp/paymentImport/</value>
 		</property>
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
