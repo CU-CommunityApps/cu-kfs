@@ -53,7 +53,7 @@ public class ConcurConstants {
     
     public static final String EMPLOYEE_GROUP_ID = "CORNELL";
     
-    public static final String CUSTOM_PAYMEMT_DOC_NUMBER_FIELD_NAME = "custPaymentDocNbr";
+    public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
     
     public class ConcurPdpConstants {
         public static final String CREDIT = "CR";

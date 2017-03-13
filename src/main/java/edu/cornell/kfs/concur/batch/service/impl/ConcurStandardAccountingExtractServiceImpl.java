@@ -50,7 +50,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     
     private Integer payeeNameFieldSize;
-    private Integer customPaymentDocumentNumberFieldSize;
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
@@ -260,7 +259,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     protected String buildSourceDocumentNumber(String reportId) {
         String sourceDocNumber = ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE + reportId;
-        return StringUtils.substring(sourceDocNumber, 0, getCustomPaymentDocumentNumberFieldSize().intValue());
+        return StringUtils.substring(sourceDocNumber, 0, ConcurConstants.SOURCE_DOCUMENT_NUMBER_FIELD_SIZE);
     }
     
     private PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line) {
@@ -374,18 +373,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
         this.payeeNameFieldSize = payeeNameFieldSize;
-    }
-
-    public Integer getCustomPaymentDocumentNumberFieldSize() {
-        if (customPaymentDocumentNumberFieldSize == null) {
-            customPaymentDocumentNumberFieldSize = getDataDictionaryService().getAttributeMaxLength(PaymentDetail.class, ConcurConstants.CUSTOM_PAYMEMT_DOC_NUMBER_FIELD_NAME);
-        }
-        LOG.info("getCustomPaymentDocumentNumberFieldSize returning " + customPaymentDocumentNumberFieldSize);
-        return customPaymentDocumentNumberFieldSize;
-    }
-
-    public void setCustomPaymentDocumentNumberFieldSize(Integer customPaymentDocumentNumberFieldSize) {
-        this.customPaymentDocumentNumberFieldSize = customPaymentDocumentNumberFieldSize;
     }
 
     public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
