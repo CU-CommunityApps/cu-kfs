@@ -55,6 +55,8 @@ public class ConcurConstants {
     
     public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
     
+    public static final String XML_FILE_EXTENSION = ".xml";
+    
     public class ConcurPdpConstants {
         public static final String CREDIT = "CR";
         public static final String DEBIT = "DR";

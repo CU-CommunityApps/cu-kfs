@@ -12,9 +12,11 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -71,6 +73,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                     "parseStandardAccoutingExtractFileToStandardAccountingExtractFile, did not parse the file into exactly 1 parse file ");
         }
         concurStandardAccountingExtractFile = (ConcurStandardAccountingExtractFile) parsed.get(0);
+        concurStandardAccountingExtractFile.setOriginalFileName(standardAccountingExtractFile.getName());
         return concurStandardAccountingExtractFile;
     }
 
@@ -126,16 +129,21 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
 
     @Override
-    public boolean extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+    public String extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         boolean success = true;
-        
+        String pdpFileName = StringUtils.EMPTY;
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile);
-            String outputFilePath = getPaymentImportDirectory() + "foo.xml";
+            pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
+            String outputFilePath = getPaymentImportDirectory() + pdpFileName;
             success = marshalPdpFeedFle(pdpFeedFileBaseEntry, outputFilePath);
         }
         
-        return success;
+        return success ? pdpFileName : StringUtils.EMPTY;
+    }
+    
+    protected String buildPdpOutputFileName(String originalFileName) {
+        return StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
 
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
@@ -317,6 +325,13 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected String formatDate(Date date) {
         DateFormat df = new SimpleDateFormat(ConcurConstants.DATE_FORMAT);
         return df.format(date);
+    }
+    
+    public void createDoneFileForPdpFile(String pdpFileName) throws IOException {
+        String fullFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
+                GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+        FileUtils.touch(new File(fullFilePath));
+        
     }
 
     @Override
