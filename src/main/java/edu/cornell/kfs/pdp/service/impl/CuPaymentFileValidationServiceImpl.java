@@ -139,14 +139,6 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             }
         }
     }
-
-    @Override
-    public void doHardEdits(PaymentFileLoad paymentFile, MessageMap errorMap) {
-        super.doHardEdits(paymentFile, errorMap);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("After doHardEdits: " + printErrorMap(errorMap));
-        }
-    }
     
     public String printErrorMap(MessageMap errorMap) {
         StringBuilder sb = new StringBuilder();
@@ -163,13 +155,4 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
         return sb.toString();
     }
-
-    @Override
-    protected void processHeaderValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
-        super.processHeaderValidation(paymentFile, errorMap);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("After processHeaderValidation: " + printErrorMap(errorMap));
-        }
-    }
-
 }
