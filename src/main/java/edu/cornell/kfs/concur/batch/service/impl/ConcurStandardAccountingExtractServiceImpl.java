@@ -5,9 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -17,12 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
-import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -30,14 +22,13 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
@@ -47,11 +38,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected String paymentImportDirectory;
     protected BatchInputFileService batchInputFileService;
     protected CUMarshalService cuMarshalService;
-    protected DataDictionaryService dataDictionaryService;
     protected BatchInputFileType batchInputFileType;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
-    
-    private Integer payeeNameFieldSize;
+    protected ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService;
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
@@ -138,24 +127,19 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             String outputFilePath = getPaymentImportDirectory() + pdpFileName;
             success = marshalPdpFeedFle(pdpFeedFileBaseEntry, outputFilePath);
         }
-        
         return success ? pdpFileName : StringUtils.EMPTY;
     }
     
-    protected String buildPdpOutputFileName(String originalFileName) {
-        return StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
-    }
-
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         KualiDecimal pdpTotal = KualiDecimal.ZERO;
         PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
-        pdpFeedFileBaseEntry.setVersion("1.0");
-        pdpFeedFileBaseEntry.setHeader(buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
-        
+        pdpFeedFileBaseEntry.setVersion(ConcurConstants.StandardAccountingExtractPdpConstants.FEED_FILE_ENTRY_HEADER_VERSION);
+        pdpFeedFileBaseEntry.setHeader(
+                getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
-                    PdpFeedGroupEntry currentGroup = getGroupForLine(pdpFeedFileBaseEntry, line);
+                    PdpFeedGroupEntry currentGroup = getGroupEntryForLine(pdpFeedFileBaseEntry, line);
                     PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
                     PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
                     
@@ -169,24 +153,25 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return pdpFeedFileBaseEntry;
     }
     
-    private PdpFeedGroupEntry getGroupForLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
+    private PdpFeedGroupEntry getGroupEntryForLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
         for (PdpFeedGroupEntry groupEntry : pdpFeedFileBaseEntry.getGroup()) {
             if (StringUtils.equalsIgnoreCase(line.getEmployeeId(), groupEntry.getPayeeId().getContent())) {
                 return groupEntry;
             }
         }
-        PdpFeedGroupEntry group = buildPdpFeedGroupEntry(line);
+        PdpFeedGroupEntry group = getConcurStandardAccountExtractPdpEntryService().buildPdpFeedGroupEntry(line);
         pdpFeedFileBaseEntry.getGroup().add(group);
         return group;
     }
     
     private PdpFeedDetailEntry getDetailEntryForLine(PdpFeedGroupEntry groupEntry, ConcurStandardAccountingExtractDetailLine line) {
         for (PdpFeedDetailEntry detailEntry : groupEntry.getDetail()) {
-            if (StringUtils.equalsIgnoreCase(detailEntry.getSourceDocNbr(), buildSourceDocumentNumber(line.getReportId()))) {
+            if (StringUtils.equalsIgnoreCase(detailEntry.getSourceDocNbr(), 
+                    getConcurStandardAccountExtractPdpEntryService().buildSourceDocumentNumber(line.getReportId()))) {
                 return detailEntry;
             }
         }
-        PdpFeedDetailEntry detailEntry = buildPdpFeedDetailEntry(line);
+        PdpFeedDetailEntry detailEntry = getConcurStandardAccountExtractPdpEntryService().buildPdpFeedDetailEntry(line);
         groupEntry.getDetail().add(detailEntry);
         return detailEntry;
     }
@@ -197,55 +182,20 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                 return accountingEntry;
             }
         }
-        PdpFeedAccountingEntry accountingEntry = buildPdpFeedAccountingEntry(line);
+        PdpFeedAccountingEntry accountingEntry = getConcurStandardAccountExtractPdpEntryService().buildPdpFeedAccountingEntry(line);
         detailEntry.getAccounting().add(accountingEntry);
         return accountingEntry;
     }
     
-
-    private PdpFeedGroupEntry buildPdpFeedGroupEntry(ConcurStandardAccountingExtractDetailLine line) {
-        PdpFeedGroupEntry currentGroup;
-        currentGroup = new PdpFeedGroupEntry();
-        currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
-                line.getEmployeeMiddleInitital()));
-        currentGroup.setPayeeId(buildPayeeIdEntry(line));
-        currentGroup.setPaymentDate(formatDate(line.getBatchDate()));
-        currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
-        currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
-        currentGroup.setCustomerInstitutionIdentifier("");
-        return currentGroup;
-    }
-
-    private PdpFeedDetailEntry buildPdpFeedDetailEntry(ConcurStandardAccountingExtractDetailLine line) {
-        PdpFeedDetailEntry currentDetailEntry;
-        currentDetailEntry = new PdpFeedDetailEntry();
-        currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
-        currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
-        currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
-        currentDetailEntry.setInvoiceNbr("");
-        currentDetailEntry.setPoNbr("");
-        currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
-        return currentDetailEntry;
-    }
-
-    private PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurStandardAccountingExtractDetailLine line) {
-        PdpFeedAccountingEntry currentAccountingEntry;
-        currentAccountingEntry =  new PdpFeedAccountingEntry();
-        currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
-        currentAccountingEntry.setAccountNbr(line.getAccountNumber());
-        currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
-        currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
-        currentAccountingEntry.setOrgRefId(line.getOrgRefId());
-        currentAccountingEntry.setProjectCd(line.getProjectCode());
-        currentAccountingEntry.setAmount(KualiDecimal.ZERO.toString());
-        return currentAccountingEntry;
-    }
-
     private PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal) {
         PdpFeedTrailerEntry trailerEntry = new PdpFeedTrailerEntry();
         trailerEntry.setDetailCount(pdpFeedFileBaseEntry.getGroup().size());
         trailerEntry.setDetailTotAmt(new Double(pdpTotal.doubleValue()));
         return trailerEntry;
+    }
+    
+    protected String buildPdpOutputFileName(String originalFileName) {
+        return StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
     protected String addAmounts(String startingAmount, KualiDecimal addAmount) {
@@ -264,51 +214,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return isSame;
         
     }
-    
-    protected String buildSourceDocumentNumber(String reportId) {
-        String sourceDocNumber = ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE + reportId;
-        return StringUtils.substring(sourceDocNumber, 0, ConcurConstants.SOURCE_DOCUMENT_NUMBER_FIELD_SIZE);
-    }
-    
-    private PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line) {
-        PdpFeedPayeeIdEntry payeeIdEntry = new PdpFeedPayeeIdEntry();
-        payeeIdEntry.setContent(line.getEmployeeId());
-        if (StringUtils.equalsIgnoreCase(line.getEmployeeStatus(), ConcurConstants.StandardAccountingExtractPdpConstants.EMPLOYEE_STATUS_CODE)) {
-            payeeIdEntry.setIdType(ConcurConstants.StandardAccountingExtractPdpConstants.EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
-        } else {
-            payeeIdEntry.setIdType(ConcurConstants.StandardAccountingExtractPdpConstants.NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
-        }
-        return payeeIdEntry;
-    }
-
-    protected PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
-        PdpFeedHeaderEntry value = new PdpFeedHeaderEntry();
-        value.setChart(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_CHART_CODE);
-        value.setCreationDate(formatDate(batchDate));
-        value.setSubUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_SUB_UNIT);
-        value.setUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_UNIT);
-        return value;
-    }
-    
-    protected String buildPayeeName(String lastName, String firstName, String middleInitial) {
-        String seperator = KFSConstants.COMMA + KFSConstants.BLANK_SPACE;
-        String fullName = lastName + seperator + firstName;
-        if (StringUtils.isNotBlank(middleInitial)) {
-            fullName = fullName + seperator + middleInitial + KFSConstants.DELIMITER;
-        }
-        if(fullName.length() > getPayeeNameFieldSize()) {
-            fullName = StringUtils.substring(fullName, 0, getPayeeNameFieldSize());
-            fullName = removeLastCharacterWhenComma(fullName);
-        }
-        return fullName;
-    }
-
-    private String removeLastCharacterWhenComma(String fullName) {
-        if (fullName.lastIndexOf(KFSConstants.COMMA) >= getPayeeNameFieldSize()-2) {
-            fullName = fullName.substring(0, fullName.lastIndexOf(KFSConstants.COMMA));
-        }
-        return fullName;
-    }
 
     private boolean marshalPdpFeedFle(PdpFeedFileBaseEntry cdpFeedFileBaseEntry, String outputFilePath) {
         boolean success = true;
@@ -322,11 +227,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return success;
     }
     
-    protected String formatDate(Date date) {
-        DateFormat df = new SimpleDateFormat(ConcurConstants.DATE_FORMAT);
-        return df.format(date);
-    }
-    
+    @Override
     public void createDoneFileForPdpFile(String pdpFileName) throws IOException {
         String fullFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
                 GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
@@ -363,31 +264,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         this.cuMarshalService = cuMarshalService;
     }
 
-    public DataDictionaryService getDataDictionaryService() {
-        return dataDictionaryService;
-    }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-    }
-
     public BatchInputFileType getBatchInputFileType() {
         return batchInputFileType;
     }
 
     public void setBatchInputFileType(BatchInputFileType batchInputFileType) {
         this.batchInputFileType = batchInputFileType;
-    }
-
-    public Integer getPayeeNameFieldSize() {
-        if (payeeNameFieldSize == null) {
-            payeeNameFieldSize = getDataDictionaryService().getAttributeMaxLength(PaymentGroup.class, PdpConstants.PaymentDetail.PAYEE_NAME);
-        }
-        return payeeNameFieldSize;
-    }
-
-    public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
-        this.payeeNameFieldSize = payeeNameFieldSize;
     }
 
     public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
@@ -397,6 +279,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     public void setConcurStandardAccountingExtractValidationService(
             ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService) {
         this.concurStandardAccountingExtractValidationService = concurStandardAccountingExtractValidationService;
+    }
+
+    public ConcurStandardAccountExtractPdpEntryService getConcurStandardAccountExtractPdpEntryService() {
+        return concurStandardAccountExtractPdpEntryService;
+    }
+
+    public void setConcurStandardAccountExtractPdpEntryService(
+            ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService) {
+        this.concurStandardAccountExtractPdpEntryService = concurStandardAccountExtractPdpEntryService;
     }
 
 }

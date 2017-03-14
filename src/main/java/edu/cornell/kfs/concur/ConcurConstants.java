@@ -49,14 +49,6 @@ public class ConcurConstants {
 
     public static final String PDP_XML_NAMESPACE = "http://www.kuali.org/kfs/pdp/payment";
     
-    public static final String DATE_FORMAT = "MM/dd/YYYY";
-    
-    public static final String EMPLOYEE_GROUP_ID = "CORNELL";
-    
-    public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
-    
-    public static final String XML_FILE_EXTENSION = ".xml";
-    
     public class ConcurPdpConstants {
         public static final String CREDIT = "CR";
         public static final String DEBIT = "DR";
@@ -74,5 +66,11 @@ public class ConcurConstants {
         public static final String DEFAULT_CHART_CODE = "IT";
         public static final String DEFAULT_UNIT = "CRNL";
         public static final String DEFAULT_SUB_UNIT = "CNCR";
+        public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
     }
+    
+    public static final String DATE_FORMAT = "MM/dd/YYYY";
+    public static final String EMPLOYEE_GROUP_ID = "CORNELL";
+    public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
+    public static final String XML_FILE_EXTENSION = ".xml";
 }

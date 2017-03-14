@@ -16,8 +16,6 @@ import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import com.ctc.wstx.util.StringUtil;
-
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;

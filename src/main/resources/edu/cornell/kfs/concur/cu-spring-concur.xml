@@ -74,8 +74,13 @@
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 		<property name="cuMarshalService" ref="cuMarshalService"/>
-		<property name="dataDictionaryService" ref="dataDictionaryService"/>
+		<property name="concurStandardAccountExtractPdpEntryService" ref="concurStandardAccountExtractPdpEntryService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
+	</bean>
+	
+	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />
+	<bean id="concurStandardAccountExtractPdpEntryService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountExtractPdpEntryServiceImpl" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
