@@ -82,6 +82,7 @@
 	<bean id="concurStandardAccountExtractPdpEntryService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountExtractPdpEntryServiceImpl" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService"/>
 		<property name="dateTimeService" ref="dateTimeService"/>
+		<property name="parameterService" ref="parameterService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
