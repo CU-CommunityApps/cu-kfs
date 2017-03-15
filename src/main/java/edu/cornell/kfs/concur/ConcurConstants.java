@@ -58,16 +58,17 @@ public class ConcurConstants {
         public static final String PAYMENT_CODE_CASH = "CASH";
         public static final String COMBINED_GROUP_INDICATOR = "Y";
         public static final String BANK_CODE = "DISB";
-        public static final String FS_ORIGIN_CODE = "Z6";
-        public static final String DOCUMENT_TYPE = "APTR";
         public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
         public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
         public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y"; 
-        public static final String DEFAULT_CHART_CODE = "IT";
-        public static final String DEFAULT_UNIT = "CRNL";
-        public static final String DEFAULT_SUB_UNIT = "CNCR";
         public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
     }
+    
+    public static final String DEFAULT_ORIGINATION_CODE_PARAMETER_NAME = "CONCUR_AP_PDP_ORIGINATION_CODE";
+    public static final String DEFAULT_SAW_PDP_DOCUMENT_TYPE_PARAMETER_NAME = "CONCUR_SAE_PDP_DOCUMENT_TYPE";
+    public static final String CUSTOMER_PROFILE_LOCATION_PARAMETER_NAME = "CONCUR_CUSTOMER_PROFILE_LOCATION";
+    public static final String CUSTOMER_PROFILE_UNIT_PARAMETER_NAME = "CONCUR_CUSTOMER_PROFILE_UNIT";
+    public static final String CUSTOMER_PROFILE_SUB_UNIT_PARAMETER_NAME = "CONCUR_CUSTOMER_PROFILE_SUB_UNIT";
     
     public static final String DATE_FORMAT = "MM/dd/yyyy";
     public static final String EMPLOYEE_GROUP_ID = "CORNELL";

@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.sql.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -18,21 +19,24 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurStandardAccountExtractPdpEntryService {
-    
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountExtractPdpEntryServiceImpl.class);
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
+    protected ParameterService parameterService;
     
     private Integer payeeNameFieldSize;
 
     @Override
     public PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry headerEntry = new PdpFeedHeaderEntry();
-        headerEntry.setChart(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_CHART_CODE);
+        headerEntry.setChart(getConcurParamterValue(ConcurConstants.CUSTOMER_PROFILE_LOCATION_PARAMETER_NAME));
         headerEntry.setCreationDate(formatDate(batchDate));
-        headerEntry.setSubUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_SUB_UNIT);
-        headerEntry.setUnit(ConcurConstants.StandardAccountingExtractPdpConstants.DEFAULT_UNIT);
+        headerEntry.setSubUnit(getConcurParamterValue(ConcurConstants.CUSTOMER_PROFILE_SUB_UNIT_PARAMETER_NAME));
+        headerEntry.setUnit(getConcurParamterValue(ConcurConstants.CUSTOMER_PROFILE_UNIT_PARAMETER_NAME));
         return headerEntry;
     }
 
@@ -85,8 +89,8 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public PdpFeedDetailEntry buildPdpFeedDetailEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedDetailEntry currentDetailEntry  = new PdpFeedDetailEntry();
         currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
-        currentDetailEntry.setFsOriginCd(ConcurConstants.StandardAccountingExtractPdpConstants.FS_ORIGIN_CODE);
-        currentDetailEntry.setFdocTypCd(ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE);
+        currentDetailEntry.setFsOriginCd(getConcurParamterValue(ConcurConstants.DEFAULT_ORIGINATION_CODE_PARAMETER_NAME));
+        currentDetailEntry.setFdocTypCd(getConcurParamterValue(ConcurConstants.DEFAULT_SAW_PDP_DOCUMENT_TYPE_PARAMETER_NAME));
         currentDetailEntry.setInvoiceNbr("");
         currentDetailEntry.setPoNbr("");
         currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
@@ -95,7 +99,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     
     @Override
     public String buildSourceDocumentNumber(String reportId) {
-        String sourceDocNumber = ConcurConstants.StandardAccountingExtractPdpConstants.DOCUMENT_TYPE + reportId;
+        String sourceDocNumber = getConcurParamterValue(ConcurConstants.DEFAULT_SAW_PDP_DOCUMENT_TYPE_PARAMETER_NAME) + reportId;
         return StringUtils.substring(sourceDocNumber, 0, ConcurConstants.SOURCE_DOCUMENT_NUMBER_FIELD_SIZE);
     }
 
@@ -122,6 +126,15 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         }
         return payeeNameFieldSize;
     }
+    
+    public String getConcurParamterValue(String parameterName) {
+        String paramterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
+        if (LOG.isInfoEnabled()) { 
+            LOG.info("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + paramterValue);
+        }
+        return paramterValue;
+    }
 
     public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
         this.payeeNameFieldSize = payeeNameFieldSize;
@@ -141,6 +154,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
+    }
+
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }
