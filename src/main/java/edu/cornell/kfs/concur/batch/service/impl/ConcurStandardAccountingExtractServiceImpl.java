@@ -118,14 +118,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
 
     @Override
-    public String extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+    public String extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         boolean success = true;
         String pdpFileName = StringUtils.EMPTY;
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
-            String outputFilePath = getPaymentImportDirectory() + pdpFileName;
-            success = marshalPdpFeedFle(pdpFeedFileBaseEntry, outputFilePath);
+            String pdpFilePath = getPaymentImportDirectory() + pdpFileName;
+            success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFilePath);
         }
         return success ? pdpFileName : StringUtils.EMPTY;
     }
@@ -139,18 +139,21 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
-                    PdpFeedGroupEntry currentGroup = getGroupEntryForLine(pdpFeedFileBaseEntry, line);
-                    PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
-                    PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
-                    
+                    buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
                     pdpTotal = pdpTotal.add(line.getJournalAmount());
-                    String newAmount = addAmounts(currentAccounting.getAmount(), line.getJournalAmount());
-                    currentAccounting.setAmount(newAmount);
                 }
             }
         }
         pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
         return pdpFeedFileBaseEntry;
+    }
+
+    private void buildAndUpdateAccountingEntryFromLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
+        PdpFeedGroupEntry currentGroup = getGroupEntryForLine(pdpFeedFileBaseEntry, line);
+        PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
+        PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
+        String newAmount = addAmounts(currentAccounting.getAmount(), line.getJournalAmount());
+        currentAccounting.setAmount(newAmount);
     }
     
     private PdpFeedGroupEntry getGroupEntryForLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
@@ -215,13 +218,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         
     }
 
-    private boolean marshalPdpFeedFle(PdpFeedFileBaseEntry cdpFeedFileBaseEntry, String outputFilePath) {
+    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry cdpFeedFileBaseEntry, String outputFilePath) {
         boolean success = true;
         try {
             File pdpFeedFile = getCuMarshalService().marshalObjectToXML(cdpFeedFileBaseEntry, outputFilePath);
+            LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFilePath);
             success = true;
         } catch (JAXBException | IOException e) {
-            LOG.error("There was an error marshalling the PDP feed file.", e);
+            LOG.error("marshalPdpFeedFile, There was an error marshalling the PDP feed file.", e);
             success = false;
         }
         return success;

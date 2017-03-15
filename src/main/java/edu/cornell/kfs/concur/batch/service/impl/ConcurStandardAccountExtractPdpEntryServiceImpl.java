@@ -1,14 +1,13 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -23,6 +22,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurStandardAccountExtractPdpEntryService {
     
     protected DataDictionaryService dataDictionaryService;
+    protected DateTimeService dateTimeService;
     
     private Integer payeeNameFieldSize;
 
@@ -43,17 +43,17 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
                 line.getEmployeeMiddleInitital()));
         currentGroup.setPayeeId(buildPayeeIdEntry(line));
         currentGroup.setPaymentDate(formatDate(line.getBatchDate()));
-        currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINDED_GROUP_INDICATOR);
+        currentGroup.setCombineGroupInd(ConcurConstants.StandardAccountingExtractPdpConstants.COMBINED_GROUP_INDICATOR);
         currentGroup.setBankCode(ConcurConstants.StandardAccountingExtractPdpConstants.BANK_CODE);
-        currentGroup.setCustomerInstitutionIdentifier("");
+        currentGroup.setCustomerInstitutionIdentifier(StringUtils.EMPTY);
         return currentGroup;
     }
     
     protected String buildPayeeName(String lastName, String firstName, String middleInitial) {
-        String seperator = KFSConstants.COMMA + KFSConstants.BLANK_SPACE;
-        String fullName = lastName + seperator + firstName;
+        String separator = KFSConstants.COMMA + KFSConstants.BLANK_SPACE;
+        String fullName = lastName + separator + firstName;
         if (StringUtils.isNotBlank(middleInitial)) {
-            fullName = fullName + seperator + middleInitial + KFSConstants.DELIMITER;
+            fullName = fullName + separator + middleInitial + KFSConstants.DELIMITER;
         }
         if(fullName.length() > getPayeeNameFieldSize()) {
             fullName = StringUtils.substring(fullName, 0, getPayeeNameFieldSize());
@@ -113,8 +113,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
     
     protected String formatDate(Date date) {
-        DateFormat df = new SimpleDateFormat(ConcurConstants.DATE_FORMAT);
-        return df.format(date);
+        return getDateTimeService().toString(date, ConcurConstants.DATE_FORMAT);
     }
     
     public Integer getPayeeNameFieldSize() {
@@ -134,6 +133,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public DateTimeService getDateTimeService() {
+        return dateTimeService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
 }
