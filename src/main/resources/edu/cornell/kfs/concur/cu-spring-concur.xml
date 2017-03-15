@@ -81,15 +81,12 @@
 	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />
 	<bean id="concurStandardAccountExtractPdpEntryService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountExtractPdpEntryServiceImpl" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService"/>
+		<property name="dateTimeService" ref="dateTimeService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">
-		<property name="accountService" ref="accountService"/>
-		<property name="subAccountService" ref="subAccountService"/>
-		<property name="objectCodeService" ref="objectCodeService"/>
-		<property name="subObjectCodeService" ref="subObjectCodeService"/>
-		<property name="projectCodeService" ref="projectCodeService"/>
+		<property name="concurAccountValidationService" ref="concurAccountValidationService"/>
 	</bean>
 	
 	<bean id="standardAccountExtractFileType" parent="FlatFileParser">

@@ -3,10 +3,12 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
 public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     
@@ -16,6 +18,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     public void setUp() throws Exception {
         concurStandardAccountExtractPdpEntryServiceImpl = new ConcurStandardAccountExtractPdpEntryServiceImpl();
         concurStandardAccountExtractPdpEntryServiceImpl.setPayeeNameFieldSize(new Integer(40));
+        concurStandardAccountExtractPdpEntryServiceImpl.setDateTimeService(new DateTimeServiceImpl());
     }
 
     @After
@@ -60,7 +63,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     
     @Test
     public void formatDate() {
-        Date testDate = new Date(2017-1900, 1, 7);
+        Date testDate = new Date(2017-1900, Calendar.FEBRUARY, 7);
         String results = concurStandardAccountExtractPdpEntryServiceImpl.formatDate(testDate);
         assertEquals("The dates should format as expected", "02/07/2017", results);
     }

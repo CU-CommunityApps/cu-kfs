@@ -13,7 +13,7 @@ public interface ConcurStandardAccountingExtractService {
     
     List<String> buildListOfFileNamesToBeProcessed();
 
-    String extractPdpFeedFromStandardAccounitngExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+    String extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
 
     boolean extractCollectorFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     

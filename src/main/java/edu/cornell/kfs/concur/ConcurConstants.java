@@ -56,7 +56,7 @@ public class ConcurConstants {
     
     public class StandardAccountingExtractPdpConstants {
         public static final String PAYMENT_CODE_CASH = "CASH";
-        public static final String COMBINDED_GROUP_INDICATOR = "Y";
+        public static final String COMBINED_GROUP_INDICATOR = "Y";
         public static final String BANK_CODE = "DISB";
         public static final String FS_ORIGIN_CODE = "Z6";
         public static final String DOCUMENT_TYPE = "APTR";
@@ -69,7 +69,7 @@ public class ConcurConstants {
         public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
     }
     
-    public static final String DATE_FORMAT = "MM/dd/YYYY";
+    public static final String DATE_FORMAT = "MM/dd/yyyy";
     public static final String EMPLOYEE_GROUP_ID = "CORNELL";
     public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
     public static final String XML_FILE_EXTENSION = ".xml";

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.FileStorageService;
 
@@ -43,7 +43,7 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                 .parseStandardAccoutingExtractFile(saeFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
-            String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
+            String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
             if (StringUtils.isEmpty(outputFileName)) {
                 success = false;
                 LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, could not produce a PDP XML file for " + saeFileName);
