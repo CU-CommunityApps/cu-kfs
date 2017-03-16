@@ -133,8 +133,8 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public String getConcurParameterValue(String parameterName) {
         String paramterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
-        if (LOG.isInfoEnabled()) { 
-            LOG.info("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + paramterValue);
+        if (LOG.isDebugEnabled()) { 
+            LOG.debug("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + paramterValue);
         }
         return paramterValue;
     }
