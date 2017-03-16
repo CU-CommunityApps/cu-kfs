@@ -70,7 +70,7 @@ public class PdpFeedFileBaseEntryFixture {
         detail.setSourceDocNbr("C16326");
         detail.setInvoiceNbr("66432520714");
         detail.setInvoiceDate("02/03/2017");
-        detail.setOrigInvoiceAmt(new Double(105.28));
+        detail.setOrigInvoiceAmt(new KualiDecimal(105.28));
         detail.setFsOriginCd("Z1");
         detail.setFdocTypCd("APCL");
         detail.setAccounting(buildAccounting());
