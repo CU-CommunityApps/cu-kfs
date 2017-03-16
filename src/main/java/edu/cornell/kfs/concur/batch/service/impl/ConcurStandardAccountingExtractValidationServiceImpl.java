@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -13,11 +14,14 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValid
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurStandardAccountingExtractValidationServiceImpl implements ConcurStandardAccountingExtractValidationService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class);
     
     protected ConcurAccountValidationService concurAccountValidationService;
+    protected ParameterService parameterService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
@@ -71,8 +75,8 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     @Override
     public boolean validateDebitCreditField(String debitCredit) {
-        boolean valid = StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.CREDIT) || 
-                StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.ConcurPdpConstants.DEBIT);
+        boolean valid = StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.CREDIT) || 
+                StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.DEBIT);
         if (valid) {
             LOG.debug("validateDebitCreditField, found a valid debit/credit.");
         } else {
@@ -83,13 +87,20 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeGroupId(String employeeGroupId) {
-        boolean valid = StringUtils.equalsIgnoreCase(employeeGroupId, ConcurConstants.EMPLOYEE_GROUP_ID);
+        String expectedGroupId = findEmploueeGroupId();
+        boolean valid = StringUtils.equalsIgnoreCase(employeeGroupId, expectedGroupId);
         if (valid) {
             LOG.debug("Found a valid employee group id.");
         } else {
-            LOG.error("Found an invalid employee group id: " + employeeGroupId);
+            LOG.error("Found an invalid employee group id: " + employeeGroupId + ".  We expected the group ID to be " + expectedGroupId);
         }
         return valid;
+    }
+    
+    protected String findEmploueeGroupId() {
+        String expectedGroupId = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurConstants.ParameterNames.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+        return expectedGroupId;
     }
 
     @Override
@@ -106,7 +117,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     @Override
     public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line) {
         boolean valid = validateReportId(line.getReportId());
-        valid = validateAccouningLine(line) && valid;
+        valid = validateAccountingLine(line) && valid;
         return valid;
     }
     
@@ -119,31 +130,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         }
         return valid;
     }
-    
-    /*
-    private boolean validateAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
-        return validateRequiredElementsExists(line) && validateAccouningLine(line);
-    }*/
 
-    private boolean validateAccouningLine(ConcurStandardAccountingExtractDetailLine line) {
+    private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line) {
         ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode(), line.getOrgRefId());
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
         LOG.info("validateAccountingInformation, the accounting validation results: " + validationResults.getErrorMessagesAsOneFormattedString());
         return validationResults.isValid();
     }
-    /*
-    private boolean validateRequiredElementsExists(ConcurStandardAccountingExtractDetailLine line) {
-        boolean valid = StringUtils.isNotBlank(line.getAccountNumber()) && 
-                StringUtils.isNotBlank(line.getChartOfAccountsCode()) &&
-                StringUtils.isNotBlank(line.getJournalAccountCode());
-        if (valid) {
-            LOG.debug("validateRequiredElementsExists, found a chart, account, and object code");
-        } else {
-            LOG.error("validateRequiredElementsExists, chart, account, or object code was empty.");
-        }
-        return valid;
-    }*/
 
     public ConcurAccountValidationService getConcurAccountValidationService() {
         return concurAccountValidationService;
@@ -151,6 +145,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setConcurAccountValidationService(ConcurAccountValidationService concurAccountValidationService) {
         this.concurAccountValidationService = concurAccountValidationService;
+    }
+
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }
