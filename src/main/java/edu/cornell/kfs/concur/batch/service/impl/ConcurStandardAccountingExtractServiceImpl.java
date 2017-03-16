@@ -144,7 +144,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                 }
             }
         }
-        pdpFeedFileBaseEntry.setTrailer(buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
+        pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
         return pdpFeedFileBaseEntry;
     }
 
@@ -190,28 +190,26 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return accountingEntry;
     }
     
-    private PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal) {
-        PdpFeedTrailerEntry trailerEntry = new PdpFeedTrailerEntry();
-        trailerEntry.setDetailCount(pdpFeedFileBaseEntry.getGroup().size());
-        trailerEntry.setDetailTotAmt(pdpTotal);
-        return trailerEntry;
-    }
-    
     protected String buildPdpOutputFileName(String originalFileName) {
         return StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
     protected boolean isCurrentAccountingEntrySameAsLineDetail(PdpFeedAccountingEntry currentAccountingEntry, 
             ConcurStandardAccountingExtractDetailLine line) {
-        boolean isSame = StringUtils.equals(currentAccountingEntry.getCoaCd(), line.getChartOfAccountsCode()) &&
-                StringUtils.equals(currentAccountingEntry.getAccountNbr(), line.getAccountNumber()) &&
-                StringUtils.equals(currentAccountingEntry.getSubAccountNbr(), line.getSubAccountNumber()) &&
-                StringUtils.equals(currentAccountingEntry.getObjectCd(), line.getJournalAccountCode()) &&
-                StringUtils.equals(currentAccountingEntry.getSubObjectCd(), line.getSubObjectCode()) &&
-                StringUtils.equals(currentAccountingEntry.getOrgRefId(), line.getOrgRefId()) &&
-                StringUtils.equals(currentAccountingEntry.getProjectCd(), line.getProjectCode());
+        boolean isSame = compareStrings(currentAccountingEntry.getCoaCd(), line.getChartOfAccountsCode()) &&
+                compareStrings(currentAccountingEntry.getAccountNbr(), line.getAccountNumber()) &&
+                compareStrings(currentAccountingEntry.getSubAccountNbr(), line.getSubAccountNumber()) &&
+                compareStrings(currentAccountingEntry.getObjectCd(), line.getJournalAccountCode()) &&
+                compareStrings(currentAccountingEntry.getSubObjectCd(), line.getSubObjectCode()) &&
+                compareStrings(currentAccountingEntry.getOrgRefId(), line.getOrgRefId()) &&
+                compareStrings(currentAccountingEntry.getProjectCd(), line.getProjectCode());
         return isSame;
-        
+    }
+    
+    private boolean compareStrings(String one, String two) {
+        one = StringUtils.trimToEmpty(one);
+        two = StringUtils.trimToEmpty(two);
+        return StringUtils.equalsIgnoreCase(one, two);
     }
 
     private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry cdpFeedFileBaseEntry, String outputFilePath) {

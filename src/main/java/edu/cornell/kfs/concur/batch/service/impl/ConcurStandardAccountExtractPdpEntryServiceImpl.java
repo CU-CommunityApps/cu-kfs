@@ -17,9 +17,11 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
@@ -111,12 +113,25 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         PdpFeedAccountingEntry currentAccountingEntry =  new PdpFeedAccountingEntry();
         currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
         currentAccountingEntry.setAccountNbr(line.getAccountNumber());
+        currentAccountingEntry.setSubAccountNbr(line.getSubAccountNumber());
         currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
         currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
         currentAccountingEntry.setOrgRefId(line.getOrgRefId());
         currentAccountingEntry.setProjectCd(line.getProjectCode());
         currentAccountingEntry.setAmount(KualiDecimal.ZERO);
         return currentAccountingEntry;
+    }
+    
+    @Override
+    public PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal) {
+        PdpFeedTrailerEntry trailerEntry = new PdpFeedTrailerEntry();
+        int numberOfDetails = 0;
+        for (PdpFeedGroupEntry group : pdpFeedFileBaseEntry.getGroup()) {
+            numberOfDetails += group.getDetail().size();
+        }
+        trailerEntry.setDetailCount(numberOfDetails);
+        trailerEntry.setDetailTotAmt(pdpTotal);
+        return trailerEntry;
     }
     
     protected String formatDate(Date date) {
