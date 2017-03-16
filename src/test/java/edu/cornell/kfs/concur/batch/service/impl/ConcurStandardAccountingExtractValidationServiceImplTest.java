@@ -23,7 +23,7 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     @Before
     public void setUp() throws Exception {
         Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class).setLevel(Level.DEBUG);
-        concurStandardAccountingValidationService = new ConcurStandardAccountingExtractValidationServiceImpl();
+        concurStandardAccountingValidationService = new TestableConcurStandardAccountingExtractValidationServiceImpl();
         
         KualiDecimal[] debits = {new KualiDecimal(100.75), new KualiDecimal(-50.45)};
         KualiDecimal[] credits  = {};
@@ -105,6 +105,31 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         assertFalse("General validation should be false, bad line count.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
     }
     
+    @Test 
+    public void validateEmployeeGroupIdGood() {
+        assertTrue("This should be a good group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0).getEmployeeGroupId()));
+    }
+    
+    @Test 
+    public void validateEmployeeGroupIdNull() {
+        assertFalse("This should be a bad group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId(null));
+    }
+    
+    @Test 
+    public void validateEmployeeGroupIdWrongValue() {
+        assertFalse("This should be a bad group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId("foo"));
+    }
+    
+    @Test
+    public void validateGeneralValidationBadEmoployeeGroup() {
+        file.getConcurStandardAccountingExtractDetailLines().get(0).setEmployeeGroupId("testMe");
+        assertFalse("General validation should be false, bad employee group id.", 
+                concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+    }
+    
     private void setBadJournalTotal() {
         file.getConcurStandardAccountingExtractDetailLines().get(0).setJournalAmount(new KualiDecimal(200));
     }
@@ -115,6 +140,13 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
 
     private void setBadRecordCount() {
         file.setRecordCount(new Integer(5));
+    }
+    
+    private class TestableConcurStandardAccountingExtractValidationServiceImpl extends ConcurStandardAccountingExtractValidationServiceImpl {
+        @Override
+        protected String findEmploueeGroupId() {
+            return "CORNELL";
+        }
     }
 
 }
