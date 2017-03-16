@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.sql.Date;
 import java.util.Calendar;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,10 +63,19 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     }
     
     @Test
-    public void formatDate() {
-        Date testDate = new Date(2017-1900, Calendar.FEBRUARY, 7);
+    public void formatDate1() {
+        DateTime jodaDateTime = new DateTime(2017, 2, 7, 0, 0);
+        Date testDate = new Date(jodaDateTime.getMillis());
         String results = concurStandardAccountExtractPdpEntryServiceImpl.formatDate(testDate);
         assertEquals("The dates should format as expected", "02/07/2017", results);
+    }
+    
+    @Test
+    public void formatDate2() {
+        DateTime jodaDateTime = new DateTime(1977, 12, 31, 3, 46);
+        Date testDate = new Date(jodaDateTime.getMillis());
+        String results = concurStandardAccountExtractPdpEntryServiceImpl.formatDate(testDate);
+        assertEquals("The dates should format as expected", "12/31/1977", results);
     }
 
 }

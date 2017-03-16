@@ -137,7 +137,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         pdpFeedFileBaseEntry.setHeader(
                 getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
-            if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.StandardAccountingExtractPdpConstants.PAYMENT_CODE_CASH)) {
+            if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
                     pdpTotal = pdpTotal.add(line.getJournalAmount());

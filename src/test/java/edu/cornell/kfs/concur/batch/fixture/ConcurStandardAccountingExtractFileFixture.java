@@ -21,12 +21,12 @@ public class ConcurStandardAccountingExtractFileFixture {
         for (KualiDecimal debitAmount : debits) {
             journalTotal = journalTotal.add(debitAmount);
             file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                    ConcurConstants.ConcurPdpConstants.DEBIT, debitAmount));
+                    ConcurConstants.DEBIT, debitAmount));
         }
         for (KualiDecimal creditAmount : credits) {
             journalTotal = journalTotal.add(creditAmount);
             file.getConcurStandardAccountingExtractDetailLines().add(buildConcurStandardAccountingExtractDetailLine(
-                    ConcurConstants.ConcurPdpConstants.CREDIT, creditAmount));
+                    ConcurConstants.CREDIT, creditAmount));
         }
         file.setJournalAmountTotal(journalTotal);
 
@@ -37,7 +37,7 @@ public class ConcurStandardAccountingExtractFileFixture {
         ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
         line.setJounalDebitCredit(debitCredit);
         line.setJournalAmount(amount);
-        line.setEmployeeGroupId(ConcurConstants.EMPLOYEE_GROUP_ID);
+        line.setEmployeeGroupId("CORNELL");
         return line;
     }
 

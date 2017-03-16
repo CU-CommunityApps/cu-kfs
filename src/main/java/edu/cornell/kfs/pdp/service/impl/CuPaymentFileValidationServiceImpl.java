@@ -99,7 +99,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
 
                 // compare net to accounting segments
                 if (paymentDetail.getAccountTotal().compareTo(paymentDetail.getNetPaymentAmount()) != 0) {
-                    LOG.debug("processGroupValidation, account total (" + paymentDetail.getAccountTotal()  + ") not equal to net amount tatal (" + paymentDetail.getNetPaymentAmount() + ")");
+                    LOG.debug("processGroupValidation, account total (" + paymentDetail.getAccountTotal()  + ") not equal to net amount total (" + paymentDetail.getNetPaymentAmount() + ")");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_DETAIL_TOTAL_MISMATCH, Integer.toString(groupCount), Integer.toString(detailCount), paymentDetail.getAccountTotal().toString(), paymentDetail.getNetPaymentAmount().toString());
                 }
 
