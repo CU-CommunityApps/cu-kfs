@@ -62,11 +62,15 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             }
             
             // validate vendor id and customer institution number
-            try {
-                paymentGroup.validateVendorIdAndCustomerInstitutionIdentifier(); 
-            } catch(RuntimeException e1) {
-                LOG.error("processGroupValidation, there was an error validating customer institution information", e1);
-                errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] { e1.getMessage() });
+            if (paymentGroup.getPayeeId().split("-").length > 1) {
+                try {
+                    paymentGroup.validateVendorIdAndCustomerInstitutionIdentifier(); 
+                } catch(RuntimeException e1) {
+                    LOG.error("processGroupValidation, there was an error validating customer institution information", e1);
+                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] { e1.getMessage() });
+                }
+            } else {
+                LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
             }
             
             // validate bank
