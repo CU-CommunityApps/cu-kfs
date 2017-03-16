@@ -76,6 +76,7 @@
 		<property name="cuMarshalService" ref="cuMarshalService"/>
 		<property name="concurStandardAccountExtractPdpEntryService" ref="concurStandardAccountExtractPdpEntryService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
+		<property name="parameterService" ref="parameterService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />

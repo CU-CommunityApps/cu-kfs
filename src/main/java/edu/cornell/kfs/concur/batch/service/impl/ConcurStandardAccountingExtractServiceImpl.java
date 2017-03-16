@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -30,6 +31,8 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
@@ -41,6 +44,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected BatchInputFileType batchInputFileType;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     protected ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService;
+    protected ParameterService parameterService;
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
@@ -137,6 +141,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         pdpFeedFileBaseEntry.setHeader(
                 getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
+            replacePendingClientWithOverride(line);
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
@@ -146,6 +151,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         }
         pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
         return pdpFeedFileBaseEntry;
+    }
+    
+    private void replacePendingClientWithOverride(ConcurStandardAccountingExtractDetailLine line) {
+        if (StringUtils.equalsIgnoreCase(line.getJournalAccountCode(), ConcurConstants.PENDING_CLIENT)) {
+            String overrideObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurConstants.ParameterNames.CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE);
+            LOG.error("replacePendingClientWithOverride, found a Pending Client object code, replacing it with " + overrideObjectCode);
+            line.setJournalAccountCode(overrideObjectCode);
+        }
     }
 
     private void buildAndUpdateAccountingEntryFromLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
@@ -286,6 +300,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     public void setConcurStandardAccountExtractPdpEntryService(
             ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService) {
         this.concurStandardAccountExtractPdpEntryService = concurStandardAccountExtractPdpEntryService;
+    }
+
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }
