@@ -155,4 +155,36 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
         return sb.toString();
     }
+    
+    @Override
+    public void doHardEdits(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.doHardEdits(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After doHardEdits: " + printErrorMap(errorMap));
+        }
+    }
+
+    @Override
+    protected void processHeaderValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.processHeaderValidation(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After processHeaderValidation: " + printErrorMap(errorMap));
+        }
+    }
+
+    @Override
+    protected void processTrailerValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.processTrailerValidation(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After processTrailerValidation: " + printErrorMap(errorMap));
+        }
+    }
+
+    @Override
+    protected void checkPaymentGroupPropertyMaxLength(PaymentGroup paymentGroup, MessageMap errorMap) {
+        super.checkPaymentGroupPropertyMaxLength(paymentGroup, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After checkPaymentGroupPropertyMaxLength: " + printErrorMap(errorMap));
+        }
+    }
 }
