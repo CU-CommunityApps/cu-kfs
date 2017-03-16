@@ -65,6 +65,7 @@ public class ConcurConstants {
         public static final String CONCUR_CUSTOMER_PROFILE_UNIT = "CONCUR_CUSTOMER_PROFILE_UNIT";
         public static final String CONCUR_CUSTOMER_PROFILE_SUB_UNIT = "CONCUR_CUSTOMER_PROFILE_SUB_UNIT";
         public static final String DEFAULT_TRAVEL_REQUEST_OBJECT_CODE = "DEFAULT_TRAVEL_REQUEST_OBJECT_CODE";
+        public static final String CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE = "CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE";
     }
     
     public static final String DATE_FORMAT = "MM/dd/yyyy";
@@ -73,4 +74,5 @@ public class ConcurConstants {
     public static final String CREDIT = "CR";
     public static final String DEBIT = "DR";
     public static final String PAYMENT_CODE_CASH = "CASH";
+    public static final String PENDING_CLIENT = "Pending Client";
 }
