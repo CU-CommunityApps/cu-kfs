@@ -20,15 +20,6 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     public void tearDown() throws Exception {
         concurStandardAccountingExtractServiceImpl = null;
     }
-
-    @Test
-    public void addAmounts() {
-        String starting = "100";
-        KualiDecimal addAmount = new KualiDecimal(500.45); 
-        String results = concurStandardAccountingExtractServiceImpl.addAmounts(starting, addAmount);
-        String expected = "600.45";
-        assertEquals("The amounts should be the same", expected, results);
-    }
     
     @Test
     public void buildPdpOutputFileName() {

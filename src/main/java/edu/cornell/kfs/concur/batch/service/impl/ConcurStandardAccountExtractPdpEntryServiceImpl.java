@@ -58,10 +58,10 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         String separator = KFSConstants.COMMA + KFSConstants.BLANK_SPACE;
         String fullName = lastName + separator + firstName;
         if (StringUtils.isNotBlank(middleInitial)) {
-            fullName = fullName + separator + middleInitial + KFSConstants.DELIMITER;
+            fullName = fullName + KFSConstants.BLANK_SPACE + middleInitial + KFSConstants.DELIMITER;
         }
         if(fullName.length() > getPayeeNameFieldSize()) {
-            fullName = StringUtils.substring(fullName, 0, getPayeeNameFieldSize());
+            fullName = StringUtils.substring(fullName, 0, getPayeeNameFieldSize().intValue());
             fullName = removeLastCharacterWhenComma(fullName);
         }
         return fullName;
@@ -115,7 +115,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
         currentAccountingEntry.setOrgRefId(line.getOrgRefId());
         currentAccountingEntry.setProjectCd(line.getProjectCode());
-        currentAccountingEntry.setAmount(KualiDecimal.ZERO.toString());
+        currentAccountingEntry.setAmount(KualiDecimal.ZERO);
         return currentAccountingEntry;
     }
     
