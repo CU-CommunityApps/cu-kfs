@@ -152,7 +152,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         PdpFeedGroupEntry currentGroup = getGroupEntryForLine(pdpFeedFileBaseEntry, line);
         PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
         PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
-        String newAmount = addAmounts(currentAccounting.getAmount(), line.getJournalAmount());
+        KualiDecimal newAmount = line.getJournalAmount().add(currentAccounting.getAmount());
         currentAccounting.setAmount(newAmount);
     }
     
@@ -193,16 +193,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal) {
         PdpFeedTrailerEntry trailerEntry = new PdpFeedTrailerEntry();
         trailerEntry.setDetailCount(pdpFeedFileBaseEntry.getGroup().size());
-        trailerEntry.setDetailTotAmt(new Double(pdpTotal.doubleValue()));
+        trailerEntry.setDetailTotAmt(pdpTotal);
         return trailerEntry;
     }
     
     protected String buildPdpOutputFileName(String originalFileName) {
         return StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
-    }
-    
-    protected String addAmounts(String startingAmount, KualiDecimal addAmount) {
-        return new KualiDecimal(startingAmount).add(addAmount).toString();
     }
     
     protected boolean isCurrentAccountingEntrySameAsLineDetail(PdpFeedAccountingEntry currentAccountingEntry, 

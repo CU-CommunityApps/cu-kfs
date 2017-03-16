@@ -30,7 +30,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     @Test
     public void buildPayeeName() {
         String results = concurStandardAccountExtractPdpEntryServiceImpl.buildPayeeName("Doe", "John", "Q");
-        String expected = "Doe, John, Q.";
+        String expected = "Doe, John Q.";
         assertEquals("The names should be the same", expected, results);
     }
     
@@ -50,15 +50,15 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     
     @Test
     public void buildPayeeNameOverFortyCharsEndWithComma() {
-        String results = concurStandardAccountExtractPdpEntryServiceImpl.buildPayeeName("zxcvbnmasdfghjklqwer", "qwertyuiopasdfgh", "l");
-        String expected = "zxcvbnmasdfghjklqwer, qwertyuiopasdfgh";
+        String results = concurStandardAccountExtractPdpEntryServiceImpl.buildPayeeName("zxcvbnmasdfghjklqwer", "qwertyuiopasdfghij", "l");
+        String expected = "zxcvbnmasdfghjklqwer, qwertyuiopasdfghij";
         assertEquals("The names should be the same", expected, results);
     }
     
     @Test
     public void buildPayeeNameOverFortyCharsEndWithComma2() {
-        String results = concurStandardAccountExtractPdpEntryServiceImpl.buildPayeeName("zxcvbnmasdfghjklqwer", "qwertyuiopasdfghi", "l");
-        String expected = "zxcvbnmasdfghjklqwer, qwertyuiopasdfghi";
+        String results = concurStandardAccountExtractPdpEntryServiceImpl.buildPayeeName("zxcvbnmasdfghjklqwer", "qwertyuiopasdfghijk", "l");
+        String expected = "zxcvbnmasdfghjklqwer, qwertyuiopasdfghij";
         assertEquals("The names should be the same", expected, results);
     }
     

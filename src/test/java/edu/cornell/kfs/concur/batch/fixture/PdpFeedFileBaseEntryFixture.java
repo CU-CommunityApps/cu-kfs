@@ -3,6 +3,8 @@ package edu.cornell.kfs.concur.batch.fixture;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
@@ -33,7 +35,7 @@ public class PdpFeedFileBaseEntryFixture {
     private static PdpFeedTrailerEntry buildTrailer() {
         PdpFeedTrailerEntry trailer = new PdpFeedTrailerEntry();
         trailer.setDetailCount(new Integer(1));
-        trailer.setDetailTotAmt(new Double(96.95));
+        trailer.setDetailTotAmt(new KualiDecimal(96.95));
         return trailer;
     }
 
@@ -85,14 +87,14 @@ public class PdpFeedFileBaseEntryFixture {
         accounting.setAccountNbr("H833810");
         accounting.setObjectCd("6000");
         accounting.setSubObjectCd("365");
-        accounting.setAmount("25.50");
+        accounting.setAmount(new KualiDecimal(25.50));
         
         PdpFeedAccountingEntry accounting2 = new PdpFeedAccountingEntry();
         accounting2.setCoaCd("IT");
         accounting2.setAccountNbr("H833810");
         accounting2.setObjectCd("6000");
         accounting2.setSubObjectCd("350");
-        accounting2.setAmount("71.45");
+        accounting2.setAmount(new KualiDecimal(71.45));
 
         accountings.add(accounting);
         accountings.add(accounting2);
