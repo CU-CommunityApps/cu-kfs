@@ -142,8 +142,8 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         pdpFeedFileBaseEntry.setHeader(
                 getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
-            replacePendingClientWithOverride(line);
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
+                logJournalAccountCodeOverriden(line);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
                     pdpTotal = pdpTotal.add(line.getJournalAmount());
@@ -154,12 +154,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return pdpFeedFileBaseEntry;
     }
     
-    private void replacePendingClientWithOverride(ConcurStandardAccountingExtractDetailLine line) {
-        if (StringUtils.equalsIgnoreCase(line.getJournalAccountCode(), ConcurConstants.PENDING_CLIENT)) {
-            String overrideObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE);
-            LOG.error("replacePendingClientWithOverride, found a Pending Client object code, replacing it with " + overrideObjectCode);
-            line.setJournalAccountCode(overrideObjectCode);
+    private void logJournalAccountCodeOverriden(ConcurStandardAccountingExtractDetailLine line) {
+        if (line.getJournalAccountCodeOverriden().booleanValue()) {
+            LOG.error("logJournalAccountCodeOverriden, the journal account code needed to be overriden");
         }
     }
 
