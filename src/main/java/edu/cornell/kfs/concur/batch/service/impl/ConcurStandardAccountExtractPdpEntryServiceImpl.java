@@ -5,8 +5,12 @@ import java.sql.Date;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.businessobject.CustomerBank;
+import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.service.CustomerProfileService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -30,8 +34,10 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
+    protected CustomerProfileService customerProfileService;
     
     private Integer payeeNameFieldSize;
+    private String bankCode;
 
     @Override
     public PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
@@ -51,11 +57,11 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentGroup.setPayeeId(buildPayeeIdEntry(line));
         currentGroup.setPaymentDate(formatDate(line.getBatchDate()));
         currentGroup.setCombineGroupInd(ConcurConstants.COMBINED_GROUP_INDICATOR);
-        currentGroup.setBankCode(ConcurConstants.BANK_CODE);
+        currentGroup.setBankCode(getBankCode());
         currentGroup.setCustomerInstitutionIdentifier(StringUtils.EMPTY);
         return currentGroup;
     }
-    
+
     protected String buildPayeeName(String lastName, String firstName, String middleInitial) {
         String separator = KFSConstants.COMMA + KFSConstants.BLANK_SPACE;
         String fullName = lastName + separator + firstName;
@@ -145,6 +151,43 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         return payeeNameFieldSize;
     }
     
+    public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
+        this.payeeNameFieldSize = payeeNameFieldSize;
+    }
+    
+    protected String getBankCode() {
+        if (StringUtils.isBlank(bankCode)) {
+            String location = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
+            String unit = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
+            String subunit = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
+            CustomerProfile customerProfile = getCustomerProfileService().get(location, unit, subunit);
+            bankCode =  findBankCode(customerProfile);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getBankCode location " + location + "  unit: " + unit + "  subunit " + subunit + "  customerProfile: " + customerProfile);
+            }
+        }
+        return bankCode;
+    }
+
+    private String findBankCode(CustomerProfile customerProfile) {
+        if(ObjectUtils.isNotNull(customerProfile)) {
+            CustomerBank achBank = customerProfile.getCustomerBankByDisbursementType(PdpConstants.DisbursementTypeCodes.ACH);
+            if (ObjectUtils.isNotNull(achBank)) {
+                return achBank.getBankCode();
+            } else {
+                CustomerBank checkBank = customerProfile.getCustomerBankByDisbursementType(PdpConstants.DisbursementTypeCodes.CHECK);
+                if (ObjectUtils.isNotNull(achBank)) {
+                    return checkBank.getBankCode();
+                }
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+    
+    public void setBankCode(String bankCode) {
+        this.bankCode = bankCode;
+    }
+    
     public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
@@ -152,10 +195,6 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             LOG.debug("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + parameterValue);
         }
         return parameterValue;
-    }
-
-    public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
-        this.payeeNameFieldSize = payeeNameFieldSize;
     }
     
     public DataDictionaryService getDataDictionaryService() {
@@ -180,6 +219,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public CustomerProfileService getCustomerProfileService() {
+        return customerProfileService;
+    }
+
+    public void setCustomerProfileService(CustomerProfileService customerProfileService) {
+        this.customerProfileService = customerProfileService;
     }
 
 }
