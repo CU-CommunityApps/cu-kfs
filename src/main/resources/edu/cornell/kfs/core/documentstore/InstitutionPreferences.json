@@ -2502,10 +2502,6 @@
   ],
    "menu": [
     {
-      "label": "Feedback",
-      "link": "/kfs/kr/kualiFeedbackReport.do"
-    },
-    {
       "label": "Help",
       "link": "/kfs/static/help/default.htm"
     },
