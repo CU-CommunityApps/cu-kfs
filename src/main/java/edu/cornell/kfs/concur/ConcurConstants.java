@@ -47,11 +47,6 @@ public class ConcurConstants {
 
     public static final String PDP_XML_NAMESPACE = "http://www.kuali.org/kfs/pdp/payment";
     
-    public static class StandardAccountingExtractPdpConstants {
-        public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
-        public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
-    }
-    
     public static final String DATE_FORMAT = "MM/dd/yyyy";
     public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
     public static final String XML_FILE_EXTENSION = ".xml";
@@ -64,4 +59,6 @@ public class ConcurConstants {
     public static final String COMBINED_GROUP_INDICATOR = "Y";
     public static final String BANK_CODE = "DISB";
     public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
+    public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
+    public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
 }

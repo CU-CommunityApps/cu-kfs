@@ -206,7 +206,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected String buildPdpOutputFileName(String originalFileName) {
-        return StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
+        return "pdp_concur_" +  StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     
     protected boolean isCurrentAccountingEntrySameAsLineDetail(PdpFeedAccountingEntry currentAccountingEntry, 
