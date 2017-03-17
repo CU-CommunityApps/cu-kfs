@@ -21,6 +21,7 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
@@ -137,7 +138,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         KualiDecimal pdpTotal = KualiDecimal.ZERO;
         PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
-        pdpFeedFileBaseEntry.setVersion(ConcurConstants.StandardAccountingExtractPdpConstants.FEED_FILE_ENTRY_HEADER_VERSION);
+        pdpFeedFileBaseEntry.setVersion(ConcurConstants.FEED_FILE_ENTRY_HEADER_VERSION);
         pdpFeedFileBaseEntry.setHeader(
                 getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
@@ -156,7 +157,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private void replacePendingClientWithOverride(ConcurStandardAccountingExtractDetailLine line) {
         if (StringUtils.equalsIgnoreCase(line.getJournalAccountCode(), ConcurConstants.PENDING_CLIENT)) {
             String overrideObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurConstants.ParameterNames.CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE);
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE);
             LOG.error("replacePendingClientWithOverride, found a Pending Client object code, replacing it with " + overrideObjectCode);
             line.setJournalAccountCode(overrideObjectCode);
         }

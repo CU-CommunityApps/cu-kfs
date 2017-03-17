@@ -20,7 +20,7 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurConstants.ParameterNames;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurReport;
@@ -167,7 +167,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         String chart = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom1());
         String accountNumber = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom2());
         String subAccountNumber = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom3());
-        String objectCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, ParameterNames.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE);
+        String objectCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE);
         String subObjectCode = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom4());
         String projectCode = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom5());
         ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, StringUtils.EMPTY);

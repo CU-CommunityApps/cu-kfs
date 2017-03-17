@@ -8,6 +8,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
@@ -87,7 +88,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeGroupId(String employeeGroupId) {
-        String expectedGroupId = findEmploueeGroupId();
+        String expectedGroupId = findEmployeeGroupId();
         boolean valid = StringUtils.equalsIgnoreCase(employeeGroupId, expectedGroupId);
         if (valid) {
             LOG.debug("Found a valid employee group id.");
@@ -97,9 +98,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         return valid;
     }
     
-    protected String findEmploueeGroupId() {
+    protected String findEmployeeGroupId() {
         String expectedGroupId = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurConstants.ParameterNames.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
         return expectedGroupId;
     }
 

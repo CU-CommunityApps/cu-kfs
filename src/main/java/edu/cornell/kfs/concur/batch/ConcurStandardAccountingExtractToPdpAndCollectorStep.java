@@ -22,19 +22,17 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         List<String> listOfSaeFileNames = getConcurStandardAccountingExtractService().buildListOfFileNamesToBeProcessed();
-        boolean success = true;
         for (String saeFileName : listOfSaeFileNames) {
             LOG.debug("execute, processing: " + saeFileName);
             try {
-                success = processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName) && success;
+                processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName);
             } catch (Exception e) {
-                success = false;
                 LOG.error("execute, there was an unexpected error processing a file: ", e);
             } finally {
                 getFileStorageService().removeDoneFiles(Collections.singletonList(saeFileName));
             }
         }
-        return success;
+        return true;
     }
 
     protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFileName) {

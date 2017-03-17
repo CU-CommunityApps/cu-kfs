@@ -17,9 +17,11 @@ import edu.cornell.kfs.concur.batch.fixture.ConcurStandardAccountingExtractFileF
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractValidationServiceImplTest {
+    private static final String DEFAULT_GROUP_ID  = "CORNELL";
     
     private ConcurStandardAccountingExtractValidationService concurStandardAccountingValidationService;
     private ConcurStandardAccountingExtractFile file;
+    
     @Before
     public void setUp() throws Exception {
         Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class).setLevel(Level.DEBUG);
@@ -144,8 +146,8 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     private class TestableConcurStandardAccountingExtractValidationServiceImpl extends ConcurStandardAccountingExtractValidationServiceImpl {
         @Override
-        protected String findEmploueeGroupId() {
-            return "CORNELL";
+        protected String findEmployeeGroupId() {
+            return DEFAULT_GROUP_ID;
         }
     }
 
