@@ -136,7 +136,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode(), line.getOrgRefId());
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
-        LOG.info("validateAccountingInformation, the accounting validation results: " + validationResults.getErrorMessagesAsOneFormattedString());
+        if (validationResults.isNotValid()) {
+            LOG.info("validateAccountingInformation, the accounting validation results: " + validationResults.getErrorMessagesAsOneFormattedString());
+        }
         return validationResults.isValid();
     }
 

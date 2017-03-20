@@ -20,6 +20,7 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         LOG.debug("marshalObjectToXML, entering");
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         if (LOG.isDebugEnabled()) {
             jaxbMarshaller.marshal( objectToMarshal, System.out );
         }
