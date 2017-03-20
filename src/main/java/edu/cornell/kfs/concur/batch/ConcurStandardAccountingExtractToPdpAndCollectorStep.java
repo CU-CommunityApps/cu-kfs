@@ -37,7 +37,7 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
 
     protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFileName) {
         boolean success = true;
-        LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFileName);
+        LOG.info("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFileName);
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                 .parseStandardAccoutingExtractFile(saeFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {

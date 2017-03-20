@@ -241,8 +241,8 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     public void createDoneFileForPdpFile(String pdpFileName) throws IOException {
         String fullFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
                 GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+        LOG.info("createDoneFileForPdpFile, fullFilePath: " + fullFilePath);
         FileUtils.touch(new File(fullFilePath));
-        
     }
 
     @Override
