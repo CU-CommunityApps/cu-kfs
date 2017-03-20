@@ -244,22 +244,6 @@
 
 	<bean id="batchFileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />
 
-	<bean id="documentStoreClient" parent="documentStoreClient-parentBean"/>
-	<bean id="documentStoreClient-parentBean" abstract="true" class="${kfs.documentstore.client.class}">
-		<constructor-arg value="${kfs.documentstore.protocol}" type="java.lang.String" />
-		<constructor-arg value="${kfs.documentstore.host}" type="java.lang.String" />
-		<constructor-arg value="${kfs.documentstore.port}" type="int" />
-		<constructor-arg value="${kfs.documentstore.dbname}" type="java.lang.String" />
-		<constructor-arg value="${kfs.documentstore.username}" type="java.lang.String" />
-		<constructor-arg value="${kfs.documentstore.password}" type="java.lang.String" />
-	</bean>
-
-	<bean id="preferencesDao" parent="preferencesDao-parentBean"/>
-	<bean id="preferencesDao-parentBean" abstract="true" class="${kfs.documentstore.class}">
-		<property name="documentStoreClient" ref="documentStoreClient" />
-		<property name="tableNamePrefix" value="${kfs.documentstore.tablename.prefix}" />
-	</bean>
-
 	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
 	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
