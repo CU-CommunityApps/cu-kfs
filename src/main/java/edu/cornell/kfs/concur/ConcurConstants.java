@@ -57,6 +57,7 @@ public class ConcurConstants {
     public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
     public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y";
     public static final String COMBINED_GROUP_INDICATOR = "Y";
+    public static final String BANK_CODE = "DISB";
     public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
     public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";

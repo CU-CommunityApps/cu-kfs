@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 import org.joda.time.DateTime;
 import org.junit.After;
