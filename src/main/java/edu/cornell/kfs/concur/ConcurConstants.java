@@ -61,4 +61,5 @@ public class ConcurConstants {
     public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
     public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
+    public static final String PDP_CONCUR_OUTPUT_FILE_NAME_STARTER = "pdp_concur_";
 }

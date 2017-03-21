@@ -4,7 +4,6 @@
  * Copyright 2005-2017 Kuali, Inc.
  * 
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  * 
@@ -1107,20 +1106,20 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     }
     
     public void validateVendorIdAndCustomerInstitutionIdentifier() {
+        
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
         Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put("vendorAddressGeneratedIdentifier", customerInstitutionNumber);
         String[] headerDetails = payeeId.split("-");
-        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/* payeeId */);
+        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
-
-        List<VendorAddress> addrs = (List<VendorAddress>) bos.findMatching(VendorAddress.class, fieldValues);
+        
+        List<VendorAddress> addrs = (List<VendorAddress>)bos.findMatching(VendorAddress.class, fieldValues);
         if (addrs.size() == 1) {
             VendorAddress addr = (VendorAddress) addrs.get(0);
             setVendorAddress(addr);
         } else {
-            throw new RuntimeException(
-                    "Invalid Address [ " + customerInstitutionNumber + " ] for payee [ " + payeeId + " ]");
+            throw new RuntimeException("Invalid Address [ "+customerInstitutionNumber+" ] for payee [ "+payeeId + " ]");
             // Need to handle bad data.
         }
     }
