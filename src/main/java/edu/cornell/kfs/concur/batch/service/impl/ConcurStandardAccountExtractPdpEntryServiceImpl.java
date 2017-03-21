@@ -1,6 +1,8 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -10,6 +12,9 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -30,6 +35,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
+    protected PersonService personService;
     
     private Integer payeeNameFieldSize;
 
@@ -53,7 +59,20 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentGroup.setCombineGroupInd(ConcurConstants.COMBINED_GROUP_INDICATOR);
         currentGroup.setBankCode(ConcurConstants.BANK_CODE);
         currentGroup.setCustomerInstitutionIdentifier(StringUtils.EMPTY);
+        addAddressesToGroup(line, currentGroup);
         return currentGroup;
+    }
+
+    private void addAddressesToGroup(ConcurStandardAccountingExtractDetailLine line, PdpFeedGroupEntry currentGroup) {
+        Person employee = getPersonService().getPersonByEmployeeId(line.getEmployeeId());
+        if (ObjectUtils.isNotNull(employee)) {
+            currentGroup.setAddress1(employee.getAddressLine1Unmasked());
+            currentGroup.setAddress2(employee.getAddressLine2Unmasked());
+            currentGroup.setAddress3(employee.getAddressLine3Unmasked());
+            currentGroup.setCity(employee.getAddressCityUnmasked());
+            currentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
+            currentGroup.setZip(employee.getAddressPostalCodeUnmasked());
+        }
     }
     
     protected String buildPayeeName(String lastName, String firstName, String middleInitial) {
@@ -99,6 +118,9 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentDetailEntry.setInvoiceNbr(StringUtils.EMPTY);
         currentDetailEntry.setPoNbr(StringUtils.EMPTY);
         currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
+        List<String> paymentTextStrings = new ArrayList<String>();
+        paymentTextStrings.add("Report ID: " + line.getReportId());
+        currentDetailEntry.setPaymentText(paymentTextStrings);
         return currentDetailEntry;
     }
     
@@ -180,6 +202,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public PersonService getPersonService() {
+        return personService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 
 }

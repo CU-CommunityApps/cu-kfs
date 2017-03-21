@@ -5,7 +5,10 @@ import java.sql.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -23,6 +26,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ParameterService parameterService;
+    protected PersonService personService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
@@ -116,9 +120,22 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     @Override
+    public boolean validateEmployeeId(String employeeId) {
+        Person employee = getPersonService().getPersonByEmployeeId(employeeId);
+        boolean valid = ObjectUtils.isNotNull(employee);
+        if (valid) {
+            LOG.debug("validateEmployeeId, found a valid employee: " + employee.getName());
+        } else {
+            LOG.error("validateEmployeeId, found a an invalid employee ID: " + employeeId);
+        }
+        return valid;
+    }
+    
+    @Override
     public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line) {
         boolean valid = validateReportId(line.getReportId());
         valid = validateAccountingLine(line) && valid;
+        valid = validateEmployeeId(line.getEmployeeId()) && valid;
         return valid;
     }
     
@@ -156,6 +173,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public PersonService getPersonService() {
+        return personService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 
 }
