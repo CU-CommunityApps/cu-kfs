@@ -35,7 +35,6 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
-    protected PersonService personService;
     
     private Integer payeeNameFieldSize;
 
@@ -59,20 +58,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentGroup.setCombineGroupInd(ConcurConstants.COMBINED_GROUP_INDICATOR);
         currentGroup.setBankCode(ConcurConstants.BANK_CODE);
         currentGroup.setCustomerInstitutionIdentifier(StringUtils.EMPTY);
-        addAddressesToGroup(line, currentGroup);
         return currentGroup;
-    }
-
-    private void addAddressesToGroup(ConcurStandardAccountingExtractDetailLine line, PdpFeedGroupEntry currentGroup) {
-        Person employee = getPersonService().getPersonByEmployeeId(line.getEmployeeId());
-        if (ObjectUtils.isNotNull(employee)) {
-            currentGroup.setAddress1(employee.getAddressLine1Unmasked());
-            currentGroup.setAddress2(employee.getAddressLine2Unmasked());
-            currentGroup.setAddress3(employee.getAddressLine3Unmasked());
-            currentGroup.setCity(employee.getAddressCityUnmasked());
-            currentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
-            currentGroup.setZip(employee.getAddressPostalCodeUnmasked());
-        }
     }
     
     protected String buildPayeeName(String lastName, String firstName, String middleInitial) {
@@ -118,9 +104,6 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentDetailEntry.setInvoiceNbr(StringUtils.EMPTY);
         currentDetailEntry.setPoNbr(StringUtils.EMPTY);
         currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
-        List<String> paymentTextStrings = new ArrayList<String>();
-        paymentTextStrings.add("Report ID: " + line.getReportId());
-        currentDetailEntry.setPaymentText(paymentTextStrings);
         return currentDetailEntry;
     }
     
@@ -145,11 +128,17 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
     
     @Override
-    public PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal) {
+    public PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
         PdpFeedTrailerEntry trailerEntry = new PdpFeedTrailerEntry();
+        KualiDecimal pdpTotal = KualiDecimal.ZERO;
         int numberOfDetails = 0;
         for (PdpFeedGroupEntry group : pdpFeedFileBaseEntry.getGroup()) {
             numberOfDetails += group.getDetail().size();
+            for(PdpFeedDetailEntry detailEntry : group.getDetail()) {
+                for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
+                    pdpTotal = pdpTotal.add(accountingEntry.getAmount());
+                }
+            }
         }
         trailerEntry.setDetailCount(numberOfDetails);
         trailerEntry.setDetailTotAmt(pdpTotal);
@@ -202,14 +191,6 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
-    }
-
-    public PersonService getPersonService() {
-        return personService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
     }
 
 }

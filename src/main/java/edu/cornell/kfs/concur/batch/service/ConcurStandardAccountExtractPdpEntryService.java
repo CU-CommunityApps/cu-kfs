@@ -2,8 +2,6 @@ package edu.cornell.kfs.concur.batch.service;
 
 import java.sql.Date;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
@@ -27,5 +25,5 @@ public interface ConcurStandardAccountExtractPdpEntryService {
     
     PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurStandardAccountingExtractDetailLine line);
     
-    PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, KualiDecimal pdpTotal);
+    PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry);
 }

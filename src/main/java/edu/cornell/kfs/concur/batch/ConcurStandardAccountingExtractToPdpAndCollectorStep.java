@@ -21,8 +21,8 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        List<String> listOfSaeFileNames = getConcurStandardAccountingExtractService().buildListOfFileNamesToBeProcessed();
-        for (String saeFileName : listOfSaeFileNames) {
+        List<String> listOfSaeFullyQualifiedFileNames = getConcurStandardAccountingExtractService().buildListOfFullyQualifiedFileNamesToBeProcessed();
+        for (String saeFileName : listOfSaeFullyQualifiedFileNames) {
             LOG.debug("execute, processing: " + saeFileName);
             try {
                 processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName);
@@ -35,16 +35,16 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
         return true;
     }
 
-    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFileName) {
+    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFullyQualifiedFileName) {
         boolean success = true;
-        LOG.info("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFileName);
+        LOG.info("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFullyQualifiedFileName);
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
-                .parseStandardAccoutingExtractFile(saeFileName);
+                .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
             String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
             if (StringUtils.isEmpty(outputFileName)) {
                 success = false;
-                LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, could not produce a PDP XML file for " + saeFileName);
+                LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
             }
             if (success) {
                 success &= getConcurStandardAccountingExtractService()

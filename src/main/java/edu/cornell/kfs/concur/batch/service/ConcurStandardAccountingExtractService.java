@@ -11,7 +11,7 @@ public interface ConcurStandardAccountingExtractService {
 
     ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException;
     
-    List<String> buildListOfFileNamesToBeProcessed();
+    List<String> buildListOfFullyQualifiedFileNamesToBeProcessed();
 
     String extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
 

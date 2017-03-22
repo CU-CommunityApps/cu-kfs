@@ -113,7 +113,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     @Override
-    public List<String> buildListOfFileNamesToBeProcessed() {
+    public List<String> buildListOfFullyQualifiedFileNamesToBeProcessed() {
         List<String> listOfFileNames = getBatchInputFileService().listInputFileNamesWithDoneFile(getBatchInputFileType());
         if (LOG.isDebugEnabled()) {
             String numberOfFiles = listOfFileNames != null ? String.valueOf(listOfFileNames.size()) : "NULL";
@@ -136,27 +136,25 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
-        KualiDecimal pdpTotal = KualiDecimal.ZERO;
         PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
         pdpFeedFileBaseEntry.setVersion(ConcurConstants.FEED_FILE_ENTRY_HEADER_VERSION);
         pdpFeedFileBaseEntry.setHeader(
                 getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
-                logJournalAccountCodeOverriden(line);
+                logJournalAccountCodeOverridden(line);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
-                    pdpTotal = pdpTotal.add(line.getJournalAmount());
                 }
             }
         }
-        pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, pdpTotal));
+        pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry));
         return pdpFeedFileBaseEntry;
     }
     
-    private void logJournalAccountCodeOverriden(ConcurStandardAccountingExtractDetailLine line) {
-        if (line.getJournalAccountCodeOverriden().booleanValue()) {
-            LOG.error("logJournalAccountCodeOverriden, the journal account code needed to be overriden");
+    private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line) {
+        if (line.getJournalAccountCodeOverridden().booleanValue()) {
+            LOG.error("logJournalAccountCodeOverridden, the journal account code needed to be overriden");
         }
     }
 
@@ -203,7 +201,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected String buildPdpOutputFileName(String originalFileName) {
-        return ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_STARTER + 
+        return ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + 
                 StringUtils.replace(originalFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
     

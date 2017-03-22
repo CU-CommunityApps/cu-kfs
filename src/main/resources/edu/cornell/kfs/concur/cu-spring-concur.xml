@@ -84,7 +84,6 @@
 		<property name="dataDictionaryService" ref="dataDictionaryService"/>
 		<property name="dateTimeService" ref="dateTimeService"/>
 		<property name="parameterService" ref="parameterService"/>
-		<property name="personService" ref="personService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
@@ -136,9 +135,9 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="40" p:propertyName="employeeStatus"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="126" p:propertyName="paymentCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"
-                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeFormater"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCodeOverriden"
-                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeOverridenFormatter"/>
+                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCodeOverridden"
+                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeOverriddenFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="jounalDebitCredit"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>

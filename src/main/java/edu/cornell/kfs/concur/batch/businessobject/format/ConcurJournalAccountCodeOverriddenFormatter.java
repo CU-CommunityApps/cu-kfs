@@ -5,11 +5,11 @@ import org.kuali.rice.core.web.format.Formatter;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 
-public class ConcurJournalAccountCodeOverridenFormatter extends Formatter {
+public class ConcurJournalAccountCodeOverriddenFormatter extends Formatter {
     
     @Override
     protected Object convertToObject(String target) {
-        Boolean wasOverriden = new Boolean(StringUtils.equalsIgnoreCase(target, ConcurConstants.PENDING_CLIENT));
-        return wasOverriden;
+        Boolean wasOverridden = new Boolean(StringUtils.equalsIgnoreCase(target, ConcurConstants.PENDING_CLIENT));
+        return wasOverridden;
     }
 }

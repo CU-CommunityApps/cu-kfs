@@ -11,9 +11,9 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-public class ConcurJournalAccountCodeFormater extends Formatter {
+public class ConcurJournalAccountCodeFormatter extends Formatter {
     private static final long serialVersionUID = -2058566831766280380L;
-    private static Logger LOG = Logger.getLogger(ConcurJournalAccountCodeFormater.class);
+    private static Logger LOG = Logger.getLogger(ConcurJournalAccountCodeFormatter.class);
     
     protected ParameterService parameterService;
 
