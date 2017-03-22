@@ -71,6 +71,11 @@
                 <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
             </list>
         </property>
+        <property name="batchFileDirectories">
+            <list merge="true">
+                <value>${staging.directory}/fp</value>
+            </list>
+        </property>
     </bean>
 
     <bean id="cu-fpModuleService" parent="fpModuleService-parentBean">
