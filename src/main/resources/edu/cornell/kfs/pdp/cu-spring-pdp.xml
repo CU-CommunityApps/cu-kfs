@@ -53,6 +53,11 @@
                 <value>payeeACHAccountExtractJob</value>
             </list>
         </property>
+        <property name="batchFileDirectories">
+            <list merge="true">
+                <value>${staging.directory}/pdp</value>
+            </list>
+        </property>
     </bean>
     
     <bean id="cu-pdpModuleService" parent="pdpModuleService-parentBean">

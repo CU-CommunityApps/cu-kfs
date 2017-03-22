@@ -41,6 +41,12 @@
 				<value>accountReversionCurrentYearAccountJob</value>
 			</list>
 		</property>
+
+		<property name="batchFileDirectories">
+			<list merge="true">
+				<value>${staging.directory}/gl</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="accountReversionCurrentYearAccountJob" parent="unscheduledJobDescriptor">
