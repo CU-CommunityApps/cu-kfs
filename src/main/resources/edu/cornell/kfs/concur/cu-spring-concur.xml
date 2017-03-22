@@ -40,7 +40,6 @@
 				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
 				<value>${staging.directory}/concur/standardAccountingExtract</value>
-				<value>${staging.directory}/concur/standardAccountingExtract/reimbursement</value>
 			</list>
 		</property>
 
@@ -69,15 +68,29 @@
 	
 	<bean id="concurStandardAccountingExtractService" parent="concurStandardAccountingExtractService-parentBean" />
 	<bean id="concurStandardAccountingExtractService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractServiceImpl" abstract="true">
-		<property name="reimbursementFeedDirectory">
-			<value>${staging.directory}/concur/standardAccountingExtract/reimbursement/</value>
+		<property name="paymentImportDirectory">
+			<value>${staging.directory}/pdp/paymentImport/</value>
 		</property>
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
+		<property name="cuMarshalService" ref="cuMarshalService"/>
+		<property name="concurStandardAccountExtractPdpEntryService" ref="concurStandardAccountExtractPdpEntryService"/>
+		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
+		<property name="parameterService" ref="parameterService"/>
+	</bean>
+	
+	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />
+	<bean id="concurStandardAccountExtractPdpEntryService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountExtractPdpEntryServiceImpl" abstract="true">
+		<property name="dataDictionaryService" ref="dataDictionaryService"/>
+		<property name="dateTimeService" ref="dateTimeService"/>
+		<property name="parameterService" ref="parameterService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">
+		<property name="concurAccountValidationService" ref="concurAccountValidationService"/>
+		<property name="parameterService" ref="parameterService"/>
+		<property name="personService" ref="personService"/>
 	</bean>
 	
 	<bean id="standardAccountExtractFileType" parent="FlatFileParser">
@@ -121,7 +134,10 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="18" p:propertyName="reportId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="40" p:propertyName="employeeStatus"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="126" p:propertyName="paymentCode"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"
+                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeFormatter"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCodeOverridden"
+                                    	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeOverriddenFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="jounalDebitCredit"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
@@ -129,11 +145,12 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="192" p:propertyName="subAccountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="193" p:propertyName="subObjectCode"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="orgRefId"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="projectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="194" p:propertyName="projectCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="195" p:propertyName="orgRefId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="324" p:propertyName="reportEndDate"
                                             p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
                                             p:dateFormat="yyyy-MM-dd"/>
+                                    
                                 </list>
                             </property>
                         </bean>

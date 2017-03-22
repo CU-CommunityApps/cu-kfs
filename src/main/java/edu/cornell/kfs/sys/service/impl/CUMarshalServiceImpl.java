@@ -17,9 +17,10 @@ public class CUMarshalServiceImpl implements CUMarshalService {
 
     @Override
     public File marshalObjectToXML(Object objectToMarshal, String outputFilePath) throws JAXBException, IOException {
-        LOG.debug("marshalObjectToXML, entering");
+        LOG.debug("marshalObjectToXML, entering, outputFilePath: " + outputFilePath);
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         if (LOG.isDebugEnabled()) {
             jaxbMarshaller.marshal( objectToMarshal, System.out );
         }

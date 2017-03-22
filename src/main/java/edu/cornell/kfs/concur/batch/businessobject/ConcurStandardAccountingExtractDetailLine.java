@@ -18,6 +18,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String employeeStatus; 
     private String paymentCode; 
     private String journalAccountCode; 
+    private Boolean journalAccountCodeOverridden;
     private String chartOfAccountsCode;
     private String accountNumber; 
     private String subAccountNumber; 
@@ -124,6 +125,14 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.journalAccountCode = journalAccountCode;
     }
 
+    public Boolean getJournalAccountCodeOverridden() {
+        return journalAccountCodeOverridden;
+    }
+
+    public void setJournalAccountCodeOverridden(Boolean journalAccountCodeOverridden) {
+        this.journalAccountCodeOverridden = journalAccountCodeOverridden;
+    }
+
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
     }
@@ -203,6 +212,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" employeeMiddleInitital: ").append(employeeMiddleInitital).append(" employeeGroupId: ").append(employeeGroupId);
         sb.append(" reportId: ").append(reportId).append(" employeeStatus: ").append(employeeStatus);
         sb.append(" paymentCode: ").append(paymentCode).append(" journalAccountCode: ").append(journalAccountCode);
+        sb.append(" journalAccountCodeOverridden ").append(journalAccountCodeOverridden);
         sb.append(" chartOfAccountsCode: ").append(chartOfAccountsCode).append(" accountNumber: ").append(accountNumber);
         sb.append(" subAccountNumber: ").append(subAccountNumber).append(" subObjectCode: ").append(subObjectCode);
         sb.append(" orgRefId: ").append(orgRefId).append(" projectCode: ").append(projectCode);

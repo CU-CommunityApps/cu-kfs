@@ -11,7 +11,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -60,17 +63,23 @@ public class PdpFeedDetailEntry {
     @XmlSchemaType(name = "normalizedString")
     protected String invoiceDate;
     @XmlElement(name = "orig_invoice_amt", namespace = ConcurConstants.PDP_XML_NAMESPACE)
-    protected Double origInvoiceAmt;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal origInvoiceAmt;
     @XmlElement(name = "net_payment_amt", namespace = ConcurConstants.PDP_XML_NAMESPACE)
-    protected Double netPaymentAmt;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal netPaymentAmt;
     @XmlElement(name = "invoice_tot_discount_amt", namespace = ConcurConstants.PDP_XML_NAMESPACE)
-    protected Double invoiceTotDiscountAmt;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal invoiceTotDiscountAmt;
     @XmlElement(name = "invoice_tot_ship_amt", namespace = ConcurConstants.PDP_XML_NAMESPACE)
-    protected Double invoiceTotShipAmt;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal invoiceTotShipAmt;
     @XmlElement(name = "invoice_tot_other_debits", namespace = ConcurConstants.PDP_XML_NAMESPACE)
-    protected Double invoiceTotOtherDebits;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal invoiceTotOtherDebits;
     @XmlElement(name = "invoice_tot_other_credits", namespace = ConcurConstants.PDP_XML_NAMESPACE)
-    protected Double invoiceTotOtherCredits;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal invoiceTotOtherCredits;
     @XmlElement(name = "fs_origin_cd", namespace = ConcurConstants.PDP_XML_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -134,51 +143,51 @@ public class PdpFeedDetailEntry {
         this.invoiceDate = value;
     }
 
-    public Double getOrigInvoiceAmt() {
+    public KualiDecimal getOrigInvoiceAmt() {
         return origInvoiceAmt;
     }
 
-    public void setOrigInvoiceAmt(Double value) {
+    public void setOrigInvoiceAmt(KualiDecimal value) {
         this.origInvoiceAmt = value;
     }
 
-    public Double getNetPaymentAmt() {
+    public KualiDecimal getNetPaymentAmt() {
         return netPaymentAmt;
     }
 
-    public void setNetPaymentAmt(Double value) {
+    public void setNetPaymentAmt(KualiDecimal value) {
         this.netPaymentAmt = value;
     }
 
-    public Double getInvoiceTotDiscountAmt() {
+    public KualiDecimal getInvoiceTotDiscountAmt() {
         return invoiceTotDiscountAmt;
     }
 
-    public void setInvoiceTotDiscountAmt(Double value) {
+    public void setInvoiceTotDiscountAmt(KualiDecimal value) {
         this.invoiceTotDiscountAmt = value;
     }
 
-    public Double getInvoiceTotShipAmt() {
+    public KualiDecimal getInvoiceTotShipAmt() {
         return invoiceTotShipAmt;
     }
 
-    public void setInvoiceTotShipAmt(Double value) {
+    public void setInvoiceTotShipAmt(KualiDecimal value) {
         this.invoiceTotShipAmt = value;
     }
 
-    public Double getInvoiceTotOtherDebits() {
+    public KualiDecimal getInvoiceTotOtherDebits() {
         return invoiceTotOtherDebits;
     }
 
-    public void setInvoiceTotOtherDebits(Double value) {
+    public void setInvoiceTotOtherDebits(KualiDecimal value) {
         this.invoiceTotOtherDebits = value;
     }
 
-    public Double getInvoiceTotOtherCredits() {
+    public KualiDecimal getInvoiceTotOtherCredits() {
         return invoiceTotOtherCredits;
     }
 
-    public void setInvoiceTotOtherCredits(Double value) {
+    public void setInvoiceTotOtherCredits(KualiDecimal value) {
         this.invoiceTotOtherCredits = value;
     }
 

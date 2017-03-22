@@ -1,8 +1,15 @@
 package edu.cornell.kfs.pdp.service.impl;
 
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpKeyConstants;
+import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
+import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
+import org.kuali.kfs.pdp.businessobject.PaymentAccountHistory;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -11,11 +18,15 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.springframework.util.AutoPopulatingList;
+import org.kuali.kfs.krad.bo.KualiCodeBase;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
+    private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
@@ -32,10 +43,12 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
 
             // verify payee id and owner code if customer requires them to be filled in
             if (paymentFile.getCustomer().getPayeeIdRequired() && StringUtils.isBlank(paymentGroup.getPayeeId())) {
+                LOG.debug("processGroupValidation, No payee");
                 errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_PAYEE_ID_REQUIRED, Integer.toString(groupCount));
             }
 
             if (paymentFile.getCustomer().getOwnershipCodeRequired() && StringUtils.isBlank(paymentGroup.getPayeeOwnerCd())) {
+                LOG.debug("processGroupValidation, no ownership code");
                 errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_PAYEE_OWNER_CODE, Integer.toString(groupCount));
             }
 
@@ -43,15 +56,21 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             if (StringUtils.isNotBlank(paymentGroup.getPayeeIdTypeCd())) {
                 PayeeType payeeType = businessObjectService.findBySinglePrimaryKey(PayeeType.class, paymentGroup.getPayeeIdTypeCd());
                 if (payeeType == null) {
+                    LOG.debug("processGroupValidation, no payee type");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_PAYEE_ID_TYPE, Integer.toString(groupCount), paymentGroup.getPayeeIdTypeCd());
                 }
             }
             
             // validate vendor id and customer institution number
-            try {
-                paymentGroup.validateVendorIdAndCustomerInstitutionIdentifier(); 
-            } catch(RuntimeException e1) {
-                errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] { e1.getMessage() });
+            if (paymentGroup.getPayeeId().split("-").length > 1) {
+                try {
+                    paymentGroup.validateVendorIdAndCustomerInstitutionIdentifier(); 
+                } catch(RuntimeException e1) {
+                    LOG.error("processGroupValidation, there was an error validating customer institution information", e1);
+                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] { e1.getMessage() });
+                }
+            } else {
+                LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
             }
             
             // validate bank
@@ -59,9 +78,11 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             if (StringUtils.isNotBlank(bankCode)) {
                 Bank bank = bankService.getByPrimaryId(bankCode);
                 if (bank == null) {
+                    LOG.debug("processGroupValidation, no bank");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_BANK_CODE, Integer.toString(groupCount), bankCode);
                 }
                 else if (!bank.isActive()) {
+                    LOG.debug("processGroupValidation, bank isn't active");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INACTIVE_BANK_CODE, Integer.toString(groupCount), bankCode);
                 }
             }
@@ -82,6 +103,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
 
                 // compare net to accounting segments
                 if (paymentDetail.getAccountTotal().compareTo(paymentDetail.getNetPaymentAmount()) != 0) {
+                    LOG.debug("processGroupValidation, account total (" + paymentDetail.getAccountTotal()  + ") not equal to net amount total (" + paymentDetail.getNetPaymentAmount() + ")");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_DETAIL_TOTAL_MISMATCH, Integer.toString(groupCount), Integer.toString(detailCount), paymentDetail.getAccountTotal().toString(), paymentDetail.getNetPaymentAmount().toString());
                 }
 
@@ -89,6 +111,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 if (StringUtils.isNotBlank(paymentDetail.getFinancialSystemOriginCode())) {
                     OriginationCode originationCode = originationCodeService.getByPrimaryKey(paymentDetail.getFinancialSystemOriginCode());
                     if (originationCode == null) {
+                        LOG.debug("processGroupValidation, origination code is null");
                         errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_ORIGIN_CODE, Integer.toString(groupCount), Integer.toString(detailCount), paymentDetail.getFinancialSystemOriginCode());
                     }
                 }
@@ -96,6 +119,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 // validate doc type if given
                 if (StringUtils.isNotBlank(paymentDetail.getFinancialDocumentTypeCode())) {
                     if ( !documentTypeService.isActiveByName(paymentDetail.getFinancialDocumentTypeCode()) ) {
+                        LOG.debug("processGroupValidation, " + paymentDetail.getFinancialDocumentTypeCode() + " is not active.");
                         errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_DOC_TYPE, Integer.toString(groupCount), Integer.toString(detailCount), paymentDetail.getFinancialDocumentTypeCode());
                     }
                 }
@@ -105,15 +129,66 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
 
             // verify total for group is not negative
             if (groupTotal.doubleValue() < 0) {
+                LOG.debug("processGroupValidation, group total less than zero");
                 errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_NEGATIVE_GROUP_TOTAL, Integer.toString(groupCount));
             }
 
             // check that the number of detail items and note lines will fit on a check stub
             if (noteLineCount > getMaxNoteLines()) {
+                LOG.debug("processGroupValidation, too many notes");
                 errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_MAX_NOTE_LINES, Integer.toString(groupCount), Integer.toString(noteLineCount), Integer.toString(getMaxNoteLines()));
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("After processGroupValidation: " + printErrorMap(errorMap));
             }
         }
     }
+    
+    public String printErrorMap(MessageMap errorMap) {
+        StringBuilder sb = new StringBuilder();
+        Set<String> keys = errorMap.getErrorMessages().keySet();
+        if (keys.size() > 0) {
+            for (String key : keys) {
+                AutoPopulatingList<ErrorMessage> errors = errorMap.getErrorMessages().get(key);
+                for (ErrorMessage error : errors) {
+                    sb.append("  Key: ").append(key).append("  error: ").append(error.toString());
+                }
+            }
+        } else {
+            sb.append("No errors");
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public void doHardEdits(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.doHardEdits(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After doHardEdits: " + printErrorMap(errorMap));
+        }
+    }
 
+    @Override
+    protected void processHeaderValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.processHeaderValidation(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After processHeaderValidation: " + printErrorMap(errorMap));
+        }
+    }
 
+    @Override
+    protected void processTrailerValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+        super.processTrailerValidation(paymentFile, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After processTrailerValidation: " + printErrorMap(errorMap));
+        }
+    }
+
+    @Override
+    protected void checkPaymentGroupPropertyMaxLength(PaymentGroup paymentGroup, MessageMap errorMap) {
+        super.checkPaymentGroupPropertyMaxLength(paymentGroup, errorMap);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("After checkPaymentGroupPropertyMaxLength: " + printErrorMap(errorMap));
+        }
+    }
 }
