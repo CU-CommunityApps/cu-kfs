@@ -1,9 +1,11 @@
 package edu.cornell.kfs.concur.batch;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.FileStorageService;
 
@@ -19,32 +21,42 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        List<String> listOfSaeFileNames = getConcurStandardAccountingExtractService().buildListOfFileNamesToBeProcessed();
-        boolean success = true;
-        for (String saeFileName : listOfSaeFileNames) {
-            LOG.info("execute, processing: " + saeFileName);
+        List<String> listOfSaeFullyQualifiedFileNames = getConcurStandardAccountingExtractService().buildListOfFullyQualifiedFileNamesToBeProcessed();
+        for (String saeFileName : listOfSaeFullyQualifiedFileNames) {
+            LOG.debug("execute, processing: " + saeFileName);
             try {
-                success = processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName) && success;
+                processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName);
             } catch (Exception e) {
-                success = false;
                 LOG.error("execute, there was an unexpected error processing a file: ", e);
             } finally {
                 getFileStorageService().removeDoneFiles(Collections.singletonList(saeFileName));
             }
         }
-        return success;
+        return true;
     }
 
-    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFileName) {
+    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFullyQualifiedFileName) {
         boolean success = true;
-        LOG.debug("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFileName);
+        LOG.info("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFullyQualifiedFileName);
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
-                .parseStandardAccoutingExtractFile(saeFileName);
+                .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
-            success = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccounitngExtract(concurStandardAccoutingExtractFile);
+            String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
+            if (StringUtils.isEmpty(outputFileName)) {
+                success = false;
+                LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
+            }
             if (success) {
                 success &= getConcurStandardAccountingExtractService()
                         .extractCollectorFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
+            }
+            if (success) {
+                try {
+                    getConcurStandardAccountingExtractService().createDoneFileForPdpFile(outputFileName);
+                } catch (IOException e) {
+                    LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, unable to create .done file: ", e);
+                    success = false;
+                }
             }
         } else {
             success = false;

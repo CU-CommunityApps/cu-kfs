@@ -29,8 +29,6 @@ public class ConcurConstants {
     public static final String EXPENSE_REPORT_URI_INDICATOR = "/expense/expensereport/";
     public static final String TRAVEL_REQUEST_URI_INDICATOR = "/travelrequest/";
 
-    public static final String DEFAULT_TRAVEL_REQUEST_OBJECT_CODE_PARAMETER_NAME = "DEFAULT_TRAVEL_REQUEST_OBJECT_CODE";
-
     public static final String EXPENSE_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE = "A_EXTV";
     public static final String REQUEST_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE = "Q_EXTV";
 
@@ -49,8 +47,19 @@ public class ConcurConstants {
 
     public static final String PDP_XML_NAMESPACE = "http://www.kuali.org/kfs/pdp/payment";
     
-    public class ConcurPdpConstants {
-        public static final String CREDIT = "CR";
-        public static final String DEBIT = "DR";
-    }
+    public static final String DATE_FORMAT = "MM/dd/yyyy";
+    public static final int SOURCE_DOCUMENT_NUMBER_FIELD_SIZE = 14; 
+    public static final String XML_FILE_EXTENSION = ".xml";
+    public static final String CREDIT = "CR";
+    public static final String DEBIT = "DR";
+    public static final String PAYMENT_CODE_CASH = "CASH";
+    public static final String PENDING_CLIENT = "Pending Client";
+    public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
+    public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y";
+    public static final String COMBINED_GROUP_INDICATOR = "Y";
+    public static final String BANK_CODE = "DISB";
+    public static final String FEED_FILE_ENTRY_HEADER_VERSION = "1.0";
+    public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
+    public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
+    public static final String PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX = "pdp_concur_";
 }

@@ -9,7 +9,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -54,9 +57,9 @@ public class PdpFeedAccountingEntry {
     @XmlSchemaType(name = "normalizedString")
     protected String projectCd;
     @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
-    protected String amount;
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal amount;
 
     public String getCoaCd() {
         return coaCd;
@@ -114,11 +117,11 @@ public class PdpFeedAccountingEntry {
         this.projectCd = value;
     }
 
-    public String getAmount() {
+    public KualiDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(String value) {
+    public void setAmount(KualiDecimal value) {
         this.amount = value;
     }
 

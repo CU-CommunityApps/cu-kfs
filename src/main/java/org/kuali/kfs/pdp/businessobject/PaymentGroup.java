@@ -1158,19 +1158,25 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
      * @param string
      */
     public void setPayeeIdAndName(String string) {
-        payeeId = string;
-        
-        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-        String[] headerDetails = payeeId.split("-");      
-        Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
-        fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
-        
-        List<VendorDetail> details = (List<VendorDetail>)bos.findMatching(VendorDetail.class, fieldValues);
-        if (details.size() == 1) {
-            payeeName=details.get(0).getVendorName();
+        if (string.split("-").length == 1) {
+            // process Payee as a employee
+            payeeId = string;
         } else {
-            throw new RuntimeException("Could not locate Vendor for payeeId [ "+ string+" ]");
+            // process Payee as a vendor
+            payeeId = string;
+
+            BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
+            String[] headerDetails = payeeId.split("-");
+            Map<String, String> fieldValues = new HashMap<String, String>();
+            fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/* payeeId */);
+            fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
+
+            List<VendorDetail> details = (List<VendorDetail>) bos.findMatching(VendorDetail.class, fieldValues);
+            if (details.size() == 1) {
+                payeeName = details.get(0).getVendorName();
+            } else {
+                throw new RuntimeException("Could not locate Vendor for payeeId [ " + string + " ]");
+            }
         }
     }
     
