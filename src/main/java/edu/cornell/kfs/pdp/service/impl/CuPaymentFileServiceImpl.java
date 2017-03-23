@@ -29,18 +29,26 @@ import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.exception.InvalidAddressException;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
     
-    private VendorService vendorService;
-    private EmailService emailService;
+    protected VendorService vendorService;
+    protected EmailService emailService;
+    protected ParameterService parameterService;
+    protected PersonService personService;
     
     public CuPaymentFileServiceImpl() {
         super();
@@ -70,6 +78,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
             businessObjectService.save(paymentGroup);
+            buildAddressesForConcurCustomerPayments(paymentFile, paymentGroup);
         }
 
         // CU Customization: Check for and warn about inactive vendors.
@@ -85,6 +94,38 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
 
         LOG.debug("loadPayments() was successful");
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
+    }
+    
+    private void buildAddressesForConcurCustomerPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+        LOG.info("buildAddressesForConcurCustomerPayments, entering");
+        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
+        String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
+        String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
+        if (StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode)) {
+            Person employee = getPersonService().getPersonByEmployeeId(paymentGroup.getPayeeId());
+            if (ObjectUtils.isNotNull(employee)) {
+                LOG.info("buildAddressesForConcurCustomerPayments, found a concur customer, for employee: " + employee.getName());
+                paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
+                paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
+                paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
+                paymentGroup.setCity(employee.getAddressCityUnmasked());
+                paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
+                paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
+            } else {
+                LOG.error("buildAddressesForConcurCustomerPayments, unable to build a person from the employee IDL " + paymentGroup.getPayeeId());
+            }
+        }
+    }
+    
+    public String getConcurParameterValue(String parameterName) {
+        String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
+        if (LOG.isDebugEnabled()) { 
+            LOG.debug("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + parameterValue);
+        }
+        return parameterValue;
     }
     
     @Override
@@ -294,6 +335,22 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
 
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    public PersonService getPersonService() {
+        return personService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 
 }
