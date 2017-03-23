@@ -77,8 +77,8 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         // store groups
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
+            setPaymentAddressFieldsForConcurPayments(paymentFile, paymentGroup);
             businessObjectService.save(paymentGroup);
-            buildAddressesForConcurCustomerPayments(paymentFile, paymentGroup);
         }
 
         // CU Customization: Check for and warn about inactive vendors.
@@ -96,8 +96,8 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
     }
     
-    private void buildAddressesForConcurCustomerPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
-        LOG.info("buildAddressesForConcurCustomerPayments, entering");
+    private void setPaymentAddressFieldsForConcurPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+        LOG.info("setPaymentAddressFieldsForConcurPayments, entering");
         String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
         String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
         String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
@@ -106,7 +106,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode)) {
             Person employee = getPersonService().getPersonByEmployeeId(paymentGroup.getPayeeId());
             if (ObjectUtils.isNotNull(employee)) {
-                LOG.info("buildAddressesForConcurCustomerPayments, found a concur customer, for employee: " + employee.getName());
+                LOG.info("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
                 paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
                 paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
                 paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
@@ -114,7 +114,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
                 paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
             } else {
-                LOG.error("buildAddressesForConcurCustomerPayments, unable to build a person from the employee IDL " + paymentGroup.getPayeeId());
+                LOG.error("setPaymentAddressFieldsForConcurPayments, unable to build a person from the employee ID: " + paymentGroup.getPayeeId());
             }
         }
     }
