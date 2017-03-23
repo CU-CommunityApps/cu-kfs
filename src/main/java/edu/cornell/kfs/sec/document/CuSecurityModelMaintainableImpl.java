@@ -28,6 +28,7 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
             } else {
                 updatedRole.setVersionNumber(modelRole.getVersionNumber() + 1);
             }
+            updatedRole.setActive(false);
             KimApiServiceLocator.getRoleService().updateRole(updatedRole.build());
         }
     }
