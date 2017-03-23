@@ -20,7 +20,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
  */
 public class ConcurFixtureUtils {
 
-    private static final DateTimeFormatter CONCUR_DATE_FORMATTER = DateTimeFormat.forPattern(ConcurConstants.SAE_COLLECTOR_DATE_FORMAT);
+    private static final DateTimeFormatter CONCUR_DATE_FORMATTER = DateTimeFormat.forPattern(ConcurConstants.DATE_FORMAT);
 
     /**
      * Returns all the constants of the given enum class that reference the given parent object.

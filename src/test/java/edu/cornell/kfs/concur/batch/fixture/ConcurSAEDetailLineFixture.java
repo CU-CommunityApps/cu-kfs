@@ -10,7 +10,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
-import edu.cornell.kfs.concur.ConcurTestConstants.ConcurCollectorTestConstants;
+import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 
 /**
@@ -20,103 +20,121 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  */
 public enum ConcurSAEDetailLineFixture {
 
-    DEFAULT_LINE(null, ConcurEmployeeFixture.JOHN_DOE, 1, ConcurTestConstants.REPORT_ID_1,
-            ConcurConstants.SAE_OUT_OF_POCKET_PAYMENT_CODE, ConcurCollectorTestConstants.CHART_CODE,
+    DEFAULT_DEBIT(null, ConcurEmployeeFixture.JOHN_DOE, 1, ConcurTestConstants.REPORT_ID_1,
+            ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
-            ConcurConstants.SAE_DEBIT_CODE, 50.00, "12/24/2016"),
+            ConcurConstants.DEBIT, 50.00, "12/24/2016"),
+    DEFAULT_CREDIT(DEFAULT_DEBIT, null, 1, ConcurConstants.CREDIT, -50.00,
+            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_00001)),
 
-    MERGING_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.MERGING_TEST, 1),
-    MERGING_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.MERGING_TEST, 2, ConcurConstants.SAE_DEBIT_CODE, 75.00),
-    MERGING_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.MERGING_TEST, 3, ConcurConstants.SAE_DEBIT_CODE, 100.00),
+    MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 1),
+    MERGING_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 2, 75.00),
+    MERGING_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 3, 100.00),
+    MERGING_TEST_LINE4(DEFAULT_CREDIT, ConcurSAEFileFixture.MERGING_TEST, 4, -225.00),
 
-    UNIQUENESS_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 1),
-    UNIQUENESS_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 2,
+    UNIQUENESS_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 1),
+    UNIQUENESS_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 2,
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, ConcurTestConstants.CHART_QQ)),
-    UNIQUENESS_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 3,
+    UNIQUENESS_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 3,
             buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ConcurTestConstants.OBJ_7777)),
-    UNIQUENESS_TEST_LINE4(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 4,
+    UNIQUENESS_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 4,
             buildOverride(LineField.ACCOUNT_NUMBER, ConcurTestConstants.ACCT_4455667)),
-    UNIQUENESS_TEST_LINE5(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 5,
+    UNIQUENESS_TEST_LINE5(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 5,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_55655)),
-    UNIQUENESS_TEST_LINE6(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 6,
+    UNIQUENESS_TEST_LINE6(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 6,
             buildOverride(LineField.SUB_OBJECT_CODE, ConcurTestConstants.SUB_OBJ_333)),
-    UNIQUENESS_TEST_LINE7(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 7,
+    UNIQUENESS_TEST_LINE7(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 7,
             buildOverride(LineField.PROJECT_CODE, ConcurTestConstants.PROJ_AA_778899)),
-    UNIQUENESS_TEST_LINE8(DEFAULT_LINE, ConcurSAEFileFixture.UNIQUENESS_TEST, 8,
+    UNIQUENESS_TEST_LINE8(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 8,
             buildOverride(LineField.ORG_REF_ID, ConcurTestConstants.ORG_REF_123ABC)),
+    UNIQUENESS_TEST_LINE9(DEFAULT_CREDIT, ConcurSAEFileFixture.UNIQUENESS_TEST, 9, -400.00),
 
-    PAYMENT_CODE_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 1),
-    PAYMENT_CODE_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 2,
+    PAYMENT_CODE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 1),
+    PAYMENT_CODE_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 2,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_55655),
-            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.SAE_PRE_PAID_OR_OTHER_PAYMENT_CODE)),
-    PAYMENT_CODE_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 3,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER)),
+    PAYMENT_CODE_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 3,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888),
-            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.SAE_UNIVERSITY_BILLED_OR_PAID_PAYMENT_CODE)),
-    PAYMENT_CODE_TEST_LINE4(DEFAULT_LINE, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 4,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    PAYMENT_CODE_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 4,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579),
-            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.SAE_PSEUDO_PAYMENT_CODE)),
-    PAYMENT_CODE_TEST_LINE5(DEFAULT_LINE, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 5,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PSEUDO)),
+    PAYMENT_CODE_TEST_LINE5(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 5,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_24680),
             buildOverride(LineField.PAYMENT_CODE, ConcurTestConstants.UNRECOGNIZED_PAYMENT_CODE)),
+    PAYMENT_CODE_TEST_LINE6(DEFAULT_CREDIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, 6, -100.00),
 
-    VALIDATION_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.VALIDATION_TEST, 1),
-    VALIDATION_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.VALIDATION_TEST, 2,
+    VALIDATION_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.VALIDATION_TEST, 1),
+    VALIDATION_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.VALIDATION_TEST, 2,
             buildOverride(LineField.REPORT_ID, StringUtils.EMPTY)),
-    VALIDATION_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.VALIDATION_TEST, 3,
+    VALIDATION_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.VALIDATION_TEST, 3,
             buildOverride(LineField.JOURNAL_ACCOUNT_CODE, StringUtils.EMPTY)),
+    VALIDATION_TEST_LINE4(DEFAULT_CREDIT, ConcurSAEFileFixture.VALIDATION_TEST, 4),
 
-    DEBIT_CREDIT_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 1),
-    DEBIT_CREDIT_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 2, ConcurConstants.SAE_CREDIT_CODE, -100.00,
+    DEBIT_CREDIT_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 1),
+    DEBIT_CREDIT_TEST_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 2, -100.00,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_55655)),
-    DEBIT_CREDIT_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 3, ConcurConstants.SAE_CREDIT_CODE, -25.55,
+    DEBIT_CREDIT_TEST_LINE3(DEFAULT_CREDIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 3, -15.11,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_55655)),
-    DEBIT_CREDIT_TEST_LINE4(DEFAULT_LINE, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 4, ConcurConstants.SAE_DEBIT_CODE, 12.33,
+    DEBIT_CREDIT_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 4, 12.33,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
-    DEBIT_CREDIT_TEST_LINE5(DEFAULT_LINE, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 5, ConcurConstants.SAE_CREDIT_CODE, -44.00,
+    DEBIT_CREDIT_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 5, -22.22,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
-    DEBIT_CREDIT_TEST_LINE6(DEFAULT_LINE, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 6, ConcurConstants.SAE_DEBIT_CODE, 75.00,
+    DEBIT_CREDIT_TEST_LINE6(DEFAULT_DEBIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 6, 75.00,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
 
-    PENDING_CLIENT_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.PENDING_CLIENT_TEST, 1, ConcurConstants.SAE_DEBIT_CODE, 60.00,
-            buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ConcurCollectorTestConstants.UNDEFINED_OBJECT_CODE)),
-    PENDING_CLIENT_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.PENDING_CLIENT_TEST, 2,
-            buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ConcurCollectorTestConstants.DEFAULT_OBJECT_CODE)),
+    PENDING_CLIENT_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.PENDING_CLIENT_TEST, 1, 60.00,
+            buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ConcurConstants.PENDING_CLIENT)),
+    PENDING_CLIENT_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.PENDING_CLIENT_TEST, 2,
+            buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ParameterTestValues.OBJECT_CODE_OVERRIDE)),
+    PENDING_CLIENT_TEST_LINE3(DEFAULT_CREDIT, ConcurSAEFileFixture.PENDING_CLIENT_TEST, 3, -110.00,
+            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_00001)),
 
-    FISCAL_YEAR_TEST1_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.FISCAL_YEAR_TEST1, 1),
-    FISCAL_YEAR_TEST2_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.FISCAL_YEAR_TEST2, 1,
+    FISCAL_YEAR_TEST1_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST1, 1),
+    FISCAL_YEAR_TEST1_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST1, 2),
+    FISCAL_YEAR_TEST2_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST2, 1,
             buildOverride(LineField.REPORT_END_DATE, "05/19/2016")),
-    FISCAL_YEAR_TEST3_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.FISCAL_YEAR_TEST3, 1,
+    FISCAL_YEAR_TEST2_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST2, 2,
+            buildOverride(LineField.REPORT_END_DATE, "05/19/2016")),
+    FISCAL_YEAR_TEST3_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST3, 1,
             buildOverride(LineField.REPORT_END_DATE, "11/09/2016")),
-    FISCAL_YEAR_TEST4_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.FISCAL_YEAR_TEST4, 1,
+    FISCAL_YEAR_TEST3_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST3, 2,
+            buildOverride(LineField.REPORT_END_DATE, "11/09/2016")),
+    FISCAL_YEAR_TEST4_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST4, 1,
             buildOverride(LineField.REPORT_END_DATE, "06/29/2016")),
-    FISCAL_YEAR_TEST5_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.FISCAL_YEAR_TEST5, 1,
+    FISCAL_YEAR_TEST4_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST4, 2,
+            buildOverride(LineField.REPORT_END_DATE, "06/29/2016")),
+    FISCAL_YEAR_TEST5_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST5, 1,
+            buildOverride(LineField.REPORT_END_DATE, "06/30/2016")),
+    FISCAL_YEAR_TEST5_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST5, 2,
             buildOverride(LineField.REPORT_END_DATE, "06/30/2016")),
 
-    DOCUMENT_NUMBER_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 1),
-    DOCUMENT_NUMBER_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 2,
+    // TODO: This test case needs modification to have each doc number balance out!
+    DOCUMENT_NUMBER_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 1),
+    DOCUMENT_NUMBER_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 2,
             buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_2),
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_55655)),
-    DOCUMENT_NUMBER_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 3,
+    DOCUMENT_NUMBER_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 3,
             buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_3),
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
-    DOCUMENT_NUMBER_TEST_LINE4(DEFAULT_LINE, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 4,
+    DOCUMENT_NUMBER_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 4,
             buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_SHORT),
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
+    DOCUMENT_NUMBER_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 5, -200.00),
 
-    SOME_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.GENERAL_TEST, 1),
-
-    EMPLOYEE_NAME_TEST_LINE1(DEFAULT_LINE, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, 1),
-    EMPLOYEE_NAME_TEST_LINE2(DEFAULT_LINE, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FIRSTNAME, 2,
+    EMPLOYEE_NAME_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, 1),
+    EMPLOYEE_NAME_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FIRSTNAME, 2,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_55655)),
-    EMPLOYEE_NAME_TEST_LINE3(DEFAULT_LINE, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_LASTNAME, 3,
+    EMPLOYEE_NAME_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_LASTNAME, 3,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
-    EMPLOYEE_NAME_TEST_LINE4(DEFAULT_LINE, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FULLNAME, 4,
+    EMPLOYEE_NAME_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FULLNAME, 4,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
+    EMPLOYEE_NAME_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, 5, -200.00),
 
     FILE9_LINE1(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JOHN_DOE, 1, "ABCDEFGHIJ1234567890",
-            ConcurConstants.SAE_OUT_OF_POCKET_PAYMENT_CODE, ConcurCollectorTestConstants.CHART_CODE,
+            ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null,
-            null, null, ConcurConstants.SAE_DEBIT_CODE, 50.00, "12/24/2016"),
+            null, null, ConcurConstants.DEBIT, 50.00, "12/24/2016"),
     FILE9_LINE2(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JOHN_DOE, 2, "11", "CASH",
             "0100", "IT", "1234321", null, null, null, null, "DR", 50.00, "2016-12-24"),
     FILE9_LINE3(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JANE_DOE, 5, "11", "CASH",
@@ -147,8 +165,13 @@ public enum ConcurSAEDetailLineFixture {
     @SafeVarargs
     private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
             int sequenceNumber, Map.Entry<LineField,String>... overrides) {
-        this(baseFixture, extractFile, baseFixture.employee, sequenceNumber,
-                baseFixture.journalDebitCredit, baseFixture.journalAmount, overrides);
+        this(baseFixture, extractFile, sequenceNumber, baseFixture.journalAmount, overrides);
+    }
+
+    @SafeVarargs
+    private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
+            int sequenceNumber, double journalAmount, Map.Entry<LineField,String>... overrides) {
+        this(baseFixture, extractFile, baseFixture.employee, sequenceNumber, baseFixture.journalDebitCredit, journalAmount, overrides);
     }
 
     @SafeVarargs
@@ -217,6 +240,9 @@ public enum ConcurSAEDetailLineFixture {
     public ConcurStandardAccountingExtractDetailLine toDetailLine() {
         ConcurStandardAccountingExtractDetailLine detailLine = new ConcurStandardAccountingExtractDetailLine();
         
+        boolean journalAccountCodeOverridden = ConcurConstants.PENDING_CLIENT.equals(journalAccountCode);
+        String actualJournalAccountCode = journalAccountCodeOverridden ? ParameterTestValues.OBJECT_CODE_OVERRIDE : journalAccountCode;
+        
         detailLine.setBatchID(extractFile.batchId);
         detailLine.setBatchDate(ConcurFixtureUtils.toSqlDate(extractFile.batchDate));
         detailLine.setSequenceNumber(sequenceNumber);
@@ -228,7 +254,8 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setEmployeeStatus(employee.status);
         detailLine.setReportId(reportId);
         detailLine.setPaymentCode(paymentCode);
-        detailLine.setJournalAccountCode(journalAccountCode);
+        detailLine.setJournalAccountCode(actualJournalAccountCode);
+        detailLine.setJournalAccountCodeOverridden(Boolean.valueOf(journalAccountCodeOverridden));
         detailLine.setChartOfAccountsCode(chartOfAccountsCode);
         detailLine.setAccountNumber(accountNumber);
         detailLine.setSubAccountNumber(subAccountNumber);

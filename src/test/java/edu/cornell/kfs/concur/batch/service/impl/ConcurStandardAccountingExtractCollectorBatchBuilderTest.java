@@ -19,11 +19,11 @@ import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
-import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
-import edu.cornell.kfs.concur.batch.fixture.CollectorBatchFixture;
+import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEFileFixture;
 
 public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
@@ -42,63 +42,62 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     @Test
     public void testLinesAreMergedWhenKeyFieldsMatch() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.MERGING_TEST, ConcurSAEFileFixture.MERGING_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.MERGING_TEST, ConcurSAEFileFixture.MERGING_TEST);
     }
 
     @Test
     public void testLinesRemainDistinctWhenKeyFieldsDiffer() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.UNIQUENESS_TEST, ConcurSAEFileFixture.UNIQUENESS_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.UNIQUENESS_TEST, ConcurSAEFileFixture.UNIQUENESS_TEST);
     }
 
     @Test
     public void testProperReuseOfSameBuilderInstance() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.MERGING_TEST, ConcurSAEFileFixture.MERGING_TEST);
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.MERGING_TEST, ConcurSAEFileFixture.MERGING_TEST);
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.UNIQUENESS_TEST, ConcurSAEFileFixture.UNIQUENESS_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.MERGING_TEST, ConcurSAEFileFixture.MERGING_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.MERGING_TEST, ConcurSAEFileFixture.MERGING_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.UNIQUENESS_TEST, ConcurSAEFileFixture.UNIQUENESS_TEST);
     }
 
     @Test
     public void testLineFilteringByPaymentCode() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.PAYMENT_CODE_TEST, ConcurSAEFileFixture.PAYMENT_CODE_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.PAYMENT_CODE_TEST, ConcurSAEFileFixture.PAYMENT_CODE_TEST);
     }
 
     @Test
     public void testInvalidLinesAreSkipped() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.VALIDATION_TEST, ConcurSAEFileFixture.VALIDATION_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.VALIDATION_TEST, ConcurSAEFileFixture.VALIDATION_TEST);
     }
 
     @Test
     public void testDebitCreditCalculations() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.DEBIT_CREDIT_TEST, ConcurSAEFileFixture.DEBIT_CREDIT_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.DEBIT_CREDIT_TEST, ConcurSAEFileFixture.DEBIT_CREDIT_TEST);
     }
 
     @Test
     public void testLinesWithPendingClientObjectCodeAreHandledProperly() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.PENDING_CLIENT_TEST, ConcurSAEFileFixture.PENDING_CLIENT_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.PENDING_CLIENT_TEST, ConcurSAEFileFixture.PENDING_CLIENT_TEST);
     }
 
     @Test
     public void testHandlingOfFiscalYearAndReportEndDate() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.FISCAL_YEAR_TEST1, ConcurSAEFileFixture.FISCAL_YEAR_TEST1);
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.FISCAL_YEAR_TEST2, ConcurSAEFileFixture.FISCAL_YEAR_TEST2);
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.FISCAL_YEAR_TEST3, ConcurSAEFileFixture.FISCAL_YEAR_TEST3);
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.FISCAL_YEAR_TEST4, ConcurSAEFileFixture.FISCAL_YEAR_TEST4);
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.FISCAL_YEAR_TEST5, ConcurSAEFileFixture.FISCAL_YEAR_TEST5);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.FISCAL_YEAR_TEST1, ConcurSAEFileFixture.FISCAL_YEAR_TEST1);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.FISCAL_YEAR_TEST2, ConcurSAEFileFixture.FISCAL_YEAR_TEST2);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.FISCAL_YEAR_TEST3, ConcurSAEFileFixture.FISCAL_YEAR_TEST3);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.FISCAL_YEAR_TEST4, ConcurSAEFileFixture.FISCAL_YEAR_TEST4);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.FISCAL_YEAR_TEST5, ConcurSAEFileFixture.FISCAL_YEAR_TEST5);
     }
 
     @Test
     public void testGenerationOfDocumentNumberFromReportId() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.DOCUMENT_NUMBER_TEST, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.DOCUMENT_NUMBER_TEST, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST);
     }
 
-    
     @Test
     public void testNameTruncatingForLineDescriptions() throws Exception {
-        assertCollectorBatchIsBuiltProperly(CollectorBatchFixture.EMPLOYEE_NAME_TEST, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST);
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.EMPLOYEE_NAME_TEST, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST);
     }
 
     protected void assertCollectorBatchIsBuiltProperly(
-            CollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
+            ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();
         ConcurStandardAccountingExtractFile saeFileContents = fixtureToBuildFrom.toExtractFile();
         CollectorBatch actual = builder.buildCollectorBatchFromStandardAccountingExtract(1, saeFileContents);
@@ -201,30 +200,28 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         }
         
         switch (parameterName) {
-            case ConcurKeyConstants.SAE_COLLECTOR_DOCTYPE_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.DOCTYPE_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.SYSTEM_ORIGINATION_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_CHART_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.CHART_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.HIGHEST_LEVEL_ORG_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_UNDEFINED_OBJECT_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.UNDEFINED_OBJECT_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_DEFAULT_OBJECT_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.DEFAULT_OBJECT_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_DEPARTMENT_NAME :
-                return ConcurTestConstants.ConcurCollectorTestConstants.DEPARTMENT_NAME;
-            case ConcurKeyConstants.SAE_COLLECTOR_CAMPUS_CODE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.CAMPUS_CODE;
-            case ConcurKeyConstants.SAE_COLLECTOR_CAMPUS_ADDRESS :
-                return ConcurTestConstants.ConcurCollectorTestConstants.CAMPUS_ADDRESS;
-            case ConcurKeyConstants.SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL :
-                return ConcurTestConstants.ConcurCollectorTestConstants.NOTIFICATION_CONTACT_EMAIL;
-            case ConcurKeyConstants.SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON :
-                return ConcurTestConstants.ConcurCollectorTestConstants.NOTIFICATION_CONTACT_PERSON;
-            case ConcurKeyConstants.SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE :
-                return ConcurTestConstants.ConcurCollectorTestConstants.NOTIFICATION_CONTACT_PHONE;
+            case ConcurParameterConstants.CONCUR_PENDING_CLIENT_OBJECT_CODE_OVERRIDE :
+                return ConcurTestConstants.ParameterTestValues.OBJECT_CODE_OVERRIDE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_DOCUMENT_TYPE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_SYSTEM_ORIGINATION_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_CHART_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_HIGHEST_LEVEL_ORG_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_DEPARTMENT_NAME;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_CAMPUS_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_CAMPUS_ADDRESS;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_EMAIL;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PERSON;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PHONE;
             default :
                 return null;
         }

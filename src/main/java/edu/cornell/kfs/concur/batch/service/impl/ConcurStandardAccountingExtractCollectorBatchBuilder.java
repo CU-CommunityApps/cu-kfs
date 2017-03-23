@@ -15,7 +15,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
@@ -45,8 +45,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected final String systemOriginationCode;
     protected final String chartCode;
     protected final String highestLevelOrgCode;
-    protected final String undefinedObjectCode;
-    protected final String defaultObjectCode;
     protected final String departmentName;
     protected final String campusCode;
     protected final String campusAddress;
@@ -77,18 +75,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.dateFormatter = dateFormatter;
         this.saeLineValidator = saeLineValidator;
         
-        this.docTypeCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_DOCTYPE_CODE);
-        this.systemOriginationCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
-        this.chartCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_CHART_CODE);
-        this.highestLevelOrgCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
-        this.undefinedObjectCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_UNDEFINED_OBJECT_CODE);
-        this.defaultObjectCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_DEFAULT_OBJECT_CODE);
-        this.departmentName = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_DEPARTMENT_NAME);
-        this.campusCode = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_CAMPUS_CODE);
-        this.campusAddress = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_CAMPUS_ADDRESS);
-        this.notificationEmail = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
-        this.notificationPerson = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
-        this.notificationPhone = parameterFinder.apply(ConcurKeyConstants.SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
+        this.docTypeCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
+        this.systemOriginationCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
+        this.chartCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
+        this.highestLevelOrgCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
+        this.departmentName = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
+        this.campusCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
+        this.campusAddress = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
+        this.notificationEmail = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
+        this.notificationPerson = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
+        this.notificationPhone = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
     }
 
     public void reset() {
@@ -103,15 +99,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         reset();
         
         try {
-            // TODO: Once Jay's changes are merged, use the filename instead of the batch date!
-            String formattedBatchDate = dateFormatter.apply(saeFileContents.getBatchDate(), ConcurConstants.SAE_COLLECTOR_DATE_FORMAT);
-            LOG.info("Generating Collector data from SAE file with batch date: " + formattedBatchDate);
+            LOG.info("Generating Collector data from SAE file: " + saeFileContents.getOriginalFileName());
             
             updateCollectorBatchHeaderFields(saeFileContents);
             buildOriginEntries(saeFileContents.getConcurStandardAccountingExtractDetailLines());
             updateCollectorBatchWithOriginEntries();
             
-            LOG.info("Finished generating collector data from SAE file with batch date: " + formattedBatchDate);
+            LOG.info("Finished generating collector data from SAE file: " + saeFileContents.getOriginalFileName());
             LOG.info("Total GL Entry Count: " + collectorBatch.getTotalRecords());
             LOG.info("Total Amount: " + collectorBatch.getTotalAmount());
         } catch (Exception e) {
@@ -174,13 +168,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected boolean shouldProcessLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {
         switch (saeLine.getPaymentCode()) {
-            case ConcurConstants.SAE_OUT_OF_POCKET_PAYMENT_CODE :
-            case ConcurConstants.SAE_UNIVERSITY_BILLED_OR_PAID_PAYMENT_CODE :
+            case ConcurConstants.PAYMENT_CODE_CASH :
+            case ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID :
                 return true;
-            case ConcurConstants.SAE_PRE_PAID_OR_OTHER_PAYMENT_CODE :
+            case ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER :
                 LOG.warn("Found a transaction with a Pre-Paid/Other payment code; it will not be processed. Item key: " + itemKey);
                 return false;
-            case ConcurConstants.SAE_PSEUDO_PAYMENT_CODE :
+            case ConcurConstants.PAYMENT_CODE_PSEUDO :
                 LOG.warn("Found a transaction with a Pseudo payment code; it will not be processed. Item key: " + itemKey);
                 return false;
             default :
@@ -191,7 +185,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected String buildItemKey(ConcurStandardAccountingExtractDetailLine saeLine) {
         String objectCodeForKey = saeLine.getJournalAccountCode();
-        if (StringUtils.equals(undefinedObjectCode, objectCodeForKey)) {
+        if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
             objectCodeForKey = buildFakeObjectCodeToLeaveDetailLineUnmerged();
         }
         
@@ -217,18 +211,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected OriginEntryFull buildOriginEntryForExtractedLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {
         OriginEntryFull originEntry = new OriginEntryFull();
         
-        String objectCode = saeLine.getJournalAccountCode();
-        if (StringUtils.equals(undefinedObjectCode, objectCode)) {
-            LOG.warn("Found a detail line with an undefined object code; will use " + defaultObjectCode
-                    + " as the object code and will not merge the line into any others. Item key: " + itemKey);
-            objectCode = defaultObjectCode;
-        }
-        
         originEntry.setChartOfAccountsCode(saeLine.getChartOfAccountsCode());
         originEntry.setAccountNumber(saeLine.getAccountNumber());
         originEntry.setSubAccountNumber(
                 StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()));
-        originEntry.setFinancialObjectCode(objectCode);
+        originEntry.setFinancialObjectCode(saeLine.getJournalAccountCode());
         originEntry.setFinancialSubObjectCode(
                 StringUtils.defaultIfBlank(saeLine.getSubObjectCode(), getDashSubObjectCode()));
         originEntry.setProjectCode(
@@ -264,7 +251,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected String buildTransactionDescription(ConcurStandardAccountingExtractDetailLine saeLine) {
-        String formattedEndDate = dateFormatter.apply(saeLine.getReportEndDate(), ConcurConstants.SAE_COLLECTOR_DATE_FORMAT);
+        String formattedEndDate = dateFormatter.apply(saeLine.getReportEndDate(), ConcurConstants.DATE_FORMAT);
         
         return new StringBuilder(INITIAL_BUILDER_SIZE)
                 .append(StringUtils.left(saeLine.getEmployeeLastName(), NAME_LENGTH_FOR_DESCRIPTION))
@@ -305,9 +292,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected String getGLDebitCreditCode(String saeDebitCreditCode) {
         switch (saeDebitCreditCode) {
-            case ConcurConstants.SAE_CREDIT_CODE :
+            case ConcurConstants.CREDIT :
                 return KFSConstants.GL_CREDIT_CODE;
-            case ConcurConstants.SAE_DEBIT_CODE :
+            case ConcurConstants.DEBIT :
                 return KFSConstants.GL_DEBIT_CODE;
             default :
                 throw new IllegalArgumentException("Unrecognized debit/credit code: " + saeDebitCreditCode);

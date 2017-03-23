@@ -53,6 +53,9 @@ public class ConcurConstants {
     public static final String CREDIT = "CR";
     public static final String DEBIT = "DR";
     public static final String PAYMENT_CODE_CASH = "CASH";
+    public static final String PAYMENT_CODE_PRE_PAID_OR_OTHER = "COPD";
+    public static final String PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID = "CBCN";
+    public static final String PAYMENT_CODE_PSEUDO = "XXXX";
     public static final String PENDING_CLIENT = "Pending Client";
     public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
     public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y";
@@ -62,14 +65,5 @@ public class ConcurConstants {
     public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
     public static final String PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX = "pdp_concur_";
-
-    public static final String SAE_CREDIT_CODE = "CR";
-    public static final String SAE_DEBIT_CODE = "DR";
-    public static final String SAE_COLLECTOR_DATE_FORMAT = "MM/dd/yyyy";
-
-    public static final String SAE_OUT_OF_POCKET_PAYMENT_CODE = "CASH";
-    public static final String SAE_PRE_PAID_OR_OTHER_PAYMENT_CODE = "COPD";
-    public static final String SAE_UNIVERSITY_BILLED_OR_PAID_PAYMENT_CODE = "CBCN";
-    public static final String SAE_PSEUDO_PAYMENT_CODE = "XXXX";
 
 }

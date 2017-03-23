@@ -20,6 +20,7 @@ public class ConcurTestConstants {
     public static final String SUB_ACCT_88888 = "88888";
     public static final String SUB_ACCT_13579 = "13579";
     public static final String SUB_ACCT_24680 = "24680";
+    public static final String SUB_ACCT_00001 = "00001";
     public static final String PROJ_AA_778899 = "AA-778899";
     public static final String PROJ_QX_400000 = "QX-400000";
     public static final String ORG_REF_123ABC = "123ABC";
@@ -31,19 +32,18 @@ public class ConcurTestConstants {
     public static final String DASH_SUB_OBJECT_CODE = "---";
     public static final String DASH_PROJECT_CODE = "----------";
 
-    public static class ConcurCollectorTestConstants {
-        public static final String DOCTYPE_CODE = "CLTE";
-        public static final String SYSTEM_ORIGINATION_CODE = "CN";
-        public static final String CHART_CODE = "IT";
-        public static final String HIGHEST_LEVEL_ORG_CODE = "6101";
-        public static final String UNDEFINED_OBJECT_CODE = "Pending Client";
-        public static final String DEFAULT_OBJECT_CODE = "6750";
-        public static final String DEPARTMENT_NAME = "Fin Sys Admin & Info Delivery";
-        public static final String CAMPUS_CODE = "NY";
-        public static final String CAMPUS_ADDRESS = "101 Main St";
-        public static final String NOTIFICATION_CONTACT_EMAIL = "saecollector@somedomain.com";
-        public static final String NOTIFICATION_CONTACT_PERSON = "James Smith";
-        public static final String NOTIFICATION_CONTACT_PHONE = "111-222-3333";
+    public static class ParameterTestValues {
+        public static final String OBJECT_CODE_OVERRIDE = "6750";
+        public static final String COLLECTOR_DOCUMENT_TYPE = "CLTE";
+        public static final String COLLECTOR_SYSTEM_ORIGINATION_CODE = "CN";
+        public static final String COLLECTOR_CHART_CODE = "IT";
+        public static final String COLLECTOR_HIGHEST_LEVEL_ORG_CODE = "6101";
+        public static final String COLLECTOR_DEPARTMENT_NAME = "Fin Sys Admin & Info Delivery";
+        public static final String COLLECTOR_CAMPUS_CODE = "NY";
+        public static final String COLLECTOR_CAMPUS_ADDRESS = "101 Main St";
+        public static final String COLLECTOR_NOTIFICATION_CONTACT_EMAIL = "saecollector@somedomain.com";
+        public static final String COLLECTOR_NOTIFICATION_CONTACT_PERSON = "James Smith";
+        public static final String COLLECTOR_NOTIFICATION_CONTACT_PHONE = "1112223333";
     }
 
 }
