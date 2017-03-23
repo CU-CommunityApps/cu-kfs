@@ -16,7 +16,7 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
      * The OLEs started after our upgrade to KFS 7.x/Rice 2.5.x.
      *
      * This workaround manually increments the version number to avoid the exception.
-     * 
+     *
      * @param modelRole
      */
     @Override
