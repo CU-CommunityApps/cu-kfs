@@ -109,7 +109,6 @@ public enum ConcurSAEDetailLineFixture {
     FISCAL_YEAR_TEST5_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST5, 2,
             buildOverride(LineField.REPORT_END_DATE, "06/30/2016")),
 
-    // TODO: This test case needs modification to have each doc number balance out!
     DOCUMENT_NUMBER_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 1),
     DOCUMENT_NUMBER_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, 2,
             buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_2),
@@ -129,22 +128,7 @@ public enum ConcurSAEDetailLineFixture {
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
     EMPLOYEE_NAME_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FULLNAME, 4,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
-    EMPLOYEE_NAME_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, 5, -200.00),
-
-    FILE9_LINE1(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JOHN_DOE, 1, "ABCDEFGHIJ1234567890",
-            ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
-            ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null,
-            null, null, ConcurConstants.DEBIT, 50.00, "12/24/2016"),
-    FILE9_LINE2(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JOHN_DOE, 2, "11", "CASH",
-            "0100", "IT", "1234321", null, null, null, null, "DR", 50.00, "2016-12-24"),
-    FILE9_LINE3(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JANE_DOE, 5, "11", "CASH",
-            "0100", "IT", "1234321", null, null, null, null, "DR", 50.00, "2016-12-24"),
-    FILE9_LINE4(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.DAN_SMITH, 6, "11", "CASH",
-            "0100", "IT", "1234321", null, null, null, null, "DR", 50.00, "2016-12-24"),
-    FILE9_LINE5(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JANE_DOE, 7, "11", "CASH",
-            "0100", "IT", "1234321", null, null, null, null, "DR", 50.00, "2016-12-24"),
-    FILE9_LINE6(ConcurSAEFileFixture.GENERAL_TEST, ConcurEmployeeFixture.JANE_DOE, 19, "11", "CASH",
-            "0100", "IT", "1234321", null, null, null, null, "DR", 50.00, "2016-12-24");
+    EMPLOYEE_NAME_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, 5, -200.00);
 
     public final ConcurSAEFileFixture extractFile;
     public final ConcurEmployeeFixture employee;

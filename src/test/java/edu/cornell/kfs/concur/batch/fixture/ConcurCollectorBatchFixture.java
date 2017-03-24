@@ -28,8 +28,7 @@ public enum ConcurCollectorBatchFixture {
     FISCAL_YEAR_TEST4(1, 2016, "06/30/2016", 2, 100.00),
     FISCAL_YEAR_TEST5(1, 2017, "07/01/2016", 2, 100.00),
     DOCUMENT_NUMBER_TEST(1, 5, 400.00),
-    EMPLOYEE_NAME_TEST(1, 5, 400.00),
-    GENERAL_TEST(1, 1, 50.00);
+    EMPLOYEE_NAME_TEST(1, 5, 400.00);
 
     public final Integer batchSequenceNumber;
     public final String universityFiscalYear;

@@ -109,9 +109,7 @@ public enum ConcurOriginEntryFixture {
     EMPLOYEE_NAME_TEST_ENTRY4(DEFAULT_DEBIT, ConcurCollectorBatchFixture.EMPLOYEE_NAME_TEST,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579),
             buildOverride(LineField.ENTRY_DESCRIPTION, "VeryLongLastNa,VeryLongFirstN,12/24/2016")),
-    EMPLOYEE_NAME_TEST_ENTRY5(DEFAULT_CREDIT, ConcurCollectorBatchFixture.EMPLOYEE_NAME_TEST, 200.00),
-
-    GENERAL_TEST_ENTRY1(DEFAULT_DEBIT, ConcurCollectorBatchFixture.GENERAL_TEST);
+    EMPLOYEE_NAME_TEST_ENTRY5(DEFAULT_CREDIT, ConcurCollectorBatchFixture.EMPLOYEE_NAME_TEST, 200.00);
 
     public final ConcurCollectorBatchFixture collectorBatch;
     public final String chartOfAccountsCode;

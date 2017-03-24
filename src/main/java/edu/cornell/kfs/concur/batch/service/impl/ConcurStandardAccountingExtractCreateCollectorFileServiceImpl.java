@@ -8,6 +8,8 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         implements ConcurStandardAccountingExtractCreateCollectorFileService {
@@ -22,10 +24,9 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     @Override
     public boolean buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
-        // TODO: Once Jay's changes are merged, use a method reference for the new validation service method!
         ConcurStandardAccountingExtractCollectorBatchBuilder builder = new ConcurStandardAccountingExtractCollectorBatchBuilder(
                 universityDateService::getFiscalYear, dateTimeService::toString,
-                (saeLine) -> true, this::getConcurParameterValueAsString);
+                concurSAEValidationService::validateConcurStandardAccountingExtractDetailLine, this::getConcurParameterValueAsString);
         
         CollectorBatch collectorBatch = builder.buildCollectorBatchFromStandardAccountingExtract(0, saeFileContents);
         if (collectorBatch == null) {
@@ -37,7 +38,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     }
 
     protected String getConcurParameterValueAsString(String parameterName) {
-        return parameterService.getParameterValueAsString("KFS-???", "????", parameterName);
+        return parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR,
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
     }
 
     public void setConcurSAEValidationService(ConcurStandardAccountingExtractValidationService concurSAEValidationService) {

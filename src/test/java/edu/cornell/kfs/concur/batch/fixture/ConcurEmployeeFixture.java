@@ -8,8 +8,6 @@ import edu.cornell.kfs.concur.ConcurTestConstants;
 public enum ConcurEmployeeFixture {
 
     JOHN_DOE("1111111", "Doe", "John", "J", ConcurTestConstants.EMPLOYEE_GROUP_ID, ConcurTestConstants.EMPLOYEE_DEFAULT_STATUS),
-    JANE_DOE("1234567", "Doe", "Jane", "M", ConcurTestConstants.EMPLOYEE_GROUP_ID, ConcurTestConstants.EMPLOYEE_DEFAULT_STATUS),
-    DAN_SMITH("9876543", "Smith", "Dan", "K", ConcurTestConstants.EMPLOYEE_GROUP_ID, ConcurTestConstants.EMPLOYEE_DEFAULT_STATUS),
     LONG_FIRSTNAME("2323232", "Jones", "VeryLongFirstName", "A",
             ConcurTestConstants.EMPLOYEE_GROUP_ID, ConcurTestConstants.EMPLOYEE_DEFAULT_STATUS),
     LONG_LASTNAME("3434343", "VeryLongLastName", "Jack", "A",

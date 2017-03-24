@@ -185,7 +185,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         }
     }
 
-    // TODO: See if this can be replaced by the validation service once Jay's changes are merged!
     protected boolean validateLine(ConcurStandardAccountingExtractDetailLine saeLine) {
         if (StringUtils.isBlank(saeLine.getReportId()) || StringUtils.isBlank(saeLine.getJournalAccountCode())) {
             return false;
