@@ -16,7 +16,7 @@ public class ConcurUtils {
     }
 
     public static String extractKFSInfoFromConcurString(String concurString) {
-        String kfsInfo = StringUtils.EMPTY;
+        String kfsInfo = concurString;
         if (doesStringContainOpenCloseParenthesis(concurString)) {
             kfsInfo = concurString.substring(concurString.lastIndexOf(CUKFSConstants.LEFT_PARENTHESIS) + 1, concurString.lastIndexOf(CUKFSConstants.RIGHT_PARENTHESIS));
         }
