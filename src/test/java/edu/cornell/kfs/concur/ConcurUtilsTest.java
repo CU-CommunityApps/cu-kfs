@@ -62,33 +62,28 @@ public class ConcurUtilsTest {
     }
     
     @Test
-    public void extractKFSInfoFromConcurStringWithCodeAndDescription(){      
-        Assert.assertEquals(KFS_FORMAT_ACCOUNT_NUMBER, ConcurUtils.extractKFSInfoFromConcurString(GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION));
+    public void extractAccountNumberFromConcurValue(){      
+        Assert.assertEquals(KFS_FORMAT_ACCOUNT_NUMBER, ConcurUtils.extractCodeFromCodeAndDescriptionValue(GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION));
     }
     
     @Test
-    public void extractKFSInfoFromConcurStringWithCodeOnly(){      
-        Assert.assertEquals(GOOD_CONCUR_FORMAT_CODE, ConcurUtils.extractKFSInfoFromConcurString(GOOD_CONCUR_FORMAT_CODE));
-    }
-    
-    @Test
-    public void extractKFSInfoFromEmptyConcurString(){      
-        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractKFSInfoFromConcurString(StringUtils.EMPTY));
+    public void extracCodeFromEmptyString(){      
+        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractCodeFromCodeAndDescriptionValue(StringUtils.EMPTY));
     }
     
     @Test
     public void stringContainOpenCloseParenthesis(){      
-        Assert.assertTrue("String does contain open/close parenthesis", ConcurUtils.doesStringContainOpenCloseParenthesis(STRING_WITH_OPEN_CLOSE_PARENTHESIS));
+        Assert.assertTrue("String does contain open/close parenthesis", ConcurUtils.stringMatchesCodeAndDescriptionPattern(STRING_WITH_OPEN_CLOSE_PARENTHESIS));
     }
     
     @Test
     public void stringDoesNotContainOpenCloseParenthesis(){      
-        Assert.assertFalse("String does not contain open/close parenthesis", ConcurUtils.doesStringContainOpenCloseParenthesis(STRING_WITHOUT_OPEN_CLOSE_PARENTHESIS));
+        Assert.assertFalse("String does not contain open/close parenthesis", ConcurUtils.stringMatchesCodeAndDescriptionPattern(STRING_WITHOUT_OPEN_CLOSE_PARENTHESIS));
     }
     
     @Test
     public void emptyStringDoesNotContainOpenCloseParenthesis(){      
-        Assert.assertFalse("Empty string does not contain open/close parenthesis", ConcurUtils.doesStringContainOpenCloseParenthesis(StringUtils.EMPTY));
+        Assert.assertFalse("Empty string does not contain open/close parenthesis", ConcurUtils.stringMatchesCodeAndDescriptionPattern(StringUtils.EMPTY));
     }
     
     @Test
