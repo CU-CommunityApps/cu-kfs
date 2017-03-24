@@ -1,8 +1,5 @@
 package edu.cornell.kfs.concur;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,9 +15,9 @@ public class ConcurUtilsTest {
     public static final String GOOD_TRAVEL_REQUEST_URI = "https://www.concursolutions.com/api/travelrequest/v1.0/requests/1234567678";
     public static final String BAD_TRAVEL_REQUEST_URI = "https://www.concursolutions.com/api/someEndPoint";
     
-    public static final String GOOD_CONCUR_FORMAT_ACCOUNT_NUMBER = "(1234567) some account description";
+    public static final String GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION= "(1234567) some account description";
     public static final String KFS_FORMAT_ACCOUNT_NUMBER = "1234567";   
-    public static final String BAD_CONCUR_FORMAT_ACCOUNT_NUMBER = "1234567 some account description";
+    public static final String GOOD_CONCUR_FORMAT_CODE = "123";
     
     public static final String STRING_WITH_OPEN_CLOSE_PARENTHESIS = "(1234567) some account description";
     public static final String STRING_WITHOUT_OPEN_CLOSE_PARENTHESIS = "1234567 some account description";
@@ -65,13 +62,13 @@ public class ConcurUtilsTest {
     }
     
     @Test
-    public void extractKFSInfoFromGoodConcurString(){      
-        Assert.assertEquals(KFS_FORMAT_ACCOUNT_NUMBER, ConcurUtils.extractKFSInfoFromConcurString(GOOD_CONCUR_FORMAT_ACCOUNT_NUMBER));
+    public void extractKFSInfoFromConcurStringWithCodeAndDescription(){      
+        Assert.assertEquals(KFS_FORMAT_ACCOUNT_NUMBER, ConcurUtils.extractKFSInfoFromConcurString(GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION));
     }
     
     @Test
-    public void extractKFSInfoFromBadConcurString(){      
-        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractKFSInfoFromConcurString(BAD_CONCUR_FORMAT_ACCOUNT_NUMBER));
+    public void extractKFSInfoFromConcurStringWithCodeOnly(){      
+        Assert.assertEquals(GOOD_CONCUR_FORMAT_CODE, ConcurUtils.extractKFSInfoFromConcurString(GOOD_CONCUR_FORMAT_CODE));
     }
     
     @Test
