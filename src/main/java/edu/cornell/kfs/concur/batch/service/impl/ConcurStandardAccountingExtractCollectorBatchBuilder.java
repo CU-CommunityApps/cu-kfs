@@ -1,23 +1,23 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 /**
@@ -40,6 +40,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected static final int NAME_LENGTH_FOR_DESCRIPTION = 14;
     protected static final int MIN_BATCH_SEQUENCE_NUMBER = 0;
     protected static final int MAX_BATCH_SEQUENCE_NUMBER = 9;
+    protected static final char PIPE_CHAR = '|';
+    protected static final char COMMA_CHAR = ',';
 
     protected final String docTypeCode;
     protected final String systemOriginationCode;
@@ -54,37 +56,40 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected CollectorBatch collectorBatch;
     protected Map<String,OriginEntryFull> originEntries;
-    protected Function<Date,Integer> fiscalYearFinder;
-    protected BiFunction<Date,String,String> dateFormatter;
-    protected Predicate<ConcurStandardAccountingExtractDetailLine> saeLineValidator;
+    protected UniversityDateService universityDateService;
+    protected DateTimeService dateTimeService;
+    protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected int batchSequenceNumber;
     protected int nextFakeObjectCode;
 
+    // NOTE: The last argument needs to be updated to use an actual service once one has been implemented.
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
-            Function<Date,Integer> fiscalYearFinder, BiFunction<Date,String,String> dateFormatter,
-            Predicate<ConcurStandardAccountingExtractDetailLine> saeLineValidator, Function<String,String> parameterFinder) {
-        if (fiscalYearFinder == null) {
-            throw new IllegalArgumentException("fiscalYearFinder cannot be null");
-        } else if (dateFormatter == null) {
-            throw new IllegalArgumentException("dateFormatter cannot be null");
-        } else if (parameterFinder == null) {
+            UniversityDateService universityDateService, DateTimeService dateTimeService,
+            ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterService) {
+        if (universityDateService == null) {
+            throw new IllegalArgumentException("universityDateService cannot be null");
+        } else if (dateTimeService == null) {
+            throw new IllegalArgumentException("dateTimeService cannot be null");
+        } else if (concurSAEValidationService == null) {
+            throw new IllegalArgumentException("saeValidationService cannot be null");
+        } else if (parameterService == null) {
             throw new IllegalArgumentException("propertyFinder cannot be null");
         }
         
-        this.fiscalYearFinder = fiscalYearFinder;
-        this.dateFormatter = dateFormatter;
-        this.saeLineValidator = saeLineValidator;
+        this.universityDateService = universityDateService;
+        this.dateTimeService = dateTimeService;
+        this.concurSAEValidationService = concurSAEValidationService;
         
-        this.docTypeCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
-        this.systemOriginationCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
-        this.chartCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
-        this.highestLevelOrgCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
-        this.departmentName = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
-        this.campusCode = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
-        this.campusAddress = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
-        this.notificationEmail = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
-        this.notificationPerson = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
-        this.notificationPhone = parameterFinder.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
+        this.docTypeCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
+        this.systemOriginationCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
+        this.chartCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
+        this.highestLevelOrgCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
+        this.departmentName = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
+        this.campusCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
+        this.campusAddress = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
+        this.notificationEmail = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
+        this.notificationPerson = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
+        this.notificationPhone = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
     }
 
     public void reset() {
@@ -121,7 +126,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new RuntimeException("Batch Sequence Number should have been an integer between 0 and 9");
         }
         
-        Integer fiscalYear = fiscalYearFinder.apply(saeFileContents.getBatchDate());
+        Integer fiscalYear = universityDateService.getFiscalYear(saeFileContents.getBatchDate());
         if (fiscalYear == null) {
             throw new RuntimeException("No fiscal year found for batch date: " + saeFileContents.getBatchDate().toString());
         }
@@ -142,7 +147,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected void buildOriginEntries(List<ConcurStandardAccountingExtractDetailLine> saeLines) {
         for (ConcurStandardAccountingExtractDetailLine saeLine : saeLines) {
             String itemKey = buildItemKey(saeLine);
-            if (shouldProcessLine(itemKey, saeLine) && saeLineValidator.test(saeLine)) {
+            if (shouldProcessLine(itemKey, saeLine)
+                    && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLine(saeLine)) {
                 OriginEntryFull originEntry = originEntries.computeIfAbsent(
                         itemKey, (newKey) -> buildOriginEntryForExtractedLine(newKey, saeLine));
                 compareLineNonKeyFieldsAgainstEntry(itemKey, saeLine, originEntry);
@@ -191,12 +197,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         
         return new StringBuilder(INITIAL_BUILDER_SIZE)
                 .append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
-                .append('|').append(makeEmptyIfBlank(saeLine.getAccountNumber()))
-                .append('|').append(StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()))
-                .append('|').append(makeEmptyIfBlank(objectCodeForKey))
-                .append('|').append(StringUtils.defaultIfBlank(saeLine.getSubObjectCode(), getDashSubObjectCode()))
-                .append('|').append(StringUtils.defaultIfBlank(saeLine.getProjectCode(), getDashProjectCode()))
-                .append('|').append(makeEmptyIfBlank(saeLine.getOrgRefId()))
+                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getAccountNumber()))
+                .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()))
+                .append(PIPE_CHAR).append(makeEmptyIfBlank(objectCodeForKey))
+                .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubObjectCode(), getDashSubObjectCode()))
+                .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getProjectCode(), getDashProjectCode()))
+                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getOrgRefId()))
                 .toString();
     }
 
@@ -251,12 +257,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected String buildTransactionDescription(ConcurStandardAccountingExtractDetailLine saeLine) {
-        String formattedEndDate = dateFormatter.apply(saeLine.getReportEndDate(), ConcurConstants.DATE_FORMAT);
+        String formattedEndDate = dateTimeService.toString(saeLine.getReportEndDate(), ConcurConstants.DATE_FORMAT);
         
         return new StringBuilder(INITIAL_BUILDER_SIZE)
                 .append(StringUtils.left(saeLine.getEmployeeLastName(), NAME_LENGTH_FOR_DESCRIPTION))
-                .append(',').append(StringUtils.left(saeLine.getEmployeeFirstName(), NAME_LENGTH_FOR_DESCRIPTION))
-                .append(',').append(formattedEndDate)
+                .append(COMMA_CHAR).append(StringUtils.left(saeLine.getEmployeeFirstName(), NAME_LENGTH_FOR_DESCRIPTION))
+                .append(COMMA_CHAR).append(formattedEndDate)
                 .toString();
     }
 

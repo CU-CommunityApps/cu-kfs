@@ -5,17 +5,19 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
+import org.easymock.Capture;
+import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
+import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
@@ -25,19 +27,24 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEFileFixture;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected static final int MIN_YEAR = 2000;
 
     protected TestConcurStandardAccountingExtractCollectorBatchBuilder builder;
+    protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
+    protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
 
     @Before
     public void setUp() throws Exception {
+        universityDateService = buildMockUniversityDateService();
         dateTimeService = new DateTimeServiceImpl();
+        concurSAEValidationService = buildMockConcurSAEValidationService();
         builder = new TestConcurStandardAccountingExtractCollectorBatchBuilder(
-                this::getFiscalYear, dateTimeService::toString, this::validateLine, this::getParameterValue);
+                universityDateService, dateTimeService, concurSAEValidationService, this::getParameterValue);
     }
 
     @Test
@@ -151,6 +158,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertEquals("Wrong transaction amount", expected.getTransactionLedgerEntryAmount(), actual.getTransactionLedgerEntryAmount());
     }
 
+    protected UniversityDateService buildMockUniversityDateService() {
+        return buildMockService(UniversityDateService.class, (service) -> {
+            Capture<Date> dateArg = EasyMock.newCapture();
+            EasyMock.expect(
+                    service.getFiscalYear(
+                            EasyMock.capture(dateArg)))
+                    .andStubAnswer(() -> getFiscalYear(dateArg.getValue()));
+        });
+    }
+
     protected Integer getFiscalYear(Date date) {
         if (date == null) {
             throw new IllegalArgumentException("date cannot be null");
@@ -183,6 +200,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             default :
                 return null;
         }
+    }
+
+    protected ConcurStandardAccountingExtractValidationService buildMockConcurSAEValidationService() {
+        return buildMockService(ConcurStandardAccountingExtractValidationService.class, (service) -> {
+            Capture<ConcurStandardAccountingExtractDetailLine> saeLineArg = EasyMock.newCapture();
+            EasyMock.expect(
+                    service.validateConcurStandardAccountingExtractDetailLine(
+                            EasyMock.capture(saeLineArg)))
+                    .andStubAnswer(() -> validateLine(saeLineArg.getValue()));
+        });
     }
 
     protected boolean validateLine(ConcurStandardAccountingExtractDetailLine saeLine) {
@@ -226,6 +253,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         }
     }
 
+    protected <T> T buildMockService(Class<T> serviceClass, Consumer<T> mockServiceConfigurer) {
+        T mockService = EasyMock.createMock(serviceClass);
+        mockServiceConfigurer.accept(mockService);
+        EasyMock.replay(mockService);
+        return mockService;
+    }
+
     /**
      * Test-only builder subclass that uses hard-coded versions of certain dash-only codes/numbers.
      */
@@ -233,9 +267,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             extends ConcurStandardAccountingExtractCollectorBatchBuilder {
         
         public TestConcurStandardAccountingExtractCollectorBatchBuilder(
-                Function<Date,Integer> fiscalYearFinder, BiFunction<Date,String,String> dateFormatter,
-                Predicate<ConcurStandardAccountingExtractDetailLine> saeLineValidator, Function<String,String> parameterFinder) {
-            super(fiscalYearFinder, dateFormatter, saeLineValidator, parameterFinder);
+                UniversityDateService universityDateService, DateTimeService dateTimeService,
+                ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterFinder) {
+            super(universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
         }
         
         @Override

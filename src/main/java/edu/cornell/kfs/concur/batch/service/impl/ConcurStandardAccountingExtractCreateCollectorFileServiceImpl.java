@@ -25,8 +25,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     @Override
     public boolean buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
         ConcurStandardAccountingExtractCollectorBatchBuilder builder = new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                universityDateService::getFiscalYear, dateTimeService::toString,
-                concurSAEValidationService::validateConcurStandardAccountingExtractDetailLine, this::getConcurParameterValueAsString);
+                universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
         
         CollectorBatch collectorBatch = builder.buildCollectorBatchFromStandardAccountingExtract(0, saeFileContents);
         if (collectorBatch == null) {
@@ -37,6 +36,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         return true;
     }
 
+    // This method needs to be replaced with an actual separate service once one has been implemented.
     protected String getConcurParameterValueAsString(String parameterName) {
         return parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR,
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);

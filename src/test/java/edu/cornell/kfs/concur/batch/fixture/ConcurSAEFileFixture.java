@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
@@ -14,6 +15,12 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  * Helper fixture for generating ConcurStandardAccountingExtractFile POJOs.
  * For convenience, one of the enum constructors can be used as a shortcut
  * for cases involving a batch date of 01/04/2017.
+ * 
+ * The POJOs will use the enum constant's name plus the ".txt" extension
+ * as the originalFileName, for convenience purposes. Such filenames
+ * are NOT expected to point to actual files; if there's a need to parse
+ * an actual file and then compare the results using this enum,
+ * then generating the filename some other way is recommended.
  */
 public enum ConcurSAEFileFixture {
 
@@ -62,6 +69,7 @@ public enum ConcurSAEFileFixture {
 
     public ConcurStandardAccountingExtractFile toExtractFileWithoutDetailLines() {
         ConcurStandardAccountingExtractFile extractFile = new ConcurStandardAccountingExtractFile();
+        extractFile.setOriginalFileName(name() + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         extractFile.setBatchId(batchId);
         extractFile.setBatchDate(ConcurFixtureUtils.toSqlDate(batchDate));
         extractFile.setRecordCount(recordCount);
