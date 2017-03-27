@@ -73,17 +73,17 @@ public class ConcurUtilsTest {
     
     @Test
     public void valueInCodeAndDescriptionFormat(){      
-        Assert.assertTrue("String was supposed to be in code and description format", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_IN_CODE_AND_DESCRIPTION_FORMAT));
+        Assert.assertTrue("This value was expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_IN_CODE_AND_DESCRIPTION_FORMAT));
     }
     
     @Test
     public void valueNotInCodeAndDescriptionFormat(){      
-        Assert.assertFalse("String does not contain open/close parenthesis", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_NOT_IN_CODE_AND_DESCRIPTION_FORMAT));
+        Assert.assertFalse("This was not expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_NOT_IN_CODE_AND_DESCRIPTION_FORMAT));
     }
     
     @Test
     public void emptyStringNotInCodeAndDescriptionFormat(){      
-        Assert.assertFalse("Empty string does not contain open/close parenthesis", ConcurUtils.stringMatchesCodeAndDescriptionPattern(StringUtils.EMPTY));
+        Assert.assertFalse("Empty string was not expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(StringUtils.EMPTY));
     }
     
     @Test
