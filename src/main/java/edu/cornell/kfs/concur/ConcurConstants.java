@@ -93,4 +93,7 @@ public class ConcurConstants {
         public static final String SAE_MISSING_OBJECT_CODES_SUB_REPORT_TITLE_NOT_SET_IN_CONFIGURATION_FILE = "SAE_MISSING_OBJECT_CODES_SUB_REPORT_TITLE_NOT_SET_IN_CONFIGURATION_FILE";
     }
 
+    public static final String CASH_ADVANCE_INDICATOR = "CASH ADVANCE";
+    public static final String SPACING_STRING_FOR_OUTPUT = "    ";
+
 }
