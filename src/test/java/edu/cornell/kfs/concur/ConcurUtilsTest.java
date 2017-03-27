@@ -1,8 +1,5 @@
 package edu.cornell.kfs.concur;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,12 +15,12 @@ public class ConcurUtilsTest {
     public static final String GOOD_TRAVEL_REQUEST_URI = "https://www.concursolutions.com/api/travelrequest/v1.0/requests/1234567678";
     public static final String BAD_TRAVEL_REQUEST_URI = "https://www.concursolutions.com/api/someEndPoint";
     
-    public static final String GOOD_CONCUR_FORMAT_ACCOUNT_NUMBER = "(1234567) some account description";
+    public static final String GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION = "(1234567) some account description";
     public static final String KFS_FORMAT_ACCOUNT_NUMBER = "1234567";   
-    public static final String BAD_CONCUR_FORMAT_ACCOUNT_NUMBER = "1234567 some account description";
+    public static final String GOOD_CONCUR_FORMAT_CODE = "123";
     
-    public static final String STRING_WITH_OPEN_CLOSE_PARENTHESIS = "(1234567) some account description";
-    public static final String STRING_WITHOUT_OPEN_CLOSE_PARENTHESIS = "1234567 some account description";
+    public static final String VALUE_IN_CODE_AND_DESCRIPTION_FORMAT = "(1234567) some account description";
+    public static final String VALUE_NOT_IN_CODE_AND_DESCRIPTION_FORMAT = "1234567 some account description";
     public static final String CHART = "IT";
     public static final String ACCOUNT_NUMBER = "1234567";
     public static final String STRING_FORMATTED_FOR_ERROR_MESSAGE = ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER + CUKFSConstants.COLON + CHART + KFSConstants.COMMA + ACCOUNT_NUMBER;
@@ -65,33 +62,28 @@ public class ConcurUtilsTest {
     }
     
     @Test
-    public void extractKFSInfoFromGoodConcurString(){      
-        Assert.assertEquals(KFS_FORMAT_ACCOUNT_NUMBER, ConcurUtils.extractKFSInfoFromConcurString(GOOD_CONCUR_FORMAT_ACCOUNT_NUMBER));
+    public void extractAccountNumberFromConcurValue(){      
+        Assert.assertEquals(KFS_FORMAT_ACCOUNT_NUMBER, ConcurUtils.extractCodeFromCodeAndDescriptionValue(GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION));
     }
     
     @Test
-    public void extractKFSInfoFromBadConcurString(){      
-        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractKFSInfoFromConcurString(BAD_CONCUR_FORMAT_ACCOUNT_NUMBER));
+    public void extracCodeFromEmptyString(){      
+        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractCodeFromCodeAndDescriptionValue(StringUtils.EMPTY));
     }
     
     @Test
-    public void extractKFSInfoFromEmptyConcurString(){      
-        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractKFSInfoFromConcurString(StringUtils.EMPTY));
+    public void valueInCodeAndDescriptionFormat(){      
+        Assert.assertTrue("This value was expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_IN_CODE_AND_DESCRIPTION_FORMAT));
     }
     
     @Test
-    public void stringContainOpenCloseParenthesis(){      
-        Assert.assertTrue("String does contain open/close parenthesis", ConcurUtils.doesStringContainOpenCloseParenthesis(STRING_WITH_OPEN_CLOSE_PARENTHESIS));
+    public void valueNotInCodeAndDescriptionFormat(){      
+        Assert.assertFalse("This was not expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_NOT_IN_CODE_AND_DESCRIPTION_FORMAT));
     }
     
     @Test
-    public void stringDoesNotContainOpenCloseParenthesis(){      
-        Assert.assertFalse("String does not contain open/close parenthesis", ConcurUtils.doesStringContainOpenCloseParenthesis(STRING_WITHOUT_OPEN_CLOSE_PARENTHESIS));
-    }
-    
-    @Test
-    public void emptyStringDoesNotContainOpenCloseParenthesis(){      
-        Assert.assertFalse("Empty string does not contain open/close parenthesis", ConcurUtils.doesStringContainOpenCloseParenthesis(StringUtils.EMPTY));
+    public void emptyStringNotInCodeAndDescriptionFormat(){      
+        Assert.assertFalse("Empty string was not expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(StringUtils.EMPTY));
     }
     
     @Test
