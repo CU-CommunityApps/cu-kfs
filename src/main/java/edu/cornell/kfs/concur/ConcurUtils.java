@@ -1,11 +1,17 @@
 package edu.cornell.kfs.concur;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurUtils {
+    
+    private static final String CODE_PATTERN = "\\((.*?)\\)";
+    private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";
 
     public static boolean isExpenseReportURI(String URI) {
         return StringUtils.isNotBlank(URI) && URI.contains(ConcurConstants.EXPENSE_REPORT_URI_INDICATOR);
@@ -15,20 +21,23 @@ public class ConcurUtils {
         return StringUtils.isNotBlank(URI) && URI.contains(ConcurConstants.TRAVEL_REQUEST_URI_INDICATOR);
     }
 
-    public static String extractKFSInfoFromConcurString(String concurString) {
-        String kfsInfo = StringUtils.EMPTY;
-        if (doesStringContainOpenCloseParenthesis(concurString)) {
-            kfsInfo = concurString.substring(concurString.lastIndexOf(CUKFSConstants.LEFT_PARENTHESIS) + 1, concurString.lastIndexOf(CUKFSConstants.RIGHT_PARENTHESIS));
+    public static String extractCodeFromCodeAndDescriptionValue(String codeAndDescriptionValue) {
+        String result = StringUtils.EMPTY;
+        if (stringMatchesCodeAndDescriptionPattern(codeAndDescriptionValue)) {
+            Pattern regexCode = Pattern.compile(CODE_PATTERN);
+            Matcher regexMatcherCode = regexCode.matcher(codeAndDescriptionValue);
+            if (regexMatcherCode.find()) {
+                result = regexMatcherCode.group(1);
+            }
         }
-        return kfsInfo;
+        return result;
     }
     
-    public static boolean doesStringContainOpenCloseParenthesis(String input) {
-        return StringUtils.isNotBlank(input)
-                && input.contains(CUKFSConstants.LEFT_PARENTHESIS)
-                && input.contains(CUKFSConstants.RIGHT_PARENTHESIS)
-                && input.lastIndexOf(CUKFSConstants.LEFT_PARENTHESIS) < input.length();
-    }   
+    public static boolean stringMatchesCodeAndDescriptionPattern(String input) {
+        Pattern regexCodeAndDescription = Pattern.compile(CODE_AND_DESCRIPTION_PATTERN);
+        Matcher regexMatcherCodeAndDescription = regexCodeAndDescription.matcher(input);
+        return regexMatcherCodeAndDescription.matches();
+    }
     
     public static String formatStringForErrorMessage(String label, String... values) {
         String formattedString = StringUtils.EMPTY;
@@ -37,8 +46,7 @@ public class ConcurUtils {
             for (String value : values) {
                 formattedString += value + KFSConstants.COMMA;
             }
-            formattedString = StringUtils.removeEnd(formattedString,
-                    KFSConstants.COMMA);
+            formattedString = StringUtils.removeEnd(formattedString, KFSConstants.COMMA);
         }
 
         return formattedString;
