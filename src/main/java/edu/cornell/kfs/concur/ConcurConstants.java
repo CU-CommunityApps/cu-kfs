@@ -66,4 +66,7 @@ public class ConcurConstants {
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
     public static final String PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX = "pdp_concur_";
 
+    public static final String CASH_ADVANCE_INDICATOR = "CASH ADVANCE";
+    public static final String SPACING_STRING_FOR_OUTPUT = "    ";
+    
 }

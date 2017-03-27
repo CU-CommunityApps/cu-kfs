@@ -37,7 +37,6 @@
 		<property name="batchFileDirectories">
 			<list>
 				<value>${reports.directory}/concur</value>
-				<value>${staging.directory}/concur/cashAdvance</value>
 				<value>${staging.directory}/concur/requestExtract</value>
 				<value>${staging.directory}/concur/standardAccountingExtract</value>
 			</list>
@@ -237,6 +236,16 @@
 		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
 	</bean>
 
+    <bean id="concurBatchUtilityService" parent="concurBatchUtilityService-parentBean" />
+    <bean id="concurBatchUtilityService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurBatchUtilityServiceImpl" abstract="true">
+        <property name="batchInputFileService" ref="batchInputFileService" />
+        <property name="dataDictionaryService" ref="dataDictionaryService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="fileStorageService" ref="fileStorageService"/>
+        <property name="cuMarshalService" ref="cuMarshalService"/>
+        <property name="parameterService" ref="parameterService"/>
+    </bean>
+
 	<!-- Request Extract File Conversion to  PDP Import File Job -->
 	<bean id="concurRequestExtractToPdpFeedJob" parent="unscheduledJobDescriptor">
         <property name="steps">
@@ -253,24 +262,38 @@
 	<bean id="concurRequestExtractCreatePdpFeedService" parent="concurRequestExtractCreatePdpFeedService-parentBean" />
 	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
-	    <property name="fileStorageService" ref="fileStorageService" />
+	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
 
 	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
 	<bean id="concurRequestExtractFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractFileServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileValidationService" ref="concurRequestExtractFileValidationService" />
+	    <property name="concurCashAdvancePdpFeedFileService" ref="concurCashAdvancePdpFeedFileService" />
+	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	    <property name="batchInputFileService" ref="batchInputFileService" />
 	    <property name="batchInputFileType" ref="concurRequestExtractInputFileType" />
 	</bean>
 
+    <bean id="concurRequestedCashAdvanceService" parent="concurRequestedCashAdvanceService-parentBean" />
+    <bean id="concurRequestedCashAdvanceService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestedCashAdvanceServiceImpl" abstract="true">
+        <property name="businessObjectService" ref="businessObjectService"/>
+    </bean>
+
 	<bean id="concurRequestExtractFileValidationService" parent="concurRequestExtractFileValidationService-parentBean" />
 	<bean id="concurRequestExtractFileValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractFileValidationServiceImpl" abstract="true">
+	    <property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService" />
+	    <property name="concurAccountValidationService" ref="concurAccountValidationService" />
+	    <property name="personService" ref="personService"/>
+	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+	    <property name="configurationService" ref="configurationService"/>
 	</bean>
 
 	<bean id="concurCashAdvancePdpFeedFileService" parent="concurCashAdvancePdpFeedFileService-parentBean" />
 	<bean id="concurCashAdvancePdpFeedFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurCashAdvancePdpFeedFileServiceImpl" abstract="true">
-	    <property name="outgoingDirectoryName" value="${staging.directory}/concur/cashAdvance"/>
-	</bean>
+	    <property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService"/>
+	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+	    <property name="paymentImportDirectory" value="${staging.directory}/pdp/paymentImport/"/>
+    </bean>
 
 	<bean id="concurRequestExtractInputFileType" parent="FlatFileParser">
         <property name="flatFileSpecification">
@@ -322,6 +345,13 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="7"
                                           p:propertyName="middleInitial"/>
+                                   <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="8"
+                                          p:propertyName="employeeGroupId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="50"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"
+                                          p:propertyName="totalApprovedAmount"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="60"
                                           p:propertyName="payeeIdType"/>
@@ -332,6 +362,9 @@
                                           p:lineSegmentIndex="189"
                                           p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"
                                           p:propertyName="requestAmount"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="89"
+                                          p:propertyName="requestEntryExpenseType"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="94"
                                           p:propertyName="requestEntryDescription"/>
