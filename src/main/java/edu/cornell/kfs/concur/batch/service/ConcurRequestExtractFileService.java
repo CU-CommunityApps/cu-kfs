@@ -8,6 +8,5 @@ public interface ConcurRequestExtractFileService {
 
     List<String> getUnprocessedRequestExtractFiles();
 
-    boolean processFile(String requestExtractFileName);
-
+    boolean processFile(String requestExtractFullyQualifiedFileName);
 }

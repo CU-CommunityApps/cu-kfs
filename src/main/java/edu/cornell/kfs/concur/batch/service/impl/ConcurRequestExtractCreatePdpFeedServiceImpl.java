@@ -1,17 +1,12 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.kuali.kfs.sys.service.FileStorageService;
 
-import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractCreatePdpFeedService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
-import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
 
 public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurRequestExtractCreatePdpFeedService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
@@ -26,12 +21,19 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
         } else {
             LOG.info("Found " + filesToProcess.size() + " file(s) to process.");
 
-            for (String requestExtractFileName : filesToProcess) {
+            for (String requestExtractFullyQualifiedFileName : filesToProcess) {
                 try {
-                    LOG.info("Begin processing for filename: " + requestExtractFileName + ".");
-                    getConcurRequestExtractFileService().processFile(requestExtractFileName);
+                    LOG.info("Begin processing for filename: " + requestExtractFullyQualifiedFileName + ".");
+                    if (getConcurRequestExtractFileService().processFile(requestExtractFullyQualifiedFileName)) {
+                        LOG.info("SUCCESSFUL processing for Request Extract File: " + requestExtractFullyQualifiedFileName);
+                    }
+                    else {
+                        LOG.error("Processing was UNSUCCESSFUL for Request Extract File: " + requestExtractFullyQualifiedFileName);
+                    }
+                } catch (Exception e) {
+                    LOG.error("Processing to create PDP Files from Request Extract [" + requestExtractFullyQualifiedFileName + "] genertated Exception: " + e.getMessage());
                 } finally {
-                    getFileStorageService().removeDoneFiles(Collections.singletonList(requestExtractFileName));
+                    getFileStorageService().removeDoneFiles(Collections.singletonList(requestExtractFullyQualifiedFileName));
                 }
             }
         }
