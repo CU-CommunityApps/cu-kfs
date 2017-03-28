@@ -101,7 +101,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentDetailEntry.setSourceDocNbr(buildSourceDocumentNumber(line.getReportId()));
         currentDetailEntry.setFsOriginCd(getConcurParameterValue(ConcurParameterConstants.CONCUR_AP_PDP_ORIGINATION_CODE));
         currentDetailEntry.setFdocTypCd(getConcurParameterValue(ConcurParameterConstants.CONCUR_SAE_PDP_DOCUMENT_TYPE));
-        currentDetailEntry.setInvoiceNbr(StringUtils.EMPTY);
+        currentDetailEntry.setInvoiceNbr(getConcurParameterValue(ConcurParameterConstants.CONCUR_PDP_DEFAULT_INVOICE_NUMBER));
         currentDetailEntry.setPoNbr(StringUtils.EMPTY);
         currentDetailEntry.setInvoiceDate(formatDate(line.getBatchDate()));
         return currentDetailEntry;
