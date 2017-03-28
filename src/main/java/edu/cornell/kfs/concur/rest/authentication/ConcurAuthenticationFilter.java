@@ -34,14 +34,14 @@ public class ConcurAuthenticationFilter implements Filter {
 
         if (StringUtils.isBlank(authorizationHeader)) {          
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            LOG.debug("doFilter(): Concur authentication failed");
+            LOG.debug("doFilter(): Concur authentication failed: missing authorization header.");
             return;
         } else {
             final String encodedUserNameAndPasswordAsToken = authorizationHeader.replaceFirst(ConcurConstants.BASIC_AUTHENTICATION_SCHEME + " ", "");
 
             if (!getConcurAuthenticationService().isConcurTokenValid(encodedUserNameAndPasswordAsToken)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                LOG.debug("doFilter(): Concur authentication failed");
+                LOG.debug("doFilter(): Concur authentication failed: invalid token.");
                 return;
             }
         }
