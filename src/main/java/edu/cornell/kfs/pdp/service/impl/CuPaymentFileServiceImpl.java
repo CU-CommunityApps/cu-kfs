@@ -97,26 +97,43 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     }
     
     private void setPaymentAddressFieldsForConcurPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
-        LOG.info("setPaymentAddressFieldsForConcurPayments, entering");
-        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
-        String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
-        String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
-        if (StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode)) {
-            Person employee = getPersonService().getPersonByEmployeeId(paymentGroup.getPayeeId());
+        LOG.debug("setPaymentAddressFieldsForConcurPayments, entering");
+        if (isConcurCustomer(paymentFile)) {
+            Person employee = buildPerson(paymentGroup.getPayeeId());
             if (ObjectUtils.isNotNull(employee)) {
-                LOG.info("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
+                LOG.debug("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
                 paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
                 paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
                 paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
                 paymentGroup.setCity(employee.getAddressCityUnmasked());
                 paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
                 paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
+                paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
             } else {
-                LOG.error("setPaymentAddressFieldsForConcurPayments, unable to build a person from the employee ID: " + paymentGroup.getPayeeId());
+                LOG.error("setPaymentAddressFieldsForConcurPayments, unable to get a person from the employee ID: " + paymentGroup.getPayeeId());
             }
         }
+    }
+
+    private Person buildPerson(String employeeId) {
+        Person person = null;
+        if (StringUtils.isNotBlank(employeeId)) {
+            try {
+                person = getPersonService().getPersonByEmployeeId(employeeId);
+            } catch (Exception e) {
+                LOG.error("buildPerson, Unable to build a person from employee ID: " + employeeId, e);
+            }
+        }
+        return person;
+    }
+    
+    private boolean isConcurCustomer(PaymentFileLoad paymentFile) {
+        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
+        String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
+        String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
+        return StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode);
     }
     
     public String getConcurParameterValue(String parameterName) {
