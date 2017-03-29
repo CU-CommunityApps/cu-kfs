@@ -151,7 +151,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line) {
         ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode(), line.getOrgRefId());
+                line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
         if (validationResults.isNotValid()) {
             LOG.info("validateAccountingInformation, the accounting validation results: " + validationResults.getErrorMessagesAsOneFormattedString());

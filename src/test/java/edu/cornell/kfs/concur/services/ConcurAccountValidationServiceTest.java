@@ -45,7 +45,7 @@ public class ConcurAccountValidationServiceTest {
                 ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
                 ConcurAccountValidationTestConstants.VALID_OBJ_CD,
                 ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, null);
+                ConcurAccountValidationTestConstants.VALID_PROJECT_CODE);
         return concurAccountInfo;
     }
     
