@@ -36,7 +36,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         return true;
     }
 
-    // This method needs to be replaced with an actual separate service once one has been implemented.
     protected String getConcurParameterValueAsString(String parameterName) {
         return parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR,
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);

@@ -62,7 +62,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected int batchSequenceNumber;
     protected int nextFakeObjectCode;
 
-    // NOTE: The last argument needs to be updated to use an actual service once one has been implemented.
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterService) {
