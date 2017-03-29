@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.kuali.kfs.sys.batch.FlatFileData;
 import org.kuali.kfs.sys.batch.FlatFileTransactionInformation;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import edu.cornell.kfs.concur.batch.ConcurRequestExtractPdpConstants;
 
 public class ConcurRequestExtractFile implements FlatFileData {
     
@@ -16,6 +19,7 @@ public class ConcurRequestExtractFile implements FlatFileData {
     private KualiDecimal totalApprovedAmount;
     private List<ConcurRequestExtractRequestDetailFileLine> requestDetails;
     private FlatFileTransactionInformation fileTransactionInformation;
+    private String fullyQualifiedPdpFileName;
     
     public ConcurRequestExtractFile() {
         this.requestDetails = new ArrayList<ConcurRequestExtractRequestDetailFileLine>();
@@ -64,4 +68,26 @@ public class ConcurRequestExtractFile implements FlatFileData {
     public void setRequestDetails(List<ConcurRequestExtractRequestDetailFileLine> requestDetails) {
         this.requestDetails = requestDetails;
     }
+
+    public String getFullyQualifiedPdpFileName() {
+        return fullyQualifiedPdpFileName;
+    }
+
+    public void setFullyQualifiedPdpFileName(String fullyQualifiedPdpFileName) {
+        this.fullyQualifiedPdpFileName = fullyQualifiedPdpFileName;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder(KFSConstants.NEWLINE).append("ConcurRequestExtractFile::   fileName: ").append(fileName).append(KFSConstants.NEWLINE);
+        sb.append("batchDate: ").append(batchDate).append(ConcurRequestExtractPdpConstants.WHITESPACE);
+        sb.append("recordCount: ").append(recordCount).append(ConcurRequestExtractPdpConstants.WHITESPACE);
+        sb.append("totalApprovedAmount: ").append(totalApprovedAmount).append(KFSConstants.NEWLINE);
+        sb.append("fullyQualifiedPdpFileName: ").append(fullyQualifiedPdpFileName).append(KFSConstants.NEWLINE);
+        sb.append("requestDetails:   ").append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE);
+        for (ConcurRequestExtractRequestDetailFileLine detailLines : requestDetails) {
+            sb.append(detailLines.toString()).append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE);
+        }
+        return sb.toString();
+    }
+
 }

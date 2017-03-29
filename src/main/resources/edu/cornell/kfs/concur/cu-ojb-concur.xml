@@ -33,4 +33,16 @@
     <field-descriptor name="validationResultMessage" column="VLDTN_RSLT_MSG" jdbc-type="VARCHAR" /> 
 </class-descriptor>
 
+<class-descriptor class="edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance" table="CU_CNCR_REQ_CASH_ADV_T">
+    <field-descriptor name="concurRequestedCashAdvanceId" column="CNCR_REQ_CASH_ADV_ID" jdbc-type="INTEGER" primarykey="true" sequence-name="CNCR_REQ_CASH_ADV_ID_SEQ" autoincrement="true"/>
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="requestId" column="REQUEST_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="employeeId" column="EMPLID" jdbc-type="VARCHAR" />
+    <field-descriptor name="paymentAmount" column="PAYMENT_AMOUNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+    <field-descriptor name="paymentDate" column="PAYMENT_DATE" jdbc-type="DATE" />
+    <field-descriptor name="sourceDocNbr" column="SOURCE_DOC_NBR" jdbc-type="VARCHAR" />
+    <field-descriptor name="fileName" column="FILE_NAME" jdbc-type="VARCHAR" />
+</class-descriptor>
+
 </descriptor-repository>
