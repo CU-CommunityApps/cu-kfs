@@ -99,34 +99,16 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private void setPaymentAddressFieldsForConcurPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
         LOG.debug("setPaymentAddressFieldsForConcurPayments, entering");
         if (isConcurCustomer(paymentFile)) {
-            Person employee = findPerson(paymentGroup.getPayeeId());
-            if (ObjectUtils.isNotNull(employee)) {
-                LOG.debug("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
-                paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
-                paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
-                paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
-                paymentGroup.setCity(employee.getAddressCityUnmasked());
-                paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
-                paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
-                paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
-            } else {
-                String errorMessage = "unable to get a person from the employee ID: " + paymentGroup.getPayeeId();
-                LOG.error("setPaymentAddressFieldsForConcurPayments, " + errorMessage);
-                throw new RuntimeException(errorMessage);
-            }
+            Person employee = getPersonService().getPersonByEmployeeId(paymentGroup.getPayeeId());
+            LOG.debug("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
+            paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
+            paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
+            paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
+            paymentGroup.setCity(employee.getAddressCityUnmasked());
+            paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
+            paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
+            paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
         }
-    }
-
-    private Person findPerson(String employeeId) {
-        Person person = null;
-        if (StringUtils.isNotBlank(employeeId)) {
-            try {
-                person = getPersonService().getPersonByEmployeeId(employeeId);
-            } catch (Exception e) {
-                LOG.error("findPerson, Unable to build a person from employee ID: " + employeeId, e);
-            }
-        }
-        return person;
     }
     
     private boolean isConcurCustomer(PaymentFileLoad paymentFile) {

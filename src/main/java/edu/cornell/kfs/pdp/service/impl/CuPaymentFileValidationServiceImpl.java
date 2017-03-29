@@ -18,15 +18,24 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.springframework.util.AutoPopulatingList;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.KualiCodeBase;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.concur.ConcurParameterConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
     private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
+    
+    protected PersonService personService;
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
@@ -71,6 +80,14 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 }
             } else {
                 LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
+                if (isConcurCustomer(paymentFile)) {
+                    Person employee = findPerson(paymentGroup.getPayeeId());
+                    if (ObjectUtils.isNull(employee)) {
+                        String errorMessage = "unable to get a person from the employee ID: " + paymentGroup.getPayeeId();
+                        LOG.error("processGroupValidation, " + errorMessage);
+                        errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] {errorMessage});
+                    }
+                }
             }
             
             // validate bank
@@ -144,6 +161,33 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
     
+    private Person findPerson(String employeeId) {
+        Person person = null;
+        if (StringUtils.isNotBlank(employeeId)) {
+            try {
+                person = getPersonService().getPersonByEmployeeId(employeeId);
+            } catch (Exception e) {
+                LOG.error("findPerson, Unable to build a person from employee ID: " + employeeId, e);
+            }
+        }
+        return person;
+    }
+    
+    private boolean isConcurCustomer(PaymentFileLoad paymentFile) {
+        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
+        String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
+        String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
+        return StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode);
+    }
+    
+    public String getConcurParameterValue(String parameterName) {
+        String parameterValue = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
+        return parameterValue;
+    }
+    
     public String printErrorMap(MessageMap errorMap) {
         StringBuilder sb = new StringBuilder();
         Set<String> keys = errorMap.getErrorMessages().keySet();
@@ -190,5 +234,13 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         if (LOG.isDebugEnabled()) {
             LOG.debug("After checkPaymentGroupPropertyMaxLength: " + printErrorMap(errorMap));
         }
+    }
+
+    public PersonService getPersonService() {
+        return personService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 }

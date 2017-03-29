@@ -93,7 +93,10 @@
         <property name="personService" ref="personService" />
     </bean>
 
-    <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl" />
+    <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl">
+    	<property name="personService" ref="personService" />
+    </bean>
+    
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     
     <bean id="pdpExtractPaymentService" parent="pdpExtractPaymentService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuExtractPaymentServiceImpl" >
