@@ -99,7 +99,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private void setPaymentAddressFieldsForConcurPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
         LOG.debug("setPaymentAddressFieldsForConcurPayments, entering");
         if (isConcurCustomer(paymentFile)) {
-            Person employee = buildPerson(paymentGroup.getPayeeId());
+            Person employee = findPerson(paymentGroup.getPayeeId());
             if (ObjectUtils.isNotNull(employee)) {
                 LOG.debug("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
                 paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
@@ -110,18 +110,20 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
                 paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
             } else {
-                LOG.error("setPaymentAddressFieldsForConcurPayments, unable to get a person from the employee ID: " + paymentGroup.getPayeeId());
+                String errorMessage = "unable to get a person from the employee ID: " + paymentGroup.getPayeeId();
+                LOG.error("setPaymentAddressFieldsForConcurPayments, " + errorMessage);
+                throw new RuntimeException(errorMessage);
             }
         }
     }
 
-    private Person buildPerson(String employeeId) {
+    private Person findPerson(String employeeId) {
         Person person = null;
         if (StringUtils.isNotBlank(employeeId)) {
             try {
                 person = getPersonService().getPersonByEmployeeId(employeeId);
             } catch (Exception e) {
-                LOG.error("buildPerson, Unable to build a person from employee ID: " + employeeId, e);
+                LOG.error("findPerson, Unable to build a person from employee ID: " + employeeId, e);
             }
         }
         return person;
