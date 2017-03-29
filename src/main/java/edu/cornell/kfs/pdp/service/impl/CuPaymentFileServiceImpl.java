@@ -9,8 +9,6 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.mail.MessagingException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.businessobject.Batch;
@@ -31,24 +29,20 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.pdp.service.CuPdpEmploueeService;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
     
     protected VendorService vendorService;
     protected EmailService emailService;
-    protected ParameterService parameterService;
     protected PersonService personService;
+    protected CuPdpEmploueeService cuPdpEmploueeService;
     
     public CuPaymentFileServiceImpl() {
         super();
@@ -77,7 +71,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         // store groups
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
-            setPaymentAddressFieldsForConcurPayments(paymentFile, paymentGroup);
+            setPaymentAddressFieldsForEmployeePayee(paymentFile, paymentGroup);
             businessObjectService.save(paymentGroup);
         }
 
@@ -96,11 +90,11 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
     }
     
-    private void setPaymentAddressFieldsForConcurPayments(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
-        LOG.debug("setPaymentAddressFieldsForConcurPayments, entering");
-        if (isConcurCustomer(paymentFile)) {
-            Person employee = getPersonService().getPersonByEmployeeId(paymentGroup.getPayeeId());
-            LOG.debug("setPaymentAddressFieldsForConcurPayments, found a concur customer, for employee: " + employee.getName());
+    private void setPaymentAddressFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+        LOG.debug("setPaymentAddressFieldsForEmployeePayee, entering");
+        if (cuPdpEmploueeService.shouldProcessPayeeAsEmployee(paymentFile)) {
+            Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
+            LOG.debug("setPaymentAddressFieldsForEmployeePayee, found a concur customer, for employee: " + employee.getName());
             paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
             paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
             paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
@@ -109,24 +103,6 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
             paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
             paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
         }
-    }
-    
-    private boolean isConcurCustomer(PaymentFileLoad paymentFile) {
-        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
-        String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
-        String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
-        return StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode);
-    }
-    
-    public String getConcurParameterValue(String parameterName) {
-        String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
-        if (LOG.isDebugEnabled()) { 
-            LOG.debug("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + parameterValue);
-        }
-        return parameterValue;
     }
     
     @Override
@@ -338,20 +314,12 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         this.emailService = emailService;
     }
 
-    public ParameterService getParameterService() {
-        return parameterService;
-    }
-
-    public void setParameterService(ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
-
-    public PersonService getPersonService() {
-        return personService;
-    }
-
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public void setCuPdpEmploueeService(CuPdpEmploueeService cuPdpEmploueeService) {
+        this.cuPdpEmploueeService = cuPdpEmploueeService;
     }
 
 }

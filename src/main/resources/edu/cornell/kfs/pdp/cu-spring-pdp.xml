@@ -89,13 +89,19 @@
     <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl">
         <property name="vendorService" ref="vendorService" />
         <property name="emailService" ref="emailService" />
-        <property name="parameterService" ref="parameterService" />
         <property name="personService" ref="personService" />
+        <property name="cuPdpEmploueeService" ref="cuPdpEmploueeService" />
     </bean>
 
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl">
     	<property name="personService" ref="personService" />
+    	<property name="cuPdpEmploueeService" ref="cuPdpEmploueeService" />
     </bean>
+    
+    <bean id="cuPdpEmploueeService" parent="cuPdpEmploueeService-parentBean" />
+	<bean id="cuPdpEmploueeService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmploueeServiceImpl" abstract="true">
+	    <property name="parameterService" ref="parameterService" />
+	</bean>
     
     <bean id="pdpPaymentMaintenanceService" parent="pdpPaymentMaintenanceService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentMaintenanceServiceImpl" />
     

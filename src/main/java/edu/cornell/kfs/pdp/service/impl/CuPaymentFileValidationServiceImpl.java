@@ -1,15 +1,11 @@
 package edu.cornell.kfs.pdp.service.impl;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpKeyConstants;
-import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
-import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
-import org.kuali.kfs.pdp.businessobject.PaymentAccountHistory;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -21,21 +17,18 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.springframework.util.AutoPopulatingList;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.bo.KualiCodeBase;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.concur.ConcurParameterConstants;
-import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.pdp.service.CuPdpEmploueeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
     private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
     
     protected PersonService personService;
+    protected CuPdpEmploueeService cuPdpEmploueeService;
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
@@ -80,7 +73,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 }
             } else {
                 LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
-                if (isConcurCustomer(paymentFile)) {
+                if (cuPdpEmploueeService.shouldProcessPayeeAsEmployee(paymentFile)) {
                     Person employee = findPerson(paymentGroup.getPayeeId());
                     if (ObjectUtils.isNull(employee)) {
                         String errorMessage = "unable to get a person from the employee ID: " + paymentGroup.getPayeeId();
@@ -165,27 +158,12 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         Person person = null;
         if (StringUtils.isNotBlank(employeeId)) {
             try {
-                person = getPersonService().getPersonByEmployeeId(employeeId);
+                person = personService.getPersonByEmployeeId(employeeId);
             } catch (Exception e) {
                 LOG.error("findPerson, Unable to build a person from employee ID: " + employeeId, e);
             }
         }
         return person;
-    }
-    
-    private boolean isConcurCustomer(PaymentFileLoad paymentFile) {
-        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
-        String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
-        String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
-        return StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getChartCode(), chartCode);
-    }
-    
-    public String getConcurParameterValue(String parameterName) {
-        String parameterValue = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
-        return parameterValue;
     }
     
     public String printErrorMap(MessageMap errorMap) {
@@ -236,11 +214,11 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
 
-    public PersonService getPersonService() {
-        return personService;
-    }
-
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public void setCuPdpEmploueeService(CuPdpEmploueeService cuPdpEmploueeService) {
+        this.cuPdpEmploueeService = cuPdpEmploueeService;
     }
 }
