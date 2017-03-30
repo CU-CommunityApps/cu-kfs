@@ -30,19 +30,22 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 public class ConcurRequestExtractFileValidationServiceImplTest {
     private ConcurRequestExtractFileValidationServiceImpl concurRequestExtractFileValidationService;
     private ConcurParameterConstantsFixture concurParameterConstantsFixture;
-    private ConcurBatchUtilityService concurBatchUtilityService;
+    private ConcurBatchUtilityServiceImpl concurBatchUtilityService;
     
     @Before
     public void setUp() throws Exception {
         Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class).setLevel(Level.DEBUG);
-        concurRequestExtractFileValidationService = new TestableConcurRequestExtractFileValidationServiceImpl();
+        concurRequestExtractFileValidationService = new ConcurRequestExtractFileValidationServiceImpl();
         concurBatchUtilityService = new TestableConcurBatchUtilityServiceImpl();
+        concurRequestExtractFileValidationService.setConcurBatchUtilityService(concurBatchUtilityService);
         concurParameterConstantsFixture = new ConcurParameterConstantsFixture();
     }
     
     @After
     public void tearDown() throws Exception {
         concurRequestExtractFileValidationService = null;
+        concurBatchUtilityService = null;
+        concurParameterConstantsFixture = null;
     }
     
     @Test
@@ -79,13 +82,6 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
             else {
                 return parameterValue;
             }
-        }
-    }
-
-    private class TestableConcurRequestExtractFileValidationServiceImpl extends ConcurRequestExtractFileValidationServiceImpl {
-        @Override
-        public ConcurBatchUtilityService getConcurBatchUtilityService() {
-            return this.concurBatchUtilityService;
         }
     }
 
