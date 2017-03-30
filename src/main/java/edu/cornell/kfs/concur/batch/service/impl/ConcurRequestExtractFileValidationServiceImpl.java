@@ -263,7 +263,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         ConcurAccountInfo concurAccountInfo =
             new ConcurAccountInfo(detailFileLine.getChart(), detailFileLine.getAccountNumber(), detailFileLine.getSubAccountNumber(),
                                   getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE),
-                                  detailFileLine.getSubObjectCode(), detailFileLine.getProjectCode(), detailFileLine.getOrgRefId());
+                                  detailFileLine.getSubObjectCode(), detailFileLine.getProjectCode());
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
         if (validationResults.isNotValid()) {
             detailFileLine.getValidationResult().addMessages(validationResults.getMessages());
