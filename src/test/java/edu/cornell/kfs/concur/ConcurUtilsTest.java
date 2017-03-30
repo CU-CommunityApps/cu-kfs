@@ -72,6 +72,11 @@ public class ConcurUtilsTest {
     }
     
     @Test
+    public void extracCodeFromNull(){      
+        Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractCodeFromCodeAndDescriptionValue(null));
+    }
+    
+    @Test
     public void valueInCodeAndDescriptionFormat(){      
         Assert.assertTrue("This value was expected to match the code and description pattern", ConcurUtils.stringMatchesCodeAndDescriptionPattern(VALUE_IN_CODE_AND_DESCRIPTION_FORMAT));
     }

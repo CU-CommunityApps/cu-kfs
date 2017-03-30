@@ -9,6 +9,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurUtils {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurUtils.class);
     
     private static final String CODE_PATTERN = "\\((.*?)\\)";
     private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";
@@ -23,6 +24,8 @@ public class ConcurUtils {
 
     public static String extractCodeFromCodeAndDescriptionValue(String codeAndDescriptionValue) {
         String result = StringUtils.EMPTY;
+        LOG.info("extractCodeFromCodeAndDescriptionValue(): Extract code from: " + codeAndDescriptionValue);
+        
         if (StringUtils.isNotBlank(codeAndDescriptionValue) && stringMatchesCodeAndDescriptionPattern(codeAndDescriptionValue)) {
             Pattern regexCode = Pattern.compile(CODE_PATTERN);
             Matcher regexMatcherCode = regexCode.matcher(codeAndDescriptionValue);
@@ -30,6 +33,8 @@ public class ConcurUtils {
                 result = regexMatcherCode.group(1);
             }
         }
+        
+        LOG.info("extractCodeFromCodeAndDescriptionValue(): Result value: " + result);
         return result;
     }
     
