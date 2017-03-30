@@ -9,8 +9,6 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.mail.MessagingException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.pdp.businessobject.Batch;
@@ -29,18 +27,22 @@ import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
+import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
     
-    private VendorService vendorService;
-    private EmailService emailService;
+    protected VendorService vendorService;
+    protected EmailService emailService;
+    protected PersonService personService;
+    protected CuPdpEmployeeService cuPdpEmployeeService;
     
     public CuPaymentFileServiceImpl() {
         super();
@@ -69,6 +71,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         // store groups
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
+            setPaymentAddressFieldsForEmployeePayee(paymentFile, paymentGroup);
             businessObjectService.save(paymentGroup);
         }
 
@@ -85,6 +88,21 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
 
         LOG.debug("loadPayments() was successful");
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
+    }
+    
+    private void setPaymentAddressFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+        LOG.debug("setPaymentAddressFieldsForEmployeePayee, entering");
+        if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
+            Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
+            LOG.debug("setPaymentAddressFieldsForEmployeePayee, found a concur customer, for employee: " + employee.getName());
+            paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
+            paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
+            paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
+            paymentGroup.setCity(employee.getAddressCityUnmasked());
+            paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
+            paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
+            paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
+        }
     }
     
     @Override
@@ -294,6 +312,14 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
 
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+    }
+
+    public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
+        this.cuPdpEmployeeService = cuPdpEmployeeService;
     }
 
 }

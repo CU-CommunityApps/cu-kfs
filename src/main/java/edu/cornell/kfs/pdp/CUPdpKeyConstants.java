@@ -25,5 +25,7 @@ public class CUPdpKeyConstants {
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_HEADING_SUMMARY_LINE_TWO = "message.pdp.achAdvice.email.attachment.headingSummaryLineTwo";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_HEADING_SUMMARY_LINE_THREE = "message.pdp.achAdvice.email.attachment.headingSummaryLineThree";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_PAYMENT_TABLE_ITEM_LINE = "message.pdp.achAdvice.email.attachment.paymentTableItemLine";
+	
+	public static final String ERROR_PDP_PAYMENTLOAD_INVALID_EMPLOYEE_ID = "error.pdp.paymentLoad.invalidEmployeeId";
 
 }
