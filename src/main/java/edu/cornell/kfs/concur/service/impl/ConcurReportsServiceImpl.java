@@ -143,7 +143,6 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
             for (AllocationsDTO allocation : allocations) {
                 ConcurAccountInfo concurAccountInfo = extractConcurAccountInfoFromAllocation(allocation);
                 if(StringUtils.isNotBlank(concurAccountInfo.getChart()) && StringUtils.isNotBlank(concurAccountInfo.getAccountNumber()) && StringUtils.isNotBlank(concurAccountInfo.getObjectCode())){
-                    concurAccountInfo.setOrgRefId(orgRefId);
                     accountInfos.add(concurAccountInfo);
                 }
             }
@@ -158,7 +157,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         String objectCode = allocation.getAccountCode1();
         String subObjectCode = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom4());
         String projectCode = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom5());
-        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, StringUtils.EMPTY);
+        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
+
         return concurAccountInfo;
     }
 
@@ -170,7 +170,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         String objectCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE);
         String subObjectCode = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom4());
         String projectCode = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom5());
-        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, StringUtils.EMPTY);
+        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
+
         accountInfoList.add(concurAccountInfo);
         return accountInfoList;
     }
