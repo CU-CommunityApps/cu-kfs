@@ -154,7 +154,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line) {
         if (line.getJournalAccountCodeOverridden().booleanValue()) {
-            LOG.error("logJournalAccountCodeOverridden, the journal account code needed to be overriden");
+            LOG.error("logJournalAccountCodeOverridden, the journal account code needed to be overridden");
         }
     }
 

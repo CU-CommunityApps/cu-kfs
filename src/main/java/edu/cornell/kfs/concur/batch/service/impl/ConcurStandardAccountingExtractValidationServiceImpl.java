@@ -121,7 +121,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeId(String employeeId) {
-        Person employee = getPersonService().getPersonByEmployeeId(employeeId);
+        Person employee = findPerson(employeeId);
         boolean valid = ObjectUtils.isNotNull(employee);
         if (valid) {
             LOG.debug("validateEmployeeId, found a valid employee: " + employee.getName());
@@ -129,6 +129,18 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             LOG.error("validateEmployeeId, found a an invalid employee ID: " + employeeId);
         }
         return valid;
+    }
+    
+    private Person findPerson(String employeeId) {
+        if (StringUtils.isNotBlank(employeeId)) {
+            try {
+                Person employee = getPersonService().getPersonByEmployeeId(employeeId);
+                return employee;
+            } catch (Exception e) {
+                LOG.error("buildPerson, Unable to create a person from employee ID: " + employeeId, e);
+            }
+        }
+        return null;
     }
     
     @Override
@@ -140,7 +152,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     private boolean validateReportId(String reportId) {
-        boolean valid = StringUtils.isNotEmpty(reportId);
+        boolean valid = StringUtils.isNotBlank(reportId);
         if (valid) {
             LOG.debug("validateReportId, found a valid report ID: " + reportId);
         } else {

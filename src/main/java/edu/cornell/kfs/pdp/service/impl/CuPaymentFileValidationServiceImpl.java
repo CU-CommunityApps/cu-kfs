@@ -1,15 +1,11 @@
 package edu.cornell.kfs.pdp.service.impl;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpKeyConstants;
-import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
-import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
-import org.kuali.kfs.pdp.businessobject.PaymentAccountHistory;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -18,15 +14,23 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 import org.springframework.util.AutoPopulatingList;
-import org.kuali.kfs.krad.bo.KualiCodeBase;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
     private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
+    
+    protected PersonService personService;
+    protected CuPdpEmployeeService cuPdpEmployeeService;
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
@@ -71,6 +75,13 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 }
             } else {
                 LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
+                if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
+                    Person employee = findPerson(paymentGroup.getPayeeId());
+                    if (ObjectUtils.isNull(employee)) {
+                        LOG.error("processGroupValidation, unable to get a person from the employee id");
+                        errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUPdpKeyConstants.ERROR_PDP_PAYMENTLOAD_INVALID_EMPLOYEE_ID, paymentGroup.getPayeeId());
+                    }
+                }
             }
             
             // validate bank
@@ -144,6 +155,18 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
     
+    private Person findPerson(String employeeId) {
+        Person person = null;
+        if (StringUtils.isNotBlank(employeeId)) {
+            try {
+                person = personService.getPersonByEmployeeId(employeeId);
+            } catch (Exception e) {
+                LOG.error("findPerson, Unable to build a person from employee ID: " + employeeId, e);
+            }
+        }
+        return person;
+    }
+    
     public String printErrorMap(MessageMap errorMap) {
         StringBuilder sb = new StringBuilder();
         Set<String> keys = errorMap.getErrorMessages().keySet();
@@ -190,5 +213,13 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         if (LOG.isDebugEnabled()) {
             LOG.debug("After checkPaymentGroupPropertyMaxLength: " + printErrorMap(errorMap));
         }
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+    }
+
+    public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
+        this.cuPdpEmployeeService = cuPdpEmployeeService;
     }
 }
