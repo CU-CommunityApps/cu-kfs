@@ -34,7 +34,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
-import edu.cornell.kfs.pdp.service.CuPdpEmploueeService;
+import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
@@ -42,7 +42,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     protected VendorService vendorService;
     protected EmailService emailService;
     protected PersonService personService;
-    protected CuPdpEmploueeService cuPdpEmploueeService;
+    protected CuPdpEmployeeService cuPdpEmployeeService;
     
     public CuPaymentFileServiceImpl() {
         super();
@@ -92,7 +92,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     
     private void setPaymentAddressFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
         LOG.debug("setPaymentAddressFieldsForEmployeePayee, entering");
-        if (cuPdpEmploueeService.shouldProcessPayeeAsEmployee(paymentFile)) {
+        if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
             Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
             LOG.debug("setPaymentAddressFieldsForEmployeePayee, found a concur customer, for employee: " + employee.getName());
             paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
@@ -318,8 +318,8 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         this.personService = personService;
     }
 
-    public void setCuPdpEmploueeService(CuPdpEmploueeService cuPdpEmploueeService) {
-        this.cuPdpEmploueeService = cuPdpEmploueeService;
+    public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
+        this.cuPdpEmployeeService = cuPdpEmployeeService;
     }
 
 }

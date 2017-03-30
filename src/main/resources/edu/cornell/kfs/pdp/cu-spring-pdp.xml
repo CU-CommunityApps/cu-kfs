@@ -90,16 +90,16 @@
         <property name="vendorService" ref="vendorService" />
         <property name="emailService" ref="emailService" />
         <property name="personService" ref="personService" />
-        <property name="cuPdpEmploueeService" ref="cuPdpEmploueeService" />
+        <property name="cuPdpEmployeeService" ref="cuPdpEmployeeService" />
     </bean>
 
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl">
     	<property name="personService" ref="personService" />
-    	<property name="cuPdpEmploueeService" ref="cuPdpEmploueeService" />
+    	<property name="cuPdpEmployeeService" ref="cuPdpEmployeeService" />
     </bean>
     
-    <bean id="cuPdpEmploueeService" parent="cuPdpEmploueeService-parentBean" />
-	<bean id="cuPdpEmploueeService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmploueeServiceImpl" abstract="true">
+    <bean id="cuPdpEmployeeService" parent="cuPdpEmployeeService-parentBean" />
+	<bean id="cuPdpEmployeeService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmployeeServiceImpl" abstract="true">
 	    <property name="parameterService" ref="parameterService" />
 	</bean>
     

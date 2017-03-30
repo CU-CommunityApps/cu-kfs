@@ -21,14 +21,16 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.pdp.service.CuPdpEmploueeService;
+import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
     private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
     
     protected PersonService personService;
-    protected CuPdpEmploueeService cuPdpEmploueeService;
+    protected CuPdpEmployeeService cuPdpEmployeeService;
     
     @Override
     protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
@@ -73,12 +75,11 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                 }
             } else {
                 LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
-                if (cuPdpEmploueeService.shouldProcessPayeeAsEmployee(paymentFile)) {
+                if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
                     Person employee = findPerson(paymentGroup.getPayeeId());
                     if (ObjectUtils.isNull(employee)) {
-                        String errorMessage = "unable to get a person from the employee ID: " + paymentGroup.getPayeeId();
-                        LOG.error("processGroupValidation, " + errorMessage);
-                        errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] {errorMessage});
+                        LOG.error("processGroupValidation, unable to get a person from the employee id");
+                        errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUPdpKeyConstants.ERROR_PDP_PAYMENTLOAD_INVALID_EMPLOYEE_ID, paymentGroup.getPayeeId());
                     }
                 }
             }
@@ -218,7 +219,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         this.personService = personService;
     }
 
-    public void setCuPdpEmploueeService(CuPdpEmploueeService cuPdpEmploueeService) {
-        this.cuPdpEmploueeService = cuPdpEmploueeService;
+    public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
+        this.cuPdpEmployeeService = cuPdpEmployeeService;
     }
 }

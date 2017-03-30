@@ -5,16 +5,16 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 
 import edu.cornell.kfs.concur.ConcurParameterConstants;
-import edu.cornell.kfs.pdp.service.CuPdpEmploueeService;
+import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-public class CuPdpEmploueeServiceImpl implements CuPdpEmploueeService {
+public class CuPdpEmployeeServiceImpl implements CuPdpEmployeeService {
     
     protected ParameterService parameterService;
     
     @Override
-    public boolean shouldProcessPayeeAsEmployee(PaymentFileLoad paymentFile) {
+    public boolean shouldPayeeBeProcessedAsEmployeeForThisCustomer(PaymentFileLoad paymentFile) {
         String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
         String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
         String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);

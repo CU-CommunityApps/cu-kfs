@@ -121,7 +121,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeId(String employeeId) {
-        Person employee = buildPerson(employeeId);
+        Person employee = findPerson(employeeId);
         boolean valid = ObjectUtils.isNotNull(employee);
         if (valid) {
             LOG.debug("validateEmployeeId, found a valid employee: " + employee.getName());
@@ -131,7 +131,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         return valid;
     }
     
-    private Person buildPerson(String employeeId) {
+    private Person findPerson(String employeeId) {
         if (StringUtils.isNotBlank(employeeId)) {
             try {
                 Person employee = getPersonService().getPersonByEmployeeId(employeeId);
