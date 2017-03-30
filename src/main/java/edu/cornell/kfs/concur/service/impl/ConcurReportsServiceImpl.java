@@ -151,27 +151,26 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     }
     
     protected ConcurAccountInfo extractConcurAccountInfoFromAllocation(AllocationsDTO allocation){
-        String chart = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom1());
-        String accountNumber = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom2());
-        String subAccountNumber = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom3());
+        String chart = ConcurUtils.extractCodeFromCodeAndDescriptionValue(allocation.getCustom1());
+        String accountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(allocation.getCustom2());
+        String subAccountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(allocation.getCustom3());
         String objectCode = allocation.getAccountCode1();
-        String subObjectCode = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom4());
-        String projectCode = ConcurUtils.extractKFSInfoFromConcurString(allocation.getCustom5());
+        String subObjectCode = allocation.getCustom4();
+        String projectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(allocation.getCustom5());
         ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
-
+        
         return concurAccountInfo;
     }
 
     private List<ConcurAccountInfo> extractAccountInfoFromTravelRequestDetails(TravelRequestDetailsDTO travelRequestDetails) {
         List<ConcurAccountInfo> accountInfoList = new ArrayList<ConcurAccountInfo>();
-        String chart = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom1());
-        String accountNumber = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom2());
-        String subAccountNumber = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom3());
+        String chart = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom1());
+        String accountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom2());
+        String subAccountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom3());
         String objectCode = parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE);
-        String subObjectCode = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom4());
-        String projectCode = ConcurUtils.extractKFSInfoFromConcurString(travelRequestDetails.getCustom5());
+        String subObjectCode = travelRequestDetails.getCustom4();
+        String projectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(travelRequestDetails.getCustom5());
         ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
-
         accountInfoList.add(concurAccountInfo);
         return accountInfoList;
     }
