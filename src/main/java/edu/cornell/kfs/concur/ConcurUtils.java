@@ -23,7 +23,7 @@ public class ConcurUtils {
 
     public static String extractCodeFromCodeAndDescriptionValue(String codeAndDescriptionValue) {
         String result = StringUtils.EMPTY;
-        if (stringMatchesCodeAndDescriptionPattern(codeAndDescriptionValue)) {
+        if (StringUtils.isNotBlank(codeAndDescriptionValue) && stringMatchesCodeAndDescriptionPattern(codeAndDescriptionValue)) {
             Pattern regexCode = Pattern.compile(CODE_PATTERN);
             Matcher regexMatcherCode = regexCode.matcher(codeAndDescriptionValue);
             if (regexMatcherCode.find()) {
@@ -34,9 +34,13 @@ public class ConcurUtils {
     }
     
     public static boolean stringMatchesCodeAndDescriptionPattern(String input) {
-        Pattern regexCodeAndDescription = Pattern.compile(CODE_AND_DESCRIPTION_PATTERN);
-        Matcher regexMatcherCodeAndDescription = regexCodeAndDescription.matcher(input);
-        return regexMatcherCodeAndDescription.matches();
+        boolean matches = false;
+        if (StringUtils.isNotBlank(input)) {
+            Pattern regexCodeAndDescription = Pattern.compile(CODE_AND_DESCRIPTION_PATTERN);
+            Matcher regexMatcherCodeAndDescription = regexCodeAndDescription.matcher(input);
+            matches = regexMatcherCodeAndDescription.matches();
+        }
+        return matches;
     }
     
     public static String formatStringForErrorMessage(String label, String... values) {
