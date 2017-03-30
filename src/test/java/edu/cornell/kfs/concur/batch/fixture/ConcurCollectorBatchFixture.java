@@ -7,7 +7,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 /**
  * Helper fixture for generating CollectorBatch business objects.
@@ -70,7 +69,6 @@ public enum ConcurCollectorBatchFixture {
         collectorBatch.setTransmissionDate(ConcurFixtureUtils.toSqlDate(transmissionDate));
         collectorBatch.setTotalRecords(totalRecords);
         collectorBatch.setTotalAmount(new KualiDecimal(totalAmount));
-        collectorBatch.setRecordType(CuGeneralLedgerConstants.COLLECTOR_HEADER_RECORD_TYPE);
         collectorBatch.setChartOfAccountsCode(ParameterTestValues.COLLECTOR_CHART_CODE);
         collectorBatch.setOrganizationCode(ParameterTestValues.COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
         collectorBatch.setCampusCode(ParameterTestValues.COLLECTOR_CAMPUS_CODE);

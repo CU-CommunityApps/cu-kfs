@@ -18,14 +18,15 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 /**
  * Helper class for converting parsed SAE file data
  * into GL CollectorBatch objects, which in turn will contain
  * OriginEntryFull objects derived from the SAE detail lines.
- * The constructed CollectorBatch objects will have the "HD"
- * (Header) record type.
+ * The CollectorBatch objects will not have a record type
+ * configured; the service that serializes the objects
+ * to a flat file will handle populating the record type
+ * in the text output.
  * 
  * This builder is NOT thread-safe; external synchronization
  * is required if one instance is used by multiple threads.
@@ -130,7 +131,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new RuntimeException("No fiscal year found for batch date: " + saeFileContents.getBatchDate().toString());
         }
         
-        collectorBatch.setRecordType(CuGeneralLedgerConstants.COLLECTOR_HEADER_RECORD_TYPE);
         collectorBatch.setUniversityFiscalYear(fiscalYear.toString());
         collectorBatch.setChartOfAccountsCode(chartCode);
         collectorBatch.setOrganizationCode(highestLevelOrgCode);
@@ -195,7 +195,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         }
         
         return new StringBuilder(INITIAL_BUILDER_SIZE)
-                .append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
+                .append(makeEmptyIfBlank(saeLine.getReportId()))
+                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
                 .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getAccountNumber()))
                 .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()))
                 .append(PIPE_CHAR).append(makeEmptyIfBlank(objectCodeForKey))
@@ -302,7 +303,18 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             case ConcurConstants.DEBIT :
                 return KFSConstants.GL_DEBIT_CODE;
             default :
-                throw new IllegalArgumentException("Unrecognized debit/credit code: " + saeDebitCreditCode);
+                throw new IllegalArgumentException("Unrecognized SAE debit/credit code: " + saeDebitCreditCode);
+        }
+    }
+
+    protected String getOppositeGLDebitCreditCode(String glDebitCreditCode) {
+        switch (glDebitCreditCode) {
+            case KFSConstants.GL_CREDIT_CODE :
+                return KFSConstants.GL_DEBIT_CODE;
+            case KFSConstants.GL_DEBIT_CODE :
+                return KFSConstants.GL_CREDIT_CODE;
+            default :
+                throw new IllegalArgumentException("Unrecognized GL debit/credit code: " + glDebitCreditCode);
         }
     }
 

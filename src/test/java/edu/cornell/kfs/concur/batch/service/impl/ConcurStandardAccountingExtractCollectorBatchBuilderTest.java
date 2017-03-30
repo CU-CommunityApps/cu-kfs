@@ -114,7 +114,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     protected void assertCollectorBatchHasCorrectData(CollectorBatch expected, CollectorBatch actual) throws Exception {
-        assertEquals("Wrong record type", expected.getRecordType(), actual.getRecordType());
         assertEquals("Wrong fiscal year", expected.getUniversityFiscalYear(), actual.getUniversityFiscalYear());
         assertEquals("Wrong chart code", expected.getChartOfAccountsCode(), actual.getChartOfAccountsCode());
         assertEquals("Wrong org code", expected.getOrganizationCode(), actual.getOrganizationCode());
