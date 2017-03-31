@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,12 +32,10 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
         
         concurRequestedCashAdvances = businessObjectService.findMatching(ConcurRequestedCashAdvance.class, fieldValues);
         
-        if ((concurRequestedCashAdvances == null) || (concurRequestedCashAdvances.isEmpty()) ){
-            return false;
-        }
-        else {
-            return true;
-        }
+        boolean isDuplicate = (CollectionUtils.isEmpty(concurRequestedCashAdvances)) ? false : true;
+
+        return isDuplicate;
+
     }
     
     public BusinessObjectService getBusinessObjectService() {

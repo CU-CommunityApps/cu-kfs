@@ -41,17 +41,17 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
 
-    public String getConcurParamterValue(String parameterName) {
+    public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
         return parameterValue;
     }
     
-    public void createDoneFileForPdpFile(String fullyQualifiedPdpFileName) throws FileStorageException {
-        getFileStorageService().createDoneFile(fullyQualifiedPdpFileName);
+    public void createDoneFile(String fullyQualifiedFileName) throws FileStorageException {
+        getFileStorageService().createDoneFile(fullyQualifiedFileName);
     }
     
-    public void removeDoneFiles(String requestExtractFullyQualifiedFileName) {
-        getFileStorageService().removeDoneFiles(Collections.singletonList(requestExtractFullyQualifiedFileName));
+    public void removeDoneFile(String fullyQualifiedFileName) throws FileStorageException {
+        getFileStorageService().removeDoneFiles(Collections.singletonList(fullyQualifiedFileName));
     }
 
     public String formatPdpPayeeName(String lastName, String firstName, String middleInitial) {
@@ -76,7 +76,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     }
 
     public String formatSourceDocumentNumber(String documentTypeCode, String concurDocumentId) {
-        String sourceDocNumber = new String(documentTypeCode + concurDocumentId);
+        String sourceDocNumber = (documentTypeCode + concurDocumentId);
         return StringUtils.substring(sourceDocNumber, 0, ConcurConstants.SOURCE_DOCUMENT_NUMBER_FIELD_SIZE);
     }
 
@@ -84,8 +84,8 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         return getDateTimeService().toString(date, ConcurConstants.DATE_FORMAT);
     }
 
-    public String buildFullyQualifiedPdpOutputFileName(String paymentImportDirecotry, String pdpInputfileName) {
-        String fullyQualifiedPdpOutputFileName = new String(paymentImportDirecotry + ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + pdpInputfileName);
+    public String buildFullyQualifiedPdpOutputFileName(String paymentImportDirectory, String pdpInputfileName) {
+        String fullyQualifiedPdpOutputFileName = new String(paymentImportDirectory + ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + pdpInputfileName);
         return StringUtils.replace(fullyQualifiedPdpOutputFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
 
@@ -108,7 +108,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         return parsedObject;
     }
 
-    public byte[] safelyLoadFileBytes(String fullyQualifiedFileName) {
+    protected byte[] safelyLoadFileBytes(String fullyQualifiedFileName) {
         InputStream fileContents;
         byte[] fileByteContent;
         try {

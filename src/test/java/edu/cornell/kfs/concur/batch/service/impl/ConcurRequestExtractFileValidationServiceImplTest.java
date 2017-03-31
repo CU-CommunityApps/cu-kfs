@@ -74,8 +74,8 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
 
     private class TestableConcurBatchUtilityServiceImpl extends ConcurBatchUtilityServiceImpl {
         @Override
-        public String getConcurParamterValue(String parameterName) {
-            String parameterValue = concurParameterConstantsFixture.getValueForConcurParamter(parameterName);
+        public String getConcurParameterValue(String parameterName) {
+            String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(parameterName);
             if (StringUtils.isEmpty(parameterValue)) {
                 return parameterName;
             }

@@ -3,6 +3,8 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.kuali.kfs.sys.exception.FileStorageException;
+
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractCreatePdpFeedService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
@@ -32,7 +34,7 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
                 } catch (Exception e) {
                     LOG.error("Processing to create PDP Files from Request Extract [" + requestExtractFullyQualifiedFileName + "] genertated Exception: " + e.getMessage());
                 } finally {
-                    getConcurBatchUtilityService().removeDoneFiles(requestExtractFullyQualifiedFileName);
+                    getConcurBatchUtilityService().removeDoneFile(requestExtractFullyQualifiedFileName);
                 }
             }
         }

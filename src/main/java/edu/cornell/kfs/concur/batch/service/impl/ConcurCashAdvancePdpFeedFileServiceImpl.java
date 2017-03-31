@@ -99,13 +99,13 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
 
     private PdpFeedDetailEntry buildPdpFeedDetailEntry(ConcurRequestExtractRequestDetailFileLine detailFileLine, PdpFeedAccountingEntry pdpAccountingEntry) {
         PdpFeedDetailEntry pdpDetailEntry  = new PdpFeedDetailEntry();
-        pdpDetailEntry.setSourceDocNbr(getConcurBatchUtilityService().formatSourceDocumentNumber(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE), detailFileLine.getRequestId()));
+        pdpDetailEntry.setSourceDocNbr(getConcurBatchUtilityService().formatSourceDocumentNumber(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE), detailFileLine.getRequestId()));
         pdpDetailEntry.setInvoiceNbr(StringUtils.EMPTY);
         pdpDetailEntry.setPoNbr(StringUtils.EMPTY);
         pdpDetailEntry.setInvoiceDate(getConcurBatchUtilityService().formatDate(detailFileLine.getBatchDate()));
         pdpDetailEntry.setNetPaymentAmt(detailFileLine.getRequestAmount());
-        pdpDetailEntry.setFsOriginCd(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_AP_PDP_ORIGINATION_CODE));
-        pdpDetailEntry.setFdocTypCd(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE));
+        pdpDetailEntry.setFsOriginCd(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_AP_PDP_ORIGINATION_CODE));
+        pdpDetailEntry.setFdocTypCd(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE));
         List<String> paymentTexts = new ArrayList<String>();
         paymentTexts.add(detailFileLine.getRequestEntryDescription());
         pdpDetailEntry.setPaymentText(paymentTexts);
@@ -120,7 +120,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         pdpAccountingEntry.setCoaCd(detailFileLine.getChart());
         pdpAccountingEntry.setAccountNbr(detailFileLine.getAccountNumber());
         pdpAccountingEntry.setSubAccountNbr(detailFileLine.getSubAccountNumber());
-        pdpAccountingEntry.setObjectCd(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE));
+        pdpAccountingEntry.setObjectCd(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE));
         pdpAccountingEntry.setSubObjectCd(detailFileLine.getSubObjectCode());
         pdpAccountingEntry.setOrgRefId(detailFileLine.getOrgRefId());
         pdpAccountingEntry.setProjectCd(detailFileLine.getProjectCode());
@@ -143,10 +143,10 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
 
     private PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
-        header.setChart(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
+        header.setChart(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
         header.setCreationDate(getConcurBatchUtilityService().formatDate(batchDate));
-        header.setSubUnit(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT));
-        header.setUnit(getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT));
+        header.setSubUnit(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT));
+        header.setUnit(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT));
         return header;
     }
 
@@ -158,7 +158,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     }
 
    public void createDoneFileForPdpFile(String concurCashAdvancePdpFeedFileName) {
-       getConcurBatchUtilityService().createDoneFileForPdpFile(concurCashAdvancePdpFeedFileName);
+       getConcurBatchUtilityService().createDoneFile(concurCashAdvancePdpFeedFileName);
    }
 
     public ConcurBatchUtilityService getConcurBatchUtilityService() {

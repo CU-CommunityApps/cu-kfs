@@ -216,7 +216,7 @@ public class ConcurRequestExtractRequestDetailFileLine {
         sb.append("lastName: ").append(lastName).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("firstName: ").append(firstName).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("middleInitial: ").append(middleInitial).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
-        sb.append("employeeGroupId: ").append(this.employeeGroupId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("employeeGroupId: ").append(employeeGroupId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("payeeIdType: ").append(payeeIdType).append(KFSConstants.NEWLINE);
         sb.append("requestId: ").append(requestId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("totalApprovedAmount: ").append(totalApprovedAmount).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);

@@ -184,12 +184,12 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             return false;
         }
         else {
-            String ourCustomerProfile = getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+            String ourCustomerProfile = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
             if (StringUtils.isNotEmpty(ourCustomerProfile) && ourCustomerProfileIsOnAllRequestDetailLines(requestExtractFile, ourCustomerProfile)) {
                 return true;
             }
             else {
-                LOG.error("File contains Request Detail lines that do not match the employee customer profile group of: " + getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID));
+                LOG.error("File contains Request Detail lines that do not match the employee customer profile group of: " + getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID));
                 return false;
             }
         }
@@ -262,7 +262,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     private boolean requestedCashAdvanceAccountingInformationIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
         ConcurAccountInfo concurAccountInfo =
             new ConcurAccountInfo(detailFileLine.getChart(), detailFileLine.getAccountNumber(), detailFileLine.getSubAccountNumber(),
-                                  getConcurBatchUtilityService().getConcurParamterValue(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE),
+                                  getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE),
                                   detailFileLine.getSubObjectCode(), detailFileLine.getProjectCode());
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
         if (validationResults.isNotValid()) {

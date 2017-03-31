@@ -3,33 +3,94 @@ package edu.cornell.kfs.concur.batch.service;
 import java.sql.Date;
 
 import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.exception.FileStorageException;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 
 public interface ConcurBatchUtilityService {
     
-    String buildFullyQualifiedPdpOutputFileName(String paymentImportDirecotry, String pdpInputfileName);
+    /**
+     * Builds the fully qualified name of the Concur PDP XML data file that will
+     * be imported during normal KFS PDP import processing.
+     *
+     * @param paymentImportDirectory File system location where standard PDP processing expects to find its XML files to load.
+     * @param pdpInputfileName Name and extension of the data file received from Concur.
+     * @return fullyQualifiedPdpOutputFileName
+     */
+    String buildFullyQualifiedPdpOutputFileName(String paymentImportDirectory, String pdpInputfileName);
+
+    /**
+     * Uses the fullyQualifiedFileName parameter to create a corresponding
+     * .done file at the same location with the same file name.
+     *
+     * @param fullyQualifiedFileName
+     */
+    void createDoneFile(String fullyQualifiedFileName) throws FileStorageException;
     
-    void createDoneFileForPdpFile(String fullyQualifiedPdpFileName);
-    
+    /**
+     * Creates the Concur PDP XML file specified by fullyQualifiedPdpFileName
+     * from the data in pdpFeedFileBaseEntry. Log file entries are made for
+     * success or failure of this method's execution.
+     *
+     * @param pdpFeedFileBaseEntry
+     * @param fullyQualifiedPdpFileName
+     * @return true when Concur XML was successfully created and perform a Log.info;
+     *         false when Concur XML file was not created and performs a Log.error.
+     */
     boolean createPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String fullyQualifiedPdpFileName);
     
+
     String formatDate(Date date);
     
+    /**
+     * Uses the input parameters to build, format, and size the PDP payee name
+     * that will be used in the PDP feed file being created from Concur data.
+     *
+     * @param lastName
+     * @param firstName
+     * @param middleInitial
+     * @return Properly formated PDP feed file payee name
+     */
     String formatPdpPayeeName(String lastName, String firstName, String middleInitial);
     
     /**
-     * 
-     * @param documentTypeCode
+     * Method concatenates the concurDocumentId to the documentTypeCode and
+     * truncates that result to the number of characters specified by
+     * SOURCE_DOCUMENT_NUMBER_FIELD_SIZE.
+     *
+     * @param documentTypeCode The four character Concur document type setup in KFS.
      * @param concurDocumentId This value will be the RequestId for request extract files and the ReportId for SAE files.
-     * @return
+     * @return Formatted string to use for Concur PDP source doc number or Collector financial document number.
      */
     String formatSourceDocumentNumber(String documentTypeCode, String concurDocumentId);
     
-    String getConcurParamterValue(String parameterName);
+    /**
+     * Use the KFS ParameterService to lookup the KFS system parameter specified
+     * in the KFS Concur name space by parameterName.
+     *
+     * @param parameterName KFS Concur name space parameter to lookup
+     * @return value associated to parameterName in KFS Concur name space
+     */
+    String getConcurParameterValue(String parameterName);
     
+    /**
+     * Parses a physical file on the file system specified by fullyQualifiedFileName
+     * into the Java object associated to the batchInputFileType by the flatFileSpecification.
+     * This configuration needs to be setup in Spring for the business object
+     * that will hold this parsed data. The returned data Object can be cast
+     * to the business object in that defining.
+     *
+     * @param fullyQualifiedFileName Fully qualified file system location and file name to be loaded.
+     * @param batchInputFileType Type of file defined in Spring that the FlatFileParser should attempt to read and load.
+     * @return Data object associated with the batchInputFileType that this returned object can be cast to.
+     */
     Object loadFile(String fullyQualifiedFileName, BatchInputFileType batchInputFileType);
     
-    void removeDoneFiles(String requestExtractFullyQualifiedFileName);
+    /**
+     * Removes the .done file at the location and with the name specified by the input parameter.
+     * @param fullyQualifiedFileName
+     */
+    void removeDoneFile(String fullyQualifiedFileName) throws FileStorageException;
     
 }
