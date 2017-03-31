@@ -223,17 +223,31 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return StringUtils.equalsIgnoreCase(one, two);
     }
 
-    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry cdpFeedFileBaseEntry, String outputFilePath) {
+    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String outputFilePath) {
         boolean success = true;
         try {
-            File pdpFeedFile = getCuMarshalService().marshalObjectToXML(cdpFeedFileBaseEntry, outputFilePath);
-            LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFilePath);
-            success = true;
+            if (shouldMarshalFile(pdpFeedFileBaseEntry)) {
+                File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, outputFilePath);
+                LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFilePath);
+                success = true;
+            } else {
+                LOG.info("marshalPdpFeedFile, did not Marshal " + outputFilePath + " as there were no accounting entries");
+            }
         } catch (JAXBException | IOException e) {
             LOG.error("marshalPdpFeedFile, There was an error marshalling the PDP feed file.", e);
             success = false;
         }
         return success;
+    }
+    
+    private boolean shouldMarshalFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+        boolean hasAccountingEntries = false;
+        for (PdpFeedGroupEntry group : pdpFeedFileBaseEntry.getGroup()) {
+            for (PdpFeedDetailEntry detail : group.getDetail()) {
+                hasAccountingEntries = hasAccountingEntries || detail.getAccounting().size() > 0;
+            }
+        }
+        return hasAccountingEntries;
     }
     
     @Override
