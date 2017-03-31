@@ -44,8 +44,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     @Override
     public boolean buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
-        ConcurStandardAccountingExtractCollectorBatchBuilder builder = new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
+        ConcurStandardAccountingExtractCollectorBatchBuilder builder = createBatchBuilder();
         
         int sequenceNumber = calculateBatchSequenceNumber();
         CollectorBatch collectorBatch = builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents);
@@ -61,6 +60,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
             LOG.error("An error occurred while writing the data to the Collector file; see earlier logs for details.");
         }
         return success;
+    }
+
+    protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
+        return new ConcurStandardAccountingExtractCollectorBatchBuilder(
+                universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
     protected String getConcurParameterValueAsString(String parameterName) {
