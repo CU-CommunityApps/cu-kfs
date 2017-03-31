@@ -36,7 +36,7 @@ import org.springframework.beans.factory.InitializingBean;
  * Subclasses can override the serialization behavior on a per-property basis by implementing
  * the getCustomSerializerFunctions() method, and having it return a Map from property names
  * to Function implementations (or an empty Map to use the default behavior for all properties).
- * Each Function must accept a potentially-null Object and return a non-null String.
+ * Each serializer Function must accept a potentially-null Object and return a non-null String.
  */
 @SuppressWarnings("deprecation")
 public abstract class BusinessObjectFlatFileSerializerFieldUtils implements InitializingBean {

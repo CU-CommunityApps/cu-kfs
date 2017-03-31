@@ -1,29 +1,172 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.batch.CollectorBatchHeaderFieldUtil;
 import org.kuali.kfs.gl.batch.CollectorBatchTrailerRecordFieldUtil;
 import org.kuali.kfs.gl.businessobject.OriginEntryFieldUtil;
+import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
+import edu.cornell.kfs.gl.batch.service.impl.CollectorFlatFileSerializerServiceImpl;
+import edu.cornell.kfs.gl.businessobject.CollectorBatchHeaderSerializerFieldUtil;
+import edu.cornell.kfs.gl.businessobject.CollectorBatchTrailerRecordSerializerFieldUtil;
+import edu.cornell.kfs.gl.businessobject.OriginEntrySerializerFieldUtil;
+import edu.cornell.kfs.sys.batch.service.BusinessObjectFlatFileSerializerService;
+import edu.cornell.kfs.sys.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
+import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
 
+@SuppressWarnings("deprecation")
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
 
     protected static final String GET_FIELD_LENGTH_MAP_METHOD = "getFieldLengthMap";
+    protected static final String EXPECTED_RESULTS_DIRECTORY_PATH = "src/test/java/edu/cornell/kfs/concur/batch/service/impl/fixture/";
+    protected static final String BASE_TEST_DIRECTORY = "test";
+    protected static final String COLLECTOR_OUTPUT_DIRECTORY_PATH = BASE_TEST_DIRECTORY + "/gl/collectorFlatFile/";
 
-    protected ConcurStandardAccountingExtractCollectorBatchBuilder createMockBatchBuilder() {
-        return createMockObject(ConcurStandardAccountingExtractCollectorBatchBuilder.class, (builder) -> {
+    protected ConcurStandardAccountingExtractCreateCollectorFileService collectorFileService;
+
+    @Before
+    public void setUp() throws Exception {
+        buildCollectorOutputDirectory();
+        collectorFileService = buildCollectorFileService();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        collectorFileService = null;
+        removeTestFilesAndDirectories();
+    }
+
+    @Test
+    public void testGenerateFileWithMinimalLineItems() throws Exception {
+        assertCollectorFileIsGeneratedCorrectly("merging-test.data", ConcurCollectorBatchFixture.MERGING_TEST);
+    }
+
+    @Test
+    public void testBatchSequenceNumberIncrementsWhenGeneratingMultipleFilesOnSameDay() throws Exception {
+        assertCollectorFileIsGeneratedCorrectly("fiscal-year-test1.data", ConcurCollectorBatchFixture.FISCAL_YEAR_TEST1);
+        assertCollectorFileIsGeneratedCorrectly("fiscal-year-test2.data", ConcurCollectorBatchFixture.FISCAL_YEAR_TEST2);
+        assertCollectorFileIsGeneratedCorrectly("fiscal-year-test3.data", ConcurCollectorBatchFixture.FISCAL_YEAR_TEST3);
+    }
+
+    protected void assertCollectorFileIsGeneratedCorrectly(String expectedResultsFileName,
+            ConcurCollectorBatchFixture fixture) throws Exception {
+        ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
+        saeFileContents.setOriginalFileName(fixture.name() + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+        
+        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents);
+        assertTrue("Collector file did not get created successfully", StringUtils.isNotBlank(collectorFilePath));
+        String collectorFileExtension = KFSConstants.DELIMITER + StringUtils.substringAfterLast(collectorFilePath, KFSConstants.DELIMITER);
+        assertEquals("Collector file has the wrong extension", GeneralLedgerConstants.BatchFileSystem.EXTENSION, collectorFileExtension);
+        
+        String expectedResultsFilePath = EXPECTED_RESULTS_DIRECTORY_PATH + expectedResultsFileName;
+        assertFileContentsAreCorrect(expectedResultsFilePath, collectorFilePath);
+    }
+
+    protected void assertFileContentsAreCorrect(String expectedResultsFilePath, String actualResultsFilePath) throws Exception {
+        FileReader expectedFileContents = null;
+        BufferedReader expectedContents = null;
+        FileReader actualFileContents = null;
+        BufferedReader actualContents = null;
+        
+        try {
+            expectedFileContents = new FileReader(expectedResultsFilePath);
+            expectedContents = new BufferedReader(expectedFileContents);
+            actualFileContents = new FileReader(actualResultsFilePath);
+            actualContents = new BufferedReader(actualFileContents);
+            
+            int lineCount = 0;
+            String expectedLine = expectedContents.readLine();
+            String actualLine = actualContents.readLine();
+            
+            while (expectedLine != null) {
+                lineCount++;
+                assertNotNull("Collector file had only " + (lineCount - 1) + " lines, but should have had more than that", actualLine);
+                assertEquals("Wrong Collector file content at line " + lineCount, expectedLine, actualLine);
+                expectedLine = expectedContents.readLine();
+                actualLine = actualContents.readLine();
+            }
+            
+            assertNull("Collector file should have had only " + lineCount + " lines, but actually had more than that", actualLine);
+            
+        } finally {
+            IOUtils.closeQuietly(actualContents);
+            IOUtils.closeQuietly(actualFileContents);
+            IOUtils.closeQuietly(expectedContents);
+            IOUtils.closeQuietly(expectedFileContents);
+        }
+    }
+
+    protected void buildCollectorOutputDirectory() throws IOException {
+        File collectorTestDirectory = new File(COLLECTOR_OUTPUT_DIRECTORY_PATH);
+        FileUtils.forceMkdir(collectorTestDirectory);
+    }
+
+    protected void removeTestFilesAndDirectories() throws IOException {
+        File collectorTestDirectory = new File(COLLECTOR_OUTPUT_DIRECTORY_PATH);
+        if (collectorTestDirectory.exists() && collectorTestDirectory.isDirectory()) {
+            FileUtils.forceDelete(collectorTestDirectory.getAbsoluteFile());
+        }
+    }
+
+    protected ConcurStandardAccountingExtractCreateCollectorFileService buildCollectorFileService() throws Exception {
+        DateTimeService dateTimeService = buildDateTimeService();
+        TestConcurStandardAccountingExtractCreateCollectorFileServiceImpl collectorFileServiceImpl =
+                new TestConcurStandardAccountingExtractCreateCollectorFileServiceImpl();
+        
+        collectorFileServiceImpl.setDateTimeService(dateTimeService);
+        collectorFileServiceImpl.setBatchFileLookupableHelperService(buildBatchFileLookupableHelperService(dateTimeService));
+        collectorFileServiceImpl.setCollectorBatchBuilder(buildMockBatchBuilder());
+        collectorFileServiceImpl.setCollectorDirectoryPath(COLLECTOR_OUTPUT_DIRECTORY_PATH);
+        collectorFileServiceImpl.setCollectorFlatFileSerializerService(buildCollectorFlatFileSerializerService(dateTimeService));
+        
+        return collectorFileServiceImpl;
+    }
+
+    protected DateTimeService buildDateTimeService() {
+        return new TestDateTimeServiceImpl();
+    }
+
+    protected LookupableHelperService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
+        TestBatchFileLookupableHelperServiceImpl lookupableHelperServiceImpl = new TestBatchFileLookupableHelperServiceImpl();
+        lookupableHelperServiceImpl.setDateTimeService(dateTimeService);
+        return lookupableHelperServiceImpl;
+    }
+
+    protected ConcurStandardAccountingExtractCollectorBatchBuilder buildMockBatchBuilder() {
+        return buildMockObject(ConcurStandardAccountingExtractCollectorBatchBuilder.class, (builder) -> {
             Capture<Integer> sequenceNumberArg = EasyMock.newCapture();
             Capture<ConcurStandardAccountingExtractFile> saeFileContentsArg = EasyMock.newCapture();
             EasyMock.expect(
@@ -34,8 +177,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected CollectorBatch buildFixtureBasedCollectorBatch(Integer sequenceNumber, ConcurStandardAccountingExtractFile saeFileContents) {
-        String fixtureConstantName = StringUtils.removeEndIgnoreCase(
-                saeFileContents.getOriginalFileName(), GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+        String fixtureConstantName = StringUtils.substringBeforeLast(saeFileContents.getOriginalFileName(), KFSConstants.DELIMITER);
         ConcurCollectorBatchFixture fixture;
         
         try {
@@ -49,14 +191,52 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         return collectorBatch;
     }
 
-    protected <T> T createMockObject(Class<T> objectClass, Consumer<T> objectConfigurer) {
+    protected <T> T buildMockObject(Class<T> objectClass, Consumer<T> objectConfigurer) {
         T mockObject = EasyMock.createMock(objectClass);
         objectConfigurer.accept(mockObject);
         EasyMock.replay(mockObject);
         return mockObject;
     }
 
-    protected CollectorBatchHeaderFieldUtil createMockBatchHeaderFieldUtil() {
+    protected BusinessObjectFlatFileSerializerService buildCollectorFlatFileSerializerService(
+            DateTimeService dateTimeService) throws Exception {
+        CollectorFlatFileSerializerServiceImpl serializerServiceImpl = new CollectorFlatFileSerializerServiceImpl();
+        
+        serializerServiceImpl.setHeaderSerializerUtils(buildBatchHeaderSerializerFieldUtil(dateTimeService));
+        serializerServiceImpl.setLineItemSerializerUtils(buildOriginEntrySerializerFieldUtil(dateTimeService));
+        serializerServiceImpl.setFooterSerializerUtils(buildBatchTrailerRecordSerializerFieldUtil());
+        
+        return serializerServiceImpl;
+    }
+
+    protected CollectorBatchHeaderSerializerFieldUtil buildBatchHeaderSerializerFieldUtil(
+            DateTimeService dateTimeService) throws Exception {
+        return buildSerializerFieldUtils(CollectorBatchHeaderSerializerFieldUtil.class, buildMockBatchHeaderFieldUtil(),
+                (serializerFieldUtils) -> serializerFieldUtils.setDateTimeService(dateTimeService));
+    }
+
+    protected OriginEntrySerializerFieldUtil buildOriginEntrySerializerFieldUtil(
+            DateTimeService dateTimeService) throws Exception {
+        return buildSerializerFieldUtils(OriginEntrySerializerFieldUtil.class, buildMockOriginEntryFieldUtil(),
+                (serializerFieldUtils) -> serializerFieldUtils.setDateTimeService(dateTimeService));
+    }
+
+    protected CollectorBatchTrailerRecordSerializerFieldUtil buildBatchTrailerRecordSerializerFieldUtil() throws Exception {
+        return buildSerializerFieldUtils(CollectorBatchTrailerRecordSerializerFieldUtil.class,
+                buildMockBatchTrailerRecordFieldUtil(), (serializerFieldUtils) -> {});
+    }
+
+    protected <T extends BusinessObjectFlatFileSerializerFieldUtils> T buildSerializerFieldUtils(
+            Class<T> serializerUtilsClass, BusinessObjectStringParserFieldUtils parserFieldUtils,
+            Consumer<T> utilsConfigurer) throws Exception {
+        T serializerFieldUtils = serializerUtilsClass.newInstance();
+        serializerFieldUtils.setParserFieldUtils(parserFieldUtils);
+        utilsConfigurer.accept(serializerFieldUtils);
+        serializerFieldUtils.afterPropertiesSet();
+        return serializerFieldUtils;
+    }
+
+    protected CollectorBatchHeaderFieldUtil buildMockBatchHeaderFieldUtil() {
         Map<String,Integer> fieldLengthMap = new HashMap<>();
         fieldLengthMap.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, 4);
         fieldLengthMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, 2);
@@ -71,10 +251,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         fieldLengthMap.put(KFSPropertyConstants.CAMPUS_CODE, 2);
         fieldLengthMap.put(KFSPropertyConstants.PHONE_NUMBER, 10);
         
-        return createMockParserFieldUtils(CollectorBatchHeaderFieldUtil.class, fieldLengthMap);
+        return buildMockParserFieldUtils(CollectorBatchHeaderFieldUtil.class, fieldLengthMap);
     }
 
-    protected OriginEntryFieldUtil createMockOriginEntryFieldUtil() {
+    protected OriginEntryFieldUtil buildMockOriginEntryFieldUtil() {
         Map<String,Integer> fieldLengthMap = new HashMap<>();
         fieldLengthMap.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, 4);
         fieldLengthMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, 2);
@@ -102,10 +282,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         fieldLengthMap.put(KFSPropertyConstants.FINANCIAL_DOCUMENT_REVERSAL_DATE, 10);
         fieldLengthMap.put(KFSPropertyConstants.TRANSACTION_ENCUMBRANCE_UPDT_CD, 1);
         
-        return createMockParserFieldUtils(OriginEntryFieldUtil.class, fieldLengthMap);
+        return buildMockParserFieldUtils(OriginEntryFieldUtil.class, fieldLengthMap);
     }
 
-    protected CollectorBatchTrailerRecordFieldUtil createMockBatchTrailerRecordFieldUtil() {
+    protected CollectorBatchTrailerRecordFieldUtil buildMockBatchTrailerRecordFieldUtil() {
         Map<String,Integer> fieldLengthMap = new HashMap<>();
         fieldLengthMap.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, 4);
         fieldLengthMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, 2);
@@ -117,7 +297,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         fieldLengthMap.put(KFSPropertyConstants.TRAILER_RECORD_SECOND_EMPTY_FIELD, 42);
         fieldLengthMap.put(KFSPropertyConstants.TOTAL_AMOUNT, 19);
         
-        return createMockParserFieldUtils(CollectorBatchTrailerRecordFieldUtil.class, fieldLengthMap);
+        return buildMockParserFieldUtils(CollectorBatchTrailerRecordFieldUtil.class, fieldLengthMap);
     }
 
     /**
@@ -127,7 +307,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
      * without introducing several new subclasses, this method will create a partial mock
      * of the class so that the "getFieldLengthMap" method will return a pre-defined Map instead.
      */
-    protected <T extends BusinessObjectStringParserFieldUtils> T createMockParserFieldUtils(
+    protected <T extends BusinessObjectStringParserFieldUtils> T buildMockParserFieldUtils(
             Class<T> fieldUtilsClass, Map<String,Integer> fieldLengthMap) {
         T mockParserFieldUtils = EasyMock.partialMockBuilder(fieldUtilsClass)
                 .withConstructor()
@@ -137,6 +317,47 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
                 .andStubReturn(fieldLengthMap);
         EasyMock.replay(mockParserFieldUtils);
         return mockParserFieldUtils;
+    }
+
+    /**
+     * Custom collector file creation service that allows for configuring a single CollectorBatch builder directly,
+     * which will always be used for the SAE-to-CollectorBatch processing.
+     */
+    public static class TestConcurStandardAccountingExtractCreateCollectorFileServiceImpl
+            extends ConcurStandardAccountingExtractCreateCollectorFileServiceImpl {
+        protected ConcurStandardAccountingExtractCollectorBatchBuilder collectorBatchBuilder;
+        
+        public void setCollectorBatchBuilder(ConcurStandardAccountingExtractCollectorBatchBuilder collectorBatchBuilder) {
+            this.collectorBatchBuilder = collectorBatchBuilder;
+        }
+        
+        @Override
+        protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
+            return collectorBatchBuilder;
+        }
+    }
+
+    /**
+     * Custom batch file lookupable class that uses a pre-defined List of root directories.
+     */
+    public static class TestBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        protected List<File> retrieveRootDirectories() {
+            return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH));
+        }
+    }
+
+    /**
+     * Custom DateTimeService class that is configured to automatically handle certain Concur date formats.
+     */
+    public static class TestDateTimeServiceImpl extends DateTimeServiceImpl {
+        
+        public TestDateTimeServiceImpl() {
+            this.stringToDateFormats = new String[] {ConcurConstants.DATE_FORMAT};
+            this.dateToStringFormatForUserInterface = ConcurConstants.DATE_FORMAT;
+        }
     }
 
 }

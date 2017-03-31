@@ -43,23 +43,24 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected String collectorDirectoryPath;
 
     @Override
-    public boolean buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
+    public String buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
         ConcurStandardAccountingExtractCollectorBatchBuilder builder = createBatchBuilder();
         
         int sequenceNumber = calculateBatchSequenceNumber();
         CollectorBatch collectorBatch = builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents);
         if (collectorBatch == null) {
             LOG.error("There was a problem preparing the data for the Collector file; will not create a file. See earlier logs for details.");
-            return false;
+            return null;
         }
         
-        String newFileName = buildCollectorFileName(saeFileContents.getOriginalFileName());
-        boolean success = collectorFlatFileSerializerService.serializeToFlatFile(newFileName, collectorBatch);
+        String collectorFilePath = buildCollectorFilePath(saeFileContents.getOriginalFileName());
+        boolean fileCreatedSuccessfully = collectorFlatFileSerializerService.serializeToFlatFile(collectorFilePath, collectorBatch);
         
-        if (!success) {
+        if (!fileCreatedSuccessfully) {
             LOG.error("An error occurred while writing the data to the Collector file; see earlier logs for details.");
+            collectorFilePath = null;
         }
-        return success;
+        return collectorFilePath;
     }
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
@@ -98,9 +99,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         return searchResults.size();
     }
 
-    protected String buildCollectorFileName(String saeFileName) {
-        String saeFileNameWithoutExtension = StringUtils.removeEndIgnoreCase(
-                saeFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+    protected String buildCollectorFilePath(String saeFileName) {
+        String saeFileNameWithoutExtension = StringUtils.substringBeforeLast(saeFileName, KFSConstants.DELIMITER);
         return new StringBuilder(DEFAULT_BUILDER_SIZE)
                 .append(collectorDirectoryPath)
                 .append(ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX)

@@ -62,6 +62,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected int batchSequenceNumber;
     protected int nextFakeObjectCode;
+    protected int nextTransactionSequenceNumber;
 
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             UniversityDateService universityDateService, DateTimeService dateTimeService,
@@ -96,6 +97,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.collectorBatch = new CollectorBatch();
         this.originEntries = new LinkedHashMap<>();
         this.nextFakeObjectCode = 1;
+        this.nextTransactionSequenceNumber = 1;
     }
 
     public CollectorBatch buildCollectorBatchFromStandardAccountingExtract(int nextBatchSequenceNumber,
@@ -138,6 +140,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         collectorBatch.setBatchSequenceNumber(Integer.valueOf(batchSequenceNumber));
         collectorBatch.setCampusCode(campusCode);
         collectorBatch.setMailingAddress(campusAddress);
+        collectorBatch.setDepartmentName(departmentName);
         collectorBatch.setEmailAddress(notificationEmail);
         collectorBatch.setPersonUserID(notificationPerson);
         collectorBatch.setPhoneNumber(notificationPhone);
@@ -217,6 +220,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected OriginEntryFull buildOriginEntryForExtractedLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {
         OriginEntryFull originEntry = new OriginEntryFull();
         
+        // Default constructor sets fiscal year to zero; need to forcibly clear it to allow auto-setup by the Poster, as per the spec.
+        originEntry.setUniversityFiscalYear(null);
+        
         originEntry.setChartOfAccountsCode(saeLine.getChartOfAccountsCode());
         originEntry.setAccountNumber(saeLine.getAccountNumber());
         originEntry.setSubAccountNumber(
@@ -232,7 +238,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         originEntry.setFinancialDocumentTypeCode(docTypeCode);
         originEntry.setFinancialSystemOriginationCode(systemOriginationCode);
         originEntry.setDocumentNumber(buildDocumentNumber(saeLine));
-        originEntry.setTransactionLedgerEntrySequenceNumber(collectorBatch.getBatchSequenceNumber());
+        originEntry.setTransactionLedgerEntrySequenceNumber(getAndIncrementTransactionSequenceNumber());
         originEntry.setTransactionLedgerEntryDescription(buildTransactionDescription(saeLine));
         originEntry.setTransactionDate(collectorBatch.getTransmissionDate());
         originEntry.setTransactionLedgerEntryAmount(KualiDecimal.ZERO);
@@ -250,6 +256,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected String getDashProjectCode() {
         return KFSConstants.getDashProjectCode();
+    }
+
+    protected int getAndIncrementTransactionSequenceNumber() {
+        return nextTransactionSequenceNumber++;
     }
 
     protected String buildDocumentNumber(ConcurStandardAccountingExtractDetailLine saeLine) {

@@ -114,15 +114,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     protected void assertCollectorBatchHasCorrectData(CollectorBatch expected, CollectorBatch actual) throws Exception {
-        assertEquals("Wrong fiscal year", expected.getUniversityFiscalYear(), actual.getUniversityFiscalYear());
-        assertEquals("Wrong chart code", expected.getChartOfAccountsCode(), actual.getChartOfAccountsCode());
+        assertEquals("Wrong batch fiscal year", expected.getUniversityFiscalYear(), actual.getUniversityFiscalYear());
+        assertEquals("Wrong batch chart code", expected.getChartOfAccountsCode(), actual.getChartOfAccountsCode());
         assertEquals("Wrong org code", expected.getOrganizationCode(), actual.getOrganizationCode());
         assertEquals("Wrong transmission date", expected.getTransmissionDate(), actual.getTransmissionDate());
-        assertEquals("Wrong sequence number", expected.getBatchSequenceNumber(), actual.getBatchSequenceNumber());
+        assertEquals("Wrong batch sequence number", expected.getBatchSequenceNumber(), actual.getBatchSequenceNumber());
         assertEquals("Wrong campus code", expected.getCampusCode(), actual.getCampusCode());
         assertEquals("Wrong mailing address", expected.getMailingAddress(), actual.getMailingAddress());
         assertEquals("Wrong email address", expected.getEmailAddress(), actual.getEmailAddress());
         assertEquals("Wrong user", expected.getPersonUserID(), actual.getPersonUserID());
+        assertEquals("Wrong department name", expected.getDepartmentName(), actual.getDepartmentName());
         assertEquals("Wrong phone number", expected.getPhoneNumber(), actual.getPhoneNumber());
         assertEquals("Wrong total record count", expected.getTotalRecords(), actual.getTotalRecords());
         assertEquals("Wrong total amount", expected.getTotalAmount(), actual.getTotalAmount());
@@ -140,6 +141,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     protected void assertOriginEntryHasCorrectData(OriginEntryFull expected, OriginEntryFull actual) throws Exception {
+        assertEquals("Wrong fiscal year", expected.getUniversityFiscalYear(), actual.getUniversityFiscalYear());
         assertEquals("Wrong chart code", expected.getChartOfAccountsCode(), actual.getChartOfAccountsCode());
         assertEquals("Wrong account number", expected.getAccountNumber(), actual.getAccountNumber());
         assertEquals("Wrong sub-account number", expected.getSubAccountNumber(), actual.getSubAccountNumber());

@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.fixture;
 import java.util.List;
 
 import org.kuali.kfs.gl.batch.CollectorBatch;
+import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
@@ -54,8 +55,11 @@ public enum ConcurCollectorBatchFixture {
         List<ConcurOriginEntryFixture> originEntryFixtures = ConcurFixtureUtils.getFixturesContainingParentFixture(
                 ConcurOriginEntryFixture.class, this, ConcurOriginEntryFixture::getCollectorBatch);
         
+        int nextSequenceNumber = 1;
         for (ConcurOriginEntryFixture originEntryFixture : originEntryFixtures) {
-            collectorBatch.addOriginEntry(originEntryFixture.toOriginEntryFull());
+            OriginEntryFull originEntry = originEntryFixture.toOriginEntryFull();
+            originEntry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber++);
+            collectorBatch.addOriginEntry(originEntry);
         }
         
         return collectorBatch;
@@ -73,6 +77,7 @@ public enum ConcurCollectorBatchFixture {
         collectorBatch.setOrganizationCode(ParameterTestValues.COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
         collectorBatch.setCampusCode(ParameterTestValues.COLLECTOR_CAMPUS_CODE);
         collectorBatch.setMailingAddress(ParameterTestValues.COLLECTOR_CAMPUS_ADDRESS);
+        collectorBatch.setDepartmentName(ParameterTestValues.COLLECTOR_DEPARTMENT_NAME);
         collectorBatch.setEmailAddress(ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
         collectorBatch.setPersonUserID(ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PERSON);
         collectorBatch.setPhoneNumber(ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PHONE);
