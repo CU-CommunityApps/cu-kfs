@@ -210,8 +210,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         boolean isSame = compareStrings(currentAccountingEntry.getCoaCd(), line.getChartOfAccountsCode()) &&
                 compareStrings(currentAccountingEntry.getAccountNbr(), line.getAccountNumber()) &&
                 compareStrings(currentAccountingEntry.getSubAccountNbr(), line.getSubAccountNumber()) &&
-                compareStrings(currentAccountingEntry.getObjectCd(), line.getJournalAccountCode()) &&
-                compareStrings(currentAccountingEntry.getSubObjectCd(), line.getSubObjectCode()) &&
                 compareStrings(currentAccountingEntry.getOrgRefId(), line.getOrgRefId()) &&
                 compareStrings(currentAccountingEntry.getProjectCd(), line.getProjectCode());
         return isSame;

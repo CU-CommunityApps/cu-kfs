@@ -162,13 +162,27 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+        ConcurAccountInfo originalConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
-        ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
+        buildValidationResult(originalConcurAccountingInformation, false);
+        
+        String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
+        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+                line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
+        ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
+        
+        return overriddenValidationResults.isValid();
+    }
+    
+    private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverridenInfo) {
+        ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(accountingInfo);
         if (validationResults.isNotValid()) {
-            LOG.info("validateAccountingInformation, the accounting validation results: " + validationResults.getErrorMessagesAsOneFormattedString());
+            String overriddenOrOriginal = isOverridenInfo ? "overridden" : "original";
+            String messageStarter = "buildValidationResult, the " + overriddenOrOriginal + " acounting validation results: "; 
+            LOG.info(messageStarter + validationResults.getErrorMessagesAsOneFormattedString());
         }
-        return validationResults.isValid();
+        return validationResults;
     }
 
     public ConcurAccountValidationService getConcurAccountValidationService() {
