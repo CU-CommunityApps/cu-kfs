@@ -129,8 +129,8 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
-            String pdpFilePath = getPaymentImportDirectory() + pdpFileName;
-            success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFilePath);
+            String pdpFullyQualifiedFilePath = getPaymentImportDirectory() + pdpFileName;
+            success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFullyQualifiedFilePath);
         }
         return success ? pdpFileName : StringUtils.EMPTY;
     }
@@ -221,15 +221,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return StringUtils.equalsIgnoreCase(one, two);
     }
 
-    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String outputFilePath) {
+    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String outputFullyQualifiedFilePath) {
         boolean success = true;
         try {
             if (shouldMarshalFile(pdpFeedFileBaseEntry)) {
-                File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, outputFilePath);
-                LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFilePath);
+                File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, outputFullyQualifiedFilePath);
+                LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFullyQualifiedFilePath);
                 success = true;
             } else {
-                LOG.info("marshalPdpFeedFile, did not Marshal " + outputFilePath + " as there were no accounting entries");
+                LOG.info("marshalPdpFeedFile, did not Marshal " + outputFullyQualifiedFilePath + " as there were no accounting entries");
             }
         } catch (JAXBException | IOException e) {
             LOG.error("marshalPdpFeedFile, There was an error marshalling the PDP feed file.", e);
@@ -250,10 +250,19 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     @Override
     public void createDoneFileForPdpFile(String pdpFileName) throws IOException {
-        String fullFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
-                GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
-        LOG.info("createDoneFileForPdpFile, fullFilePath: " + fullFilePath);
-        FileUtils.touch(new File(fullFilePath));
+        if (pdpUploadFileExists(pdpFileName)) {
+            String fullDoneFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
+                    GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+            LOG.info("createDoneFileForPdpFile, fullFilePath: " + fullDoneFilePath);
+            FileUtils.touch(new File(fullDoneFilePath));
+        } else {
+            LOG.info("createDoneFileForPdpFile, the PDP upload file was not created, so we don't want to create the .done file.");
+        }
+    }
+    
+    private boolean pdpUploadFileExists(String pdpFileName) {
+        File pdpFile = new File(getPaymentImportDirectory() + pdpFileName);
+        return pdpFile.exists();
     }
 
     @Override
