@@ -244,8 +244,8 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" subAccountNumber: ").append(subAccountNumber).append(" subObjectCode: ").append(subObjectCode);
         sb.append(" orgRefId: ").append(orgRefId).append(" projectCode: ").append(projectCode);
         sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
-        sb.append(" reportEndDate: ").append(reportEndDate).append(" policy: ").append(policy);
-        sb.append(" expenseType: ").append(expenseType);
+        sb.append(" journalAmountString: ").append(journalAmountString).append(" reportEndDate: ").append(reportEndDate);
+        sb.append(" policy: ").append(policy).append(" expenseType: ").append(expenseType);
         return sb.toString();
     }
 

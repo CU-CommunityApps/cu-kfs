@@ -224,7 +224,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String outputFullyQualifiedFilePath) {
         boolean success = true;
         try {
-            if (shouldMarshalFile(pdpFeedFileBaseEntry)) {
+            if (doesPdpFileBaseEntryHaveAccountingEntries(pdpFeedFileBaseEntry)) {
                 File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, outputFullyQualifiedFilePath);
                 LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFullyQualifiedFilePath);
                 success = true;
@@ -238,7 +238,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return success;
     }
     
-    private boolean shouldMarshalFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+    private boolean doesPdpFileBaseEntryHaveAccountingEntries(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
         boolean hasAccountingEntries = false;
         for (PdpFeedGroupEntry group : pdpFeedFileBaseEntry.getGroup()) {
             for (PdpFeedDetailEntry detail : group.getDetail()) {

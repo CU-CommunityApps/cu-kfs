@@ -10,52 +10,52 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 public class RemovePlusSignKualiDecimalFormatterTest {
     
-    private RemovePlusSignKualiDecimalFormatter removePlusSignKualiDecimalFormatter;
-    private static final String STANDARD_ASSERT_MESSAGE = "The expected and actual should be the same";
+    private RemovePlusSignKualiDecimalFormatter kualiDecimalFormatter;
+    private static final String ASSERT_SHOULD_EQUAL_MESSAGE = "The expected and actual should be the same";
 
     @Before
     public void setUp() throws Exception {
-        removePlusSignKualiDecimalFormatter = new RemovePlusSignKualiDecimalFormatter();
+        kualiDecimalFormatter = new RemovePlusSignKualiDecimalFormatter();
     }
 
     @After
     public void tearDown() throws Exception {
-        removePlusSignKualiDecimalFormatter = null;
+        kualiDecimalFormatter = null;
     }
 
     @Test
     public void concertNormalNumberString() {
         KualiDecimal expected = new KualiDecimal(100.55);
-        KualiDecimal actual = (KualiDecimal) removePlusSignKualiDecimalFormatter.convertToObject("100.55");
-        assertEquals(STANDARD_ASSERT_MESSAGE, expected, actual);
+        KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("100.55");
+        assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
     public void concertNormalNumberStringWithPlus() {
         KualiDecimal expected = new KualiDecimal(100.55);
-        KualiDecimal actual = (KualiDecimal) removePlusSignKualiDecimalFormatter.convertToObject("+100.55");
-        assertEquals(STANDARD_ASSERT_MESSAGE, expected, actual);
+        KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("+100.55");
+        assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
     public void concertNormalNumberStringWithMinus() {
         KualiDecimal expected = new KualiDecimal(-100.55);
-        KualiDecimal actual = (KualiDecimal) removePlusSignKualiDecimalFormatter.convertToObject("-100.55");
-        assertEquals(STANDARD_ASSERT_MESSAGE, expected, actual);
+        KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("-100.55");
+        assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
     public void concertEmptyString() {
         KualiDecimal expected = null;
-        KualiDecimal actual = (KualiDecimal) removePlusSignKualiDecimalFormatter.convertToObject("");
-        assertEquals(STANDARD_ASSERT_MESSAGE, expected, actual);
+        KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("");
+        assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
     public void concertNonNumberic() {
         KualiDecimal expected = null;
-        KualiDecimal actual = (KualiDecimal) removePlusSignKualiDecimalFormatter.convertToObject("xyz");
-        assertEquals(STANDARD_ASSERT_MESSAGE, expected, actual);
+        KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("xyz");
+        assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
 
 }
