@@ -1,11 +1,13 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
@@ -62,7 +64,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected int batchSequenceNumber;
     protected int nextFakeObjectCode;
-    protected int nextTransactionSequenceNumber;
+    protected Map<String,MutableInt> nextTransactionSequenceNumbers;
 
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             UniversityDateService universityDateService, DateTimeService dateTimeService,
@@ -97,7 +99,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.collectorBatch = new CollectorBatch();
         this.originEntries = new LinkedHashMap<>();
         this.nextFakeObjectCode = 1;
-        this.nextTransactionSequenceNumber = 1;
+        this.nextTransactionSequenceNumbers = new HashMap<>();
     }
 
     public CollectorBatch buildCollectorBatchFromStandardAccountingExtract(int nextBatchSequenceNumber,
@@ -238,7 +240,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         originEntry.setFinancialDocumentTypeCode(docTypeCode);
         originEntry.setFinancialSystemOriginationCode(systemOriginationCode);
         originEntry.setDocumentNumber(buildDocumentNumber(saeLine));
-        originEntry.setTransactionLedgerEntrySequenceNumber(getAndIncrementTransactionSequenceNumber());
+        originEntry.setTransactionLedgerEntrySequenceNumber(
+                getNextTransactionSequenceNumber(saeLine.getReportId()));
         originEntry.setTransactionLedgerEntryDescription(buildTransactionDescription(saeLine));
         originEntry.setTransactionDate(collectorBatch.getTransmissionDate());
         originEntry.setTransactionLedgerEntryAmount(KualiDecimal.ZERO);
@@ -258,8 +261,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         return KFSConstants.getDashProjectCode();
     }
 
-    protected int getAndIncrementTransactionSequenceNumber() {
-        return nextTransactionSequenceNumber++;
+    protected int getNextTransactionSequenceNumber(String reportId) {
+        MutableInt nextSequenceNumber = nextTransactionSequenceNumbers.computeIfAbsent(
+                reportId, (key) -> new MutableInt(0));
+        nextSequenceNumber.increment();
+        return nextSequenceNumber.intValue();
     }
 
     protected String buildDocumentNumber(ConcurStandardAccountingExtractDetailLine saeLine) {

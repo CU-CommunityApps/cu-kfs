@@ -1,7 +1,10 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -54,11 +57,14 @@ public enum ConcurCollectorBatchFixture {
         CollectorBatch collectorBatch = toCollectorBatchWithoutOriginEntries();
         List<ConcurOriginEntryFixture> originEntryFixtures = ConcurFixtureUtils.getFixturesContainingParentFixture(
                 ConcurOriginEntryFixture.class, this, ConcurOriginEntryFixture::getCollectorBatch);
+        Map<String,MutableInt> nextSequenceNumbers = new HashMap<>();
         
-        int nextSequenceNumber = 1;
         for (ConcurOriginEntryFixture originEntryFixture : originEntryFixtures) {
             OriginEntryFull originEntry = originEntryFixture.toOriginEntryFull();
-            originEntry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber++);
+            MutableInt nextSequenceNumber = nextSequenceNumbers.computeIfAbsent(
+                    originEntry.getDocumentNumber(), (key) -> new MutableInt(0));
+            nextSequenceNumber.increment();
+            originEntry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.intValue());
             collectorBatch.addOriginEntry(originEntry);
         }
         

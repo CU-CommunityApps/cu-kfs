@@ -1,6 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -88,11 +89,31 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         
         String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents);
         assertTrue("Collector file did not get created successfully", StringUtils.isNotBlank(collectorFilePath));
-        String collectorFileExtension = KFSConstants.DELIMITER + StringUtils.substringAfterLast(collectorFilePath, KFSConstants.DELIMITER);
-        assertEquals("Collector file has the wrong extension", GeneralLedgerConstants.BatchFileSystem.EXTENSION, collectorFileExtension);
+        
+        assertGeneratedCollectorFileHasCorrectPath(saeFileContents.getOriginalFileName(), collectorFilePath);
         
         String expectedResultsFilePath = EXPECTED_RESULTS_DIRECTORY_PATH + expectedResultsFileName;
         assertFileContentsAreCorrect(expectedResultsFilePath, collectorFilePath);
+    }
+
+    protected void assertGeneratedCollectorFileHasCorrectPath(String originalFileName, String collectorFilePath) throws Exception {
+        assertTrue("Collector file was not placed in the expected output directory of " + COLLECTOR_OUTPUT_DIRECTORY_PATH,
+                StringUtils.startsWith(collectorFilePath, COLLECTOR_OUTPUT_DIRECTORY_PATH));
+        
+        String collectorFileName = StringUtils.substringAfter(collectorFilePath, COLLECTOR_OUTPUT_DIRECTORY_PATH);
+        assertEquals("File name has too many extension delimiters",
+                StringUtils.countMatches(originalFileName, KFSConstants.DELIMITER),
+                StringUtils.countMatches(collectorFileName, KFSConstants.DELIMITER));
+        assertFalse("Did not find a file extension after the delimiter", StringUtils.endsWith(collectorFileName, KFSConstants.DELIMITER));
+        
+        String collectorFilePrefix = StringUtils.left(collectorFileName, ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX.length());
+        String collectorFileExtension = KFSConstants.DELIMITER + StringUtils.substringAfterLast(collectorFileName, KFSConstants.DELIMITER);
+        assertEquals("Collector file has the wrong prefix", ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX, collectorFilePrefix);
+        assertEquals("Collector file has the wrong extension", GeneralLedgerConstants.BatchFileSystem.EXTENSION, collectorFileExtension);
+        
+        String originalFileNameWithoutExtension = StringUtils.substringBeforeLast(originalFileName, KFSConstants.DELIMITER);
+        assertEquals("Collector file should have had the original SAE file's name embedded within it", originalFileNameWithoutExtension,
+                StringUtils.substringBetween(collectorFileName, collectorFilePrefix, collectorFileExtension));
     }
 
     protected void assertFileContentsAreCorrect(String expectedResultsFilePath, String actualResultsFilePath) throws Exception {
