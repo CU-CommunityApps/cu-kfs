@@ -29,6 +29,8 @@ public class ConcurStandardAccountingExtractDetailLine {
     private KualiDecimal journalAmount;
     private String journalAmountString;
     private Date reportEndDate;
+    private String policy;
+    private String expenseType;
     
     public String getBatchID() {
         return batchID;
@@ -214,6 +216,22 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.reportEndDate = reportEndDate;
     }
 
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public String getExpenseType() {
+        return expenseType;
+    }
+
+    public void setExpenseType(String expenseType) {
+        this.expenseType = expenseType;
+    }
+
     public String getDebugInformation() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
@@ -226,7 +244,8 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" subAccountNumber: ").append(subAccountNumber).append(" subObjectCode: ").append(subObjectCode);
         sb.append(" orgRefId: ").append(orgRefId).append(" projectCode: ").append(projectCode);
         sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
-        sb.append(" reportEndDate: ").append(reportEndDate);
+        sb.append(" reportEndDate: ").append(reportEndDate).append(" policy: ").append(policy);
+        sb.append(" expenseType: ").append(expenseType);
         return sb.toString();
     }
 

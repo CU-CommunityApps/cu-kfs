@@ -142,7 +142,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
                 Person employee = getPersonService().getPersonByEmployeeId(employeeId);
                 return employee;
             } catch (Exception e) {
-                LOG.error("buildPerson, Unable to create a person from employee ID: " + employeeId, e);
+                LOG.error("findPerson, Unable to create a person from employee ID: " + employeeId, e);
             }
         }
         return null;
