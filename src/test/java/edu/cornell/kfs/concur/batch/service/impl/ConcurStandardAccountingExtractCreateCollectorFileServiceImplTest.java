@@ -82,6 +82,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         assertCollectorFileIsGeneratedCorrectly("fiscal-year-test3.data", ConcurCollectorBatchFixture.FISCAL_YEAR_TEST3);
     }
 
+    @Test
+    public void testCollectorFileNotGeneratedWhenBuilderFails() throws Exception {
+        assertCollectorFileIsNotGenerated("NON_EXISTENT_FIXTURE");
+    }
+
     protected void assertCollectorFileIsGeneratedCorrectly(String expectedResultsFileName,
             ConcurCollectorBatchFixture fixture) throws Exception {
         ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
@@ -148,6 +153,14 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
             IOUtils.closeQuietly(expectedContents);
             IOUtils.closeQuietly(expectedFileContents);
         }
+    }
+
+    protected void assertCollectorFileIsNotGenerated(String fixtureName) throws Exception {
+        ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
+        saeFileContents.setOriginalFileName(fixtureName + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
+        
+        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents);
+        assertTrue("A Collector file should not have been created", StringUtils.isBlank(collectorFilePath));
     }
 
     protected void buildCollectorOutputDirectory() throws IOException {
