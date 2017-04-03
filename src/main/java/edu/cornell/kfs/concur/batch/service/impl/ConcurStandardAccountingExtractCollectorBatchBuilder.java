@@ -319,18 +319,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             case ConcurConstants.DEBIT :
                 return KFSConstants.GL_DEBIT_CODE;
             default :
-                throw new IllegalArgumentException("Unrecognized SAE debit/credit code: " + saeDebitCreditCode);
-        }
-    }
-
-    protected String getOppositeGLDebitCreditCode(String glDebitCreditCode) {
-        switch (glDebitCreditCode) {
-            case KFSConstants.GL_CREDIT_CODE :
-                return KFSConstants.GL_DEBIT_CODE;
-            case KFSConstants.GL_DEBIT_CODE :
-                return KFSConstants.GL_CREDIT_CODE;
-            default :
-                throw new IllegalArgumentException("Unrecognized GL debit/credit code: " + glDebitCreditCode);
+                throw new IllegalArgumentException("Unrecognized debit/credit code: " + saeDebitCreditCode);
         }
     }
 
