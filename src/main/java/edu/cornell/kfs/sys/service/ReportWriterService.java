@@ -60,4 +60,10 @@ public interface ReportWriterService extends org.kuali.kfs.sys.service.ReportWri
 	public RoleService getRoleService();
 
 	public void setRoleService(RoleService roleService);
+
+	public void setFileNamePrefix(String fileNamePrefix);
+
+	public void setTitle(String title);
+
+	public void destroy();
 }
