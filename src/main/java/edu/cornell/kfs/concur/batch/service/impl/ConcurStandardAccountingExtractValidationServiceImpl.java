@@ -62,14 +62,19 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         KualiDecimal detailTotal = KualiDecimal.ZERO;
         boolean debitCreditValid = true;
         boolean employeeGroupIdValid = true;
-        for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile
-                .getConcurStandardAccountingExtractDetailLines()) {
-            detailTotal = detailTotal.add(line.getJournalAmount());
+        boolean journalTotalValidation = true;
+        for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
+            if (line.getJournalAmount() != null) {
+                detailTotal = detailTotal.add(line.getJournalAmount());
+            } else {
+                LOG.error("validateAmountsAndDebitCreditCode, Parsed a null KualiDecimal from the original value of " + line.getJournalAmountString());
+                journalTotalValidation = false;
+            }
             debitCreditValid &= validateDebitCreditField(line.getJounalDebitCredit());
             employeeGroupIdValid &= validateEmployeeGroupId(line.getEmployeeGroupId());
         }
         
-        boolean journalTotalValidation = journalTotal.equals(detailTotal);
+        journalTotalValidation = journalTotalValidation && journalTotal.equals(detailTotal);
         if (journalTotalValidation) {
             LOG.debug("validateAmounts, journal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
         } else {

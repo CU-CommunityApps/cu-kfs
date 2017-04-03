@@ -27,6 +27,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String projectCode; 
     private String jounalDebitCredit;
     private KualiDecimal journalAmount;
+    private String journalAmountString;
     private Date reportEndDate;
     
     public String getBatchID() {
@@ -195,6 +196,14 @@ public class ConcurStandardAccountingExtractDetailLine {
 
     public void setJournalAmount(KualiDecimal journalAmount) {
         this.journalAmount = journalAmount;
+    }
+
+    public String getJournalAmountString() {
+        return journalAmountString;
+    }
+
+    public void setJournalAmountString(String journalAmountString) {
+        this.journalAmountString = journalAmountString;
     }
 
     public Date getReportEndDate() {
