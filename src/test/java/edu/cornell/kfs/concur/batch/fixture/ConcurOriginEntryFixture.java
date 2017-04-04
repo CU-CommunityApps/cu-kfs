@@ -17,6 +17,9 @@ import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
  * Helper fixture for generating OriginEntryFull business objects.
  * For convenience, some of the enum constructors allow for using another enum constant
  * as a base, and then overrides can be specified using the other constructor args or var-args.
+ * 
+ * The setup of the transactionLedgerEntrySequenceNumber will be handled by ConcurCollectorBatchFixture
+ * when it converts this enum's fixtures into OriginEntryFull objects.
  */
 public enum ConcurOriginEntryFixture {
 
@@ -180,6 +183,9 @@ public enum ConcurOriginEntryFixture {
     public OriginEntryFull toOriginEntryFull() {
         OriginEntryFull originEntry = new OriginEntryFull();
         
+        // Default constructor sets fiscal year to zero; need to forcibly clear it to match the setup in our Concur runtime code.
+        originEntry.setUniversityFiscalYear(null);
+        
         originEntry.setChartOfAccountsCode(chartOfAccountsCode);
         originEntry.setAccountNumber(accountNumber);
         originEntry.setSubAccountNumber(
@@ -194,7 +200,6 @@ public enum ConcurOriginEntryFixture {
         originEntry.setFinancialDocumentTypeCode(ParameterTestValues.COLLECTOR_DOCUMENT_TYPE);
         originEntry.setFinancialSystemOriginationCode(ParameterTestValues.COLLECTOR_SYSTEM_ORIGINATION_CODE);
         originEntry.setDocumentNumber(documentNumber);
-        originEntry.setTransactionLedgerEntrySequenceNumber(collectorBatch.batchSequenceNumber);
         originEntry.setTransactionLedgerEntryDescription(transactionLedgerEntryDescription);
         originEntry.setTransactionDate(ConcurFixtureUtils.toSqlDate(collectorBatch.transmissionDate));
         originEntry.setTransactionDebitCreditCode(transactionDebitCreditCode);
