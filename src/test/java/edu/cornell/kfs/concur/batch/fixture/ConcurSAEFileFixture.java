@@ -2,7 +2,6 @@ package edu.cornell.kfs.concur.batch.fixture;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -59,9 +58,14 @@ public enum ConcurSAEFileFixture {
         
         List<ConcurSAEDetailLineFixture> lineFixtures = ConcurFixtureUtils.getFixturesContainingParentFixture(
                 ConcurSAEDetailLineFixture.class, this, ConcurSAEDetailLineFixture::getExtractFile);
-        List<ConcurStandardAccountingExtractDetailLine> detailLines = lineFixtures.stream()
-                .map(ConcurSAEDetailLineFixture::toDetailLine)
-                .collect(Collectors.toCollection(ArrayList::new));
+        
+        List<ConcurStandardAccountingExtractDetailLine> detailLines = new ArrayList<>(lineFixtures.size());
+        int nextSequenceNumber = 1;
+        for (ConcurSAEDetailLineFixture lineFixture : lineFixtures) {
+            ConcurStandardAccountingExtractDetailLine detailLine = lineFixture.toDetailLine();
+            detailLine.setSequenceNumber(Integer.toString(nextSequenceNumber++));
+            detailLines.add(detailLine);
+        }
         extractFile.setConcurStandardAccountingExtractDetailLines(detailLines);
         
         return extractFile;

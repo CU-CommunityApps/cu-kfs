@@ -1,13 +1,16 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
+import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 /**
  * Helper fixture for generating CollectorBatch business objects.
@@ -54,9 +57,15 @@ public enum ConcurCollectorBatchFixture {
         CollectorBatch collectorBatch = toCollectorBatchWithoutOriginEntries();
         List<ConcurOriginEntryFixture> originEntryFixtures = ConcurFixtureUtils.getFixturesContainingParentFixture(
                 ConcurOriginEntryFixture.class, this, ConcurOriginEntryFixture::getCollectorBatch);
+        Map<String,MutableInt> nextSequenceNumbers = new HashMap<>();
         
         for (ConcurOriginEntryFixture originEntryFixture : originEntryFixtures) {
-            collectorBatch.addOriginEntry(originEntryFixture.toOriginEntryFull());
+            OriginEntryFull originEntry = originEntryFixture.toOriginEntryFull();
+            MutableInt nextSequenceNumber = nextSequenceNumbers.computeIfAbsent(
+                    originEntry.getDocumentNumber(), (key) -> new MutableInt(0));
+            nextSequenceNumber.increment();
+            originEntry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.intValue());
+            collectorBatch.addOriginEntry(originEntry);
         }
         
         return collectorBatch;
@@ -70,11 +79,11 @@ public enum ConcurCollectorBatchFixture {
         collectorBatch.setTransmissionDate(ConcurFixtureUtils.toSqlDate(transmissionDate));
         collectorBatch.setTotalRecords(totalRecords);
         collectorBatch.setTotalAmount(new KualiDecimal(totalAmount));
-        collectorBatch.setRecordType(CuGeneralLedgerConstants.COLLECTOR_HEADER_RECORD_TYPE);
         collectorBatch.setChartOfAccountsCode(ParameterTestValues.COLLECTOR_CHART_CODE);
         collectorBatch.setOrganizationCode(ParameterTestValues.COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
         collectorBatch.setCampusCode(ParameterTestValues.COLLECTOR_CAMPUS_CODE);
         collectorBatch.setMailingAddress(ParameterTestValues.COLLECTOR_CAMPUS_ADDRESS);
+        collectorBatch.setDepartmentName(ParameterTestValues.COLLECTOR_DEPARTMENT_NAME);
         collectorBatch.setEmailAddress(ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
         collectorBatch.setPersonUserID(ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PERSON);
         collectorBatch.setPhoneNumber(ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PHONE);

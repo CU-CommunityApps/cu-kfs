@@ -1,11 +1,13 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
@@ -18,14 +20,15 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 
 /**
  * Helper class for converting parsed SAE file data
  * into GL CollectorBatch objects, which in turn will contain
  * OriginEntryFull objects derived from the SAE detail lines.
- * The constructed CollectorBatch objects will have the "HD"
- * (Header) record type.
+ * The CollectorBatch objects will not have a record type
+ * configured; the service that serializes the objects
+ * to a flat file will handle populating the record type
+ * in the text output.
  * 
  * This builder is NOT thread-safe; external synchronization
  * is required if one instance is used by multiple threads.
@@ -61,6 +64,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected int batchSequenceNumber;
     protected int nextFakeObjectCode;
+    protected Map<String,MutableInt> nextTransactionSequenceNumbers;
 
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             UniversityDateService universityDateService, DateTimeService dateTimeService,
@@ -95,6 +99,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.collectorBatch = new CollectorBatch();
         this.originEntries = new LinkedHashMap<>();
         this.nextFakeObjectCode = 1;
+        this.nextTransactionSequenceNumbers = new HashMap<>();
     }
 
     public CollectorBatch buildCollectorBatchFromStandardAccountingExtract(int nextBatchSequenceNumber,
@@ -130,7 +135,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new RuntimeException("No fiscal year found for batch date: " + saeFileContents.getBatchDate().toString());
         }
         
-        collectorBatch.setRecordType(CuGeneralLedgerConstants.COLLECTOR_HEADER_RECORD_TYPE);
         collectorBatch.setUniversityFiscalYear(fiscalYear.toString());
         collectorBatch.setChartOfAccountsCode(chartCode);
         collectorBatch.setOrganizationCode(highestLevelOrgCode);
@@ -138,6 +142,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         collectorBatch.setBatchSequenceNumber(Integer.valueOf(batchSequenceNumber));
         collectorBatch.setCampusCode(campusCode);
         collectorBatch.setMailingAddress(campusAddress);
+        collectorBatch.setDepartmentName(departmentName);
         collectorBatch.setEmailAddress(notificationEmail);
         collectorBatch.setPersonUserID(notificationPerson);
         collectorBatch.setPhoneNumber(notificationPhone);
@@ -195,7 +200,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         }
         
         return new StringBuilder(INITIAL_BUILDER_SIZE)
-                .append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
+                .append(saeLine.getReportId())
+                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
                 .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getAccountNumber()))
                 .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()))
                 .append(PIPE_CHAR).append(makeEmptyIfBlank(objectCodeForKey))
@@ -216,6 +222,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected OriginEntryFull buildOriginEntryForExtractedLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {
         OriginEntryFull originEntry = new OriginEntryFull();
         
+        // Default constructor sets fiscal year to zero; need to forcibly clear it to allow auto-setup by the Poster, as per the spec.
+        originEntry.setUniversityFiscalYear(null);
+        
         originEntry.setChartOfAccountsCode(saeLine.getChartOfAccountsCode());
         originEntry.setAccountNumber(saeLine.getAccountNumber());
         originEntry.setSubAccountNumber(
@@ -231,7 +240,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         originEntry.setFinancialDocumentTypeCode(docTypeCode);
         originEntry.setFinancialSystemOriginationCode(systemOriginationCode);
         originEntry.setDocumentNumber(buildDocumentNumber(saeLine));
-        originEntry.setTransactionLedgerEntrySequenceNumber(collectorBatch.getBatchSequenceNumber());
+        originEntry.setTransactionLedgerEntrySequenceNumber(
+                getNextTransactionSequenceNumber(saeLine.getReportId()));
         originEntry.setTransactionLedgerEntryDescription(buildTransactionDescription(saeLine));
         originEntry.setTransactionDate(collectorBatch.getTransmissionDate());
         originEntry.setTransactionLedgerEntryAmount(KualiDecimal.ZERO);
@@ -249,6 +259,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected String getDashProjectCode() {
         return KFSConstants.getDashProjectCode();
+    }
+
+    protected int getNextTransactionSequenceNumber(String reportId) {
+        MutableInt nextSequenceNumber = nextTransactionSequenceNumbers.computeIfAbsent(
+                reportId, (key) -> new MutableInt(0));
+        nextSequenceNumber.increment();
+        return nextSequenceNumber.intValue();
     }
 
     protected String buildDocumentNumber(ConcurStandardAccountingExtractDetailLine saeLine) {

@@ -4,6 +4,6 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 
 public interface ConcurStandardAccountingExtractCreateCollectorFileService {
 
-    boolean buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents);
+    String buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents);
 
 }
