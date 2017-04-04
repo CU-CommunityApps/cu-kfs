@@ -157,4 +157,19 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 			}
 		}
 	}
+
+	@Override
+    public void setFileNamePrefix(String fileNamePrefix) {
+        super.setFileNamePrefix(fileNamePrefix);
+    }
+
+	@Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+    }
+
+	@Override
+	public void destroy() {
+	    super.destroy();
+	}
 }
