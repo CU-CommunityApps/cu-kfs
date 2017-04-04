@@ -37,15 +37,14 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
+import edu.cornell.kfs.concur.batch.businessobject.CollectorBatchHeaderSerializerFieldUtil;
+import edu.cornell.kfs.concur.batch.businessobject.CollectorBatchTrailerRecordSerializerFieldUtil;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.businessobject.OriginEntrySerializerFieldUtil;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
+import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
-import edu.cornell.kfs.gl.batch.service.impl.CollectorFlatFileSerializerServiceImpl;
-import edu.cornell.kfs.gl.businessobject.CollectorBatchHeaderSerializerFieldUtil;
-import edu.cornell.kfs.gl.businessobject.CollectorBatchTrailerRecordSerializerFieldUtil;
-import edu.cornell.kfs.gl.businessobject.OriginEntrySerializerFieldUtil;
-import edu.cornell.kfs.sys.batch.service.BusinessObjectFlatFileSerializerService;
-import edu.cornell.kfs.sys.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
 import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
 
 @SuppressWarnings("deprecation")

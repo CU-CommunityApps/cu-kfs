@@ -200,7 +200,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         }
         
         return new StringBuilder(INITIAL_BUILDER_SIZE)
-                .append(makeEmptyIfBlank(saeLine.getReportId()))
+                .append(saeLine.getReportId())
                 .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
                 .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getAccountNumber()))
                 .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()))

@@ -1,4 +1,4 @@
-package edu.cornell.kfs.sys.batch.service.impl;
+package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -12,8 +12,8 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
 
-import edu.cornell.kfs.sys.batch.service.BusinessObjectFlatFileSerializerService;
-import edu.cornell.kfs.sys.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
+import edu.cornell.kfs.concur.batch.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
+import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 
 /**
  * Basic implementation of BusinessObjectFlatFileSerializerService that allows for creating a file

@@ -5,9 +5,6 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 public class CuGeneralLedgerConstants extends GeneralLedgerConstants {
 
 	public static final String ANNUAL_CLOSING_CHARTS_PARAM = "ANNUAL_CLOSING_CHARTS";
-	public static final String COLLECTOR_HEADER_RECORD_TYPE = "HD";
-	public static final String COLLECTOR_TRAILER_RECORD_TYPE = "TL";
-	public static final String COLLECTOR_FILE_DATE_FORMAT = "yyyy-MM-dd";
 
 	public static class ReversionProcess extends OrganizationReversionProcess {
 		static final public String CASH_REVERSION_OBJECT_CODE_PARM = "CASH_REVERSION_OBJECT_CODE";

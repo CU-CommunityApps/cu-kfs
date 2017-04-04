@@ -1,4 +1,4 @@
-package edu.cornell.kfs.gl.businessobject;
+package edu.cornell.kfs.concur.batch.businessobject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,8 +7,7 @@ import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
-import edu.cornell.kfs.sys.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
+import edu.cornell.kfs.concur.ConcurConstants;
 
 /**
  * BO serialization utility subclass for serializing CollectorBatch BOs
@@ -43,7 +42,7 @@ public class CollectorBatchTrailerRecordSerializerFieldUtil extends BusinessObje
     }
 
     protected String forciblyMarkAsTrailerRecord(Object recordType) {
-        return CuGeneralLedgerConstants.COLLECTOR_TRAILER_RECORD_TYPE;
+        return ConcurConstants.COLLECTOR_TRAILER_RECORD_TYPE;
     }
 
 }

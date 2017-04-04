@@ -1,4 +1,4 @@
-package edu.cornell.kfs.gl.businessobject;
+package edu.cornell.kfs.concur.batch.businessobject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
+import edu.cornell.kfs.concur.ConcurConstants;
 
 /**
  * BO serialization utility subclass for serializing CollectorBatch BOs
@@ -40,7 +40,7 @@ public class CollectorBatchHeaderSerializerFieldUtil extends CollectorSerializer
     }
 
     protected String forciblyMarkAsHeaderRecord(Object recordType) {
-        return CuGeneralLedgerConstants.COLLECTOR_HEADER_RECORD_TYPE;
+        return ConcurConstants.COLLECTOR_HEADER_RECORD_TYPE;
     }
 
 }

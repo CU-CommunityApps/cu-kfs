@@ -1,4 +1,4 @@
-package edu.cornell.kfs.gl.businessobject;
+package edu.cornell.kfs.concur.batch.businessobject;
 
 import java.util.HashMap;
 import java.util.Map;

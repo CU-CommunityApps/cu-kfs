@@ -1,4 +1,4 @@
-package edu.cornell.kfs.sys.batch.service;
+package edu.cornell.kfs.concur.batch.service;
 
 import org.kuali.rice.krad.bo.BusinessObject;
 

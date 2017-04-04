@@ -1,4 +1,4 @@
-package edu.cornell.kfs.sys.businessobject;
+package edu.cornell.kfs.concur.batch.businessobject;
 
 import java.util.Map;
 import java.util.function.Function;
