@@ -42,6 +42,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     protected ParameterService parameterService;
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
+    private String concurFailedRequestQueueEndpoint;
+    private String concurFailedRequestDeleteNortificationEndpoint;
     
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
@@ -193,7 +195,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         Client client = Client.create(clientConfig);
         WebResource resource = client.resource(workflowURI);
       
-        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
+        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).
+                header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).
+                post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
 
         response.bufferEntity();
         String result = response.getEntity(String.class);
@@ -210,6 +214,31 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         return xml;
     }
     
+    @Override
+    public boolean deleteFailedEventQueueItem(String noticationId) {
+        LOG.info("updateExpenseReportStatusInConcur(), noticationId: " + noticationId);
+        String deleteItemURL = getConcurFailedRequestDeleteNortificationEndpoint() + noticationId;
+        String authorizationToken = ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + 
+                concurAccessTokenService.getAccessToken();
+        
+        ClientConfig clientConfig = new DefaultClientConfig();
+        Client client = Client.create(clientConfig);
+        
+        ClientRequest.Builder builder = new ClientRequest.Builder();
+        builder.accept(MediaType.APPLICATION_XML);
+        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, authorizationToken);
+        URI uri;
+        try {
+            uri = new URI(deleteItemURL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("An error occured while building the report details URI: ", e);
+        }
+
+        ClientRequest resource = builder.build(uri, HttpMethod.GET);
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL));
+        LOG.info("updateExpenseReportStatusInConcur(), the resonse status was " + ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
+        return response.getStatus() == ClientResponse.Status.OK.getStatusCode();
+    }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
         String errorMessagesString = addMessageHeader(message);
@@ -267,6 +296,22 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     public void setConcurRequestWorkflowUpdateNamespace(
             String concurRequestWorkflowUpdateNamespace) {
         this.concurRequestWorkflowUpdateNamespace = concurRequestWorkflowUpdateNamespace;
+    }
+
+    public String getConcurFailedRequestQueueEndpoint() {
+        return concurFailedRequestQueueEndpoint;
+    }
+
+    public void setConcurFailedRequestQueueEndpoint(String concurFailedRequestQueueEndpoint) {
+        this.concurFailedRequestQueueEndpoint = concurFailedRequestQueueEndpoint;
+    }
+
+    public String getConcurFailedRequestDeleteNortificationEndpoint() {
+        return concurFailedRequestDeleteNortificationEndpoint;
+    }
+
+    public void setConcurFailedRequestDeleteNortificationEndpoint(String concurFailedRequestDeleteNortificationEndpoint) {
+        this.concurFailedRequestDeleteNortificationEndpoint = concurFailedRequestDeleteNortificationEndpoint;
     }
 
 }

@@ -43,6 +43,11 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
         concurEventNotification.setValidationResultMessage(validationResultMessages);
         saveConcurEventNotification(concurEventNotification);
     }
+    
+    @Override
+    public void retrieveAndPersistFailedEventQueueReports() {
+        
+    }
 
 
     public BusinessObjectService getBusinessObjectService() {

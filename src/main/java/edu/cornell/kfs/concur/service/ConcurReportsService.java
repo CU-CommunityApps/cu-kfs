@@ -8,5 +8,7 @@ public interface ConcurReportsService {
     ConcurReport extractConcurReport(String reportURI);
 
     void updateExpenseReportStatusInConcur(String workflowURI, ValidationResult validationResult);
+    
+    boolean deleteFailedEventQueueItem(String noticationId);
 
 }

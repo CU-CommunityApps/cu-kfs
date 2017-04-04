@@ -12,4 +12,6 @@ public interface ConcurEventNotificationService {
     
     void updateConcurEventNotificationFlagsAndValidationMessage(ConcurEventNotification concurEventNotification, boolean inProcess, boolean processed, boolean validationResult, String validationResultMessages);
     
+    void retrieveAndPersistFailedEventQueueReports();
+    
 }

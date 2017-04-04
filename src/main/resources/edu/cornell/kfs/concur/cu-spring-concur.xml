@@ -230,6 +230,12 @@
 		<property name="concurRequestWorkflowUpdateNamespace">
 			<value>${concur.request.workflow.update.namespace}</value>
 		</property>
+		<property name="concurFailedRequestQueueEndpoint">
+			<value>${concur.failed.request.queue}</value>
+		</property>
+		<property name="concurFailedRequestDeleteNortificationEndpoint">
+			<value>${concur.failed.request.queue.delete}</value>
+		</property>
 	</bean>
 	
 	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />
