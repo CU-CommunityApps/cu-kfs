@@ -62,14 +62,19 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         KualiDecimal detailTotal = KualiDecimal.ZERO;
         boolean debitCreditValid = true;
         boolean employeeGroupIdValid = true;
-        for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile
-                .getConcurStandardAccountingExtractDetailLines()) {
-            detailTotal = detailTotal.add(line.getJournalAmount());
+        boolean journalTotalValidation = true;
+        for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
+            if (line.getJournalAmount() != null) {
+                detailTotal = detailTotal.add(line.getJournalAmount());
+            } else {
+                LOG.error("validateAmountsAndDebitCreditCode, Parsed a null KualiDecimal from the original value of " + line.getJournalAmountString());
+                journalTotalValidation = false;
+            }
             debitCreditValid &= validateDebitCreditField(line.getJounalDebitCredit());
             employeeGroupIdValid &= validateEmployeeGroupId(line.getEmployeeGroupId());
         }
         
-        boolean journalTotalValidation = journalTotal.equals(detailTotal);
+        journalTotalValidation = journalTotalValidation && journalTotal.equals(detailTotal);
         if (journalTotalValidation) {
             LOG.debug("validateAmounts, journal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
         } else {
@@ -137,7 +142,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
                 Person employee = getPersonService().getPersonByEmployeeId(employeeId);
                 return employee;
             } catch (Exception e) {
-                LOG.error("buildPerson, Unable to create a person from employee ID: " + employeeId, e);
+                LOG.error("findPerson, Unable to create a person from employee ID: " + employeeId, e);
             }
         }
         return null;
@@ -162,13 +167,30 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+        reportErrorsWithOriginalAccountingDetails(line);
+        String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
+        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+                line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
+        ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
+        
+        return overriddenValidationResults.isValid();
+    }
+
+    private void reportErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
+        ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
-        ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
+        buildValidationResult(accountingInformation, false);
+    }
+    
+    private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {
+        ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(accountingInfo);
         if (validationResults.isNotValid()) {
-            LOG.info("validateAccountingInformation, the accounting validation results: " + validationResults.getErrorMessagesAsOneFormattedString());
+            String overriddenOrOriginal = isOverriddenInfo ? "overridden" : "original";
+            String messageStarter = "buildValidationResult, the " + overriddenOrOriginal + " acounting validation results: "; 
+            LOG.info(messageStarter + validationResults.getErrorMessagesAsOneFormattedString());
         }
-        return validationResults.isValid();
+        return validationResults;
     }
 
     public ConcurAccountValidationService getConcurAccountValidationService() {

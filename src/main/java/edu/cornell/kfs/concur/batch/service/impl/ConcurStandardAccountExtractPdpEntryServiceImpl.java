@@ -119,8 +119,8 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
         currentAccountingEntry.setAccountNbr(line.getAccountNumber());
         currentAccountingEntry.setSubAccountNbr(line.getSubAccountNumber());
-        currentAccountingEntry.setObjectCd(line.getJournalAccountCode());
-        currentAccountingEntry.setSubObjectCd(line.getSubObjectCode());
+        currentAccountingEntry.setObjectCd(getConcurParameterValue(ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE));
+        currentAccountingEntry.setSubObjectCd(StringUtils.EMPTY);
         currentAccountingEntry.setOrgRefId(line.getOrgRefId());
         currentAccountingEntry.setProjectCd(line.getProjectCode());
         currentAccountingEntry.setAmount(KualiDecimal.ZERO);

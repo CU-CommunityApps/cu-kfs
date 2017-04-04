@@ -129,8 +129,8 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
-            String pdpFilePath = getPaymentImportDirectory() + pdpFileName;
-            success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFilePath);
+            String pdpFullyQualifiedFilePath = getPaymentImportDirectory() + pdpFileName;
+            success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFullyQualifiedFilePath);
         }
         return success ? pdpFileName : StringUtils.EMPTY;
     }
@@ -210,8 +210,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         boolean isSame = compareStrings(currentAccountingEntry.getCoaCd(), line.getChartOfAccountsCode()) &&
                 compareStrings(currentAccountingEntry.getAccountNbr(), line.getAccountNumber()) &&
                 compareStrings(currentAccountingEntry.getSubAccountNbr(), line.getSubAccountNumber()) &&
-                compareStrings(currentAccountingEntry.getObjectCd(), line.getJournalAccountCode()) &&
-                compareStrings(currentAccountingEntry.getSubObjectCd(), line.getSubObjectCode()) &&
                 compareStrings(currentAccountingEntry.getOrgRefId(), line.getOrgRefId()) &&
                 compareStrings(currentAccountingEntry.getProjectCd(), line.getProjectCode());
         return isSame;
@@ -223,12 +221,16 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return StringUtils.equalsIgnoreCase(one, two);
     }
 
-    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry cdpFeedFileBaseEntry, String outputFilePath) {
+    private boolean marshalPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String outputFullyQualifiedFilePath) {
         boolean success = true;
         try {
-            File pdpFeedFile = getCuMarshalService().marshalObjectToXML(cdpFeedFileBaseEntry, outputFilePath);
-            LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFilePath);
-            success = true;
+            if (doesPdpFileBaseEntryHaveAccountingEntries(pdpFeedFileBaseEntry)) {
+                File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, outputFullyQualifiedFilePath);
+                LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFullyQualifiedFilePath);
+                success = true;
+            } else {
+                LOG.info("marshalPdpFeedFile, did not Marshal " + outputFullyQualifiedFilePath + " as there were no accounting entries");
+            }
         } catch (JAXBException | IOException e) {
             LOG.error("marshalPdpFeedFile, There was an error marshalling the PDP feed file.", e);
             success = false;
@@ -236,12 +238,31 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return success;
     }
     
+    private boolean doesPdpFileBaseEntryHaveAccountingEntries(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+        boolean hasAccountingEntries = false;
+        for (PdpFeedGroupEntry group : pdpFeedFileBaseEntry.getGroup()) {
+            for (PdpFeedDetailEntry detail : group.getDetail()) {
+                hasAccountingEntries = hasAccountingEntries || detail.getAccounting().size() > 0;
+            }
+        }
+        return hasAccountingEntries;
+    }
+    
     @Override
     public void createDoneFileForPdpFile(String pdpFileName) throws IOException {
-        String fullFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
-                GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
-        LOG.info("createDoneFileForPdpFile, fullFilePath: " + fullFilePath);
-        FileUtils.touch(new File(fullFilePath));
+        if (pdpUploadFileExists(pdpFileName)) {
+            String fullDoneFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
+                    GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+            LOG.info("createDoneFileForPdpFile, fullFilePath: " + fullDoneFilePath);
+            FileUtils.touch(new File(fullDoneFilePath));
+        } else {
+            LOG.info("createDoneFileForPdpFile, the PDP upload file was not created, so we don't want to create the .done file.");
+        }
+    }
+    
+    private boolean pdpUploadFileExists(String pdpFileName) {
+        File pdpFile = new File(getPaymentImportDirectory() + pdpFileName);
+        return pdpFile.exists();
     }
 
     @Override
