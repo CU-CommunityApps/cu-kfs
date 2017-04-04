@@ -10,6 +10,8 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.FileStorageService;
 
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractReportService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
@@ -17,6 +19,7 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpAndCollectorStep.class);
     protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
+    protected ConcurStandardAccountingExtractReportService concurStandardAccountingExtractReportService;
     protected FileStorageService fileStorageService;
 
     @Override
@@ -24,8 +27,10 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
         List<String> listOfSaeFullyQualifiedFileNames = getConcurStandardAccountingExtractService().buildListOfFullyQualifiedFileNamesToBeProcessed();
         for (String saeFileName : listOfSaeFullyQualifiedFileNames) {
             LOG.debug("execute, processing: " + saeFileName);
+            ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
             try {
-                processCurrentFileAndExtractPdpFeedFromSAEFile(saeFileName);
+                processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(saeFileName, reportData);
+                getConcurStandardAccountingExtractReportService().generateReport(reportData);
             } catch (Exception e) {
                 LOG.error("execute, there was an unexpected error processing a file: ", e);
             } finally {
@@ -35,16 +40,16 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
         return true;
     }
 
-    protected boolean processCurrentFileAndExtractPdpFeedFromSAEFile(String saeFullyQualifiedFileName) {
+    protected boolean processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(String saeFullyQualifiedFileName, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean success = true;
-        LOG.info("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFullyQualifiedFileName);
+        LOG.info("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, current File: " + saeFullyQualifiedFileName);
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                 .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
             String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
             if (StringUtils.isEmpty(outputFileName)) {
                 success = false;
-                LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
+                LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
             }
             if (success) {
                 success &= getConcurStandardAccountingExtractService()
@@ -54,13 +59,13 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
                 try {
                     getConcurStandardAccountingExtractService().createDoneFileForPdpFile(outputFileName);
                 } catch (IOException e) {
-                    LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, unable to create .done file: ", e);
+                    LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, unable to create .done file: ", e);
                     success = false;
                 }
             }
         } else {
             success = false;
-            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, the SAE file failed high level validation.");
+            LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, the SAE file failed high level validation.");
         }
         return success;
     }
@@ -88,5 +93,14 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
 
     public void setFileStorageService(FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
+    }
+
+    public ConcurStandardAccountingExtractReportService getConcurStandardAccountingExtractReportService() {
+        return concurStandardAccountingExtractReportService;
+    }
+
+    public void setConcurStandardAccountingExtractReportService(
+            ConcurStandardAccountingExtractReportService concurStandardAccountingExtractReportService) {
+        this.concurStandardAccountingExtractReportService = concurStandardAccountingExtractReportService;
     }
 }
