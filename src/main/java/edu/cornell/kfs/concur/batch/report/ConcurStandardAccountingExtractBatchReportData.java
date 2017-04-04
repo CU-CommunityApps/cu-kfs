@@ -117,7 +117,7 @@ public class ConcurStandardAccountingExtractBatchReportData {
         this.validationErrorFileLines = validationErrorFileLines;
     }
 
-    public void addErroringValidationFileLine(ConcurBatchReportLineValidationErrorItem validationErrorFileLine) {
+    public void addValidationErrorFileLine(ConcurBatchReportLineValidationErrorItem validationErrorFileLine) {
         if (validationErrorFileLines == null) {
             validationErrorFileLines = new ArrayList<ConcurBatchReportLineValidationErrorItem>();
         }

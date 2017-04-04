@@ -68,7 +68,7 @@ public class ConcurBatchReportLineValidationErrorItem {
         return itemErrorResults;
     }
 
-    public void setErrorResults(List<ValidationResult> itemErrorResults) {
+    public void setItemErrorResults(List<ValidationResult> itemErrorResults) {
         this.itemErrorResults = itemErrorResults;
     }
     

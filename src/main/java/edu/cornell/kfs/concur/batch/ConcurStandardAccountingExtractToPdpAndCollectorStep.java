@@ -42,14 +42,14 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
 
     protected boolean processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(String saeFullyQualifiedFileName, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean success = true;
-        LOG.info("processCurrentFileAndExtractPdpFeedFromSAEFile, current File: " + saeFullyQualifiedFileName);
+        LOG.info("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, current File: " + saeFullyQualifiedFileName);
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                 .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
             String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
             if (StringUtils.isEmpty(outputFileName)) {
                 success = false;
-                LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
+                LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
             }
             if (success) {
                 success &= getConcurStandardAccountingExtractService()
@@ -59,13 +59,13 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
                 try {
                     getConcurStandardAccountingExtractService().createDoneFileForPdpFile(outputFileName);
                 } catch (IOException e) {
-                    LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, unable to create .done file: ", e);
+                    LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, unable to create .done file: ", e);
                     success = false;
                 }
             }
         } else {
             success = false;
-            LOG.error("processCurrentFileAndExtractPdpFeedFromSAEFile, the SAE file failed high level validation.");
+            LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, the SAE file failed high level validation.");
         }
         return success;
     }

@@ -394,7 +394,6 @@
         <property name="titleKey" value="message.concur.requestExtract.title.createPdpFeedFile"/>
 	</bean>
 
-    <!-- Standard Accounting Extract Batch Report -->
     <bean id="concurStandardAccountingExtractReportService" parent="concurStandardAccountingExtractReportService-parentBean" />
     <bean id="concurStandardAccountingExtractReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractReportServiceImpl" abstract="true">
         <property name="reportWriterService" ref="concurReportWriterService" />
@@ -412,7 +411,6 @@
         <property name="reportMissingObjectCodesSubTitle" value="Concur Standard Accounting Extract Records With Missing Object Codes"/>
     </bean>
 
-    <!-- Common Concur Batch Report Writer -->
     <bean id="concurReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
         <property name="filePath" value="${reports.directory}/cncr"/>
     </bean>
