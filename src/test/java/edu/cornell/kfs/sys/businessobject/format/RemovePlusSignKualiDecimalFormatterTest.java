@@ -24,35 +24,35 @@ public class RemovePlusSignKualiDecimalFormatterTest {
     }
 
     @Test
-    public void concertNormalNumberString() {
+    public void convertNormalNumberString() {
         KualiDecimal expected = new KualiDecimal(100.55);
         KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("100.55");
         assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
-    public void concertNormalNumberStringWithPlus() {
+    public void convertNormalNumberStringWithPlus() {
         KualiDecimal expected = new KualiDecimal(100.55);
         KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("+100.55");
         assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
-    public void concertNormalNumberStringWithMinus() {
+    public void convertNormalNumberStringWithMinus() {
         KualiDecimal expected = new KualiDecimal(-100.55);
         KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("-100.55");
         assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
-    public void concertEmptyString() {
+    public void convertEmptyString() {
         KualiDecimal expected = null;
         KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("");
         assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);
     }
     
     @Test
-    public void concertNonNumberic() {
+    public void convertNonNumberic() {
         KualiDecimal expected = null;
         KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("xyz");
         assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);

@@ -183,10 +183,10 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         buildValidationResult(accountingInformation, false);
     }
     
-    private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverridenInfo) {
+    private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(accountingInfo);
         if (validationResults.isNotValid()) {
-            String overriddenOrOriginal = isOverridenInfo ? "overridden" : "original";
+            String overriddenOrOriginal = isOverriddenInfo ? "overridden" : "original";
             String messageStarter = "buildValidationResult, the " + overriddenOrOriginal + " acounting validation results: "; 
             LOG.info(messageStarter + validationResults.getErrorMessagesAsOneFormattedString());
         }
