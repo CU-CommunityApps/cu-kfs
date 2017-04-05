@@ -14,6 +14,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -73,14 +74,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             if (line.getJournalAmount() != null) {
                 detailTotal = detailTotal.add(line.getJournalAmount());
             } else {
-         //       String validationError = 
-        //        reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), ));
-           //     nkk log validation error
-                LOG.error("validateAmountsAndDebitCreditCode, Parsed a null KualiDecimal from the original value of " + line.getJournalAmountString());
+                String validationError = "Parsed a null KualiDecimal from the original value of " + line.getJournalAmountString();
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), 
+                        line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationError));
+                LOG.error("validateAmountsAndDebitCreditCode, " + validationError);
                 journalTotalValidation = false;
             }
-            debitCreditValid &= validateDebitCreditField(line.getJounalDebitCredit());
-            employeeGroupIdValid &= validateEmployeeGroupId(line.getEmployeeGroupId());
+            debitCreditValid &= validateDebitCreditField(line, reportData);
+            employeeGroupIdValid &= validateEmployeeGroupId(line, reportData);
         }
         
         journalTotalValidation = journalTotalValidation && journalTotal.equals(detailTotal);
@@ -95,25 +96,29 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     @Override
-    public boolean validateDebitCreditField(String debitCredit) {
-        boolean valid = StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.CREDIT) || 
-                StringUtils.equalsIgnoreCase(debitCredit, ConcurConstants.DEBIT);
+    public boolean validateDebitCreditField(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.CREDIT) || 
+                        StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.DEBIT);
         if (valid) {
             LOG.debug("validateDebitCreditField, found a valid debit/credit.");
         } else {
-            LOG.error("validateDebitCreditField, invalid debit or credit: " + debitCredit);
+            String validationError = "Invalid debit or credit: " + line.getJounalDebitCredit();
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationError));
+            LOG.error("validateDebitCreditField, " + validationError);
         }
         return valid;
     }
     
     @Override
-    public boolean validateEmployeeGroupId(String employeeGroupId) {
+    public boolean validateEmployeeGroupId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         String expectedGroupId = findEmployeeGroupId();
-        boolean valid = StringUtils.equalsIgnoreCase(employeeGroupId, expectedGroupId);
+        boolean valid = StringUtils.equalsIgnoreCase(line.getEmployeeGroupId(), expectedGroupId);
         if (valid) {
             LOG.debug("Found a valid employee group id.");
         } else {
-            LOG.error("Found an invalid employee group id: " + employeeGroupId + ".  We expected the group ID to be " + expectedGroupId);
+            String validationError = ("Found an invalid employee group id: " + line.getEmployeeGroupId() + ".  We expected the group ID to be " + expectedGroupId);
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationError));
+            LOG.error("validateEmployeeGroupId, " + validationError);
         }
         return valid;
     }
@@ -144,13 +149,15 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     @Override
-    public boolean validateEmployeeId(String employeeId) {
-        Person employee = findPerson(employeeId);
+    public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        Person employee = findPerson(line.getEmployeeId());
         boolean valid = ObjectUtils.isNotNull(employee);
         if (valid) {
             LOG.debug("validateEmployeeId, found a valid employee: " + employee.getName());
         } else {
-            LOG.error("validateEmployeeId, found a an invalid employee ID: " + employeeId);
+            String validationError = "Found a an invalid employee ID: " + line.getEmployeeId();
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationError));
+            LOG.error("validateEmployeeId, " + validationError);
         }
         return valid;
     }
@@ -168,30 +175,36 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line) {
-        boolean valid = validateReportId(line.getReportId());
-        valid = validateAccountingLine(line) && valid;
-        valid = validateEmployeeId(line.getEmployeeId()) && valid;
+    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateReportId(line, reportData);
+        valid = validateAccountingLine(line, reportData) && valid;
+        valid = validateEmployeeId(line, reportData) && valid;
         return valid;
     }
     
-    private boolean validateReportId(String reportId) {
-        boolean valid = StringUtils.isNotBlank(reportId);
+    private boolean validateReportId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = StringUtils.isNotBlank(line.getReportId());
         if (valid) {
-            LOG.debug("validateReportId, found a valid report ID: " + reportId);
+            LOG.debug("validateReportId, found a valid report ID: " + line.getReportId());
         } else {
-            LOG.error("validateReportId, no valid report ID");
+            String validationError = "No valid report ID.";
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationError));
+            LOG.error("validateReportId, " + validationError);
         }
         return valid;
     }
 
-    private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line) {
+    private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         reportErrorsWithOriginalAccountingDetails(line);
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
         ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
         ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
+        
+        if (overriddenValidationResults.isNotValid()) {
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
+        }
         
         return overriddenValidationResults.isValid();
     }

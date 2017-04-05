@@ -19,7 +19,7 @@ public class ConcurBatchReportMissingObjectCodeItem extends ConcurBatchReportLin
          this.policyName = policyName;
          this.expenseTypeName = expenseTypeName;
      }
-     
+ 
      public ConcurBatchReportMissingObjectCodeItem(String reportId, String employeeId, String lastName, String firstName, String middleInitial, String itemErrorResult, String policyName,  String expenseTypeName) {
          super(reportId, employeeId, lastName, firstName, middleInitial, itemErrorResult);
          this.policyName = policyName;

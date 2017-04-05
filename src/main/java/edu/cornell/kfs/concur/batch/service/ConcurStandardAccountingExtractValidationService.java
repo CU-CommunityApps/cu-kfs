@@ -14,13 +14,15 @@ public interface ConcurStandardAccountingExtractValidationService {
     
     boolean validateAmountsAndDebitCreditCode(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData);
     
-    boolean validateDebitCreditField(String debitCredit);
+    boolean validateDebitCreditField(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
     
     boolean validateDate(Date date);
     
-    public boolean validateEmployeeId(String employeeId);
+    public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
     
     boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line);
     
-    boolean validateEmployeeGroupId(String employeeGroupId);
+    boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
+    
+    boolean validateEmployeeGroupId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
 }
