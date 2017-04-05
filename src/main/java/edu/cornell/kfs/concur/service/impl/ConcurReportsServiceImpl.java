@@ -26,6 +26,7 @@ import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurReport;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.xmlObjects.AllocationsDTO;
+import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationListDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseEntryDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseReportDetailsDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ItemizationEntryDTO;
@@ -238,6 +239,16 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL));
         LOG.info("updateExpenseReportStatusInConcur(), the resonse status was " + ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
         return response.getStatus() == ClientResponse.Status.OK.getStatusCode();
+    }
+    
+    @Override
+    public ConcurEventNotificationListDTO retrieveConcurEventNotificationListDTO() {
+        LOG.info("retrieveConcurEventNotificationListDTO, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
+        ClientConfig clientConfig = new DefaultClientConfig();
+        Client client = Client.create(clientConfig);
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint()));
+        ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
+        return reportDetails;
     }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {

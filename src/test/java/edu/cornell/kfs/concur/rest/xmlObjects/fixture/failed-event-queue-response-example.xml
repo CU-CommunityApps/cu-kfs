@@ -1,7 +1,8 @@
-<?xml version="1.0"?>
-<NotificationList>
+<NotificationList
+	xmlns="http://www.concursolutions.com/api/notification/2012/06"
+	xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
     <Notification>
-        <Context>context1</Context>
+        <Context i:nil="true"/>
         <EventDateTime>04/01/2017</EventDateTime>
         <EventType>eventType1</EventType>
         <NotificationURI>noticationUri1</NotificationURI>
@@ -9,7 +10,7 @@
         <ObjectURI>objectUri1</ObjectURI>
     </Notification>
     <Notification>
-        <Context>context2</Context>
+        <Context i:nil="true"/>
         <EventDateTime>04/02/2017</EventDateTime>
         <EventType>eventType2</EventType>
         <NotificationURI>noticationUri2</NotificationURI>

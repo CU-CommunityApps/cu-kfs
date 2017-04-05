@@ -52,9 +52,6 @@ public class ConcurEventNotificationListDTOTest {
     }
     
     private void validateConcurEventNotificationDTO(ConcurEventNotificationDTO dto, String indexNumber) {
-        String expectedContext = "context" + indexNumber;
-        assertEquals(EQUAL_ASSERT_STATEMENT, expectedContext, dto.getContext());
-        
         String expectedEventType = "eventType" + indexNumber;
         assertEquals(EQUAL_ASSERT_STATEMENT, expectedEventType, dto.getEventType());
         
