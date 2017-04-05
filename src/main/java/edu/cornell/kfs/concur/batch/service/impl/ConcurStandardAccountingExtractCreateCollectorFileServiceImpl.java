@@ -17,6 +17,7 @@ import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
@@ -43,8 +44,9 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected String collectorDirectoryPath;
 
     @Override
-    public String buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
-        CollectorBatch collectorBatch = buildCollectorBatch(saeFileContents);
+    public String buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents,
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        CollectorBatch collectorBatch = buildCollectorBatch(saeFileContents, reportData);
         if (collectorBatch == null) {
             LOG.error("There was a problem preparing the data for the Collector file; will not create a file. See earlier logs for details.");
             return StringUtils.EMPTY;
@@ -52,10 +54,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch);
     }
 
-    protected CollectorBatch buildCollectorBatch(ConcurStandardAccountingExtractFile saeFileContents) {
+    protected CollectorBatch buildCollectorBatch(ConcurStandardAccountingExtractFile saeFileContents,
+            ConcurStandardAccountingExtractBatchReportData reportData) {
         ConcurStandardAccountingExtractCollectorBatchBuilder builder = createBatchBuilder();
         int sequenceNumber = calculateBatchSequenceNumber();
-        return builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents);
+        return builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents, reportData);
     }
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {

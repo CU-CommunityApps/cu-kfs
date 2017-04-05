@@ -27,6 +27,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEFileFixture;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
@@ -107,7 +108,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();
         ConcurStandardAccountingExtractFile saeFileContents = fixtureToBuildFrom.toExtractFile();
-        CollectorBatch actual = builder.buildCollectorBatchFromStandardAccountingExtract(1, saeFileContents);
+        ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
+        CollectorBatch actual = builder.buildCollectorBatchFromStandardAccountingExtract(1, saeFileContents, reportData);
         
         assertNotNull("The SAE file contents should have been converted to a CollectorBatch successfully", actual);
         assertCollectorBatchHasCorrectData(expected, actual);
@@ -249,6 +251,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PERSON;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE :
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PHONE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_OBJECT_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_CASH_OFFSET_OBJECT_CODE;
             default :
                 return null;
         }

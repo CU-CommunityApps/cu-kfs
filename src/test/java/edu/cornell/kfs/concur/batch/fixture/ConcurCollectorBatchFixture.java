@@ -20,18 +20,18 @@ import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 public enum ConcurCollectorBatchFixture {
 
     MERGING_TEST(1, 2, 450.00),
-    UNIQUENESS_TEST(1, 9, 800.00),
-    PAYMENT_CODE_TEST(1, 3, 200.00),
+    UNIQUENESS_TEST(1, 16, 800.00),
+    PAYMENT_CODE_TEST(1, 4, 200.00),
     VALIDATION_TEST(1, 2, 100.00),
-    DEBIT_CREDIT_TEST(1, 4, 274.66),
-    PENDING_CLIENT_TEST(1, 3, 220.00),
+    DEBIT_CREDIT_TEST(1, 8, 559.32),
+    PENDING_CLIENT_TEST(1, 4, 220.00),
     FISCAL_YEAR_TEST1(1, 2, 100.00),
     FISCAL_YEAR_TEST2(1, 2016, "05/20/2016", 2, 100.00),
     FISCAL_YEAR_TEST3(1, 2017, "11/10/2016", 2, 100.00),
     FISCAL_YEAR_TEST4(1, 2016, "06/30/2016", 2, 100.00),
     FISCAL_YEAR_TEST5(1, 2017, "07/01/2016", 2, 100.00),
-    DOCUMENT_NUMBER_TEST(1, 5, 400.00),
-    EMPLOYEE_NAME_TEST(1, 5, 400.00);
+    DOCUMENT_NUMBER_TEST(1, 8, 400.00),
+    EMPLOYEE_NAME_TEST(1, 8, 400.00);
 
     public final Integer batchSequenceNumber;
     public final String universityFiscalYear;
@@ -64,7 +64,7 @@ public enum ConcurCollectorBatchFixture {
             MutableInt nextSequenceNumber = nextSequenceNumbers.computeIfAbsent(
                     originEntry.getDocumentNumber(), (key) -> new MutableInt(0));
             nextSequenceNumber.increment();
-            originEntry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.intValue());
+            originEntry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.toInteger());
             collectorBatch.addOriginEntry(originEntry);
         }
         
