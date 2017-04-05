@@ -174,6 +174,12 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         return null;
     }
     
+    @Deprecated
+    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line) {
+        ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
+        return validateConcurStandardAccountingExtractDetailLine(line, reportData);
+    }
+
     @Override
     public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean valid = validateReportId(line, reportData);
@@ -201,11 +207,11 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
         ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
-        
+
         if (overriddenValidationResults.isNotValid()) {
             reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
         }
-        
+
         return overriddenValidationResults.isValid();
     }
 
