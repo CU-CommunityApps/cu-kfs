@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<NotificationList>
+    <Notification>
+        <Context>context1</Context>
+        <EventDateTime>04/01/2017</EventDateTime>
+        <EventType>eventType1</EventType>
+        <NotificationURI>noticationUri1</NotificationURI>
+        <ObjectType>objectType1</ObjectType>
+        <ObjectURI>objectUri1</ObjectURI>
+    </Notification>
+    <Notification>
+        <Context>context2</Context>
+        <EventDateTime>04/02/2017</EventDateTime>
+        <EventType>eventType2</EventType>
+        <NotificationURI>noticationUri2</NotificationURI>
+        <ObjectType>objectType2</ObjectType>
+        <ObjectURI>objectUri2</ObjectURI>
+    </Notification>
+</NotificationList>
