@@ -65,11 +65,13 @@ public class ConcurConstants {
     public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
     public static final String PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX = "pdp_concur_";
+
     public static final String COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX = "gl_collector_concur_";
     public static final String COLLECTOR_HEADER_RECORD_TYPE = "HD";
     public static final String COLLECTOR_TRAILER_RECORD_TYPE = "TL";
     public static final String COLLECTOR_FILE_DATE_FORMAT = "yyyy-MM-dd";
 
+    public final static String FILE_EXTENSION_DELIMITTER = ".";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";

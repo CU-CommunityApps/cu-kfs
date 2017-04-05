@@ -39,28 +39,49 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected String reportMissingObjectCodesSubTitle;
     
     public File generateReport(ConcurStandardAccountingExtractBatchReportData reportData) {
+        LOG.debug("generateReport, entered");
         initializeReportTitleAndFileName(reportData);
-        writeSummarySubReport(reportData);
-        writeValidationErrorSubReport(reportData);
-        writeMissingObjectCodesSubReport(reportData);
+        if (!writeHeaderValidationErrors(reportData)) {
+            writeSummarySubReport(reportData);
+            writeValidationErrorSubReport(reportData);
+            writeMissingObjectCodesSubReport(reportData);
+        }
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
     
-    protected void initializeReportTitleAndFileName(ConcurStandardAccountingExtractBatchReportData reportData) {
-        String concurFileName = reportData.getConcurFileName();
-        if (StringUtils.isEmpty(concurFileName)) {
-            concurFileName = ConcurConstants.StandardAccountingExtractReport.UNKNOWN_SAE_FILENAME;
-        }
-        getReportWriterService().setFileNamePrefix((getFileNamePrefixFirstPart() + concurFileName + getFileNamePrefixSecondPart()));
+    protected void initializeReportTitleAndFileName(ConcurStandardAccountingExtractBatchReportData  reportData) {
+        LOG.debug("initializeReportTitleAndFileName, entered for Concur data file name:" + reportData.getConcurFileName());
+        String concurFileName = convertConcurFileNameToDefaultWhenNotProvided(reportData.getConcurFileName());
+        getReportWriterService().setFileNamePrefix(buildConcurReportFileNamePrefix(concurFileName, getFileNamePrefixFirstPart(), getFileNamePrefixSecondPart()));
         getReportWriterService().setTitle(getReportTitle());
         getReportWriterService().initialize();
         getReportWriterService().writeNewLines(2);
         getReportWriterService().writeFormattedMessageLine(getReportConcurFileNameLabel() + concurFileName);
         getReportWriterService().writeNewLines(2);
     }
-    
+
+    protected boolean writeHeaderValidationErrors(ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean headerValidationFailed = false;
+        if (CollectionUtils.isNotEmpty(reportData.getHeaderValidationErrors())) {
+            LOG.debug("writeHeaderValidationErrors, detected header validation errors");
+            headerValidationFailed = true;
+            getReportWriterService().writeFormattedMessageLine("--------------------------------------------------------");
+            getReportWriterService().writeFormattedMessageLine("The following header row validation errors were detected");
+            getReportWriterService().writeFormattedMessageLine("--------------------------------------------------------");
+            for (String errorString : reportData.getHeaderValidationErrors()) {
+                getReportWriterService().writeFormattedMessageLine(errorString);
+            }
+            getReportWriterService().writeNewLines(2);
+        }
+        else {
+            LOG.debug("writeHeaderValidationErrors, NO header validation errors detected");
+        }
+        return headerValidationFailed;
+    }
+
     protected void writeSummarySubReport(ConcurStandardAccountingExtractBatchReportData reportData) {
+        LOG.debug("writeSummarySubReport, entered");
         String reimbursementsInExpenseReportLabel = (StringUtils.isEmpty(reportData.getReimbursementsInExpenseReport().getItemLabel())) ?
                 getReimbursementsInExpenseReportLabel() : reportData.getReimbursementsInExpenseReport().getItemLabel();
 
@@ -77,7 +98,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
                 getPdpRecordsProcessedLabel() : reportData.getPdpRecordsProcessed().getItemLabel();
 
         getReportWriterService().writeSubTitle(this.getSummarySubTitle());
-        getReportWriterService().writeNewLines(2);
+        getReportWriterService().writeNewLines(1);
 
         String rowFormat = "%44s %20d %20s";
         String hdrRowFormat = "%44s %20s %20s";
@@ -112,6 +133,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     }
 
     protected void writeValidationErrorSubReport(ConcurStandardAccountingExtractBatchReportData reportData) {
+        LOG.debug("writeValidationErrorSubReport, entered");
         String rowFormat = "%-24s %-24s %-36s %-36s %-14s";
         String hdrRowFormat = "%-24s %-24s %-36s %-36s %-14s";
         Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Middle Initial" };
@@ -142,6 +164,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     }
 
     protected void writeMissingObjectCodesSubReport(ConcurStandardAccountingExtractBatchReportData reportData) {
+        LOG.debug("writeMissingObjectCodesSubReport, entered");
         String rowFormat = "%-20s %-20s %-20s %-20s %-20s %20s";
         String hdrRowFormat = "%-20s %-20s %-20s %-20s %-20s %20s";
         Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Policy Name", "Expense Type Name"};
@@ -171,9 +194,23 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     }
 
     protected void finalizeReport() {
+        LOG.debug("finalizeReport, entered");
         getReportWriterService().writeNewLines(3);
         getReportWriterService().writeFormattedMessageLine(ConcurConstants.StandardAccountingExtractReport.END_OF_REPORT_MESSAGE);
         getReportWriterService().destroy();
+    }
+
+    private String convertConcurFileNameToDefaultWhenNotProvided(String concurFileName) {
+        if (StringUtils.isEmpty(concurFileName)) {
+            return ConcurConstants.StandardAccountingExtractReport.UNKNOWN_SAE_FILENAME;
+        }
+        else {
+            return concurFileName;
+        }
+    }
+
+    private String buildConcurReportFileNamePrefix(String concurFileName, String prefixFirstPart, String prefixSecondPart) {
+        return (prefixFirstPart + (StringUtils.substringBeforeLast(concurFileName, ConcurConstants.FILE_EXTENSION_DELIMITTER)) + prefixSecondPart);
     }
 
     public ReportWriterService getReportWriterService() {

@@ -5,15 +5,13 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.concur.businessobjects.ValidationResult;
-
 public class ConcurBatchReportLineValidationErrorItem {
     private String reportId;
     private String employeeId;
     private String lastName;
     private String firstName;
     private String middleInitial;
-    List<ValidationResult> itemErrorResults;
+    List<String> itemErrorResults;
     
     public ConcurBatchReportLineValidationErrorItem () {
         this.reportId = KFSConstants.EMPTY_STRING;
@@ -21,17 +19,26 @@ public class ConcurBatchReportLineValidationErrorItem {
         this.lastName = KFSConstants.EMPTY_STRING;
         this.firstName = KFSConstants.EMPTY_STRING;
         this.middleInitial = KFSConstants.EMPTY_STRING;
-        this.itemErrorResults = new ArrayList<ValidationResult>();
+        this.itemErrorResults = new ArrayList<String>();
     }
     
-    public ConcurBatchReportLineValidationErrorItem (String reportId, String employeeId, String lastName, String firstName, String middleInitial, List<ValidationResult> itemErrorResults) {
+    public ConcurBatchReportLineValidationErrorItem (String reportId, String employeeId, String lastName, String firstName, String middleInitial, List<String> itemErrorResults) {
         this.reportId = reportId;
         this.employeeId = employeeId;
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleInitial = middleInitial;
         this.itemErrorResults = itemErrorResults;
-    }    
+    }
+
+    public ConcurBatchReportLineValidationErrorItem (String reportId, String employeeId, String lastName, String firstName, String middleInitial, String itemErrorResult) {
+        this.reportId = reportId;
+        this.employeeId = employeeId;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.middleInitial = middleInitial;
+        this.itemErrorResults.add(itemErrorResult);
+    }
 
     public String getReportId() {
         return reportId;
@@ -64,17 +71,17 @@ public class ConcurBatchReportLineValidationErrorItem {
         this.middleInitial = middleInitial;
     }
 
-    public List<ValidationResult> getItemErrorResults() {
+    public List<String> getItemErrorResults() {
         return itemErrorResults;
     }
 
-    public void setItemErrorResults(List<ValidationResult> itemErrorResults) {
+    public void setItemErrorResults(List<String> itemErrorResults) {
         this.itemErrorResults = itemErrorResults;
     }
     
-    public void addItemErrorResult(ValidationResult itemErrorResult) {
+    public void addItemErrorResult(String itemErrorResult) {
         if (itemErrorResults == null) {
-            itemErrorResults = new ArrayList<ValidationResult>();
+            itemErrorResults = new ArrayList<String>();
         }
         this.itemErrorResults.add(itemErrorResult);
     }

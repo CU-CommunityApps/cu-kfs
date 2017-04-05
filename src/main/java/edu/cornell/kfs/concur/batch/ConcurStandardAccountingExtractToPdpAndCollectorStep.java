@@ -25,16 +25,16 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         List<String> listOfSaeFullyQualifiedFileNames = getConcurStandardAccountingExtractService().buildListOfFullyQualifiedFileNamesToBeProcessed();
-        for (String saeFileName : listOfSaeFullyQualifiedFileNames) {
-            LOG.debug("execute, processing: " + saeFileName);
+        for (String saeFullyQualifiedFileName : listOfSaeFullyQualifiedFileNames) {
+            LOG.debug("execute, processing: " + saeFullyQualifiedFileName);
             ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
             try {
-                processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(saeFileName, reportData);
+                processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(saeFullyQualifiedFileName, reportData);
                 getConcurStandardAccountingExtractReportService().generateReport(reportData);
             } catch (Exception e) {
                 LOG.error("execute, there was an unexpected error processing a file: ", e);
             } finally {
-                getFileStorageService().removeDoneFiles(Collections.singletonList(saeFileName));
+                getFileStorageService().removeDoneFiles(Collections.singletonList(saeFullyQualifiedFileName));
             }
         }
         return true;
@@ -45,8 +45,9 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
         LOG.info("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, current File: " + saeFullyQualifiedFileName);
         ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
                 .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
-        if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile)) {
-            String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
+        reportData.setConcurFileName(concurStandardAccoutingExtractFile.getOriginalFileName());
+        if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile, reportData)) {
+            String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile, reportData);
             if (StringUtils.isEmpty(outputFileName)) {
                 success = false;
                 LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);

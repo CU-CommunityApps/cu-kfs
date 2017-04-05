@@ -14,6 +14,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
@@ -29,10 +30,11 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected PersonService personService;
     
     @Override
-    public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
-        boolean valid = validateDetailCount(concurStandardAccountingExtractFile);
-        valid = validateAmountsAndDebitCreditCode(concurStandardAccountingExtractFile) && valid;
-        valid = validateDate(concurStandardAccountingExtractFile.getBatchDate()) && valid;
+    public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
+                                                            ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateDetailCount(concurStandardAccountingExtractFile, reportData);
+        valid = validateAmountsAndDebitCreditCode(concurStandardAccountingExtractFile, reportData) && valid;
+        valid = validateHeaderDate(concurStandardAccountingExtractFile.getBatchDate(), reportData) && valid;
         if (LOG.isDebugEnabled() && valid) {
             LOG.debug("validateConcurStandardAccountExtractFile, passed file level validation, the record counts, batch date, and journal totals are all correct.");
         }
@@ -40,7 +42,8 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     @Override
-    public boolean validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+    public boolean validateDetailCount(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
+                                       ConcurStandardAccountingExtractBatchReportData reportData) {
         Integer numberOfDetailsInHeader = concurStandardAccountingExtractFile.getRecordCount();
         int actualNumberOfDetails = concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().size();
         
@@ -49,15 +52,18 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         if (valid) {
             LOG.debug("validateDetailCount, Number of detail lines is what we expected: " + actualNumberOfDetails);
         } else {
-            LOG.error("validateDetailCount, The header said there were (" + numberOfDetailsInHeader + 
-                    ") detail lines expected, but the actual number of details were (" + actualNumberOfDetails + ")");
+            String validationError = "The header said there were (" + numberOfDetailsInHeader +
+                    ") detail lines expected, but the actual number of details were (" + actualNumberOfDetails + ")";
+            reportData.addHeaderValidationError(validationError);
+            LOG.error("validateDetailCount, " + validationError);
         }
         
         return valid;
     }
 
     @Override
-    public boolean validateAmountsAndDebitCreditCode(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+    public boolean validateAmountsAndDebitCreditCode(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
+                                                     ConcurStandardAccountingExtractBatchReportData reportData) {
         KualiDecimal journalTotal = concurStandardAccountingExtractFile.getJournalAmountTotal();
         KualiDecimal detailTotal = KualiDecimal.ZERO;
         boolean debitCreditValid = true;
@@ -67,6 +73,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             if (line.getJournalAmount() != null) {
                 detailTotal = detailTotal.add(line.getJournalAmount());
             } else {
+         //       String validationError = 
+        //        reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), ));
+           //     nkk log validation error
                 LOG.error("validateAmountsAndDebitCreditCode, Parsed a null KualiDecimal from the original value of " + line.getJournalAmountString());
                 journalTotalValidation = false;
             }
@@ -78,7 +87,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         if (journalTotalValidation) {
             LOG.debug("validateAmounts, journal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
         } else {
-            LOG.error("validateAmounts, The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")");
+            String validationError = "The journal total (" + journalTotal + ") does not equal the detail line total (" + detailTotal + ")";
+            reportData.addHeaderValidationError(validationError);
+            LOG.error("validateAmounts, " + validationError);
         }
         return journalTotalValidation && debitCreditValid && employeeGroupIdValid;
     }
@@ -120,6 +131,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             LOG.debug("validateDate, found a valid date: " + date);
         } else {
             LOG.error("validateDate, found a a null date.");
+        }
+        return valid;
+    }
+
+    protected boolean validateHeaderDate(Date date, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateDate(date);
+        if (!valid) {
+            reportData.addHeaderValidationError("Header row contains an invalid date.");
         }
         return valid;
     }
