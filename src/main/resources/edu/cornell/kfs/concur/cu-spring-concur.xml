@@ -203,7 +203,6 @@
 	<bean id="concurEventNotificationService" parent="concurEventNotificationService-parentBean" />
 	<bean id="concurEventNotificationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
-		<property name="cuMarshalService" ref="cuMarshalService"/>
 		<property name="concurReportsService" ref="concurReportsService"/>
 		<property name="concurEventNotificationConversionService" ref="concurEventNotificationConversionService"/>
 	</bean>

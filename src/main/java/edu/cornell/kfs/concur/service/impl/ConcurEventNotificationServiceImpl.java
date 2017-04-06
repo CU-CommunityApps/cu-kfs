@@ -16,13 +16,11 @@ import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationListDTO;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationConversionService;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
-import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class ConcurEventNotificationServiceImpl implements ConcurEventNotificationService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurEventNotificationServiceImpl.class);
     
     protected BusinessObjectService businessObjectService;
-    protected CUMarshalService cuMarshalService;
     protected ConcurReportsService concurReportsService;
     protected ConcurEventNotificationConversionService concurEventNotificationConversionService;
 
@@ -91,14 +89,6 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
-    }
-
-    public CUMarshalService getCuMarshalService() {
-        return cuMarshalService;
-    }
-
-    public void setCuMarshalService(CUMarshalService cuMarshalService) {
-        this.cuMarshalService = cuMarshalService;
     }
 
     public ConcurReportsService getConcurReportsService() {
