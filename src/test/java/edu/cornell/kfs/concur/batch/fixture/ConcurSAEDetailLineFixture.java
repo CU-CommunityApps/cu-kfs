@@ -27,8 +27,7 @@ public enum ConcurSAEDetailLineFixture {
             ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
             ConcurConstants.DEBIT, 50.00, "12/24/2016"),
-    DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00,
-            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_00001)),
+    DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00),
 
     MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST),
     MERGING_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 75.00),
@@ -114,7 +113,16 @@ public enum ConcurSAEDetailLineFixture {
     EMPLOYEE_NAME_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_LASTNAME,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
     EMPLOYEE_NAME_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FULLNAME,
-            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579));
+            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
+    
+    CASH_AND_CARD_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 100.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    CASH_AND_CARD_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 5.00),
+    
+    CANCELED_TRIP_TEST_LINE1(DEFAULT_CREDIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, -442.40,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    CANCELED_TRIP_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, 10.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID));
 
     public final ConcurSAEFileFixture extractFile;
     public final ConcurEmployeeFixture employee;
@@ -230,7 +238,10 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setOrgRefId(orgRefId);
         detailLine.setJounalDebitCredit(journalDebitCredit);
         detailLine.setJournalAmount(new KualiDecimal(journalAmount));
+        detailLine.setJournalAmountString(String.valueOf(journalAmount));
         detailLine.setReportEndDate(ConcurFixtureUtils.toSqlDate(reportEndDate));
+        detailLine.setPolicy(ConcurTestConstants.DEFAULT_POLICY_NAME);
+        detailLine.setExpenseType(ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME);
         
         return detailLine;
     }
@@ -238,6 +249,11 @@ public enum ConcurSAEDetailLineFixture {
     // This getter is primarily meant for use as a method reference.
     public ConcurSAEFileFixture getExtractFile() {
         return extractFile;
+    }
+
+    // This getter is primarily meant for use as a method reference.
+    public double getJournalAmount() {
+        return journalAmount;
     }
 
     /**

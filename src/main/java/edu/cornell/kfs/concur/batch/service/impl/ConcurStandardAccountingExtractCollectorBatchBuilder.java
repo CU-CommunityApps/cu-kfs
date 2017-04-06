@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
@@ -107,20 +106,29 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.prepaidOffsetAccountNumber = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
         this.prepaidOffsetObjectCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
         this.cashOffsetObjectCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE);
+        
+        reset();
     }
 
-    public void reset() {
+    protected void reset() {
         this.collectorBatch = new CollectorBatch();
         this.lineGroups = new LinkedHashMap<>();
         this.nextFakeObjectCode = 1;
         this.nextTransactionSequenceNumbers = new HashMap<>();
+        this.batchSequenceNumber = 0;
+        this.reportData = null;
     }
 
     public CollectorBatch buildCollectorBatchFromStandardAccountingExtract(int nextBatchSequenceNumber,
             ConcurStandardAccountingExtractFile saeFileContents, ConcurStandardAccountingExtractBatchReportData newReportData) {
+        if (saeFileContents == null) {
+            throw new IllegalArgumentException("saeFileContents cannot be null");
+        } else if (newReportData == null) {
+            throw new IllegalArgumentException("newReportData cannot be null");
+        }
         this.batchSequenceNumber = nextBatchSequenceNumber;
         this.reportData = newReportData;
-        reset();
+        CollectorBatch result;
         
         try {
             LOG.info("Generating Collector data from SAE file: " + saeFileContents.getOriginalFileName());
@@ -135,15 +143,19 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             groupLines(saeFileContents.getConcurStandardAccountingExtractDetailLines());
             updateCollectorBatchWithOriginEntries();
             
-            LOG.info("Finished generating collector data from SAE file: " + saeFileContents.getOriginalFileName());
+            LOG.info("Finished generating Collector data from SAE file: " + saeFileContents.getOriginalFileName());
             LOG.info("Total GL Entry Count: " + collectorBatch.getTotalRecords());
             LOG.info("Total Amount: " + collectorBatch.getTotalAmount());
+            result = collectorBatch;
         } catch (Exception e) {
             LOG.error("Error encountered while generating Collector data from SAE file", e);
-            return null;
+            reportData.addHeaderValidationError("Error processing SAE-to-Collector feed: " + e.getMessage());
+            result = null;
+        } finally {
+            reset();
         }
         
-        return collectorBatch;
+        return result;
     }
 
     protected void updateCollectorBatchHeaderFields(ConcurStandardAccountingExtractFile saeFileContents) {
@@ -168,13 +180,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected void groupLines(List<ConcurStandardAccountingExtractDetailLine> saeLines) {
         for (ConcurStandardAccountingExtractDetailLine saeLine : saeLines) {
             String itemKey = buildItemKey(saeLine);
-            if (concurSAEValidationService.validateConcurStandardAccountingExtractDetailLine(saeLine)
-                    && shouldProcessLine(itemKey, saeLine)) {
+            if (shouldProcessLine(itemKey, saeLine)
+                    && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLine(saeLine, reportData)) {
+                if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
+                    reportPendingClientLine(saeLine);
+                }
                 DetailLineGroup lineGroup = lineGroups.computeIfAbsent(
                         itemKey, (newKey) -> new DetailLineGroup(saeLine.getReportId(), buildOriginEntryForExtractedLine(newKey, saeLine)));
                 lineGroup.addDetailLine(saeLine);
-            } else {
-                reportUnprocessedLine(saeLine);
             }
         }
     }
@@ -207,13 +220,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 return true;
             case ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER :
                 LOG.warn("Found a transaction with a Pre-Paid/Other payment code; it will not be processed. Item key: " + itemKey);
+                reportUnprocessedLine(saeLine, "The line has the Pre-Paid/Other (COPD) payment code");
                 return false;
             case ConcurConstants.PAYMENT_CODE_PSEUDO :
                 LOG.warn("Found a transaction with a Pseudo payment code; it will not be processed. Item key: " + itemKey);
                 reportBypassOfLineWithPseudoPaymentCode(saeLine);
+                reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code");
                 return false;
             default :
                 LOG.warn("Found a transaction with an unknown payment code; it will not be processed. Item key: " + itemKey);
+                reportUnprocessedLine(saeLine, "The line has an unrecognized payment code");
                 return false;
         }
     }
@@ -326,27 +342,27 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected void reportPendingClientLine(ConcurStandardAccountingExtractDetailLine saeLine) {
-        ConcurBatchReportMissingObjectCodeItem pendingClientItem = buildPreConfiguredErrorItem(
-                ConcurBatchReportMissingObjectCodeItem::new, saeLine);
-        pendingClientItem.setPolicyName(saeLine.getPolicy());
-        pendingClientItem.setExpenseTypeName(saeLine.getExpenseType());
+        ConcurBatchReportMissingObjectCodeItem pendingClientItem = new ConcurBatchReportMissingObjectCodeItem(
+                saeLine.getReportId(),
+                saeLine.getEmployeeId(),
+                saeLine.getEmployeeLastName(),
+                saeLine.getEmployeeFirstName(),
+                saeLine.getEmployeeMiddleInitital(),
+                "Line has the \"Pending Client\" object code",
+                saeLine.getPolicy(),
+                saeLine.getExpenseType());
         reportData.addPendingClientObjectCodeLine(pendingClientItem);
     }
 
-    protected void reportUnprocessedLine(ConcurStandardAccountingExtractDetailLine saeLine) {
-        reportData.addValidationErrorFileLine(
-                buildPreConfiguredErrorItem(ConcurBatchReportLineValidationErrorItem::new, saeLine));
-    }
-
-    protected <T extends ConcurBatchReportLineValidationErrorItem> T buildPreConfiguredErrorItem(
-            Supplier<T> errorItemSupplier, ConcurStandardAccountingExtractDetailLine saeLine) {
-        T errorItem = errorItemSupplier.get();
-        errorItem.setReportId(saeLine.getReportId());
-        errorItem.setEmployeeId(saeLine.getEmployeeId());
-        errorItem.setLastName(saeLine.getEmployeeLastName());
-        errorItem.setFirstName(saeLine.getEmployeeFirstName());
-        errorItem.setMiddleInitial(saeLine.getEmployeeMiddleInitital());
-        return errorItem;
+    protected void reportUnprocessedLine(ConcurStandardAccountingExtractDetailLine saeLine, String errorMessage) {
+        ConcurBatchReportLineValidationErrorItem errorItem = new ConcurBatchReportLineValidationErrorItem(
+                saeLine.getReportId(),
+                saeLine.getEmployeeId(),
+                saeLine.getEmployeeLastName(),
+                saeLine.getEmployeeFirstName(),
+                saeLine.getEmployeeMiddleInitital(),
+                errorMessage);
+        reportData.addValidationErrorFileLine(errorItem);
     }
 
     /**
@@ -444,7 +460,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             } else if (amount.isNegative()) {
                 return KFSConstants.GL_CREDIT_CODE;
             } else {
-                throw new IllegalArgumentException("amount cannot be zero");
+                throw new IllegalArgumentException("Cannot have a zero amount for an Origin Entry");
             }
         }
     }

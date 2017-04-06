@@ -35,7 +35,9 @@ public enum ConcurSAEFileFixture {
     FISCAL_YEAR_TEST4("06/30/2016", 1, 50.00),
     FISCAL_YEAR_TEST5("07/01/2016", 1, 50.00),
     DOCUMENT_NUMBER_TEST(4, 200.00),
-    EMPLOYEE_NAME_TEST(4, 200.00);
+    EMPLOYEE_NAME_TEST(4, 200.00),
+    CASH_AND_CARD_TEST(2, 105.00),
+    CANCELED_TRIP_TEST(2, -432.40);
 
     public final String batchId;
     public final String batchDate;
