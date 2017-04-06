@@ -6,6 +6,7 @@ import java.util.List;
 import org.kuali.kfs.krad.exception.ValidationException;
 
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 
 public interface ConcurStandardAccountingExtractService {
 
@@ -13,7 +14,7 @@ public interface ConcurStandardAccountingExtractService {
     
     List<String> buildListOfFullyQualifiedFileNamesToBeProcessed();
 
-    String extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+    String extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData);
 
     boolean extractCollectorFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
     

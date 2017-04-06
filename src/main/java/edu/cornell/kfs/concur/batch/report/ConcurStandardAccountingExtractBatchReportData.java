@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportHeaderValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
@@ -13,7 +12,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 public class ConcurStandardAccountingExtractBatchReportData {
     
     private String concurFileName;
-    private ConcurBatchReportHeaderValidationErrorItem headerValidationErrors;
+    private List<String> headerValidationErrors;
     private ConcurBatchReportSummaryItem reimbursementsInExpenseReport;
     private ConcurBatchReportSummaryItem cashAdvancesRelatedToExpenseReports;
     private ConcurBatchReportSummaryItem expensesPaidOnCorporateCard;
@@ -24,6 +23,7 @@ public class ConcurStandardAccountingExtractBatchReportData {
     
     public ConcurStandardAccountingExtractBatchReportData() {
         this.concurFileName = KFSConstants.EMPTY_STRING;
+        this.headerValidationErrors = new ArrayList<String>();
         this.reimbursementsInExpenseReport = new ConcurBatchReportSummaryItem();
         this.cashAdvancesRelatedToExpenseReports = new ConcurBatchReportSummaryItem();
         this.expensesPaidOnCorporateCard = new ConcurBatchReportSummaryItem();
@@ -34,7 +34,7 @@ public class ConcurStandardAccountingExtractBatchReportData {
     }
     
     public ConcurStandardAccountingExtractBatchReportData(String concurFileName,
-            ConcurBatchReportHeaderValidationErrorItem headerValidationErrors,
+            List<String> headerValidationErrors,
             ConcurBatchReportSummaryItem reimbursementsInExpenseReport,
             ConcurBatchReportSummaryItem cashAdvancesRelatedToExpenseReports,
             ConcurBatchReportSummaryItem expensesPaidOnCorporateCard,
@@ -61,12 +61,19 @@ public class ConcurStandardAccountingExtractBatchReportData {
         this.concurFileName = concurFileName;
     }
 
-    public ConcurBatchReportHeaderValidationErrorItem getHeaderValidationErrors() {
+    public List<String> getHeaderValidationErrors() {
         return headerValidationErrors;
     }
 
-    public void setHeaderValidationErrors(ConcurBatchReportHeaderValidationErrorItem headerValidationErrors) {
+    public void setHeaderValidationErrors(List<String> headerValidationErrors) {
         this.headerValidationErrors = headerValidationErrors;
+    }
+
+    public void addHeaderValidationError(String headerValidationError) {
+        if (headerValidationErrors == null) {
+            headerValidationErrors = new ArrayList<String>();
+        }
+        this.headerValidationErrors.add(headerValidationError);
     }
 
     public ConcurBatchReportSummaryItem getReimbursementsInExpenseReport() {

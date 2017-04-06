@@ -409,7 +409,7 @@
         <property name="fileNamePrefixSecondPart" value="--"/>
         <property name="reportTitle" value="Report for Concur Standard Accounting Extract File Creating KFS PDP and KFS Collector Files"/>
         <property name="summarySubTitle" value="Summary of Record Counts and Dollar Amounts"/>
-        <property name="reportConcurFileNameLabel" value="Report is for Concur Standard Accounting Extract File :          "/>
+        <property name="reportConcurFileNameLabel" value="Report is for Concur Standard Accounting Extract File : "/>
         <property name="reimbursementsInExpenseReportLabel" value="Reimbursements In Expense Report :"/>
         <property name="cashAdvancesRelatedToExpenseReportsLabel" value="Cash Advances Related to Expense Report :"/>
         <property name="expensesPaidOnCorporateCardLabel" value="Expenses Paid on Corporate Card :"/>

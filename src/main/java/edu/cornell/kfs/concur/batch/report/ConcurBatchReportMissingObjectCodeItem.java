@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.concur.businessobjects.ValidationResult;
-
 public class ConcurBatchReportMissingObjectCodeItem extends ConcurBatchReportLineValidationErrorItem {
      private String policyName;
      private String expenseTypeName;
@@ -16,8 +14,14 @@ public class ConcurBatchReportMissingObjectCodeItem extends ConcurBatchReportLin
          this.expenseTypeName = KFSConstants.EMPTY_STRING;
      }
      
-     public ConcurBatchReportMissingObjectCodeItem(String reportId, String employeeId, String lastName, String firstName, String middleInitial, List<ValidationResult> itemErrorResults, String policyName,  String expenseTypeName) {
+     public ConcurBatchReportMissingObjectCodeItem(String reportId, String employeeId, String lastName, String firstName, String middleInitial, List<String> itemErrorResults, String policyName,  String expenseTypeName) {
          super(reportId, employeeId, lastName, firstName, middleInitial, itemErrorResults);
+         this.policyName = policyName;
+         this.expenseTypeName = expenseTypeName;
+     }
+
+     public ConcurBatchReportMissingObjectCodeItem(String reportId, String employeeId, String lastName, String firstName, String middleInitial, String itemErrorResult, String policyName,  String expenseTypeName) {
+         super(reportId, employeeId, lastName, firstName, middleInitial, itemErrorResult);
          this.policyName = policyName;
          this.expenseTypeName = expenseTypeName;
      }

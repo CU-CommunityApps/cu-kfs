@@ -19,6 +19,7 @@ import org.kuali.rice.krad.util.ObjectUtils;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
@@ -128,7 +129,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
     
     @Override
-    public PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+    public PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractBatchReportData reportData) {
         PdpFeedTrailerEntry trailerEntry = new PdpFeedTrailerEntry();
         KualiDecimal pdpTotal = KualiDecimal.ZERO;
         int numberOfDetails = 0;
@@ -142,6 +143,8 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         }
         trailerEntry.setDetailCount(numberOfDetails);
         trailerEntry.setDetailTotAmt(pdpTotal);
+        reportData.getPdpRecordsProcessed().setRecordCount(numberOfDetails);
+        reportData.getPdpRecordsProcessed().setDollarAmount(pdpTotal);
         return trailerEntry;
     }
     

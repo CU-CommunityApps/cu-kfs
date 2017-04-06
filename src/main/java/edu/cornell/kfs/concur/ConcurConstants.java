@@ -65,16 +65,19 @@ public class ConcurConstants {
     public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
     public static final String PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX = "pdp_concur_";
+
     public static final String COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX = "gl_collector_concur_";
     public static final String COLLECTOR_HEADER_RECORD_TYPE = "HD";
     public static final String COLLECTOR_TRAILER_RECORD_TYPE = "TL";
     public static final String COLLECTOR_FILE_DATE_FORMAT = "yyyy-MM-dd";
 
+    public static final String FILE_EXTENSION_DELIMITTER = ".";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";
         public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "No records with validation errors.";
         public static final String NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE = "No transactions with \"Pending Client\" as the object code.";
+        public static final String NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT = "No validation errors to output.";
         public static final String END_OF_REPORT_MESSAGE = "End of report.";
         public static final String PREFIX_FIRST_PART_NOT_SET_IN_CONFIGURATION_FILE = "PREFIX_FIRST_PART_NOT_SET_IN_CONFIGURATION_FILE";
         public static final String PREFIX_SECOND_PART_NOT_SET_IN_CONFIGURATION_FILE = "PREFIX_SECOND_PART_NOT_SET_IN_CONFIGURATION_FILE";
