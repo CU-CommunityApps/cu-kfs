@@ -71,7 +71,7 @@ public class ConcurConstants {
     public static final String COLLECTOR_TRAILER_RECORD_TYPE = "TL";
     public static final String COLLECTOR_FILE_DATE_FORMAT = "yyyy-MM-dd";
 
-    public final static String FILE_EXTENSION_DELIMITTER = ".";
+    public static final String FILE_EXTENSION_DELIMITTER = ".";
 
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";

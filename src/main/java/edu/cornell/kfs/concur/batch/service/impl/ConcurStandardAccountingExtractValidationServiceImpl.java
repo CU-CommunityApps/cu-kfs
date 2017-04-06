@@ -201,7 +201,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        reportErrorsWithOriginalAccountingDetails(line);
+        logErrorsWithOriginalAccountingDetails(line);
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
         ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
@@ -215,7 +215,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         return overriddenValidationResults.isValid();
     }
 
-    private void reportErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
+    private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
         ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
         buildValidationResult(accountingInformation, false);

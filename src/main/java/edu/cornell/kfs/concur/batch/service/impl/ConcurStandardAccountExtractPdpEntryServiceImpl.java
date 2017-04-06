@@ -144,7 +144,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         trailerEntry.setDetailCount(numberOfDetails);
         trailerEntry.setDetailTotAmt(pdpTotal);
         reportData.getPdpRecordsProcessed().setRecordCount(numberOfDetails);
-        reportData.getPdpRecordsProcessed().setDollarAmount(pdpTotal);;
+        reportData.getPdpRecordsProcessed().setDollarAmount(pdpTotal);
         return trailerEntry;
     }
     

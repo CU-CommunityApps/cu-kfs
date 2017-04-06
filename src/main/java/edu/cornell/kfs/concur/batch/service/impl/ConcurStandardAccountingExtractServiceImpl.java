@@ -146,7 +146,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         KualiDecimal totalReimbursementDollarAmount = KualiDecimal.ZERO;
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
-                totalReimbursementLineCount ++;
+                totalReimbursementLineCount++;
                 totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
                 logJournalAccountCodeOverridden(line, reportData);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line, reportData)) {
