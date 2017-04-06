@@ -27,5 +27,10 @@ public class ConcurEventNotificationServiceImplTest {
         String actualNotificationId = concurEventNotificationServiceImpl.findNotificationId(notificationURI);
         assertEquals("Expected NotificationId and ActualNotificationId should be the same", expectedNotifcationId, actualNotificationId);
     }
+    
+    @Test
+    public void failingUnitTestForBryan() {
+        assertTrue("this is a failing unit test to see what Happens in Jenkins.", false);
+    }
 
 }
