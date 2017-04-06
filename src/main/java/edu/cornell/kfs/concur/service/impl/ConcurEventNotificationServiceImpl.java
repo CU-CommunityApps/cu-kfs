@@ -60,20 +60,15 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     public void retrieveAndPersistFailedEventQueueReports() {
         ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveConcurEventNotificationListDTO();
         if (areThereNotificationsToProcess(notificationList)) {
-            int counter = 0;
             LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
             for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
                 try {
                     ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
                     saveConcurEventNotification(concurEventNotification);
-                    if (counter == 0) {
-                        LOG.info("retrieveAndPersistFailedEventQueueReports, NotificationURI: " + concurEventNotification.getNotificationURI());
                     getConcurReportsService().deleteFailedEventQueueItem(findNotificationId(concurEventNotification.getNotificationURI()));
-                    }
                 } catch (ParseException e) {
                     LOG.error("validate():" + e.getMessage(), e);
                 }
-                counter++;
             }
         } else {
             LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");

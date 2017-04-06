@@ -9,6 +9,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.taskdefs.Delete;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
@@ -89,7 +90,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
 
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI));
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
         TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
 
         return reportDetails;
@@ -99,13 +100,13 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
 
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI));
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
         ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
 
         return reportDetails;
     }
 
-    protected ClientRequest buildReportDetailsClientRequest(String reportURI) {
+    protected ClientRequest buildReportDetailsClientRequest(String reportURI, String httpMethod) {
         ClientRequest.Builder builder = new ClientRequest.Builder();
         builder.accept(MediaType.APPLICATION_XML);
         builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken());
@@ -116,7 +117,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
             throw new RuntimeException("An error occured while building the report details URI: ", e);
         }
 
-        return builder.build(uri, HttpMethod.GET);
+        return builder.build(uri, httpMethod);
     }
 
     protected List<ConcurAccountInfo> extractAccountInfoFromExpenseReportDetails(ExpenseReportDetailsDTO reportDetails) {
@@ -219,27 +220,16 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     public boolean deleteFailedEventQueueItem(String noticationId) {
         LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
         String deleteItemURL = getConcurFailedRequestDeleteNortificationEndpoint() + noticationId;
-        LOG.info("deleteFailedEventQueueItem(), there delete item URL: " + deleteItemURL);
-        String authorizationToken = ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + 
-                concurAccessTokenService.getAccessToken();
+        LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
         
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
         
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, authorizationToken);
-        URI uri;
-        try {
-            uri = new URI(deleteItemURL);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("An error occured while building the report details URI: ", e);
-        }
-
-        ClientRequest resource = builder.build(uri, HttpMethod.DELETE);
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL));
-        LOG.info("deleteFailedEventQueueItem(), the resonse status was " + ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
-        return response.getStatus() == ClientResponse.Status.OK.getStatusCode();
+        int statusCode = response.getStatus();
+        String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+        LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
+        return statusCode == ClientResponse.Status.OK.getStatusCode();
     }
     
     @Override
@@ -247,7 +237,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         LOG.info("retrieveConcurEventNotificationListDTO, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint()));
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
         ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
         return reportDetails;
     }
