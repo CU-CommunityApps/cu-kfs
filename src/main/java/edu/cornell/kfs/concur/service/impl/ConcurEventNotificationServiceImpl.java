@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.BadRequestException;
-
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -72,9 +70,6 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
             }
         } else {
             LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
-        }
-        if (true) {
-            throw new RuntimeException("Lame way to kill processing.");
         }
     }
 
