@@ -27,6 +27,7 @@ public class ConcurEventNotificationProcessingServiceImpl implements ConcurEvent
 
     @Override
     public void processConcurEventNotifications() {
+        concurEventNotificationService.retrieveAndPersistFailedEventQueueReports();
         Collection<ConcurEventNotification> concurEventNotifications = concurEventNotificationService.retrieveConcurEventNotificationsForProcessing();
         if (ObjectUtils.isNotNull(concurEventNotifications)) {
             for (ConcurEventNotification concurEventNotification : concurEventNotifications) {

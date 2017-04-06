@@ -203,6 +203,8 @@
 	<bean id="concurEventNotificationService" parent="concurEventNotificationService-parentBean" />
 	<bean id="concurEventNotificationService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurEventNotificationServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
+		<property name="concurReportsService" ref="concurReportsService"/>
+		<property name="concurEventNotificationConversionService" ref="concurEventNotificationConversionService"/>
 	</bean>
 	
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
@@ -229,6 +231,12 @@
 		</property>
 		<property name="concurRequestWorkflowUpdateNamespace">
 			<value>${concur.request.workflow.update.namespace}</value>
+		</property>
+		<property name="concurFailedRequestQueueEndpoint">
+			<value>${concur.failed.request.queue}</value>
+		</property>
+		<property name="concurFailedRequestDeleteNotificationEndpoint">
+			<value>${concur.failed.request.queue.delete}</value>
 		</property>
 	</bean>
 	
