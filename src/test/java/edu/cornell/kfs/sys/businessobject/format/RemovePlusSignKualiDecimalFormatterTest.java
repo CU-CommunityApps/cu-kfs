@@ -52,7 +52,7 @@ public class RemovePlusSignKualiDecimalFormatterTest {
     }
     
     @Test
-    public void convertNonNumberic() {
+    public void convertNonNumeric() {
         KualiDecimal expected = null;
         KualiDecimal actual = (KualiDecimal) kualiDecimalFormatter.convertToObject("xyz");
         assertEquals(ASSERT_SHOULD_EQUAL_MESSAGE, expected, actual);

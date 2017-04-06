@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.log4j.Level;
@@ -14,13 +15,19 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.fixture.ConcurStandardAccountingExtractFileFixture;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractValidationServiceImplTest {
     private static final String DEFAULT_GROUP_ID  = "CORNELL";
+    private static final String NULL_GROUP_ID  = null;
+    private static final String FOO_GROUP_ID  = "foo";
     
     private ConcurStandardAccountingExtractValidationService concurStandardAccountingValidationService;
     private ConcurStandardAccountingExtractFile file;
+    private ConcurStandardAccountingExtractFile nullGroupIdFile;
+    private ConcurStandardAccountingExtractFile fooGroupIdFile;
+    private ConcurStandardAccountingExtractBatchReportData reportData;
     
     @Before
     public void setUp() throws Exception {
@@ -29,41 +36,47 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         
         KualiDecimal[] debits = {new KualiDecimal(100.75), new KualiDecimal(-50.45)};
         KualiDecimal[] credits  = {};
-        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits);
+        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, DEFAULT_GROUP_ID);
+        nullGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, NULL_GROUP_ID);
+        fooGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, FOO_GROUP_ID);
+        reportData = new ConcurStandardAccountingExtractBatchReportData();
     }
 
     @After
     public void tearDown() throws Exception {
         concurStandardAccountingValidationService = null;
         file = null;
+        nullGroupIdFile = null;
+        fooGroupIdFile = null;
+        reportData = null;
     }
     
     @Test
     public void validateDetailCountGood() {
-        assertTrue("The counts should be been the same.", concurStandardAccountingValidationService.validateDetailCount(file));
+        assertTrue("The counts should be been the same.", concurStandardAccountingValidationService.validateDetailCount(file, reportData));
     }
     
     @Test
     public void validateDetailCountIncorrectMatch() {
         setBadRecordCount();
-        assertFalse("The counts should NOT be been the same.", concurStandardAccountingValidationService.validateDetailCount(file));
+        assertFalse("The counts should NOT be been the same.", concurStandardAccountingValidationService.validateDetailCount(file, reportData));
     }
     
     @Test
     public void validateAmountsGood() {
-        assertTrue("The amounts should equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file));
+        assertTrue("The amounts should equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file, reportData));
     }
     
     @Test
     public void validateAmountsAmountMismatch() {
         setBadJournalTotal();
-        assertFalse("The amounts should NOT be equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file));
+        assertFalse("The amounts should NOT be equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file, reportData));
     }
     
     @Test
     public void validateAmountsIncorrectDebitCredit() {
         setBadDebitCredit();
-        assertFalse("The should throw an error due to incorrect debitCredit field", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file));
+        assertFalse("The should throw an error due to incorrect debitCredit field", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file, reportData));
     }
     
     @Test
@@ -80,56 +93,56 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateGeneralValidationGood() {
-        assertTrue("General Validation should be good.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+        assertTrue("General Validation should be good.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadDate() {
         file.setBatchDate(null);
-        assertFalse("General validation should be false, bad date.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+        assertFalse("General validation should be false, bad date.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadAmount() {
         setBadJournalTotal();
-        assertFalse("General validation should be false, bad journal total.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+        assertFalse("General validation should be false, bad journal total.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadDebitCredit() {
         setBadDebitCredit();
-        assertFalse("General validation should be false, bad debit credit field.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+        assertFalse("General validation should be false, bad debit credit field.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadCount() {
         setBadRecordCount();
-        assertFalse("General validation should be false, bad line count.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+        assertFalse("General validation should be false, bad line count.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
     }
     
     @Test 
     public void validateEmployeeGroupIdGood() {
         assertTrue("This should be a good group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0).getEmployeeGroupId()));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test 
     public void validateEmployeeGroupIdNull() {
         assertFalse("This should be a bad group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId(null));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(nullGroupIdFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test 
     public void validateEmployeeGroupIdWrongValue() {
         assertFalse("This should be a bad group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId("foo"));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(fooGroupIdFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test
     public void validateGeneralValidationBadEmoployeeGroup() {
         file.getConcurStandardAccountingExtractDetailLines().get(0).setEmployeeGroupId("testMe");
         assertFalse("General validation should be false, bad employee group id.", 
-                concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file));
+                concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
     }
     
     private void setBadJournalTotal() {
