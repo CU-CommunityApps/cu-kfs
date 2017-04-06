@@ -26,6 +26,7 @@ import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurReport;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.xmlObjects.AllocationsDTO;
+import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationListDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseEntryDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ExpenseReportDetailsDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ItemizationEntryDTO;
@@ -42,6 +43,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     protected ParameterService parameterService;
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
+    private String concurFailedRequestQueueEndpoint;
+    private String concurFailedRequestDeleteNotificationEndpoint;
     
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
@@ -86,7 +89,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
 
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI));
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
         TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
 
         return reportDetails;
@@ -96,13 +99,13 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
 
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI));
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
         ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
 
         return reportDetails;
     }
 
-    protected ClientRequest buildReportDetailsClientRequest(String reportURI) {
+    protected ClientRequest buildReportDetailsClientRequest(String reportURI, String httpMethod) {
         ClientRequest.Builder builder = new ClientRequest.Builder();
         builder.accept(MediaType.APPLICATION_XML);
         builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken());
@@ -113,7 +116,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
             throw new RuntimeException("An error occured while building the report details URI: ", e);
         }
 
-        return builder.build(uri, HttpMethod.GET);
+        return builder.build(uri, httpMethod);
     }
 
     protected List<ConcurAccountInfo> extractAccountInfoFromExpenseReportDetails(ExpenseReportDetailsDTO reportDetails) {
@@ -193,7 +196,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         Client client = Client.create(clientConfig);
         WebResource resource = client.resource(workflowURI);
       
-        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
+        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).
+                header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).
+                post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
 
         response.bufferEntity();
         String result = response.getEntity(String.class);
@@ -210,6 +215,31 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         return xml;
     }
     
+    @Override
+    public boolean deleteFailedEventQueueItemInConcur(String noticationId) {
+        LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
+        String deleteItemURL = getConcurFailedRequestDeleteNotificationEndpoint() + noticationId;
+        LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
+        
+        ClientConfig clientConfig = new DefaultClientConfig();
+        Client client = Client.create(clientConfig);
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
+        
+        int statusCode = response.getStatus();
+        String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+        LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
+        return statusCode == ClientResponse.Status.OK.getStatusCode();
+    }
+    
+    @Override
+    public ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur() {
+        LOG.info("retrieveConcurEventNotificationListDTO, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
+        ClientConfig clientConfig = new DefaultClientConfig();
+        Client client = Client.create(clientConfig);
+        ClientResponse response = client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
+        ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
+        return reportDetails;
+    }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
         String errorMessagesString = addMessageHeader(message);
@@ -267,6 +297,22 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     public void setConcurRequestWorkflowUpdateNamespace(
             String concurRequestWorkflowUpdateNamespace) {
         this.concurRequestWorkflowUpdateNamespace = concurRequestWorkflowUpdateNamespace;
+    }
+
+    public String getConcurFailedRequestQueueEndpoint() {
+        return concurFailedRequestQueueEndpoint;
+    }
+
+    public void setConcurFailedRequestQueueEndpoint(String concurFailedRequestQueueEndpoint) {
+        this.concurFailedRequestQueueEndpoint = concurFailedRequestQueueEndpoint;
+    }
+
+    public String getConcurFailedRequestDeleteNotificationEndpoint() {
+        return concurFailedRequestDeleteNotificationEndpoint;
+    }
+
+    public void setConcurFailedRequestDeleteNotificationEndpoint(String concurFailedRequestDeleteNotificationEndpoint) {
+        this.concurFailedRequestDeleteNotificationEndpoint = concurFailedRequestDeleteNotificationEndpoint;
     }
 
 }
