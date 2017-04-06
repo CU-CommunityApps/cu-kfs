@@ -1,15 +1,21 @@
 package edu.cornell.kfs.concur.service.impl;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.BadRequestException;
+
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
+import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationListDTO;
+import edu.cornell.kfs.concur.service.ConcurEventNotificationConversionService;
 import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
 import edu.cornell.kfs.sys.service.CUMarshalService;
@@ -20,6 +26,7 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     protected BusinessObjectService businessObjectService;
     protected CUMarshalService cuMarshalService;
     protected ConcurReportsService concurReportsService;
+    protected ConcurEventNotificationConversionService concurEventNotificationConversionService;
 
     @Override
     public void saveConcurEventNotification(ConcurEventNotification concurEventNotification) {
@@ -52,14 +59,40 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
         ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveConcurEventNotificationListDTO();
-        if (notificationList != null && notificationList.getConcurEventNotificationDTOs() != null && notificationList.getConcurEventNotificationDTOs().size() > 0) {
+        if (areThereNotificationsToProcess(notificationList)) {
+            int counter = 0;
             LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
+            for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
+                try {
+                    ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
+                    saveConcurEventNotification(concurEventNotification);
+                    if (counter == 0) {
+                        LOG.info("retrieveAndPersistFailedEventQueueReports, NotificationURI: " + concurEventNotification.getNotificationURI());
+                    getConcurReportsService().deleteFailedEventQueueItem(findNotificationId(concurEventNotification.getNotificationURI()));
+                    }
+                } catch (ParseException e) {
+                    LOG.error("validate():" + e.getMessage(), e);
+                }
+                counter++;
+            }
         } else {
             LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
         }
         if (true) {
             throw new RuntimeException("Lame way to kill processing.");
         }
+    }
+
+    private boolean areThereNotificationsToProcess(ConcurEventNotificationListDTO notificationList) {
+        return notificationList != null && 
+                notificationList.getConcurEventNotificationDTOs() != null && 
+                notificationList.getConcurEventNotificationDTOs().size() > 0;
+    }
+    
+    protected String findNotificationId(String notificationUri) {
+        String[] uriElements = StringUtils.split(notificationUri, "/");
+        int lastIndex = uriElements.length - 1;
+        return uriElements[lastIndex];
     }
 
     public BusinessObjectService getBusinessObjectService() {
@@ -84,6 +117,15 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
 
     public void setConcurReportsService(ConcurReportsService concurReportsService) {
         this.concurReportsService = concurReportsService;
+    }
+
+    public ConcurEventNotificationConversionService getConcurEventNotificationConversionService() {
+        return concurEventNotificationConversionService;
+    }
+
+    public void setConcurEventNotificationConversionService(
+            ConcurEventNotificationConversionService concurEventNotificationConversionService) {
+        this.concurEventNotificationConversionService = concurEventNotificationConversionService;
     }
 
 }

@@ -205,6 +205,7 @@
 		<property name="businessObjectService" ref="businessObjectService"/>
 		<property name="cuMarshalService" ref="cuMarshalService"/>
 		<property name="concurReportsService" ref="concurReportsService"/>
+		<property name="concurEventNotificationConversionService" ref="concurEventNotificationConversionService"/>
 	</bean>
 	
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />

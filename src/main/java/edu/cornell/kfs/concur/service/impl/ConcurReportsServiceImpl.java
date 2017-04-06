@@ -217,8 +217,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     
     @Override
     public boolean deleteFailedEventQueueItem(String noticationId) {
-        LOG.info("updateExpenseReportStatusInConcur(), noticationId: " + noticationId);
+        LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
         String deleteItemURL = getConcurFailedRequestDeleteNortificationEndpoint() + noticationId;
+        LOG.info("deleteFailedEventQueueItem(), there delete item URL: " + deleteItemURL);
         String authorizationToken = ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + 
                 concurAccessTokenService.getAccessToken();
         
@@ -235,9 +236,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
             throw new RuntimeException("An error occured while building the report details URI: ", e);
         }
 
-        ClientRequest resource = builder.build(uri, HttpMethod.GET);
+        ClientRequest resource = builder.build(uri, HttpMethod.DELETE);
         ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL));
-        LOG.info("updateExpenseReportStatusInConcur(), the resonse status was " + ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
+        LOG.info("deleteFailedEventQueueItem(), the resonse status was " + ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
         return response.getStatus() == ClientResponse.Status.OK.getStatusCode();
     }
     
