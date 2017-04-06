@@ -147,7 +147,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
                 totalReimbursementLineCount ++;
-                totalReimbursementDollarAmount.add(line.getJournalAmount());
+                totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
                 logJournalAccountCodeOverridden(line, reportData);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line, reportData)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
