@@ -72,10 +72,14 @@
 		<property name="paymentImportDirectory">
 			<value>${staging.directory}/pdp/paymentImport/</value>
 		</property>
+		<property name="collectorImportDirectory">
+		    <value>${staging.directory}/gl/collectorFlatFile</value>
+		</property>
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 		<property name="cuMarshalService" ref="cuMarshalService"/>
 		<property name="concurStandardAccountExtractPdpEntryService" ref="concurStandardAccountExtractPdpEntryService"/>
+		<property name="concurStandardAccountingExtractCreateCollectorFileService" ref="concurStandardAccountingExtractCreateCollectorFileService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
 		<property name="parameterService" ref="parameterService"/>
 	</bean>
@@ -83,6 +87,20 @@
 	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />
 	<bean id="concurStandardAccountExtractPdpEntryService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountExtractPdpEntryServiceImpl" abstract="true">
 		<property name="dataDictionaryService" ref="dataDictionaryService"/>
+		<property name="dateTimeService" ref="dateTimeService"/>
+		<property name="parameterService" ref="parameterService"/>
+	</bean>
+	
+	<bean id="concurStandardAccountingExtractCreateCollectorFileService" parent="concurStandardAccountingExtractCreateCollectorFileService-parentBean"/>
+	<bean id="concurStandardAccountingExtractCreateCollectorFileService-parentBean" abstract="true"
+			class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractCreateCollectorFileServiceImpl">
+		<property name="collectorDirectoryPath">
+		    <value>${staging.directory}/gl/collectorFlatFile</value>
+		</property>
+		<property name="concurSAEValidationService" ref="concurStandardAccountingExtractValidationService"/>
+		<property name="collectorFlatFileSerializerService" ref="concurCollectorFlatFileSerializerService"/>
+		<property name="batchFileLookupableHelperService" ref="batchFileLookupableHelperService"/>
+		<property name="universityDateService" ref="universityDateService"/>
 		<property name="dateTimeService" ref="dateTimeService"/>
 		<property name="parameterService" ref="parameterService"/>
 	</bean>
@@ -171,6 +189,36 @@
         <property name="fileNamePrefix" value="extract_CES_SAE_v3_"/>
     </bean>
 	
+	<bean id="concurCollectorFlatFileSerializerService" parent="concurCollectorFlatFileSerializerService-parentBean"/>
+	<bean id="concurCollectorFlatFileSerializerService-parentBean" abstract="true" class="edu.cornell.kfs.concur.batch.service.impl.CollectorFlatFileSerializerServiceImpl">
+		<property name="headerSerializerUtils" ref="concurCollectorBatchHeaderSerializerUtil"/>
+		<property name="lineItemSerializerUtils" ref="concurOriginEntrySerializerUtil"/>
+		<property name="footerSerializerUtils" ref="concurCollectorBatchTrailerRecordSerializerUtil"/>
+	</bean>
+
+	<bean id="concurCollectorBatchHeaderSerializerUtil" parent="concurCollectorBatchHeaderSerializerUtil-parentBean"/>
+	<bean id="concurCollectorBatchHeaderSerializerUtil-parentBean" abstract="true" class="edu.cornell.kfs.concur.batch.businessobject.CollectorBatchHeaderSerializerFieldUtil">
+		<property name="parserFieldUtils">
+			<bean class="org.kuali.kfs.gl.batch.CollectorBatchHeaderFieldUtil"/>
+		</property>
+		<property name="dateTimeService" ref="dateTimeService"/>
+	</bean>
+
+	<bean id="concurOriginEntrySerializerUtil" parent="concurOriginEntrySerializerUtil-parentBean"/>
+	<bean id="concurOriginEntrySerializerUtil-parentBean" abstract="true" class="edu.cornell.kfs.concur.batch.businessobject.OriginEntrySerializerFieldUtil">
+		<property name="parserFieldUtils">
+			<bean class="org.kuali.kfs.gl.batch.businessobject.OriginEntryFieldUtil"/>
+		</property>
+		<property name="dateTimeService" ref="dateTimeService"/>
+	</bean>
+
+	<bean id="concurCollectorBatchTrailerRecordSerializerUtil" parent="concurCollectorBatchTrailerRecordSerializerUtil-parentBean"/>
+	<bean id="concurCollectorBatchTrailerRecordSerializerUtil-parentBean" abstract="true"
+			class="edu.cornell.kfs.concur.batch.businessobject.CollectorBatchTrailerRecordSerializerFieldUtil">
+		<property name="parserFieldUtils">
+			<bean class="org.kuali.kfs.gl.batch.CollectorBatchTrailerRecordFieldUtil"/>
+		</property>
+	</bean>
 	
 	<bean id="concurEventNotificationProcessingBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">

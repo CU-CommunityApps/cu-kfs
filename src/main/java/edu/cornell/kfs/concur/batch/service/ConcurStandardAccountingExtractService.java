@@ -16,8 +16,12 @@ public interface ConcurStandardAccountingExtractService {
 
     String extractPdpFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData);
 
-    boolean extractCollectorFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+    String extractCollectorFeedFromStandardAccountingExtract(
+            ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData);
     
     void createDoneFileForPdpFile(String pdpFileName) throws IOException;
 
+    void removeDoneFileForPdpFileQuietly(String pdpFileName);
+
+    void createDoneFileForCollectorFile(String collectorFileName) throws IOException;
 }
