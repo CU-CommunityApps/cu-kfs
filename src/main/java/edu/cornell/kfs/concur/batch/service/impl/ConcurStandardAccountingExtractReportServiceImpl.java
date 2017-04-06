@@ -106,6 +106,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         Object[] headerBreak = { "------------------------------------------", "------------", "-------------" };
         getReportWriterService().setNewPage(false);
         getReportWriterService().writeNewLines(1);
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
 
@@ -148,16 +149,20 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
             getReportWriterService().writeFormattedMessageLine(ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
         }
         else {
-            for(ConcurBatchReportLineValidationErrorItem errorItem : reportData.getValidationErrorFileLines()){
+            for(ConcurBatchReportLineValidationErrorItem errorItem : reportData.getValidationErrorFileLines()) {
                 if (getReportWriterService().isNewPage() || firstLine) {
                     firstLine = false;
                     getReportWriterService().setNewPage(false);
                     getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
                     getReportWriterService().writeNewLines(1);
-                    getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
-                    getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
                 }
+                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
+                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
                 getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(), errorItem.getFirstName(), errorItem.getMiddleInitial());
+                getReportWriterService().writeNewLines(1);
+                writeErrorItemMessages(errorItem.getItemErrorResults());
+                getReportWriterService().writeNewLines(1);
             }
         }
         getReportWriterService().pageBreak();
@@ -172,23 +177,39 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
         boolean firstLine = true;
 
-        if (CollectionUtils.isEmpty(reportData.getValidationErrorFileLines())) {
+        if (CollectionUtils.isEmpty(reportData.getPendingClientObjectCodeLines())) {
             getReportWriterService().setNewPage(false);
             getReportWriterService().writeSubTitle(getReportMissingObjectCodesSubTitle());
             getReportWriterService().writeNewLines(1);
             getReportWriterService().writeFormattedMessageLine(ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE);
         }
         else {
-            for(ConcurBatchReportMissingObjectCodeItem errorItem : reportData.getPendingClientObjectCodeLines()){
+            for(ConcurBatchReportMissingObjectCodeItem errorItem : reportData.getPendingClientObjectCodeLines()) {
                 if (getReportWriterService().isNewPage() || firstLine) {
                     firstLine = false;
                     getReportWriterService().setNewPage(false);
                     getReportWriterService().writeSubTitle(getReportMissingObjectCodesSubTitle());
                     getReportWriterService().writeNewLines(1);
-                    getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
-                    getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
                 }
+                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
+                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
                 getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(), errorItem.getFirstName(), errorItem.getMiddleInitial());
+                getReportWriterService().writeNewLines(1);
+                writeErrorItemMessages(errorItem.getItemErrorResults());
+                getReportWriterService().writeNewLines(1);
+            }
+        }
+    }
+
+    private void writeErrorItemMessages(List<String> errorMessages) {
+        LOG.debug("writeErrorItemMessages, entered");
+        if (CollectionUtils.isEmpty(errorMessages)) {
+            getReportWriterService().writeFormattedMessageLine(ConcurConstants.StandardAccountingExtractReport.NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT);
+        }
+        else {
+            for (String errorMessage : errorMessages) {
+                getReportWriterService().writeFormattedMessageLine(errorMessage);
             }
         }
     }

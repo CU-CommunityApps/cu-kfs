@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.log4j.Level;
@@ -19,9 +20,13 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValid
 
 public class ConcurStandardAccountingExtractValidationServiceImplTest {
     private static final String DEFAULT_GROUP_ID  = "CORNELL";
+    private static final String NULL_GROUP_ID  = null;
+    private static final String FOO_GROUP_ID  = "foo";
     
     private ConcurStandardAccountingExtractValidationService concurStandardAccountingValidationService;
     private ConcurStandardAccountingExtractFile file;
+    private ConcurStandardAccountingExtractFile nullGroupIdFile;
+    private ConcurStandardAccountingExtractFile fooGroupIdFile;
     private ConcurStandardAccountingExtractBatchReportData reportData;
     
     @Before
@@ -31,7 +36,9 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         
         KualiDecimal[] debits = {new KualiDecimal(100.75), new KualiDecimal(-50.45)};
         KualiDecimal[] credits  = {};
-        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits);
+        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, DEFAULT_GROUP_ID);
+        nullGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, NULL_GROUP_ID);
+        fooGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, FOO_GROUP_ID);
         reportData = new ConcurStandardAccountingExtractBatchReportData();
     }
 
@@ -39,6 +46,8 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     public void tearDown() throws Exception {
         concurStandardAccountingValidationService = null;
         file = null;
+        nullGroupIdFile = null;
+        fooGroupIdFile = null;
         reportData = null;
     }
     
@@ -114,19 +123,19 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     @Test 
     public void validateEmployeeGroupIdGood() {
         assertTrue("This should be a good group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0).getEmployeeGroupId()));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test 
     public void validateEmployeeGroupIdNull() {
         assertFalse("This should be a bad group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId(null));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(nullGroupIdFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test 
     public void validateEmployeeGroupIdWrongValue() {
         assertFalse("This should be a bad group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId("foo"));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(fooGroupIdFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test

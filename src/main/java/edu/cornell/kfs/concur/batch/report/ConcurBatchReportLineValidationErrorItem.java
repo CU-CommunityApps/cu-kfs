@@ -37,7 +37,7 @@ public class ConcurBatchReportLineValidationErrorItem {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleInitial = middleInitial;
-        this.itemErrorResults.add(itemErrorResult);
+        this.addItemErrorResult(itemErrorResult);
     }
 
     public String getReportId() {
@@ -85,5 +85,5 @@ public class ConcurBatchReportLineValidationErrorItem {
         }
         this.itemErrorResults.add(itemErrorResult);
     }
-    
+
 }

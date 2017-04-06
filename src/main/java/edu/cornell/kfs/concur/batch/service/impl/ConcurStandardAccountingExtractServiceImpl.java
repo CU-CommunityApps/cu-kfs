@@ -25,6 +25,7 @@ import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
@@ -140,16 +141,21 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData) {
         PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
         pdpFeedFileBaseEntry.setVersion(ConcurConstants.FEED_FILE_ENTRY_HEADER_VERSION);
-        pdpFeedFileBaseEntry.setHeader(
-                getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
+        pdpFeedFileBaseEntry.setHeader(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedHeaderEntry(concurStandardAccountingExtractFile.getBatchDate()));
+        int totalReimbursementLineCount = 0;
+        KualiDecimal totalReimbursementDollarAmount = KualiDecimal.ZERO;
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
+                totalReimbursementLineCount ++;
+                totalReimbursementDollarAmount.add(line.getJournalAmount());
                 logJournalAccountCodeOverridden(line, reportData);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line, reportData)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
                 }
             }
         }
+        reportData.getReimbursementsInExpenseReport().setRecordCount(totalReimbursementLineCount);
+        reportData.getReimbursementsInExpenseReport().setDollarAmount(totalReimbursementDollarAmount);
         pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, reportData));
         return pdpFeedFileBaseEntry;
     }
