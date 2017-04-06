@@ -25,7 +25,7 @@ public class ConcurEventNotificationServiceImplTest {
         String notificationURI = "https://www.concursolutions.com/api/platform/notifications/v1.0/notification/gWu2zdPNXG6oQHp0VDaEmNn77NGJ5aQ9rww";
         String expectedNotifcationId = "gWu2zdPNXG6oQHp0VDaEmNn77NGJ5aQ9rww";
         String actualNotificationId = concurEventNotificationServiceImpl.findNotificationId(notificationURI);
-        assertEquals("Expeted NotificationId and ActualNotificationId should be the same", expectedNotifcationId, actualNotificationId);
+        assertEquals("Expected NotificationId and ActualNotificationId should be the same", expectedNotifcationId, actualNotificationId);
     }
 
 }

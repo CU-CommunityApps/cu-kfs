@@ -36,7 +36,7 @@ public class ConcurEventNotificationListDTOTest {
 
     @Test
     public void marshalEventNoticationListFile() throws JAXBException {
-        ConcurEventNotificationListDTO dto = cuMarshalService.unmarshallFile(xmlFile, ConcurEventNotificationListDTO.class);
+        ConcurEventNotificationListDTO dto = cuMarshalService.unmarshalFile(xmlFile, ConcurEventNotificationListDTO.class);
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(0), "1");
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(1), "2");
         
@@ -45,7 +45,7 @@ public class ConcurEventNotificationListDTOTest {
     @Test
     public void marshalEventNoticationListString() throws JAXBException, IOException {
         String xmlString = FileUtils.readFileToString(xmlFile);
-        ConcurEventNotificationListDTO dto = cuMarshalService.unmarshallString(xmlString, ConcurEventNotificationListDTO.class);
+        ConcurEventNotificationListDTO dto = cuMarshalService.unmarshalString(xmlString, ConcurEventNotificationListDTO.class);
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(0), "1");
         validateConcurEventNotificationDTO(dto.getConcurEventNotificationDTOs().get(1), "2");
         

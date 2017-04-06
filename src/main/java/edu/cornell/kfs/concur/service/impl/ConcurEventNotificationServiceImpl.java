@@ -54,14 +54,14 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
-        ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveConcurEventNotificationListDTO();
+        ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
         if (areThereNotificationsToProcess(notificationList)) {
             LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
             for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
                 try {
                     ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
                     saveConcurEventNotification(concurEventNotification);
-                    getConcurReportsService().deleteFailedEventQueueItem(findNotificationId(concurEventNotification.getNotificationURI()));
+                    getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
                 } catch (ParseException e) {
                     LOG.error("validate():" + e.getMessage(), e);
                 }

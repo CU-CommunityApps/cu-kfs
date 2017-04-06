@@ -235,7 +235,7 @@
 		<property name="concurFailedRequestQueueEndpoint">
 			<value>${concur.failed.request.queue}</value>
 		</property>
-		<property name="concurFailedRequestDeleteNortificationEndpoint">
+		<property name="concurFailedRequestDeleteNotificationEndpoint">
 			<value>${concur.failed.request.queue.delete}</value>
 		</property>
 	</bean>

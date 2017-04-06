@@ -33,14 +33,14 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     }
     
     @Override
-    public <T> T unmarshallFile(File xmlFile, Class<T> clazz) throws JAXBException {
+    public <T> T unmarshalFile(File xmlFile, Class<T> clazz) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(clazz);
         T object = (T) jc.createUnmarshaller().unmarshal(xmlFile);
         return object;
     }
     
     @Override
-    public <T> T unmarshallString(String xmlString, Class<T> clazz) throws JAXBException {
+    public <T> T unmarshalString(String xmlString, Class<T> clazz) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(clazz);
         StringReader reader = new StringReader(xmlString);
         T object = (T) jc.createUnmarshaller().unmarshal(reader);

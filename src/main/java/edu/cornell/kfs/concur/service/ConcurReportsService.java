@@ -10,8 +10,8 @@ public interface ConcurReportsService {
 
     void updateExpenseReportStatusInConcur(String workflowURI, ValidationResult validationResult);
     
-    boolean deleteFailedEventQueueItem(String noticationId);
+    boolean deleteFailedEventQueueItemInConcur(String noticationId);
     
-    ConcurEventNotificationListDTO retrieveConcurEventNotificationListDTO();
+    ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur();
 
 }

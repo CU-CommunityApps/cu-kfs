@@ -44,7 +44,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
-    private String concurFailedRequestDeleteNortificationEndpoint;
+    private String concurFailedRequestDeleteNotificationEndpoint;
     
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
@@ -216,9 +216,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     }
     
     @Override
-    public boolean deleteFailedEventQueueItem(String noticationId) {
+    public boolean deleteFailedEventQueueItemInConcur(String noticationId) {
         LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
-        String deleteItemURL = getConcurFailedRequestDeleteNortificationEndpoint() + noticationId;
+        String deleteItemURL = getConcurFailedRequestDeleteNotificationEndpoint() + noticationId;
         LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
         
         ClientConfig clientConfig = new DefaultClientConfig();
@@ -232,7 +232,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     }
     
     @Override
-    public ConcurEventNotificationListDTO retrieveConcurEventNotificationListDTO() {
+    public ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur() {
         LOG.info("retrieveConcurEventNotificationListDTO, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
@@ -307,12 +307,12 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         this.concurFailedRequestQueueEndpoint = concurFailedRequestQueueEndpoint;
     }
 
-    public String getConcurFailedRequestDeleteNortificationEndpoint() {
-        return concurFailedRequestDeleteNortificationEndpoint;
+    public String getConcurFailedRequestDeleteNotificationEndpoint() {
+        return concurFailedRequestDeleteNotificationEndpoint;
     }
 
-    public void setConcurFailedRequestDeleteNortificationEndpoint(String concurFailedRequestDeleteNortificationEndpoint) {
-        this.concurFailedRequestDeleteNortificationEndpoint = concurFailedRequestDeleteNortificationEndpoint;
+    public void setConcurFailedRequestDeleteNotificationEndpoint(String concurFailedRequestDeleteNotificationEndpoint) {
+        this.concurFailedRequestDeleteNotificationEndpoint = concurFailedRequestDeleteNotificationEndpoint;
     }
 
 }
