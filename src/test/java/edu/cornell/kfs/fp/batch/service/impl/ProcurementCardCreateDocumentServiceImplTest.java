@@ -35,7 +35,7 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     private static String transAmt = "SELECT * FROM FP_PRCRMNT_TRN_DTL_T";
 
     
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/fp/batch/service/fixture/fp_pcdo_usbank_2014267.data";    
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/service/fixture/fp_pcdo_usbank_2014267.data";
     private String batchDirectory;  
 
     
