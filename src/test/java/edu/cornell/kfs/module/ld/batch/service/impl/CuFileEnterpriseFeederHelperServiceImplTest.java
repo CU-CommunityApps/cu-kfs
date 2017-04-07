@@ -25,8 +25,8 @@ import org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl;
 @ConfigureContext
 public class CuFileEnterpriseFeederHelperServiceImplTest  extends KualiTestBase {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederHelperServiceImplTest.class);
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
-    private static final String RECON_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
+    private static final String RECON_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";
     
     private FileEnterpriseFeederHelperService fileEnterpriseFeederHelperService;
     

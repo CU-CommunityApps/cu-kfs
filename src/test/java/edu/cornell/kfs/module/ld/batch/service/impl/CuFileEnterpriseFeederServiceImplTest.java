@@ -20,8 +20,8 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 @ConfigureContext
 public class CuFileEnterpriseFeederServiceImplTest extends KualiTestBase  {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederServiceImplTest.class);
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
-    private static final String RECON_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
+    private static final String RECON_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";
     private static final String LD_REPORTS_FOLDER = "/ld";
     
     private EnterpriseFeederService enterpriseFeederService;
