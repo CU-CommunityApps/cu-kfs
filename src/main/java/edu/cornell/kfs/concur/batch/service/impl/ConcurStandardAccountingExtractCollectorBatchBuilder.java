@@ -1,11 +1,9 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +11,7 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -51,6 +50,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected static final int MAX_BATCH_SEQUENCE_NUMBER = 9;
     protected static final char PIPE_CHAR = '|';
     protected static final char COMMA_CHAR = ',';
+    protected static final String PENDING_CLIENT_MESSAGE = "Line has the \"Pending Client\" object code";
 
     protected final String docTypeCode;
     protected final String systemOriginationCode;
@@ -62,20 +62,21 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected final String notificationEmail;
     protected final String notificationPerson;
     protected final String notificationPhone;
-    protected final String prepaidOffsetAccountNumber;
-    protected final String prepaidOffsetObjectCode;
-    protected final String cashOffsetObjectCode;
 
     protected CollectorBatch collectorBatch;
-    protected Map<String,DetailLineGroup> lineGroups;
+    protected Map<String,ConcurDetailLineGroupForCollector> lineGroups;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
+    protected Function<String,String> parameterService;
     protected ConcurStandardAccountingExtractBatchReportData reportData;
     protected int batchSequenceNumber;
     protected int nextFakeObjectCode;
     protected Map<String,MutableInt> nextTransactionSequenceNumbers;
 
+    /**
+     * @throws IllegalArgumentException if any arguments are null.
+     */
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterService) {
@@ -92,6 +93,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
         this.concurSAEValidationService = concurSAEValidationService;
+        this.parameterService = parameterService;
         
         this.docTypeCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
         this.systemOriginationCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
@@ -103,14 +105,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.notificationEmail = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
         this.notificationPerson = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
         this.notificationPhone = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
-        this.prepaidOffsetAccountNumber = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
-        this.prepaidOffsetObjectCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
-        this.cashOffsetObjectCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE);
         
-        reset();
+        resetBuilderForNextRun();
     }
 
-    protected void reset() {
+    protected void resetBuilderForNextRun() {
         this.collectorBatch = new CollectorBatch();
         this.lineGroups = new LinkedHashMap<>();
         this.nextFakeObjectCode = 1;
@@ -119,6 +118,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.reportData = null;
     }
 
+    /**
+     * @throws IllegalArgumentException if any arguments are null.
+     */
     public CollectorBatch buildCollectorBatchFromStandardAccountingExtract(int nextBatchSequenceNumber,
             ConcurStandardAccountingExtractFile saeFileContents, ConcurStandardAccountingExtractBatchReportData newReportData) {
         if (saeFileContents == null) {
@@ -134,30 +136,33 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             LOG.info("Generating Collector data from SAE file: " + saeFileContents.getOriginalFileName());
             
             if (batchSequenceNumber < MIN_BATCH_SEQUENCE_NUMBER || batchSequenceNumber > MAX_BATCH_SEQUENCE_NUMBER) {
-                throw new IllegalArgumentException("Batch Sequence Number should have been an integer between 0 and 9");
-            } else if (reportData == null) {
-                throw new IllegalArgumentException("Batch Report Data POJO cannot be null");
+                throw new IllegalArgumentException("Batch Sequence Number should have been an integer between "
+                        + MIN_BATCH_SEQUENCE_NUMBER + " and " + MAX_BATCH_SEQUENCE_NUMBER);
             }
             
             updateCollectorBatchHeaderFields(saeFileContents);
             groupLines(saeFileContents.getConcurStandardAccountingExtractDetailLines());
             updateCollectorBatchWithOriginEntries();
             
-            LOG.info("Finished generating Collector data from SAE file: " + saeFileContents.getOriginalFileName());
-            LOG.info("Total GL Entry Count: " + collectorBatch.getTotalRecords());
-            LOG.info("Total Amount: " + collectorBatch.getTotalAmount());
+            LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Finished generating Collector data from SAE file: "
+                    + saeFileContents.getOriginalFileName());
+            LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Total GL Entry Count: " + collectorBatch.getTotalRecords());
+            LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Total Amount: " + collectorBatch.getTotalAmount());
             result = collectorBatch;
         } catch (Exception e) {
-            LOG.error("Error encountered while generating Collector data from SAE file", e);
+            LOG.error("buildCollectorBatchFromStandardAccountingExtract(): Error encountered while generating Collector data from SAE file", e);
             reportData.addHeaderValidationError("Error processing SAE-to-Collector feed: " + e.getMessage());
             result = null;
         } finally {
-            reset();
+            resetBuilderForNextRun();
         }
         
         return result;
     }
 
+    /**
+     * @throws RuntimeException if universityDateService cannot find a fiscal year for the SAE file's batch date.
+     */
     protected void updateCollectorBatchHeaderFields(ConcurStandardAccountingExtractFile saeFileContents) {
         Integer fiscalYear = universityDateService.getFiscalYear(saeFileContents.getBatchDate());
         if (fiscalYear == null) {
@@ -185,15 +190,17 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
                     reportPendingClientLine(saeLine);
                 }
-                DetailLineGroup lineGroup = lineGroups.computeIfAbsent(
-                        itemKey, (newKey) -> new DetailLineGroup(saeLine.getReportId(), buildOriginEntryForExtractedLine(newKey, saeLine)));
+                ConcurDetailLineGroupForCollector lineGroup = lineGroups.computeIfAbsent(
+                        itemKey, (newKey) -> new ConcurDetailLineGroupForCollector(
+                                saeLine.getReportId(), buildOriginEntryForExtractedLine(newKey, saeLine),
+                                parameterService, this::getDashValueForProperty));
                 lineGroup.addDetailLine(saeLine);
             }
         }
     }
 
     protected void updateCollectorBatchWithOriginEntries() {
-        for (DetailLineGroup lineGroup : lineGroups.values()) {
+        for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
             for (OriginEntryFull originEntry : lineGroup.buildOriginEntries()) {
                 originEntry.setTransactionLedgerEntrySequenceNumber(
                         getNextTransactionSequenceNumber(lineGroup.getReportId()));
@@ -219,16 +226,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 reportCorporateCardPayment(saeLine);
                 return true;
             case ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER :
-                LOG.warn("Found a transaction with a Pre-Paid/Other payment code; it will not be processed. Item key: " + itemKey);
                 reportUnprocessedLine(saeLine, "The line has the Pre-Paid/Other (COPD) payment code");
                 return false;
             case ConcurConstants.PAYMENT_CODE_PSEUDO :
-                LOG.warn("Found a transaction with a Pseudo payment code; it will not be processed. Item key: " + itemKey);
                 reportBypassOfLineWithPseudoPaymentCode(saeLine);
                 reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code");
                 return false;
             default :
-                LOG.warn("Found a transaction with an unknown payment code; it will not be processed. Item key: " + itemKey);
                 reportUnprocessedLine(saeLine, "The line has an unrecognized payment code");
                 return false;
         }
@@ -286,6 +290,19 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         originEntry.setTransactionLedgerEntryAmount(KualiDecimal.ZERO);
         
         return originEntry;
+    }
+
+    protected String getDashValueForProperty(String propertyName) {
+        switch (propertyName) {
+            case KFSPropertyConstants.SUB_ACCOUNT_NUMBER :
+                return getDashSubAccountNumber();
+            case KFSPropertyConstants.SUB_OBJECT_CODE :
+                return getDashSubObjectCode();
+            case KFSPropertyConstants.PROJECT_CODE :
+                return getDashProjectCode();
+            default :
+                return StringUtils.EMPTY;
+        }
     }
 
     protected String getDashSubAccountNumber() {
@@ -348,7 +365,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 saeLine.getEmployeeLastName(),
                 saeLine.getEmployeeFirstName(),
                 saeLine.getEmployeeMiddleInitital(),
-                "Line has the \"Pending Client\" object code",
+                PENDING_CLIENT_MESSAGE,
                 saeLine.getPolicy(),
                 saeLine.getExpenseType());
         reportData.addPendingClientObjectCodeLine(pendingClientItem);
@@ -363,106 +380,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 saeLine.getEmployeeMiddleInitital(),
                 errorMessage);
         reportData.addValidationErrorFileLine(errorItem);
-    }
-
-    /**
-     * Internal helper class for encapsulating related SAE transactions,
-     * and for generating Collector OriginEntryFull lines from them.
-     */
-    protected class DetailLineGroup {
-        protected String reportId;
-        protected List<ConcurStandardAccountingExtractDetailLine> detailLines;
-        protected OriginEntryFull baseEntry;
-        protected Map<String,KualiDecimal> paymentCodeAmounts;
-        
-        public DetailLineGroup(String reportId, OriginEntryFull baseEntry) {
-            this.reportId = reportId;
-            this.detailLines = new ArrayList<>();
-            this.baseEntry = baseEntry;
-            this.paymentCodeAmounts = new HashMap<>();
-        }
-        
-        public String getReportId() {
-            return reportId;
-        }
-        
-        public void addDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-            detailLines.add(detailLine);
-            paymentCodeAmounts.merge(detailLine.getPaymentCode(), detailLine.getJournalAmount(), KualiDecimal::add);
-        }
-        
-        public List<OriginEntryFull> buildOriginEntries() {
-            KualiDecimal cashAmount = paymentCodeAmounts.getOrDefault(ConcurConstants.PAYMENT_CODE_CASH, KualiDecimal.ZERO);
-            KualiDecimal corporateCardAmount = paymentCodeAmounts.getOrDefault(
-                    ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, KualiDecimal.ZERO);
-            KualiDecimal totalAmount = cashAmount.add(corporateCardAmount);
-            
-            List<OriginEntryFull> originEntries = new ArrayList<>();
-            if (totalAmount.isNonZero()) {
-                originEntries.add(buildOriginEntry(totalAmount));
-            } else {
-                if (corporateCardAmount.isNonZero()) {
-                    originEntries.add(buildOriginEntry(corporateCardAmount));
-                }
-                if (cashAmount.isNonZero()) {
-                    originEntries.add(buildOriginEntry(cashAmount));
-                }
-            }
-            
-            if (corporateCardAmount.isNonZero()) {
-                originEntries.add(
-                        buildOffsetOriginEntry(corporateCardAmount, this::configureOriginEntryForCorporateCardOffset));
-            }
-            if (cashAmount.isNonZero()) {
-                originEntries.add(
-                        buildOffsetOriginEntry(cashAmount, this::configureOriginEntryForCashOffset));
-            }
-            
-            return originEntries;
-        }
-
-        protected void configureOriginEntryForCorporateCardOffset(OriginEntryFull originEntry) {
-            originEntry.setChartOfAccountsCode(chartCode);
-            originEntry.setAccountNumber(prepaidOffsetAccountNumber);
-            originEntry.setSubAccountNumber(getDashSubAccountNumber());
-            originEntry.setFinancialObjectCode(prepaidOffsetObjectCode);
-            originEntry.setFinancialSubObjectCode(getDashSubObjectCode());
-        }
-
-        protected void configureOriginEntryForCashOffset(OriginEntryFull originEntry) {
-            originEntry.setFinancialObjectCode(cashOffsetObjectCode);
-            originEntry.setFinancialSubObjectCode(getDashSubObjectCode());
-        }
-
-        protected OriginEntryFull buildOffsetOriginEntry(KualiDecimal amount, Consumer<OriginEntryFull> originEntryConfigurer) {
-            KualiDecimal offsetAmount = amount.negated();
-            return buildOriginEntry(offsetAmount, originEntryConfigurer);
-        }
-        
-        protected OriginEntryFull buildOriginEntry(KualiDecimal amount) {
-            return buildOriginEntry(amount, (originEntry) -> {});
-        }
-
-        protected OriginEntryFull buildOriginEntry(KualiDecimal amount, Consumer<OriginEntryFull> originEntryConfigurer) {
-            OriginEntryFull originEntry = new OriginEntryFull(baseEntry);
-            String debitCreditCode = getGeneralLedgerDebitCreditCode(amount);
-            
-            originEntry.setTransactionDebitCreditCode(debitCreditCode);
-            originEntry.setTransactionLedgerEntryAmount(amount.abs());
-            originEntryConfigurer.accept(originEntry);
-            
-            return originEntry;
-        }
-
-        protected String getGeneralLedgerDebitCreditCode(KualiDecimal amount) {
-            if (amount.isPositive()) {
-                return KFSConstants.GL_DEBIT_CODE;
-            } else if (amount.isNegative()) {
-                return KFSConstants.GL_CREDIT_CODE;
-            } else {
-                throw new IllegalArgumentException("Cannot have a zero amount for an Origin Entry");
-            }
-        }
     }
 
 }

@@ -268,7 +268,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         T serializerFieldUtils = serializerUtilsClass.newInstance();
         serializerFieldUtils.setParserFieldUtils(parserFieldUtils);
         utilsConfigurer.accept(serializerFieldUtils);
-        serializerFieldUtils.afterPropertiesSet();
         return serializerFieldUtils;
     }
 

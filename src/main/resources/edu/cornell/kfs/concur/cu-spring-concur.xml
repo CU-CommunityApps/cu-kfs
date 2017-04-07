@@ -73,7 +73,7 @@
 			<value>${staging.directory}/pdp/paymentImport/</value>
 		</property>
 		<property name="collectorImportDirectory">
-		    <value>${staging.directory}/gl/collectorFlatFile</value>
+		    <value>${staging.directory}/gl/collectorFlatFile/</value>
 		</property>
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
@@ -95,7 +95,7 @@
 	<bean id="concurStandardAccountingExtractCreateCollectorFileService-parentBean" abstract="true"
 			class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractCreateCollectorFileServiceImpl">
 		<property name="collectorDirectoryPath">
-		    <value>${staging.directory}/gl/collectorFlatFile</value>
+		    <value>${staging.directory}/gl/collectorFlatFile/</value>
 		</property>
 		<property name="concurSAEValidationService" ref="concurStandardAccountingExtractValidationService"/>
 		<property name="collectorFlatFileSerializerService" ref="concurCollectorFlatFileSerializerService"/>
@@ -207,7 +207,7 @@
 	<bean id="concurOriginEntrySerializerUtil" parent="concurOriginEntrySerializerUtil-parentBean"/>
 	<bean id="concurOriginEntrySerializerUtil-parentBean" abstract="true" class="edu.cornell.kfs.concur.batch.businessobject.OriginEntrySerializerFieldUtil">
 		<property name="parserFieldUtils">
-			<bean class="org.kuali.kfs.gl.batch.businessobject.OriginEntryFieldUtil"/>
+			<bean class="org.kuali.kfs.gl.businessobject.OriginEntryFieldUtil"/>
 		</property>
 		<property name="dateTimeService" ref="dateTimeService"/>
 	</bean>

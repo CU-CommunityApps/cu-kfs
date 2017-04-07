@@ -32,7 +32,7 @@ public enum ConcurCollectorBatchFixture {
     FISCAL_YEAR_TEST5(1, 2017, "07/01/2016", 2, 100.00),
     DOCUMENT_NUMBER_TEST(1, 8, 400.00),
     EMPLOYEE_NAME_TEST(1, 8, 400.00),
-    CASH_AND_CARD_TEST(1, 3, 210.00),
+    CASH_AND_CARD_TEST(1, 4, 210.00),
     CANCELED_TRIP_TEST(1, 2, 864.80);
 
     public final Integer batchSequenceNumber;

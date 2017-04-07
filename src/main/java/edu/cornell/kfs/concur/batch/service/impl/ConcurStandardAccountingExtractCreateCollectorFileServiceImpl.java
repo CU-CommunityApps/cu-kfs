@@ -54,7 +54,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         
         CollectorBatch collectorBatch = buildCollectorBatch(saeFileContents, reportData);
         if (collectorBatch == null) {
-            LOG.error("There was a problem preparing the data for the Collector file; will not create a file. See earlier logs for details.");
+            LOG.error("buildCollectorFile(): There was a problem preparing the data for the Collector file;"
+                    + " will not create a file. See earlier logs for details.");
             return StringUtils.EMPTY;
         }
         return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch, reportData);
@@ -67,7 +68,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
             int sequenceNumber = calculateBatchSequenceNumber();
             return builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents, reportData);
         } catch (Exception e) {
-            LOG.error("Unexpected unhandled error encountered while generating the CollectorBatch object", e);
+            LOG.error("buildCollectorBatch(): Unexpected unhandled error encountered while generating the CollectorBatch object", e);
             reportData.addHeaderValidationError("Encountered an unexpected error while generating Collector data from the SAE file");
             return null;
         }
@@ -114,7 +115,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         String collectorFilePath = buildCollectorFilePath(originalFileName);
         boolean fileCreatedSuccessfully = collectorFlatFileSerializerService.serializeToFlatFile(collectorFilePath, collectorBatch);
         if (!fileCreatedSuccessfully) {
-            LOG.error("An error occurred while writing the data to the Collector file; see earlier logs for details.");
+            LOG.error("writeToCollectorFile(): An error occurred while writing the data to the Collector file; see earlier logs for details.");
             reportData.addHeaderValidationError("Encountered an unexpected I/O error when generating the Collector file");
             return StringUtils.EMPTY;
         }

@@ -272,17 +272,17 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     public void removeDoneFileForPdpFileQuietly(String pdpFileName) {
         try {
             if (!StringUtils.endsWith(pdpFileName, ConcurConstants.XML_FILE_EXTENSION) || !pdpUploadFileExists(pdpFileName)) {
-                LOG.error("Cannot remove PDP .done file if the PDP upload file was not already created.");
+                LOG.error("removeDoneFileForPdpFileQuietly, Cannot remove PDP .done file if the PDP upload file was not already created.");
                 return;
             }
         
             String fullDoneFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
                     GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
             if (!FileUtils.deleteQuietly(new File(fullDoneFilePath))) {
-                LOG.error("Could not remove PDP .done file: " + fullDoneFilePath);
+                LOG.error("removeDoneFileForPdpFileQuietly, Could not remove PDP .done file: " + fullDoneFilePath);
             }
         } catch (RuntimeException e) {
-            LOG.error("Unexpected runtime exception was thrown while attempting to remove PDP .done file", e);
+            LOG.error("removeDoneFileForPdpFileQuietly, Unexpected runtime exception was thrown while attempting to remove PDP .done file", e);
         }
     }
 
