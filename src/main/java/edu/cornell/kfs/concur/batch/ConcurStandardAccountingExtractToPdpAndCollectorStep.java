@@ -47,21 +47,34 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
                 .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
         reportData.setConcurFileName(concurStandardAccoutingExtractFile.getOriginalFileName());
         if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile, reportData)) {
-            String outputFileName = getConcurStandardAccountingExtractService().extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile, reportData);
-            if (StringUtils.isEmpty(outputFileName)) {
+            String pdpOutputFileName = getConcurStandardAccountingExtractService()
+                    .extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile, reportData);
+            String collectorOutputFileName = null;
+            if (StringUtils.isEmpty(pdpOutputFileName)) {
                 success = false;
                 LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, could not produce a PDP XML file for " + saeFullyQualifiedFileName);
             }
             if (success) {
-                success &= getConcurStandardAccountingExtractService()
-                        .extractCollectorFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile);
+                collectorOutputFileName = getConcurStandardAccountingExtractService()
+                        .extractCollectorFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile, reportData);
+                if (StringUtils.isEmpty(collectorOutputFileName)) {
+                    LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, could not produce a Collector flat file for "
+                            + saeFullyQualifiedFileName);
+                    success = false;
+                }
             }
             if (success) {
+                boolean createdPdpDoneFile = false;
                 try {
-                    getConcurStandardAccountingExtractService().createDoneFileForPdpFile(outputFileName);
+                    getConcurStandardAccountingExtractService().createDoneFileForPdpFile(pdpOutputFileName);
+                    createdPdpDoneFile = true;
+                    getConcurStandardAccountingExtractService().createDoneFileForCollectorFile(collectorOutputFileName);
                 } catch (IOException e) {
                     LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, unable to create .done file: ", e);
                     success = false;
+                    if (createdPdpDoneFile) {
+                        getConcurStandardAccountingExtractService().removeDoneFileForPdpFileQuietly(pdpOutputFileName);
+                    }
                 }
             }
         } else {

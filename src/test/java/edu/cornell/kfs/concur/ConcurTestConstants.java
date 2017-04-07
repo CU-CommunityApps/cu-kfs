@@ -27,6 +27,8 @@ public class ConcurTestConstants {
     public static final String ORG_REF_777JJJ = "777JJJ";
     public static final String JAN_04_2017 = "01/04/2017";
     public static final int FY_2017 = 2017;
+    public static final String DEFAULT_POLICY_NAME = "Travel";
+    public static final String DEFAULT_EXPENSE_TYPE_NAME = "Hotel";
 
     public static final String DASH_SUB_ACCOUNT_NUMBER = "-----";
     public static final String DASH_SUB_OBJECT_CODE = "---";
@@ -44,6 +46,9 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_NOTIFICATION_CONTACT_EMAIL = "saecollector@somedomain.com";
         public static final String COLLECTOR_NOTIFICATION_CONTACT_PERSON = "James Smith";
         public static final String COLLECTOR_NOTIFICATION_CONTACT_PHONE = "1112223333";
+        public static final String COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER = "7171717";
+        public static final String COLLECTOR_PREPAID_OFFSET_OBJECT_CODE = "7711";
+        public static final String COLLECTOR_CASH_OFFSET_OBJECT_CODE = "8282";
     }
 
 }

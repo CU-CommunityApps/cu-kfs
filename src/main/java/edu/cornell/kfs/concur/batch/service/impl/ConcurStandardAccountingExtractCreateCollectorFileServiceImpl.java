@@ -17,6 +17,7 @@ import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
@@ -43,19 +44,34 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected String collectorDirectoryPath;
 
     @Override
-    public String buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents) {
-        CollectorBatch collectorBatch = buildCollectorBatch(saeFileContents);
+    public String buildCollectorFile(ConcurStandardAccountingExtractFile saeFileContents,
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        if (saeFileContents == null) {
+            throw new IllegalArgumentException("saeFileContents cannot be null");
+        } else if (reportData == null) {
+            throw new IllegalArgumentException("reportData cannot be null");
+        }
+        
+        CollectorBatch collectorBatch = buildCollectorBatch(saeFileContents, reportData);
         if (collectorBatch == null) {
-            LOG.error("There was a problem preparing the data for the Collector file; will not create a file. See earlier logs for details.");
+            LOG.error("buildCollectorFile(): There was a problem preparing the data for the Collector file;"
+                    + " will not create a file. See earlier logs for details.");
             return StringUtils.EMPTY;
         }
-        return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch);
+        return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch, reportData);
     }
 
-    protected CollectorBatch buildCollectorBatch(ConcurStandardAccountingExtractFile saeFileContents) {
-        ConcurStandardAccountingExtractCollectorBatchBuilder builder = createBatchBuilder();
-        int sequenceNumber = calculateBatchSequenceNumber();
-        return builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents);
+    protected CollectorBatch buildCollectorBatch(ConcurStandardAccountingExtractFile saeFileContents,
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        try {
+            ConcurStandardAccountingExtractCollectorBatchBuilder builder = createBatchBuilder();
+            int sequenceNumber = calculateBatchSequenceNumber();
+            return builder.buildCollectorBatchFromStandardAccountingExtract(sequenceNumber, saeFileContents, reportData);
+        } catch (Exception e) {
+            LOG.error("buildCollectorBatch(): Unexpected unhandled error encountered while generating the CollectorBatch object", e);
+            reportData.addHeaderValidationError("Encountered an unexpected error while generating Collector data from the SAE file");
+            return null;
+        }
     }
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
@@ -94,11 +110,13 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         return searchResults.size();
     }
 
-    protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch) {
+    protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch,
+            ConcurStandardAccountingExtractBatchReportData reportData) {
         String collectorFilePath = buildCollectorFilePath(originalFileName);
         boolean fileCreatedSuccessfully = collectorFlatFileSerializerService.serializeToFlatFile(collectorFilePath, collectorBatch);
         if (!fileCreatedSuccessfully) {
-            LOG.error("An error occurred while writing the data to the Collector file; see earlier logs for details.");
+            LOG.error("writeToCollectorFile(): An error occurred while writing the data to the Collector file; see earlier logs for details.");
+            reportData.addHeaderValidationError("Encountered an unexpected I/O error when generating the Collector file");
             return StringUtils.EMPTY;
         }
         return collectorFilePath;

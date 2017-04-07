@@ -43,6 +43,7 @@ import edu.cornell.kfs.concur.batch.businessobject.CollectorBatchTrailerRecordSe
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.OriginEntrySerializerFieldUtil;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
@@ -88,10 +89,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
 
     protected void assertCollectorFileIsGeneratedCorrectly(String expectedResultsFileName,
             ConcurCollectorBatchFixture fixture) throws Exception {
+        ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
         ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
         saeFileContents.setOriginalFileName(fixture.name() + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         
-        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents);
+        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents, reportData);
         assertTrue("Collector file did not get created successfully", StringUtils.isNotBlank(collectorFilePath));
         
         assertGeneratedCollectorFileHasCorrectPath(saeFileContents.getOriginalFileName(), collectorFilePath);
@@ -155,10 +157,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected void assertCollectorFileIsNotGenerated(String fixtureName) throws Exception {
+        ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
         ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
         saeFileContents.setOriginalFileName(fixtureName + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         
-        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents);
+        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents, reportData);
         assertTrue("A Collector file should not have been created", StringUtils.isBlank(collectorFilePath));
     }
 
@@ -204,7 +207,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
             Capture<ConcurStandardAccountingExtractFile> saeFileContentsArg = EasyMock.newCapture();
             EasyMock.expect(
                     builder.buildCollectorBatchFromStandardAccountingExtract(
-                            EasyMock.captureInt(sequenceNumberArg), EasyMock.capture(saeFileContentsArg)))
+                            EasyMock.captureInt(sequenceNumberArg), EasyMock.capture(saeFileContentsArg), EasyMock.anyObject()))
                     .andStubAnswer(() -> buildFixtureBasedCollectorBatch(sequenceNumberArg.getValue(), saeFileContentsArg.getValue()));
         });
     }
@@ -265,7 +268,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         T serializerFieldUtils = serializerUtilsClass.newInstance();
         serializerFieldUtils.setParserFieldUtils(parserFieldUtils);
         utilsConfigurer.accept(serializerFieldUtils);
-        serializerFieldUtils.afterPropertiesSet();
         return serializerFieldUtils;
     }
 

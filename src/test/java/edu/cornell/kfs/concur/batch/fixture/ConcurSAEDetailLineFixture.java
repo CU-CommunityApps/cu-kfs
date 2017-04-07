@@ -27,13 +27,11 @@ public enum ConcurSAEDetailLineFixture {
             ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
             ConcurConstants.DEBIT, 50.00, "12/24/2016"),
-    DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00,
-            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_00001)),
+    DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00),
 
     MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST),
     MERGING_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 75.00),
     MERGING_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 100.00),
-    MERGING_TEST_LINE4(DEFAULT_CREDIT, ConcurSAEFileFixture.MERGING_TEST, -225.00),
 
     UNIQUENESS_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST),
     UNIQUENESS_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST,
@@ -50,7 +48,6 @@ public enum ConcurSAEDetailLineFixture {
             buildOverride(LineField.PROJECT_CODE, ConcurTestConstants.PROJ_AA_778899)),
     UNIQUENESS_TEST_LINE8(DEFAULT_DEBIT, ConcurSAEFileFixture.UNIQUENESS_TEST,
             buildOverride(LineField.ORG_REF_ID, ConcurTestConstants.ORG_REF_123ABC)),
-    UNIQUENESS_TEST_LINE9(DEFAULT_CREDIT, ConcurSAEFileFixture.UNIQUENESS_TEST, -400.00),
 
     PAYMENT_CODE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST),
     PAYMENT_CODE_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST,
@@ -65,14 +62,12 @@ public enum ConcurSAEDetailLineFixture {
     PAYMENT_CODE_TEST_LINE5(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_24680),
             buildOverride(LineField.PAYMENT_CODE, ConcurTestConstants.UNRECOGNIZED_PAYMENT_CODE)),
-    PAYMENT_CODE_TEST_LINE6(DEFAULT_CREDIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST, -100.00),
 
     VALIDATION_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.VALIDATION_TEST),
     VALIDATION_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.VALIDATION_TEST,
             buildOverride(LineField.REPORT_ID, StringUtils.EMPTY)),
     VALIDATION_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.VALIDATION_TEST,
             buildOverride(LineField.JOURNAL_ACCOUNT_CODE, StringUtils.EMPTY)),
-    VALIDATION_TEST_LINE4(DEFAULT_CREDIT, ConcurSAEFileFixture.VALIDATION_TEST),
 
     DEBIT_CREDIT_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST),
     DEBIT_CREDIT_TEST_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, -100.00,
@@ -83,33 +78,22 @@ public enum ConcurSAEDetailLineFixture {
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
     DEBIT_CREDIT_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, -22.22,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
-    DEBIT_CREDIT_TEST_LINE6(DEFAULT_DEBIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 75.00,
+    DEBIT_CREDIT_TEST_LINE6(DEFAULT_DEBIT, ConcurSAEFileFixture.DEBIT_CREDIT_TEST, 80.00,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
 
     PENDING_CLIENT_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.PENDING_CLIENT_TEST, 60.00,
             buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ConcurConstants.PENDING_CLIENT)),
     PENDING_CLIENT_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.PENDING_CLIENT_TEST,
             buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ParameterTestValues.OBJECT_CODE_OVERRIDE)),
-    PENDING_CLIENT_TEST_LINE3(DEFAULT_CREDIT, ConcurSAEFileFixture.PENDING_CLIENT_TEST, -110.00,
-            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_00001)),
 
     FISCAL_YEAR_TEST1_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST1),
-    FISCAL_YEAR_TEST1_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST1),
     FISCAL_YEAR_TEST2_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST2,
-            buildOverride(LineField.REPORT_END_DATE, "05/19/2016")),
-    FISCAL_YEAR_TEST2_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST2,
             buildOverride(LineField.REPORT_END_DATE, "05/19/2016")),
     FISCAL_YEAR_TEST3_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST3,
             buildOverride(LineField.REPORT_END_DATE, "11/09/2016")),
-    FISCAL_YEAR_TEST3_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST3,
-            buildOverride(LineField.REPORT_END_DATE, "11/09/2016")),
     FISCAL_YEAR_TEST4_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST4,
             buildOverride(LineField.REPORT_END_DATE, "06/29/2016")),
-    FISCAL_YEAR_TEST4_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST4,
-            buildOverride(LineField.REPORT_END_DATE, "06/29/2016")),
     FISCAL_YEAR_TEST5_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST5,
-            buildOverride(LineField.REPORT_END_DATE, "06/30/2016")),
-    FISCAL_YEAR_TEST5_LINE2(DEFAULT_CREDIT, ConcurSAEFileFixture.FISCAL_YEAR_TEST5,
             buildOverride(LineField.REPORT_END_DATE, "06/30/2016")),
 
     DOCUMENT_NUMBER_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST),
@@ -122,7 +106,6 @@ public enum ConcurSAEDetailLineFixture {
     DOCUMENT_NUMBER_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST,
             buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_SHORT),
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
-    DOCUMENT_NUMBER_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.DOCUMENT_NUMBER_TEST, -200.00),
 
     EMPLOYEE_NAME_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST),
     EMPLOYEE_NAME_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FIRSTNAME,
@@ -131,7 +114,15 @@ public enum ConcurSAEDetailLineFixture {
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
     EMPLOYEE_NAME_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FULLNAME,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
-    EMPLOYEE_NAME_TEST_LINE5(DEFAULT_CREDIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, -200.00);
+    
+    CASH_AND_CARD_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 100.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    CASH_AND_CARD_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 5.00),
+    
+    CANCELED_TRIP_TEST_LINE1(DEFAULT_CREDIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, -442.40,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    CANCELED_TRIP_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, 10.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID));
 
     public final ConcurSAEFileFixture extractFile;
     public final ConcurEmployeeFixture employee;
@@ -247,7 +238,10 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setOrgRefId(orgRefId);
         detailLine.setJounalDebitCredit(journalDebitCredit);
         detailLine.setJournalAmount(new KualiDecimal(journalAmount));
+        detailLine.setJournalAmountString(String.valueOf(journalAmount));
         detailLine.setReportEndDate(ConcurFixtureUtils.toSqlDate(reportEndDate));
+        detailLine.setPolicy(ConcurTestConstants.DEFAULT_POLICY_NAME);
+        detailLine.setExpenseType(ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME);
         
         return detailLine;
     }
@@ -255,6 +249,11 @@ public enum ConcurSAEDetailLineFixture {
     // This getter is primarily meant for use as a method reference.
     public ConcurSAEFileFixture getExtractFile() {
         return extractFile;
+    }
+
+    // This getter is primarily meant for use as a method reference.
+    public double getJournalAmount() {
+        return journalAmount;
     }
 
     /**

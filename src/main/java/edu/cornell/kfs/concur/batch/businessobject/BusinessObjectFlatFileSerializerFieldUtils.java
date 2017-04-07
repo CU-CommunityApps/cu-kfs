@@ -10,7 +10,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Base utility class for serializing specific objects into single-line fixed-length Strings,
@@ -39,7 +38,7 @@ import org.springframework.beans.factory.InitializingBean;
  * Each serializer Function must accept a potentially-null Object and return a non-null String.
  */
 @SuppressWarnings("deprecation")
-public abstract class BusinessObjectFlatFileSerializerFieldUtils implements InitializingBean {
+public abstract class BusinessObjectFlatFileSerializerFieldUtils {
 
     protected static final String CONTROL_CHARS_PATTERN_STRING = "\\p{Cntrl}";
 
@@ -54,12 +53,14 @@ public abstract class BusinessObjectFlatFileSerializerFieldUtils implements Init
 
     /**
      * This method MUST be invoked prior to serializing any objects.
-     * Automatic invocation by the Spring container is acceptable.
+     * The serializeBusinessObject() method will automatically call this method if necessary.
      * 
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     * The initialization will also call the getCustomSerializerFunctions() method,
+     * so that it can cache its returned Map.
+     * 
+     * @throws NullPointerException if the getCustomSerializerFunctions() method returns a null Map.
      */
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    public void initialize() {
         controlCharacterPattern = Pattern.compile(CONTROL_CHARS_PATTERN_STRING);
         lineLength = calculateLineLength();
         fieldSerializerFunctions = getCustomSerializerFunctions();
@@ -75,11 +76,13 @@ public abstract class BusinessObjectFlatFileSerializerFieldUtils implements Init
      * custom property-serialization Functions that have been configured. Property values
      * will be truncated or right-padded as needed to match the max lengths from the metadata.
      * 
+     * If the initialize() method has not already been invoked, this method will call it
+     * prior to performing the object serialization.
+     * 
      * @param businessObject The business object to serialize; cannot be null.
      * @return A single-line fixed-width String representation of the given object, intended for being written to an output file.
      * @throws IllegalArgumentException if businessObject is null or is not an instance of the expected type.
-     * @throws IllegalStateException if the afterPropertiesSet() method was not already invoked by the container or programmatically.
-     * @throws NullPointerException if a property-serialization Function converts a property value to a null String.
+     * @throws NullPointerException if thrown by initialize() or if a property-serialization Function converts a property value to a null String.
      */
     public String serializeBusinessObject(BusinessObject businessObject) {
         if (ObjectUtils.isNull(businessObject)) {
@@ -87,7 +90,7 @@ public abstract class BusinessObjectFlatFileSerializerFieldUtils implements Init
         } else if (!parserFieldUtils.getBusinessObjectClass().isAssignableFrom(businessObject.getClass())) {
             throw new IllegalArgumentException("businessObject is not of the expected type");
         } else if (fieldSerializerFunctions == null) {
-            throw new IllegalStateException("Serializer was not initialized via the afterPropertiesSet() method");
+            initialize();
         }
         
         Map<String,Integer> fieldLengthMap = parserFieldUtils.getFieldLengthMap();

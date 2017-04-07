@@ -2,11 +2,15 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 import org.easymock.Capture;
@@ -19,14 +23,22 @@ import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
+import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
+import edu.cornell.kfs.concur.batch.fixture.ConcurSAEDetailLineFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEFileFixture;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
+import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
@@ -103,14 +115,33 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.EMPLOYEE_NAME_TEST, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST);
     }
 
+    @Test
+    public void testMixOfCashAndCorporateCardLinesForSameTransactionGrouping() throws Exception {
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.CASH_AND_CARD_TEST, ConcurSAEFileFixture.CASH_AND_CARD_TEST);
+    }
+
+    @Test
+    public void testTransactionGroupingWithNetCreditAmount() throws Exception {
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.CANCELED_TRIP_TEST, ConcurSAEFileFixture.CANCELED_TRIP_TEST);
+    }
+
     protected void assertCollectorBatchIsBuiltProperly(
             ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();
+        List<ConcurSAEDetailLineFixture> lineFixtures = ConcurFixtureUtils.getFixturesContainingParentFixture(
+                ConcurSAEDetailLineFixture.class, fixtureToBuildFrom, ConcurSAEDetailLineFixture::getExtractFile);
+        
         ConcurStandardAccountingExtractFile saeFileContents = fixtureToBuildFrom.toExtractFile();
-        CollectorBatch actual = builder.buildCollectorBatchFromStandardAccountingExtract(1, saeFileContents);
+        ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
+        CollectorBatch actual = builder.buildCollectorBatchFromStandardAccountingExtract(1, saeFileContents, reportData);
         
         assertNotNull("The SAE file contents should have been converted to a CollectorBatch successfully", actual);
         assertCollectorBatchHasCorrectData(expected, actual);
+        
+        assertReportHasCorrectErrorLinesAndOrdering(lineFixtures, reportData);
+        assertReportHasCorrectPendingClientLinesAndOrdering(lineFixtures, reportData);
+        assertReportHasCorrectCorporateCardStatistics(lineFixtures, reportData);
+        assertReportHasCorrectPseudoPaymentCodeStatistics(lineFixtures, reportData);
     }
 
     protected void assertCollectorBatchHasCorrectData(CollectorBatch expected, CollectorBatch actual) throws Exception {
@@ -157,6 +188,106 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertEquals("Wrong transaction date", expected.getTransactionDate(), actual.getTransactionDate());
         assertEquals("Wrong debit/credit code", expected.getTransactionDebitCreditCode(), actual.getTransactionDebitCreditCode());
         assertEquals("Wrong transaction amount", expected.getTransactionLedgerEntryAmount(), actual.getTransactionLedgerEntryAmount());
+    }
+
+    protected void assertReportHasCorrectErrorLinesAndOrdering(
+            List<ConcurSAEDetailLineFixture> lineFixtures, ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
+        assertReportHasCorrectLinesAndOrdering(lineFixtures, this::fixtureFailsMinimalTestValidation,
+                reportData.getValidationErrorFileLines(), (expectedLine, actualLine) -> {});
+    }
+
+    protected void assertReportHasCorrectPendingClientLinesAndOrdering(
+            List<ConcurSAEDetailLineFixture> lineFixtures, ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
+        assertReportHasCorrectLinesAndOrdering(lineFixtures, this::fixtureRepresentsPendingClientLine,
+                reportData.getPendingClientObjectCodeLines(), this::assertReportRowPropertiesForPendingClientItemsAreCorrect);
+    } 
+
+    protected <T extends ConcurBatchReportLineValidationErrorItem> void assertReportHasCorrectLinesAndOrdering(
+            List<ConcurSAEDetailLineFixture> lineFixtures, Predicate<ConcurSAEDetailLineFixture> lineFilter, List<T> actualLines,
+            BiConsumer<ConcurSAEDetailLineFixture,T> extraValidation) throws Exception {
+        ConcurSAEDetailLineFixture[] expectedLines = lineFixtures.stream()
+                .filter(lineFilter)
+                .toArray(ConcurSAEDetailLineFixture[]::new);
+        
+        assertEquals("Wrong number of error-related lines in report", expectedLines.length, actualLines.size());
+        
+        int i = 0;
+        for (ConcurSAEDetailLineFixture expectedLine : expectedLines) {
+            T actualLine = actualLines.get(i);
+            
+            assertEquals("Wrong report ID", expectedLine.reportId, actualLine.getReportId());
+            assertEquals("Wrong employee ID", expectedLine.employee.employeeId, actualLine.getEmployeeId());
+            assertEquals("Wrong last name", expectedLine.employee.lastName, actualLine.getLastName());
+            assertEquals("Wrong first name", expectedLine.employee.firstName, actualLine.getFirstName());
+            assertEquals("Wrong middle initial", expectedLine.employee.middleInitial, actualLine.getMiddleInitial());
+            
+            List<String> messages = actualLine.getItemErrorResults();
+            assertNotNull("Error messages list should not be null", messages);
+            assertEquals("Wrong number of error messages in list", 1, messages.size());
+            assertTrue("Error message should have been non-blank", StringUtils.isNotBlank(messages.get(0)));
+            
+            extraValidation.accept(expectedLine, actualLine);
+            
+            i++;
+        }
+    }
+
+    protected void assertReportRowPropertiesForPendingClientItemsAreCorrect(
+            ConcurSAEDetailLineFixture expectedLine, ConcurBatchReportMissingObjectCodeItem actualLine) {
+        assertEquals("Wrong policy name", ConcurTestConstants.DEFAULT_POLICY_NAME, actualLine.getPolicyName());
+        assertEquals("Wrong expense type name", ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME, actualLine.getExpenseTypeName());
+    }
+
+    protected void assertReportHasCorrectCorporateCardStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
+            ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
+        assertReportStatisticHasCorrectTotals(lineFixtures,
+                this::fixtureRepresentsCorporateCardLine, reportData.getExpensesPaidOnCorporateCard());
+    }
+
+    protected void assertReportHasCorrectPseudoPaymentCodeStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
+            ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
+        assertReportStatisticHasCorrectTotals(lineFixtures,
+                this::fixtureRepresentsPseudoPaymentCodeLine, reportData.getTransactionsBypassed());
+    }
+
+    protected void assertReportStatisticHasCorrectTotals(List<ConcurSAEDetailLineFixture> lineFixtures,
+            Predicate<ConcurSAEDetailLineFixture> fixtureFilter, ConcurBatchReportSummaryItem actualSummary) throws Exception {
+        ConcurSAEDetailLineFixture[] filteredItems = lineFixtures.stream()
+                .filter(fixtureFilter)
+                .toArray(ConcurSAEDetailLineFixture[]::new);
+        KualiDecimal expectedAmount = Arrays.stream(filteredItems)
+                .map(ConcurSAEDetailLineFixture::getJournalAmount)
+                .map(Math::abs)
+                .map(KualiDecimal::new)
+                .reduce(KualiDecimal.ZERO, KualiDecimal::add);
+        
+        assertEquals("Wrong record count for statistic", filteredItems.length, actualSummary.getRecordCount());
+        assertEquals("Wrong dollar amount for statistic", expectedAmount, actualSummary.getDollarAmount());
+    }
+
+    protected boolean fixtureFailsMinimalTestValidation(ConcurSAEDetailLineFixture fixture) {
+        return !fixturePassesMinimalTestValidation(fixture);
+    }
+
+    protected boolean fixturePassesMinimalTestValidation(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.isNotBlank(fixture.reportId) && StringUtils.isNotBlank(fixture.journalAccountCode)
+                && (fixtureRepresentsCashLine(fixture) || fixtureRepresentsCorporateCardLine(fixture));
+    }
+
+    protected boolean fixtureRepresentsCashLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(ConcurConstants.PAYMENT_CODE_CASH, fixture.paymentCode);
+    }
+
+    protected boolean fixtureRepresentsCorporateCardLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, fixture.paymentCode);
+    } 
+
+    protected boolean fixtureRepresentsPseudoPaymentCodeLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(ConcurConstants.PAYMENT_CODE_PSEUDO, fixture.paymentCode);
+    }
+
+    protected boolean fixtureRepresentsPendingClientLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(ConcurConstants.PENDING_CLIENT, fixture.journalAccountCode);
     }
 
     protected UniversityDateService buildMockUniversityDateService() {
@@ -208,13 +339,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             Capture<ConcurStandardAccountingExtractDetailLine> saeLineArg = EasyMock.newCapture();
             EasyMock.expect(
                     service.validateConcurStandardAccountingExtractDetailLine(
-                            EasyMock.capture(saeLineArg)))
+                            EasyMock.capture(saeLineArg), EasyMock.anyObject()))
                     .andStubAnswer(() -> validateLine(saeLineArg.getValue()));
         });
     }
 
     protected boolean validateLine(ConcurStandardAccountingExtractDetailLine saeLine) {
         if (StringUtils.isBlank(saeLine.getReportId()) || StringUtils.isBlank(saeLine.getJournalAccountCode())) {
+            builder.reportUnprocessedLine(saeLine, "Line failed validation");
             return false;
         }
         
@@ -249,6 +381,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PERSON;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE :
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PHONE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_OBJECT_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_CASH_OFFSET_OBJECT_CODE;
             default :
                 return null;
         }

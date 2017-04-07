@@ -21,33 +21,31 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
 
     protected String paymentImportDirectory;
+    protected String collectorImportDirectory;
     protected BatchInputFileService batchInputFileService;
     protected CUMarshalService cuMarshalService;
     protected BatchInputFileType batchInputFileType;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     protected ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService;
+    protected ConcurStandardAccountingExtractCreateCollectorFileService concurStandardAccountingExtractCreateCollectorFileService;
     protected ParameterService parameterService;
 
     @Override
@@ -269,15 +267,52 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
             LOG.info("createDoneFileForPdpFile, the PDP upload file was not created, so we don't want to create the .done file.");
         }
     }
-    
+
+    @Override
+    public void removeDoneFileForPdpFileQuietly(String pdpFileName) {
+        try {
+            if (!StringUtils.endsWith(pdpFileName, ConcurConstants.XML_FILE_EXTENSION) || !pdpUploadFileExists(pdpFileName)) {
+                LOG.error("removeDoneFileForPdpFileQuietly, Cannot remove PDP .done file if the PDP upload file was not already created.");
+                return;
+            }
+        
+            String fullDoneFilePath = StringUtils.replace(getPaymentImportDirectory() + pdpFileName, ConcurConstants.XML_FILE_EXTENSION, 
+                    GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+            if (!FileUtils.deleteQuietly(new File(fullDoneFilePath))) {
+                LOG.error("removeDoneFileForPdpFileQuietly, Could not remove PDP .done file: " + fullDoneFilePath);
+            }
+        } catch (RuntimeException e) {
+            LOG.error("removeDoneFileForPdpFileQuietly, Unexpected runtime exception was thrown while attempting to remove PDP .done file", e);
+        }
+    }
+
     private boolean pdpUploadFileExists(String pdpFileName) {
         File pdpFile = new File(getPaymentImportDirectory() + pdpFileName);
         return pdpFile.exists();
     }
 
     @Override
-    public boolean extractCollectorFeedFromStandardAccountingExtract(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
-        return true;
+    public String extractCollectorFeedFromStandardAccountingExtract(
+            ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData) {
+        return getConcurStandardAccountingExtractCreateCollectorFileService().buildCollectorFile(
+                concurStandardAccountingExtractFile, reportData);
+    }
+
+    @Override
+    public void createDoneFileForCollectorFile(String collectorFileName) throws IOException {
+        if (collectorUploadFileExists(collectorFileName)) {
+            String fullDoneFilePath = StringUtils.replace(getCollectorImportDirectory() + collectorFileName,
+                    GeneralLedgerConstants.BatchFileSystem.EXTENSION, GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+            LOG.info("createDoneFileForCollectorFile, fullFilePath: " + fullDoneFilePath);
+            FileUtils.touch(new File(fullDoneFilePath));
+        } else {
+            LOG.info("createDoneFileForCollectorFile, the Collector upload file was not created, so we don't want to create the .done file.");
+        }
+    }
+
+    private boolean collectorUploadFileExists(String collectorFileName) {
+        File collectorFile = new File(getCollectorImportDirectory() + collectorFileName);
+        return collectorFile.exists();
     }
 
     public String getPaymentImportDirectory() {
@@ -286,6 +321,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setPaymentImportDirectory(String paymentImportDirectory) {
         this.paymentImportDirectory = paymentImportDirectory;
+    }
+
+    public String getCollectorImportDirectory() {
+        return collectorImportDirectory;
+    }
+
+    public void setCollectorImportDirectory(String collectorImportDirectory) {
+        this.collectorImportDirectory = collectorImportDirectory;
     }
 
     public BatchInputFileService getBatchInputFileService() {
@@ -328,6 +371,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     public void setConcurStandardAccountExtractPdpEntryService(
             ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService) {
         this.concurStandardAccountExtractPdpEntryService = concurStandardAccountExtractPdpEntryService;
+    }
+
+    public ConcurStandardAccountingExtractCreateCollectorFileService getConcurStandardAccountingExtractCreateCollectorFileService() {
+        return concurStandardAccountingExtractCreateCollectorFileService;
+    }
+
+    public void setConcurStandardAccountingExtractCreateCollectorFileService(
+            ConcurStandardAccountingExtractCreateCollectorFileService concurStandardAccountingExtractCreateCollectorFileService) {
+        this.concurStandardAccountingExtractCreateCollectorFileService = concurStandardAccountingExtractCreateCollectorFileService;
     }
 
     public ParameterService getParameterService() {
