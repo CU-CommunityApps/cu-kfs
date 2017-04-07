@@ -1,28 +1,24 @@
 package edu.cornell.kfs.fp.service.impl;
 
-import static org.junit.Assert.*;
-
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-import java.util.List;
-
+import com.sun.jersey.api.client.ClientRequest;
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
+import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import com.sun.jersey.api.client.ClientRequest;
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
+import java.util.List;
 
-import org.apache.log4j.BasicConfigurator;
-
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
-import edu.cornell.kfs.fp.service.impl.AmazonWebServicesBillingServiceImpl;
-import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AmazonWebServicesBillingServiceImplTest {
-    
+
     public static final String JSON_EXAMPLE_1_ENTRY = "{ \"account_detail\": [ { \"aws_account\": \"036869565879\", \"kfs_account\": \"G123008\", \"cost_center\": \"\", \"business_purpose\": \"this is a test\", \"cost\": \"605.5106149888798\" }]}";
     public static final String JSON_EXAMPLE = "{ \"account_detail\": [" 
             + "{ \"aws_account\": \"noCostCenter\", \"kfs_account\": \"G123008\", \"cost_center\": \"\", \"business_purpose\": \"this is a test\", \"cost\": \"605.5106149888798\" },"
@@ -42,7 +38,6 @@ public class AmazonWebServicesBillingServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        BasicConfigurator.configure();
         amazonService = new AmazonWebServicesBillingServiceImpl();
     }
 
