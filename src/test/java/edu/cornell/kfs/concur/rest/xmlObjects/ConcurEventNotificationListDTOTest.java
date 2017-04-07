@@ -16,7 +16,7 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class ConcurEventNotificationListDTOTest {
-    private static final String EXAMPLE_FILE_NAME = "src/test/java/edu/cornell/kfs/concur/rest/xmlObjects/fixture/failed-event-queue-response-example.xml";
+    private static final String EXAMPLE_FILE_NAME = "src/test/resources/edu/cornell/kfs/concur/rest/xmlObjects/fixture/failed-event-queue-response-example.xml";
     private static final String EQUAL_ASSERT_STATEMENT = "Expected value should equal the actual value.";
     
     private CUMarshalService cuMarshalService;

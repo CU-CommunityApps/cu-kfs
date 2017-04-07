@@ -52,7 +52,7 @@ import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServ
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
 
     protected static final String GET_FIELD_LENGTH_MAP_METHOD = "getFieldLengthMap";
-    protected static final String EXPECTED_RESULTS_DIRECTORY_PATH = "src/test/java/edu/cornell/kfs/concur/batch/service/impl/fixture/";
+    protected static final String EXPECTED_RESULTS_DIRECTORY_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/";
     protected static final String BASE_TEST_DIRECTORY = "test";
     protected static final String COLLECTOR_OUTPUT_DIRECTORY_PATH = BASE_TEST_DIRECTORY + "/gl/collectorFlatFile/";
 
