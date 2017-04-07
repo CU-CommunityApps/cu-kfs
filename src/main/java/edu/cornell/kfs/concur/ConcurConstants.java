@@ -54,7 +54,7 @@ public class ConcurConstants {
     public static final String DEBIT = "DR";
     public static final String PAYMENT_CODE_CASH = "CASH";
     public static final String PAYMENT_CODE_PRE_PAID_OR_OTHER = "COPD";
-    public static final String PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID = "CBCN";
+    public static final String PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID = "CBCP";
     public static final String PAYMENT_CODE_PSEUDO = "XXXX";
     public static final String PENDING_CLIENT = "Pending Client";
     public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
