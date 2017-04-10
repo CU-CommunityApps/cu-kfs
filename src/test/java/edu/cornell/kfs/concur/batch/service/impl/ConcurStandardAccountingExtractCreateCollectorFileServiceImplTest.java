@@ -93,20 +93,17 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         ConcurStandardAccountingExtractFile saeFileContents = new ConcurStandardAccountingExtractFile();
         saeFileContents.setOriginalFileName(fixture.name() + GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION);
         
-        String collectorFilePath = collectorFileService.buildCollectorFile(saeFileContents, reportData);
-        assertTrue("Collector file did not get created successfully", StringUtils.isNotBlank(collectorFilePath));
+        String collectorFileName = collectorFileService.buildCollectorFile(saeFileContents, reportData);
+        assertTrue("Collector file did not get created successfully", StringUtils.isNotBlank(collectorFileName));
         
-        assertGeneratedCollectorFileHasCorrectPath(saeFileContents.getOriginalFileName(), collectorFilePath);
+        assertGeneratedCollectorFileHasCorrectName(saeFileContents.getOriginalFileName(), collectorFileName);
         
         String expectedResultsFilePath = EXPECTED_RESULTS_DIRECTORY_PATH + expectedResultsFileName;
-        assertFileContentsAreCorrect(expectedResultsFilePath, collectorFilePath);
+        String actualResultsFilePath = COLLECTOR_OUTPUT_DIRECTORY_PATH + collectorFileName;
+        assertFileContentsAreCorrect(expectedResultsFilePath, actualResultsFilePath);
     }
 
-    protected void assertGeneratedCollectorFileHasCorrectPath(String originalFileName, String collectorFilePath) throws Exception {
-        assertTrue("Collector file was not placed in the expected output directory of " + COLLECTOR_OUTPUT_DIRECTORY_PATH,
-                StringUtils.startsWith(collectorFilePath, COLLECTOR_OUTPUT_DIRECTORY_PATH));
-        
-        String collectorFileName = StringUtils.substringAfter(collectorFilePath, COLLECTOR_OUTPUT_DIRECTORY_PATH);
+    protected void assertGeneratedCollectorFileHasCorrectName(String originalFileName, String collectorFileName) throws Exception {
         assertEquals("File name has too many extension delimiters",
                 StringUtils.countMatches(originalFileName, KFSConstants.DELIMITER),
                 StringUtils.countMatches(collectorFileName, KFSConstants.DELIMITER));
