@@ -41,7 +41,13 @@ public interface ConcurBatchUtilityService {
     boolean createPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String fullyQualifiedPdpFileName);
     
 
-    String formatDate(Date date);
+    /**
+     * Date to be formatted into MM/dd/yyyy format.
+     *
+     * @param date
+     * @return String in MM/dd/yyyy representation for the date passed in.
+     */
+    String formatDate_MMddyyyy(Date date);
     
     /**
      * Uses the input parameters to build, format, and size the PDP payee name

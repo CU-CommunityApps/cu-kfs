@@ -80,7 +80,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         return StringUtils.substring(sourceDocNumber, 0, ConcurConstants.SOURCE_DOCUMENT_NUMBER_FIELD_SIZE);
     }
 
-    public String formatDate(Date date) {
+    public String formatDate_MMddyyyy(Date date) {
         return getDateTimeService().toString(date, ConcurConstants.DATE_FORMAT);
     }
 

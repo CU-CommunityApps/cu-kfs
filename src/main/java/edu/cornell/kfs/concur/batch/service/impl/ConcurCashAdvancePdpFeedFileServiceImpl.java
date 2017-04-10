@@ -90,7 +90,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         pdpGroupEntry.setPayeeName(getConcurBatchUtilityService().formatPdpPayeeName(detailFileLine.getLastName(), detailFileLine.getFirstName(), detailFileLine.getMiddleInitial()));
         pdpGroupEntry.setPayeeId(pdpPayeeIdEntry);
         pdpGroupEntry.setCustomerInstitutionIdentifier(StringUtils.EMPTY);
-        pdpGroupEntry.setPaymentDate(getConcurBatchUtilityService().formatDate(detailFileLine.getBatchDate()));
+        pdpGroupEntry.setPaymentDate(getConcurBatchUtilityService().formatDate_MMddyyyy(detailFileLine.getBatchDate()));
         pdpGroupEntry.setCombineGroupInd(ConcurConstants.COMBINED_GROUP_INDICATOR);
         pdpGroupEntry.setBankCode(ConcurConstants.BANK_CODE);
         pdpGroupEntry.setDetail(pdpDetailEntries);
@@ -102,7 +102,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         pdpDetailEntry.setSourceDocNbr(getConcurBatchUtilityService().formatSourceDocumentNumber(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE), detailFileLine.getRequestId()));
         pdpDetailEntry.setInvoiceNbr(StringUtils.EMPTY);
         pdpDetailEntry.setPoNbr(StringUtils.EMPTY);
-        pdpDetailEntry.setInvoiceDate(getConcurBatchUtilityService().formatDate(detailFileLine.getBatchDate()));
+        pdpDetailEntry.setInvoiceDate(getConcurBatchUtilityService().formatDate_MMddyyyy(detailFileLine.getBatchDate()));
         pdpDetailEntry.setNetPaymentAmt(detailFileLine.getRequestAmount());
         pdpDetailEntry.setFsOriginCd(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_AP_PDP_ORIGINATION_CODE));
         pdpDetailEntry.setFdocTypCd(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE));
@@ -144,7 +144,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     private PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
         header.setChart(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
-        header.setCreationDate(getConcurBatchUtilityService().formatDate(batchDate));
+        header.setCreationDate(getConcurBatchUtilityService().formatDate_MMddyyyy(batchDate));
         header.setSubUnit(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT));
         header.setUnit(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT));
         return header;
