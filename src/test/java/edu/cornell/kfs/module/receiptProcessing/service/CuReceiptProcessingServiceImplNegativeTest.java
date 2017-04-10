@@ -20,9 +20,8 @@ public class CuReceiptProcessingServiceImplNegativeTest {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingService.class);
 
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_bad_test.csv";
-    private static final String IMG_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/attachements/testUnit.pdf";
-    private static final String BATCH_DIRECTORY = "test/opt/work/staging/fp/receiptProcessing";
-    private static final String RECEIPT_DIR = "/infra/receipt_processing/CIT-csv-archive/";
+    private static final String TEST_PATH = "test";
+    private static final String BATCH_DIRECTORY = TEST_PATH + "/opt/work/staging/fp/receiptProcessing";
 
     private ReceiptProcessingServiceImpl receiptProcessingService;
 
@@ -37,8 +36,6 @@ public class CuReceiptProcessingServiceImplNegativeTest {
         createDirectory(BATCH_DIRECTORY);
         copyFile(DATA_FILE_PATH, BATCH_DIRECTORY + "/receiptProcessing_test.csv");
         createDoneFile();
-        createDirectory(RECEIPT_DIR);
-        copyFile(IMG_FILE_PATH, RECEIPT_DIR + "/testUnit.pdf");
     }
 
     private List<BatchInputFileType> setupBatchInputFileTypes() {
@@ -74,17 +71,11 @@ public class CuReceiptProcessingServiceImplNegativeTest {
 
     @After
     public void tearDown() throws Exception {
-        deleteDirectory(BATCH_DIRECTORY);
-        deleteDirectory(RECEIPT_DIR);
+        FileUtils.forceDelete(new File(TEST_PATH).getAbsoluteFile());
     }
 
-    private void deleteDirectory(String batchDirectory) {
-        File batchDirectoryFile = new File(batchDirectory);
-        batchDirectoryFile.delete();
-    }
-    
     @Test(expected=RuntimeException.class)
-    public void testCanLoadFiles() {
+    public void loadFilesInvalidFile() {
         Assert.assertFalse(receiptProcessingService.loadFiles());
     }
     
