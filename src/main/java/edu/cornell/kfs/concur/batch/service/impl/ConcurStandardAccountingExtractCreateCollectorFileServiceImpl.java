@@ -112,7 +112,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch) {
         String collectorFileName = buildCollectorFileName(originalFileName);
-        String collectorFilePath = buildCollectorFilePath(collectorFileName);
+        String collectorFilePath = buildFullyQualifiedCollectorFileName(collectorFileName);
         boolean fileCreatedSuccessfully = collectorFlatFileSerializerService.serializeToFlatFile(collectorFilePath, collectorBatch);
         if (!fileCreatedSuccessfully) {
             LOG.error("writeToCollectorFile(): An error occurred while writing the data to the Collector file; see earlier logs for details.");
@@ -127,7 +127,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
                 + GeneralLedgerConstants.BatchFileSystem.EXTENSION;
     }
 
-    protected String buildCollectorFilePath(String collectorFileName) {
+    protected String buildFullyQualifiedCollectorFileName(String collectorFileName) {
         return collectorDirectoryPath + collectorFileName;
     }
 
