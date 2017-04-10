@@ -58,7 +58,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
                     + " will not create a file. See earlier logs for details.");
             return StringUtils.EMPTY;
         }
-        return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch, reportData);
+        return writeToCollectorFile(saeFileContents.getOriginalFileName(), collectorBatch);
     }
 
     protected CollectorBatch buildCollectorBatch(ConcurStandardAccountingExtractFile saeFileContents,
@@ -110,26 +110,25 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         return searchResults.size();
     }
 
-    protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch,
-            ConcurStandardAccountingExtractBatchReportData reportData) {
-        String collectorFilePath = buildCollectorFilePath(originalFileName);
+    protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch) {
+        String collectorFileName = buildCollectorFileName(originalFileName);
+        String collectorFilePath = buildFullyQualifiedCollectorFileName(collectorFileName);
         boolean fileCreatedSuccessfully = collectorFlatFileSerializerService.serializeToFlatFile(collectorFilePath, collectorBatch);
         if (!fileCreatedSuccessfully) {
             LOG.error("writeToCollectorFile(): An error occurred while writing the data to the Collector file; see earlier logs for details.");
-            reportData.addHeaderValidationError("Encountered an unexpected I/O error when generating the Collector file");
             return StringUtils.EMPTY;
         }
-        return collectorFilePath;
+        return collectorFileName;
     }
 
-    protected String buildCollectorFilePath(String saeFileName) {
+    protected String buildCollectorFileName(String saeFileName) {
         String saeFileNameWithoutExtension = StringUtils.substringBeforeLast(saeFileName, KFSConstants.DELIMITER);
-        return new StringBuilder(DEFAULT_BUILDER_SIZE)
-                .append(collectorDirectoryPath)
-                .append(ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX)
-                .append(saeFileNameWithoutExtension)
-                .append(GeneralLedgerConstants.BatchFileSystem.EXTENSION)
-                .toString();
+        return ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX + saeFileNameWithoutExtension
+                + GeneralLedgerConstants.BatchFileSystem.EXTENSION;
+    }
+
+    protected String buildFullyQualifiedCollectorFileName(String collectorFileName) {
+        return collectorDirectoryPath + collectorFileName;
     }
 
     public void setConcurSAEValidationService(ConcurStandardAccountingExtractValidationService concurSAEValidationService) {
