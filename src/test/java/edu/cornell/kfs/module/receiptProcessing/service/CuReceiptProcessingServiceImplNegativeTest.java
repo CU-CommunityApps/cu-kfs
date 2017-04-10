@@ -1,42 +1,44 @@
 package edu.cornell.kfs.module.receiptProcessing.service;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
-
 import edu.cornell.kfs.module.receiptProcessing.batch.ReceiptProcessingCSV;
 import edu.cornell.kfs.module.receiptProcessing.batch.ReceiptProcessingCSVInputFileType;
 import edu.cornell.kfs.module.receiptProcessing.service.impl.ReceiptProcessingServiceImpl;
 import edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl;
-import junit.framework.TestCase;
-import org.kuali.kfs.sys.ConfigureContext;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-
-
-@ConfigureContext(session = ccs1)
-public class CuReceiptProcessingServiceImplNegativeTest extends TestCase {
+public class CuReceiptProcessingServiceImplNegativeTest {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingService.class);
 
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_bad_test.csv";
-    private static final String IMG_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/attachements/testUnit.pdf";
-    private static final String BATCH_DIRECTORY = "test/opt/work/staging/fp/receiptProcessing";
-    private static final String RECEIPT_DIR = "/infra/receipt_processing/CIT-csv-archive/";
+    private static final String TEST_PATH = "test";
+    private static final String BATCH_DIRECTORY = TEST_PATH + "/opt/work/staging/fp/receiptProcessing";
 
     private ReceiptProcessingServiceImpl receiptProcessingService;
 
-    
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         receiptProcessingService = new ReceiptProcessingServiceImpl();
 
         CuBatchInputFileServiceImpl batchInputFileService = new CuBatchInputFileServiceImpl();
         receiptProcessingService.setBatchInputFileService(batchInputFileService);
+        receiptProcessingService.setBatchInputFileTypes(setupBatchInputFileTypes());
 
+        createDirectory(BATCH_DIRECTORY);
+        copyFile(DATA_FILE_PATH, BATCH_DIRECTORY + "/receiptProcessing_test.csv");
+        createDoneFile();
+    }
+
+    private List<BatchInputFileType> setupBatchInputFileTypes() {
         ReceiptProcessingCSVInputFileType batchInputFileType = new ReceiptProcessingCSVInputFileType();
         batchInputFileType.setDirectoryPath(BATCH_DIRECTORY);
         batchInputFileType.setFileExtension("csv");
@@ -44,50 +46,37 @@ public class CuReceiptProcessingServiceImplNegativeTest extends TestCase {
         List<BatchInputFileType> batchInputFileTypeList = new ArrayList<>();
         batchInputFileTypeList.add(batchInputFileType);
 
-        receiptProcessingService.setBatchInputFileTypes(batchInputFileTypeList);
+        return batchInputFileTypeList;
+    }
 
-        //make sure we have a batch directory
-        File batchDirectoryFile = new File(BATCH_DIRECTORY);
+    private void createDirectory(String batchDirectory) {
+        File batchDirectoryFile = new File(batchDirectory);
         batchDirectoryFile.mkdir();
+    }
 
-        //copy the data file into place
-        File dataFileSrc = new File(DATA_FILE_PATH);
-        File dataFileDest = new File(BATCH_DIRECTORY + "/receiptProcessing_test.csv");
+    private void copyFile(String dataFilePath, String pathname) throws IOException {
+        File dataFileSrc = new File(dataFilePath);
+        File dataFileDest = new File(pathname);
         FileUtils.copyFile(dataFileSrc, dataFileDest);
+    }
 
-        //create .done file
+    private void createDoneFile() throws IOException {
         String doneFileName = BATCH_DIRECTORY + "/receiptProcessing_test.done";
         File doneFile = new File(doneFileName);
         if (!doneFile.exists()) {
             LOG.info("Creating done file: " + doneFile.getAbsolutePath());
             doneFile.createNewFile();
         }
-        
-        //make sure we have a pdf directory
-        File pdfDirectoryFile = new File(RECEIPT_DIR);
-        pdfDirectoryFile.mkdir();
-
-        //copy the data file into place
-        File imgFileSrc = new File(IMG_FILE_PATH);
-        File imgFileDest = new File(RECEIPT_DIR + "/testUnit.pdf");
-        FileUtils.copyFile(imgFileSrc, imgFileDest);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        File batchDirectoryFile = new File(BATCH_DIRECTORY);
-        batchDirectoryFile.delete();
+    @After
+    public void tearDown() throws Exception {
+        FileUtils.forceDelete(new File(TEST_PATH).getAbsoluteFile());
     }
 
-
-    public void testCanLoadFiles() {
-        try {
-            assertFalse(receiptProcessingService.loadFiles());
-        }
-        catch (RuntimeException e)
-        {
-
-        }
+    @Test(expected=RuntimeException.class)
+    public void loadFilesInvalidFile() {
+        Assert.assertFalse(receiptProcessingService.loadFiles());
     }
     
 }
