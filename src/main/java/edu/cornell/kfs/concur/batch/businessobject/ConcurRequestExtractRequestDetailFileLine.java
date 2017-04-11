@@ -6,13 +6,21 @@ import java.util.List;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import org.kuali.kfs.sys.KFSConstants;
+
+import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEntryDetailFileLine;
+import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailLineValidationResult;
+
 public class ConcurRequestExtractRequestDetailFileLine {
-    private boolean lineValid;
     private Date batchDate;
+    private String requestEntryExpenseType;
     private String employeeId;
     private String lastName;
     private String firstName;
     private String middleInitial;
+    private KualiDecimal totalApprovedAmount;
+    private String employeeGroupId;
     private String payeeIdType;
     private String requestId;
     private KualiDecimal requestAmount;
@@ -25,23 +33,25 @@ public class ConcurRequestExtractRequestDetailFileLine {
     private String projectCode;
     private String orgRefId;
     private List<ConcurRequestExtractRequestEntryDetailFileLine> requestEntryDetails;
+    private ConcurRequestExtractRequestDetailLineValidationResult validationResult;
     
     public ConcurRequestExtractRequestDetailFileLine() {
         this.requestEntryDetails = new ArrayList<ConcurRequestExtractRequestEntryDetailFileLine>();
+        this.validationResult = new ConcurRequestExtractRequestDetailLineValidationResult();
     }
-    
-    public boolean isLineValid() {
-        return lineValid;
+
+    public String getRequestEntryExpenseType() {
+        return requestEntryExpenseType;
     }
-    
-    public void setLineValid(boolean lineValid) {
-        this.lineValid = lineValid;
+
+    public void setRequestEntryExpenseType(String requestEntryExpenseType) {
+        this.requestEntryExpenseType = requestEntryExpenseType;
     }
-    
+
     public Date getBatchDate() {
         return batchDate;
     }
-    
+
     public void setBatchDate(Date batchDate) {
         this.batchDate = batchDate;
     }
@@ -69,15 +79,31 @@ public class ConcurRequestExtractRequestDetailFileLine {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    
+
     public String getMiddleInitial() {
         return middleInitial;
     }
-    
+
     public void setMiddleInitial(String middleInitial) {
         this.middleInitial = middleInitial;
     }
-    
+
+    public KualiDecimal getTotalApprovedAmount() {
+        return totalApprovedAmount;
+    }
+
+    public void setTotalApprovedAmount(KualiDecimal totalApprovedAmount) {
+        this.totalApprovedAmount = totalApprovedAmount;
+    }
+
+    public String getEmployeeGroupId() {
+        return employeeGroupId;
+    }
+
+    public void setEmployeeGroupId(String employeeGroupId) {
+        this.employeeGroupId = employeeGroupId;
+    }
+
     public String getPayeeIdType() {
         return payeeIdType;
     }
@@ -173,4 +199,46 @@ public class ConcurRequestExtractRequestDetailFileLine {
     public void setRequestEntryDetails(List<ConcurRequestExtractRequestEntryDetailFileLine> requestEntryDetails) {
         this.requestEntryDetails = requestEntryDetails;
     }
+
+    public ConcurRequestExtractRequestDetailLineValidationResult getValidationResult() {
+        return validationResult;
+    }
+
+    public void setDetailValidationResult(ConcurRequestExtractRequestDetailLineValidationResult validationResult) {
+        this.validationResult = validationResult;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder("ConcurRequestExtractDetailFileLine:").append(KFSConstants.NEWLINE);
+        sb.append("batchDate: ").append(batchDate).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("requestEntryExpenseType: ").append(requestEntryExpenseType).append(KFSConstants.NEWLINE);
+        sb.append("employeeId: ").append(employeeId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("lastName: ").append(lastName).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("firstName: ").append(firstName).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("middleInitial: ").append(middleInitial).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("employeeGroupId: ").append(employeeGroupId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("payeeIdType: ").append(payeeIdType).append(KFSConstants.NEWLINE);
+        sb.append("requestId: ").append(requestId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("totalApprovedAmount: ").append(totalApprovedAmount).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("requestAmount: ").append(requestAmount).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("expenseReportId: ").append(expenseReportId).append(KFSConstants.NEWLINE);
+        sb.append("requestEntryDescription: ").append(requestEntryDescription).append(KFSConstants.NEWLINE);
+        sb.append("chart: ").append(chart).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("accountNumber: ").append(accountNumber).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("subAccountNumber: ").append(subAccountNumber).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("subObjectCode: ").append(subObjectCode).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("projectCode: ").append(projectCode).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("orgRefId: ").append(orgRefId).append(KFSConstants.NEWLINE);
+        sb.append("requestEntryDetails:  ").append(KFSConstants.NEWLINE);
+        for (ConcurRequestExtractRequestEntryDetailFileLine entryLines : requestEntryDetails) {
+            sb.append(entryLines.toString()).append(KFSConstants.NEWLINE);
+        }
+        sb.append("cashAdvanceLine: ").append(validationResult.isCashAdvanceLine()).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("cashAdvanceUsedInExpenseReport: ").append(validationResult.isCashAdvanceUsedInExpenseReport()).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("validCashAdvanceLine: ").append(validationResult.isValidCashAdvanceLine()).append(KFSConstants.NEWLINE);
+        sb.append("validationFailureMessages: ").append(KFSConstants.NEWLINE);
+        sb.append(validationResult.getErrorMessagesAsOneFormattedString());
+        return sb.toString();
+    }
+
 }
