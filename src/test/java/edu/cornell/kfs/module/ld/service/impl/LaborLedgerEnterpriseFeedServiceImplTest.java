@@ -22,8 +22,8 @@ import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
 @ConfigureContext
 public class LaborLedgerEnterpriseFeedServiceImplTest extends TestCase {
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
-    private static final String BAD_DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/ld/fixture/SMGROSBAD.data";
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
+    private static final String BAD_DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROSBAD.data";
 
     private static final String DISENCUMBRANCE_ACCOUNTING_LINE = "2014IT6258326-----5020---AC";
     

@@ -20,7 +20,7 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 public class TestPdpMarshal {
 
     private static final String BATCH_DIRECTORY = "test/opt/work/staging/concur/standardAccountingExtract/pdpOutput/";
-    private static final String EXAMPLE_PDP_FILE_PATH = "src/test/java/edu/cornell/kfs/concur/batch/fixture/PdpExample.xml";
+    private static final String EXAMPLE_PDP_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/fixture/PdpExample.xml";
 
     private File batchDirectoryFile;
     private CUMarshalService cUMarshalService;
