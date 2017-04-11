@@ -1,9 +1,12 @@
 package edu.cornell.kfs.concur.batch.service;
 
-import org.kuali.kfs.sys.batch.InitiateDirectory;
+import java.io.IOException;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 
-public interface ConcurCashAdvancePdpFeedFileService extends InitiateDirectory {
+public interface ConcurCashAdvancePdpFeedFileService {
 
-	void createDoneFileFor(String concurCashAdvancePdpFeedFileName);
+    boolean createPdpFeedFileForValidatedDetailFileLines(ConcurRequestExtractFile validatedRequestExtractFile);
+
+    void createDoneFileForPdpFile(String concurCashAdvancePdpFeedFileName) throws IOException;
 
 }
