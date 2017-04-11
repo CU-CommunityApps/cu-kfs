@@ -133,7 +133,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         CollectorBatch result;
         
         try {
-            LOG.info("Generating Collector data from SAE file: " + saeFileContents.getOriginalFileName());
+            LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Generating Collector data from SAE file: "
+                    + saeFileContents.getOriginalFileName());
             
             if (batchSequenceNumber < MIN_BATCH_SEQUENCE_NUMBER || batchSequenceNumber > MAX_BATCH_SEQUENCE_NUMBER) {
                 throw new IllegalArgumentException("Batch Sequence Number should have been an integer between "
@@ -355,7 +356,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             ConcurStandardAccountingExtractDetailLine saeLine) {
         ConcurBatchReportSummaryItem summaryItem = summaryItemGetter.apply(reportData);
         summaryItem.setRecordCount(summaryItem.getRecordCount() + 1);
-        summaryItem.setDollarAmount(summaryItem.getDollarAmount().add(saeLine.getJournalAmount().abs()));
+        summaryItem.setDollarAmount(summaryItem.getDollarAmount().add(saeLine.getJournalAmount()));
     }
 
     protected void reportPendingClientLine(ConcurStandardAccountingExtractDetailLine saeLine) {

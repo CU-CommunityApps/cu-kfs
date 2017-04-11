@@ -256,9 +256,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 .filter(fixtureFilter)
                 .toArray(ConcurSAEDetailLineFixture[]::new);
         KualiDecimal expectedAmount = Arrays.stream(filteredItems)
-                .map(ConcurSAEDetailLineFixture::getJournalAmount)
-                .map(Math::abs)
-                .map(KualiDecimal::new)
+                .mapToDouble(ConcurSAEDetailLineFixture::getJournalAmount)
+                .mapToObj(KualiDecimal::new)
                 .reduce(KualiDecimal.ZERO, KualiDecimal::add);
         
         assertEquals("Wrong record count for statistic", filteredItems.length, actualSummary.getRecordCount());
