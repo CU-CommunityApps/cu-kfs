@@ -65,7 +65,7 @@ public class AdvanceDepositServiceImplTest {
 
     private static final String TXT_FILE_EXTENSION = "txt";
     private static final String DONE_FILE_EXTENSION = "done";
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/fp/batch/service/fixture/";
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/service/fixture/";
     private static final String DATA_FILE_GOOD_NAME = "achIncome_test";
     private static final String DATA_FILE_EMPTY_NAME = "achIncome_empty_test";
     private static final String BATCH_DIRECTORY = "test/fp/achIncome/";

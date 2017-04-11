@@ -33,7 +33,7 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
 
     private BatchInputFileService batchInputFileService;
     
-    private static final String TEST_BATCH_DIRECTORY = "src/test/java/edu/cornell/kfs/sys/batch/service/impl/fixture/";
+    private static final String TEST_BATCH_DIRECTORY = "src/test/resources/edu/cornell/kfs/sys/batch/service/impl/fixture/";
 
     private String testFileIdentifier;
     private InputStream validAccountReversionFileContents;

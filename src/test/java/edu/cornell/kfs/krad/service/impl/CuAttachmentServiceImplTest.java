@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class CuAttachmentServiceImplTest {
 
-    private static final String ATTACHMENT_TEST_FILE_PATH = "src/test/java/edu/cornell/kfs/krad/service/fixture";
+    private static final String ATTACHMENT_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/krad/service/fixture";
     private static final String GOOD_FILE_CONTENTS = "This is a pretend good attachment file.";
     private static final String GOOD_FILE_NAME = "good.txt";
     private static final String TEST_PATH = "test";

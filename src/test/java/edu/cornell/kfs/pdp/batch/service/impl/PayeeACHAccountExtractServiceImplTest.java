@@ -71,7 +71,7 @@ public class PayeeACHAccountExtractServiceImplTest {
     private static final String BANK_ACCOUNT_TYPE_CODE = "bankAccountTypeCode";
     private static final Integer DOCUMENT_DESCRIPTION_MAX_LENGTH = Integer.valueOf(40);
 
-    private static final String ACH_SOURCE_FILE_PATH = "src/test/java/edu/cornell/kfs/pdp/batch/service/fixture";
+    private static final String ACH_SOURCE_FILE_PATH = "src/test/resources/edu/cornell/kfs/pdp/batch/service/fixture";
     private static final String ACH_TESTING_FILE_PATH = "test/pdp/payeeACHAccountExtract";
     private static final String ACH_TESTING_DIRECTORY = ACH_TESTING_FILE_PATH + "/";
     private static final String FILE_PATH_FORMAT = "{0}/{1}.{2}";
