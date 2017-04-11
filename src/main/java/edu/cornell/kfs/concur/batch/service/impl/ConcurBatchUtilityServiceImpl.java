@@ -92,7 +92,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     public boolean createPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String fullyQualifiedPdpFileName) {
         boolean success = true;
         try {
-            File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, fullyQualifiedPdpFileName);
+            getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, fullyQualifiedPdpFileName);
             LOG.info("createPdpFeedFile:  Created PDP Feed file: " + fullyQualifiedPdpFileName);
             success = true;
         } catch (JAXBException | IOException e) {
