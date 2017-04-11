@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
 import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationDTO;
@@ -48,8 +49,15 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
         concurEventNotification.setInProcess(inProcess);
         concurEventNotification.setProcessed(processed);
         concurEventNotification.setValidationResult(validationResult);
-        concurEventNotification.setValidationResultMessage(validationResultMessages);
+        concurEventNotification.setValidationResultMessage(truncateValidationResultMessageToMaximumDatabaseFieldSize(validationResultMessages));
         saveConcurEventNotification(concurEventNotification);
+    }
+    
+    protected String truncateValidationResultMessageToMaximumDatabaseFieldSize(String validationResultMessages) {
+        if (validationResultMessages != null && validationResultMessages.length() > ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH) {
+            validationResultMessages = validationResultMessages.substring(0, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+        }
+        return validationResultMessages;
     }
     
     @Override
