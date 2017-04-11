@@ -19,7 +19,7 @@ import java.util.List;
 public class CuReceiptProcessingServiceImplNegativeTest {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingService.class);
 
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_bad_test.csv";
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_bad_test.csv";
     private static final String TEST_PATH = "test";
     private static final String BATCH_DIRECTORY = TEST_PATH + "/opt/work/staging/fp/receiptProcessing";
 
