@@ -51,10 +51,10 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
                 try {
                     getConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile(requestExtractFile.getFullyQualifiedPdpFileName());
                 } catch (IOException ioe) {
-                    LOG.error("ConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile generated IOException attempting to create .done file for generated PdpFeedFile: " + requestExtractFile.getFullyQualifiedPdpFileName());
+                    LOG.error("processFile: ConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile generated IOException attempting to create .done file for generated PdpFeedFile: " + requestExtractFile.getFullyQualifiedPdpFileName());
                     processingSuccessful = false;
                 } catch (FileStorageException fse) {
-                    LOG.error("ConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile generated FileStorageException attempting to create .done file for generated PdpFeedFile: " + requestExtractFile.getFullyQualifiedPdpFileName());
+                    LOG.error("processFile: ConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile generated FileStorageException attempting to create .done file for generated PdpFeedFile: " + requestExtractFile.getFullyQualifiedPdpFileName());
                     processingSuccessful = false;
                 }
             }
@@ -67,7 +67,7 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
         Object parsedFile = getConcurBatchUtilityService().loadFile(requestExtractFullyQualifiedFileName, getBatchInputFileType());
         List<ConcurRequestExtractFile> requestExtractFiles = (ArrayList<ConcurRequestExtractFile>) parsedFile;
         if (requestExtractFiles.size() != 1) {
-            LOG.error("Single physical file " + requestExtractFullyQualifiedFileName + " should have translated into single parsed file. More or less than one parsed file was detected.");
+            LOG.error("loadFileIntoParsedDataObject: Single physical file " + requestExtractFullyQualifiedFileName + " should have translated into single parsed file. More or less than one parsed file was detected.");
             throw new RuntimeException("Single physical file " + requestExtractFullyQualifiedFileName + " should have translated into single parsed file. More or less than one parsed file was detected.");
         }
         else {

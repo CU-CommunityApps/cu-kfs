@@ -46,11 +46,11 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         return parameterValue;
     }
     
-    public void createDoneFile(String fullyQualifiedFileName) throws FileStorageException {
+    public void createDoneFileFor(String fullyQualifiedFileName) throws FileStorageException {
         getFileStorageService().createDoneFile(fullyQualifiedFileName);
     }
     
-    public void removeDoneFile(String fullyQualifiedFileName) throws FileStorageException {
+    public void removeDoneFileFor(String fullyQualifiedFileName) throws FileStorageException {
         getFileStorageService().removeDoneFiles(Collections.singletonList(fullyQualifiedFileName));
     }
 
@@ -60,8 +60,8 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
             fullName = fullName + KFSConstants.BLANK_SPACE + middleInitial + KFSConstants.DELIMITER;
         }
 
-        int payeeNameFieldSize = (getDataDictionaryService().getAttributeMaxLength(PaymentGroup.class, PdpConstants.PaymentDetail.PAYEE_NAME)).intValue();
-        if (fullName.length() > payeeNameFieldSize) {
+        Integer payeeNameFieldSize = getDataDictionaryService().getAttributeMaxLength(PaymentGroup.class, PdpConstants.PaymentDetail.PAYEE_NAME);
+        if (fullName.length() > payeeNameFieldSize.intValue()) {
             fullName = StringUtils.substring(fullName, 0, payeeNameFieldSize);
             fullName = removeLastPayeeNameCharacterWhenComma(fullName, payeeNameFieldSize);
         }
@@ -93,7 +93,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         boolean success = true;
         try {
             File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, fullyQualifiedPdpFileName);
-            LOG.info("Created PDP Feed file: " + fullyQualifiedPdpFileName);
+            LOG.info("createPdpFeedFile:  Created PDP Feed file: " + fullyQualifiedPdpFileName);
             success = true;
         } catch (JAXBException | IOException e) {
             LOG.error("createPdpFeedFile.marshalObjectToXML: There was an error marshalling the PDP feed file: " + fullyQualifiedPdpFileName, e);
@@ -114,13 +114,13 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         try {
             fileContents = new FileInputStream(fullyQualifiedFileName);
         } catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
+            LOG.error("safelyLoadFileBytes:  Batch file not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
             throw new RuntimeException("Batch File not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
         }
         try {
             fileByteContent = IOUtils.toByteArray(fileContents);
         } catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
+            LOG.error("safelyLoadFileBytes:  IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
             throw new RuntimeException("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
         } finally {
             IOUtils.closeQuietly(fileContents);

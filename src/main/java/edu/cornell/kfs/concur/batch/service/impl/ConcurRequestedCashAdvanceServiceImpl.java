@@ -32,7 +32,7 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
         
         concurRequestedCashAdvances = businessObjectService.findMatching(ConcurRequestedCashAdvance.class, fieldValues);
         
-        boolean isDuplicate = (CollectionUtils.isEmpty(concurRequestedCashAdvances)) ? false : true;
+        boolean isDuplicate = CollectionUtils.isNotEmpty(concurRequestedCashAdvances);
 
         return isDuplicate;
 

@@ -18,23 +18,23 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
     public void createPdpFeedsFromRequestExtracts() {
         List<String> filesToProcess = getConcurRequestExtractFileService().getUnprocessedRequestExtractFiles();
         if (filesToProcess.isEmpty()) {
-            LOG.info("No Request Extract files found to process.");
+            LOG.info("createPdpFeedsFromRequestExtracts: No Request Extract files found to process.");
         } else {
-            LOG.info("Found " + filesToProcess.size() + " file(s) to process.");
+            LOG.info("createPdpFeedsFromRequestExtracts: Found " + filesToProcess.size() + " file(s) to process.");
 
             for (String requestExtractFullyQualifiedFileName : filesToProcess) {
                 try {
-                    LOG.info("Begin processing for filename: " + requestExtractFullyQualifiedFileName + ".");
+                    LOG.info("createPdpFeedsFromRequestExtracts: Begin processing for filename: " + requestExtractFullyQualifiedFileName + ".");
                     if (getConcurRequestExtractFileService().processFile(requestExtractFullyQualifiedFileName)) {
-                        LOG.info("SUCCESSFUL processing for Request Extract File: " + requestExtractFullyQualifiedFileName);
+                        LOG.info("createPdpFeedsFromRequestExtracts: SUCCESSFUL processing for Request Extract File: " + requestExtractFullyQualifiedFileName);
                     }
                     else {
-                        LOG.error("Processing was UNSUCCESSFUL for Request Extract File: " + requestExtractFullyQualifiedFileName);
+                        LOG.error("createPdpFeedsFromRequestExtracts: Processing was UNSUCCESSFUL for Request Extract File: " + requestExtractFullyQualifiedFileName);
                     }
                 } catch (Exception e) {
-                    LOG.error("Processing to create PDP Files from Request Extract [" + requestExtractFullyQualifiedFileName + "] genertated Exception: " + e.getMessage());
+                    LOG.error("createPdpFeedsFromRequestExtracts: Processing to create PDP Files from Request Extract [" + requestExtractFullyQualifiedFileName + "] genertated Exception: " + e.getMessage());
                 } finally {
-                    getConcurBatchUtilityService().removeDoneFile(requestExtractFullyQualifiedFileName);
+                    getConcurBatchUtilityService().removeDoneFileFor(requestExtractFullyQualifiedFileName);
                 }
             }
         }

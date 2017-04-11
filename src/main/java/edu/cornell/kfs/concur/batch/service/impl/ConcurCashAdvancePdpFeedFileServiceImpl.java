@@ -40,11 +40,11 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
             String fullyQualifiedPdpFileName = getConcurBatchUtilityService().buildFullyQualifiedPdpOutputFileName(getPaymentImportDirectory(), requestExtractFile.getFileName());
             pdpFileSuccessfullyCreated = getConcurBatchUtilityService().createPdpFeedFile(pdpFeedFileDataObject, fullyQualifiedPdpFileName);
             if (pdpFileSuccessfullyCreated) {
-                LOG.info("fullyQualifiedPdpFileName [" + fullyQualifiedPdpFileName + "]  was created for requestExtractFile [" + requestExtractFile.getFileName() + "]");
+                LOG.info("createPdpFeedFileForValidatedDetailFileLines: fullyQualifiedPdpFileName [" + fullyQualifiedPdpFileName + "]  was created for requestExtractFile [" + requestExtractFile.getFileName() + "]");
                 requestExtractFile.setFullyQualifiedPdpFileName(fullyQualifiedPdpFileName);
             }
             else {
-                LOG.error("FAILED TO CREATE: fullyQualifiedPdpFileName [" + fullyQualifiedPdpFileName + "] for requestExtractFile [" + requestExtractFile.getFileName() + "]");
+                LOG.error("createPdpFeedFileForValidatedDetailFileLines: FAILED TO CREATE: fullyQualifiedPdpFileName [" + fullyQualifiedPdpFileName + "] for requestExtractFile [" + requestExtractFile.getFileName() + "]");
             }
         }
         return pdpFileSuccessfullyCreated;
@@ -70,7 +70,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
               totalPdpDetailRecordsAmount = totalPdpDetailRecordsAmount.add(detailFileLine.getRequestAmount());
           }
           else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isNotValidCashAdvanceLine()) {
-              LOG.info("Cash Advance was detected but validation failed for:  " + KFSConstants.NEWLINE + detailFileLine.toString());
+              LOG.info("buildPdpFeedBaseEntry: Cash Advance was detected but validation failed for:  " + KFSConstants.NEWLINE + detailFileLine.toString());
           }
         }
         pdpBaseEntry.setGroup(groupEntries);
@@ -136,7 +136,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         } else if (StringUtils.equalsIgnoreCase(detailFileLine.getPayeeIdType(), ConcurConstants.NON_EMPLOYEE_STATUS_CODE)) {
             payeeIdEntry.setIdType(ConcurConstants.NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
         } else {
-            LOG.error("Invalid PayeeIdType detected in buildPdpFeedPayeeIdEntry AFTER validation while building PDP output file:" + detailFileLine.getPayeeIdType());
+            LOG.error("buildPdpFeedPayeeIdEntry: Invalid PayeeIdType detected in buildPdpFeedPayeeIdEntry AFTER validation while building PDP output file:" + detailFileLine.getPayeeIdType());
         }
         return payeeIdEntry;
     }
@@ -158,7 +158,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     }
 
    public void createDoneFileForPdpFile(String concurCashAdvancePdpFeedFileName) {
-       getConcurBatchUtilityService().createDoneFile(concurCashAdvancePdpFeedFileName);
+       getConcurBatchUtilityService().createDoneFileFor(concurCashAdvancePdpFeedFileName);
    }
 
     public ConcurBatchUtilityService getConcurBatchUtilityService() {

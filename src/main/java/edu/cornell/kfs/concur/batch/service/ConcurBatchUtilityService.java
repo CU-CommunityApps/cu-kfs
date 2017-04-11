@@ -26,7 +26,7 @@ public interface ConcurBatchUtilityService {
      *
      * @param fullyQualifiedFileName
      */
-    void createDoneFile(String fullyQualifiedFileName) throws FileStorageException;
+    void createDoneFileFor(String fullyQualifiedFileName) throws FileStorageException;
     
     /**
      * Creates the Concur PDP XML file specified by fullyQualifiedPdpFileName
@@ -97,6 +97,6 @@ public interface ConcurBatchUtilityService {
      * Removes the .done file at the location and with the name specified by the input parameter.
      * @param fullyQualifiedFileName
      */
-    void removeDoneFile(String fullyQualifiedFileName) throws FileStorageException;
+    void removeDoneFileFor(String fullyQualifiedFileName) throws FileStorageException;
     
 }

@@ -12,13 +12,13 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEn
 
 public enum ConcurRequestExtractRequestDetailFileLineFixture {
 
-    REQUEST_DETAIL_GOOD_LINE_1((new Date(Calendar.getInstance().getTimeInMillis())), new String("34YA"), new KualiDecimal(10.00), new String("CORNELL"), 1),
-    REQUEST_DETAIL_GOOD_LINE_2((new Date(Calendar.getInstance().getTimeInMillis())), new String("34YE"), new KualiDecimal(40.00), new String("CORNELL"), 2),
-    REQUEST_DETAIL_GOOD_LINE_3((new Date(Calendar.getInstance().getTimeInMillis())), new String("34YH"), new KualiDecimal(200.00), new String("CORNELL"), 1),
-    REQUEST_DETAIL_GOOD_LINE_4((new Date(Calendar.getInstance().getTimeInMillis())), new String("34YK"), new KualiDecimal(3.33), new String("CORNELL"), 3),
-    REQUEST_DETAIL_GOOD_LINE_5((new Date(Calendar.getInstance().getTimeInMillis())), new String("34YN"), new KualiDecimal(5000.00), new String("CORNELL"), 1),
+    REQUEST_DETAIL_GOOD_LINE_1((new Date(Calendar.getInstance().getTimeInMillis())), "34YA", new KualiDecimal(10.00), "CORNELL", 1),
+    REQUEST_DETAIL_GOOD_LINE_2((new Date(Calendar.getInstance().getTimeInMillis())), "34YE", new KualiDecimal(40.00), "CORNELL", 2),
+    REQUEST_DETAIL_GOOD_LINE_3((new Date(Calendar.getInstance().getTimeInMillis())), "34YH", new KualiDecimal(200.00), "CORNELL", 1),
+    REQUEST_DETAIL_GOOD_LINE_4((new Date(Calendar.getInstance().getTimeInMillis())), "34YK", new KualiDecimal(3.33), "CORNELL", 3),
+    REQUEST_DETAIL_GOOD_LINE_5((new Date(Calendar.getInstance().getTimeInMillis())), "34YN", new KualiDecimal(5000.00), "CORNELL", 1),
     
-    REQUEST_DETAIL_BAD_EMPLOYEE_GROUP_ID_LINE_2((new Date(Calendar.getInstance().getTimeInMillis())), new String("34YE"), new KualiDecimal(40.00), new String("HARVARD"), 2);
+    REQUEST_DETAIL_BAD_EMPLOYEE_GROUP_ID_LINE_2((new Date(Calendar.getInstance().getTimeInMillis())), "34YE", new KualiDecimal(40.00), "HARVARD", 2);
 
     public final Date batchDate;
     public final String requestId;
