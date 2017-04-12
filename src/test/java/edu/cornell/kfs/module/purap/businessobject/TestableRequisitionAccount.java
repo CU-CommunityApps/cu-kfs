@@ -25,8 +25,11 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import java.math.BigDecimal;
 
 /**
- * Version of RequisitionAccount specifically for testing since it
- * avoids the Spring call in getAccountLinePercent.
+ * Version of RequisitionAccount specifically for testing.
+ *
+ * This replacement for RequistionAccount avoids the Spring call in getAccountLinePercent from that class, but can
+ * still call super.getAccountLinePercent() to get the initial accountLinePercent from PurApAccountingLineBase which it
+ * couldn't do if it extended RequisitionAccount to override getAccountLinePercent().
  */
 public class TestableRequisitionAccount extends PurApAccountingLineBase {
 

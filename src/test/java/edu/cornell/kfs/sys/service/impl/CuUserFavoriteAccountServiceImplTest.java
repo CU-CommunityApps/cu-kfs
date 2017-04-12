@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
@@ -20,7 +21,6 @@ import org.kuali.rice.krad.bo.BusinessObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public class CuUserFavoriteAccountServiceImplTest {
@@ -34,8 +34,8 @@ public class CuUserFavoriteAccountServiceImplTest {
 
     @Test
     public void testPrimaryFavoriteAccount() {
-        List<FavoriteAccount> favoriteAccounts = buildFavoriteAccountList();
-        FavoriteAccount favoriteAccount = userFavoriteAccountService.getFavoriteAccount(favoriteAccounts.get(0).getUserProcurementProfile().getPrincipalId());
+        final String principalId = FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount().getUserProcurementProfile().getPrincipalId();
+        FavoriteAccount favoriteAccount = userFavoriteAccountService.getFavoriteAccount(principalId);
         Assert.assertTrue("Favorite Account should exist", favoriteAccount != null);
         Assert.assertTrue("should be Primary favorite account", favoriteAccount.getPrimaryInd());
         
@@ -43,40 +43,23 @@ public class CuUserFavoriteAccountServiceImplTest {
         Assert.assertTrue("Favorite Account should not exist", favoriteAccount == null);
     }
 
-    private List<FavoriteAccount> buildFavoriteAccountList() {
-        List<FavoriteAccount> favoriteAccounts = new ArrayList<>();
-
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_2.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_3.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_4.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_5.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_6.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_7.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_8.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_9.createFavoriteAccount());
-        favoriteAccounts.add(FavoriteAccountFixture.FAVORITE_ACCOUNT_10.createFavoriteAccount());
-
-        return favoriteAccounts;
-    }
-
     @Test
     public void testPopulatedNewRequisitionAccount() {
-        final String accountType = "REQS";
+        final String accountType = PurapConstants.REQUISITION_DOCUMENT_TYPE;
         final Class<TestableRequisitionAccount> accountClass = TestableRequisitionAccount.class;
         validateAccount(accountType, accountClass);
     }
 
     @Test
     public void testPopulatedNewPurchaseOrderAccount() {
-        final String accountType = "PO";
+        final String accountType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT;
         final Class<PurchaseOrderAccount> accountClass = PurchaseOrderAccount.class;
         validateAccount(accountType, accountClass);
     }
 
     @Test
     public void testPopulatedNewIWantAccount() {
-        final String accountType = "IWNT";
+        final String accountType = CUPurapConstants.IWNT_DOC_TYPE;
         final Class<IWantAccount> accountClass = IWantAccount.class;
         validateAccount(accountType, accountClass);
     }
@@ -117,7 +100,12 @@ public class CuUserFavoriteAccountServiceImplTest {
 
         @Override
         public <T extends BusinessObject> T findByPrimaryKey(Class<T> clazz, Map<String, ?> primaryKeys) {
-            return (T)FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount();
+            Integer accountLineIdentifier = (Integer) primaryKeys.get("accountLineIdentifier");
+            if (accountLineIdentifier.equals(13)) {
+                return (T) FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount();
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -131,6 +119,7 @@ public class CuUserFavoriteAccountServiceImplTest {
                 return null;
             }
         }
+
     }
 
 }
