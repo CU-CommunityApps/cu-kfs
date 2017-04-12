@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import edu.cornell.kfs.sys.service.impl.TestUserFavoriteAccountServiceImpl;
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
 import org.easymock.Mock;
@@ -30,7 +31,6 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
-import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.document.Document;
@@ -47,7 +47,6 @@ import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderFor
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
-import edu.cornell.kfs.sys.service.impl.UserFavoriteAccountServiceImpl;
 import edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl;
 
 public class FavoriteAccountLineBuilderTest {
@@ -86,7 +85,7 @@ public class FavoriteAccountLineBuilderTest {
     @BeforeClass
     public static void setUp() throws Exception {
         userProcurementProfileValidationService = new UserProcurementProfileValidationServiceImpl();
-        userFavoriteAccountService = new TestUserFavoriteAccountService();
+        userFavoriteAccountService = new ExtendedTestUserFavoriteAccountService();
         
         reqsAccounts = new ArrayList<PurApAccountingLine>();
         poAccounts = new ArrayList<PurApAccountingLine>();
@@ -467,7 +466,7 @@ public class FavoriteAccountLineBuilderTest {
     /*
      * Test-only UserFavoriteAccountService implementation.
      */
-    private static class TestUserFavoriteAccountService extends UserFavoriteAccountServiceImpl {
+    private static class ExtendedTestUserFavoriteAccountService extends TestUserFavoriteAccountServiceImpl {
         @Override
         public FavoriteAccount getSelectedFavoriteAccount(Integer accountLineIdentifier) {
             if (TEST_FAVORITE_ACCOUNT_LINE_ID.equals(accountLineIdentifier)) {
@@ -476,23 +475,6 @@ public class FavoriteAccountLineBuilderTest {
                 return testAltFavoriteAccount;
             }
             return null;
-        }
-        
-        @Override
-        protected void populateAccountNumberOnPurApAccountingLine(FavoriteAccount account, PurApAccountingLine acctLine) {
-            // To avoid Spring calls, we need to set the account number field manually instead of using the setter.
-            try {
-                Field accountNumberField = AccountingLineBase.class.getDeclaredField("accountNumber");
-                accountNumberField.setAccessible(true);
-                accountNumberField.set(acctLine, account.getAccountNumber());
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        
-        @Override
-        protected void refreshReferenceObjectsForPopulatedAccountingLine(GeneralLedgerPendingEntrySourceDetail acctLine) {
-            // Do nothing.
         }
     }
 
