@@ -1,105 +1,125 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.db18;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
-import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
+import edu.cornell.kfs.module.purap.businessobject.TestableRequisitionAccount;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
+import edu.cornell.kfs.sys.service.impl.fixture.FavoriteAccountFixture;
+import edu.cornell.kfs.sys.service.impl.fixture.UserProcurementProfileFixture;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
+import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.krad.bo.BusinessObject;
 
-@ConfigureContext(session = db18)
-public class CuUserFavoriteAccountServiceImplTest extends KualiTestBase {
-    private UserFavoriteAccountService userFavoriteAccountService;
-    @Override
-    protected void setUp() throws Exception {
-        // TODO Auto-generated method stub
-        super.setUp();
-        userFavoriteAccountService = SpringContext.getBean(UserFavoriteAccountService.class);
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+public class CuUserFavoriteAccountServiceImplTest {
+    private UserFavoriteAccountServiceImpl userFavoriteAccountService;
+
+    @Before
+    public void setUp() throws Exception {
+        userFavoriteAccountService = new TestUserFavoriteAccountServiceImpl();
+        userFavoriteAccountService.setBusinessObjectService(new MockBusinessObjectServiceImpl());
     }
 
-    /*
-     * test get user primary favorite account
-     * 
-     */
+    @Test
     public void testPrimaryFavoriteAccount() {
-        Map<String, String> fieldMap = new HashMap<String, String>();
-        fieldMap.put("primaryInd", "Y");
-        List<FavoriteAccount> favoriteAccounts = (List<FavoriteAccount>)SpringContext.getBean(BusinessObjectService.class).findMatching(FavoriteAccount.class, fieldMap);
-        FavoriteAccount favoriteAccount = userFavoriteAccountService.getFavoriteAccount(favoriteAccounts.get(0).getUserProcurementProfile().getPrincipalId());
-        assertTrue("Favorite Account should exist", favoriteAccount != null);
-        assertTrue("should be Primary favorite account", favoriteAccount.getPrimaryInd());
+        final String principalId = FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount().getUserProcurementProfile().getPrincipalId();
+        FavoriteAccount favoriteAccount = userFavoriteAccountService.getFavoriteAccount(principalId);
+        Assert.assertTrue("Favorite Account should exist", favoriteAccount != null);
+        Assert.assertTrue("should be Primary favorite account", favoriteAccount.getPrimaryInd());
         
         favoriteAccount = userFavoriteAccountService.getFavoriteAccount("2");
-        assertTrue("Favorite Account should not exist", favoriteAccount == null);
-
+        Assert.assertTrue("Favorite Account should not exist", favoriteAccount == null);
     }
-    
-    /*
-     * test populate user favorite account to accounting line
-     */
-    public void testPopulatedNewAccount() {
-        Map<String, String> fieldMap = new HashMap<String, String>();
-        fieldMap.put("primaryInd", "Y");
-        FavoriteAccount favoriteAccount =
-                SpringContext.getBean(BusinessObjectService.class).findMatching(FavoriteAccount.class, fieldMap).iterator().next();
-        GeneralLedgerPendingEntrySourceDetail iwntAccount;
-        
-        PurApAccountingLine acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, RequisitionAccount.class);
-        assertNotNull("Account should be populated", acct);
-        assertTrue("Account should be REQS Account", acct instanceof RequisitionAccount);
-        assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), acct.getAccountNumber());
-        assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), acct.getFinancialObjectCode());
-        assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, acct.getAccountLinePercent().compareTo(new BigDecimal(100)));
 
-        acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, PurchaseOrderAccount.class);
-        assertNotNull("Account should be populated", acct);
-        assertTrue("Account should be PO Account", acct instanceof PurchaseOrderAccount);
-        assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), acct.getAccountNumber());
-        assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), acct.getFinancialObjectCode());
-        assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, acct.getAccountLinePercent().compareTo(new BigDecimal(100)));
-
-        iwntAccount = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, IWantAccount.class);
-        assertNotNull("Account should be populated", iwntAccount);
-        assertTrue("Account should be IWNT Account", iwntAccount instanceof IWantAccount);
-        assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), iwntAccount.getAccountNumber());
-        assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), iwntAccount.getFinancialObjectCode());
-        assertEquals("Amount-or-Percent indicator should be Percent",
-                CUPurapConstants.PERCENT, ((IWantAccount) iwntAccount).getUseAmountOrPercent());
-        assertEquals("Incorrect percentage (comparison against 100% should have been zero)",
-                0, ((IWantAccount) iwntAccount).getAmountOrPercent().compareTo(new KualiDecimal(100)));
-
-        acct = userFavoriteAccountService.getPopulatedNewAccount(null, PurchaseOrderAccount.class);
-        assertNull("Account should not be populated", acct);
-       
-
+    @Test
+    public void testPopulatedNewRequisitionAccount() {
+        final String accountType = PurapConstants.REQUISITION_DOCUMENT_TYPE;
+        final Class<TestableRequisitionAccount> accountClass = TestableRequisitionAccount.class;
+        validateAccount(accountType, accountClass);
     }
-    
-    /*
-     * test retrieve favorite account based on the selected favorite account PK
-     */
+
+    @Test
+    public void testPopulatedNewPurchaseOrderAccount() {
+        final String accountType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT;
+        final Class<PurchaseOrderAccount> accountClass = PurchaseOrderAccount.class;
+        validateAccount(accountType, accountClass);
+    }
+
+    @Test
+    public void testPopulatedNewIWantAccount() {
+        final String accountType = CUPurapConstants.IWNT_DOC_TYPE;
+        final Class<IWantAccount> accountClass = IWantAccount.class;
+        validateAccount(accountType, accountClass);
+    }
+
+    private void validateAccount(String accountType, Class accountClass) {
+        final FavoriteAccount favoriteAccount = FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount();
+        final GeneralLedgerPendingEntrySourceDetail acct = userFavoriteAccountService.getPopulatedNewAccount(favoriteAccount, accountClass);
+        Assert.assertNotNull("Account should be populated", acct);
+        Assert.assertTrue("Account should be " + accountType + " Account", accountClass.isInstance(acct));
+        Assert.assertEquals("Account Number should be populated", favoriteAccount.getAccountNumber(), acct.getAccountNumber());
+        Assert.assertEquals("Object Code should be populated", favoriteAccount.getFinancialObjectCode(), acct.getFinancialObjectCode());
+
+        if (acct instanceof IWantAccount) {
+            final KualiDecimal accountLinePercent = ((IWantAccount) acct).getAmountOrPercent();
+            Assert.assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, accountLinePercent.compareTo(new KualiDecimal(100)));
+            Assert.assertEquals("Amount-or-Percent indicator should be Percent", CUPurapConstants.PERCENT, ((IWantAccount) acct).getUseAmountOrPercent());
+        } else {
+            final BigDecimal accountLinePercent = ((PurApAccountingLineBase) acct).getAccountLinePercent();
+            Assert.assertEquals("Incorrect percentage (comparison against 100% should have been zero)", 0, accountLinePercent.compareTo(new BigDecimal(100)));
+        }
+    }
+
+    @Test
+    public void testPopulatedNewAccountNull() {
+        GeneralLedgerPendingEntrySourceDetail acct = userFavoriteAccountService.getPopulatedNewAccount(null, PurchaseOrderAccount.class);
+        Assert.assertNull("Account should not be populated", acct);
+    }
+
+    @Test
     public void testSelectedFavoriteAccount() {
-        FavoriteAccount favoriteAccount1 = ((List<FavoriteAccount>)SpringContext.getBean(BusinessObjectService.class).findAll(FavoriteAccount.class)).get(0);
-        
+        FavoriteAccount favoriteAccount1 = FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount();
         FavoriteAccount favoriteAccount2 = userFavoriteAccountService.getSelectedFavoriteAccount(favoriteAccount1.getAccountLineIdentifier());
-        assertTrue("Favorite Account should exist", favoriteAccount2 != null);
-        assertTrue("should have the same PK", favoriteAccount1.getAccountLineIdentifier().equals(favoriteAccount2.getAccountLineIdentifier()));
+        Assert.assertTrue("Favorite Account should exist", favoriteAccount2 != null);
+        Assert.assertTrue("should have the same PK", favoriteAccount1.getAccountLineIdentifier().equals(favoriteAccount2.getAccountLineIdentifier()));
+    }
+
+    private class MockBusinessObjectServiceImpl extends BusinessObjectServiceImpl {
+
+        @Override
+        public <T extends BusinessObject> T findByPrimaryKey(Class<T> clazz, Map<String, ?> primaryKeys) {
+            Integer accountLineIdentifier = (Integer) primaryKeys.get("accountLineIdentifier");
+            if (accountLineIdentifier.equals(13)) {
+                return (T) FavoriteAccountFixture.FAVORITE_ACCOUNT_1.createFavoriteAccount();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public <T extends BusinessObject> Collection<T> findMatching(Class<T> clazz, Map<String, ?> fieldValues) {
+            String principalId = (String) fieldValues.get("principalId");
+            if (StringUtils.equals("1008950", principalId)) {
+                Collection<T> results = new ArrayList<>();
+                results.add((T) UserProcurementProfileFixture.USER_PROCUREMENT_PROFILE_8.createUserProcurementProfile());
+                return results;
+            } else {
+                return null;
+            }
+        }
 
     }
-    
 
 }
