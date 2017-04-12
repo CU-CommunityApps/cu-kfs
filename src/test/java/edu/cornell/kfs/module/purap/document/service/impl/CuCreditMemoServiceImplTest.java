@@ -3,6 +3,9 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.ConfigureContext;
@@ -15,83 +18,92 @@ import org.kuali.kfs.krad.service.DocumentService;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 
-@ConfigureContext(session = UserNameFixture.mo14)
-public class CuCreditMemoServiceImplTest extends KualiTestBase {
-
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuCreditMemoServiceImplTest.class);
+public class CuCreditMemoServiceImplTest {
 
 	private CuCreditMemoServiceImpl creditMemoServiceImpl;
-	private DocumentService documentService;
+	private DateTimeService dateTimeService;
+	private VendorCreditMemoDocument creditMemoDocument;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		creditMemoServiceImpl = (CuCreditMemoServiceImpl) TestUtils.getUnproxiedService("creditMemoService");
-		documentService = SpringContext.getBean(DocumentService.class);
-
+	@Before
+	public void setUp() throws Exception {
+		creditMemoServiceImpl = new CuCreditMemoServiceImpl();
+		dateTimeService = new DateTimeServiceImpl();
+		creditMemoDocument = setupVendorCreditMemoDocument();
 	}
 
-	public void testAddHoldOnCreditMemo() throws Exception {
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+    private VendorCreditMemoDocument setupVendorCreditMemoDocument() {
+	    // Mock to avoid calling super constructor
+	    VendorCreditMemoDocument creditMemoDocument = new VendorCreditMemoDocument();
 
+	    // mock out DocumentService and assert number of times save is called?
+
+        creditMemoDocument.getDocumentHeader().setDocumentDescription("Description");
+        creditMemoDocument.setVendorDetailAssignedIdentifier(0);
+        creditMemoDocument.setVendorHeaderGeneratedIdentifier(4291);
+        creditMemoDocument.setCreditMemoNumber("12345");
+        creditMemoDocument.setCreditMemoDate(dateTimeService.getCurrentSqlDate());
+        creditMemoDocument.setCreditMemoAmount(new KualiDecimal(100));
+
+        return creditMemoDocument;
+    }
+
+    @Test
+	public void testAddHoldOnCreditMemo() throws Exception {
 		creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
-		assertTrue(creditMemoDocument.isHoldIndicator());
-		assertTrue(UserNameFixture.mo14.getPerson().getPrincipalId().equalsIgnoreCase(creditMemoDocument.getLastActionPerformedByPersonId()));
+		Assert.assertTrue(creditMemoDocument.isHoldIndicator());
+		Assert.assertTrue(UserNameFixture.mo14.getPerson().getPrincipalId().equalsIgnoreCase(creditMemoDocument.getLastActionPerformedByPersonId()));
 	}
-	
-	public void testRemoveHoldOnCreditMemo() throws Exception {
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
 
+	@Test
+	public void testRemoveHoldOnCreditMemo() throws Exception {
 		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
-		assertFalse(creditMemoDocument.isHoldIndicator());
-		assertNull(creditMemoDocument.getLastActionPerformedByPersonId());
+		Assert.assertFalse(creditMemoDocument.isHoldIndicator());
+		Assert.assertNull(creditMemoDocument.getLastActionPerformedByPersonId());
 	}
-	
+
+	@Test
 	public void testrResetExtractedCreditMemo_Successful() throws Exception {
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
-		creditMemoDocument.setExtractedTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+		creditMemoDocument.setExtractedTimestamp(dateTimeService.getCurrentTimestamp());
 		creditMemoServiceImpl.resetExtractedCreditMemo(creditMemoDocument, "unit test");
 
-		assertNull(creditMemoDocument.getExtractedTimestamp());
-		assertNull(creditMemoDocument.getCreditMemoPaidTimestamp());
+		Assert.assertNull(creditMemoDocument.getExtractedTimestamp());
+		Assert.assertNull(creditMemoDocument.getCreditMemoPaidTimestamp());
 	}
-	
+
+	@Test
 	public void testrResetExtractedCreditMemo_Fail() throws Exception {
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
 		creditMemoDocument.setApplicationDocumentStatus(PurapConstants.CreditMemoStatuses.APPDOC_CANCELLED_IN_PROCESS);
-		creditMemoDocument.setExtractedTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
-		creditMemoDocument.setCreditMemoPaidTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
+		creditMemoDocument.setExtractedTimestamp(dateTimeService.getCurrentTimestamp());
+		creditMemoDocument.setCreditMemoPaidTimestamp(dateTimeService.getCurrentTimestamp());
 
 		creditMemoServiceImpl.resetExtractedCreditMemo(creditMemoDocument, "unit test");
 
-		assertNotNull(creditMemoDocument.getExtractedTimestamp());
-		assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
+		Assert.assertNotNull(creditMemoDocument.getExtractedTimestamp());
+		Assert.assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
 	}
-	
-	public void testMarkPaid() throws Exception {
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
 
-		Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
+	@Test
+	public void testMarkPaid() throws Exception {
+		Date currentDate = dateTimeService.getCurrentSqlDate();
 		Timestamp currentTimeStamp = new Timestamp(currentDate.getTime());
 		creditMemoServiceImpl.markPaid(creditMemoDocument, currentDate);
 
-		assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
-		assertEquals(currentTimeStamp, creditMemoDocument.getCreditMemoPaidTimestamp());
+		Assert.assertNotNull(creditMemoDocument.getCreditMemoPaidTimestamp());
+		Assert.assertEquals(currentTimeStamp, creditMemoDocument.getCreditMemoPaidTimestamp());
 	}
-	
-	public void testPopulateDocumentAfterInit() throws Exception {
-		
-		CuVendorCreditMemoDocument creditMemoDocument = (CuVendorCreditMemoDocument)VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
 
+	@Test
+	public void testPopulateDocumentAfterInit() throws WorkflowException {
 		creditMemoServiceImpl.populateDocumentAfterInit(creditMemoDocument);
 
-		assertNotNull(creditMemoDocument.getPaymentMethodCode());
-		assertEquals("P", creditMemoDocument.getPaymentMethodCode());
-		
+		Assert.assertNotNull(((CuVendorCreditMemoDocument)creditMemoDocument).getPaymentMethodCode());
+		Assert.assertEquals("P", ((CuVendorCreditMemoDocument)creditMemoDocument).getPaymentMethodCode());
 	}
 
 }
