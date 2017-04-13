@@ -233,7 +233,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     
     @Override
     public ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur() {
-        LOG.info("retrieveConcurEventNotificationListDTO, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
+        LOG.info("retrieveFailedEventQueueNotificationsFromConcur, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
         ClientResponse response = client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
