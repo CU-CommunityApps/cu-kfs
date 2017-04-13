@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.businessobjects;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -51,7 +52,7 @@ public class ValidationResult {
     
     private boolean isNotDuplicateMessage(String message) {
         for (String currentMessage : getMessages()) {
-            if (StringUtils.equals(currentMessage, message)) {
+            if (StringUtils.equalsIgnoreCase(currentMessage, message)) {
                 return false;
             }
         }
@@ -59,7 +60,7 @@ public class ValidationResult {
     }
 
     public void addMessages(List<String> messagesToAdd) {
-        if (messagesToAdd != null) {
+        if (CollectionUtils.isNotEmpty(messagesToAdd)) {
             for (String messageToAdd : messagesToAdd) {
                 addMessage(messageToAdd);
             }

@@ -2,6 +2,7 @@ package edu.cornell.kfs.concur.service.impl;
 
 import static org.junit.Assert.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,11 +62,7 @@ public class ConcurEventNotificationServiceImplTest {
     }
     
     private String buildLongMessage() {
-        StringBuilder sb = new StringBuilder(ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
-        for (int i = 0; i<ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH; i++) {
-            sb.append("A");
-        }
-        return sb.toString();
+        return StringUtils.repeat("A", ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
     }
 
 }

@@ -54,10 +54,7 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     }
     
     protected String truncateValidationResultMessageToMaximumDatabaseFieldSize(String validationResultMessages) {
-        if (validationResultMessages != null && validationResultMessages.length() > ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH) {
-            validationResultMessages = validationResultMessages.substring(0, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
-        }
-        return validationResultMessages;
+        return StringUtils.left(validationResultMessages, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
     }
     
     @Override
