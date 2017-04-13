@@ -37,13 +37,19 @@ import org.kuali.kfs.vnd.fixture.VendorAddressFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.kuali.rice.kew.api.WorkflowDocument;
+import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.doctype.bo.DocumentType;
+import org.kuali.rice.kew.impl.document.WorkflowDocumentImpl;
+import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import javax.xml.parsers.DocumentBuilder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.sql.Date;
@@ -105,9 +111,7 @@ public class CuCreditMemoServiceImplTest {
         IMockBuilder<CuVendorCreditMemoDocument> builder = EasyMock.createMockBuilder(CuVendorCreditMemoDocument.class).addMockedMethods(methodNames.toArray(new String[0]));
         creditMemoDocument = builder.createNiceMock();
 
-	    // mock out DocumentService and assert number of times save is called?
-
-        creditMemoDocument.setDocumentHeader(new FinancialSystemDocumentHeader());
+        creditMemoDocument.setDocumentHeader(new MockFinancialSystemDocumentHeader());
         creditMemoDocument.getDocumentHeader().setDocumentDescription("Description");
         creditMemoDocument.setVendorDetailAssignedIdentifier(0);
         creditMemoDocument.setVendorHeaderGeneratedIdentifier(4291);
@@ -268,4 +272,14 @@ public class CuCreditMemoServiceImplTest {
             return 200;
         }
     }
+
+    private class MockFinancialSystemDocumentHeader extends FinancialSystemDocumentHeader {
+
+        @Override
+        public void setApplicationDocumentStatus(String applicationDocumentStatus) {
+            this.applicationDocumentStatus = applicationDocumentStatus;
+        }
+
+    }
+
 }
