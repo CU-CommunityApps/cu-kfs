@@ -56,7 +56,6 @@
                 <test.excludes>
                     **/CuDisbursementVoucherPayeeServiceImplTest.java,
                     **/CuB2BPurchaseOrderSciquestServiceImplTest.java,
-                    **/CuCreditMemoServiceImplTest.java,
                     **/CuPaymentRequestServiceImplTest.java,
                     **/CuPurchase*Test.java,
                     **/CuRequisitionServiceImplTest.java,

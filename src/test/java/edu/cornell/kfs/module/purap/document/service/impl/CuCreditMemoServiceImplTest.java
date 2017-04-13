@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
 import org.easymock.EasyMock;
@@ -11,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.kns.service.impl.DataDictionaryServiceImpl;
 import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.krad.document.Document;
@@ -20,13 +21,11 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
 import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.module.purap.document.service.impl.AccountsPayableServiceImpl;
-import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -37,19 +36,12 @@ import org.kuali.kfs.vnd.fixture.VendorAddressFixture;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
-import org.kuali.rice.kew.api.WorkflowDocument;
-import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kew.doctype.bo.DocumentType;
-import org.kuali.rice.kew.impl.document.WorkflowDocumentImpl;
-import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.xml.parsers.DocumentBuilder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.sql.Date;
@@ -61,15 +53,15 @@ import java.util.HashMap;
 @PrepareForTest(CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class)
 public class CuCreditMemoServiceImplTest {
 
-	private CuCreditMemoServiceImpl creditMemoServiceImpl;
-	private DateTimeService dateTimeService;
-	private CuVendorCreditMemoDocument creditMemoDocument;
-	private DocumentService documentService;
-	private NoteService noteService;
-    private PurapService purapService;
     private AccountsPayableService accountsPayableService;
-    private VendorService vendorService;
+    private CuCreditMemoServiceImpl creditMemoServiceImpl;
     private DataDictionaryService dataDictionaryService;
+    private DateTimeService dateTimeService;
+    private DocumentService documentService;
+    private NoteService noteService;
+    private PurapService purapService;
+    private VendorService vendorService;
+    private CuVendorCreditMemoDocument creditMemoDocument;
     @Mock
     private static Person mo14Person;
     @Mock
@@ -77,13 +69,19 @@ public class CuCreditMemoServiceImplTest {
 
     @Before
 	public void setUp() throws Exception {
-	    documentService = new MockDocumentServiceImpl();
+        accountsPayableService = EasyMock.createNiceMock(AccountsPayableService.class);
+        EasyMock.expect(accountsPayableService.getExpiredOrClosedAccountList(creditMemoDocument)).andReturn(new HashMap<>());
+        EasyMock.replay(accountsPayableService);
+
+        dataDictionaryService = EasyMock.createNiceMock(DataDictionaryService.class);
+        EasyMock.expect(dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KRADPropertyConstants.DOCUMENT_DESCRIPTION)).andReturn(200);
+        EasyMock.replay(dataDictionaryService);
+
+        dateTimeService = new DateTimeServiceImpl();
+        documentService = new MockDocumentServiceImpl();
         noteService = EasyMock.createMock(NoteService.class);
         purapService = EasyMock.createMock(PurapService.class);
-        dateTimeService = new DateTimeServiceImpl();
-        accountsPayableService = new MockAccountsPayableServiceImpl();
         vendorService = new MockVendorServiceImpl();
-        dataDictionaryService = new MockDataDictionaryServiceImpl();
 
         creditMemoServiceImpl = PowerMock.createPartialMock(CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, "reIndexDocument", "getCreditMemoDocumentById");
 
@@ -96,8 +94,9 @@ public class CuCreditMemoServiceImplTest {
 
 		creditMemoDocument = setupVendorCreditMemoDocument();
 
-		mo14Person = createMockPerson(UserNameFixture.mo14);
-        mo14Session = createMockUserSession(mo14Person);
+		mo14Person = MockPersonUtil.createMockPerson(UserNameFixture.mo14);
+        mo14Session = MockPersonUtil.createMockUserSession(mo14Person);
+
         GlobalVariables.setUserSession(mo14Session);
 	}
 
@@ -120,26 +119,6 @@ public class CuCreditMemoServiceImplTest {
         creditMemoDocument.setCreditMemoAmount(new KualiDecimal(100));
 
         return creditMemoDocument;
-    }
-
-    protected static UserSession createMockUserSession(Person person) {
-        UserSession userSession = EasyMock.createMock(UserSession.class);
-        EasyMock.expect(userSession.getPrincipalId()).andStubReturn(person.getPrincipalId());
-        EasyMock.expect(userSession.getPrincipalName()).andStubReturn(person.getPrincipalName());
-        EasyMock.expect(userSession.getLoggedInUserPrincipalName()).andStubReturn(person.getPrincipalName());
-        EasyMock.expect(userSession.getPerson()).andStubReturn(person);
-        EasyMock.expect(userSession.getActualPerson()).andStubReturn(person);
-        EasyMock.replay(userSession);
-        return userSession;
-    }
-
-    protected static Person createMockPerson(UserNameFixture userNameFixture) {
-        Person person = EasyMock.createMock(PersonImpl.class);
-        EasyMock.expect(person.getPrincipalName()).andStubReturn(userNameFixture.toString());
-        EasyMock.expect(person.getPrincipalId()).andStubReturn(userNameFixture.toString());
-        EasyMock.expect(person.getCampusCode()).andStubReturn(userNameFixture.toString());
-        EasyMock.replay(person);
-        return person;
     }
 
     @Test
@@ -233,13 +212,6 @@ public class CuCreditMemoServiceImplTest {
         }
     }
 
-    private class MockAccountsPayableServiceImpl extends AccountsPayableServiceImpl {
-        @Override
-        public HashMap<String, ExpiredOrClosedAccountEntry> getExpiredOrClosedAccountList(AccountsPayableDocument document) {
-            return new HashMap<>();
-        }
-    }
-
     private class MockVendorDetail extends VendorDetail {
         @Override
         public PersistableBusinessObjectExtension getExtension() {
@@ -263,13 +235,6 @@ public class CuCreditMemoServiceImplTest {
         @Override
         public VendorAddress getVendorDefaultAddress(Integer vendorHeaderId, Integer vendorDetailId, String addressType, String campus, boolean activeCheck) {
             return VendorAddressFixture.address1.createAddress();
-        }
-    }
-
-    private class MockDataDictionaryServiceImpl extends DataDictionaryServiceImpl {
-        @Override
-        public Integer getAttributeMaxLength(Class dataObjectClass, String attributeName) {
-            return 200;
         }
     }
 
