@@ -5,6 +5,7 @@ import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
 import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
@@ -44,7 +45,6 @@ import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.impl.identity.PersonImpl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -101,10 +101,10 @@ public class CuDisbursementVoucherDocumentTest {
         IMockBuilder<CuDisbursementVoucherDocument> builder = EasyMock.createMockBuilder(CuDisbursementVoucherDocument.class).addMockedMethods(methodNames.toArray(new String[0]));
         cuDisbursementVoucherDocument = builder.createNiceMock();
 
-        ccs1Person = createMockPerson(UserNameFixture.ccs1);
-        mo14Person = createMockPerson(UserNameFixture.mo14);
-        ccs1Session = createMockUserSession(ccs1Person);
-        mo14Session = createMockUserSession(mo14Person);
+        ccs1Person = MockPersonUtil.createMockPerson(UserNameFixture.ccs1);
+        mo14Person = MockPersonUtil.createMockPerson(UserNameFixture.mo14);
+        ccs1Session = MockPersonUtil.createMockUserSession(ccs1Person);
+        mo14Session = MockPersonUtil.createMockUserSession(mo14Person);
 
         vendorService = new TestVendorService();
         disbursementVoucherPayeeService = new TestDisbursementVoucherPayeeService();
@@ -122,25 +122,6 @@ public class CuDisbursementVoucherDocumentTest {
         cuDisbursementVoucherDocument.setVendorService(null);
         cuDisbursementVoucherDocument.setDocumentHelperService(null);
         KNSGlobalVariables.getMessageList().clear();
-    }
-
-    protected static UserSession createMockUserSession(Person person) {
-        UserSession userSession = EasyMock.createMock(UserSession.class);
-        EasyMock.expect(userSession.getPrincipalId()).andStubReturn(person.getPrincipalId());
-        EasyMock.expect(userSession.getPrincipalName()).andStubReturn(person.getPrincipalName());
-        EasyMock.expect(userSession.getLoggedInUserPrincipalName()).andStubReturn(person.getPrincipalName());
-        EasyMock.expect(userSession.getPerson()).andStubReturn(person);
-        EasyMock.expect(userSession.getActualPerson()).andStubReturn(person);
-        EasyMock.replay(userSession);
-        return userSession;
-    }
-
-    protected static Person createMockPerson(UserNameFixture userNameFixture) {
-        Person person = EasyMock.createMock(PersonImpl.class);
-        EasyMock.expect(person.getPrincipalName()).andStubReturn(userNameFixture.toString());
-        EasyMock.expect(person.getPrincipalId()).andStubReturn(userNameFixture.toString());
-        EasyMock.replay(person);
-        return person;
     }
 
     @Before
