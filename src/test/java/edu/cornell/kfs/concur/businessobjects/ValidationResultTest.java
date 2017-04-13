@@ -63,7 +63,7 @@ public class ValidationResultTest {
     @Test
     public void verifyAddEmptyCollectionMessage() {
         validationResult.addMessage(TEST_STRING_ONE);
-        validationResult.addMessages(new ArrayList());
+        validationResult.addMessages(new ArrayList<String>());
         assertEquals("There should only be one line", 1, validationResult.getMessages().size());
     }
 
