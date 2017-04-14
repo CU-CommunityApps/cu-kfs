@@ -71,7 +71,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         // store groups
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
-            setPaymentAddressFieldsForEmployeePayee(paymentFile, paymentGroup);
+            setPaymentFieldsForEmployeePayee(paymentFile, paymentGroup);
             businessObjectService.save(paymentGroup);
         }
 
@@ -90,11 +90,11 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
     }
     
-    private void setPaymentAddressFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
-        LOG.debug("setPaymentAddressFieldsForEmployeePayee, entering");
+    private void setPaymentFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+        LOG.debug("setPaymentFieldsForEmployeePayee, entering");
         if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
             Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
-            LOG.debug("setPaymentAddressFieldsForEmployeePayee, found a concur customer, for employee: " + employee.getName());
+            LOG.debug("setPaymentFieldsForEmployeePayee, found a concur customer, for employee: " + employee.getName());
             paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
             paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
             paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
@@ -102,6 +102,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
             paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
             paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
             paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
+            paymentGroup.setEmployeeIndicator(true);
         }
     }
     
