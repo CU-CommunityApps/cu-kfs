@@ -204,7 +204,16 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         logErrorsWithOriginalAccountingDetails(line);
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
-        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+        
+        String chartOfAccountsCode = line.getChartOfAccountsCode();
+        String accountNumber = line.getAccountNumber();
+        if (isCashAdvanceLine(line)) {
+            /**
+             * @todo override chart and account
+             */
+        }
+        
+        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(chartOfAccountsCode, chartOfAccountsCode, 
                 line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
         ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
 
@@ -216,9 +225,20 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
-        buildValidationResult(accountingInformation, false);
+        if (!isCashAdvanceLine(line)) {
+            ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+                    line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
+            buildValidationResult(accountingInformation, false);
+        } else {
+            LOG.debug("logErrorsWithOriginalAccountingDetails, found a cash advance line, so no need to log pre override validation errors.");
+        }
+    }
+    
+    protected boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
+        /**
+         * @todo implement this
+         */
+        return true;
     }
     
     private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {
