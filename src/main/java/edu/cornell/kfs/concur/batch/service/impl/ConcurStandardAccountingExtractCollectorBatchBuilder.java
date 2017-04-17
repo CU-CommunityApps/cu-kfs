@@ -12,6 +12,8 @@ import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.SystemOptions;
+import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -65,6 +67,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected CollectorBatch collectorBatch;
     protected Map<String,ConcurDetailLineGroupForCollector> lineGroups;
+    protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
@@ -78,9 +81,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
      * @throws IllegalArgumentException if any arguments are null.
      */
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
+            OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterService) {
-        if (universityDateService == null) {
+        if (optionsService == null) {
+            throw new IllegalArgumentException("optionsService cannot be null");
+        } else if (universityDateService == null) {
             throw new IllegalArgumentException("universityDateService cannot be null");
         } else if (dateTimeService == null) {
             throw new IllegalArgumentException("dateTimeService cannot be null");
@@ -90,6 +96,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new IllegalArgumentException("propertyFinder cannot be null");
         }
         
+        this.optionsService = optionsService;
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
         this.concurSAEValidationService = concurSAEValidationService;
@@ -148,7 +155,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Finished generating Collector data from SAE file: "
                     + saeFileContents.getOriginalFileName());
             LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Total GL Entry Count: " + collectorBatch.getTotalRecords());
-            LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Total Amount: " + collectorBatch.getTotalAmount());
+            LOG.info("buildCollectorBatchFromStandardAccountingExtract(): Total Debit Amount: " + collectorBatch.getTotalAmount());
             result = collectorBatch;
         } catch (Exception e) {
             LOG.error("buildCollectorBatchFromStandardAccountingExtract(): Error encountered while generating Collector data from SAE file", e);
@@ -201,8 +208,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected void updateCollectorBatchWithOriginEntries() {
+        Integer fiscalYear = Integer.valueOf(collectorBatch.getUniversityFiscalYear());
+        SystemOptions fiscalYearOptions = optionsService.getOptions(fiscalYear);
+        String actualFinancialBalanceTypeCode = fiscalYearOptions.getActualFinancialBalanceTypeCd();
+        
         for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
             for (OriginEntryFull originEntry : lineGroup.buildOriginEntries()) {
+                originEntry.setFinancialBalanceTypeCode(actualFinancialBalanceTypeCode);
                 originEntry.setTransactionLedgerEntrySequenceNumber(
                         getNextTransactionSequenceNumber(lineGroup.getReportId()));
                 collectorBatch.addOriginEntry(originEntry);
@@ -210,13 +222,18 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         }
         
         Integer totalRecords = Integer.valueOf(collectorBatch.getOriginEntries().size());
-        KualiDecimal totalAmount = collectorBatch.getOriginEntries()
+        KualiDecimal totalDebitAmount = collectorBatch.getOriginEntries()
                 .stream()
+                .filter(this::isDebitEntry)
                 .map(OriginEntryFull::getTransactionLedgerEntryAmount)
                 .reduce(KualiDecimal.ZERO, KualiDecimal::add);
         
         collectorBatch.setTotalRecords(totalRecords);
-        collectorBatch.setTotalAmount(totalAmount);
+        collectorBatch.setTotalAmount(totalDebitAmount);
+    }
+
+    protected boolean isDebitEntry(OriginEntryFull originEntry) {
+        return StringUtils.equals(KFSConstants.GL_DEBIT_CODE, originEntry.getTransactionDebitCreditCode());
     }
 
     protected boolean shouldProcessLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {

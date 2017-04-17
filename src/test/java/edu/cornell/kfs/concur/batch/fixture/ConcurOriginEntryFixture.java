@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.service.BalanceTypeService;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -238,6 +239,7 @@ public enum ConcurOriginEntryFixture {
         // Default constructor sets fiscal year to zero; need to forcibly clear it to match the setup in our Concur runtime code.
         originEntry.setUniversityFiscalYear(null);
         
+        originEntry.setFinancialBalanceTypeCode(BalanceTypeService.ACTUAL_BALANCE_TYPE);
         originEntry.setChartOfAccountsCode(chartOfAccountsCode);
         originEntry.setAccountNumber(accountNumber);
         originEntry.setSubAccountNumber(
