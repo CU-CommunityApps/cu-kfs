@@ -300,7 +300,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             SystemOptions testOptions = new SystemOptions();
             testOptions.setActualFinancialBalanceTypeCd(BalanceTypeService.ACTUAL_BALANCE_TYPE);
             
-            EasyMock.expect(service.getCurrentYearOptions())
+            EasyMock.expect(service.getOptions(EasyMock.anyObject()))
                     .andStubReturn(testOptions);
         });
     }

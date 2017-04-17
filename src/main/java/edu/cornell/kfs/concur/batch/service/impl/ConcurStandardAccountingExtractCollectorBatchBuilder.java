@@ -208,7 +208,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected void updateCollectorBatchWithOriginEntries() {
-        SystemOptions options = optionsService.getCurrentYearOptions();
+        Integer fiscalYear = Integer.valueOf(collectorBatch.getUniversityFiscalYear());
+        SystemOptions options = optionsService.getOptions(fiscalYear);
         String actualFinancialBalanceTypeCode = options.getActualFinancialBalanceTypeCd();
         
         for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
