@@ -16,6 +16,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
@@ -29,6 +30,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ParameterService parameterService;
     protected PersonService personService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -207,10 +209,8 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         
         String chartOfAccountsCode = line.getChartOfAccountsCode();
         String accountNumber = line.getAccountNumber();
-        if (isCashAdvanceLine(line)) {
-            /**
-             * @todo override chart and account
-             */
+        if (getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
+            LOG.debug("validateAccountingLine, found a cash advance line.");
         }
         
         ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(chartOfAccountsCode, chartOfAccountsCode, 
@@ -225,20 +225,13 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
-        if (!isCashAdvanceLine(line)) {
+        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
             ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                     line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
             buildValidationResult(accountingInformation, false);
         } else {
             LOG.debug("logErrorsWithOriginalAccountingDetails, found a cash advance line, so no need to log pre override validation errors.");
         }
-    }
-    
-    protected boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
-        /**
-         * @todo implement this
-         */
-        return true;
     }
     
     private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {
@@ -273,6 +266,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public ConcurStandardAccountingExtractCashAdvanceService getConcurStandardAccountingExtractCashAdvanceService() {
+        return concurStandardAccountingExtractCashAdvanceService;
+    }
+
+    public void setConcurStandardAccountingExtractCashAdvanceService(ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService) {
+        this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
     }
 
 }

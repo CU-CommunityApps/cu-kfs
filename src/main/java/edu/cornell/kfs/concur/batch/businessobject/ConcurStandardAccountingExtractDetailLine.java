@@ -34,6 +34,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private KualiDecimal cashAdvanceAmount;
     private Date cashAdvanceIssueDate;
     private String cashAdvanceCaKey;
+    private String reportEntryId;
     
     public String getBatchID() {
         return batchID;
@@ -259,12 +260,20 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.cashAdvanceCaKey = cashAdvanceCaKey;
     }
 
+    public String getReportEntryId() {
+        return reportEntryId;
+    }
+
+    public void setReportEntryId(String reportEntryId) {
+        this.reportEntryId = reportEntryId;
+    }
+
     public String getDebugInformation() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
         sb.append(" employeeLastName: ").append(employeeLastName).append(" employeeFirstName: ").append(employeeFirstName);
         sb.append(" employeeMiddleInitital: ").append(employeeMiddleInitital).append(" employeeGroupId: ").append(employeeGroupId);
-        sb.append(" reportId: ").append(reportId).append(" employeeStatus: ").append(employeeStatus);
+        sb.append(" reportId: ").append(reportId).append(" reportEntryId: ").append(reportEntryId).append(" employeeStatus: ").append(employeeStatus);
         sb.append(" paymentCode: ").append(paymentCode).append(" journalAccountCode: ").append(journalAccountCode);
         sb.append(" journalAccountCodeOverridden ").append(journalAccountCodeOverridden);
         sb.append(" chartOfAccountsCode: ").append(chartOfAccountsCode).append(" accountNumber: ").append(accountNumber);
