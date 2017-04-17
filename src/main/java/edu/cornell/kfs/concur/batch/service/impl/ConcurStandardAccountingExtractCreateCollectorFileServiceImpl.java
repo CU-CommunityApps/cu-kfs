@@ -11,6 +11,7 @@ import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.bo.BusinessObject;
@@ -38,6 +39,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
     protected LookupableHelperService batchFileLookupableHelperService;
+    protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
@@ -76,7 +78,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
         return new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
+                optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
     protected String getConcurParameterValueAsString(String parameterName) {
@@ -141,6 +143,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     public void setBatchFileLookupableHelperService(LookupableHelperService batchFileLookupableHelperService) {
         this.batchFileLookupableHelperService = batchFileLookupableHelperService;
+    }
+
+    public void setOptionsService(OptionsService optionsService) {
+        this.optionsService = optionsService;
     }
 
     public void setUniversityDateService(UniversityDateService universityDateService) {
