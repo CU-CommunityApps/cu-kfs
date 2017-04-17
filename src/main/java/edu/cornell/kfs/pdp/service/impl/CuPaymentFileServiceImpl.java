@@ -71,7 +71,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         // store groups
         for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
-            setPaymentAddressFieldsForEmployeePayee(paymentFile, paymentGroup);
+            updatePaymentFieldsForEmployeePayee(paymentFile, paymentGroup);
             businessObjectService.save(paymentGroup);
         }
 
@@ -90,19 +90,24 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
     }
     
-    private void setPaymentAddressFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
-        LOG.debug("setPaymentAddressFieldsForEmployeePayee, entering");
+    private void updatePaymentFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+        LOG.debug("updatePaymentFieldsForEmployeePayee, entering");
         if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
             Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
-            LOG.debug("setPaymentAddressFieldsForEmployeePayee, found a concur customer, for employee: " + employee.getName());
-            paymentGroup.setLine1Address(employee.getAddressLine1Unmasked());
-            paymentGroup.setLine2Address(employee.getAddressLine2Unmasked());
-            paymentGroup.setLine3Address(employee.getAddressLine3Unmasked());
-            paymentGroup.setCity(employee.getAddressCityUnmasked());
-            paymentGroup.setState(employee.getAddressStateProvinceCodeUnmasked());
-            paymentGroup.setZipCd(employee.getAddressPostalCodeUnmasked());
-            paymentGroup.setCountry(employee.getAddressCountryCodeUnmasked());
+            LOG.debug("updatePaymentFieldsForEmployeePayee, processing payee as emoployee: " + employee.getName());
+            updatePayeeAddressFieldsFromPerson(paymentGroup, employee);
+            paymentGroup.setEmployeeIndicator(true);
         }
+    }
+    
+    private void updatePayeeAddressFieldsFromPerson(PaymentGroup paymentGroup, Person person) {
+        paymentGroup.setLine1Address(person.getAddressLine1Unmasked());
+        paymentGroup.setLine2Address(person.getAddressLine2Unmasked());
+        paymentGroup.setLine3Address(person.getAddressLine3Unmasked());
+        paymentGroup.setCity(person.getAddressCityUnmasked());
+        paymentGroup.setState(person.getAddressStateProvinceCodeUnmasked());
+        paymentGroup.setZipCd(person.getAddressPostalCodeUnmasked());
+        paymentGroup.setCountry(person.getAddressCountryCodeUnmasked());
     }
     
     @Override
