@@ -19,8 +19,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.coa.service.BalanceTypeService;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
+import org.kuali.kfs.sys.businessobject.SystemOptions;
+import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -46,17 +49,19 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected static final int MIN_YEAR = 2000;
 
     protected TestConcurStandardAccountingExtractCollectorBatchBuilder builder;
+    protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
 
     @Before
     public void setUp() throws Exception {
+        optionsService = buildMockOptionsService();
         universityDateService = buildMockUniversityDateService();
         dateTimeService = new DateTimeServiceImpl();
         concurSAEValidationService = buildMockConcurSAEValidationService();
         builder = new TestConcurStandardAccountingExtractCollectorBatchBuilder(
-                universityDateService, dateTimeService, concurSAEValidationService, this::getParameterValue);
+                optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getParameterValue);
     }
 
     @Test
@@ -172,6 +177,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     protected void assertOriginEntryHasCorrectData(OriginEntryFull expected, OriginEntryFull actual) throws Exception {
+        assertEquals("Wrong balance type", expected.getFinancialBalanceTypeCode(), actual.getFinancialBalanceTypeCode());
         assertEquals("Wrong fiscal year", expected.getUniversityFiscalYear(), actual.getUniversityFiscalYear());
         assertEquals("Wrong chart code", expected.getChartOfAccountsCode(), actual.getChartOfAccountsCode());
         assertEquals("Wrong account number", expected.getAccountNumber(), actual.getAccountNumber());
@@ -287,6 +293,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected boolean fixtureRepresentsPendingClientLine(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.equals(ConcurConstants.PENDING_CLIENT, fixture.journalAccountCode);
+    }
+
+    protected OptionsService buildMockOptionsService() {
+        return buildMockService(OptionsService.class, (service) -> {
+            SystemOptions testOptions = new SystemOptions();
+            testOptions.setActualFinancialBalanceTypeCd(BalanceTypeService.ACTUAL_BALANCE_TYPE);
+            
+            EasyMock.expect(service.getCurrentYearOptions())
+                    .andStubReturn(testOptions);
+        });
     }
 
     protected UniversityDateService buildMockUniversityDateService() {
@@ -405,9 +421,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             extends ConcurStandardAccountingExtractCollectorBatchBuilder {
         
         public TestConcurStandardAccountingExtractCollectorBatchBuilder(
+                OptionsService optionsService,
                 UniversityDateService universityDateService, DateTimeService dateTimeService,
                 ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterFinder) {
-            super(universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
+            super(optionsService, universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
         }
         
         @Override
