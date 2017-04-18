@@ -50,5 +50,8 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_PREPAID_OFFSET_OBJECT_CODE = "7711";
         public static final String COLLECTOR_CASH_OFFSET_OBJECT_CODE = "8282";
     }
+    
+    public static final String PDP_LINE_FIXTURE_CASH_ADVANCE_KEY = "ABC123";
+    public static final String PDP_LINE_FIXTURE_REPORT_ENTRY_ID = "entryID101";
 
 }
