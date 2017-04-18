@@ -24,14 +24,14 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImplTest {
     }
 
     @Test
-    public void validateCashLine() {
+    public void validateIsCashAdvanceTrue() {
         ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
         line.setCashAdvanceCaKey("1242");
         assertTrue("Should be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(line));
     }
     
     @Test
-    public void validateNonCashLine() {
+    public void validateIsCashAdvanceFalse() {
         ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
         assertFalse("Should NOT be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(line));
     }

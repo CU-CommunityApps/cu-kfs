@@ -1,6 +1,8 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +16,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractOverrideAccountingInfo;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
@@ -203,35 +206,34 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        logErrorsWithOriginalAccountingDetails(line);
+        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
+            logErrorsWithOriginalAccountingDetails(line);
+    
+            ValidationResult overriddenValidationResults = buildValidationResult(buildOverriddenConcurAccountingInformation(line), true);
+    
+            if (overriddenValidationResults.isNotValid()) {
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
+            }
+
+            return overriddenValidationResults.isValid();
+        } else {
+            LOG.debug("validateAccountingLine, found a cash advance line, no need to validate");
+            return true;
+        }
+    }
+    
+    private ConcurAccountInfo buildOverriddenConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
-        
-        String chartOfAccountsCode = line.getChartOfAccountsCode();
-        String accountNumber = line.getAccountNumber();
-        if (getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
-            LOG.debug("validateAccountingLine, found a cash advance line.");
-        }
-        
-        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(chartOfAccountsCode, chartOfAccountsCode, 
+        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(),  line.getAccountNumber(), 
                 line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
-        ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
-
-        if (overriddenValidationResults.isNotValid()) {
-            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
-        }
-
-        return overriddenValidationResults.isValid();
+        return overriddenConcurAccountingInformation;
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
-        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
-            ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                    line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
-            buildValidationResult(accountingInformation, false);
-        } else {
-            LOG.debug("logErrorsWithOriginalAccountingDetails, found a cash advance line, so no need to log pre override validation errors.");
-        }
+        ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+                line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
+        buildValidationResult(accountingInformation, false);
     }
     
     private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {
