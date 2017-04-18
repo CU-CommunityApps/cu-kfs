@@ -81,6 +81,7 @@
 		<property name="concurStandardAccountingExtractCreateCollectorFileService" ref="concurStandardAccountingExtractCreateCollectorFileService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
 		<property name="parameterService" ref="parameterService"/>
+		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />

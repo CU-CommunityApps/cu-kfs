@@ -28,6 +28,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
+import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
@@ -115,15 +116,15 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
 
     @Override
-    public PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurStandardAccountingExtractDetailLine line) {
+    public PdpFeedAccountingEntry buildPdpFeedAccountingEntry( ConcurAccountInfo concurAccountInfo) {
         PdpFeedAccountingEntry currentAccountingEntry =  new PdpFeedAccountingEntry();
-        currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
-        currentAccountingEntry.setAccountNbr(line.getAccountNumber());
-        currentAccountingEntry.setSubAccountNbr(line.getSubAccountNumber());
+        currentAccountingEntry.setCoaCd(concurAccountInfo.getChart());
+        currentAccountingEntry.setAccountNbr(concurAccountInfo.getAccountNumber());
+        currentAccountingEntry.setSubAccountNbr(concurAccountInfo.getSubAccountNumber());
         currentAccountingEntry.setObjectCd(getConcurParameterValue(ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE));
         currentAccountingEntry.setSubObjectCd(StringUtils.EMPTY);
-        currentAccountingEntry.setOrgRefId(line.getOrgRefId());
-        currentAccountingEntry.setProjectCd(line.getProjectCode());
+        currentAccountingEntry.setOrgRefId(concurAccountInfo.getOrgRefId());
+        currentAccountingEntry.setProjectCd(concurAccountInfo.getProjectCode());
         currentAccountingEntry.setAmount(KualiDecimal.ZERO);
         return currentAccountingEntry;
     }

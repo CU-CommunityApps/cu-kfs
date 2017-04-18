@@ -26,6 +26,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
@@ -33,6 +34,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
+import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
@@ -47,6 +49,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService;
     protected ConcurStandardAccountingExtractCreateCollectorFileService concurStandardAccountingExtractCreateCollectorFileService;
     protected ParameterService parameterService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
@@ -148,7 +151,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                 totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
                 logJournalAccountCodeOverridden(line, reportData);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line, reportData)) {
-                    buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line);
+                    buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line, concurStandardAccountingExtractFile);
                 }
             }
         }
@@ -166,10 +169,11 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         }
     }
 
-    private void buildAndUpdateAccountingEntryFromLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line) {
+    private void buildAndUpdateAccountingEntryFromLine(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
         PdpFeedGroupEntry currentGroup = getGroupEntryForLine(pdpFeedFileBaseEntry, line);
         PdpFeedDetailEntry currentDetail = getDetailEntryForLine(currentGroup, line);
-        PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line);
+        PdpFeedAccountingEntry currentAccounting = getAccountingEntryForLine(currentDetail, line, concurStandardAccountingExtractFile);
         KualiDecimal newAmount = line.getJournalAmount().add(currentAccounting.getAmount());
         currentAccounting.setAmount(newAmount);
     }
@@ -197,15 +201,34 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         return detailEntry;
     }
     
-    private PdpFeedAccountingEntry getAccountingEntryForLine(PdpFeedDetailEntry detailEntry, ConcurStandardAccountingExtractDetailLine line) {
+    private PdpFeedAccountingEntry getAccountingEntryForLine(PdpFeedDetailEntry detailEntry, ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        
+        ConcurAccountInfo concurAccountInfo = buildConcurAccountInfoFromExtractDetailLine(line,
+                concurStandardAccountingExtractFile);
+        
         for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
-            if (isCurrentAccountingEntrySameAsLineDetail(accountingEntry, line)) {
+            if (isCurrentAccountingEntrySameAsLineDetail(accountingEntry, concurAccountInfo)) {
                 return accountingEntry;
             }
         }
-        PdpFeedAccountingEntry accountingEntry = getConcurStandardAccountExtractPdpEntryService().buildPdpFeedAccountingEntry(line);
+        PdpFeedAccountingEntry accountingEntry = getConcurStandardAccountExtractPdpEntryService().buildPdpFeedAccountingEntry(concurAccountInfo);
         detailEntry.getAccounting().add(accountingEntry);
         return accountingEntry;
+    }
+
+    private ConcurAccountInfo buildConcurAccountInfoFromExtractDetailLine(ConcurStandardAccountingExtractDetailLine line,
+            ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        ConcurAccountInfo concurAccountInfo;
+        if (getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
+            concurAccountInfo = getConcurStandardAccountingExtractCashAdvanceService().findAccountingInfoForCashAdvanceLine(line, 
+                    concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines());
+        } else {
+            concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), line.getSubAccountNumber(), 
+                    line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
+            concurAccountInfo.setOrgRefId(line.getOrgRefId());
+        }
+        return concurAccountInfo;
     }
     
     protected String buildPdpOutputFileName(String originalFileName) {
@@ -214,12 +237,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     }
     
     protected boolean isCurrentAccountingEntrySameAsLineDetail(PdpFeedAccountingEntry currentAccountingEntry, 
-            ConcurStandardAccountingExtractDetailLine line) {
-        boolean isSame = compareStrings(currentAccountingEntry.getCoaCd(), line.getChartOfAccountsCode()) &&
-                compareStrings(currentAccountingEntry.getAccountNbr(), line.getAccountNumber()) &&
-                compareStrings(currentAccountingEntry.getSubAccountNbr(), line.getSubAccountNumber()) &&
-                compareStrings(currentAccountingEntry.getOrgRefId(), line.getOrgRefId()) &&
-                compareStrings(currentAccountingEntry.getProjectCd(), line.getProjectCode());
+            ConcurAccountInfo concurAccountInfo) {
+        boolean isSame = compareStrings(currentAccountingEntry.getCoaCd(), concurAccountInfo.getChart()) &&
+                compareStrings(currentAccountingEntry.getAccountNbr(), concurAccountInfo.getAccountNumber()) &&
+                compareStrings(currentAccountingEntry.getSubAccountNbr(), concurAccountInfo.getSubAccountNumber()) &&
+                compareStrings(currentAccountingEntry.getOrgRefId(), concurAccountInfo.getOrgRefId()) &&
+                compareStrings(currentAccountingEntry.getProjectCd(), concurAccountInfo.getProjectCode());
         return isSame;
     }
     
@@ -388,6 +411,15 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public ConcurStandardAccountingExtractCashAdvanceService getConcurStandardAccountingExtractCashAdvanceService() {
+        return concurStandardAccountingExtractCashAdvanceService;
+    }
+
+    public void setConcurStandardAccountingExtractCashAdvanceService(
+            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService) {
+        this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
     }
 
 }
