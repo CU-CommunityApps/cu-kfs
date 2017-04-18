@@ -18,10 +18,18 @@ public class ConcurPropertyConstants {
     public class ConcurRequestedCashAdvance {
         public static final String CONCUR_REQUESTED_CASH_ADVANCE_ID = "concurRequestedCashAdvanceId";
         public static final String REQUEST_ID = "requestId";
-        public static final String EMPLOYEE_ID = "employeeId";
+        public static final String EMPLID = "employeeId";
         public static final String PAYMENT_AMOUNT = "paymentAmount";
         public static final String PAYMENT_DATE = "paymentDate";
         public static final String SOURCE_DOC_NBR = "sourceDocNbr";
+        public static final String CASH_ADV_KEY = "cashAdvanceKey";
+        public static final String FIN_COA_CD = "chart";
+        public static final String ACCOUNT_NBR = "accountNumber";
+        public static final String SUB_ACCT_NBR = "subAccountNumber";
+        public static final String FIN_OBJECT_CD = "objectCode";
+        public static final String FIN_SUB_OBJ_CD = "subObjectCode";
+        public static final String PROJECT_CD = "projectCode";
+        public static final String ORG_REF_ID = "orgRefId";
         public static final String FILE_NAME = "fileName";
     }
 
