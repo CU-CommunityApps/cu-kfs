@@ -129,7 +129,7 @@ public class ConcurDetailLineGroupForCollector {
      */
     protected void addOriginEntriesForLines(
             List<OriginEntryFull> originEntries, List<ConcurStandardAccountingExtractDetailLine> detailLines,
-            BiFunction<OriginEntryFull,List<ConcurStandardAccountingExtractDetailLine>,Optional<OriginEntryFull>> offsetGenerator) {
+            BiFunction<OriginEntryFull, List<ConcurStandardAccountingExtractDetailLine>, Optional<OriginEntryFull>> offsetGenerator) {
         if (CollectionUtils.isEmpty(detailLines)) {
             return;
         }

@@ -25,18 +25,18 @@ public class ConcurDetailLineGroupForCollectorHelper {
     protected String cashOffsetObjectCode;
 
     public ConcurDetailLineGroupForCollectorHelper(String actualFinancialBalanceTypeCode, Date transmissionDate,
-            DateTimeService dateTimeService, Function<String,String> dashPropertyValueGetter, Function<String,String> parameterService) {
+            DateTimeService dateTimeService, Function<String,String> dashPropertyValueGetter, Function<String,String> concurParameterGetter) {
         this.dateTimeService = dateTimeService;
         this.dashPropertyValueGetter = dashPropertyValueGetter;
         this.actualFinancialBalanceTypeCode = actualFinancialBalanceTypeCode;
         this.transmissionDate = transmissionDate;
         
-        this.documentTypeCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
-        this.systemOriginationCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
-        this.chartCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
-        this.prepaidOffsetAccountNumber = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
-        this.prepaidOffsetObjectCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
-        this.cashOffsetObjectCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE);
+        this.documentTypeCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
+        this.systemOriginationCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
+        this.chartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
+        this.prepaidOffsetAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
+        this.prepaidOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
+        this.cashOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE);
     }
 
     public String getActualFinancialBalanceTypeCode() {

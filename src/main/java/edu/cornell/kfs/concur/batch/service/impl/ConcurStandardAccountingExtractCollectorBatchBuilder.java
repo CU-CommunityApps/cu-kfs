@@ -62,7 +62,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
-    protected Function<String,String> parameterService;
+    protected Function<String,String> concurParameterGetter;
     protected ConcurStandardAccountingExtractBatchReportData reportData;
     protected ConcurDetailLineGroupForCollectorHelper collectorHelper;
     protected int batchSequenceNumber;
@@ -73,7 +73,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
-            ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterService) {
+            ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> concurParameterGetter) {
         if (optionsService == null) {
             throw new IllegalArgumentException("optionsService cannot be null");
         } else if (universityDateService == null) {
@@ -82,25 +82,25 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new IllegalArgumentException("dateTimeService cannot be null");
         } else if (concurSAEValidationService == null) {
             throw new IllegalArgumentException("saeValidationService cannot be null");
-        } else if (parameterService == null) {
-            throw new IllegalArgumentException("propertyFinder cannot be null");
+        } else if (concurParameterGetter == null) {
+            throw new IllegalArgumentException("concurParameterGetter cannot be null");
         }
         
         this.optionsService = optionsService;
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
         this.concurSAEValidationService = concurSAEValidationService;
-        this.parameterService = parameterService;
+        this.concurParameterGetter = concurParameterGetter;
         
-        this.docTypeCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
-        this.chartCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
-        this.highestLevelOrgCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
-        this.departmentName = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
-        this.campusCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
-        this.campusAddress = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
-        this.notificationEmail = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
-        this.notificationPerson = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
-        this.notificationPhone = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
+        this.docTypeCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
+        this.chartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
+        this.highestLevelOrgCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
+        this.departmentName = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
+        this.campusCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
+        this.campusAddress = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
+        this.notificationEmail = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
+        this.notificationPerson = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
+        this.notificationPhone = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
         
         resetBuilderForNextRun();
     }
@@ -183,7 +183,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         String actualFinancialBalanceTypeCode = getActualFinancialBalanceTypeCodeForCollectorBatch();
         this.collectorHelper = new ConcurDetailLineGroupForCollectorHelper(
                 actualFinancialBalanceTypeCode, collectorBatch.getTransmissionDate(),
-                dateTimeService, this::getDashValueForProperty, parameterService);
+                dateTimeService, this::getDashValueForProperty, concurParameterGetter);
     }
 
     protected String getActualFinancialBalanceTypeCodeForCollectorBatch() {
