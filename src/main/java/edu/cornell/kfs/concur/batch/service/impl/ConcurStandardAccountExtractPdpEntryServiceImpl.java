@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,6 +173,96 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
         this.payeeNameFieldSize = payeeNameFieldSize;
+    }
+    
+    @Override
+    public PdpFeedFileBaseEntry removeNonReimbursableSectionsFromPdpFeedFileBaseEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, 
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        LOG.debug("Entering removeNonReimbursableSectionsFromPdpFeedFileBaseEntry");
+        PdpFeedFileBaseEntry baseEntry = new PdpFeedFileBaseEntry();
+        baseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry));
+        baseEntry.setVersion(pdpFeedFileBaseEntry.getVersion());
+        
+        for (PdpFeedGroupEntry groupEntry : pdpFeedFileBaseEntry.getGroup()) {
+            PdpFeedGroupEntry newGroupEntry = buildNewGroupEntry(groupEntry);
+            boolean validNewGroup = false;
+            
+            for (PdpFeedDetailEntry detailEntry : groupEntry.getDetail()) {
+                PdpFeedDetailEntry newDetailEntry = buildNewDetailEntry(detailEntry);
+                KualiDecimal originalDetailTotal = KualiDecimal.ZERO;
+                KualiDecimal newDetailTotal = KualiDecimal.ZERO;
+                for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
+                    originalDetailTotal = originalDetailTotal.add(accountingEntry.getAmount());
+                    if (accountingEntry.getAmount().isGreaterThan(KualiDecimal.ZERO)) {
+                        newDetailTotal = newDetailTotal.add(accountingEntry.getAmount());
+                        newDetailEntry.getAccounting().add(buildNewAccountingEntry(accountingEntry));
+                    } else {
+                        LOG.debug("removeNonReimbursableSectionsFromPdpFeedFileBaseEntry, not adding acounting entry: " + accountingEntry.toString());
+                    }
+                }
+                
+                if (originalDetailTotal.isGreaterThan(KualiDecimal.ZERO) && newDetailTotal.isGreaterThan(KualiDecimal.ZERO)) {
+                    validNewGroup = true;
+                    newGroupEntry.getDetail().add(newDetailEntry);
+                } else {
+                    LOG.debug("removeNonReimbursableSectionsFromPdpFeedFileBaseEntry. not adding detail for source document: " + newDetailEntry.getSourceDocNbr());
+                }
+            }
+            
+            if (validNewGroup) {
+                baseEntry.getGroup().add(newGroupEntry);
+            } else {
+                LOG.debug("removeNonReimbursableSectionsFromPdpFeedFileBaseEntry, not adding group for" + newGroupEntry.getPayeeName());
+            }
+        }
+
+        baseEntry.setTrailer(buildPdpFeedTrailerEntry(baseEntry, reportData));
+        return baseEntry;
+    }
+
+    private PdpFeedAccountingEntry buildNewAccountingEntry(PdpFeedAccountingEntry accountingEntry) {
+        PdpFeedAccountingEntry newAccountingEntry = new PdpFeedAccountingEntry();
+        newAccountingEntry.setCoaCd(accountingEntry.getCoaCd());
+        newAccountingEntry.setAccountNbr(accountingEntry.getAccountNbr());
+        newAccountingEntry.setSubAccountNbr(accountingEntry.getSubAccountNbr());
+        newAccountingEntry.setObjectCd(accountingEntry.getObjectCd());
+        newAccountingEntry.setProjectCd(accountingEntry.getProjectCd());
+        newAccountingEntry.setOrgRefId(accountingEntry.getOrgRefId());
+        newAccountingEntry.setAmount(accountingEntry.getAmount());
+        return newAccountingEntry;
+    }
+
+    private PdpFeedDetailEntry buildNewDetailEntry(PdpFeedDetailEntry detailEntry) {
+        PdpFeedDetailEntry newDetailEntry = new PdpFeedDetailEntry();
+        newDetailEntry.setSourceDocNbr(detailEntry.getSourceDocNbr());
+        newDetailEntry.setInvoiceNbr(detailEntry.getInvoiceNbr());
+        newDetailEntry.setPoNbr(detailEntry.getPoNbr());
+        newDetailEntry.setInvoiceDate(detailEntry.getInvoiceDate());
+        newDetailEntry.setFsOriginCd(detailEntry.getFsOriginCd());
+        newDetailEntry.setFdocTypCd(detailEntry.getFdocTypCd());
+        return newDetailEntry;
+    }
+
+    private PdpFeedGroupEntry buildNewGroupEntry(PdpFeedGroupEntry groupEntry) {
+        PdpFeedGroupEntry newGroup = new PdpFeedGroupEntry();
+        newGroup.setPayeeName(groupEntry.getPayeeName());
+        PdpFeedPayeeIdEntry newPayeeIdEntry = new PdpFeedPayeeIdEntry();
+        newPayeeIdEntry.setContent(groupEntry.getPayeeId().getContent());
+        newPayeeIdEntry.setIdType(groupEntry.getPayeeId().getIdType());
+        newGroup.setPayeeId(newPayeeIdEntry);
+        newGroup.setCustomerInstitutionIdentifier(groupEntry.getCustomerInstitutionIdentifier());
+        newGroup.setPaymentDate(groupEntry.getPaymentDate());
+        newGroup.setBankCode(groupEntry.getBankCode());
+        return newGroup;
+    }
+
+    private PdpFeedHeaderEntry copyHeaderEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+        PdpFeedHeaderEntry headerEntry = new PdpFeedHeaderEntry();
+        headerEntry.setChart(pdpFeedFileBaseEntry.getHeader().getChart());
+        headerEntry.setCreationDate(pdpFeedFileBaseEntry.getHeader().getCreationDate());
+        headerEntry.setSubUnit(pdpFeedFileBaseEntry.getHeader().getSubUnit());
+        headerEntry.setUnit(pdpFeedFileBaseEntry.getHeader().getUnit());
+        return headerEntry;
     }
     
     public DataDictionaryService getDataDictionaryService() {
