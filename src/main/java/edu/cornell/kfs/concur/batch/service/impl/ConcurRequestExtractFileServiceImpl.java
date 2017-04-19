@@ -42,12 +42,13 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
         boolean processingSuccessful = false;
         ConcurRequestExtractFile requestExtractFile = loadFileIntoParsedDataObject(requestExtractFullyQualifiedFileName);
         if (getConcurRequestExtractFileValidationService().requestExtractHeaderRowValidatesToFileContents(requestExtractFile)) {
+            List<String> uniqueRequestIdsInFile = new ArrayList<String>();
             for (ConcurRequestExtractRequestDetailFileLine detailFileLine : requestExtractFile.getRequestDetails()) {
-                getConcurRequestExtractFileValidationService().performRequestDetailLineValidation(detailFileLine);
+                getConcurRequestExtractFileValidationService().performRequestDetailLineValidation(detailFileLine, uniqueRequestIdsInFile);
             }
             requestExtractFile.setFileName(parseRequestExtractFileNameFrom(requestExtractFullyQualifiedFileName));
             processingSuccessful = getConcurCashAdvancePdpFeedFileService().createPdpFeedFileForValidatedDetailFileLines(requestExtractFile);
-            if (processingSuccessful) {
+            if (processingSuccessful && StringUtils.isNotBlank(requestExtractFile.getFullyQualifiedPdpFileName())) {
                 try {
                     getConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile(requestExtractFile.getFullyQualifiedPdpFileName());
                 } catch (IOException ioe) {

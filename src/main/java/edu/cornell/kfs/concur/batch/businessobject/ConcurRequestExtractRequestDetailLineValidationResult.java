@@ -6,12 +6,14 @@ import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 
 public class ConcurRequestExtractRequestDetailLineValidationResult extends ValidationResult {
     private boolean cashAdvanceLine;
+    private boolean clonedCashAdvance;
     private boolean cashAdvanceUsedInExpenseReport;
     private boolean validCashAdvanceLine;
 
     public ConcurRequestExtractRequestDetailLineValidationResult() {
         super();
         this.cashAdvanceLine = false;
+        this.clonedCashAdvance = false;
         this.cashAdvanceUsedInExpenseReport = false;
         this.validCashAdvanceLine = false;
     }
@@ -26,6 +28,18 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
 
     public void setCashAdvanceLine(boolean cashAdvanceLine) {
         this.cashAdvanceLine = cashAdvanceLine;
+    }
+
+    public boolean isClonedCashAdvance() {
+        return clonedCashAdvance;
+    }
+
+    public boolean isNotClonedCashAdvance() {
+        return !clonedCashAdvance;
+    }
+
+    public void setClonedCashAdvance(boolean clonedCashAdvance) {
+        this.clonedCashAdvance = clonedCashAdvance;
     }
 
     public boolean isCashAdvanceUsedInExpenseReport() {
