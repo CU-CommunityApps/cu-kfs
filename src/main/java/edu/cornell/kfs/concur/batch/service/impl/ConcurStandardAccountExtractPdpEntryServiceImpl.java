@@ -165,9 +165,6 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
-        if (LOG.isDebugEnabled()) { 
-            LOG.debug("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + parameterValue);
-        }
         return parameterValue;
     }
 
@@ -180,59 +177,58 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             ConcurStandardAccountingExtractBatchReportData reportData) {
         LOG.debug("Entering removeNonReimbursableSectionsFromPdpFeedFileBaseEntry");
         PdpFeedFileBaseEntry baseEntry = new PdpFeedFileBaseEntry();
-        baseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry));
+        baseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry.getHeader()));
         baseEntry.setVersion(pdpFeedFileBaseEntry.getVersion());
-        
+        buildNewGroupEntries(pdpFeedFileBaseEntry, baseEntry);
+        baseEntry.setTrailer(buildPdpFeedTrailerEntry(baseEntry, reportData));
+        return baseEntry;
+    }
+
+    private void buildNewGroupEntries(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, PdpFeedFileBaseEntry baseEntry) {
         for (PdpFeedGroupEntry groupEntry : pdpFeedFileBaseEntry.getGroup()) {
-            PdpFeedGroupEntry newGroupEntry = buildNewGroupEntry(groupEntry);
+            PdpFeedGroupEntry newGroupEntry = copyGroupEntry(groupEntry);
             boolean validNewGroup = false;
             
             for (PdpFeedDetailEntry detailEntry : groupEntry.getDetail()) {
-                PdpFeedDetailEntry newDetailEntry = buildNewDetailEntry(detailEntry);
-                KualiDecimal originalDetailTotal = KualiDecimal.ZERO;
-                KualiDecimal newDetailTotal = KualiDecimal.ZERO;
+                PdpFeedDetailEntry newDetailEntry = copyDetailEntry(detailEntry);
+                KualiDecimal transactionTotal = KualiDecimal.ZERO;
                 for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
-                    originalDetailTotal = originalDetailTotal.add(accountingEntry.getAmount());
+                    transactionTotal = transactionTotal.add(accountingEntry.getAmount());
                     if (accountingEntry.getAmount().isGreaterThan(KualiDecimal.ZERO)) {
-                        newDetailTotal = newDetailTotal.add(accountingEntry.getAmount());
-                        newDetailEntry.getAccounting().add(buildNewAccountingEntry(accountingEntry));
+                        newDetailEntry.getAccounting().add(copyAccountingEntry(accountingEntry));
                     } else {
-                        LOG.debug("removeNonReimbursableSectionsFromPdpFeedFileBaseEntry, not adding acounting entry: " + accountingEntry.toString());
+                        LOG.debug("buildNewGroupEntries, not adding acounting entry: " + accountingEntry.getDebugInfo());
                     }
                 }
-                
-                if (originalDetailTotal.isGreaterThan(KualiDecimal.ZERO) && newDetailTotal.isGreaterThan(KualiDecimal.ZERO)) {
+                LOG.debug("buildNewGroupEntries, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + transactionTotal);
+                if (transactionTotal.isGreaterThan(KualiDecimal.ZERO)) {
                     validNewGroup = true;
                     newGroupEntry.getDetail().add(newDetailEntry);
-                } else {
-                    LOG.debug("removeNonReimbursableSectionsFromPdpFeedFileBaseEntry. not adding detail for source document: " + newDetailEntry.getSourceDocNbr());
                 }
             }
             
             if (validNewGroup) {
                 baseEntry.getGroup().add(newGroupEntry);
             } else {
-                LOG.debug("removeNonReimbursableSectionsFromPdpFeedFileBaseEntry, not adding group for" + newGroupEntry.getPayeeName());
+                LOG.debug("buildNewGroupEntries, not adding group for" + newGroupEntry.getPayeeName());
             }
         }
-
-        baseEntry.setTrailer(buildPdpFeedTrailerEntry(baseEntry, reportData));
-        return baseEntry;
     }
 
-    private PdpFeedAccountingEntry buildNewAccountingEntry(PdpFeedAccountingEntry accountingEntry) {
+    private PdpFeedAccountingEntry copyAccountingEntry(PdpFeedAccountingEntry accountingEntry) {
         PdpFeedAccountingEntry newAccountingEntry = new PdpFeedAccountingEntry();
         newAccountingEntry.setCoaCd(accountingEntry.getCoaCd());
         newAccountingEntry.setAccountNbr(accountingEntry.getAccountNbr());
         newAccountingEntry.setSubAccountNbr(accountingEntry.getSubAccountNbr());
         newAccountingEntry.setObjectCd(accountingEntry.getObjectCd());
+        newAccountingEntry.setSubObjectCd(accountingEntry.getSubObjectCd());
         newAccountingEntry.setProjectCd(accountingEntry.getProjectCd());
         newAccountingEntry.setOrgRefId(accountingEntry.getOrgRefId());
         newAccountingEntry.setAmount(accountingEntry.getAmount());
         return newAccountingEntry;
     }
 
-    private PdpFeedDetailEntry buildNewDetailEntry(PdpFeedDetailEntry detailEntry) {
+    private PdpFeedDetailEntry copyDetailEntry(PdpFeedDetailEntry detailEntry) {
         PdpFeedDetailEntry newDetailEntry = new PdpFeedDetailEntry();
         newDetailEntry.setSourceDocNbr(detailEntry.getSourceDocNbr());
         newDetailEntry.setInvoiceNbr(detailEntry.getInvoiceNbr());
@@ -243,26 +239,28 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         return newDetailEntry;
     }
 
-    private PdpFeedGroupEntry buildNewGroupEntry(PdpFeedGroupEntry groupEntry) {
+    private PdpFeedGroupEntry copyGroupEntry(PdpFeedGroupEntry groupEntry) {
         PdpFeedGroupEntry newGroup = new PdpFeedGroupEntry();
         newGroup.setPayeeName(groupEntry.getPayeeName());
+        
         PdpFeedPayeeIdEntry newPayeeIdEntry = new PdpFeedPayeeIdEntry();
         newPayeeIdEntry.setContent(groupEntry.getPayeeId().getContent());
         newPayeeIdEntry.setIdType(groupEntry.getPayeeId().getIdType());
         newGroup.setPayeeId(newPayeeIdEntry);
+        
         newGroup.setCustomerInstitutionIdentifier(groupEntry.getCustomerInstitutionIdentifier());
         newGroup.setPaymentDate(groupEntry.getPaymentDate());
         newGroup.setBankCode(groupEntry.getBankCode());
         return newGroup;
     }
 
-    private PdpFeedHeaderEntry copyHeaderEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
-        PdpFeedHeaderEntry headerEntry = new PdpFeedHeaderEntry();
-        headerEntry.setChart(pdpFeedFileBaseEntry.getHeader().getChart());
-        headerEntry.setCreationDate(pdpFeedFileBaseEntry.getHeader().getCreationDate());
-        headerEntry.setSubUnit(pdpFeedFileBaseEntry.getHeader().getSubUnit());
-        headerEntry.setUnit(pdpFeedFileBaseEntry.getHeader().getUnit());
-        return headerEntry;
+    private PdpFeedHeaderEntry copyHeaderEntry(PdpFeedHeaderEntry headerEntry) {
+        PdpFeedHeaderEntry newHeaderEntry = new PdpFeedHeaderEntry();
+        newHeaderEntry.setChart(headerEntry.getChart());
+        newHeaderEntry.setCreationDate(headerEntry.getCreationDate());
+        newHeaderEntry.setSubUnit(headerEntry.getSubUnit());
+        newHeaderEntry.setUnit(headerEntry.getUnit());
+        return newHeaderEntry;
     }
     
     public DataDictionaryService getDataDictionaryService() {
