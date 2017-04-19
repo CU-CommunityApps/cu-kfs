@@ -26,7 +26,7 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
         Collection<ConcurRequestedCashAdvance> concurRequestedCashAdvances = null;
         Map<String, String> fieldValues = new HashMap<String, String>();
         
-        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.EMPLOYEE_ID, concurRequestedCashAdvance.getEmployeeId());
+        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.EMPLID, concurRequestedCashAdvance.getEmployeeId());
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.REQUEST_ID, concurRequestedCashAdvance.getRequestId());
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.PAYMENT_AMOUNT, concurRequestedCashAdvance.getPaymentAmount().toString());
         
@@ -38,6 +38,18 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
 
     }
     
+    @Override
+    public Collection<ConcurRequestedCashAdvance> findConcurRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {
+        Collection<ConcurRequestedCashAdvance> concurRequestedCashAdvances = null;
+        Map<String, String> fieldValues = new HashMap<String, String>();
+
+        fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.CASH_ADV_KEY, cashAdvanceKey);
+
+        concurRequestedCashAdvances = businessObjectService.findMatching(ConcurRequestedCashAdvance.class, fieldValues);
+
+        return concurRequestedCashAdvances;
+    }
+
     public BusinessObjectService getBusinessObjectService() {
         return businessObjectService;
     }

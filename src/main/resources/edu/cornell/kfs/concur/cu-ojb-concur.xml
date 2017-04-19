@@ -42,6 +42,14 @@
     <field-descriptor name="paymentAmount" column="PAYMENT_AMOUNT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
     <field-descriptor name="paymentDate" column="PAYMENT_DATE" jdbc-type="DATE" />
     <field-descriptor name="sourceDocNbr" column="SOURCE_DOC_NBR" jdbc-type="VARCHAR" />
+    <field-descriptor name="cashAdvanceKey" column="CASH_ADV_KEY" jdbc-type="VARCHAR" />
+    <field-descriptor name="chart" column="FIN_COA_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" />
+    <field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" />
+    <field-descriptor name="objectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="subObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="projectCode" column="PROJECT_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="orgRefId" column="ORG_REF_ID" jdbc-type="VARCHAR" />
     <field-descriptor name="fileName" column="FILE_NAME" jdbc-type="VARCHAR" />
 </class-descriptor>
 
