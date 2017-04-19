@@ -39,7 +39,7 @@ public class TestPdpMarshal {
     
     @Test
     public void verifyConcurPDPFileCanBeMarshalled() throws JAXBException, IOException {
-        File marshalledXMLFile = cUMarshalService.marshalObjectToXML(PdpFeedFileBaseEntryFixture.buildPdpFile(), 
+        File marshalledXMLFile = cUMarshalService.marshalObjectToXML(PdpFeedFileBaseEntryFixture.MARSHAL_TEST.toPdpFeedFileBaseEntry(), 
                 batchDirectoryFile.getAbsolutePath() + "generatedXML.xml");
         assertTrue("The marshalled XML should be greater than 0", FileUtils.sizeOf(marshalledXMLFile) > 0);
         

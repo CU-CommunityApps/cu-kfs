@@ -53,5 +53,31 @@ public class ConcurTestConstants {
     
     public static final String PDP_LINE_FIXTURE_CASH_ADVANCE_KEY = "ABC123";
     public static final String PDP_LINE_FIXTURE_REPORT_ENTRY_ID = "entryID101";
+    
+    public static class PdpFeedFileConstants {
+        public static final String CHART = "IT";
+        public static final String BATCH_DATE = "02/17/2017";
+        public static final String UNIT = "CRNL";
+        public static final String SUB_UNIT = "CLIF";
+        
+        public static final String PAYEE_NAME_BIMBO = "Bimbo Foods Inc";
+        public static final String PAYEE_ID_BIMBO = "13086-0";
+        public static final String CUSTOM_INSTITUTION_IDENTIFIER_BIMBO = "18901";
+        
+        public static final String PAYEE_NAME_JAY = "Jay Hulslander";
+        public static final String PAYEE_ID_JAY = "1231354353";
+        public static final String PAYEE_ID_TYPE = "E";
+        
+        public static final String PAYEE_TYPE_VENDOR = "V";
+        public static final String BANK_CODE = "DISB";
+        public static final String COMBINE_GROUP_INDICATOR_YES = "Y";
+        public static final String PAYMENT_DATE = "02/03/2017";
+        public static final String SOURCE_DOC_NUMBER = "C16326";
+        public static final String INVOICE_NUMBER = "66432520714";
+        public static final String ORIGIN_CODE = "Z1";
+        public static final String FDOC_NUMBER = "APCL";
+        public static final String ACCOUNT_NUMBER = "H833810";
+        public static final String OBJECT_CODE = "6000";
+    }
 
 }
