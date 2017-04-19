@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.List;
 
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
