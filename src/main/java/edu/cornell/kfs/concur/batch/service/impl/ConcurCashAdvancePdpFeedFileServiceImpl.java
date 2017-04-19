@@ -1,7 +1,8 @@
 package edu.cornell.kfs.concur.batch.service.impl;
-
+import org.apache.commons.collections.CollectionUtils;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -79,9 +80,23 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         return pdpBaseEntry;
     }
 
-    private void recordCashAdvanceGenerationInDuplicateTrackingTable(ConcurRequestExtractRequestDetailFileLine detailFileLine, String soureDocumentNumber, String requestExtractFileName) {
+    private void recordCashAdvanceGenerationInDuplicateTrackingTable(ConcurRequestExtractRequestDetailFileLine detailFileLine, String sourceDocumentNumber, String requestExtractFileName) {
         ConcurRequestedCashAdvance duplicateTrackingCashAdvance =
-                new ConcurRequestedCashAdvance(detailFileLine.getRequestId(), detailFileLine.getEmployeeId(), detailFileLine.getRequestAmount(), detailFileLine.getBatchDate(), soureDocumentNumber, requestExtractFileName);
+                new ConcurRequestedCashAdvance(detailFileLine.getRequestId(),
+                                               detailFileLine.getEmployeeId(),
+                                               detailFileLine.getRequestAmount(),
+                                               detailFileLine.getBatchDate(),
+                                               sourceDocumentNumber,
+                                               detailFileLine.getCashAdvanceKey(),
+                                               detailFileLine.getChart(),
+                                               detailFileLine.getAccountNumber(),
+                                               StringUtils.defaultIfBlank(detailFileLine.getSubAccountNumber(), KFSConstants.EMPTY_STRING),
+                                               getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE),
+                                               StringUtils.defaultIfBlank(detailFileLine.getSubObjectCode(), KFSConstants.EMPTY_STRING),
+                                               StringUtils.defaultIfBlank(detailFileLine.getProjectCode(), KFSConstants.EMPTY_STRING),
+                                               StringUtils.defaultIfBlank(detailFileLine.getOrgRefId(), KFSConstants.EMPTY_STRING),
+                                               requestExtractFileName);
+
         getConcurRequestedCashAdvanceService().saveConcurRequestedCashAdvance(duplicateTrackingCashAdvance);
     }
 

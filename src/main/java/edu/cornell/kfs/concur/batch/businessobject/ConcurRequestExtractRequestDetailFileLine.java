@@ -32,6 +32,7 @@ public class ConcurRequestExtractRequestDetailFileLine {
     private String subObjectCode;
     private String projectCode;
     private String orgRefId;
+    private String cashAdvanceKey;
     private List<ConcurRequestExtractRequestEntryDetailFileLine> requestEntryDetails;
     private ConcurRequestExtractRequestDetailLineValidationResult validationResult;
     
@@ -192,6 +193,14 @@ public class ConcurRequestExtractRequestDetailFileLine {
         this.orgRefId = orgRefId;
     }
     
+    public String getCashAdvanceKey() {
+        return cashAdvanceKey;
+    }
+
+    public void setCashAdvanceKey(String cashAdvanceKey) {
+        this.cashAdvanceKey = cashAdvanceKey;
+    }
+
     public List<ConcurRequestExtractRequestEntryDetailFileLine> getRequestEntryDetails() {
         return requestEntryDetails;
     }
@@ -223,6 +232,7 @@ public class ConcurRequestExtractRequestDetailFileLine {
         sb.append("requestAmount: ").append(requestAmount).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("expenseReportId: ").append(expenseReportId).append(KFSConstants.NEWLINE);
         sb.append("requestEntryDescription: ").append(requestEntryDescription).append(KFSConstants.NEWLINE);
+        sb.append("cashAdvanceKey: ").append(cashAdvanceKey).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("chart: ").append(chart).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("accountNumber: ").append(accountNumber).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("subAccountNumber: ").append(subAccountNumber).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);

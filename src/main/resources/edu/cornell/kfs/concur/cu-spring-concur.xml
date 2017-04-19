@@ -449,6 +449,9 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="169"
                                           p:propertyName="orgRefId"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification"
+                                          p:lineSegmentIndex="198"
+                                          p:propertyName="cashAdvanceKey"/>
                                 </list>
                             </property>
                         </bean>
