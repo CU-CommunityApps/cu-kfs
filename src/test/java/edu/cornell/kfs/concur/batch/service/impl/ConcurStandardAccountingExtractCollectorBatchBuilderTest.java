@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.kuali.kfs.coa.service.BalanceTypeService;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
@@ -428,19 +429,19 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         }
         
         @Override
-        protected String getDashSubAccountNumber() {
-            return ConcurTestConstants.DASH_SUB_ACCOUNT_NUMBER;
+        protected String getDashValueForProperty(String propertyName) {
+            switch (propertyName) {
+                case KFSPropertyConstants.SUB_ACCOUNT_NUMBER :
+                    return ConcurTestConstants.DASH_SUB_ACCOUNT_NUMBER;
+                case KFSPropertyConstants.SUB_OBJECT_CODE :
+                    return ConcurTestConstants.DASH_SUB_OBJECT_CODE;
+                case KFSPropertyConstants.PROJECT_CODE :
+                    return ConcurTestConstants.DASH_PROJECT_CODE;
+                default :
+                    return StringUtils.EMPTY;
+            }
         }
         
-        @Override
-        protected String getDashSubObjectCode() {
-            return ConcurTestConstants.DASH_SUB_OBJECT_CODE;
-        }
-        
-        @Override
-        protected String getDashProjectCode() {
-            return ConcurTestConstants.DASH_PROJECT_CODE;
-        }
     }
 
 }
