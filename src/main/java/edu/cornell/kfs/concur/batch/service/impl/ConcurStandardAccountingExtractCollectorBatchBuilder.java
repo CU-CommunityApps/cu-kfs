@@ -1,13 +1,11 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.mutable.MutableInt;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
@@ -44,18 +42,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractCollectorBatchBuilder.class);
 
-    protected static final String FAKE_OBJECT_CODE_PREFIX = "?NONE?";
-    protected static final int INITIAL_BUILDER_SIZE = 50;
-    protected static final int REPORT_ID_LENGTH_FOR_DOC_NUMBER = 10;
-    protected static final int NAME_LENGTH_FOR_DESCRIPTION = 14;
     protected static final int MIN_BATCH_SEQUENCE_NUMBER = 0;
     protected static final int MAX_BATCH_SEQUENCE_NUMBER = 9;
-    protected static final char PIPE_CHAR = '|';
-    protected static final char COMMA_CHAR = ',';
     protected static final String PENDING_CLIENT_MESSAGE = "Line has the \"Pending Client\" object code";
 
     protected final String docTypeCode;
-    protected final String systemOriginationCode;
     protected final String chartCode;
     protected final String highestLevelOrgCode;
     protected final String departmentName;
@@ -71,11 +62,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
-    protected Function<String,String> parameterService;
+    protected Function<String,String> concurParameterGetter;
     protected ConcurStandardAccountingExtractBatchReportData reportData;
+    protected ConcurDetailLineGroupForCollectorHelper collectorHelper;
     protected int batchSequenceNumber;
-    protected int nextFakeObjectCode;
-    protected Map<String,MutableInt> nextTransactionSequenceNumbers;
 
     /**
      * @throws IllegalArgumentException if any arguments are null.
@@ -83,7 +73,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
-            ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterService) {
+            ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> concurParameterGetter) {
         if (optionsService == null) {
             throw new IllegalArgumentException("optionsService cannot be null");
         } else if (universityDateService == null) {
@@ -92,26 +82,25 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new IllegalArgumentException("dateTimeService cannot be null");
         } else if (concurSAEValidationService == null) {
             throw new IllegalArgumentException("saeValidationService cannot be null");
-        } else if (parameterService == null) {
-            throw new IllegalArgumentException("propertyFinder cannot be null");
+        } else if (concurParameterGetter == null) {
+            throw new IllegalArgumentException("concurParameterGetter cannot be null");
         }
         
         this.optionsService = optionsService;
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
         this.concurSAEValidationService = concurSAEValidationService;
-        this.parameterService = parameterService;
+        this.concurParameterGetter = concurParameterGetter;
         
-        this.docTypeCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
-        this.systemOriginationCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
-        this.chartCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
-        this.highestLevelOrgCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
-        this.departmentName = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
-        this.campusCode = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
-        this.campusAddress = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
-        this.notificationEmail = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
-        this.notificationPerson = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
-        this.notificationPhone = parameterService.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
+        this.docTypeCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
+        this.chartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
+        this.highestLevelOrgCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_HIGHEST_LEVEL_ORG_CODE);
+        this.departmentName = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DEPARTMENT_NAME);
+        this.campusCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_CODE);
+        this.campusAddress = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CAMPUS_ADDRESS);
+        this.notificationEmail = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL);
+        this.notificationPerson = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PERSON);
+        this.notificationPhone = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE);
         
         resetBuilderForNextRun();
     }
@@ -119,8 +108,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected void resetBuilderForNextRun() {
         this.collectorBatch = new CollectorBatch();
         this.lineGroups = new LinkedHashMap<>();
-        this.nextFakeObjectCode = 1;
-        this.nextTransactionSequenceNumbers = new HashMap<>();
+        this.collectorHelper = null;
         this.batchSequenceNumber = 0;
         this.reportData = null;
     }
@@ -149,6 +137,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             }
             
             updateCollectorBatchHeaderFields(saeFileContents);
+            initializeCollectorHelperFromCollectorBatch();
             groupLines(saeFileContents.getConcurStandardAccountingExtractDetailLines());
             updateCollectorBatchWithOriginEntries();
             
@@ -190,33 +179,36 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         collectorBatch.setPhoneNumber(notificationPhone);
     }
 
+    protected void initializeCollectorHelperFromCollectorBatch() {
+        String actualFinancialBalanceTypeCode = getActualFinancialBalanceTypeCodeForCollectorBatch();
+        this.collectorHelper = new ConcurDetailLineGroupForCollectorHelper(
+                actualFinancialBalanceTypeCode, collectorBatch.getTransmissionDate(),
+                dateTimeService, this::getDashValueForProperty, concurParameterGetter);
+    }
+
+    protected String getActualFinancialBalanceTypeCodeForCollectorBatch() {
+        Integer fiscalYear = Integer.valueOf(collectorBatch.getUniversityFiscalYear());
+        SystemOptions fiscalYearOptions = optionsService.getOptions(fiscalYear);
+        return fiscalYearOptions.getActualFinancialBalanceTypeCd();
+    }
+
     protected void groupLines(List<ConcurStandardAccountingExtractDetailLine> saeLines) {
         for (ConcurStandardAccountingExtractDetailLine saeLine : saeLines) {
-            String itemKey = buildItemKey(saeLine);
-            if (shouldProcessLine(itemKey, saeLine)
+            if (shouldProcessLine(saeLine)
                     && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLine(saeLine, reportData)) {
                 if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
                     reportPendingClientLine(saeLine);
                 }
                 ConcurDetailLineGroupForCollector lineGroup = lineGroups.computeIfAbsent(
-                        itemKey, (newKey) -> new ConcurDetailLineGroupForCollector(
-                                saeLine.getReportId(), buildOriginEntryForExtractedLine(newKey, saeLine),
-                                parameterService, this::getDashValueForProperty));
+                        saeLine.getReportId(), (reportId) -> new ConcurDetailLineGroupForCollector(reportId, collectorHelper));
                 lineGroup.addDetailLine(saeLine);
             }
         }
     }
 
     protected void updateCollectorBatchWithOriginEntries() {
-        Integer fiscalYear = Integer.valueOf(collectorBatch.getUniversityFiscalYear());
-        SystemOptions fiscalYearOptions = optionsService.getOptions(fiscalYear);
-        String actualFinancialBalanceTypeCode = fiscalYearOptions.getActualFinancialBalanceTypeCd();
-        
         for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
             for (OriginEntryFull originEntry : lineGroup.buildOriginEntries()) {
-                originEntry.setFinancialBalanceTypeCode(actualFinancialBalanceTypeCode);
-                originEntry.setTransactionLedgerEntrySequenceNumber(
-                        getNextTransactionSequenceNumber(lineGroup.getReportId()));
                 collectorBatch.addOriginEntry(originEntry);
             }
         }
@@ -236,7 +228,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         return StringUtils.equals(KFSConstants.GL_DEBIT_CODE, originEntry.getTransactionDebitCreditCode());
     }
 
-    protected boolean shouldProcessLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {
+    protected boolean shouldProcessLine(ConcurStandardAccountingExtractDetailLine saeLine) {
         switch (saeLine.getPaymentCode()) {
             case ConcurConstants.PAYMENT_CODE_CASH :
                 return true;
@@ -256,104 +248,17 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         }
     }
 
-    protected String buildItemKey(ConcurStandardAccountingExtractDetailLine saeLine) {
-        String objectCodeForKey = saeLine.getJournalAccountCode();
-        if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
-            objectCodeForKey = buildFakeObjectCodeToLeaveDetailLineUnmerged();
-        }
-        
-        return new StringBuilder(INITIAL_BUILDER_SIZE)
-                .append(saeLine.getReportId())
-                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getChartOfAccountsCode()))
-                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getAccountNumber()))
-                .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()))
-                .append(PIPE_CHAR).append(makeEmptyIfBlank(objectCodeForKey))
-                .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getSubObjectCode(), getDashSubObjectCode()))
-                .append(PIPE_CHAR).append(StringUtils.defaultIfBlank(saeLine.getProjectCode(), getDashProjectCode()))
-                .append(PIPE_CHAR).append(makeEmptyIfBlank(saeLine.getOrgRefId()))
-                .toString();
-    }
-
-    protected String makeEmptyIfBlank(String value) {
-        return StringUtils.defaultIfBlank(value, StringUtils.EMPTY);
-    }
-
-    protected String buildFakeObjectCodeToLeaveDetailLineUnmerged() {
-        return FAKE_OBJECT_CODE_PREFIX + (nextFakeObjectCode++);
-    }
-
-    protected OriginEntryFull buildOriginEntryForExtractedLine(String itemKey, ConcurStandardAccountingExtractDetailLine saeLine) {
-        OriginEntryFull originEntry = new OriginEntryFull();
-        
-        // Default constructor sets fiscal year to zero; need to forcibly clear it to allow auto-setup by the Poster, as per the spec.
-        originEntry.setUniversityFiscalYear(null);
-        
-        originEntry.setChartOfAccountsCode(saeLine.getChartOfAccountsCode());
-        originEntry.setAccountNumber(saeLine.getAccountNumber());
-        originEntry.setSubAccountNumber(
-                StringUtils.defaultIfBlank(saeLine.getSubAccountNumber(), getDashSubAccountNumber()));
-        originEntry.setFinancialObjectCode(saeLine.getJournalAccountCode());
-        originEntry.setFinancialSubObjectCode(
-                StringUtils.defaultIfBlank(saeLine.getSubObjectCode(), getDashSubObjectCode()));
-        originEntry.setProjectCode(
-                StringUtils.defaultIfBlank(saeLine.getProjectCode(), getDashProjectCode()));
-        originEntry.setOrganizationReferenceId(
-                StringUtils.defaultIfBlank(saeLine.getOrgRefId(), StringUtils.EMPTY));
-        
-        originEntry.setFinancialDocumentTypeCode(docTypeCode);
-        originEntry.setFinancialSystemOriginationCode(systemOriginationCode);
-        originEntry.setDocumentNumber(buildDocumentNumber(saeLine));
-        originEntry.setTransactionLedgerEntryDescription(buildTransactionDescription(saeLine));
-        originEntry.setTransactionDate(collectorBatch.getTransmissionDate());
-        originEntry.setTransactionLedgerEntryAmount(KualiDecimal.ZERO);
-        
-        return originEntry;
-    }
-
     protected String getDashValueForProperty(String propertyName) {
         switch (propertyName) {
             case KFSPropertyConstants.SUB_ACCOUNT_NUMBER :
-                return getDashSubAccountNumber();
+                return KFSConstants.getDashSubAccountNumber();
             case KFSPropertyConstants.SUB_OBJECT_CODE :
-                return getDashSubObjectCode();
+                return KFSConstants.getDashFinancialSubObjectCode();
             case KFSPropertyConstants.PROJECT_CODE :
-                return getDashProjectCode();
+                return KFSConstants.getDashProjectCode();
             default :
                 return StringUtils.EMPTY;
         }
-    }
-
-    protected String getDashSubAccountNumber() {
-        return KFSConstants.getDashSubAccountNumber();
-    }
-
-    protected String getDashSubObjectCode() {
-        return KFSConstants.getDashFinancialSubObjectCode();
-    }
-
-    protected String getDashProjectCode() {
-        return KFSConstants.getDashProjectCode();
-    }
-
-    protected Integer getNextTransactionSequenceNumber(String reportId) {
-        MutableInt nextSequenceNumber = nextTransactionSequenceNumbers.computeIfAbsent(
-                reportId, (key) -> new MutableInt(0));
-        nextSequenceNumber.increment();
-        return nextSequenceNumber.toInteger();
-    }
-
-    protected String buildDocumentNumber(ConcurStandardAccountingExtractDetailLine saeLine) {
-        return docTypeCode + StringUtils.left(saeLine.getReportId(), REPORT_ID_LENGTH_FOR_DOC_NUMBER);
-    }
-
-    protected String buildTransactionDescription(ConcurStandardAccountingExtractDetailLine saeLine) {
-        String formattedEndDate = dateTimeService.toString(saeLine.getReportEndDate(), ConcurConstants.DATE_FORMAT);
-        
-        return new StringBuilder(INITIAL_BUILDER_SIZE)
-                .append(StringUtils.left(saeLine.getEmployeeLastName(), NAME_LENGTH_FOR_DESCRIPTION))
-                .append(COMMA_CHAR).append(StringUtils.left(saeLine.getEmployeeFirstName(), NAME_LENGTH_FOR_DESCRIPTION))
-                .append(COMMA_CHAR).append(formattedEndDate)
-                .toString();
     }
 
     protected void reportCashAdvance(ConcurStandardAccountingExtractDetailLine saeLine) {
