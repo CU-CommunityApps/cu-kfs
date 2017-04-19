@@ -39,7 +39,7 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
     }
     
     @Override
-    public Collection<ConcurRequestedCashAdvance> findConcurRequestedCashAdvanceBy(String cashAdvanceKey) {
+    public Collection<ConcurRequestedCashAdvance> findConcurRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {
         Collection<ConcurRequestedCashAdvance> concurRequestedCashAdvances = null;
         Map<String, String> fieldValues = new HashMap<String, String>();
 

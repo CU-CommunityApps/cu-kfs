@@ -10,6 +10,6 @@ public interface ConcurRequestedCashAdvanceService {
     
     boolean isDuplicateConcurRequestCashAdvance(ConcurRequestedCashAdvance concurRequestedCashAdvance);
 
-    Collection<ConcurRequestedCashAdvance> findConcurRequestedCashAdvanceBy(String cashAdvanceKey);
+    Collection<ConcurRequestedCashAdvance> findConcurRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey);
 
 }
