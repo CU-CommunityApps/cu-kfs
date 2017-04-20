@@ -72,6 +72,7 @@ public class ConcurTestConstants {
         public static final String BANK_CODE = "DISB";
         public static final String COMBINE_GROUP_INDICATOR_YES = "Y";
         public static final String PAYMENT_DATE = "02/03/2017";
+        public static final String PAYMENT_OWNERSHIP_CODE = "xyz";
         public static final String SOURCE_DOC_NUMBER = "C16326";
         public static final String INVOICE_NUMBER = "66432520714";
         public static final String ORIGIN_CODE = "Z1";

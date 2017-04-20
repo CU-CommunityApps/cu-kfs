@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +35,7 @@ public enum PdpFeedGroupEntryFixture {
     public final String paymentDate;
     public final String combineGroupInd;
     public final String bankCode;
-    public final EnumSet<PdpFeedDetailEntryFixture> detailEntries;
+    public final Collection<PdpFeedDetailEntryFixture> detailEntries;
     
     private PdpFeedGroupEntryFixture(String payeeName, String payeeIdType, String payeeId, String payeeOwnershipCode, String customerInstitutionIdentifier, String paymentDate, 
             String combineGroupInd, String bankCode, EnumSet<PdpFeedDetailEntryFixture> detailEntries) {
@@ -45,11 +47,11 @@ public enum PdpFeedGroupEntryFixture {
         this.paymentDate = paymentDate;
         this.combineGroupInd = combineGroupInd;
         this.bankCode = bankCode;
-        this.detailEntries = detailEntries;
+        this.detailEntries = Collections.unmodifiableSet(detailEntries);
     }
     
     private PdpFeedGroupEntryFixture(String payeeName, String payeeIdType, String payeeId, String customerInstitutionIdentifier, EnumSet<PdpFeedDetailEntryFixture> detailEntries) {
-        this(payeeName, payeeIdType, payeeId, "xyz", customerInstitutionIdentifier, PdpFeedFileConstants.PAYMENT_DATE, PdpFeedFileConstants.COMBINE_GROUP_INDICATOR_YES,
+        this(payeeName, payeeIdType, payeeId, PdpFeedFileConstants.PAYMENT_OWNERSHIP_CODE, customerInstitutionIdentifier, PdpFeedFileConstants.PAYMENT_DATE, PdpFeedFileConstants.COMBINE_GROUP_INDICATOR_YES,
                 PdpFeedFileConstants.BANK_CODE, detailEntries);
     }
     

@@ -194,14 +194,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
                 KualiDecimal transactionTotal = KualiDecimal.ZERO;
                 for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
                     transactionTotal = transactionTotal.add(accountingEntry.getAmount());
-                    if (accountingEntry.getAmount().isGreaterThan(KualiDecimal.ZERO)) {
+                    if (accountingEntry.getAmount().isPositive()) {
                         newDetailEntry.getAccounting().add(copyAccountingEntry(accountingEntry));
                     } else {
                         LOG.debug("buildNewGroupEntries, not adding accounting entry: " + accountingEntry.toString());
                     }
                 }
                 LOG.debug("buildNewGroupEntries, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + transactionTotal);
-                if (transactionTotal.isGreaterThan(KualiDecimal.ZERO)) {
+                if (transactionTotal.isPositive()) {
                     validNewGroup = true;
                     newGroupEntry.getDetail().add(newDetailEntry);
                 }

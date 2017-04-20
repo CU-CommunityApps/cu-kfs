@@ -31,8 +31,6 @@ public class ConcurStandardAccountingExtractDetailLine {
     private Date reportEndDate;
     private String policy;
     private String expenseType;
-    private KualiDecimal cashAdvanceAmount;
-    private Date cashAdvanceIssueDate;
     private String cashAdvanceKey;
     private String reportEntryId;
     
@@ -236,22 +234,6 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.expenseType = expenseType;
     }
 
-    public KualiDecimal getCashAdvanceAmount() {
-        return cashAdvanceAmount;
-    }
-
-    public void setCashAdvanceAmount(KualiDecimal cashAdvanceAmount) {
-        this.cashAdvanceAmount = cashAdvanceAmount;
-    }
-
-    public Date getCashAdvanceIssueDate() {
-        return cashAdvanceIssueDate;
-    }
-
-    public void setCashAdvanceIssueDate(Date cashAdvanceIssueDate) {
-        this.cashAdvanceIssueDate = cashAdvanceIssueDate;
-    }
-
     public String getCashAdvanceKey() {
         return cashAdvanceKey;
     }
@@ -282,7 +264,6 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
         sb.append(" journalAmountString: ").append(journalAmountString).append(" reportEndDate: ").append(reportEndDate);
         sb.append(" policy: ").append(policy).append(" expenseType: ").append(expenseType);
-        sb.append(" cashAdvanceAmount: ").append(cashAdvanceAmount).append(" cashAdvanceIssueDate: ").append(cashAdvanceIssueDate);
         sb.append(" cashAdvanceKey: ").append(cashAdvanceKey);
         return sb.toString();
     }

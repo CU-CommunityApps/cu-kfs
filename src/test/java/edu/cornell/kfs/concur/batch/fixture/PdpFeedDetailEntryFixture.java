@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -21,7 +23,7 @@ public enum PdpFeedDetailEntryFixture {
     public final double origInvoiceAmt;
     public final String fsOriginCd;
     public final String fdocTypCd;
-    public final EnumSet<PdpFeedAccountingEntryFixture> accountingEntries;
+    public final Collection<PdpFeedAccountingEntryFixture> accountingEntries;
     
     private PdpFeedDetailEntryFixture(String sourceDocNbr, String invoiceNbr, String invoiceDate, double origInvoiceAmt, String fsOriginCd, String fdocTypCde, 
             EnumSet<PdpFeedAccountingEntryFixture> accountingEntries) {
@@ -31,7 +33,7 @@ public enum PdpFeedDetailEntryFixture {
         this.origInvoiceAmt = origInvoiceAmt;
         this.fsOriginCd = fsOriginCd;
         this.fdocTypCd = fdocTypCde;
-        this.accountingEntries = accountingEntries;
+        this.accountingEntries = Collections.unmodifiableSet(accountingEntries);
     }
     
     private PdpFeedDetailEntryFixture(double origInvoiceAmt, EnumSet<PdpFeedAccountingEntryFixture> accountingEntries) {

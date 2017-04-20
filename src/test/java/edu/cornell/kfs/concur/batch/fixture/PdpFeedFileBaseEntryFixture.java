@@ -1,5 +1,7 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -29,13 +31,13 @@ public enum PdpFeedFileBaseEntryFixture {
     FEED_TWO_GROUPS_ONE_ZERO(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_ZERO, PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_POSITIVE));
     
     public final PdpFeedHeaderEntryFixture headerEntry;
-    public final EnumSet<PdpFeedGroupEntryFixture> groupEntries;
+    public final Collection<PdpFeedGroupEntryFixture> groupEntries;
     public final PdpFeedTrailerEntryFixture trailerEntry;
     
     private PdpFeedFileBaseEntryFixture(PdpFeedHeaderEntryFixture headerEntry, PdpFeedTrailerEntryFixture trailerEntry, EnumSet<PdpFeedGroupEntryFixture> groupEntries) {
         this.headerEntry = headerEntry;
         this.trailerEntry = trailerEntry;
-        this.groupEntries = groupEntries;
+        this.groupEntries = Collections.unmodifiableSet(groupEntries);
     }
     
     private PdpFeedFileBaseEntryFixture(EnumSet<PdpFeedGroupEntryFixture> groupEntries) {

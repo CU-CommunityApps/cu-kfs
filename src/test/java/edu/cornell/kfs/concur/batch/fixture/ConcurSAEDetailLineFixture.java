@@ -208,7 +208,7 @@ public enum ConcurSAEDetailLineFixture {
             String reportId, String paymentCode, String chartOfAccountsCode,
             String journalAccountCode, String accountNumber, String subAccountNumber, String subObjectCode,
             String projectCode, String orgRefId, String journalDebitCredit, double journalAmount, String reportEndDate,
-            String cashAdvanceCaKey, String reportEntryId) {
+            String cashAdvanceKey, String reportEntryId) {
         this.extractFile = extractFile;
         this.employee = employee;
         this.reportId = reportId;
@@ -223,7 +223,7 @@ public enum ConcurSAEDetailLineFixture {
         this.journalDebitCredit = journalDebitCredit;
         this.journalAmount = journalAmount;
         this.reportEndDate = reportEndDate;
-        this.cashAdvanceKey = cashAdvanceCaKey;
+        this.cashAdvanceKey = cashAdvanceKey;
         this.reportEntryId = reportEntryId;
     }
 
