@@ -14,7 +14,7 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
 
     @Override
     public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
-        return StringUtils.isNotEmpty(line.getCashAdvanceCaKey());
+        return StringUtils.isNotBlank(line.getCashAdvanceKey());
     }
     
     @Override 
@@ -28,11 +28,16 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
         }
         for (ConcurStandardAccountingExtractDetailLine line : saeLines) {
             if (StringUtils.equalsIgnoreCase(line.getReportEntryId(), cashAdvanceReportEntryId) && !isCashAdvanceLine(line)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("findAccountingInfoForCashAdvanceLine, setting accountNumber to " + line.getAccountNumber() + " and chart to " + line.getChartOfAccountsCode());
-                }
-                info.setAccountNumber(line.getAccountNumber());
                 info.setChart(line.getChartOfAccountsCode());
+                info.setAccountNumber(line.getAccountNumber());
+                info.setSubAccountNumber(line.getSubAccountNumber());
+                info.setObjectCode(line.getJournalAccountCode());
+                info.setSubObjectCode(line.getSubObjectCode());
+                info.setProjectCode(line.getProjectCode());
+                info.setOrgRefId(line.getOrgRefId());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("findAccountingInfoForCashAdvanceLine, returning Concur account info: " + info.toString());
+                }
                 break;
             }
         }

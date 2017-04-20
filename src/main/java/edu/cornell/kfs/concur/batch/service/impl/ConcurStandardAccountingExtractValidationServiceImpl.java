@@ -224,7 +224,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     private ConcurAccountInfo buildOverriddenConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
-        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(),  line.getAccountNumber(), 
+        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
         return overriddenConcurAccountingInformation;
     }

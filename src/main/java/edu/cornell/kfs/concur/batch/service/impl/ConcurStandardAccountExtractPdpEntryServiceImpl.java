@@ -197,7 +197,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
                     if (accountingEntry.getAmount().isGreaterThan(KualiDecimal.ZERO)) {
                         newDetailEntry.getAccounting().add(copyAccountingEntry(accountingEntry));
                     } else {
-                        LOG.debug("buildNewGroupEntries, not adding acounting entry: " + accountingEntry.getDebugInfo());
+                        LOG.debug("buildNewGroupEntries, not adding accounting entry: " + accountingEntry.getDebugInfo());
                     }
                 }
                 LOG.debug("buildNewGroupEntries, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + transactionTotal);

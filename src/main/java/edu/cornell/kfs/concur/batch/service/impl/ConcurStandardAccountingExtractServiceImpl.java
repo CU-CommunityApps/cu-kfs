@@ -226,8 +226,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                     concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines());
         } else {
             concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), line.getSubAccountNumber(), 
-                    line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
-            concurAccountInfo.setOrgRefId(line.getOrgRefId());
+                    line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode(), line.getOrgRefId());
         }
         return concurAccountInfo;
     }

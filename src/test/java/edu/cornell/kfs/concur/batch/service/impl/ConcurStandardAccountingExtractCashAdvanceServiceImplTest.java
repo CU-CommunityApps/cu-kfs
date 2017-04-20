@@ -35,7 +35,7 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImplTest {
     @Test
     public void validateIsCashAdvanceTrue() {
         ConcurStandardAccountingExtractDetailLine line = ConcurSAEDetailLineFixture.PDP_TEST_CASH_ADVANCE_500.toDetailLine();
-        line.setCashAdvanceCaKey("1242");
+        line.setCashAdvanceKey("1242");
         assertTrue("Should be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(line));
     }
     

@@ -33,7 +33,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String expenseType;
     private KualiDecimal cashAdvanceAmount;
     private Date cashAdvanceIssueDate;
-    private String cashAdvanceCaKey;
+    private String cashAdvanceKey;
     private String reportEntryId;
     
     public String getBatchID() {
@@ -252,12 +252,12 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.cashAdvanceIssueDate = cashAdvanceIssueDate;
     }
 
-    public String getCashAdvanceCaKey() {
-        return cashAdvanceCaKey;
+    public String getCashAdvanceKey() {
+        return cashAdvanceKey;
     }
 
-    public void setCashAdvanceCaKey(String cashAdvanceCaKey) {
-        this.cashAdvanceCaKey = cashAdvanceCaKey;
+    public void setCashAdvanceKey(String cashAdvanceKey) {
+        this.cashAdvanceKey = cashAdvanceKey;
     }
 
     public String getReportEntryId() {
@@ -283,7 +283,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" journalAmountString: ").append(journalAmountString).append(" reportEndDate: ").append(reportEndDate);
         sb.append(" policy: ").append(policy).append(" expenseType: ").append(expenseType);
         sb.append(" cashAdvanceAmount: ").append(cashAdvanceAmount).append(" cashAdvanceIssueDate: ").append(cashAdvanceIssueDate);
-        sb.append(" cashAdvanceCaKey: ").append(cashAdvanceCaKey);
+        sb.append(" cashAdvanceKey: ").append(cashAdvanceKey);
         return sb.toString();
     }
 

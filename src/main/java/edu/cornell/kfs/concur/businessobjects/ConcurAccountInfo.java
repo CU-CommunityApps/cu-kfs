@@ -23,6 +23,11 @@ public class ConcurAccountInfo {
         this.setSubObjectCode(subObjectCode);
         this.setProjectCode(projectCode);
     }
+    
+    public ConcurAccountInfo(String chart, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode, String orgRefId) {
+        this(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
+        this.orgRefId = orgRefId;
+    }
 
     public String getChart() {
         return chart;
