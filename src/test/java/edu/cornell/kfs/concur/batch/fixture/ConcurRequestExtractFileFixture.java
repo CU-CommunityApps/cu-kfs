@@ -13,7 +13,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEn
 
 public enum ConcurRequestExtractFileFixture {
     
-    GOOD_FILE("GOOD_FILE_COUNT_FILE", (new Date(Calendar.getInstance().getTimeInMillis())), new Integer(13), new KualiDecimal(5253.33),
+    GOOD_FILE("GOOD_FILE", "04/14/2017", 13, new KualiDecimal(5253.33),
         new ConcurRequestExtractRequestDetailFileLine[]
             {ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_2.createConcurRequestExtractRequestDetailFileLine(),
@@ -21,7 +21,19 @@ public enum ConcurRequestExtractFileFixture {
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_4.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_5.createConcurRequestExtractRequestDetailFileLine()}),
 
-    BAD_FILE_COUNT_FILE("BAD_FILE_COUNT_FILE", (new Date(Calendar.getInstance().getTimeInMillis())), new Integer(4), new KualiDecimal(5253.33),
+    GOOD_FILE_MULTIPLE_DETAILS("GOOD_FILE_MULTIPLE_DETAILS", "04/14/2017", 21, new KualiDecimal(5253.33),
+        new ConcurRequestExtractRequestDetailFileLine[]
+            {ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_2.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_3.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_3.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_3.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_3.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_4.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_5.createConcurRequestExtractRequestDetailFileLine()}),
+
+    BAD_FILE_COUNT_FILE("BAD_FILE_COUNT_FILE", "04/14/2017", 4, new KualiDecimal(5253.33),
         new ConcurRequestExtractRequestDetailFileLine[]
             {ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_2.createConcurRequestExtractRequestDetailFileLine(),
@@ -29,15 +41,24 @@ public enum ConcurRequestExtractFileFixture {
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_4.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_5.createConcurRequestExtractRequestDetailFileLine()}),
 
-    BAD_REQUEST_AMOUNT_FILE("BAD_REQUEST_AMOUNT_FILE", (new Date(Calendar.getInstance().getTimeInMillis())), new Integer(13), new KualiDecimal(9.87),
+    BAD_REQUEST_AMOUNT_FILE("BAD_REQUEST_AMOUNT_FILE", "04/14/2017", 13, new KualiDecimal(9.87),
         new ConcurRequestExtractRequestDetailFileLine[]
             {ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_2.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_3.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_4.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_5.createConcurRequestExtractRequestDetailFileLine()}),
+
+    BAD_REQUEST_AMOUNT_MULTIPLE_DETAILS_FILE("BAD_REQUEST_AMOUNT_MULTIPLE_DETAILS_FILE", "04/14/2017", 15, new KualiDecimal(9.87),
+        new ConcurRequestExtractRequestDetailFileLine[]
+            {ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
+             ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_2.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_3.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_4.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_5.createConcurRequestExtractRequestDetailFileLine()}),
     
-    BAD_EMPLOYEE_GROUP_ID_FILE("BAD_EMPLOYEE_GROUP_ID_FILE", (new Date(Calendar.getInstance().getTimeInMillis())), new Integer(13), new KualiDecimal(5253.33),
+    BAD_EMPLOYEE_GROUP_ID_FILE("BAD_EMPLOYEE_GROUP_ID_FILE", "04/14/2017", 13, new KualiDecimal(5253.33),
         new ConcurRequestExtractRequestDetailFileLine[]
             {ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_GOOD_LINE_1.createConcurRequestExtractRequestDetailFileLine(),
              ConcurRequestExtractRequestDetailFileLineFixture.REQUEST_DETAIL_BAD_EMPLOYEE_GROUP_ID_LINE_2.createConcurRequestExtractRequestDetailFileLine(),
@@ -51,11 +72,11 @@ public enum ConcurRequestExtractFileFixture {
     public final KualiDecimal totalApprovedAmount;
     public final List<ConcurRequestExtractRequestDetailFileLine> requestDetails;
     
-    private ConcurRequestExtractFileFixture (String fileName, Date batchDate, Integer recordCount,
+    private ConcurRequestExtractFileFixture (String fileName, String batchDate, int recordCount,
                                              KualiDecimal totalApprovedAmount, ConcurRequestExtractRequestDetailFileLine[] detailLines) {
         this.fileName = fileName;
-        this.batchDate = batchDate;
-        this.recordCount = recordCount;
+        this.batchDate = ConcurFixtureUtils.toSqlDate(batchDate);
+        this.recordCount = new Integer(recordCount);
         this.totalApprovedAmount = totalApprovedAmount;
         this.requestDetails = new ArrayList<ConcurRequestExtractRequestDetailFileLine>();
         for (ConcurRequestExtractRequestDetailFileLine detailLine : detailLines) {

@@ -9,5 +9,6 @@ public interface ConcurRequestExtractFileValidationService {
 
     boolean requestExtractHeaderRowValidatesToFileContents(ConcurRequestExtractFile requestExtractFile);
 
-    void performRequestDetailLineValidation(ConcurRequestExtractRequestDetailFileLine detailFileLine);
+    void performRequestDetailLineValidation(ConcurRequestExtractRequestDetailFileLine detailFileLine, List<String> uniqueRequestIdsInFile);
+
 }

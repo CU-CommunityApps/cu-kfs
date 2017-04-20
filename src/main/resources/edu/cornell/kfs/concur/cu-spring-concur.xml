@@ -423,8 +423,8 @@
                                           p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"
                                           p:propertyName="requestAmount"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
-                                          p:lineSegmentIndex="89"
-                                          p:propertyName="requestEntryExpenseType"/>
+                                          p:lineSegmentIndex="196"
+                                          p:propertyName="cashAdvancePaymentCodeName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="94"
                                           p:propertyName="requestEntryDescription"/>

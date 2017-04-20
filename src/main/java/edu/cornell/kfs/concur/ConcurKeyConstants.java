@@ -12,5 +12,6 @@ public class ConcurKeyConstants {
     public static final String CONCUR_REQUEST_EXTRACT_PAYEE_ID_TYPE_INVALID = "validation.error.concur.request.extract.invalid.payee.id.type";
     public static final String CONCUR_REQUEST_EXTRACT_REQUEST_AMOUNT_INVALID = "validation.error.concur.request.extract.invalid.request.amount";
     public static final String CONCUR_REQUEST_EXTRACT_DUPLICATE_CASH_ADVANCE_DETECTED = "validation.error.concur.request.extract.duplicate.cash.advance";
+    public static final String CONCUR_REQUEST_EXTRACT_INVALID_KEYS_FOR_DUPLICATE_CHECK = "validation.error.concur.request.extract.invalid.keys.duplicate.check";
 
 }

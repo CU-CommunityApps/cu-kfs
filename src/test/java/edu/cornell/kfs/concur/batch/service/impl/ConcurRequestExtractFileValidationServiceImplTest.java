@@ -72,6 +72,18 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         assertFalse("Expected Result: Request Detail row contains BAD Employee Group Id.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile));
     }
 
+    @Test
+    public void testFileContainsMultipleRequestDetailLinesHeaderAmountMatch() {
+        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.GOOD_FILE_MULTIPLE_DETAILS.createConcurRequestExtractFile();
+        assertTrue("Expected Result: Header amount SHOULD match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile));
+    }
+
+    @Test
+    public void testFileContainsMultipleRequestDetailLinesHeaderAmountDoesNotMatch() {
+        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_REQUEST_AMOUNT_MULTIPLE_DETAILS_FILE.createConcurRequestExtractFile();
+        assertFalse("Expected Result: Header amount should NOT match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile));
+    }
+
     private class TestableConcurBatchUtilityServiceImpl extends ConcurBatchUtilityServiceImpl {
         @Override
         public String getConcurParameterValue(String parameterName) {
