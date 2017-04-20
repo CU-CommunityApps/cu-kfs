@@ -41,7 +41,7 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImplTest {
     
     @Test
     public void validateIsCashAdvanceFalse() {
-        ConcurStandardAccountingExtractDetailLine line = ConcurSAEDetailLineFixture.PDP_TEST_DEBIT_1_500.toDetailLine();
+        ConcurStandardAccountingExtractDetailLine line = ConcurSAEDetailLineFixture.PDP_TEST_DEBIT_1_50.toDetailLine();
         assertFalse("Should NOT be a cash advance line", concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(line));
     }
     

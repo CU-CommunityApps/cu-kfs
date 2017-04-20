@@ -127,7 +127,7 @@ public enum ConcurSAEDetailLineFixture {
     PDP_TEST_CASH_ADVANCE_500(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_TEST, -500, buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.PDP_LINE_FIXTURE_CASH_ADVANCE_KEY),
             buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID), 
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY)),
-    PDP_TEST_DEBIT_1_500(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 50, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
+    PDP_TEST_DEBIT_1_50(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 50, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
     PDP_TEST_DEBIT_2_500(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 500, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
     PDP_TEST_DEBIT_3_500_NO_ACCOUNT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 500, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID + "-2"),
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY));
