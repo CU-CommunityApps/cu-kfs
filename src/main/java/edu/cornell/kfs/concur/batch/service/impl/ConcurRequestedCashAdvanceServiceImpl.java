@@ -29,9 +29,9 @@ public class ConcurRequestedCashAdvanceServiceImpl implements ConcurRequestedCas
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.EMPLID, concurRequestedCashAdvance.getEmployeeId());
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.REQUEST_ID, concurRequestedCashAdvance.getRequestId());
         fieldValues.put(ConcurPropertyConstants.ConcurRequestedCashAdvance.PAYMENT_AMOUNT, concurRequestedCashAdvance.getPaymentAmount().toString());
-        
+
         concurRequestedCashAdvances = businessObjectService.findMatching(ConcurRequestedCashAdvance.class, fieldValues);
-        
+
         boolean isDuplicate = CollectionUtils.isNotEmpty(concurRequestedCashAdvances);
 
         return isDuplicate;

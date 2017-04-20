@@ -14,7 +14,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDe
 
 public class ConcurRequestExtractRequestDetailFileLine {
     private Date batchDate;
-    private String requestEntryExpenseType;
+    private String cashAdvancePaymentCodeName;
     private String employeeId;
     private String lastName;
     private String firstName;
@@ -41,14 +41,6 @@ public class ConcurRequestExtractRequestDetailFileLine {
         this.validationResult = new ConcurRequestExtractRequestDetailLineValidationResult();
     }
 
-    public String getRequestEntryExpenseType() {
-        return requestEntryExpenseType;
-    }
-
-    public void setRequestEntryExpenseType(String requestEntryExpenseType) {
-        this.requestEntryExpenseType = requestEntryExpenseType;
-    }
-
     public Date getBatchDate() {
         return batchDate;
     }
@@ -57,6 +49,14 @@ public class ConcurRequestExtractRequestDetailFileLine {
         this.batchDate = batchDate;
     }
     
+    public String getCashAdvancePaymentCodeName() {
+        return cashAdvancePaymentCodeName;
+    }
+
+    public void setCashAdvancePaymentCodeName(String cashAdvancePaymentCodeName) {
+        this.cashAdvancePaymentCodeName = cashAdvancePaymentCodeName;
+    }
+
     public String getEmployeeId() {
         return employeeId;
     }
@@ -220,7 +220,7 @@ public class ConcurRequestExtractRequestDetailFileLine {
     public String toString() {
         StringBuilder sb = new StringBuilder("ConcurRequestExtractDetailFileLine:").append(KFSConstants.NEWLINE);
         sb.append("batchDate: ").append(batchDate).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
-        sb.append("requestEntryExpenseType: ").append(requestEntryExpenseType).append(KFSConstants.NEWLINE);
+        sb.append("cashAdvancePaymentCodeName: ").append(cashAdvancePaymentCodeName).append(KFSConstants.NEWLINE);
         sb.append("employeeId: ").append(employeeId).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("lastName: ").append(lastName).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("firstName: ").append(firstName).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
@@ -244,6 +244,7 @@ public class ConcurRequestExtractRequestDetailFileLine {
             sb.append(entryLines.toString()).append(KFSConstants.NEWLINE);
         }
         sb.append("cashAdvanceLine: ").append(validationResult.isCashAdvanceLine()).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
+        sb.append("clonedCashAdvance: ").append(validationResult.isClonedCashAdvance()).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("cashAdvanceUsedInExpenseReport: ").append(validationResult.isCashAdvanceUsedInExpenseReport()).append(ConcurConstants.SPACING_STRING_FOR_OUTPUT);
         sb.append("validCashAdvanceLine: ").append(validationResult.isValidCashAdvanceLine()).append(KFSConstants.NEWLINE);
         sb.append("validationFailureMessages: ").append(KFSConstants.NEWLINE);

@@ -115,7 +115,7 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     private PdpFeedDetailEntry buildPdpFeedDetailEntry(ConcurRequestExtractRequestDetailFileLine detailFileLine, PdpFeedAccountingEntry pdpAccountingEntry) {
         PdpFeedDetailEntry pdpDetailEntry  = new PdpFeedDetailEntry();
         pdpDetailEntry.setSourceDocNbr(getConcurBatchUtilityService().formatSourceDocumentNumber(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REQUEST_EXTRACT_PDP_DOCUMENT_TYPE), detailFileLine.getRequestId()));
-        pdpDetailEntry.setInvoiceNbr(StringUtils.EMPTY);
+        pdpDetailEntry.setInvoiceNbr(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_PDP_DEFAULT_INVOICE_NUMBER));
         pdpDetailEntry.setPoNbr(StringUtils.EMPTY);
         pdpDetailEntry.setInvoiceDate(getConcurBatchUtilityService().formatDate_MMddyyyy(detailFileLine.getBatchDate()));
         pdpDetailEntry.setNetPaymentAmt(detailFileLine.getRequestAmount());

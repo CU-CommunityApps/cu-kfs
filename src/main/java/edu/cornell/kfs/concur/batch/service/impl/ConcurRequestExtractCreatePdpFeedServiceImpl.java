@@ -32,7 +32,7 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
                         LOG.error("createPdpFeedsFromRequestExtracts: Processing was UNSUCCESSFUL for Request Extract File: " + requestExtractFullyQualifiedFileName);
                     }
                 } catch (Exception e) {
-                    LOG.error("createPdpFeedsFromRequestExtracts: Processing to create PDP Files from Request Extract [" + requestExtractFullyQualifiedFileName + "] genertated Exception: " + e.getMessage());
+                    LOG.error("createPdpFeedsFromRequestExtracts: Processing to create PDP Files from Request Extract [" + requestExtractFullyQualifiedFileName + "] generated Exception: " + e.getMessage());
                 } finally {
                     getConcurBatchUtilityService().removeDoneFileFor(requestExtractFullyQualifiedFileName);
                 }
