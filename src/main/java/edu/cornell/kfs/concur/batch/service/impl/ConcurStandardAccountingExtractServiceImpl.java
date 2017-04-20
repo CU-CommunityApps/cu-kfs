@@ -99,12 +99,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected void logDetailedInfoForConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
         if (LOG.isDebugEnabled()) {
             if (saeFile != null) {
-                LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, " + saeFile.getDebugInformation());
+                LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, " + saeFile.toString());
                 if (saeFile.getConcurStandardAccountingExtractDetailLines() != null) {
                     LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, Number of line items: " + 
                             saeFile.getConcurStandardAccountingExtractDetailLines().size());
                     for (ConcurStandardAccountingExtractDetailLine line : saeFile.getConcurStandardAccountingExtractDetailLines()) {
-                        LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, " + line.getDebugInformation());
+                        LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, " + line.toString());
                     }
                 } else {
                     LOG.debug("logDetailedInfoForConcurStandardAccountingExtractFile, The getConcurStandardAccountingExtractDetailLines is null");

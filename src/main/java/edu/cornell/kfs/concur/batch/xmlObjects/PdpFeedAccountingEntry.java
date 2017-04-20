@@ -125,7 +125,7 @@ public class PdpFeedAccountingEntry {
         this.amount = value;
     }
     
-    public String getDebugInfo() {
+    public String toString() {
         StringBuilder sb = new StringBuilder("Chart: ").append(coaCd).append(" Account: ").append(accountNbr);
         sb.append(" Sub Account: ").append(subAccountNbr).append(" Object: ").append(objectCd);
         sb.append(" Sub Object: ").append(subObjectCd).append(" project: ").append(projectCd);

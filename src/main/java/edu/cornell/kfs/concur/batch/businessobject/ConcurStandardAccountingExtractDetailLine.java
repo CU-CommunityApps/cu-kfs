@@ -268,7 +268,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.reportEntryId = reportEntryId;
     }
 
-    public String getDebugInformation() {
+    public String toString() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
         sb.append(" employeeLastName: ").append(employeeLastName).append(" employeeFirstName: ").append(employeeFirstName);
