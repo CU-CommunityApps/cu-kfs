@@ -1,10 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,9 +11,6 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -204,18 +197,18 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             KualiDecimal originalDetailTransactionTotal = KualiDecimal.ZERO;
             for (PdpFeedAccountingEntry originalAccountingEntry : originalDetailEntry.getAccounting()) {
                 originalDetailTransactionTotal = originalDetailTransactionTotal.add(originalAccountingEntry.getAmount());
-                addOnlyPositiveAccountingEntriesForPDPProcessing(newDetailEntry, originalAccountingEntry);
+                addOnlyPositiveAccountingEntryForPDPProcessing(newDetailEntry, originalAccountingEntry);
             }
             addNewPaymentDetailToGroupIfTotalIsPositive(newGroupEntry, newDetailEntry, originalDetailTransactionTotal);
         }
     }
 
-    private void addOnlyPositiveAccountingEntriesForPDPProcessing(PdpFeedDetailEntry newDetailEntry,
+    private void addOnlyPositiveAccountingEntryForPDPProcessing(PdpFeedDetailEntry newDetailEntry,
             PdpFeedAccountingEntry originalAccountingEntry) {
         if (originalAccountingEntry.getAmount().isPositive()) {
             newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
         } else {
-            LOG.debug("addOnlyPositiveAccountingEntriesForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
+            LOG.debug("addOnlyPositiveAccountingEntryForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
         }
     }
 
