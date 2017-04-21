@@ -132,7 +132,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         String pdpFileName = StringUtils.EMPTY;
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile, reportData);
-            pdpFeedFileBaseEntry = getConcurStandardAccountExtractPdpEntryService().removeNonReimbursableSectionsFromPdpFeedFileBaseEntry(pdpFeedFileBaseEntry, reportData);
+            pdpFeedFileBaseEntry = getConcurStandardAccountExtractPdpEntryService().createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(pdpFeedFileBaseEntry, reportData);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
             String pdpFullyQualifiedFilePath = getPaymentImportDirectory() + pdpFileName;
             success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFullyQualifiedFilePath);

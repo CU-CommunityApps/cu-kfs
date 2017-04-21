@@ -29,6 +29,6 @@ public interface ConcurStandardAccountExtractPdpEntryService {
     
     PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractBatchReportData reportData);
     
-    PdpFeedFileBaseEntry removeNonReimbursableSectionsFromPdpFeedFileBaseEntry(PdpFeedFileBaseEntry baseEntry, ConcurStandardAccountingExtractBatchReportData reportData);
+    PdpFeedFileBaseEntry createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(PdpFeedFileBaseEntry baseEntry, ConcurStandardAccountingExtractBatchReportData reportData);
 
 }

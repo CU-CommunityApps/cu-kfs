@@ -175,7 +175,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
     
     @Override
-    public PdpFeedFileBaseEntry removeNonReimbursableSectionsFromPdpFeedFileBaseEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, 
+    public PdpFeedFileBaseEntry createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, 
             ConcurStandardAccountingExtractBatchReportData reportData) {
         LOG.debug("Entering removeNonReimbursableSectionsFromPdpFeedFileBaseEntry");
         PdpFeedFileBaseEntry newBaseEntry = new PdpFeedFileBaseEntry();
@@ -204,17 +204,22 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             KualiDecimal originalDetailTransactionTotal = KualiDecimal.ZERO;
             for (PdpFeedAccountingEntry originalAccountingEntry : originalDetailEntry.getAccounting()) {
                 originalDetailTransactionTotal = originalDetailTransactionTotal.add(originalAccountingEntry.getAmount());
-                if (originalAccountingEntry.getAmount().isPositive()) {
-                    newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
-                } else {
-                    LOG.debug("addDetailEntriesToNewGroupEntry, not adding accounting entry: " + originalAccountingEntry.toString());
-                }
+                addOnlyPositiveAccountingEntriesForPDPProcessing(newDetailEntry, originalAccountingEntry);
             }
-            addNewPaymentDetailToGroup(newGroupEntry, newDetailEntry, originalDetailTransactionTotal);
+            addNewPaymentDetailToGroupIfTotalIsPositive(newGroupEntry, newDetailEntry, originalDetailTransactionTotal);
         }
     }
 
-    private void addNewPaymentDetailToGroup(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
+    private void addOnlyPositiveAccountingEntriesForPDPProcessing(PdpFeedDetailEntry newDetailEntry,
+            PdpFeedAccountingEntry originalAccountingEntry) {
+        if (originalAccountingEntry.getAmount().isPositive()) {
+            newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
+        } else {
+            LOG.debug("addOnlyPositiveAccountingEntriesForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
+        }
+    }
+
+    private void addNewPaymentDetailToGroupIfTotalIsPositive(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("addNewPaymentDetailToGroup, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
         }
@@ -226,7 +231,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
                 if (originalDetailTransactionTotal.isNegative()) {
                     sb.append(" a negative amount in PDP, so it will be handled by collector.");
                 } else {
-                    sb.append(" a zerion amount in PDP, so no payment needs to be issued");
+                    sb.append(" a zero amount in PDP, so no payment needs to be issued");
                 }
                 LOG.debug(sb.toString());
             }
