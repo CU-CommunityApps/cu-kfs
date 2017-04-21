@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
@@ -33,6 +34,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import freemarker.core._RegexBuiltins.split_reBI;
 
 public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurStandardAccountExtractPdpEntryService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountExtractPdpEntryServiceImpl.class);
@@ -176,42 +178,59 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public PdpFeedFileBaseEntry removeNonReimbursableSectionsFromPdpFeedFileBaseEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, 
             ConcurStandardAccountingExtractBatchReportData reportData) {
         LOG.debug("Entering removeNonReimbursableSectionsFromPdpFeedFileBaseEntry");
-        PdpFeedFileBaseEntry baseEntry = new PdpFeedFileBaseEntry();
-        baseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry.getHeader()));
-        baseEntry.setVersion(pdpFeedFileBaseEntry.getVersion());
-        buildNewGroupEntries(pdpFeedFileBaseEntry, baseEntry);
-        baseEntry.setTrailer(buildPdpFeedTrailerEntry(baseEntry, reportData));
-        return baseEntry;
+        PdpFeedFileBaseEntry newBaseEntry = new PdpFeedFileBaseEntry();
+        newBaseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry.getHeader()));
+        newBaseEntry.setVersion(pdpFeedFileBaseEntry.getVersion());
+        addGroupEntriesToNewBaseEntry(newBaseEntry, pdpFeedFileBaseEntry);
+        newBaseEntry.setTrailer(buildPdpFeedTrailerEntry(newBaseEntry, reportData));
+        return newBaseEntry;
     }
 
-    private void buildNewGroupEntries(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, PdpFeedFileBaseEntry baseEntry) {
-        for (PdpFeedGroupEntry groupEntry : pdpFeedFileBaseEntry.getGroup()) {
-            PdpFeedGroupEntry newGroupEntry = copyGroupEntry(groupEntry);
-            boolean validNewGroup = false;
-            
-            for (PdpFeedDetailEntry detailEntry : groupEntry.getDetail()) {
-                PdpFeedDetailEntry newDetailEntry = copyDetailEntry(detailEntry);
-                KualiDecimal transactionTotal = KualiDecimal.ZERO;
-                for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
-                    transactionTotal = transactionTotal.add(accountingEntry.getAmount());
-                    if (accountingEntry.getAmount().isPositive()) {
-                        newDetailEntry.getAccounting().add(copyAccountingEntry(accountingEntry));
-                    } else {
-                        LOG.debug("buildNewGroupEntries, not adding accounting entry: " + accountingEntry.toString());
-                    }
-                }
-                LOG.debug("buildNewGroupEntries, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + transactionTotal);
-                if (transactionTotal.isPositive()) {
-                    validNewGroup = true;
-                    newGroupEntry.getDetail().add(newDetailEntry);
-                }
-            }
-            
-            if (validNewGroup) {
-                baseEntry.getGroup().add(newGroupEntry);
+    private void addGroupEntriesToNewBaseEntry(PdpFeedFileBaseEntry newBaseEntry, PdpFeedFileBaseEntry originalBaseEntry) {
+        for (PdpFeedGroupEntry originalGroupEntry : originalBaseEntry.getGroup()) {
+            PdpFeedGroupEntry newGroupEntry = copyGroupEntry(originalGroupEntry);
+            addDetailEntriesToNewGroupEntry(newGroupEntry, originalGroupEntry);
+            if (CollectionUtils.isNotEmpty(newGroupEntry.getDetail())) {
+                newBaseEntry.getGroup().add(newGroupEntry);
             } else {
-                LOG.debug("buildNewGroupEntries, not adding group for" + newGroupEntry.getPayeeName());
+                LOG.debug("addGroupEntriesToNewBaseEntry, not adding group for" + newGroupEntry.getPayeeName());
             }
+        }
+    }
+    
+    private void addDetailEntriesToNewGroupEntry(PdpFeedGroupEntry newGroupEntry, PdpFeedGroupEntry originalGroupEntry) {
+        for (PdpFeedDetailEntry originalDetailEntry : originalGroupEntry.getDetail()) {
+            PdpFeedDetailEntry newDetailEntry = copyDetailEntry(originalDetailEntry);
+            KualiDecimal originalDetailTransactionTotal = KualiDecimal.ZERO;
+            for (PdpFeedAccountingEntry originalAccountingEntry : originalDetailEntry.getAccounting()) {
+                originalDetailTransactionTotal = originalDetailTransactionTotal.add(originalAccountingEntry.getAmount());
+                if (originalAccountingEntry.getAmount().isPositive()) {
+                    newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
+                } else {
+                    LOG.debug("addDetailEntriesToNewGroupEntry, not adding accounting entry: " + originalAccountingEntry.toString());
+                }
+            }
+            addNewPaymentDetailToGroup(newGroupEntry, newDetailEntry, originalDetailTransactionTotal);
+        }
+    }
+
+    private void addNewPaymentDetailToGroup(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("addNewPaymentDetailToGroup, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
+        }
+        if (originalDetailTransactionTotal.isPositive()) {
+            newGroupEntry.getDetail().add(newDetailEntry);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroup SAE transactions summed to");
+                if (originalDetailTransactionTotal.isNegative()) {
+                    sb.append(" a negative amount in PDP, so it will be handled by collector.");
+                } else {
+                    sb.append(" a zerion amount in PDP, so no payment needs to be issued");
+                }
+                LOG.debug(sb.toString());
+            }
+            
         }
     }
 
