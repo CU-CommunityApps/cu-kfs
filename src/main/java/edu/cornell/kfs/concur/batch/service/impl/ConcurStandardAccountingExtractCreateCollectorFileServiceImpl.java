@@ -20,6 +20,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -37,6 +38,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected static final int DEFAULT_BUILDER_SIZE = 100;
 
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
+    protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
     protected LookupableHelperService batchFileLookupableHelperService;
     protected OptionsService optionsService;
@@ -78,7 +80,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
         return new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
+                concurRequestedCashAdvanceService, optionsService, universityDateService,
+                dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
     protected String getConcurParameterValueAsString(String parameterName) {
@@ -135,6 +138,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     public void setConcurSAEValidationService(ConcurStandardAccountingExtractValidationService concurSAEValidationService) {
         this.concurSAEValidationService = concurSAEValidationService;
+    }
+
+    public void setConcurRequestedCashAdvanceService(ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService) {
+        this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
     }
 
     public void setCollectorFlatFileSerializerService(BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService) {

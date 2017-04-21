@@ -24,6 +24,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorI
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 /**
@@ -58,6 +59,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected CollectorBatch collectorBatch;
     protected Map<String,ConcurDetailLineGroupForCollector> lineGroups;
+    protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -71,10 +73,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
      * @throws IllegalArgumentException if any arguments are null.
      */
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
-            OptionsService optionsService,
+            ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService, OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> concurParameterGetter) {
-        if (optionsService == null) {
+        if (concurRequestedCashAdvanceService == null) {
+            throw new IllegalArgumentException("concurRequestedCashAdvanceService cannot be null");
+        } else if (optionsService == null) {
             throw new IllegalArgumentException("optionsService cannot be null");
         } else if (universityDateService == null) {
             throw new IllegalArgumentException("universityDateService cannot be null");
@@ -183,7 +187,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         String actualFinancialBalanceTypeCode = getActualFinancialBalanceTypeCodeForCollectorBatch();
         this.collectorHelper = new ConcurDetailLineGroupForCollectorHelper(
                 actualFinancialBalanceTypeCode, collectorBatch.getTransmissionDate(),
-                dateTimeService, this::getDashValueForProperty, concurParameterGetter);
+                concurRequestedCashAdvanceService, dateTimeService, this::getDashValueForProperty, concurParameterGetter);
     }
 
     protected String getActualFinancialBalanceTypeCodeForCollectorBatch() {
@@ -208,9 +212,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected void updateCollectorBatchWithOriginEntries() {
         for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
-            for (OriginEntryFull originEntry : lineGroup.buildOriginEntries()) {
-                collectorBatch.addOriginEntry(originEntry);
-            }
+            lineGroup.buildAndAddOriginEntries(collectorBatch::addOriginEntry);
         }
         
         Integer totalRecords = Integer.valueOf(collectorBatch.getOriginEntries().size());
