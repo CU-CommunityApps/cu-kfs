@@ -25,6 +25,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeIte
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 /**
@@ -60,6 +61,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected CollectorBatch collectorBatch;
     protected Map<String,ConcurDetailLineGroupForCollector> lineGroups;
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -73,11 +75,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
      * @throws IllegalArgumentException if any arguments are null.
      */
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
-            ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService, OptionsService optionsService,
+            ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
+            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService, OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> concurParameterGetter) {
         if (concurRequestedCashAdvanceService == null) {
             throw new IllegalArgumentException("concurRequestedCashAdvanceService cannot be null");
+        } else if (concurStandardAccountingExtractCashAdvanceService == null) {
+            throw new IllegalArgumentException("concurStandardAccountingExtractCashAdvanceService cannot be null");
         } else if (optionsService == null) {
             throw new IllegalArgumentException("optionsService cannot be null");
         } else if (universityDateService == null) {
@@ -90,6 +95,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new IllegalArgumentException("concurParameterGetter cannot be null");
         }
         
+        this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
+        this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
         this.optionsService = optionsService;
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
@@ -187,7 +194,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         String actualFinancialBalanceTypeCode = getActualFinancialBalanceTypeCodeForCollectorBatch();
         this.collectorHelper = new ConcurDetailLineGroupForCollectorHelper(
                 actualFinancialBalanceTypeCode, collectorBatch.getTransmissionDate(),
-                concurRequestedCashAdvanceService, dateTimeService, this::getDashValueForProperty, concurParameterGetter);
+                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService,
+                dateTimeService, this::getDashValueForProperty, concurParameterGetter);
     }
 
     protected String getActualFinancialBalanceTypeCodeForCollectorBatch() {
@@ -212,7 +220,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected void updateCollectorBatchWithOriginEntries() {
         for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
-            lineGroup.buildAndAddOriginEntries(collectorBatch::addOriginEntry);
+            lineGroup.buildAndAddOriginEntries(collectorBatch::addOriginEntry, this::reportUnprocessedLine);
         }
         
         Integer totalRecords = Integer.valueOf(collectorBatch.getOriginEntries().size());

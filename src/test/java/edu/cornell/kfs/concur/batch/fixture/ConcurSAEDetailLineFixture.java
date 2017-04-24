@@ -26,8 +26,12 @@ public enum ConcurSAEDetailLineFixture {
     DEFAULT_DEBIT(null, ConcurEmployeeFixture.JOHN_DOE, ConcurTestConstants.REPORT_ID_1,
             ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
-            ConcurConstants.DEBIT, 50.00, "12/24/2016", null, null),
+            ConcurConstants.DEBIT, 50.00, "12/24/2016", null, ConcurTestConstants.REPORT_ENTRY_ID_1),
     DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00),
+    DEFAULT_CASH_ADVANCE(DEFAULT_CREDIT, null,
+            buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY),
+            buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY),
+            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_1)),
 
     MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST),
     MERGING_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 75.00),
@@ -56,8 +60,7 @@ public enum ConcurSAEDetailLineFixture {
     PAYMENT_CODE_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888),
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
-    PAYMENT_CODE_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST,
-            buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579),
+    PAYMENT_CODE_TEST_LINE4(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PAYMENT_CODE_TEST,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PSEUDO)),
     PAYMENT_CODE_TEST_LINE5(DEFAULT_DEBIT, ConcurSAEFileFixture.PAYMENT_CODE_TEST,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_24680),
@@ -114,16 +117,61 @@ public enum ConcurSAEDetailLineFixture {
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_88888)),
     EMPLOYEE_NAME_TEST_LINE4(DEFAULT_DEBIT, ConcurSAEFileFixture.EMPLOYEE_NAME_TEST, ConcurEmployeeFixture.LONG_FULLNAME,
             buildOverride(LineField.SUB_ACCOUNT_NUMBER, ConcurTestConstants.SUB_ACCT_13579)),
-    
+
     CASH_AND_CARD_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 100.00,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
     CASH_AND_CARD_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 5.00),
-    
+
     CANCELED_TRIP_TEST_LINE1(DEFAULT_CREDIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, -442.40,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
     CANCELED_TRIP_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, 10.00,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
-    
+
+    FULL_USE_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FULL_USE_CASH_ADVANCE_TEST),
+    FULL_USE_CASH_ADVANCE_TEST_LINE2(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.FULL_USE_CASH_ADVANCE_TEST),
+
+    PARTIAL_USE_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.PARTIAL_USE_CASH_ADVANCE_TEST, 30.00),
+    PARTIAL_USE_CASH_ADVANCE_TEST_LINE2(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PARTIAL_USE_CASH_ADVANCE_TEST, -30.00),
+    PARTIAL_USE_CASH_ADVANCE_TEST_LINE3(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PARTIAL_USE_CASH_ADVANCE_TEST, -20.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PSEUDO)),
+
+    EXPENSE_EXCEEDS_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.EXPENSE_EXCEEDS_CASH_ADVANCE_TEST, 35.00),
+    EXPENSE_EXCEEDS_CASH_ADVANCE_TEST_LINE2(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.EXPENSE_EXCEEDS_CASH_ADVANCE_TEST, -35.00),
+    EXPENSE_EXCEEDS_CASH_ADVANCE_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.EXPENSE_EXCEEDS_CASH_ADVANCE_TEST, 15.00),
+
+    MULTIPLE_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, 40.00),
+    MULTIPLE_CASH_ADVANCE_TEST_LINE2(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, -40.00),
+    MULTIPLE_CASH_ADVANCE_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, 10.00,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2)),
+    MULTIPLE_CASH_ADVANCE_TEST_LINE4(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, -10.00,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2)),
+    MULTIPLE_CASH_ADVANCE_TEST_LINE5(DEFAULT_DEBIT, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, 40.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    MULTIPLE_CASH_ADVANCE_TEST_LINE6(DEFAULT_DEBIT, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, 200.00,
+            buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_2),
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_3)),
+    MULTIPLE_CASH_ADVANCE_TEST_LINE7(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST, -200.00,
+            buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_2),
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_3),
+            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_2)),
+
+    ORPHANED_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST),
+    ORPHANED_CASH_ADVANCE_TEST_LINE2(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST),
+    ORPHANED_CASH_ADVANCE_TEST_LINE3(DEFAULT_DEBIT, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST, 10.00,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2)),
+    ORPHANED_CASH_ADVANCE_TEST_LINE4(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST, -10.00,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2),
+            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_NONEXISTENT)),
+    ORPHANED_CASH_ADVANCE_TEST_LINE5(DEFAULT_DEBIT, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST, 40.00,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    ORPHANED_CASH_ADVANCE_TEST_LINE6(DEFAULT_DEBIT, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST, 200.00,
+            buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_2),
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_3)),
+    ORPHANED_CASH_ADVANCE_TEST_LINE7(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST, -200.00,
+            buildOverride(LineField.REPORT_ID, ConcurTestConstants.REPORT_ID_2),
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_3),
+            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_2)),
+
     PDP_TEST_CASH_ADVANCE_500(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_TEST, -500, buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.PDP_LINE_FIXTURE_CASH_ADVANCE_KEY),
             buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID), 
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY)),
@@ -261,6 +309,11 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setReportEntryId(reportEntryId);
         
         return detailLine;
+    }
+
+    // This getter is primarily meant for use as a method reference.
+    public String getReportId() {
+        return reportId;
     }
 
     // This getter is primarily meant for use as a method reference.

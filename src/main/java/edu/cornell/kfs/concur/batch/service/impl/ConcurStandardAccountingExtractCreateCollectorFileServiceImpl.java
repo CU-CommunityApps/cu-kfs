@@ -21,6 +21,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -35,10 +36,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
             ConcurStandardAccountingExtractCreateCollectorFileServiceImpl.class);
 
     protected static final String DATE_RANGE_FORMAT = "%s..%s";
-    protected static final int DEFAULT_BUILDER_SIZE = 100;
 
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
     protected LookupableHelperService batchFileLookupableHelperService;
     protected OptionsService optionsService;
@@ -80,7 +81,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
         return new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                concurRequestedCashAdvanceService, optionsService, universityDateService,
+                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, optionsService, universityDateService,
                 dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
@@ -142,6 +143,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     public void setConcurRequestedCashAdvanceService(ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService) {
         this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
+    }
+
+    public void setConcurStandardAccountingExtractCashAdvanceService(
+            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService) {
+        this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
     }
 
     public void setCollectorFlatFileSerializerService(BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService) {

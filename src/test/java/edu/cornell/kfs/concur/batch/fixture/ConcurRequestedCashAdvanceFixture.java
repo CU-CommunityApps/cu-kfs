@@ -1,15 +1,20 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.concur.ConcurTestConstants;
+import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
 
 public enum ConcurRequestedCashAdvanceFixture {
-    TEST_CASH_ADVANCE_01("REQ01", ConcurEmployeeFixture.JOHN_DOE, 100.00, "12/01/2016", "DOC01", "CA01",
-            "IT", "G222333", null, "1414", null, null, null, "test01.txt");
+    CASH_ADVANCE_50(ConcurTestConstants.REQUEST_ID_1, ConcurEmployeeFixture.JOHN_DOE, 50.00, "12/01/2016",
+            ConcurTestConstants.SOURCE_DOC_NUMBER_1, ConcurTestConstants.CASH_ADVANCE_KEY_1,
+            ParameterTestValues.COLLECTOR_CHART_CODE, ConcurTestConstants.ACCT_4455667, null,
+            ConcurTestConstants.OBJ_1414, null, null, null, ConcurTestConstants.TEST_FILE_NAME),
+    CASH_ADVANCE_200(ConcurTestConstants.REQUEST_ID_2, ConcurEmployeeFixture.JOHN_DOE, 200.00, "12/02/2016",
+            ConcurTestConstants.SOURCE_DOC_NUMBER_1, ConcurTestConstants.CASH_ADVANCE_KEY_2,
+            ConcurTestConstants.CHART_QQ, ConcurTestConstants.ACCT_1234321, null,
+            ConcurTestConstants.OBJ_1414, null, null, null, ConcurTestConstants.TEST_FILE_NAME);
 
     public final int concurRequestedCashAdvanceId;
     public final String requestId;
@@ -26,42 +31,6 @@ public enum ConcurRequestedCashAdvanceFixture {
     public final String projectCode;
     public final String orgRefId;
     public final String fileName;
-
-    @SafeVarargs
-    private ConcurRequestedCashAdvanceFixture(
-            ConcurRequestedCashAdvanceFixture baseFixture, Map.Entry<LineField,String>... overrides) {
-        this(baseFixture, baseFixture.paymentAmount.doubleValue(), overrides);
-    }
-
-    @SafeVarargs
-    private ConcurRequestedCashAdvanceFixture(ConcurRequestedCashAdvanceFixture baseFixture, double paymentAmount,
-            Map.Entry<LineField,String>... overrides) {
-        this(baseFixture, baseFixture.employee, paymentAmount, overrides);
-    }
-
-    @SafeVarargs
-    private ConcurRequestedCashAdvanceFixture(ConcurRequestedCashAdvanceFixture baseFixture, ConcurEmployeeFixture employee,
-            double paymentAmount, Map.Entry<LineField,String>... overrides) {
-        this(baseFixture, employee, paymentAmount, ConcurFixtureUtils.buildOverrideMap(LineField.class, overrides));
-    }
-
-    private ConcurRequestedCashAdvanceFixture(ConcurRequestedCashAdvanceFixture baseFixture, ConcurEmployeeFixture employee,
-            double paymentAmount, EnumMap<LineField,String> overrideMap) {
-        this(overrideMap.getOrDefault(LineField.REQUEST_ID, baseFixture.requestId),
-                employee,
-                paymentAmount,
-                overrideMap.getOrDefault(LineField.PAYMENT_DATE, baseFixture.paymentDate),
-                overrideMap.getOrDefault(LineField.SOURCE_DOC_NBR, baseFixture.sourceDocNbr),
-                overrideMap.getOrDefault(LineField.CASH_ADVANCE_KEY, baseFixture.cashAdvanceKey),
-                overrideMap.getOrDefault(LineField.CHART, baseFixture.chart),
-                overrideMap.getOrDefault(LineField.ACCOUNT_NUMBER, baseFixture.accountNumber),
-                overrideMap.getOrDefault(LineField.SUB_ACCOUNT_NUMBER, baseFixture.subAccountNumber),
-                overrideMap.getOrDefault(LineField.OBJECT_CODE, baseFixture.objectCode),
-                overrideMap.getOrDefault(LineField.SUB_OBJECT_CODE, baseFixture.subObjectCode),
-                overrideMap.getOrDefault(LineField.PROJECT_CODE, baseFixture.projectCode),
-                overrideMap.getOrDefault(LineField.ORG_REF_ID, baseFixture.orgRefId),
-                overrideMap.getOrDefault(LineField.FILE_NAME, baseFixture.fileName));
-    }
 
     private ConcurRequestedCashAdvanceFixture(String requestId, ConcurEmployeeFixture employee, double paymentAmount, String paymentDate,
             String sourceDocNbr, String cashAdvanceKey, String chart, String accountNumber, String subAccountNumber,
@@ -103,25 +72,6 @@ public enum ConcurRequestedCashAdvanceFixture {
         requestedCashAdvance.setFileName(fileName);
         
         return requestedCashAdvance;
-    }
-
-    /**
-     * Helper enum containing all of the fields of the enclosing enum that can be overridden
-     * via the helper constructors.
-     */
-    public enum LineField {
-       REQUEST_ID,
-       PAYMENT_DATE,
-       SOURCE_DOC_NBR,
-       CASH_ADVANCE_KEY,
-       CHART,
-       ACCOUNT_NUMBER,
-       SUB_ACCOUNT_NUMBER,
-       OBJECT_CODE,
-       SUB_OBJECT_CODE,
-       PROJECT_CODE,
-       ORG_REF_ID,
-       FILE_NAME;
     }
 
 }

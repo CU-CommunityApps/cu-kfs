@@ -40,7 +40,7 @@ public class ConcurDetailLineSubGroupForCollector {
                 corporateCardLines.add(detailLine);
                 break;
             default :
-                throw new IllegalArgumentException("Found a row with an unprocessable payment code; this should never happen! Code: "
+                throw new IllegalArgumentException("Found a row with an unprocessable payment code; this should NEVER happen! Code: "
                         + detailLine.getPaymentCode());
         }
     }
