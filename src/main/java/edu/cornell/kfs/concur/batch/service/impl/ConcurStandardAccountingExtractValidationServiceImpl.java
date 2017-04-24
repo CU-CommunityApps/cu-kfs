@@ -40,8 +40,8 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         boolean valid = validateDetailCount(concurStandardAccountingExtractFile, reportData);
         valid = validateAmountsAndDebitCreditCode(concurStandardAccountingExtractFile, reportData) && valid;
         valid = validateHeaderDate(concurStandardAccountingExtractFile.getBatchDate(), reportData) && valid;
-        if (LOG.isDebugEnabled() && valid) {
-            LOG.debug("validateConcurStandardAccountExtractFile, passed file level validation, the record counts, batch date, and journal totals are all correct.");
+        if (LOG.isInfoEnabled() && valid) {
+            LOG.info("validateConcurStandardAccountExtractFile, passed file level validation, the record counts, batch date, and journal totals are all correct.");
         }
         return valid;
     }
