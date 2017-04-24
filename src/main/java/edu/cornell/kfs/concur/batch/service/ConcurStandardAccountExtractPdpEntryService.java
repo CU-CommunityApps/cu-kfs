@@ -11,6 +11,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
+import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 
 public interface ConcurStandardAccountExtractPdpEntryService {
     
@@ -23,8 +24,11 @@ public interface ConcurStandardAccountExtractPdpEntryService {
     PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line);
     
     PdpFeedDetailEntry buildPdpFeedDetailEntry(ConcurStandardAccountingExtractDetailLine line);
-    
-    PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurStandardAccountingExtractDetailLine line);
+
+    PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurAccountInfo concurAccountInfo);
     
     PdpFeedTrailerEntry buildPdpFeedTrailerEntry(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, ConcurStandardAccountingExtractBatchReportData reportData);
+    
+    PdpFeedFileBaseEntry createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(PdpFeedFileBaseEntry baseEntry, ConcurStandardAccountingExtractBatchReportData reportData);
+
 }

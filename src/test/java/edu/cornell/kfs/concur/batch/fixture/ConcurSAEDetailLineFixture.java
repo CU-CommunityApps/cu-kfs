@@ -26,7 +26,7 @@ public enum ConcurSAEDetailLineFixture {
     DEFAULT_DEBIT(null, ConcurEmployeeFixture.JOHN_DOE, ConcurTestConstants.REPORT_ID_1,
             ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
-            ConcurConstants.DEBIT, 50.00, "12/24/2016"),
+            ConcurConstants.DEBIT, 50.00, "12/24/2016", null, null),
     DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00),
 
     MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST),
@@ -122,7 +122,15 @@ public enum ConcurSAEDetailLineFixture {
     CANCELED_TRIP_TEST_LINE1(DEFAULT_CREDIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, -442.40,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
     CANCELED_TRIP_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, 10.00,
-            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID));
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+    
+    PDP_TEST_CASH_ADVANCE_500(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_TEST, -500, buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.PDP_LINE_FIXTURE_CASH_ADVANCE_KEY),
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID), 
+            buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY)),
+    PDP_TEST_DEBIT_1_50(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 50, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
+    PDP_TEST_DEBIT_2_500(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 500, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID)),
+    PDP_TEST_DEBIT_3_500_NO_ACCOUNT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_TEST, 500, buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID + "-2"),
+            buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY));
 
     public final ConcurSAEFileFixture extractFile;
     public final ConcurEmployeeFixture employee;
@@ -138,6 +146,8 @@ public enum ConcurSAEDetailLineFixture {
     public final String journalDebitCredit;
     public final double journalAmount;
     public final String reportEndDate;
+    public final String cashAdvanceKey;
+    public final String reportEntryId;
 
     @SafeVarargs
     private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
@@ -189,13 +199,16 @@ public enum ConcurSAEDetailLineFixture {
                 overrideMap.getOrDefault(LineField.ORG_REF_ID, baseFixture.orgRefId),
                 journalDebitCredit,
                 journalAmount,
-                overrideMap.getOrDefault(LineField.REPORT_END_DATE, baseFixture.reportEndDate));
+                overrideMap.getOrDefault(LineField.REPORT_END_DATE, baseFixture.reportEndDate), 
+                overrideMap.getOrDefault(LineField.CASH_ADVANCE_KEY, baseFixture.cashAdvanceKey),
+                overrideMap.getOrDefault(LineField.REPORT_ENTRY_ID, baseFixture.reportEntryId));
     }
 
     private ConcurSAEDetailLineFixture(ConcurSAEFileFixture extractFile, ConcurEmployeeFixture employee,
             String reportId, String paymentCode, String chartOfAccountsCode,
             String journalAccountCode, String accountNumber, String subAccountNumber, String subObjectCode,
-            String projectCode, String orgRefId, String journalDebitCredit, double journalAmount, String reportEndDate) {
+            String projectCode, String orgRefId, String journalDebitCredit, double journalAmount, String reportEndDate,
+            String cashAdvanceKey, String reportEntryId) {
         this.extractFile = extractFile;
         this.employee = employee;
         this.reportId = reportId;
@@ -210,6 +223,8 @@ public enum ConcurSAEDetailLineFixture {
         this.journalDebitCredit = journalDebitCredit;
         this.journalAmount = journalAmount;
         this.reportEndDate = reportEndDate;
+        this.cashAdvanceKey = cashAdvanceKey;
+        this.reportEntryId = reportEntryId;
     }
 
     public ConcurStandardAccountingExtractDetailLine toDetailLine() {
@@ -242,6 +257,8 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setReportEndDate(ConcurFixtureUtils.toSqlDate(reportEndDate));
         detailLine.setPolicy(ConcurTestConstants.DEFAULT_POLICY_NAME);
         detailLine.setExpenseType(ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME);
+        detailLine.setCashAdvanceKey(cashAdvanceKey);
+        detailLine.setReportEntryId(reportEntryId);
         
         return detailLine;
     }
@@ -270,7 +287,9 @@ public enum ConcurSAEDetailLineFixture {
         SUB_OBJECT_CODE,
         ORG_REF_ID,
         PROJECT_CODE,
-        REPORT_END_DATE;
+        REPORT_END_DATE,
+        CASH_ADVANCE_KEY,
+        REPORT_ENTRY_ID;
     }
 
 }

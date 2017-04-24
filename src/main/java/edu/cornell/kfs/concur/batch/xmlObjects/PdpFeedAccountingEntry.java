@@ -124,5 +124,13 @@ public class PdpFeedAccountingEntry {
     public void setAmount(KualiDecimal value) {
         this.amount = value;
     }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Chart: ").append(coaCd).append(" Account: ").append(accountNbr);
+        sb.append(" Sub Account: ").append(subAccountNbr).append(" Object: ").append(objectCd);
+        sb.append(" Sub Object: ").append(subObjectCd).append(" project: ").append(projectCd);
+        sb.append(" Org Ref Id: ").append(orgRefId).append(" Amount: ").append(amount);
+        return sb.toString();
+    }
 
 }

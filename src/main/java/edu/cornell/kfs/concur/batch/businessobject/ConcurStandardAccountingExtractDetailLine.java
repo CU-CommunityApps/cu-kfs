@@ -31,6 +31,8 @@ public class ConcurStandardAccountingExtractDetailLine {
     private Date reportEndDate;
     private String policy;
     private String expenseType;
+    private String cashAdvanceKey;
+    private String reportEntryId;
     
     public String getBatchID() {
         return batchID;
@@ -232,12 +234,28 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.expenseType = expenseType;
     }
 
-    public String getDebugInformation() {
+    public String getCashAdvanceKey() {
+        return cashAdvanceKey;
+    }
+
+    public void setCashAdvanceKey(String cashAdvanceKey) {
+        this.cashAdvanceKey = cashAdvanceKey;
+    }
+
+    public String getReportEntryId() {
+        return reportEntryId;
+    }
+
+    public void setReportEntryId(String reportEntryId) {
+        this.reportEntryId = reportEntryId;
+    }
+
+    public String toString() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
         sb.append(" employeeLastName: ").append(employeeLastName).append(" employeeFirstName: ").append(employeeFirstName);
         sb.append(" employeeMiddleInitital: ").append(employeeMiddleInitital).append(" employeeGroupId: ").append(employeeGroupId);
-        sb.append(" reportId: ").append(reportId).append(" employeeStatus: ").append(employeeStatus);
+        sb.append(" reportId: ").append(reportId).append(" reportEntryId: ").append(reportEntryId).append(" employeeStatus: ").append(employeeStatus);
         sb.append(" paymentCode: ").append(paymentCode).append(" journalAccountCode: ").append(journalAccountCode);
         sb.append(" journalAccountCodeOverridden ").append(journalAccountCodeOverridden);
         sb.append(" chartOfAccountsCode: ").append(chartOfAccountsCode).append(" accountNumber: ").append(accountNumber);
@@ -246,6 +264,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
         sb.append(" journalAmountString: ").append(journalAmountString).append(" reportEndDate: ").append(reportEndDate);
         sb.append(" policy: ").append(policy).append(" expenseType: ").append(expenseType);
+        sb.append(" cashAdvanceKey: ").append(cashAdvanceKey);
         return sb.toString();
     }
 

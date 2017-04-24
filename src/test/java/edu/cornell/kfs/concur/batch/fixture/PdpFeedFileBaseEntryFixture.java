@@ -1,8 +1,13 @@
 package edu.cornell.kfs.concur.batch.fixture;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
@@ -12,92 +17,42 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
+import edu.cornell.kfs.concur.ConcurTestConstants.PdpFeedFileConstants;
 
-public class PdpFeedFileBaseEntryFixture {
-    public static PdpFeedFileBaseEntry buildPdpFile() {
-        PdpFeedFileBaseEntry pdpFile = new PdpFeedFileBaseEntry();
-        pdpFile.setHeader(buildHeader());
-        pdpFile.setVersion("1.0");
-        pdpFile.setTrailer(buildTrailer());
-        pdpFile.setGroup(buildGroups());
-        return pdpFile;
-    }
+public enum PdpFeedFileBaseEntryFixture {
 
-    private static PdpFeedHeaderEntry buildHeader() {
-        PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
-        header.setChart("IT");
-        header.setCreationDate("02/17/2017");
-        header.setSubUnit("CLIF");
-        header.setUnit("CRNL");
-        return header;
-    }
-
-    private static PdpFeedTrailerEntry buildTrailer() {
-        PdpFeedTrailerEntry trailer = new PdpFeedTrailerEntry();
-        trailer.setDetailCount(new Integer(1));
-        trailer.setDetailTotAmt(new KualiDecimal(96.95));
-        return trailer;
-    }
-
-    private static List<PdpFeedGroupEntry> buildGroups() {
-        List<PdpFeedGroupEntry> groups = new ArrayList();
-        groups.add(buildGroup("Bimbo Foods Inc"));
-        return groups;
+    MARSHAL_TEST(EnumSet.of(PdpFeedGroupEntryFixture.MARSHAL_TEST)),
+    FEED_ONE_TRANS_ZERO(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_ONE_TRANS_ZERO)),
+    FEED_ONE_TRANS_ZER_ONE_TRANS_POSITIVE(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_ONE_TRANS_ZERO_ONE_TRANS_POSITIVE)),
+    FEED_TWO_TRANS_SUM_TO_POSITIVE(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_POSITIVE)),
+    FEED_TWO_TRANS_SUM_TO_ZERO(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_ZERO)),
+    FEED_TWO_TRANS_SUM_TO_NEGATIVE(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_NEGATIVE)),
+    FEED_TWO_DETAILS_ONE_POSITIVE_ONE_ZERO(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_TWO_DETAILS_ONE_POSITIVE_ONE_ZERO)),
+    FEED_TWO_GROUPS_ONE_ZERO(EnumSet.of(PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_ZERO, PdpFeedGroupEntryFixture.GROUP_TWO_TRANS_SUM_TO_POSITIVE));
+    
+    public final PdpFeedHeaderEntryFixture headerEntry;
+    public final Collection<PdpFeedGroupEntryFixture> groupEntries;
+    public final PdpFeedTrailerEntryFixture trailerEntry;
+    
+    private PdpFeedFileBaseEntryFixture(PdpFeedHeaderEntryFixture headerEntry, PdpFeedTrailerEntryFixture trailerEntry, EnumSet<PdpFeedGroupEntryFixture> groupEntries) {
+        this.headerEntry = headerEntry;
+        this.trailerEntry = trailerEntry;
+        this.groupEntries = Collections.unmodifiableSet(groupEntries);
     }
     
-    private static PdpFeedGroupEntry buildGroup(String payeeName){
-        PdpFeedGroupEntry group = new PdpFeedGroupEntry();
-        group.setPayeeName(payeeName);
-
-        PdpFeedPayeeIdEntry payeeId = new PdpFeedPayeeIdEntry();
-        payeeId.setIdType("V");
-        payeeId.setContent("13086-0");
-        group.setPayeeId(payeeId);
-        group.setPayeeOwnCd("xyz");
-        group.setCustomerInstitutionIdentifier("18901");
-        
-        group.setPaymentDate("02/03/2017");
-        group.setCombineGroupInd("Y");
-        group.setBankCode("DISB");
-        group.setDetail(buildDetails());
-        return group;
+    private PdpFeedFileBaseEntryFixture(EnumSet<PdpFeedGroupEntryFixture> groupEntries) {
+        this(PdpFeedHeaderEntryFixture.BASIC_HEADER, PdpFeedTrailerEntryFixture.BASIC_TRAILER, groupEntries);
+    }
+    
+    public PdpFeedFileBaseEntry toPdpFeedFileBaseEntry() {
+        PdpFeedFileBaseEntry pdpFeedFileBaseEntry = new PdpFeedFileBaseEntry();
+        pdpFeedFileBaseEntry.setVersion("1.0");
+        pdpFeedFileBaseEntry.setHeader(headerEntry.toPdpFeedHeaderEntry());
+        pdpFeedFileBaseEntry.setTrailer(trailerEntry.toPdpFeedTrailerEntry());
+        for (PdpFeedGroupEntryFixture group : groupEntries) {
+            pdpFeedFileBaseEntry.getGroup().add(group.toPdpFeedGroupEntry());
+        }
+        return pdpFeedFileBaseEntry;
     }
 
-    private static List<PdpFeedDetailEntry> buildDetails() {
-        List<PdpFeedDetailEntry> details = new ArrayList();
-
-        PdpFeedDetailEntry detail = new PdpFeedDetailEntry();
-        detail.setSourceDocNbr("C16326");
-        detail.setInvoiceNbr("66432520714");
-        detail.setInvoiceDate("02/03/2017");
-        detail.setOrigInvoiceAmt(new KualiDecimal(105.28));
-        detail.setFsOriginCd("Z1");
-        detail.setFdocTypCd("APCL");
-        detail.setAccounting(buildAccounting());
-
-        details.add(detail);
-        return details;
-    }
-
-    private static List<PdpFeedAccountingEntry> buildAccounting() {
-        List<PdpFeedAccountingEntry> accountings = new ArrayList();
-
-        PdpFeedAccountingEntry accounting = new PdpFeedAccountingEntry();
-        accounting.setCoaCd("IT");
-        accounting.setAccountNbr("H833810");
-        accounting.setObjectCd("6000");
-        accounting.setSubObjectCd("365");
-        accounting.setAmount(new KualiDecimal(25.50));
-        
-        PdpFeedAccountingEntry accounting2 = new PdpFeedAccountingEntry();
-        accounting2.setCoaCd("IT");
-        accounting2.setAccountNbr("H833810");
-        accounting2.setObjectCd("6000");
-        accounting2.setSubObjectCd("350");
-        accounting2.setAmount(new KualiDecimal(71.45));
-
-        accountings.add(accounting);
-        accountings.add(accounting2);
-        return accountings;
-    }
 }
