@@ -1,15 +1,12 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +35,7 @@ public class ConcurDetailLineGroupForCollector {
 
     protected String reportId;
     protected ConcurDetailLineGroupForCollectorHelper collectorHelper;
-    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedRegularLines;
+    protected Map<String, ConcurDetailLineSubGroupForCollector> consolidatedRegularLines;
     protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedCashAdvanceLines;
     protected Map<String, ConcurStandardAccountingExtractDetailLine> cashAdvanceLinesByReportEntryId;
     protected Map<String, ConcurRequestedCashAdvance> requestedCashAdvancesByCashAdvanceKey;
@@ -70,8 +67,8 @@ public class ConcurDetailLineGroupForCollector {
             cashAdvanceLinesByReportEntryId.put("reportEntryId", detailLine);
         } else {
             String accountingFieldsKey = buildAccountingFieldsKey(detailLine);
-            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, (key) -> new ArrayList<>())
-                    .add(detailLine);
+            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, ConcurDetailLineSubGroupForCollector::new)
+                    .addDetailLine(detailLine);
         }
     }
 
@@ -80,9 +77,9 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected ConcurRequestedCashAdvance getExistingRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {
-        ConcurRequestedCashAdvance requestedCashAdvance = collectorHelper.getRequestedCashAdvanceByCashAdvanceKey("caKey");
+        ConcurRequestedCashAdvance requestedCashAdvance = collectorHelper.getRequestedCashAdvanceByCashAdvanceKey(cashAdvanceKey);
         if (ObjectUtils.isNull(requestedCashAdvance)) {
-            throw new IllegalStateException("A requested cash advance does not exist for key: " + "theKey");
+            throw new IllegalStateException("A requested cash advance does not exist for key: " + cashAdvanceKey);
         }
         return requestedCashAdvance;
     }
@@ -152,27 +149,14 @@ public class ConcurDetailLineGroupForCollector {
     public void buildAndAddOriginEntries(Consumer<OriginEntryFull> entryConsumer) {
         nextTransactionSequenceNumber = 1;
         
-        for (List<ConcurStandardAccountingExtractDetailLine> subGroup : consolidatedRegularLines.values()) {
-            Map<String, List<ConcurStandardAccountingExtractDetailLine>> linesByPaymentCode = groupDetailLinesByPaymentCode(subGroup);
-            List<ConcurStandardAccountingExtractDetailLine> cashLines = linesByPaymentCode.getOrDefault(
-                    ConcurConstants.PAYMENT_CODE_CASH, Collections.emptyList());
-            List<ConcurStandardAccountingExtractDetailLine> corporateCardLines = linesByPaymentCode.getOrDefault(
-                    ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, Collections.emptyList());
-            
-            addOriginEntriesForCorporateCardLines(entryConsumer, corporateCardLines);
-            addOriginEntriesForCashLines(entryConsumer, cashLines);
+        for (ConcurDetailLineSubGroupForCollector subGroup : consolidatedRegularLines.values()) {
+            addOriginEntriesForCorporateCardLines(entryConsumer, subGroup.getCorporateCardLines());
+            addOriginEntriesForCashLines(entryConsumer, subGroup.getCashLines());
         }
         
         for (List<ConcurStandardAccountingExtractDetailLine> cashAdvanceSubGroup : consolidatedCashAdvanceLines.values()) {
             addOriginEntriesForCashAdvanceLines(entryConsumer, cashAdvanceSubGroup);
         }
-    }
-
-    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> groupDetailLinesByPaymentCode(
-            List<ConcurStandardAccountingExtractDetailLine> detailLines) {
-        return detailLines.stream()
-                .collect(Collectors.groupingBy(
-                        ConcurStandardAccountingExtractDetailLine::getPaymentCode, HashMap::new, Collectors.toCollection(ArrayList::new)));
     }
 
     protected void addOriginEntriesForCashLines(
