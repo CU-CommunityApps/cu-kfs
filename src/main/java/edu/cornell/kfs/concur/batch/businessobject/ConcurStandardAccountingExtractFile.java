@@ -68,7 +68,7 @@ public class ConcurStandardAccountingExtractFile {
         this.originalFileName = originalFileName;
     }
 
-    public String getDebugInformation() {
+    public String toString() {
         StringBuilder sb = new StringBuilder(" batchDate: ").append(batchDate).append(" recordCount: ").append(recordCount);
         sb.append(" journalAmountTotal: ").append(journalAmountTotal).append(" batchId: ").append(batchId);
         sb.append(" originalFileName: ").append(originalFileName);

@@ -1,6 +1,8 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,6 +18,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
@@ -29,6 +32,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ParameterService parameterService;
     protected PersonService personService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -201,18 +205,28 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        logErrorsWithOriginalAccountingDetails(line);
+        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
+            logErrorsWithOriginalAccountingDetails(line);
+    
+            ValidationResult overriddenValidationResults = buildValidationResult(buildOverriddenConcurAccountingInformation(line), true);
+    
+            if (overriddenValidationResults.isNotValid()) {
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
+            }
+
+            return overriddenValidationResults.isValid();
+        } else {
+            LOG.debug("validateAccountingLine, found a cash advance line, no need to validate");
+            return true;
+        }
+    }
+    
+    private ConcurAccountInfo buildOverriddenConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
         ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
                 line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
-        ValidationResult overriddenValidationResults = buildValidationResult(overriddenConcurAccountingInformation, true);
-
-        if (overriddenValidationResults.isNotValid()) {
-            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
-        }
-
-        return overriddenValidationResults.isValid();
+        return overriddenConcurAccountingInformation;
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
@@ -253,6 +267,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public ConcurStandardAccountingExtractCashAdvanceService getConcurStandardAccountingExtractCashAdvanceService() {
+        return concurStandardAccountingExtractCashAdvanceService;
+    }
+
+    public void setConcurStandardAccountingExtractCashAdvanceService(ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService) {
+        this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
     }
 
 }

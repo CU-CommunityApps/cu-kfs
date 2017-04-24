@@ -1,9 +1,8 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.service.DataDictionaryService;
@@ -12,9 +11,6 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -28,6 +24,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
+import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
@@ -115,15 +112,15 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
 
     @Override
-    public PdpFeedAccountingEntry buildPdpFeedAccountingEntry(ConcurStandardAccountingExtractDetailLine line) {
+    public PdpFeedAccountingEntry buildPdpFeedAccountingEntry( ConcurAccountInfo concurAccountInfo) {
         PdpFeedAccountingEntry currentAccountingEntry =  new PdpFeedAccountingEntry();
-        currentAccountingEntry.setCoaCd(line.getChartOfAccountsCode());
-        currentAccountingEntry.setAccountNbr(line.getAccountNumber());
-        currentAccountingEntry.setSubAccountNbr(line.getSubAccountNumber());
+        currentAccountingEntry.setCoaCd(concurAccountInfo.getChart());
+        currentAccountingEntry.setAccountNbr(concurAccountInfo.getAccountNumber());
+        currentAccountingEntry.setSubAccountNbr(concurAccountInfo.getSubAccountNumber());
         currentAccountingEntry.setObjectCd(getConcurParameterValue(ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE));
         currentAccountingEntry.setSubObjectCd(StringUtils.EMPTY);
-        currentAccountingEntry.setOrgRefId(line.getOrgRefId());
-        currentAccountingEntry.setProjectCd(line.getProjectCode());
+        currentAccountingEntry.setOrgRefId(concurAccountInfo.getOrgRefId());
+        currentAccountingEntry.setProjectCd(concurAccountInfo.getProjectCode());
         currentAccountingEntry.setAmount(KualiDecimal.ZERO);
         return currentAccountingEntry;
     }
@@ -162,14 +159,124 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
-        if (LOG.isDebugEnabled()) { 
-            LOG.debug("getConcurParamterValue, parameterName: " + parameterName + " paramterValue: " + parameterValue);
-        }
         return parameterValue;
     }
 
     public void setPayeeNameFieldSize(Integer payeeNameFieldSize) {
         this.payeeNameFieldSize = payeeNameFieldSize;
+    }
+    
+    @Override
+    public PdpFeedFileBaseEntry createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, 
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        LOG.debug("Entering createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections");
+        PdpFeedFileBaseEntry newBaseEntry = new PdpFeedFileBaseEntry();
+        newBaseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry.getHeader()));
+        newBaseEntry.setVersion(pdpFeedFileBaseEntry.getVersion());
+        addGroupEntriesToNewBaseEntry(newBaseEntry, pdpFeedFileBaseEntry);
+        newBaseEntry.setTrailer(buildPdpFeedTrailerEntry(newBaseEntry, reportData));
+        return newBaseEntry;
+    }
+
+    private void addGroupEntriesToNewBaseEntry(PdpFeedFileBaseEntry newBaseEntry, PdpFeedFileBaseEntry originalBaseEntry) {
+        for (PdpFeedGroupEntry originalGroupEntry : originalBaseEntry.getGroup()) {
+            PdpFeedGroupEntry newGroupEntry = copyGroupEntry(originalGroupEntry);
+            addDetailEntriesToNewGroupEntry(newGroupEntry, originalGroupEntry);
+            if (CollectionUtils.isNotEmpty(newGroupEntry.getDetail())) {
+                newBaseEntry.getGroup().add(newGroupEntry);
+            } else {
+                LOG.debug("addGroupEntriesToNewBaseEntry, not adding group for" + newGroupEntry.getPayeeName());
+            }
+        }
+    }
+    
+    private void addDetailEntriesToNewGroupEntry(PdpFeedGroupEntry newGroupEntry, PdpFeedGroupEntry originalGroupEntry) {
+        for (PdpFeedDetailEntry originalDetailEntry : originalGroupEntry.getDetail()) {
+            PdpFeedDetailEntry newDetailEntry = copyDetailEntry(originalDetailEntry);
+            KualiDecimal originalDetailTransactionTotal = KualiDecimal.ZERO;
+            for (PdpFeedAccountingEntry originalAccountingEntry : originalDetailEntry.getAccounting()) {
+                originalDetailTransactionTotal = originalDetailTransactionTotal.add(originalAccountingEntry.getAmount());
+                addOnlyPositiveAccountingEntryForPDPProcessing(newDetailEntry, originalAccountingEntry);
+            }
+            addNewPaymentDetailToGroupIfTotalIsPositive(newGroupEntry, newDetailEntry, originalDetailTransactionTotal);
+        }
+    }
+
+    private void addOnlyPositiveAccountingEntryForPDPProcessing(PdpFeedDetailEntry newDetailEntry,
+            PdpFeedAccountingEntry originalAccountingEntry) {
+        if (originalAccountingEntry.getAmount().isPositive()) {
+            newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
+        } else {
+            LOG.debug("addOnlyPositiveAccountingEntryForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
+        }
+    }
+
+    private void addNewPaymentDetailToGroupIfTotalIsPositive(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("addNewPaymentDetailToGroupIfTotalIsPositive, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
+        }
+        if (originalDetailTransactionTotal.isPositive()) {
+            newGroupEntry.getDetail().add(newDetailEntry);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroupIfTotalIsPositive SAE transactions summed to");
+                if (originalDetailTransactionTotal.isNegative()) {
+                    sb.append(" a negative amount in PDP, so it will be handled by collector.");
+                } else {
+                    sb.append(" a zero amount in PDP, so no payment needs to be issued");
+                }
+                LOG.debug(sb.toString());
+            }
+            
+        }
+    }
+
+    private PdpFeedAccountingEntry copyAccountingEntry(PdpFeedAccountingEntry accountingEntry) {
+        PdpFeedAccountingEntry newAccountingEntry = new PdpFeedAccountingEntry();
+        newAccountingEntry.setCoaCd(accountingEntry.getCoaCd());
+        newAccountingEntry.setAccountNbr(accountingEntry.getAccountNbr());
+        newAccountingEntry.setSubAccountNbr(accountingEntry.getSubAccountNbr());
+        newAccountingEntry.setObjectCd(accountingEntry.getObjectCd());
+        newAccountingEntry.setSubObjectCd(accountingEntry.getSubObjectCd());
+        newAccountingEntry.setProjectCd(accountingEntry.getProjectCd());
+        newAccountingEntry.setOrgRefId(accountingEntry.getOrgRefId());
+        newAccountingEntry.setAmount(accountingEntry.getAmount());
+        return newAccountingEntry;
+    }
+
+    private PdpFeedDetailEntry copyDetailEntry(PdpFeedDetailEntry detailEntry) {
+        PdpFeedDetailEntry newDetailEntry = new PdpFeedDetailEntry();
+        newDetailEntry.setSourceDocNbr(detailEntry.getSourceDocNbr());
+        newDetailEntry.setInvoiceNbr(detailEntry.getInvoiceNbr());
+        newDetailEntry.setPoNbr(detailEntry.getPoNbr());
+        newDetailEntry.setInvoiceDate(detailEntry.getInvoiceDate());
+        newDetailEntry.setFsOriginCd(detailEntry.getFsOriginCd());
+        newDetailEntry.setFdocTypCd(detailEntry.getFdocTypCd());
+        return newDetailEntry;
+    }
+
+    private PdpFeedGroupEntry copyGroupEntry(PdpFeedGroupEntry groupEntry) {
+        PdpFeedGroupEntry newGroup = new PdpFeedGroupEntry();
+        newGroup.setPayeeName(groupEntry.getPayeeName());
+        
+        PdpFeedPayeeIdEntry newPayeeIdEntry = new PdpFeedPayeeIdEntry();
+        newPayeeIdEntry.setContent(groupEntry.getPayeeId().getContent());
+        newPayeeIdEntry.setIdType(groupEntry.getPayeeId().getIdType());
+        newGroup.setPayeeId(newPayeeIdEntry);
+        
+        newGroup.setCustomerInstitutionIdentifier(groupEntry.getCustomerInstitutionIdentifier());
+        newGroup.setPaymentDate(groupEntry.getPaymentDate());
+        newGroup.setBankCode(groupEntry.getBankCode());
+        return newGroup;
+    }
+
+    private PdpFeedHeaderEntry copyHeaderEntry(PdpFeedHeaderEntry headerEntry) {
+        PdpFeedHeaderEntry newHeaderEntry = new PdpFeedHeaderEntry();
+        newHeaderEntry.setChart(headerEntry.getChart());
+        newHeaderEntry.setCreationDate(headerEntry.getCreationDate());
+        newHeaderEntry.setSubUnit(headerEntry.getSubUnit());
+        newHeaderEntry.setUnit(headerEntry.getUnit());
+        return newHeaderEntry;
     }
     
     public DataDictionaryService getDataDictionaryService() {

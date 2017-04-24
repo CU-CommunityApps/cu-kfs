@@ -81,6 +81,7 @@
 		<property name="concurStandardAccountingExtractCreateCollectorFileService" ref="concurStandardAccountingExtractCreateCollectorFileService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
 		<property name="parameterService" ref="parameterService"/>
+		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountExtractPdpEntryService" parent="concurStandardAccountExtractPdpEntryService-parentBean" />
@@ -110,6 +111,11 @@
 		<property name="concurAccountValidationService" ref="concurAccountValidationService"/>
 		<property name="parameterService" ref="parameterService"/>
 		<property name="personService" ref="personService"/>
+		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
+	</bean>
+	
+	<bean id="concurStandardAccountingExtractCashAdvanceService" parent="concurStandardAccountingExtractCashAdvanceService-parentBean" />
+	<bean id="concurStandardAccountingExtractCashAdvanceService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractCashAdvanceServiceImpl" abstract="true">
 	</bean>
 	
 	<bean id="standardAccountExtractFileType" parent="FlatFileParser">
@@ -153,6 +159,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="18" p:propertyName="reportId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="32" p:propertyName="policy"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="40" p:propertyName="employeeStatus"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="60" p:propertyName="reportEntryId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="62" p:propertyName="expenseType"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="125" p:propertyName="paymentCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"
@@ -163,6 +170,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmountString"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="186" p:propertyName="cashAdvanceKey"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="190" p:propertyName="chartOfAccountsCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="192" p:propertyName="subAccountNumber"/>

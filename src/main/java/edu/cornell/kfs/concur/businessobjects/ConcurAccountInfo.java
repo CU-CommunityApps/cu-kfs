@@ -9,6 +9,11 @@ public class ConcurAccountInfo {
     protected String objectCode;
     protected String subObjectCode;
     protected String projectCode;
+    protected String orgRefId;
+    
+    public ConcurAccountInfo() {
+        
+    }
 
     public ConcurAccountInfo(String chart, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode) {
         this.setChart(chart);
@@ -17,6 +22,11 @@ public class ConcurAccountInfo {
         this.setObjectCode(objectCode);
         this.setSubObjectCode(subObjectCode);
         this.setProjectCode(projectCode);
+    }
+    
+    public ConcurAccountInfo(String chart, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode, String orgRefId) {
+        this(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
+        this.orgRefId = orgRefId;
     }
 
     public String getChart() {
@@ -41,6 +51,10 @@ public class ConcurAccountInfo {
 
     public String getProjectCode() {
         return projectCode;
+    }
+    
+    public String getOrgRefId() {
+        return orgRefId;
     }
 
     public void setChart(String chart) {
@@ -67,6 +81,10 @@ public class ConcurAccountInfo {
         this.projectCode = projectCode;
     }
     
+    public void setOrgRefId(String orgRefId) {
+        this.orgRefId = orgRefId;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -83,6 +101,8 @@ public class ConcurAccountInfo {
         result.append("Sub object code: " + this.subObjectCode);
         result.append(KFSConstants.NEWLINE);
         result.append("Project code: " + this.projectCode);
+        result.append(KFSConstants.NEWLINE);
+        result.append("orgRefId: " + orgRefId);
         result.append(KFSConstants.NEWLINE);
 
         return result.toString();
