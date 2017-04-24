@@ -170,7 +170,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     @Override
     public PdpFeedFileBaseEntry createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, 
             ConcurStandardAccountingExtractBatchReportData reportData) {
-        LOG.debug("Entering removeNonReimbursableSectionsFromPdpFeedFileBaseEntry");
+        LOG.debug("Entering createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections");
         PdpFeedFileBaseEntry newBaseEntry = new PdpFeedFileBaseEntry();
         newBaseEntry.setHeader(copyHeaderEntry(pdpFeedFileBaseEntry.getHeader()));
         newBaseEntry.setVersion(pdpFeedFileBaseEntry.getVersion());
@@ -214,13 +214,13 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     private void addNewPaymentDetailToGroupIfTotalIsPositive(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("addNewPaymentDetailToGroup, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
+            LOG.debug("addNewPaymentDetailToGroupIfTotalIsPositive, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
         }
         if (originalDetailTransactionTotal.isPositive()) {
             newGroupEntry.getDetail().add(newDetailEntry);
         } else {
             if (LOG.isDebugEnabled()) {
-                StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroup SAE transactions summed to");
+                StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroupIfTotalIsPositive SAE transactions summed to");
                 if (originalDetailTransactionTotal.isNegative()) {
                     sb.append(" a negative amount in PDP, so it will be handled by collector.");
                 } else {
