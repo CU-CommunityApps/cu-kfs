@@ -54,21 +54,6 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     }
 
     private PdpFeedFileBaseEntry buildPdpFeedBaseEntry(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
-        int totalPdpDetailRecordsCount = 0;
-        KualiDecimal totalPdpDetailRecordsAmount = KualiDecimal.ZERO;
-        int totalClonedCashAdvanceLinesCount = 0;
-        KualiDecimal totalClonedCashAdvanceLinesAmount = KualiDecimal.ZERO;
-        int totalCashAdvancesUseInExpenseReportCount = 0;
-        KualiDecimal totalCashAdvancesUseInExpenseReportAmount= KualiDecimal.ZERO;
-        int totalDuplicateCashAdvanceCount = 0;
-        KualiDecimal totalDuplicateCashAdvanceAmount = KualiDecimal.ZERO;
-        int totalNonCashAdvanceRecordsCount = 0;
-        KualiDecimal totalNonCashAdvanceRecordsAmount = KualiDecimal.ZERO;
-        int totalCashAdvancesNotProcessedDueToValidationErrorsCount = 0;
-        KualiDecimal totalCashAdvancesNotProcessedDueToValidationErrorsAmount = KualiDecimal.ZERO;
-        int totalProcessingAttemptedLineCount = 0;
-        KualiDecimal totalProcessingAttemptedLineAmount = KualiDecimal.ZERO;
-
         PdpFeedFileBaseEntry pdpBaseEntry = new PdpFeedFileBaseEntry();
         pdpBaseEntry.setHeader(buildPdpFeedHeaderEntry(requestExtractFile.getBatchDate()));
         List<PdpFeedGroupEntry> groupEntries = new ArrayList<PdpFeedGroupEntry>();
@@ -80,46 +65,31 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
                 pdpDetailEntries.add(pdpDetailEntry);
                 groupEntries.add(buildPdpFeedGroupEntry(detailFileLine, buildPdpFeedPayeeIdEntry(detailFileLine), pdpDetailEntries));
                 recordCashAdvanceGenerationInDuplicateTrackingTable(detailFileLine, pdpDetailEntry.getSourceDocNbr(), requestExtractFile.getFileName());
-                totalPdpDetailRecordsCount++;
-                totalPdpDetailRecordsAmount = totalPdpDetailRecordsAmount.add(detailFileLine.getRequestAmount());
+                updateReportDataPdpFeedFileCountAndAmountTotals(reportData, detailFileLine);
             }
             else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isClonedCashAdvance()) {
-                totalClonedCashAdvanceLinesCount++;
-                totalClonedCashAdvanceLinesAmount = totalClonedCashAdvanceLinesAmount.add(detailFileLine.getRequestAmount());
+                updateReportDataClonedCashAdvanceCountAndAmountTotals(reportData, detailFileLine);
             }
             else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isCashAdvanceUsedInExpenseReport()) {
-                totalCashAdvancesUseInExpenseReportCount++;
-                totalCashAdvancesUseInExpenseReportAmount = totalCashAdvancesUseInExpenseReportAmount.add(detailFileLine.getRequestAmount());
+                updateReportDataCashAdvancesUsedInExpenseReportCountAndAmountTotals(reportData, detailFileLine);
             }
             else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isDuplicatedCashAdvanceLine()) {
-                totalDuplicateCashAdvanceCount++;
-                totalDuplicateCashAdvanceAmount = totalDuplicateCashAdvanceAmount.add(detailFileLine.getRequestAmount());
+                updateReportDataDuplicateCashAdvanceCountAndAmountTotals(reportData, detailFileLine);
                 updateReportDataWithFileLineValidationError(reportData, detailFileLine);
             }
             else if (detailFileLine.getValidationResult().isNotCashAdvanceLine()) {
-                totalNonCashAdvanceRecordsCount++;
-                totalNonCashAdvanceRecordsAmount = totalNonCashAdvanceRecordsAmount.add(detailFileLine.getRequestAmount());
+                updateReportDataTravelRequestsOnlyCountAndAmountTotals(reportData, detailFileLine);
             }
             else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isNotValidCashAdvanceLine()) {
-                totalCashAdvancesNotProcessedDueToValidationErrorsCount++;
-                totalCashAdvancesNotProcessedDueToValidationErrorsAmount = totalCashAdvancesNotProcessedDueToValidationErrorsAmount.add(detailFileLine.getRequestAmount());
+                updateReportDataValidationErrorCountAndAmountTotals(reportData, detailFileLine);
                 updateReportDataWithFileLineValidationError(reportData, detailFileLine);
                 LOG.info("buildPdpFeedBaseEntry: Cash Advance was detected but validation failed for:  " + KFSConstants.NEWLINE + detailFileLine.toString());
             }
-            totalProcessingAttemptedLineCount++;
-            totalProcessingAttemptedLineAmount = totalProcessingAttemptedLineAmount.add(detailFileLine.getRequestAmount());
+            updateReportDataRequestExtractFileTotalCountAndAmountTotals(reportData, detailFileLine);
         }
         pdpBaseEntry.setGroup(groupEntries);
-        pdpBaseEntry.setTrailer(buildPdpFeedTrailerEntry(totalPdpDetailRecordsCount, totalPdpDetailRecordsAmount));
+        pdpBaseEntry.setTrailer(buildPdpFeedTrailerEntry(reportData.getCashAdvancesProcessedInPdp().getRecordCount(), reportData.getCashAdvancesProcessedInPdp().getDollarAmount()));
         pdpBaseEntry.setVersion(ConcurConstants.FEED_FILE_ENTRY_HEADER_VERSION);
-
-        updateReportDataWithProcessingTotals(reportData, totalPdpDetailRecordsCount, totalPdpDetailRecordsAmount,
-                totalClonedCashAdvanceLinesCount, totalClonedCashAdvanceLinesAmount,
-                totalCashAdvancesUseInExpenseReportCount, totalCashAdvancesUseInExpenseReportAmount,
-                totalDuplicateCashAdvanceCount, totalDuplicateCashAdvanceAmount,
-                totalNonCashAdvanceRecordsCount, totalNonCashAdvanceRecordsAmount,
-                totalCashAdvancesNotProcessedDueToValidationErrorsCount, totalCashAdvancesNotProcessedDueToValidationErrorsAmount,
-                totalProcessingAttemptedLineCount, totalProcessingAttemptedLineAmount);
         return pdpBaseEntry;
     }
 
@@ -215,56 +185,60 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         return trailer;
     }
 
-    private void updateReportDataWithProcessingTotals(ConcurRequestExtractBatchReportData reportData,
-            int totalPdpDetailRecordsCount, KualiDecimal totalPdpDetailRecordsAmount,
-            int totalClonedCashAdvanceLinesCount, KualiDecimal totalClonedCashAdvanceLinesAmount,
-            int totalCashAdvancesUseInExpenseReportCount, KualiDecimal totalCashAdvancesUseInExpenseReportAmount,
-            int totalDuplicateCashAdvanceCount, KualiDecimal totalDuplicateCashAdvanceAmount,
-            int totalNonCashAdvanceRecordsCount, KualiDecimal totalNonCashAdvanceRecordsAmount,
-            int totalCashAdvancesNotProcessedDueToValidationErrorsCount, KualiDecimal totalCashAdvancesNotProcessedDueToValidationErrorsAmount,
-            int totalProcessingAttemptedLineCount, KualiDecimal totalProcessingAttemptedLineAmount) {
-        updateReportDataWithPdpFeedFileTotals(reportData, totalPdpDetailRecordsCount, totalPdpDetailRecordsAmount);
-        updateReportDataWithClonedCashAdvanceTotals(reportData, totalClonedCashAdvanceLinesCount, totalClonedCashAdvanceLinesAmount);
-        updateReportDataWithCashAdvancesUsedInExpenseReportTotals(reportData, totalCashAdvancesUseInExpenseReportCount, totalCashAdvancesUseInExpenseReportAmount);
-        updateReportDataWithDuplicateCashAdvanceTotals(reportData, totalDuplicateCashAdvanceCount, totalDuplicateCashAdvanceAmount);
-        updateReportDataWithTravelRequestsOnlyTotals(reportData, totalNonCashAdvanceRecordsCount, totalNonCashAdvanceRecordsAmount);
-        updateReportDataWithValidationErrorTotals(reportData, totalCashAdvancesNotProcessedDueToValidationErrorsCount, totalCashAdvancesNotProcessedDueToValidationErrorsAmount);
-        updateReportDataWithRequestExtractFileTotals(reportData, totalProcessingAttemptedLineCount, totalProcessingAttemptedLineAmount);
+    private void updateReportDataPdpFeedFileCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getCashAdvancesProcessedInPdp().getRecordCount();
+        count++;
+        reportData.getCashAdvancesProcessedInPdp().setRecordCount(count);
+        KualiDecimal amount = reportData.getCashAdvancesProcessedInPdp().getDollarAmount();
+        reportData.getCashAdvancesProcessedInPdp().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
-    private void updateReportDataWithPdpFeedFileTotals(ConcurRequestExtractBatchReportData reportData, int totalPdpDetailRecordsCount, KualiDecimal totalPdpDetailRecordsAmount) {
-        reportData.getCashAdvancesProcessedInPdp().setRecordCount(totalPdpDetailRecordsCount);
-        reportData.getCashAdvancesProcessedInPdp().setDollarAmount(totalPdpDetailRecordsAmount);
+    private void updateReportDataClonedCashAdvanceCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getClonedCashAdvanceRequests().getRecordCount();
+        count++;
+        reportData.getClonedCashAdvanceRequests().setRecordCount(count);
+        KualiDecimal amount = reportData.getClonedCashAdvanceRequests().getDollarAmount();
+        reportData.getClonedCashAdvanceRequests().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
-    private void updateReportDataWithClonedCashAdvanceTotals(ConcurRequestExtractBatchReportData reportData, int totalClonedCashAdvanceLinesCount, KualiDecimal totalClonedCashAdvanceLinesAmount) {
-        reportData.getClonedCashAdvanceRequests().setRecordCount(totalClonedCashAdvanceLinesCount);
-        reportData.getClonedCashAdvanceRequests().setDollarAmount(totalClonedCashAdvanceLinesAmount);
+    private void updateReportDataCashAdvancesUsedInExpenseReportCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getCashAdvancesBypassedRelatedToExpenseReport().getRecordCount();
+        count++;
+        reportData.getCashAdvancesBypassedRelatedToExpenseReport().setRecordCount(count);
+        KualiDecimal amount = reportData.getCashAdvancesBypassedRelatedToExpenseReport().getDollarAmount();
+        reportData.getCashAdvancesBypassedRelatedToExpenseReport().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
-    private void updateReportDataWithCashAdvancesUsedInExpenseReportTotals(ConcurRequestExtractBatchReportData reportData, int totalCashAdvancesUseInExpenseReportCount, KualiDecimal totalCashAdvancesUseInExpenseReportAmount) {
-        reportData.getCashAdvancesBypassedRelatedToExpenseReport().setRecordCount(totalCashAdvancesUseInExpenseReportCount);
-        reportData.getCashAdvancesBypassedRelatedToExpenseReport().setDollarAmount(totalCashAdvancesUseInExpenseReportAmount);
+    private void updateReportDataDuplicateCashAdvanceCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getDuplicateCashAdvanceRequests().getRecordCount();
+        count++;
+        reportData.getDuplicateCashAdvanceRequests().setRecordCount(count);
+        KualiDecimal amount = reportData.getDuplicateCashAdvanceRequests().getDollarAmount();
+        reportData.getDuplicateCashAdvanceRequests().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
-    private void updateReportDataWithDuplicateCashAdvanceTotals(ConcurRequestExtractBatchReportData reportData, int totalDuplicateCashAdvanceCount, KualiDecimal totalDuplicateCashAdvanceAmount) {
-        reportData.getDuplicateCashAdvanceRequests().setRecordCount(totalDuplicateCashAdvanceCount);
-        reportData.getDuplicateCashAdvanceRequests().setDollarAmount(totalDuplicateCashAdvanceAmount);
+    private void updateReportDataTravelRequestsOnlyCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getRecordsBypassedTravelRequestOnly().getRecordCount();
+        count++;
+        reportData.getRecordsBypassedTravelRequestOnly().setRecordCount(count);
+        KualiDecimal amount = reportData.getRecordsBypassedTravelRequestOnly().getDollarAmount();
+        reportData.getRecordsBypassedTravelRequestOnly().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
-    private void updateReportDataWithTravelRequestsOnlyTotals(ConcurRequestExtractBatchReportData reportData, int totalNonCashAdvanceRecordsCount, KualiDecimal totalNonCashAdvanceRecordsAmount) {
-        reportData.getRecordsBypassedTravelRequestOnly().setRecordCount(totalNonCashAdvanceRecordsCount);
-        reportData.getRecordsBypassedTravelRequestOnly().setDollarAmount(totalNonCashAdvanceRecordsAmount);
+    private void updateReportDataValidationErrorCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getCashAdvancesNotProcessedValidationErrors().getRecordCount();
+        count++;
+        reportData.getCashAdvancesNotProcessedValidationErrors().setRecordCount(count);
+        KualiDecimal amount = reportData.getCashAdvancesNotProcessedValidationErrors().getDollarAmount();
+        reportData.getCashAdvancesNotProcessedValidationErrors().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
-    private void updateReportDataWithValidationErrorTotals(ConcurRequestExtractBatchReportData reportData, int totalCashAdvancesNotProcessedDueToValidationErrorsCount, KualiDecimal totalCashAdvancesNotProcessedDueToValidationErrorsAmount) {
-        reportData.getCashAdvancesNotProcessedValidationErrors().setRecordCount(totalCashAdvancesNotProcessedDueToValidationErrorsCount);
-        reportData.getCashAdvancesNotProcessedValidationErrors().setDollarAmount(totalCashAdvancesNotProcessedDueToValidationErrorsAmount);
-    }
-
-    private void updateReportDataWithRequestExtractFileTotals(ConcurRequestExtractBatchReportData reportData, int totalProcessingAttemptedLineCount, KualiDecimal totalProcessingAttemptedLineAmount) {
-        reportData.getTotalsForFile().setRecordCount(totalProcessingAttemptedLineCount);
-        reportData.getTotalsForFile().setDollarAmount(totalProcessingAttemptedLineAmount);
+    private void updateReportDataRequestExtractFileTotalCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        int count = reportData.getTotalsForFile().getRecordCount();
+        count++;
+        reportData.getTotalsForFile().setRecordCount(count);
+        KualiDecimal amount = reportData.getTotalsForFile().getDollarAmount();
+        reportData.getTotalsForFile().setDollarAmount(amount.add(detailFileLine.getRequestAmount()));
     }
 
     private void updateReportDataWithFileLineValidationError(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {

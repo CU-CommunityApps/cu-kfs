@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import org.kuali.kfs.sys.KFSConstants;
+
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
@@ -31,6 +33,15 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     protected String cashAdvancesNotProcessedValidationErrorsLabel;
     protected String totalsForFileLabel;
     protected String reportValidationErrorsSubTitle;
+    protected String recordsNotSentToPdpSubLabel;
+
+    public String getRecordsNotSentToPdpSubLabel() {
+        return recordsNotSentToPdpSubLabel;
+    }
+
+    public void setRecordsNotSentToPdpSubLabel(String recordsNotSentToPdpSubLabel) {
+        this.recordsNotSentToPdpSubLabel = recordsNotSentToPdpSubLabel;
+    }
 
     public File generateReport(ConcurRequestExtractBatchReportData reportData) {
         LOG.debug("generateReport: entered");
@@ -75,72 +86,33 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
 
     protected void writeSummarySubReport(ConcurRequestExtractBatchReportData reportData) {
         LOG.debug("writeSummarySubReport, entered");
-        String cashAdvancesProcessedInPdpLabel = (StringUtils.isEmpty(reportData.getCashAdvancesProcessedInPdp().getItemLabel())) ?
-                getCashAdvancesProcessedInPdpLabel() : reportData.getCashAdvancesProcessedInPdp().getItemLabel();
-
-        String cashAdvancesBypassedRelatedToExpenseReportLabel = (StringUtils.isEmpty(reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel())) ?
-                getCashAdvancesBypassedRelatedToExpenseReportLabel() : reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel();
-
-        String recordsBypassedTravelRequestOnlyLabel = (StringUtils.isEmpty(reportData.getRecordsBypassedTravelRequestOnly().getItemLabel())) ?
-                getRecordsBypassedTravelRequestOnlyLabel() : reportData.getRecordsBypassedTravelRequestOnly().getItemLabel();
-
-        String duplicateCashAdvanceRequestsLabel = (StringUtils.isEmpty(reportData.getDuplicateCashAdvanceRequests().getItemLabel())) ?
-                getDuplicateCashAdvanceRequestsLabel() : reportData.getDuplicateCashAdvanceRequests().getItemLabel();
-
-        String clonedCashAdvanceRequestsLabel = (StringUtils.isEmpty(reportData.getClonedCashAdvanceRequests().getItemLabel())) ?
-                getClonedCashAdvanceRequestsLabel() : reportData.getClonedCashAdvanceRequests().getItemLabel();       
-
-        String cashAdvancesNotProcessedValidationErrorsLabel = (StringUtils.isEmpty(reportData.getCashAdvancesNotProcessedValidationErrors().getItemLabel())) ?
-                getCashAdvancesNotProcessedValidationErrorsLabel() : reportData.getCashAdvancesNotProcessedValidationErrors().getItemLabel();  
-
-        String totalsForFileLabel = (StringUtils.isEmpty(reportData.getTotalsForFile().getItemLabel())) ?
-                getTotalsForFileLabel() : reportData.getTotalsForFile().getItemLabel();
-
-        getReportWriterService().writeSubTitle(this.getSummarySubTitle());
+        ensureSummaryLabelsHaveValues(reportData);
+        getReportWriterService().writeSubTitle(getSummarySubTitle());
         getReportWriterService().writeNewLines(1);
 
         String rowFormat = "%54s %20d %20s";
         String hdrRowFormat = "%54s %20s %20s";
-        Object[] headerArgs = { "                        Totals                      ", "Record Count", "Dollar Amount" };
+        Object[] headerArgs = { "                                                     ", "Record Count", "Dollar Amount" };
         Object[] headerBreak = { "----------------------------------------------------", "------------", "-------------" };
         Object[] totalsBreak = { "====================================================", "============", "=============" };
         getReportWriterService().setNewPage(false);
         getReportWriterService().writeNewLines(1);
-        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
 
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                cashAdvancesProcessedInPdpLabel, reportData.getCashAdvancesProcessedInPdp().getRecordCount(),
-                reportData.getCashAdvancesProcessedInPdp().getDollarAmount().toString());
-
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                cashAdvancesBypassedRelatedToExpenseReportLabel, reportData.getCashAdvancesBypassedRelatedToExpenseReport().getRecordCount(),
-                reportData.getCashAdvancesBypassedRelatedToExpenseReport().getDollarAmount().toString());
-
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                recordsBypassedTravelRequestOnlyLabel, reportData.getRecordsBypassedTravelRequestOnly().getRecordCount(),
-                reportData.getRecordsBypassedTravelRequestOnly().getDollarAmount().toString());
-
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                duplicateCashAdvanceRequestsLabel, reportData.getDuplicateCashAdvanceRequests().getRecordCount(),
-                reportData.getDuplicateCashAdvanceRequests().getDollarAmount().toString());
-        
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                clonedCashAdvanceRequestsLabel, reportData.getClonedCashAdvanceRequests().getRecordCount(),
-                reportData.getClonedCashAdvanceRequests().getDollarAmount().toString());
-        
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                cashAdvancesNotProcessedValidationErrorsLabel, reportData.getCashAdvancesNotProcessedValidationErrors().getRecordCount(),
-                reportData.getCashAdvancesNotProcessedValidationErrors().getDollarAmount().toString());
-
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getCashAdvancesProcessedInPdp().getItemLabel(), reportData.getCashAdvancesProcessedInPdp().getRecordCount(), reportData.getCashAdvancesProcessedInPdp().getDollarAmount().toString());
+        getReportWriterService().writeNewLines(1);
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, totalsBreak);
-        
-        getReportWriterService().writeFormattedMessageLine(rowFormat, 
-                totalsForFileLabel, reportData.getTotalsForFile().getRecordCount(),
-                reportData.getTotalsForFile().getDollarAmount().toString());
-
-        getReportWriterService().pageBreak();
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, getRecordsNotSentToPdpSubLabel(), KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING);
+        getReportWriterService().writeNewLines(1);
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel(), reportData.getCashAdvancesBypassedRelatedToExpenseReport().getRecordCount(), reportData.getCashAdvancesBypassedRelatedToExpenseReport().getDollarAmount().toString());
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsBypassedTravelRequestOnly().getItemLabel(), reportData.getRecordsBypassedTravelRequestOnly().getRecordCount(), reportData.getRecordsBypassedTravelRequestOnly().getDollarAmount().toString());
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getDuplicateCashAdvanceRequests().getItemLabel(), reportData.getDuplicateCashAdvanceRequests().getRecordCount(), reportData.getDuplicateCashAdvanceRequests().getDollarAmount().toString());
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getClonedCashAdvanceRequests().getItemLabel(), reportData.getClonedCashAdvanceRequests().getRecordCount(), reportData.getClonedCashAdvanceRequests().getDollarAmount().toString());
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getCashAdvancesNotProcessedValidationErrors().getItemLabel(), reportData.getCashAdvancesNotProcessedValidationErrors().getRecordCount(), reportData.getCashAdvancesNotProcessedValidationErrors().getDollarAmount().toString());
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, totalsBreak);
+        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getTotalsForFile().getItemLabel(), reportData.getTotalsForFile().getRecordCount(), reportData.getTotalsForFile().getDollarAmount().toString());
+        getReportWriterService().writeNewLines(4);
     }
 
     protected void writeValidationErrorSubReport(ConcurRequestExtractBatchReportData reportData) {
@@ -150,8 +122,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Middle Initial" };
         Object[] headerBreak = { "---------", "-----------", "---------", "----------", "--------------" };
 
-        boolean firstLine = true;
-
         if (CollectionUtils.isEmpty(reportData.getValidationErrorFileLines())) {
             getReportWriterService().setNewPage(false);
             getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
@@ -159,23 +129,19 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
             getReportWriterService().writeFormattedMessageLine(ConcurConstants.RequestExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
         }
         else {
+            getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
+            getReportWriterService().writeNewLines(1);
+            getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+            getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
+            getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+
             for(ConcurBatchReportLineValidationErrorItem errorItem : reportData.getValidationErrorFileLines()) {
-                if (getReportWriterService().isNewPage() || firstLine) {
-                    firstLine = false;
-                    getReportWriterService().setNewPage(false);
-                    getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
-                    getReportWriterService().writeNewLines(1);
-                }
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
                 getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(), errorItem.getFirstName(), errorItem.getMiddleInitial());
                 getReportWriterService().writeNewLines(1);
                 writeErrorItemMessages(errorItem.getItemErrorResults());
                 getReportWriterService().writeNewLines(2);
             }
         }
-        getReportWriterService().pageBreak();
     }
 
     protected void finalizeReport() {
@@ -207,6 +173,30 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
             for (String errorMessage : errorMessages) {
                 getReportWriterService().writeFormattedMessageLine(errorMessage);
             }
+        }
+    }
+
+    private void ensureSummaryLabelsHaveValues (ConcurRequestExtractBatchReportData reportData) {
+        if (StringUtils.isEmpty(reportData.getCashAdvancesProcessedInPdp().getItemLabel())) {
+            reportData.getCashAdvancesProcessedInPdp().setItemLabel(getCashAdvancesProcessedInPdpLabel());
+        }
+        if (StringUtils.isEmpty(reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel())) {
+            reportData.getCashAdvancesBypassedRelatedToExpenseReport().setItemLabel(getCashAdvancesBypassedRelatedToExpenseReportLabel());
+        }
+        if (StringUtils.isEmpty(reportData.getRecordsBypassedTravelRequestOnly().getItemLabel())) {
+            reportData.getRecordsBypassedTravelRequestOnly().setItemLabel(getRecordsBypassedTravelRequestOnlyLabel());
+        }
+        if (StringUtils.isEmpty(reportData.getDuplicateCashAdvanceRequests().getItemLabel())) {
+            reportData.getDuplicateCashAdvanceRequests().setItemLabel(getDuplicateCashAdvanceRequestsLabel());
+        }
+        if (StringUtils.isEmpty(reportData.getClonedCashAdvanceRequests().getItemLabel())) {
+            reportData.getClonedCashAdvanceRequests().setItemLabel(getClonedCashAdvanceRequestsLabel());
+        }
+        if (StringUtils.isEmpty(reportData.getCashAdvancesNotProcessedValidationErrors().getItemLabel())) {
+            reportData.getCashAdvancesNotProcessedValidationErrors().setItemLabel(getCashAdvancesNotProcessedValidationErrorsLabel());
+        }
+        if (StringUtils.isEmpty(reportData.getTotalsForFile().getItemLabel())) {
+            reportData.getTotalsForFile().setItemLabel(getTotalsForFileLabel());
         }
     }
 
