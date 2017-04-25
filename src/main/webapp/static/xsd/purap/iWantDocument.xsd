@@ -8,44 +8,44 @@
     <xsd:import namespace="http://www.kuali.org/kfs/purap/types" schemaLocation="classpath:edu/cornell/kfs/module/purap/purapTypes.xsd" />
    
     <xsd:element name="initiator" type="kfs:zeroToThirtyCharType"/>
-    <xsd:element name="sourceNumber" type="kfs:zeroToTenCharType"/>
-    <xsd:element name="businessPurpose" type="kfs:docExplanationType"/>
+    <xsd:element name="sourceNumber" type="purap:zeroToTenCharType"/>
+    <xsd:element name="businessPurpose" type="purap:docExplanationType"/>
     <xsd:element name="collegeLevelOrganization" type="purap:collegeLevelOrganizationType"/>
     <xsd:element name="departmentLevelOrganization" type="kfs:zeroToFourCharType"/> 
     <xsd:element name="sameAsInitiator" type="kfs:indicatorType"/>
     <xsd:element name="requestorNetID" type="kfs:zeroToThirtyCharType"/>
-    <xsd:element name="requestorEmailAddress" type="kfs:zeroToTwoHundredCharType"/>
-    <xsd:element name="requestorPhoneNumber" type="kfs:phoneType"/>
-    <xsd:element name="requestorAddress" type="kfs:zeroToTwoHundredFiftyFiveCharType"/>
+    <xsd:element name="requestorEmailAddress" type="purap:zeroToTwoHundredCharType"/>
+    <xsd:element name="requestorPhoneNumber" type="purap:phoneType"/>
+    <xsd:element name="requestorAddress" type="purap:zeroToTwoHundredFiftyFiveCharType"/>
     <xsd:element name="sameAsRequestor" type="kfs:indicatorType"/>
     <xsd:element name="deliverToNetID" type="kfs:zeroToThirtyCharType"/>
-    <xsd:element name="deliverToEmailAddress" type="kfs:zeroToTwoHundredCharType"/>
-    <xsd:element name="deliverToPhoneNumber" type="kfs:phoneType"/>
-    <xsd:element name="deliverToAddress" type="kfs:zeroToTwoHundredFiftyFiveCharType"/>
+    <xsd:element name="deliverToEmailAddress" type="purap:zeroToTwoHundredCharType"/>
+    <xsd:element name="deliverToPhoneNumber" type="purap:phoneType"/>
+    <xsd:element name="deliverToAddress" type="purap:zeroToTwoHundredFiftyFiveCharType"/>
     <xsd:element name="vendorId" type="purap:vendorIdType"/>
-    <xsd:element name="vendorName" type="kfs:zeroToOneHundredCharType"/>
-    <xsd:element name="vendorDescription" type="kfs:zeroToFiveHundredCharType"/>
+    <xsd:element name="vendorName" type="purap:zeroToOneHundredCharType"/>
+    <xsd:element name="vendorDescription" type="purap:zeroToFiveHundredCharType"/>
     
     <xsd:element name="itemUnitOfMeasureCode" type="purap:uomType"/>
     <xsd:element name="itemCatalogNumber" type="purap:catalogNumberType"/>
     <xsd:element name="itemDescription" type="purap:itemDescriptionType"/>
     <xsd:element name="itemUnitPrice" type="purap:unitPriceType"/>
-    <xsd:element name="purchasingCommodityCode" type="kfs:zeroToFortyCharType"/>
+    <xsd:element name="purchasingCommodityCode" type="purap:zeroToFortyCharType"/>
     <xsd:element name="itemQuantity" type="purap:quantityType"/>
     
     <xsd:element name="chartOfAccountsCode" type="kfs:zeroToTwoCharType"/>
-    <xsd:element name="accountNumber" type="kfs:zeroToSevenCharType"/>
+    <xsd:element name="accountNumber" type="purap:zeroToSevenCharType"/>
     <xsd:element name="financialObjectCode" type="kfs:zeroToFourCharType"/>
-    <xsd:element name="subAccountNumber" type="kfs:zeroToFiveCharType"/>
-    <xsd:element name="financialSubObjectCode" type="kfs:zeroToThreeCharType"/>
-    <xsd:element name="projectCode" type="kfs:zeroToTenCharType"/>
+    <xsd:element name="subAccountNumber" type="purap:zeroToFiveCharType"/>
+    <xsd:element name="financialSubObjectCode" type="purap:zeroToThreeCharType"/>
+    <xsd:element name="projectCode" type="purap:zeroToTenCharType"/>
     <xsd:element name="organizationReferenceId" type="kfs:ZeroToEightCharType"/>
     <xsd:element name="amountOrPercent" type="kfs:amountType"/>
     <xsd:element name="useAmountOrPercent" type="purap:amountOrPercentType"/>
     
-   <xsd:element name="accountDescriptionTxt" type="kfs:zeroToTwoHundredFiftyFiveCharType"/> 
+   <xsd:element name="accountDescriptionTxt" type="purap:zeroToTwoHundredFiftyFiveCharType"/>
    
-   <xsd:element name="commentsAndSpecialInstructions" type="kfs:zeroToThreeHundredCharType"/> 
+   <xsd:element name="commentsAndSpecialInstructions" type="purap:zeroToThreeHundredCharType"/>
    
    <xsd:element name="goods" type="kfs:indicatorType"/> 
    
@@ -53,11 +53,11 @@
    
    <xsd:element name="adHocRouteToNetID" type="kfs:zeroToThirtyCharType"/> 
    
-   <xsd:element name="noteText" type="kfs:zeroToEightHundredCharType"/> 
+   <xsd:element name="noteText" type="purap:zeroToEightHundredCharType"/>
    
-   <xsd:element name="mimeTypeCode" type="kfs:zeroToFortyCharType"/>
-   <xsd:element name="fileName" type="kfs:zeroToTwoHundredFiftyCharType"/>
-   <xsd:element name="attachmentType" type="kfs:zeroToEightHundredCharType"/>
+   <xsd:element name="mimeTypeCode" type="purap:zeroToFortyCharType"/>
+   <xsd:element name="fileName" type="purap:zeroToTwoHundredFiftyCharType"/>
+   <xsd:element name="attachmentType" type="purap:zeroToEightHundredCharType"/>
    
        
     <!-- definition of attributes -->
