@@ -206,6 +206,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected void groupLines(List<ConcurStandardAccountingExtractDetailLine> saeLines) {
         for (ConcurStandardAccountingExtractDetailLine saeLine : saeLines) {
+            if (concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(saeLine)) {
+                reportCashAdvance(saeLine);
+            }
             if (shouldProcessLine(saeLine)
                     && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLine(saeLine, reportData)) {
                 if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {

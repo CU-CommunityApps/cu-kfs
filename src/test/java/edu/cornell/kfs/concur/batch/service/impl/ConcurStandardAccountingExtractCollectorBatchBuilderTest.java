@@ -189,6 +189,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         
         assertReportHasCorrectErrorLinesAndOrdering(lineFixtures, reportData);
         assertReportHasCorrectPendingClientLinesAndOrdering(lineFixtures, reportData);
+        assertReportHasCorrectCashAdvanceStatistics(lineFixtures, reportData);
         assertReportHasCorrectCorporateCardStatistics(lineFixtures, reportData);
         assertReportHasCorrectPseudoPaymentCodeStatistics(lineFixtures, reportData);
     }
@@ -243,7 +244,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected void assertReportHasCorrectErrorLinesAndOrdering(
             List<ConcurSAEDetailLineFixture> lineFixtures, ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
         Set<String> reportIdsWithOrphanedCashAdvances = lineFixtures.stream()
-                .filter(this::fixtureRepresentsOrphanedCashAdvance)
+                .filter(this::fixtureRepresentsOrphanedCashAdvanceLine)
                 .map(ConcurSAEDetailLineFixture::getReportId)
                 .collect(Collectors.toCollection(HashSet::new));
         
@@ -294,6 +295,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertEquals("Wrong expense type name", ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME, actualLine.getExpenseTypeName());
     }
 
+    protected void assertReportHasCorrectCashAdvanceStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
+            ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
+        assertReportStatisticHasCorrectTotals(lineFixtures,
+                this::fixtureRepresentsCashAdvanceLine, reportData.getCashAdvancesRelatedToExpenseReports());
+    }
+
     protected void assertReportHasCorrectCorporateCardStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
             ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
         assertReportStatisticHasCorrectTotals(lineFixtures,
@@ -329,7 +336,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 && (fixtureRepresentsCashLine(fixture) || fixtureRepresentsCorporateCardLine(fixture));
     }
 
-    protected boolean fixtureRepresentsOrphanedCashAdvance(ConcurSAEDetailLineFixture fixture) {
+    protected boolean fixtureRepresentsCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.isNotBlank(fixture.cashAdvanceKey);
+    }
+
+    protected boolean fixtureRepresentsOrphanedCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.equals(ConcurTestConstants.CASH_ADVANCE_KEY_NONEXISTENT, fixture.cashAdvanceKey);
     }
 

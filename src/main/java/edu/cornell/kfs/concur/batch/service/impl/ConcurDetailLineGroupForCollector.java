@@ -32,9 +32,10 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  */
 public class ConcurDetailLineGroupForCollector {
 
-    protected static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance did not have a corresponding entry from the Request Extract.";
+    protected static final String ORPHANED_CASH_ADVANCE_MESSAGE_FRAGMENT = "Cash Advance did not have a corresponding entry from the Request Extract.";
+    protected static final String ORPHANED_CASH_ADVANCE_MESSAGE_FORMAT = "%s Cash Advance Key: %s";
     protected static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE =
-            "Line was not processed because within the same Report ID, another " + ORPHANED_CASH_ADVANCE_MESSAGE;
+            "Line was not processed because within the same Report ID, another " + ORPHANED_CASH_ADVANCE_MESSAGE_FRAGMENT;
     protected static final String FAKE_OBJECT_CODE_PREFIX = "?NONE?";
     protected static final String ORPHANED_CASH_ADVANCES_KEY = "ORPHANED_CASH_ADVANCES";
     protected static final String ACCOUNTING_FIELDS_KEY_FORMAT = "%s|%s|%s|%s|%s|%s|%s";
@@ -69,7 +70,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     public void addDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        if (isCashAdvanceLine(detailLine)) {
+        if (collectorHelper.isCashAdvanceLine(detailLine)) {
             ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey.computeIfAbsent(
                     detailLine.getCashAdvanceKey(), this::getExistingRequestedCashAdvanceByCashAdvanceKey);
             String accountingFieldsKey = buildAccountingFieldsKeyForCashAdvance(detailLine, requestedCashAdvance);
@@ -81,10 +82,6 @@ public class ConcurDetailLineGroupForCollector {
             consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, ConcurDetailLineSubGroupForCollector::new)
                     .addDetailLine(detailLine);
         }
-    }
-
-    protected boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return StringUtils.isNotBlank(detailLine.getCashAdvanceKey());
     }
 
     protected ConcurRequestedCashAdvance getExistingRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {
@@ -185,7 +182,7 @@ public class ConcurDetailLineGroupForCollector {
 
     protected void addOriginEntriesForCashAdvanceLines(
             Consumer<OriginEntryFull> entryConsumer, List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines) {
-        addOriginEntriesForLines(entryConsumer, cashAdvanceLines, this::doNotBuildOffsetOriginEntry);
+        addOriginEntriesForLines(entryConsumer, cashAdvanceLines, this::doNotBuildAnyOriginEntriesForCashAdvanceOffset);
     }
 
     /**
@@ -237,13 +234,28 @@ public class ConcurDetailLineGroupForCollector {
 
     protected KualiDecimal calculateTotalAmountForCashAdvanceLinesReferencedByRegularLines(
             List<ConcurStandardAccountingExtractDetailLine> regularDetailLines) {
-        return regularDetailLines.stream()
+        if (cashAdvanceLinesByReportEntryId.isEmpty()) {
+            return KualiDecimal.ZERO;
+        }
+        
+        String[] reportEntryIds = regularDetailLines.stream()
                 .map(ConcurStandardAccountingExtractDetailLine::getReportEntryId)
                 .distinct()
-                .map(cashAdvanceLinesByReportEntryId::get)
-                .filter((cashAdvanceLine) -> cashAdvanceLine != null)
-                .map(ConcurStandardAccountingExtractDetailLine::getJournalAmount)
-                .reduce(KualiDecimal.ZERO, KualiDecimal::add);
+                .toArray(String[]::new);
+        
+        List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines = new ArrayList<>(reportEntryIds.length);
+        for (String reportEntryId : reportEntryIds) {
+            ConcurStandardAccountingExtractDetailLine cashAdvanceLine = cashAdvanceLinesByReportEntryId.get(reportEntryId);
+            if (cashAdvanceLine != null) {
+                cashAdvanceLines.add(cashAdvanceLine);
+            }
+        }
+        
+        if (cashAdvanceLines.isEmpty()) {
+            return KualiDecimal.ZERO;
+        } else {
+            return calculateTotalAmountForLines(cashAdvanceLines);
+        }
     }
 
     protected Optional<OriginEntryFull> buildOriginEntryForCorporateCardOffset(
@@ -260,8 +272,9 @@ public class ConcurDetailLineGroupForCollector {
         return Optional.of(offsetEntry);
     }
 
-    protected Optional<OriginEntryFull> doNotBuildOffsetOriginEntry(
-            OriginEntryFull originEntry, List<ConcurStandardAccountingExtractDetailLine> detailLines) {
+    // This is only meant for use as a method reference, as an argument to the addOriginEntriesForLines() method.
+    protected Optional<OriginEntryFull> doNotBuildAnyOriginEntriesForCashAdvanceOffset(
+            OriginEntryFull cashAdvanceEntry, List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines) {
         return Optional.empty();
     }
 
@@ -274,7 +287,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
-        if (isCashAdvanceLine(detailLine)) {
+        if (collectorHelper.isCashAdvanceLine(detailLine)) {
             return buildCashAdvanceOriginEntry(detailLine, amount);
         } else {
             return buildRegularOriginEntry(detailLine, amount);
@@ -393,8 +406,11 @@ public class ConcurDetailLineGroupForCollector {
         Set<String> sequenceNumbersForOrphanedCashAdvanceLines = getSequenceNumbersForOrphanedCashAdvanceLines();
         
         for (ConcurStandardAccountingExtractDetailLine detailLine : linesForGroup) {
-            String errorMessage = sequenceNumbersForOrphanedCashAdvanceLines.contains(detailLine.getSequenceNumber())
-                    ? ORPHANED_CASH_ADVANCE_MESSAGE : GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE;
+            String errorMessage = GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE;
+            if (sequenceNumbersForOrphanedCashAdvanceLines.contains(detailLine.getSequenceNumber())) {
+                errorMessage = String.format(ORPHANED_CASH_ADVANCE_MESSAGE_FORMAT,
+                        ORPHANED_CASH_ADVANCE_MESSAGE_FRAGMENT, detailLine.getCashAdvanceKey());
+            }
             lineErrorReporter.accept(detailLine, errorMessage);
         }
     }
