@@ -34,8 +34,6 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
-import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
