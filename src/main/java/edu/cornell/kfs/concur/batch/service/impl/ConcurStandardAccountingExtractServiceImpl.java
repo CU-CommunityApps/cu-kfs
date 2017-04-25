@@ -275,7 +275,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                 LOG.info("marshalPdpFeedFile, marshaled the file " + outputFullyQualifiedFilePath);
                 success = true;
             } else {
-                LOG.info("marshalPdpFeedFile, did not Marshal " + outputFullyQualifiedFilePath + " as there were no accounting entries");
+                LOG.info("marshalPdpFeedFile, did not marshal " + outputFullyQualifiedFilePath + " as there were no accounting entries");
             }
         } catch (JAXBException | IOException e) {
             LOG.error("marshalPdpFeedFile, There was an error marshalling the PDP feed file.", e);
