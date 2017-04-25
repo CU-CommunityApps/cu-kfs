@@ -34,6 +34,8 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
@@ -133,11 +135,24 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile, reportData);
             pdpFeedFileBaseEntry = getConcurStandardAccountExtractPdpEntryService().createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(pdpFeedFileBaseEntry, reportData);
+            logPdpSummaryInformation(pdpFeedFileBaseEntry);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
             String pdpFullyQualifiedFilePath = getPaymentImportDirectory() + pdpFileName;
             success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFullyQualifiedFilePath);
+        } else {
+            LOG.error("extractPdpFeedFromStandardAccountingExtract, there are no detail lines to process.");
         }
         return success ? pdpFileName : StringUtils.EMPTY;
+    }
+    
+    private void logPdpSummaryInformation(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+        if(LOG.isInfoEnabled()) {
+            StringBuilder sb = new StringBuilder("logPdpSummaryInformation,");
+            sb.append(" PDP creation date: ").append(pdpFeedFileBaseEntry.getHeader().getCreationDate());
+            sb.append(", total number of payments in PDP file: ").append(pdpFeedFileBaseEntry.getTrailer().getDetailCount());
+            sb.append(", total amount to be paid: ").append(pdpFeedFileBaseEntry.getTrailer().getDetailTotAmt());
+            LOG.info(sb.toString());
+        }
     }
     
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData) {
