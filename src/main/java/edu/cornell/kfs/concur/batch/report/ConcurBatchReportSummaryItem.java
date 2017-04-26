@@ -37,6 +37,12 @@ public class ConcurBatchReportSummaryItem {
         this.recordCount = recordCount;
     }
 
+    public void incrementRecordCount() {
+        int count = this.getRecordCount();
+        count++;
+        this.setRecordCount(count);
+    }
+
     public KualiDecimal getDollarAmount() {
         return dollarAmount;
     }
@@ -44,5 +50,9 @@ public class ConcurBatchReportSummaryItem {
     public void setDollarAmount(KualiDecimal dollarAmount) {
         this.dollarAmount = dollarAmount;
     }
- 
+
+    public void addDollarAmount(KualiDecimal amountToAdd) {
+        this.setDollarAmount(this.getDollarAmount().add(amountToAdd));
+    }
+
 }

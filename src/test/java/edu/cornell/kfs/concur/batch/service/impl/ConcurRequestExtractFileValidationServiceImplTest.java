@@ -19,6 +19,8 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import org.kuali.kfs.sys.KFSConstants;
+
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
@@ -68,7 +70,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
         assertTrue("Expected Result: Header amount SHOULD match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
         LOG.info(reportData.getHeaderValidationErrors());
-        System.out.println("");
+        LOG.info(KFSConstants.NEWLINE);
         reportData = null;
     }
     
@@ -79,7 +81,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
         assertFalse("Expected Result: Header amount should NOT match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
         LOG.info(reportData.getHeaderValidationErrors());
-        System.out.println("");
+        LOG.info(KFSConstants.NEWLINE);
         reportData = null;
     }
 
@@ -90,7 +92,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
         assertFalse("Expected Result: Header row count should NOT match file row count.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
         LOG.info(reportData.getHeaderValidationErrors());
-        System.out.println("");
+        LOG.info(KFSConstants.NEWLINE);
         reportData = null;
     }
 
@@ -101,7 +103,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
         assertFalse("Expected Result: Request Detail row contains BAD Employee Group Id.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
         LOG.info(reportData.getHeaderValidationErrors());
-        System.out.println("");
+        LOG.info(KFSConstants.NEWLINE);
         reportData = null;
     }
 
@@ -112,7 +114,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
         assertTrue("Expected Result: Header amount SHOULD match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
         LOG.info(reportData.getHeaderValidationErrors());
-        System.out.println("");
+        LOG.info(KFSConstants.NEWLINE);
         reportData = null;
     }
 
@@ -123,7 +125,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
         assertFalse("Expected Result: Header amount should NOT match sum of row amounts from file.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
         LOG.info(reportData.getHeaderValidationErrors());
-        System.out.println("");
+        LOG.info(KFSConstants.NEWLINE);
         reportData = null;
     }
 
