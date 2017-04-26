@@ -78,15 +78,6 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         return pdpBaseEntry;
     }
 
-    private boolean isDetailFileLineValidCashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
-        if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isValidCashAdvanceLine()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
     private void recordCashAdvanceGenerationInDuplicateTrackingTable(ConcurRequestExtractRequestDetailFileLine detailFileLine, String sourceDocumentNumber, String requestExtractFileName) {
         ConcurRequestedCashAdvance duplicateTrackingCashAdvance =
                 new ConcurRequestedCashAdvance(detailFileLine.getRequestId(),
@@ -179,20 +170,40 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
         return trailer;
     }
 
+    private boolean isDetailFileLineValidCashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        return (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isValidCashAdvanceLine());
+    }
+
+    private boolean isDetailFileLineClonedCashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        return (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isClonedCashAdvance());
+    }
+
+    private boolean isDetailFileLineCashAdvanceUsedInExpenseReport(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        return (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isCashAdvanceUsedInExpenseReport());
+    }
+
+    private boolean isDetailFileLineDuplicateCashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        return (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isDuplicatedCashAdvanceLine());
+    }
+
+    private boolean isDetailFileLineNotACashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        return (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isNotValidCashAdvanceLine());
+    }
+
     private void updateReportDataForDetailFileLineBeingProcessed(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine, int totalPdpDetailRecordsCount, KualiDecimal totalPdpDetailRecordsAmount) {
         if (isDetailFileLineValidCashAdvanceRequest(detailFileLine)) {
             updateReportDataPdpFeedFileCountAndAmountTotals(reportData, totalPdpDetailRecordsCount, totalPdpDetailRecordsAmount);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: Cash advance included in PDP feed file :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
-        else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isClonedCashAdvance()) {
+        else if (isDetailFileLineClonedCashAdvanceRequest(detailFileLine)) {
             updateReportDataClonedCashAdvanceCountAndAmountTotals(reportData, detailFileLine);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: Cloned cash advance :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
-        else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isCashAdvanceUsedInExpenseReport()) {
+        else if (isDetailFileLineCashAdvanceUsedInExpenseReport(detailFileLine)) {
             updateReportDataCashAdvancesUsedInExpenseReportCountAndAmountTotals(reportData, detailFileLine);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: Cash advance used in expense report :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
-        else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isDuplicatedCashAdvanceLine()) {
+        else if (isDetailFileLineDuplicateCashAdvanceRequest(detailFileLine)) {
             updateReportDataDuplicateCashAdvanceCountAndAmountTotals(reportData, detailFileLine);
             updateReportDataWithFileLineValidationError(reportData, detailFileLine);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: DUPLICATE cash advance :  " + KFSConstants.NEWLINE + detailFileLine.toString());
@@ -201,13 +212,13 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
             updateReportDataTravelRequestsOnlyCountAndAmountTotals(reportData, detailFileLine);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: NOT a cash advance :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
-        else if (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isNotValidCashAdvanceLine()) {
+        else if (isDetailFileLineNotACashAdvanceRequest(detailFileLine)) {
             updateReportDataValidationErrorCountAndAmountTotals(reportData, detailFileLine);
             updateReportDataWithFileLineValidationError(reportData, detailFileLine);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: Cash Advance but validation failed :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
         else {
-            LOG.info("updateReportDataForDetailFileLineBeingProcessed: ***PROBLEM*** detailFileLine Line NOT included in any report totals and this should NOT happen :  " + KFSConstants.NEWLINE + detailFileLine.toString());
+            LOG.error("updateReportDataForDetailFileLineBeingProcessed: ***PROBLEM*** detailFileLine Line NOT included in any report totals and this should NOT happen :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
         updateReportDataRequestExtractFileTotalCountAndAmountTotals(reportData, detailFileLine);
     }
