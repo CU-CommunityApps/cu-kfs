@@ -98,8 +98,11 @@
 		    <value>${staging.directory}/gl/collectorFlatFile/</value>
 		</property>
 		<property name="concurSAEValidationService" ref="concurStandardAccountingExtractValidationService"/>
+		<property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService"/>
+		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
 		<property name="collectorFlatFileSerializerService" ref="concurCollectorFlatFileSerializerService"/>
 		<property name="batchFileLookupableHelperService" ref="batchFileLookupableHelperService"/>
+		<property name="configurationService" ref="configurationService"/>
 		<property name="optionsService" ref="optionsService"/>
 		<property name="universityDateService" ref="universityDateService"/>
 		<property name="dateTimeService" ref="dateTimeService"/>

@@ -4,6 +4,9 @@ public class ConcurKeyConstants {
     public static final String CONCUR_ACCOUNT_INFO_IS_REQUIRED = "error.concur.account.info.required";
     public static final String INCORRECT_CONCUR_STATUS_CODE = "error.concur.status.invalid";
 
+    public static final String CONCUR_SAE_ORPHANED_CASH_ADVANCE = "validation.error.concur.sae.orphaned.cash.advance";
+    public static final String CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE = "validation.error.concur.sae.group.with.orphaned.cash.advance";
+
     public static final String CONCUR_REQUEST_EXTRACT_NOT_CASH_ADVANCE_DATA_LINE = "validation.error.concur.request.extract.not.cash.advance";
     public static final String CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_USED_IN_EXPENSE_REPORT = "validation.error.concur.request.extract.cash.advance.in.expense.report";
     public static final String CONCUR_REQUEST_EXTRACT_REQUEST_ID_INVALID = "validation.error.concur.request.extract.invalid.request.id";

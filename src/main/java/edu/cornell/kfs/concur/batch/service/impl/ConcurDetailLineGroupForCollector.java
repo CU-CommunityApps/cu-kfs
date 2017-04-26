@@ -2,22 +2,28 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 
 /**
@@ -28,6 +34,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 public class ConcurDetailLineGroupForCollector {
 
     protected static final String FAKE_OBJECT_CODE_PREFIX = "?NONE?";
+    protected static final String ORPHANED_CASH_ADVANCES_KEY = "ORPHANED_CASH_ADVANCES";
     protected static final String ACCOUNTING_FIELDS_KEY_FORMAT = "%s|%s|%s|%s|%s|%s|%s";
     protected static final String TRANSACTION_DESCRIPTION_FORMAT = "%s,%s,%s";
     protected static final int REPORT_ID_LENGTH_FOR_DOC_NUMBER = 10;
@@ -35,14 +42,24 @@ public class ConcurDetailLineGroupForCollector {
 
     protected String reportId;
     protected ConcurDetailLineGroupForCollectorHelper collectorHelper;
-    protected Map<String,List<ConcurStandardAccountingExtractDetailLine>> consolidatedRegularLines;
+    protected Map<String, ConcurDetailLineSubGroupForCollector> consolidatedRegularLines;
+    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedCashAdvanceLines;
+    protected Map<String, ConcurStandardAccountingExtractDetailLine> cashAdvanceLinesByReportEntryId;
+    protected Map<String, ConcurRequestedCashAdvance> requestedCashAdvancesByCashAdvanceKey;
+    protected boolean hasMissingRequestedCashAdvance;
     protected int nextFakeObjectCode;
+    protected int nextTransactionSequenceNumber;
 
     public ConcurDetailLineGroupForCollector(String reportId, ConcurDetailLineGroupForCollectorHelper collectorHelper) {
         this.reportId = reportId;
         this.collectorHelper = collectorHelper;
         this.consolidatedRegularLines = new LinkedHashMap<>();
+        this.consolidatedCashAdvanceLines = new LinkedHashMap<>();
+        this.cashAdvanceLinesByReportEntryId = new LinkedHashMap<>();
+        this.requestedCashAdvancesByCashAdvanceKey = new LinkedHashMap<>();
+        this.hasMissingRequestedCashAdvance = false;
         this.nextFakeObjectCode = 1;
+        this.nextTransactionSequenceNumber = 1;
     }
 
     public String getReportId() {
@@ -50,16 +67,31 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     public void addDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        String accountingFieldsKey = buildAccountingFieldsKey(detailLine);
-        consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, (key) -> new ArrayList<>())
-                .add(detailLine);
+        if (collectorHelper.isCashAdvanceLine(detailLine)) {
+            ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey.computeIfAbsent(
+                    detailLine.getCashAdvanceKey(), this::getExistingRequestedCashAdvanceByCashAdvanceKey);
+            String accountingFieldsKey = buildAccountingFieldsKeyForCashAdvance(detailLine, requestedCashAdvance);
+            consolidatedCashAdvanceLines.computeIfAbsent(accountingFieldsKey, (key) -> new ArrayList<>())
+                    .add(detailLine);
+            cashAdvanceLinesByReportEntryId.put(detailLine.getReportEntryId(), detailLine);
+        } else {
+            String accountingFieldsKey = buildAccountingFieldsKey(detailLine);
+            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, (key) -> new ConcurDetailLineSubGroupForCollector())
+                    .addDetailLine(detailLine);
+        }
+    }
+
+    protected ConcurRequestedCashAdvance getExistingRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {
+        ConcurRequestedCashAdvance requestedCashAdvance = collectorHelper.getRequestedCashAdvanceByCashAdvanceKey(cashAdvanceKey);
+        if (ObjectUtils.isNull(requestedCashAdvance)) {
+            hasMissingRequestedCashAdvance = true;
+        }
+        return requestedCashAdvance;
     }
 
     protected String buildAccountingFieldsKey(ConcurStandardAccountingExtractDetailLine detailLine) {
         String objectCodeForKey = detailLine.getJournalAccountCode();
-        if (Boolean.TRUE.equals(detailLine.getJournalAccountCodeOverridden())) {
-            objectCodeForKey = buildFakeObjectCodeToLeaveDetailLineUnmerged();
-        }
+        objectCodeForKey = convertToFakeObjectCodeIfNecessary(objectCodeForKey, detailLine);
         
         return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
                 detailLine.getChartOfAccountsCode(),
@@ -71,6 +103,33 @@ public class ConcurDetailLineGroupForCollector {
                 StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
     }
 
+    protected String buildAccountingFieldsKeyForCashAdvance(
+            ConcurStandardAccountingExtractDetailLine detailLine, ConcurRequestedCashAdvance requestedCashAdvance) {
+        if (ObjectUtils.isNull(requestedCashAdvance)) {
+            return ORPHANED_CASH_ADVANCES_KEY;
+        }
+        
+        String objectCodeForKey = StringUtils.defaultIfBlank(requestedCashAdvance.getObjectCode(), detailLine.getJournalAccountCode());
+        objectCodeForKey = convertToFakeObjectCodeIfNecessary(objectCodeForKey, detailLine);
+        
+        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
+                requestedCashAdvance.getChart(),
+                requestedCashAdvance.getAccountNumber(),
+                defaultToDashesIfBlank(requestedCashAdvance.getSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
+                objectCodeForKey,
+                defaultToDashesIfBlank(requestedCashAdvance.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE),
+                defaultToDashesIfBlank(requestedCashAdvance.getProjectCode(), KFSPropertyConstants.PROJECT_CODE),
+                StringUtils.defaultIfBlank(requestedCashAdvance.getOrgRefId(), StringUtils.EMPTY));
+    }
+
+    protected String convertToFakeObjectCodeIfNecessary(String objectCode, ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (Boolean.TRUE.equals(detailLine.getJournalAccountCodeOverridden())) {
+            return buildFakeObjectCodeToLeaveDetailLineUnmerged();
+        } else {
+            return objectCode;
+        }
+    }
+
     protected String buildFakeObjectCodeToLeaveDetailLineUnmerged() {
         return FAKE_OBJECT_CODE_PREFIX + nextFakeObjectCode++;
     }
@@ -79,56 +138,49 @@ public class ConcurDetailLineGroupForCollector {
         return StringUtils.defaultIfBlank(value, collectorHelper.getDashOnlyPropertyValue(propertyName));
     }
 
-    public List<OriginEntryFull> buildOriginEntries() {
-        List<OriginEntryFull> originEntries = new ArrayList<>();
-        
-        for (List<ConcurStandardAccountingExtractDetailLine> subGroup : consolidatedRegularLines.values()) {
-            Map<String,List<ConcurStandardAccountingExtractDetailLine>> linesByPaymentCode = groupDetailLinesByPaymentCode(subGroup);
-            List<ConcurStandardAccountingExtractDetailLine> cashLines = linesByPaymentCode.getOrDefault(
-                    ConcurConstants.PAYMENT_CODE_CASH, Collections.emptyList());
-            List<ConcurStandardAccountingExtractDetailLine> corporateCardLines = linesByPaymentCode.getOrDefault(
-                    ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, Collections.emptyList());
-            
-            addOriginEntriesForCorporateCardLines(originEntries, corporateCardLines);
-            addOriginEntriesForCashLines(originEntries, cashLines);
-        }
-        
-        setTransactionSequenceNumbersOnOriginEntries(originEntries);
-        
-        return originEntries;
+    public boolean hasNoErrors() {
+        return !hasMissingRequestedCashAdvance;
     }
 
-    protected void setTransactionSequenceNumbersOnOriginEntries(List<OriginEntryFull> originEntries) {
-        int nextTransactionSequenceNumber = 1;
-        for (OriginEntryFull originEntry : originEntries) {
-            originEntry.setTransactionLedgerEntrySequenceNumber(nextTransactionSequenceNumber++);
-        }
+    public void reportErrors(BiConsumer<ConcurStandardAccountingExtractDetailLine, String> lineErrorReporter) {
+        reportAllLinesForGroupAsFailuresDueToOrphanedCashAdvanceLines(lineErrorReporter);
     }
 
-    protected Map<String,List<ConcurStandardAccountingExtractDetailLine>> groupDetailLinesByPaymentCode(
-            List<ConcurStandardAccountingExtractDetailLine> detailLines) {
-        return detailLines.stream()
-                .collect(Collectors.groupingBy(
-                        ConcurStandardAccountingExtractDetailLine::getPaymentCode, HashMap::new, Collectors.toCollection(ArrayList::new)));
+    public void buildAndAddOriginEntries(Consumer<OriginEntryFull> entryConsumer) {
+        nextTransactionSequenceNumber = 1;
+        
+        for (ConcurDetailLineSubGroupForCollector subGroup : consolidatedRegularLines.values()) {
+            addOriginEntriesForCorporateCardLines(entryConsumer, subGroup.getCorporateCardLines());
+            addOriginEntriesForCashLines(entryConsumer, subGroup.getCashLines());
+        }
+        
+        for (List<ConcurStandardAccountingExtractDetailLine> cashAdvanceSubGroup : consolidatedCashAdvanceLines.values()) {
+            addOriginEntriesForCashAdvanceLines(entryConsumer, cashAdvanceSubGroup);
+        }
     }
 
     protected void addOriginEntriesForCashLines(
-            List<OriginEntryFull> originEntries, List<ConcurStandardAccountingExtractDetailLine> cashLines) {
-        addOriginEntriesForLines(originEntries, cashLines, this::buildOriginEntryForCashOffset);
+            Consumer<OriginEntryFull> entryConsumer, List<ConcurStandardAccountingExtractDetailLine> cashLines) {
+        addOriginEntriesForLines(entryConsumer, cashLines, this::buildOriginEntryForCashOffset);
     }
 
     protected void addOriginEntriesForCorporateCardLines(
-            List<OriginEntryFull> originEntries, List<ConcurStandardAccountingExtractDetailLine> corporateCardLines) {
-        addOriginEntriesForLines(originEntries, corporateCardLines, this::buildOriginEntryForCorporateCardOffset);
+            Consumer<OriginEntryFull> entryConsumer, List<ConcurStandardAccountingExtractDetailLine> corporateCardLines) {
+        addOriginEntriesForLines(entryConsumer, corporateCardLines, this::buildOriginEntryForCorporateCardOffset);
+    }
+
+    protected void addOriginEntriesForCashAdvanceLines(
+            Consumer<OriginEntryFull> entryConsumer, List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines) {
+        addOriginEntriesForLines(entryConsumer, cashAdvanceLines, this::doNotBuildAnyOriginEntriesForCashAdvanceOffset);
     }
 
     /**
-     * @param originEntries The List to add the generated origin entries to; won't be modified if detailLines is empty or has zero-sum lines.
+     * @param entryConsumer The Consumer to add the generated origin entries to; won't be called if detailLines is empty or has zero-sum lines.
      * @param detailLines The SAE lines to generate a single origin entry from; may be empty.
      * @param offsetGenerator A BiFunction that may create an offset entry using the generated regular entry and the detailLines List.
      */
     protected void addOriginEntriesForLines(
-            List<OriginEntryFull> originEntries, List<ConcurStandardAccountingExtractDetailLine> detailLines,
+            Consumer<OriginEntryFull> entryConsumer, List<ConcurStandardAccountingExtractDetailLine> detailLines,
             BiFunction<OriginEntryFull, List<ConcurStandardAccountingExtractDetailLine>, Optional<OriginEntryFull>> offsetGenerator) {
         if (CollectionUtils.isEmpty(detailLines)) {
             return;
@@ -138,11 +190,11 @@ public class ConcurDetailLineGroupForCollector {
         if (totalAmount.isNonZero()) {
             ConcurStandardAccountingExtractDetailLine firstDetailLine = detailLines.get(0);
             OriginEntryFull originEntry = buildOriginEntry(firstDetailLine, totalAmount);
-            originEntries.add(originEntry);
+            entryConsumer.accept(originEntry);
             
             Optional<OriginEntryFull> optionalOffsetEntry = offsetGenerator.apply(originEntry, detailLines);
             if (optionalOffsetEntry.isPresent()) {
-                originEntries.add(optionalOffsetEntry.get());
+                entryConsumer.accept(optionalOffsetEntry.get());
             }
         }
     }
@@ -156,12 +208,43 @@ public class ConcurDetailLineGroupForCollector {
     protected Optional<OriginEntryFull> buildOriginEntryForCashOffset(
             OriginEntryFull cashEntry, List<ConcurStandardAccountingExtractDetailLine> cashLines) {
         KualiDecimal cashAmount = getSignedAmountFromOriginEntry(cashEntry);
+        KualiDecimal cashAdvanceAmount = calculateTotalAmountForCashAdvanceLinesReferencedByRegularLines(cashLines);
+        KualiDecimal cashAmountToOffset = cashAmount.add(cashAdvanceAmount);
+        if (cashAmountToOffset.isZero()) {
+            return Optional.empty();
+        }
         
-        OriginEntryFull offsetEntry = buildOffsetOriginEntry(cashEntry, cashAmount);
+        OriginEntryFull offsetEntry = buildOffsetOriginEntry(cashEntry, cashAmountToOffset);
         offsetEntry.setFinancialObjectCode(collectorHelper.getCashOffsetObjectCode());
         offsetEntry.setFinancialSubObjectCode(collectorHelper.getDashOnlyPropertyValue(KFSPropertyConstants.SUB_OBJECT_CODE));
         
         return Optional.of(offsetEntry);
+    }
+
+    protected KualiDecimal calculateTotalAmountForCashAdvanceLinesReferencedByRegularLines(
+            List<ConcurStandardAccountingExtractDetailLine> regularDetailLines) {
+        if (cashAdvanceLinesByReportEntryId.isEmpty()) {
+            return KualiDecimal.ZERO;
+        }
+        
+        String[] reportEntryIds = regularDetailLines.stream()
+                .map(ConcurStandardAccountingExtractDetailLine::getReportEntryId)
+                .distinct()
+                .toArray(String[]::new);
+        
+        List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines = new ArrayList<>(reportEntryIds.length);
+        for (String reportEntryId : reportEntryIds) {
+            ConcurStandardAccountingExtractDetailLine cashAdvanceLine = cashAdvanceLinesByReportEntryId.get(reportEntryId);
+            if (cashAdvanceLine != null) {
+                cashAdvanceLines.add(cashAdvanceLine);
+            }
+        }
+        
+        if (cashAdvanceLines.isEmpty()) {
+            return KualiDecimal.ZERO;
+        } else {
+            return calculateTotalAmountForLines(cashAdvanceLines);
+        }
     }
 
     protected Optional<OriginEntryFull> buildOriginEntryForCorporateCardOffset(
@@ -178,20 +261,56 @@ public class ConcurDetailLineGroupForCollector {
         return Optional.of(offsetEntry);
     }
 
+    protected Optional<OriginEntryFull> doNotBuildAnyOriginEntriesForCashAdvanceOffset(
+            OriginEntryFull cashAdvanceEntry, List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines) {
+        return Optional.empty();
+    }
+
     protected OriginEntryFull buildOffsetOriginEntry(OriginEntryFull baseEntry, KualiDecimal amountToOffset) {
         OriginEntryFull offsetEntry = new OriginEntryFull(baseEntry);
         KualiDecimal offsetAmount = amountToOffset.negated();
+        setTransactionSequenceNumberToNextAvailableValue(offsetEntry);
         configureAmountAndDebitCreditCodeOnOriginEntry(offsetEntry, offsetAmount);
         return offsetEntry;
     }
 
     protected OriginEntryFull buildOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        if (collectorHelper.isCashAdvanceLine(detailLine)) {
+            return buildCashAdvanceOriginEntry(detailLine, amount);
+        } else {
+            return buildRegularOriginEntry(detailLine, amount);
+        }
+    }
+
+    protected OriginEntryFull buildCashAdvanceOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        OriginEntryFull originEntry = new OriginEntryFull();
+        ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey.get(detailLine.getCashAdvanceKey());
+        if (requestedCashAdvance == null) {
+            throw new IllegalStateException("Did not find cash advance when building Collector line; this should NEVER happen. Key: "
+                    + detailLine.getCashAdvanceKey());
+        }
+        
+        originEntry.setChartOfAccountsCode(requestedCashAdvance.getChart());
+        originEntry.setAccountNumber(requestedCashAdvance.getAccountNumber());
+        originEntry.setSubAccountNumber(
+                defaultToDashesIfBlank(requestedCashAdvance.getSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
+        originEntry.setFinancialObjectCode(
+                StringUtils.defaultIfBlank(requestedCashAdvance.getObjectCode(), detailLine.getJournalAccountCode()));
+        originEntry.setFinancialSubObjectCode(
+                defaultToDashesIfBlank(requestedCashAdvance.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE));
+        originEntry.setProjectCode(
+                defaultToDashesIfBlank(requestedCashAdvance.getProjectCode(), KFSPropertyConstants.PROJECT_CODE));
+        originEntry.setOrganizationReferenceId(
+                StringUtils.defaultIfBlank(requestedCashAdvance.getOrgRefId(), StringUtils.EMPTY));
+        
+        configureOriginEntryGeneratedFromLine(originEntry, detailLine, amount);
+        
+        return originEntry;
+    }
+
+    protected OriginEntryFull buildRegularOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
         OriginEntryFull originEntry = new OriginEntryFull();
         
-        // Default constructor sets fiscal year to zero; need to forcibly clear it to allow auto-setup by the Poster, as per the spec.
-        originEntry.setUniversityFiscalYear(null);
-        
-        originEntry.setFinancialBalanceTypeCode(collectorHelper.getActualFinancialBalanceTypeCode());
         originEntry.setChartOfAccountsCode(detailLine.getChartOfAccountsCode());
         originEntry.setAccountNumber(detailLine.getAccountNumber());
         originEntry.setSubAccountNumber(
@@ -204,15 +323,29 @@ public class ConcurDetailLineGroupForCollector {
         originEntry.setOrganizationReferenceId(
                 StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
         
+        configureOriginEntryGeneratedFromLine(originEntry, detailLine, amount);
+        
+        return originEntry;
+    }
+
+    protected void configureOriginEntryGeneratedFromLine(
+            OriginEntryFull originEntry, ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        // Default constructor sets fiscal year to zero; need to forcibly clear it to allow auto-setup by the Poster, as per the spec.
+        originEntry.setUniversityFiscalYear(null);
+        
+        originEntry.setFinancialBalanceTypeCode(collectorHelper.getActualFinancialBalanceTypeCode());
         originEntry.setFinancialDocumentTypeCode(collectorHelper.getDocumentTypeCode());
         originEntry.setFinancialSystemOriginationCode(collectorHelper.getSystemOriginationCode());
         originEntry.setDocumentNumber(buildDocumentNumber(detailLine));
         originEntry.setTransactionLedgerEntryDescription(buildTransactionDescription(detailLine));
         originEntry.setTransactionDate(collectorHelper.getTransmissionDate());
         
+        setTransactionSequenceNumberToNextAvailableValue(originEntry);
         configureAmountAndDebitCreditCodeOnOriginEntry(originEntry, amount);
-        
-        return originEntry;
+    }
+
+    protected void setTransactionSequenceNumberToNextAvailableValue(OriginEntryFull originEntry) {
+        originEntry.setTransactionLedgerEntrySequenceNumber(nextTransactionSequenceNumber++);
     }
 
     protected String buildDocumentNumber(ConcurStandardAccountingExtractDetailLine detailLine) {
@@ -253,6 +386,54 @@ public class ConcurDetailLineGroupForCollector {
             default :
                 throw new IllegalArgumentException("originEntry does not have a valid debit/credit code");
         }
+    }
+
+    protected void reportAllLinesForGroupAsFailuresDueToOrphanedCashAdvanceLines(
+            BiConsumer<ConcurStandardAccountingExtractDetailLine, String> lineErrorReporter) {
+        List<ConcurStandardAccountingExtractDetailLine> linesForGroup = getDetailLinesSortedBySequenceNumberNumerically();
+        Set<String> sequenceNumbersForOrphanedCashAdvanceLines = getSequenceNumbersForOrphanedCashAdvanceLines();
+        
+        for (ConcurStandardAccountingExtractDetailLine detailLine : linesForGroup) {
+            String errorMessage;
+            if (sequenceNumbersForOrphanedCashAdvanceLines.contains(detailLine.getSequenceNumber())) {
+                errorMessage = collectorHelper.getFormattedValidationMessage(
+                        ConcurKeyConstants.CONCUR_SAE_ORPHANED_CASH_ADVANCE, detailLine.getCashAdvanceKey());
+            } else {
+                errorMessage = collectorHelper.getValidationMessage(ConcurKeyConstants.CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE);
+            }
+            lineErrorReporter.accept(detailLine, errorMessage);
+        }
+    }
+
+    protected Set<String> getSequenceNumbersForOrphanedCashAdvanceLines() {
+        return consolidatedCashAdvanceLines.get(ORPHANED_CASH_ADVANCES_KEY)
+                .stream()
+                .map(ConcurStandardAccountingExtractDetailLine::getSequenceNumber)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    protected List<ConcurStandardAccountingExtractDetailLine> getDetailLinesSortedBySequenceNumberNumerically() {
+        List<ConcurStandardAccountingExtractDetailLine> linesForGroup = new ArrayList<>();
+        
+        for (ConcurDetailLineSubGroupForCollector subGroup : consolidatedRegularLines.values()) {
+            linesForGroup.addAll(subGroup.getCashLines());
+            linesForGroup.addAll(subGroup.getCorporateCardLines());
+        }
+        for (List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines : consolidatedCashAdvanceLines.values()) {
+            linesForGroup.addAll(cashAdvanceLines);
+        }
+        
+        Collections.sort(linesForGroup, this::compareBySequenceNumberAsPositiveNumericString);
+        return linesForGroup;
+    }
+
+    protected int compareBySequenceNumberAsPositiveNumericString(
+            ConcurStandardAccountingExtractDetailLine line1, ConcurStandardAccountingExtractDetailLine line2) {
+        int lengthComparison = line1.getSequenceNumber().length() - line2.getSequenceNumber().length();
+        if (lengthComparison != 0) {
+            return lengthComparison;
+        }
+        return line1.getSequenceNumber().compareTo(line2.getSequenceNumber());
     }
 
 }

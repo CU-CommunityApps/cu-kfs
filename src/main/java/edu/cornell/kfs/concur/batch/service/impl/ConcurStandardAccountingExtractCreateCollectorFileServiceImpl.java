@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.bo.BusinessObject;
 
@@ -20,6 +21,8 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -34,11 +37,13 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
             ConcurStandardAccountingExtractCreateCollectorFileServiceImpl.class);
 
     protected static final String DATE_RANGE_FORMAT = "%s..%s";
-    protected static final int DEFAULT_BUILDER_SIZE = 100;
 
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
+    protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
     protected LookupableHelperService batchFileLookupableHelperService;
+    protected ConfigurationService configurationService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -78,6 +83,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
         return new ConcurStandardAccountingExtractCollectorBatchBuilder(
+                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
                 optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
@@ -137,12 +143,25 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         this.concurSAEValidationService = concurSAEValidationService;
     }
 
+    public void setConcurRequestedCashAdvanceService(ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService) {
+        this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
+    }
+
+    public void setConcurStandardAccountingExtractCashAdvanceService(
+            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService) {
+        this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
+    }
+
     public void setCollectorFlatFileSerializerService(BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService) {
         this.collectorFlatFileSerializerService = collectorFlatFileSerializerService;
     }
 
     public void setBatchFileLookupableHelperService(LookupableHelperService batchFileLookupableHelperService) {
         this.batchFileLookupableHelperService = batchFileLookupableHelperService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
     public void setOptionsService(OptionsService optionsService) {
