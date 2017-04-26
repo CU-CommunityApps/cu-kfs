@@ -23,14 +23,6 @@ public class ConcurDetailLineSubGroupForCollector {
         this.corporateCardLines = new ArrayList<>();
     }
 
-    /**
-     * Convenience constructor that takes a Map-related key as input and then discards it;
-     * is only meant for use as a method reference to simplify certain Map operations.
-     */
-    public <T> ConcurDetailLineSubGroupForCollector(T mapKey) {
-        this();
-    }
-
     public void addDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         switch (detailLine.getPaymentCode()) {
             case ConcurConstants.PAYMENT_CODE_CASH :
