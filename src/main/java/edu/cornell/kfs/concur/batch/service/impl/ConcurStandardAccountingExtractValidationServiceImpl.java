@@ -224,15 +224,29 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     private ConcurAccountInfo buildOverriddenConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
-        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
-        return overriddenConcurAccountingInformation;
+        return buildConcurAccountingInformation(line, overriddenObjectCode, StringUtils.EMPTY);
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
+        ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(
+                line, line.getJournalAccountCode(), line.getSubObjectCode());
         buildValidationResult(accountingInformation, false);
+    }
+    
+    private ConcurAccountInfo buildConcurAccountingInformation(
+            ConcurStandardAccountingExtractDetailLine line, String objectCode, String subObjectCode) {
+        if (lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
+            return new ConcurAccountInfo(line.getReportChartOfAccountsCode(), line.getReportAccountNumber(), 
+                    line.getReportSubAccountNumber(), objectCode, subObjectCode, line.getReportProjectCode());
+        } else {
+            return new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+                    line.getSubAccountNumber(), objectCode, subObjectCode, line.getProjectCode());
+        }
+    }
+    
+    private boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine line) {
+        return Boolean.TRUE.equals(line.getReportEntryIsPersonalFlag())
+                && StringUtils.equals(ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, line.getPaymentCode());
     }
     
     private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {

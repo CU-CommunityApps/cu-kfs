@@ -257,6 +257,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 return true;
             case ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID :
                 reportCorporateCardPayment(saeLine);
+                // Temporary hack to ignore personal expense lines until their handling has been implemented.
+                if (Boolean.TRUE.equals(saeLine.getReportEntryIsPersonalFlag())) {
+                    reportUnprocessedLine(saeLine, "Ignoring personal expense on corporate card");
+                    return false;
+                }
                 return true;
             case ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER :
                 reportUnprocessedLine(saeLine, "The line has the Pre-Paid/Other (COPD) payment code");

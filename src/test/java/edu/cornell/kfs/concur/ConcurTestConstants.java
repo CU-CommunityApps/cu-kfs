@@ -5,6 +5,7 @@ public class ConcurTestConstants {
     public static final String EMPLOYEE_GROUP_ID = "CORNELL";
     public static final String EMPLOYEE_DEFAULT_STATUS = "EMPLOYEE";
     public static final String UNRECOGNIZED_PAYMENT_CODE = "????";
+    public static final String DEFAULT_REPORT_ACCOUNT = "1122334";
     public static final String REPORT_ID_1 = "ABCDEFGHIJ1234567890";
     public static final String REPORT_ID_2 = "JJJJJKKKKK5555566666";
     public static final String REPORT_ID_3 = "ZZYYXXVVWW7766554433";

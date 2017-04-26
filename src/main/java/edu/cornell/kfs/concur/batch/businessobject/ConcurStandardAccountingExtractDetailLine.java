@@ -33,6 +33,13 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String expenseType;
     private String cashAdvanceKey;
     private String reportEntryId;
+    private Boolean reportEntryIsPersonalFlag;
+    private String reportChartOfAccountsCode;
+    private String reportAccountNumber;
+    private String reportSubAccountNumber;
+    private String reportSubObjectCode;
+    private String reportProjectCode;
+    private String reportOrgRefId;
     
     public String getBatchID() {
         return batchID;
@@ -250,12 +257,69 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.reportEntryId = reportEntryId;
     }
 
+    public Boolean getReportEntryIsPersonalFlag() {
+        return reportEntryIsPersonalFlag;
+    }
+
+    public void setReportEntryIsPersonalFlag(Boolean reportEntryIsPersonalFlag) {
+        this.reportEntryIsPersonalFlag = reportEntryIsPersonalFlag;
+    }
+
+    public String getReportChartOfAccountsCode() {
+        return reportChartOfAccountsCode;
+    }
+
+    public void setReportChartOfAccountsCode(String reportChartOfAccountsCode) {
+        this.reportChartOfAccountsCode = reportChartOfAccountsCode;
+    }
+
+    public String getReportAccountNumber() {
+        return reportAccountNumber;
+    }
+
+    public void setReportAccountNumber(String reportAccountNumber) {
+        this.reportAccountNumber = reportAccountNumber;
+    }
+
+    public String getReportSubAccountNumber() {
+        return reportSubAccountNumber;
+    }
+
+    public void setReportSubAccountNumber(String reportSubAccountNumber) {
+        this.reportSubAccountNumber = reportSubAccountNumber;
+    }
+
+    public String getReportSubObjectCode() {
+        return reportSubObjectCode;
+    }
+
+    public void setReportSubObjectCode(String reportSubObjectCode) {
+        this.reportSubObjectCode = reportSubObjectCode;
+    }
+
+    public String getReportProjectCode() {
+        return reportProjectCode;
+    }
+
+    public void setReportProjectCode(String reportProjectCode) {
+        this.reportProjectCode = reportProjectCode;
+    }
+
+    public String getReportOrgRefId() {
+        return reportOrgRefId;
+    }
+
+    public void setReportOrgRefId(String reportOrgRefId) {
+        this.reportOrgRefId = reportOrgRefId;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
         sb.append(" employeeLastName: ").append(employeeLastName).append(" employeeFirstName: ").append(employeeFirstName);
         sb.append(" employeeMiddleInitital: ").append(employeeMiddleInitital).append(" employeeGroupId: ").append(employeeGroupId);
-        sb.append(" reportId: ").append(reportId).append(" reportEntryId: ").append(reportEntryId).append(" employeeStatus: ").append(employeeStatus);
+        sb.append(" reportId: ").append(reportId).append(" reportEntryId: ").append(reportEntryId);
+        sb.append(" reportEntryIsPersonalFlag: ").append(reportEntryIsPersonalFlag).append(" employeeStatus: ").append(employeeStatus);
         sb.append(" paymentCode: ").append(paymentCode).append(" journalAccountCode: ").append(journalAccountCode);
         sb.append(" journalAccountCodeOverridden ").append(journalAccountCodeOverridden);
         sb.append(" chartOfAccountsCode: ").append(chartOfAccountsCode).append(" accountNumber: ").append(accountNumber);
@@ -264,6 +328,9 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
         sb.append(" journalAmountString: ").append(journalAmountString).append(" reportEndDate: ").append(reportEndDate);
         sb.append(" policy: ").append(policy).append(" expenseType: ").append(expenseType);
+        sb.append(" reportChartOfAccountsCode: ").append(reportChartOfAccountsCode).append(" reportAccountNumber: ").append(reportAccountNumber);
+        sb.append(" reportSubAccountNumber: ").append(reportSubAccountNumber).append(" reportSubObjectCode: ").append(reportSubObjectCode);
+        sb.append(" reportProjectCode: ").append(reportProjectCode).append(" reportOrgRefId: ").append(reportOrgRefId);
         sb.append(" cashAdvanceKey: ").append(cashAdvanceKey);
         return sb.toString();
     }
