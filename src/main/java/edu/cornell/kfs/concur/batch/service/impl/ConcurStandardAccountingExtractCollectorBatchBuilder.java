@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -62,6 +63,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected Map<String,ConcurDetailLineGroupForCollector> lineGroups;
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
+    protected ConfigurationService configurationService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -76,13 +78,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
      */
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
-            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService, OptionsService optionsService,
+            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService,
+            ConfigurationService configurationService, OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> concurParameterGetter) {
         if (concurRequestedCashAdvanceService == null) {
             throw new IllegalArgumentException("concurRequestedCashAdvanceService cannot be null");
         } else if (concurStandardAccountingExtractCashAdvanceService == null) {
             throw new IllegalArgumentException("concurStandardAccountingExtractCashAdvanceService cannot be null");
+        } else if (configurationService == null) {
+            throw new IllegalArgumentException("configurationService cannot be null");
         } else if (optionsService == null) {
             throw new IllegalArgumentException("optionsService cannot be null");
         } else if (universityDateService == null) {
@@ -97,6 +102,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         
         this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
         this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
+        this.configurationService = configurationService;
         this.optionsService = optionsService;
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
@@ -195,7 +201,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.collectorHelper = new ConcurDetailLineGroupForCollectorHelper(
                 actualFinancialBalanceTypeCode, collectorBatch.getTransmissionDate(),
                 concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService,
-                dateTimeService, this::getDashValueForProperty, concurParameterGetter);
+                configurationService, dateTimeService, this::getDashValueForProperty, concurParameterGetter);
     }
 
     protected String getActualFinancialBalanceTypeCodeForCollectorBatch() {
@@ -223,7 +229,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
     protected void updateCollectorBatchWithOriginEntries() {
         for (ConcurDetailLineGroupForCollector lineGroup : lineGroups.values()) {
-            lineGroup.buildAndAddOriginEntries(collectorBatch::addOriginEntry, this::reportUnprocessedLine);
+            if (lineGroup.hasNoErrors()) {
+                lineGroup.buildAndAddOriginEntries(collectorBatch::addOriginEntry);
+            } else {
+                lineGroup.reportErrors(this::reportUnprocessedLine);
+            }
         }
         
         Integer totalRecords = Integer.valueOf(collectorBatch.getOriginEntries().size());

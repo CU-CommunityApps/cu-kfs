@@ -45,6 +45,11 @@ public class ConcurTestConstants {
     public static final String DASH_SUB_OBJECT_CODE = "---";
     public static final String DASH_PROJECT_CODE = "----------";
 
+    public static class PropertyTestValues {
+        public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
+        public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
+    }
+
     public static class ParameterTestValues {
         public static final String OBJECT_CODE_OVERRIDE = "6750";
         public static final String COLLECTOR_DOCUMENT_TYPE = "CLTE";

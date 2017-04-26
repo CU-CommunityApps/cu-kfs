@@ -22,6 +22,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 
@@ -32,10 +33,6 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  */
 public class ConcurDetailLineGroupForCollector {
 
-    protected static final String ORPHANED_CASH_ADVANCE_MESSAGE_FRAGMENT = "Cash Advance did not have a corresponding entry from the Request Extract.";
-    protected static final String ORPHANED_CASH_ADVANCE_MESSAGE_FORMAT = "%s Cash Advance Key: %s";
-    protected static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE =
-            "Line was not processed because within the same Report ID, another " + ORPHANED_CASH_ADVANCE_MESSAGE_FRAGMENT;
     protected static final String FAKE_OBJECT_CODE_PREFIX = "?NONE?";
     protected static final String ORPHANED_CASH_ADVANCES_KEY = "ORPHANED_CASH_ADVANCES";
     protected static final String ACCOUNTING_FIELDS_KEY_FORMAT = "%s|%s|%s|%s|%s|%s|%s";
@@ -79,7 +76,7 @@ public class ConcurDetailLineGroupForCollector {
             cashAdvanceLinesByReportEntryId.put(detailLine.getReportEntryId(), detailLine);
         } else {
             String accountingFieldsKey = buildAccountingFieldsKey(detailLine);
-            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, ConcurDetailLineSubGroupForCollector::new)
+            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, (key) -> new ConcurDetailLineSubGroupForCollector())
                     .addDetailLine(detailLine);
         }
     }
@@ -87,7 +84,6 @@ public class ConcurDetailLineGroupForCollector {
     protected ConcurRequestedCashAdvance getExistingRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {
         ConcurRequestedCashAdvance requestedCashAdvance = collectorHelper.getRequestedCashAdvanceByCashAdvanceKey(cashAdvanceKey);
         if (ObjectUtils.isNull(requestedCashAdvance)) {
-            // The null Requested Cash Advance is only flagged here; the addOriginEntriesForLines() method will do the error reporting.
             hasMissingRequestedCashAdvance = true;
         }
         return requestedCashAdvance;
@@ -142,23 +138,16 @@ public class ConcurDetailLineGroupForCollector {
         return StringUtils.defaultIfBlank(value, collectorHelper.getDashOnlyPropertyValue(propertyName));
     }
 
-    /**
-     * Generates OriginEntryFull BOs from the SAE lines and passes them to the given Consumer.
-     * If there was an error condition that should cause all of the lines of the current Report ID
-     * to be skipped (such as a Cash Advance line missing a corresponding Requested Cash Advance BO),
-     * the SAE lines and their error messages will be passed to the given BiConsumer instead.
-     * 
-     * @param entryConsumer A Consumer that the generated OriginEntryFull BOs can be passed to.
-     * @param lineErrorReporter A BiConsumer that can accept an SAE line and its error message.
-     */
-    public void buildAndAddOriginEntries(Consumer<OriginEntryFull> entryConsumer,
-            BiConsumer<ConcurStandardAccountingExtractDetailLine, String> lineErrorReporter) {
+    public boolean hasNoErrors() {
+        return !hasMissingRequestedCashAdvance;
+    }
+
+    public void reportErrors(BiConsumer<ConcurStandardAccountingExtractDetailLine, String> lineErrorReporter) {
+        reportAllLinesForGroupAsFailuresDueToOrphanedCashAdvanceLines(lineErrorReporter);
+    }
+
+    public void buildAndAddOriginEntries(Consumer<OriginEntryFull> entryConsumer) {
         nextTransactionSequenceNumber = 1;
-        
-        if (hasMissingRequestedCashAdvance) {
-            reportAllLinesForGroupAsFailuresDueToOrphanedCashAdvanceLines(lineErrorReporter);
-            return;
-        }
         
         for (ConcurDetailLineSubGroupForCollector subGroup : consolidatedRegularLines.values()) {
             addOriginEntriesForCorporateCardLines(entryConsumer, subGroup.getCorporateCardLines());
@@ -186,7 +175,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     /**
-     * @param originEntries The List to add the generated origin entries to; won't be modified if detailLines is empty or has zero-sum lines.
+     * @param entryConsumer The Consumer to add the generated origin entries to; won't be called if detailLines is empty or has zero-sum lines.
      * @param detailLines The SAE lines to generate a single origin entry from; may be empty.
      * @param offsetGenerator A BiFunction that may create an offset entry using the generated regular entry and the detailLines List.
      */
@@ -272,7 +261,6 @@ public class ConcurDetailLineGroupForCollector {
         return Optional.of(offsetEntry);
     }
 
-    // This is only meant for use as a method reference, as an argument to the addOriginEntriesForLines() method.
     protected Optional<OriginEntryFull> doNotBuildAnyOriginEntriesForCashAdvanceOffset(
             OriginEntryFull cashAdvanceEntry, List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines) {
         return Optional.empty();
@@ -406,10 +394,12 @@ public class ConcurDetailLineGroupForCollector {
         Set<String> sequenceNumbersForOrphanedCashAdvanceLines = getSequenceNumbersForOrphanedCashAdvanceLines();
         
         for (ConcurStandardAccountingExtractDetailLine detailLine : linesForGroup) {
-            String errorMessage = GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE;
+            String errorMessage;
             if (sequenceNumbersForOrphanedCashAdvanceLines.contains(detailLine.getSequenceNumber())) {
-                errorMessage = String.format(ORPHANED_CASH_ADVANCE_MESSAGE_FORMAT,
-                        ORPHANED_CASH_ADVANCE_MESSAGE_FRAGMENT, detailLine.getCashAdvanceKey());
+                errorMessage = collectorHelper.getFormattedValidationMessage(
+                        ConcurKeyConstants.CONCUR_SAE_ORPHANED_CASH_ADVANCE, detailLine.getCashAdvanceKey());
+            } else {
+                errorMessage = collectorHelper.getValidationMessage(ConcurKeyConstants.CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE);
             }
             lineErrorReporter.accept(detailLine, errorMessage);
         }

@@ -1,10 +1,12 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -21,6 +23,7 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
+    protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
     protected Function<String,String> dashPropertyValueGetter;
     protected String actualFinancialBalanceTypeCode;
@@ -35,10 +38,12 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     public ConcurDetailLineGroupForCollectorHelper(String actualFinancialBalanceTypeCode, Date transmissionDate,
             ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
-            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService, DateTimeService dateTimeService,
+            ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService,
+            ConfigurationService configurationService, DateTimeService dateTimeService,
             Function<String,String> dashPropertyValueGetter, Function<String,String> concurParameterGetter) {
         this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
         this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
+        this.configurationService = configurationService;
         this.dateTimeService = dateTimeService;
         this.dashPropertyValueGetter = dashPropertyValueGetter;
         this.actualFinancialBalanceTypeCode = actualFinancialBalanceTypeCode;
@@ -109,6 +114,15 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         return concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(detailLine);
+    }
+
+    public String getValidationMessage(String messageKey) {
+        return configurationService.getPropertyValueAsString(messageKey);
+    }
+
+    public String getFormattedValidationMessage(String messageKey, Object... messageArguments) {
+        String validationMessagePattern = getValidationMessage(messageKey);
+        return MessageFormat.format(validationMessagePattern, messageArguments);
     }
 
 }

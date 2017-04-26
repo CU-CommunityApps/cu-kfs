@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.krad.bo.BusinessObject;
 
@@ -42,6 +43,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
     protected LookupableHelperService batchFileLookupableHelperService;
+    protected ConfigurationService configurationService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -81,8 +83,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
         return new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, optionsService, universityDateService,
-                dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
+                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
+                optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
     protected String getConcurParameterValueAsString(String parameterName) {
@@ -156,6 +158,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     public void setBatchFileLookupableHelperService(LookupableHelperService batchFileLookupableHelperService) {
         this.batchFileLookupableHelperService = batchFileLookupableHelperService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
     public void setOptionsService(OptionsService optionsService) {
