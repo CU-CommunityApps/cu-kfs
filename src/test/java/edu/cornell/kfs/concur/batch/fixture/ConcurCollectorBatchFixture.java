@@ -33,7 +33,12 @@ public enum ConcurCollectorBatchFixture {
     DOCUMENT_NUMBER_TEST(1, 8, 200.00),
     EMPLOYEE_NAME_TEST(1, 8, 200.00),
     CASH_AND_CARD_TEST(1, 4, 105.00),
-    CANCELED_TRIP_TEST(1, 2, 432.40);
+    CANCELED_TRIP_TEST(1, 2, 432.40),
+    FULL_USE_CASH_ADVANCE_TEST(1, 2, 50.00),
+    PARTIAL_USE_CASH_ADVANCE_TEST(1, 2, 30.00),
+    EXPENSE_EXCEEDS_CASH_ADVANCE_TEST(1, 3, 50.00),
+    MULTIPLE_CASH_ADVANCE_TEST(1, 6, 290.00),
+    ORPHANED_CASH_ADVANCE_TEST(1, 2, 200.00);
 
     public final Integer batchSequenceNumber;
     public final String universityFiscalYear;

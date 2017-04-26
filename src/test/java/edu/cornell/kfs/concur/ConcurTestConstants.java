@@ -12,6 +12,7 @@ public class ConcurTestConstants {
     public static final String CHART_QQ = "QQ";
     public static final String OBJ_6200 = "6200";
     public static final String OBJ_7777 = "7777";
+    public static final String OBJ_1414 = "1414";
     public static final String SUB_OBJ_333 = "333";
     public static final String SUB_OBJ_864 = "864";
     public static final String ACCT_1234321 = "1234321";
@@ -29,10 +30,25 @@ public class ConcurTestConstants {
     public static final int FY_2017 = 2017;
     public static final String DEFAULT_POLICY_NAME = "Travel";
     public static final String DEFAULT_EXPENSE_TYPE_NAME = "Hotel";
+    public static final String REPORT_ENTRY_ID_1 = "1234";
+    public static final String REPORT_ENTRY_ID_2 = "1235";
+    public static final String REPORT_ENTRY_ID_3 = "2234";
+    public static final String CASH_ADVANCE_KEY_1 = "101";
+    public static final String CASH_ADVANCE_KEY_2 = "102";
+    public static final String CASH_ADVANCE_KEY_NONEXISTENT = "999";
+    public static final String REQUEST_ID_1 = "A1B2C3D4E5F6G7H8I9J0";
+    public static final String REQUEST_ID_2 = "ZZ11YY22XX33WW44VV55";
+    public static final String SOURCE_DOC_NUMBER_1 = "10987654";
+    public static final String TEST_FILE_NAME = "testFile01.txt";
 
     public static final String DASH_SUB_ACCOUNT_NUMBER = "-----";
     public static final String DASH_SUB_OBJECT_CODE = "---";
     public static final String DASH_PROJECT_CODE = "----------";
+
+    public static class PropertyTestValues {
+        public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
+        public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
+    }
 
     public static class ParameterTestValues {
         public static final String OBJECT_CODE_OVERRIDE = "6750";

@@ -5,12 +5,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.easymock.Capture;
@@ -26,23 +30,29 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
+import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
+import edu.cornell.kfs.concur.batch.fixture.ConcurRequestedCashAdvanceFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEDetailLineFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEFileFixture;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
@@ -50,6 +60,9 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected static final int MIN_YEAR = 2000;
 
     protected TestConcurStandardAccountingExtractCollectorBatchBuilder builder;
+    protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
+    protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
+    protected ConfigurationService configurationService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -57,11 +70,15 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     @Before
     public void setUp() throws Exception {
+        concurRequestedCashAdvanceService = buildMockRequestedCashAdvanceService();
+        concurStandardAccountingExtractCashAdvanceService = new ConcurStandardAccountingExtractCashAdvanceServiceImpl();
+        configurationService = buildMockConfigurationService();
         optionsService = buildMockOptionsService();
         universityDateService = buildMockUniversityDateService();
         dateTimeService = new DateTimeServiceImpl();
         concurSAEValidationService = buildMockConcurSAEValidationService();
         builder = new TestConcurStandardAccountingExtractCollectorBatchBuilder(
+                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
                 optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getParameterValue);
     }
 
@@ -131,6 +148,36 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.CANCELED_TRIP_TEST, ConcurSAEFileFixture.CANCELED_TRIP_TEST);
     }
 
+    @Test
+    public void testFullyUsedCashAdvance() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.FULL_USE_CASH_ADVANCE_TEST, ConcurSAEFileFixture.FULL_USE_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testPartiallyUsedCashAdvance() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.PARTIAL_USE_CASH_ADVANCE_TEST, ConcurSAEFileFixture.PARTIAL_USE_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testExpensesGreaterThanCashAdvanceAmount() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.EXPENSE_EXCEEDS_CASH_ADVANCE_TEST, ConcurSAEFileFixture.EXPENSE_EXCEEDS_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testCashAdvancesAcrossMultipleReportIds() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MULTIPLE_CASH_ADVANCE_TEST, ConcurSAEFileFixture.MULTIPLE_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testExcludeRowsForReportIdWhenCashAdvanceObjectDoesNotExist() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ORPHANED_CASH_ADVANCE_TEST, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST);
+    }
+
     protected void assertCollectorBatchIsBuiltProperly(
             ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();
@@ -146,6 +193,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         
         assertReportHasCorrectErrorLinesAndOrdering(lineFixtures, reportData);
         assertReportHasCorrectPendingClientLinesAndOrdering(lineFixtures, reportData);
+        assertReportHasCorrectCashAdvanceStatistics(lineFixtures, reportData);
         assertReportHasCorrectCorporateCardStatistics(lineFixtures, reportData);
         assertReportHasCorrectPseudoPaymentCodeStatistics(lineFixtures, reportData);
     }
@@ -199,7 +247,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected void assertReportHasCorrectErrorLinesAndOrdering(
             List<ConcurSAEDetailLineFixture> lineFixtures, ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
-        assertReportHasCorrectLinesAndOrdering(lineFixtures, this::fixtureFailsMinimalTestValidation,
+        Set<String> reportIdsWithOrphanedCashAdvances = lineFixtures.stream()
+                .filter(this::fixtureRepresentsOrphanedCashAdvanceLine)
+                .map(ConcurSAEDetailLineFixture::getReportId)
+                .collect(Collectors.toCollection(HashSet::new));
+        
+        assertReportHasCorrectLinesAndOrdering(lineFixtures,
+                (fixture) -> fixtureFailsMinimalTestValidation(fixture) || reportIdsWithOrphanedCashAdvances.contains(fixture.reportId),
                 reportData.getValidationErrorFileLines(), (expectedLine, actualLine) -> {});
     }
 
@@ -245,6 +299,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertEquals("Wrong expense type name", ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME, actualLine.getExpenseTypeName());
     }
 
+    protected void assertReportHasCorrectCashAdvanceStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
+            ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
+        assertReportStatisticHasCorrectTotals(lineFixtures,
+                this::fixtureRepresentsCashAdvanceLine, reportData.getCashAdvancesRelatedToExpenseReports());
+    }
+
     protected void assertReportHasCorrectCorporateCardStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
             ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
         assertReportStatisticHasCorrectTotals(lineFixtures,
@@ -280,6 +340,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 && (fixtureRepresentsCashLine(fixture) || fixtureRepresentsCorporateCardLine(fixture));
     }
 
+    protected boolean fixtureRepresentsCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.isNotBlank(fixture.cashAdvanceKey);
+    }
+
+    protected boolean fixtureRepresentsOrphanedCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(ConcurTestConstants.CASH_ADVANCE_KEY_NONEXISTENT, fixture.cashAdvanceKey);
+    }
+
     protected boolean fixtureRepresentsCashLine(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.equals(ConcurConstants.PAYMENT_CODE_CASH, fixture.paymentCode);
     }
@@ -294,6 +362,33 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected boolean fixtureRepresentsPendingClientLine(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.equals(ConcurConstants.PENDING_CLIENT, fixture.journalAccountCode);
+    }
+
+    protected ConcurRequestedCashAdvanceService buildMockRequestedCashAdvanceService() {
+        return buildMockService(ConcurRequestedCashAdvanceService.class, (service) -> {
+            EasyMock.expect(
+                    service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_1))
+                    .andStubReturn(Collections.singletonList(
+                            ConcurRequestedCashAdvanceFixture.CASH_ADVANCE_50.toRequestedCashAdvance()));
+            EasyMock.expect(
+                    service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_2))
+                    .andStubReturn(Collections.singletonList(
+                            ConcurRequestedCashAdvanceFixture.CASH_ADVANCE_200.toRequestedCashAdvance()));
+            EasyMock.expect(
+                    service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_NONEXISTENT))
+                    .andStubReturn(Collections.emptyList());
+        });
+    }
+
+    protected ConfigurationService buildMockConfigurationService() {
+        return buildMockService(ConfigurationService.class, (service) -> {
+            EasyMock.expect(
+                    service.getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE))
+                    .andStubReturn(PropertyTestValues.GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE);
+            EasyMock.expect(
+                    service.getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_ORPHANED_CASH_ADVANCE))
+                    .andStubReturn(PropertyTestValues.ORPHANED_CASH_ADVANCE_MESSAGE);
+        });
     }
 
     protected OptionsService buildMockOptionsService() {
@@ -422,10 +517,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             extends ConcurStandardAccountingExtractCollectorBatchBuilder {
         
         public TestConcurStandardAccountingExtractCollectorBatchBuilder(
-                OptionsService optionsService,
+                ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
+                ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService,
+                ConfigurationService configurationService, OptionsService optionsService,
                 UniversityDateService universityDateService, DateTimeService dateTimeService,
                 ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterFinder) {
-            super(optionsService, universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
+            super(concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
+                    optionsService, universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
         }
         
         @Override
