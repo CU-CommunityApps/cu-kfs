@@ -332,6 +332,7 @@
 	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	    <property name="batchInputFileService" ref="batchInputFileService" />
 	    <property name="batchInputFileType" ref="concurRequestExtractInputFileType" />
+	    <property name="concurRequestExtractReportService" ref="concurRequestExtractReportService" />
 	</bean>
 
     <bean id="concurRequestedCashAdvanceService" parent="concurRequestedCashAdvanceService-parentBean" />
@@ -506,6 +507,25 @@
 
     <bean id="concurReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
         <property name="filePath" value="${reports.directory}/cncr"/>
+    </bean>
+
+    <bean id="concurRequestExtractReportService" parent="concurRequestExtractReportService-parentBean" />
+    <bean id="concurRequestExtractReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractReportServiceImpl" abstract="true">
+        <property name="reportWriterService" ref="concurReportWriterService" />
+        <property name="fileNamePrefixFirstPart" value="request-extract-report-for--"/>
+        <property name="fileNamePrefixSecondPart" value="--"/>
+        <property name="reportTitle" value="Report for Concur Request Extract File Creating KFS PDP File"/>
+        <property name="reportConcurFileNameLabel" value="Report is for Concur Request Extract File : "/>
+        <property name="summarySubTitle" value="Summary of Record Counts and Dollar Amounts"/>
+        <property name="cashAdvancesProcessedInPdpLabel" value="Cash Advances Processed in PDP :"/>
+        <property name="recordsNotSentToPdpSubLabel" value="Records Not Sent to PDP"/>
+        <property name="cashAdvancesBypassedRelatedToExpenseReportLabel" value="Bypassed Cash Advances Related to Expense Report :"/>
+        <property name="recordsBypassedTravelRequestOnlyLabel" value="Records Bypassed as Travel Requests Only :"/>
+        <property name="duplicateCashAdvanceRequestsLabel" value="Duplicate Cash Advance Request :"/>
+        <property name="clonedCashAdvanceRequestsLabel" value="Cloned Cash Advance Request :"/>
+        <property name="cashAdvancesNotProcessedValidationErrorsLabel" value="Cash Advance Requests With Validation Errors :"/>
+        <property name="totalsForFileLabel" value="Total of All Records Listed Above:"/>
+        <property name="reportValidationErrorsSubTitle" value="Concur Request Extract Records With Validation Errors"/>
     </bean>
 
 </beans>

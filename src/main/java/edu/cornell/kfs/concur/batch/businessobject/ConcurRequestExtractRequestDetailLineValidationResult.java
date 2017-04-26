@@ -8,6 +8,7 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
     private boolean cashAdvanceLine;
     private boolean clonedCashAdvance;
     private boolean cashAdvanceUsedInExpenseReport;
+    private boolean duplicatedCashAdvanceLine;
     private boolean validCashAdvanceLine;
 
     public ConcurRequestExtractRequestDetailLineValidationResult() {
@@ -15,6 +16,7 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
         this.cashAdvanceLine = false;
         this.clonedCashAdvance = false;
         this.cashAdvanceUsedInExpenseReport = false;
+        this.duplicatedCashAdvanceLine = false;
         this.validCashAdvanceLine = false;
     }
 
@@ -52,6 +54,18 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
 
     public void setCashAdvanceUsedInExpenseReport(boolean cashAdvanceUsedInExpenseReport) {
         this.cashAdvanceUsedInExpenseReport = cashAdvanceUsedInExpenseReport;
+    }
+
+    public boolean isDuplicatedCashAdvanceLine() {
+        return duplicatedCashAdvanceLine;
+    }
+
+    public boolean isNotDuplicatedCashAdvanceLine() {
+        return !duplicatedCashAdvanceLine;
+    }
+
+    public void setDuplicatedCashAdvanceLine(boolean duplicatedCashAdvanceLine) {
+        this.duplicatedCashAdvanceLine = duplicatedCashAdvanceLine;
     }
 
     public boolean isValidCashAdvanceLine() {
