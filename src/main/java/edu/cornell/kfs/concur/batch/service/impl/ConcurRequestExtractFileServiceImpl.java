@@ -20,10 +20,12 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
+import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurCashAdvancePdpFeedFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
 
 public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtractFileService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileServiceImpl.class);
@@ -32,6 +34,7 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurRequestExtractFileValidationService concurRequestExtractFileValidationService;
     protected ConcurCashAdvancePdpFeedFileService concurCashAdvancePdpFeedFileService;
+    protected ConcurRequestExtractReportService concurRequestExtractReportService;
 
     public List<String> getUnprocessedRequestExtractFiles() {
         List<String> fileNamesToLoad = getBatchInputFileService().listInputFileNamesWithDoneFile(getBatchInputFileType());
@@ -41,13 +44,15 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
     public boolean processFile(String requestExtractFullyQualifiedFileName) {
         boolean processingSuccessful = false;
         ConcurRequestExtractFile requestExtractFile = loadFileIntoParsedDataObject(requestExtractFullyQualifiedFileName);
-        if (getConcurRequestExtractFileValidationService().requestExtractHeaderRowValidatesToFileContents(requestExtractFile)) {
+        ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
+        reportData.setConcurFileName(parseRequestExtractFileNameFrom(requestExtractFullyQualifiedFileName));
+        if (getConcurRequestExtractFileValidationService().requestExtractHeaderRowValidatesToFileContents(requestExtractFile, reportData)) {
             List<String> uniqueRequestIdsInFile = new ArrayList<String>();
             for (ConcurRequestExtractRequestDetailFileLine detailFileLine : requestExtractFile.getRequestDetails()) {
                 getConcurRequestExtractFileValidationService().performRequestDetailLineValidation(detailFileLine, uniqueRequestIdsInFile);
             }
             requestExtractFile.setFileName(parseRequestExtractFileNameFrom(requestExtractFullyQualifiedFileName));
-            processingSuccessful = getConcurCashAdvancePdpFeedFileService().createPdpFeedFileForValidatedDetailFileLines(requestExtractFile);
+            processingSuccessful = getConcurCashAdvancePdpFeedFileService().createPdpFeedFileForValidatedDetailFileLines(requestExtractFile, reportData);
             if (processingSuccessful && StringUtils.isNotBlank(requestExtractFile.getFullyQualifiedPdpFileName())) {
                 try {
                     getConcurCashAdvancePdpFeedFileService().createDoneFileForPdpFile(requestExtractFile.getFullyQualifiedPdpFileName());
@@ -60,6 +65,7 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
                 }
             }
         }
+        getConcurRequestExtractReportService().generateReport(reportData);
         LOG.debug("method processFile:: requestExtractFile data after processing: " + KFSConstants.NEWLINE + requestExtractFile.toString());
         return processingSuccessful;
     }
@@ -121,6 +127,14 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
+    }
+
+    public ConcurRequestExtractReportService getConcurRequestExtractReportService() {
+        return concurRequestExtractReportService;
+    }
+
+    public void setConcurRequestExtractReportService(ConcurRequestExtractReportService concurRequestExtractReportService) {
+        this.concurRequestExtractReportService = concurRequestExtractReportService;
     }
 
 }

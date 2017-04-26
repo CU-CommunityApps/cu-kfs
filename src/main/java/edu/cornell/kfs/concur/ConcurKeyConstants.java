@@ -16,5 +16,8 @@ public class ConcurKeyConstants {
     public static final String CONCUR_REQUEST_EXTRACT_REQUEST_AMOUNT_INVALID = "validation.error.concur.request.extract.invalid.request.amount";
     public static final String CONCUR_REQUEST_EXTRACT_DUPLICATE_CASH_ADVANCE_DETECTED = "validation.error.concur.request.extract.duplicate.cash.advance";
     public static final String CONCUR_REQUEST_EXTRACT_INVALID_KEYS_FOR_DUPLICATE_CHECK = "validation.error.concur.request.extract.invalid.keys.duplicate.check";
-
+    public static final String CONCUR_REQUEST_EXTRACT_HEADER_ROW_COUNT_FAILED = "validation.error.concur.request.extract.header.row.count.failed";
+    public static final String CONCUR_REQUEST_EXTRACT_HAS_NO_REQUEST_DETAIL_LINES = "validation.error.concur.request.extract.no.request.detail.lines";
+    public static final String CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP = "validation.error.concur.request.extract.contains.bad.customer.profile.group";
+    public static final String CONCUR_REQUEST_EXTRACT_HEADER_AMOUNT_FILE_AMOUNT_MISMATCH = "validation.error.concur.request.extract.header.amount.file.amount.mismatch";
 }
