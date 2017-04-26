@@ -53,7 +53,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     @Override
     public ConcurStandardAccountingExtractFile parseStandardAccoutingExtractFile(String standardAccountingExtractFileName) throws ValidationException {
-        LOG.debug("parseStandardAccoutingExtractFile, Attempting to parse the file " + standardAccountingExtractFileName);
+        LOG.info("parseStandardAccoutingExtractFile, Attempting to parse the file " + standardAccountingExtractFileName);
 
         ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = loadConcurStandardAccountingExtractFile(standardAccountingExtractFileName);
         logDetailedInfoForConcurStandardAccountingExtractFile(concurStandardAccountingExtractFile);
@@ -119,9 +119,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     @Override
     public List<String> buildListOfFullyQualifiedFileNamesToBeProcessed() {
         List<String> listOfFileNames = getBatchInputFileService().listInputFileNamesWithDoneFile(getBatchInputFileType());
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isInfoEnabled()) {
             String numberOfFiles = listOfFileNames != null ? String.valueOf(listOfFileNames.size()) : "NULL";
-            LOG.debug("buildListOfFileNamesToBeProcessed number of files found to process: " + numberOfFiles);
+            LOG.info("buildListOfFileNamesToBeProcessed number of files found to process: " + numberOfFiles);
         }
         return listOfFileNames;
     }
@@ -133,11 +133,24 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile, reportData);
             pdpFeedFileBaseEntry = getConcurStandardAccountExtractPdpEntryService().createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(pdpFeedFileBaseEntry, reportData);
+            logPdpSummaryInformation(pdpFeedFileBaseEntry);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
             String pdpFullyQualifiedFilePath = getPaymentImportDirectory() + pdpFileName;
             success = marshalPdpFeedFile(pdpFeedFileBaseEntry, pdpFullyQualifiedFilePath);
+        } else {
+            LOG.error("extractPdpFeedFromStandardAccountingExtract, there are no detail lines to process.");
         }
         return success ? pdpFileName : StringUtils.EMPTY;
+    }
+    
+    private void logPdpSummaryInformation(PdpFeedFileBaseEntry pdpFeedFileBaseEntry) {
+        if(LOG.isInfoEnabled()) {
+            StringBuilder sb = new StringBuilder("logPdpSummaryInformation,");
+            sb.append(" PDP creation date: ").append(pdpFeedFileBaseEntry.getHeader().getCreationDate());
+            sb.append(", total number of payments in PDP file: ").append(pdpFeedFileBaseEntry.getTrailer().getDetailCount());
+            sb.append(", total amount to be paid: ").append(pdpFeedFileBaseEntry.getTrailer().getDetailTotAmt());
+            LOG.info(sb.toString());
+        }
     }
     
     private PdpFeedFileBaseEntry buildPdpFeedFileBaseEntry(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile, ConcurStandardAccountingExtractBatchReportData reportData) {
@@ -257,10 +270,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         try {
             if (doesPdpFileBaseEntryHaveAccountingEntries(pdpFeedFileBaseEntry)) {
                 File pdpFeedFile = getCuMarshalService().marshalObjectToXML(pdpFeedFileBaseEntry, outputFullyQualifiedFilePath);
-                LOG.debug("marshalPdpFeedFile, marshaled the file " + outputFullyQualifiedFilePath);
+                LOG.info("marshalPdpFeedFile, marshaled the file " + outputFullyQualifiedFilePath);
                 success = true;
             } else {
-                LOG.info("marshalPdpFeedFile, did not Marshal " + outputFullyQualifiedFilePath + " as there were no accounting entries");
+                LOG.info("marshalPdpFeedFile, did not marshal " + outputFullyQualifiedFilePath + " as there were no accounting entries");
             }
         } catch (JAXBException | IOException e) {
             LOG.error("marshalPdpFeedFile, There was an error marshalling the PDP feed file.", e);
