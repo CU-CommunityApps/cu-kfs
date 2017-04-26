@@ -185,7 +185,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             if (CollectionUtils.isNotEmpty(newGroupEntry.getDetail())) {
                 newBaseEntry.getGroup().add(newGroupEntry);
             } else {
-                LOG.debug("addGroupEntriesToNewBaseEntry, not adding group for" + newGroupEntry.getPayeeName());
+                LOG.info("addGroupEntriesToNewBaseEntry, not adding group for" + newGroupEntry.getPayeeName());
             }
         }
     }
@@ -207,25 +207,26 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         if (originalAccountingEntry.getAmount().isPositive()) {
             newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
         } else {
-            LOG.debug("addOnlyPositiveAccountingEntryForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
+            LOG.info("addOnlyPositiveAccountingEntryForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
         }
     }
 
     private void addNewPaymentDetailToGroupIfTotalIsPositive(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("addNewPaymentDetailToGroupIfTotalIsPositive, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
-        }
         if (originalDetailTransactionTotal.isPositive()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("addNewPaymentDetailToGroupIfTotalIsPositive, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
+            }
             newGroupEntry.getDetail().add(newDetailEntry);
         } else {
-            if (LOG.isDebugEnabled()) {
-                StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroupIfTotalIsPositive SAE transactions summed to");
+            if (LOG.isInfoEnabled()) {
+                StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroupIfTotalIsPositive, Not adding detail to group for source document  ");
+                sb.append(newDetailEntry.getSourceDocNbr()).append(" with a tansaction total of ").append(originalDetailTransactionTotal);
                 if (originalDetailTransactionTotal.isNegative()) {
-                    sb.append(" a negative amount in PDP, so it will be handled by collector.");
+                    sb.append(".  A negative amount, it will be handled by the collector");
                 } else {
-                    sb.append(" a zero amount in PDP, so no payment needs to be issued");
+                    sb.append(".  A zero amount, no payment needs to be issued");
                 }
-                LOG.debug(sb.toString());
+                LOG.info(sb.toString());
             }
             
         }
