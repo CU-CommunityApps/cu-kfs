@@ -213,8 +213,8 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     private void addNewPaymentDetailToGroupIfTotalIsPositive(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
         if (originalDetailTransactionTotal.isPositive()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("addNewPaymentDetailToGroupIfTotalIsPositive, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("addNewPaymentDetailToGroupIfTotalIsPositive, total transaction for " + newDetailEntry.getSourceDocNbr() + " detail: " + originalDetailTransactionTotal);
             }
             newGroupEntry.getDetail().add(newDetailEntry);
         } else {
@@ -222,9 +222,9 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
                 StringBuilder sb = new StringBuilder("addNewPaymentDetailToGroupIfTotalIsPositive, Not adding detail to group for source document  ");
                 sb.append(newDetailEntry.getSourceDocNbr()).append(" with a tansaction total of ").append(originalDetailTransactionTotal);
                 if (originalDetailTransactionTotal.isNegative()) {
-                    sb.append(".  A negative amount, it will be handled by the collector.");
+                    sb.append(".  A negative amount, it will be handled by the collector");
                 } else {
-                    sb.append(".  A zero amount, no payment needs to be issued.");
+                    sb.append(".  A zero amount, no payment needs to be issued");
                 }
                 LOG.info(sb.toString());
             }
