@@ -132,7 +132,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         String pdpFileName = StringUtils.EMPTY;
         if (!concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().isEmpty()){
             PdpFeedFileBaseEntry pdpFeedFileBaseEntry = buildPdpFeedFileBaseEntry(concurStandardAccountingExtractFile, reportData);
-            pdpFeedFileBaseEntry = getConcurStandardAccountExtractPdpEntryService().createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(pdpFeedFileBaseEntry, reportData);
+            //pdpFeedFileBaseEntry = getConcurStandardAccountExtractPdpEntryService().createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(pdpFeedFileBaseEntry, reportData);
             logPdpSummaryInformation(pdpFeedFileBaseEntry);
             pdpFileName = buildPdpOutputFileName(concurStandardAccountingExtractFile.getOriginalFileName());
             String pdpFullyQualifiedFilePath = getPaymentImportDirectory() + pdpFileName;
@@ -177,12 +177,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     protected boolean shouldProcessSAELineToPDP(ConcurStandardAccountingExtractDetailLine line) {
         boolean isCashLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH);
-        boolean isCBCPLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID);
         /**
-         * @todo actual compare the right field in the SAE
+         * @todo use the service call for checking these two.
          */
-        boolean isNonReimbursable = StringUtils.equals(ConcurConstants.PERSONAL_NON_REIMBURSABLE_EXPENSE, ConcurConstants.PERSONAL_NON_REIMBURSABLE_EXPENSE);
-        return isCashLine || (isCBCPLine && isNonReimbursable);
+        boolean isCBCPLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID);
+        boolean isCreditLine = StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.CREDIT);
+        boolean isPersonalExpense = true;
+        
+        return isCashLine || (isCBCPLine && isPersonalExpense && isCreditLine);
     }
     
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {

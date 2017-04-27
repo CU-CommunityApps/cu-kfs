@@ -1,6 +1,8 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -196,19 +198,59 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             KualiDecimal originalDetailTransactionTotal = KualiDecimal.ZERO;
             for (PdpFeedAccountingEntry originalAccountingEntry : originalDetailEntry.getAccounting()) {
                 originalDetailTransactionTotal = originalDetailTransactionTotal.add(originalAccountingEntry.getAmount());
-                addOnlyPositiveAccountingEntryForPDPProcessing(newDetailEntry, originalAccountingEntry);
+                newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
             }
+            cleanNewDetailEntry(newDetailEntry);
             addNewPaymentDetailToGroupIfTotalIsPositive(newGroupEntry, newDetailEntry, originalDetailTransactionTotal);
         }
     }
-
-    private void addOnlyPositiveAccountingEntryForPDPProcessing(PdpFeedDetailEntry newDetailEntry,
-            PdpFeedAccountingEntry originalAccountingEntry) {
-        if (originalAccountingEntry.getAmount().isPositive()) {
-            newDetailEntry.getAccounting().add(copyAccountingEntry(originalAccountingEntry));
-        } else {
-            LOG.info("addOnlyPositiveAccountingEntryForPDPProcessing, not adding accounting entry: " + originalAccountingEntry.toString());
+    
+    private void cleanNewDetailEntry(PdpFeedDetailEntry newDetailEntry) {
+        KualiDecimal originalDebitTotal = KualiDecimal.ZERO;
+        KualiDecimal originalCreditTotal = KualiDecimal.ZERO;
+        for (PdpFeedAccountingEntry accountingEntry : newDetailEntry.getAccounting()) {
+            if (accountingEntry.getAmount().isPositive()) {
+                originalDebitTotal = originalDebitTotal.add(accountingEntry.getAmount());
+            } else {
+                originalCreditTotal = originalCreditTotal.add(accountingEntry.getAmount());
+            }
         }
+        LOG.info("cleanNewDetailEntry, originalDebitTotal: " + originalDebitTotal + "  originalCreditTotal: " + originalCreditTotal) ;
+        if (originalCreditTotal.abs().isGreaterEqual(originalDebitTotal)) {
+            LOG.info("cleanNewDetailEntry, credits are greater than or equal to debits, so removing PDP transactions, which will prevent the detail from being added to the group");
+            newDetailEntry.getAccounting().clear();
+        } else if (!originalCreditTotal.equals(KualiDecimal.ZERO)) {
+            LOG.info("cleanNewDetailEntry, there are credits, but there are more debits, so we need to deduct the credits from the debits");
+            deductCreditAmountsFromDebitTransactions(newDetailEntry, originalCreditTotal);
+        }
+        removeNonPositiveAccountingEntriesFromDetailEntry(newDetailEntry);
+    }
+
+    private void deductCreditAmountsFromDebitTransactions(PdpFeedDetailEntry newDetailEntry, KualiDecimal originalCreditTotal) {
+        KualiDecimal totalDeductionsLeft = new KualiDecimal(originalCreditTotal.doubleValue());
+        for (PdpFeedAccountingEntry accountingEntry : newDetailEntry.getAccounting()) {
+            if (accountingEntry.getAmount().isPositive() && totalDeductionsLeft.isNegative()) {
+                KualiDecimal newTransactionAmount = accountingEntry.getAmount().add(totalDeductionsLeft);
+                if (newTransactionAmount.isNegative()) {
+                    totalDeductionsLeft = new KualiDecimal(newTransactionAmount.doubleValue());
+                    newTransactionAmount = KualiDecimal.ZERO;
+                } else {
+                    totalDeductionsLeft = KualiDecimal.ZERO;
+                }
+                LOG.info("deductCreditAmountsFromDebitTransactions, Editing transction " + accountingEntry.toString() + ". changing the amount to " + newTransactionAmount);
+                accountingEntry.setAmount(newTransactionAmount);
+            }
+        }
+    }
+
+    private void removeNonPositiveAccountingEntriesFromDetailEntry(PdpFeedDetailEntry newDetailEntry) {
+        List<PdpFeedAccountingEntry> newAccountingEntries = new ArrayList<PdpFeedAccountingEntry>();
+        for (PdpFeedAccountingEntry accountingEntry : newDetailEntry.getAccounting()) {
+            if (accountingEntry.getAmount().isPositive()) {
+                newAccountingEntries.add(accountingEntry);
+            }
+        }
+        newDetailEntry.setAccounting(newAccountingEntries);
     }
 
     private void addNewPaymentDetailToGroupIfTotalIsPositive(PdpFeedGroupEntry newGroupEntry, PdpFeedDetailEntry newDetailEntry, KualiDecimal originalDetailTransactionTotal) {
@@ -231,6 +273,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
             
         }
     }
+    
 
     private PdpFeedAccountingEntry copyAccountingEntry(PdpFeedAccountingEntry accountingEntry) {
         PdpFeedAccountingEntry newAccountingEntry = new PdpFeedAccountingEntry();

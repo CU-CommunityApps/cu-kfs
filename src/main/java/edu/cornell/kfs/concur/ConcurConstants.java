@@ -65,7 +65,6 @@ public class ConcurConstants {
     public static final String EMPLOYEE_STATUS_CODE = "EMPLOYEE";
     public static final String NON_EMPLOYEE_STATUS_CODE = "NON-EMPLOYEE";
     public static final String PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX = "pdp_concur_";
-    public static final String PERSONAL_NON_REIMBURSABLE_EXPENSE = "Personal/Non Reimbursable";
 
     public static final String COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX = "gl_collector_concur_";
     public static final String COLLECTOR_HEADER_RECORD_TYPE = "HD";
