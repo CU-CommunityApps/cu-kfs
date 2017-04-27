@@ -103,6 +103,7 @@
 		<property name="collectorFlatFileSerializerService" ref="concurCollectorFlatFileSerializerService"/>
 		<property name="batchFileLookupableHelperService" ref="batchFileLookupableHelperService"/>
 		<property name="configurationService" ref="configurationService"/>
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 		<property name="optionsService" ref="optionsService"/>
 		<property name="universityDateService" ref="universityDateService"/>
 		<property name="dateTimeService" ref="dateTimeService"/>
@@ -115,6 +116,7 @@
 		<property name="parameterService" ref="parameterService"/>
 		<property name="personService" ref="personService"/>
 		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractCashAdvanceService" parent="concurStandardAccountingExtractCashAdvanceService-parentBean" />

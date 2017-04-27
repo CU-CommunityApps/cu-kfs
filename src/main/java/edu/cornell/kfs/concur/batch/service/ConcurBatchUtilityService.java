@@ -5,7 +5,7 @@ import java.sql.Date;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.exception.FileStorageException;
 
-import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 
 public interface ConcurBatchUtilityService {
@@ -98,5 +98,15 @@ public interface ConcurBatchUtilityService {
      * @param fullyQualifiedFileName
      */
     void removeDoneFileFor(String fullyQualifiedFileName) throws FileStorageException;
+    
+    /**
+     * Determines whether the given SAE detail line represents a corporate card transaction
+     * that was used to pay a personal expense. Such transactions should not be reimbursed
+     * to the traveler.
+     * 
+     * @param line The SAE line object to examine.
+     * @return True if the SAE line is a corporate card charge and is flagged as a personal expense, false otherwise.
+     */
+    boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine line);
     
 }

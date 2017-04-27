@@ -51,6 +51,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorI
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
@@ -63,6 +64,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConfigurationService configurationService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -73,13 +75,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         concurRequestedCashAdvanceService = buildMockRequestedCashAdvanceService();
         concurStandardAccountingExtractCashAdvanceService = new ConcurStandardAccountingExtractCashAdvanceServiceImpl();
         configurationService = buildMockConfigurationService();
+        concurBatchUtilityService = new ConcurBatchUtilityServiceImpl();
         optionsService = buildMockOptionsService();
         universityDateService = buildMockUniversityDateService();
         dateTimeService = new DateTimeServiceImpl();
         concurSAEValidationService = buildMockConcurSAEValidationService();
         builder = new TestConcurStandardAccountingExtractCollectorBatchBuilder(
                 concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
-                optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getParameterValue);
+                concurBatchUtilityService, optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getParameterValue);
     }
 
     @Test
@@ -519,11 +522,11 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         public TestConcurStandardAccountingExtractCollectorBatchBuilder(
                 ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
                 ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService,
-                ConfigurationService configurationService, OptionsService optionsService,
+                ConfigurationService configurationService, ConcurBatchUtilityService concurBatchUtilityService, OptionsService optionsService,
                 UniversityDateService universityDateService, DateTimeService dateTimeService,
                 ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> parameterFinder) {
             super(concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
-                    optionsService, universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
+                    concurBatchUtilityService, optionsService, universityDateService, dateTimeService, concurSAEValidationService, parameterFinder);
         }
         
         @Override

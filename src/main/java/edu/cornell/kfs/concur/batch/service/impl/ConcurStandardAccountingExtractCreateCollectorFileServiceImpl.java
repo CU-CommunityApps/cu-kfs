@@ -21,6 +21,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
@@ -44,6 +45,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
     protected LookupableHelperService batchFileLookupableHelperService;
     protected ConfigurationService configurationService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -83,7 +85,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
         return new ConcurStandardAccountingExtractCollectorBatchBuilder(
-                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService,
+                concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService, configurationService, concurBatchUtilityService,
                 optionsService, universityDateService, dateTimeService, concurSAEValidationService, this::getConcurParameterValueAsString);
     }
 
@@ -162,6 +164,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
     public void setOptionsService(OptionsService optionsService) {

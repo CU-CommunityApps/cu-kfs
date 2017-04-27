@@ -25,6 +25,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorI
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
@@ -64,6 +65,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConfigurationService configurationService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     protected OptionsService optionsService;
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
@@ -79,7 +81,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     public ConcurStandardAccountingExtractCollectorBatchBuilder(
             ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
             ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService,
-            ConfigurationService configurationService, OptionsService optionsService,
+            ConfigurationService configurationService, ConcurBatchUtilityService concurBatchUtilityService, OptionsService optionsService,
             UniversityDateService universityDateService, DateTimeService dateTimeService,
             ConcurStandardAccountingExtractValidationService concurSAEValidationService, Function<String,String> concurParameterGetter) {
         if (concurRequestedCashAdvanceService == null) {
@@ -88,6 +90,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
             throw new IllegalArgumentException("concurStandardAccountingExtractCashAdvanceService cannot be null");
         } else if (configurationService == null) {
             throw new IllegalArgumentException("configurationService cannot be null");
+        } else if (concurBatchUtilityService == null) {
+            throw new IllegalArgumentException("concurBatchUtilityService cannot be null");
         } else if (optionsService == null) {
             throw new IllegalArgumentException("optionsService cannot be null");
         } else if (universityDateService == null) {
@@ -103,6 +107,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.concurRequestedCashAdvanceService = concurRequestedCashAdvanceService;
         this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
         this.configurationService = configurationService;
+        this.concurBatchUtilityService = concurBatchUtilityService;
         this.optionsService = optionsService;
         this.universityDateService = universityDateService;
         this.dateTimeService = dateTimeService;
@@ -201,7 +206,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         this.collectorHelper = new ConcurDetailLineGroupForCollectorHelper(
                 actualFinancialBalanceTypeCode, collectorBatch.getTransmissionDate(),
                 concurRequestedCashAdvanceService, concurStandardAccountingExtractCashAdvanceService,
-                configurationService, dateTimeService, this::getDashValueForProperty, concurParameterGetter);
+                configurationService, concurBatchUtilityService, dateTimeService, this::getDashValueForProperty, concurParameterGetter);
     }
 
     protected String getActualFinancialBalanceTypeCodeForCollectorBatch() {
@@ -257,7 +262,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 return true;
             case ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID :
                 reportCorporateCardPayment(saeLine);
-                // Temporary hack to ignore personal expense lines until their handling has been implemented.
                 if (Boolean.TRUE.equals(saeLine.getReportEntryIsPersonalFlag())) {
                     reportUnprocessedLine(saeLine, "Ignoring personal expense on corporate card");
                     return false;
