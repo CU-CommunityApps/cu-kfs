@@ -160,7 +160,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         int totalReimbursementLineCount = 0;
         KualiDecimal totalReimbursementDollarAmount = KualiDecimal.ZERO;
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
-            if (StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH)) {
+            if (shouldProcessSAELineToPDP(line)) {
                 totalReimbursementLineCount++;
                 totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
                 logJournalAccountCodeOverridden(line, reportData);
@@ -173,6 +173,16 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         reportData.getReimbursementsInExpenseReport().setDollarAmount(totalReimbursementDollarAmount);
         pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, reportData));
         return pdpFeedFileBaseEntry;
+    }
+    
+    protected boolean shouldProcessSAELineToPDP(ConcurStandardAccountingExtractDetailLine line) {
+        boolean isCashLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH);
+        boolean isCBCPLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID);
+        /**
+         * @todo actual compare the right field in the SAE
+         */
+        boolean isNonReimbursable = StringUtils.equals(ConcurConstants.PERSONAL_NON_REIMBURSABLE_EXPENSE, ConcurConstants.PERSONAL_NON_REIMBURSABLE_EXPENSE);
+        return isCashLine || (isCBCPLine && isNonReimbursable);
     }
     
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
