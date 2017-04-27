@@ -1,8 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -18,6 +16,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -33,6 +32,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected ParameterService parameterService;
     protected PersonService personService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -224,15 +224,24 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     private ConcurAccountInfo buildOverriddenConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
         String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                 CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
-        ConcurAccountInfo overriddenConcurAccountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                line.getSubAccountNumber(), overriddenObjectCode, StringUtils.EMPTY, line.getProjectCode());
-        return overriddenConcurAccountingInformation;
+        return buildConcurAccountingInformation(line, overriddenObjectCode, StringUtils.EMPTY);
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurAccountInfo accountingInformation = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
-                line.getSubAccountNumber(), line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode());
+        ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(
+                line, line.getJournalAccountCode(), line.getSubObjectCode());
         buildValidationResult(accountingInformation, false);
+    }
+    
+    private ConcurAccountInfo buildConcurAccountingInformation(
+            ConcurStandardAccountingExtractDetailLine line, String objectCode, String subObjectCode) {
+        if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
+            return new ConcurAccountInfo(line.getReportChartOfAccountsCode(), line.getReportAccountNumber(), 
+                    line.getReportSubAccountNumber(), objectCode, subObjectCode, line.getReportProjectCode());
+        } else {
+            return new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), 
+                    line.getSubAccountNumber(), objectCode, subObjectCode, line.getProjectCode());
+        }
     }
     
     private ValidationResult buildValidationResult(ConcurAccountInfo accountingInfo, boolean isOverriddenInfo) {
@@ -275,6 +284,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setConcurStandardAccountingExtractCashAdvanceService(ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService) {
         this.concurStandardAccountingExtractCashAdvanceService = concurStandardAccountingExtractCashAdvanceService;
+    }
+
+    public ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return concurBatchUtilityService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
 }

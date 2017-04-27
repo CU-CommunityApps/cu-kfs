@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -20,13 +21,17 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  * 
  * The setup of the line sequence number will be handled by ConcurSAEFileFixture
  * when it converts this enum's fixtures into ConcurStandardAccountingExtractDetailLine POJOs.
+ * Also, the reportEntryIsPersonalFlag is being stored as a "Y"/"N" String, to allow
+ * for simplified overriding via the related utility classes and methods.
  */
 public enum ConcurSAEDetailLineFixture {
 
     DEFAULT_DEBIT(null, ConcurEmployeeFixture.JOHN_DOE, ConcurTestConstants.REPORT_ID_1,
             ConcurConstants.PAYMENT_CODE_CASH, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
-            ConcurConstants.DEBIT, 50.00, "12/24/2016", null, ConcurTestConstants.REPORT_ENTRY_ID_1),
+            ConcurConstants.DEBIT, 50.00, "12/24/2016", null, ConcurTestConstants.REPORT_ENTRY_ID_1,
+            KRADConstants.NO_INDICATOR_VALUE, ParameterTestValues.COLLECTOR_CHART_CODE,
+            ConcurTestConstants.DEFAULT_REPORT_ACCOUNT, null, null, null, null),
     DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00),
     DEFAULT_CASH_ADVANCE(DEFAULT_CREDIT, null,
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY),
@@ -196,6 +201,13 @@ public enum ConcurSAEDetailLineFixture {
     public final String reportEndDate;
     public final String cashAdvanceKey;
     public final String reportEntryId;
+    public final String reportEntryIsPersonalFlag;
+    public final String reportChartOfAccountsCode;
+    public final String reportAccountNumber;
+    public final String reportSubAccountNumber;
+    public final String reportSubObjectCode;
+    public final String reportProjectCode;
+    public final String reportOrgRefId;
 
     @SafeVarargs
     private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
@@ -249,14 +261,23 @@ public enum ConcurSAEDetailLineFixture {
                 journalAmount,
                 overrideMap.getOrDefault(LineField.REPORT_END_DATE, baseFixture.reportEndDate), 
                 overrideMap.getOrDefault(LineField.CASH_ADVANCE_KEY, baseFixture.cashAdvanceKey),
-                overrideMap.getOrDefault(LineField.REPORT_ENTRY_ID, baseFixture.reportEntryId));
+                overrideMap.getOrDefault(LineField.REPORT_ENTRY_ID, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_ENTRY_IS_PERSONAL_FLAG, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_CHART_OF_ACCOUNTS_CODE, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_ACCOUNT_NUMBER, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_SUB_ACCOUNT_NUMBER, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_SUB_OBJECT_CODE, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_PROJECT_CODE, baseFixture.reportEntryId),
+                overrideMap.getOrDefault(LineField.REPORT_ORG_REF_ID, baseFixture.reportEntryId));
     }
 
     private ConcurSAEDetailLineFixture(ConcurSAEFileFixture extractFile, ConcurEmployeeFixture employee,
             String reportId, String paymentCode, String chartOfAccountsCode,
             String journalAccountCode, String accountNumber, String subAccountNumber, String subObjectCode,
             String projectCode, String orgRefId, String journalDebitCredit, double journalAmount, String reportEndDate,
-            String cashAdvanceKey, String reportEntryId) {
+            String cashAdvanceKey, String reportEntryId, String reportEntryIsPersonalFlag,
+            String reportChartOfAccountsCode, String reportAccountNumber, String reportSubAccountNumber,
+            String reportSubObjectCode, String reportProjectCode, String reportOrgRefId) {
         this.extractFile = extractFile;
         this.employee = employee;
         this.reportId = reportId;
@@ -273,6 +294,13 @@ public enum ConcurSAEDetailLineFixture {
         this.reportEndDate = reportEndDate;
         this.cashAdvanceKey = cashAdvanceKey;
         this.reportEntryId = reportEntryId;
+        this.reportEntryIsPersonalFlag = reportEntryIsPersonalFlag;
+        this.reportChartOfAccountsCode = reportChartOfAccountsCode;
+        this.reportAccountNumber = reportAccountNumber;
+        this.reportSubAccountNumber = reportSubAccountNumber;
+        this.reportSubObjectCode = reportSubObjectCode;
+        this.reportProjectCode = reportProjectCode;
+        this.reportOrgRefId = reportOrgRefId;
     }
 
     public ConcurStandardAccountingExtractDetailLine toDetailLine() {
@@ -307,8 +335,18 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setExpenseType(ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME);
         detailLine.setCashAdvanceKey(cashAdvanceKey);
         detailLine.setReportEntryId(reportEntryId);
-        
+        detailLine.setReportEntryIsPersonalFlag(getReportEntryIsPersonalFlagAsBoolean());
+        detailLine.setReportChartOfAccountsCode(reportChartOfAccountsCode);
+        detailLine.setReportAccountNumber(reportAccountNumber);
+        detailLine.setReportSubAccountNumber(reportSubAccountNumber);
+        detailLine.setReportSubObjectCode(reportSubObjectCode);
+        detailLine.setReportProjectCode(reportProjectCode);
+        detailLine.setReportOrgRefId(reportOrgRefId);
         return detailLine;
+    }
+
+    public Boolean getReportEntryIsPersonalFlagAsBoolean() {
+        return Boolean.valueOf(KRADConstants.YES_INDICATOR_VALUE.equals(reportEntryIsPersonalFlag));
     }
 
     // This getter is primarily meant for use as a method reference.
@@ -342,7 +380,14 @@ public enum ConcurSAEDetailLineFixture {
         PROJECT_CODE,
         REPORT_END_DATE,
         CASH_ADVANCE_KEY,
-        REPORT_ENTRY_ID;
+        REPORT_ENTRY_ID,
+        REPORT_ENTRY_IS_PERSONAL_FLAG,
+        REPORT_CHART_OF_ACCOUNTS_CODE,
+        REPORT_ACCOUNT_NUMBER,
+        REPORT_SUB_ACCOUNT_NUMBER,
+        REPORT_SUB_OBJECT_CODE,
+        REPORT_PROJECT_CODE,
+        REPORT_ORG_REF_ID;
     }
 
 }
