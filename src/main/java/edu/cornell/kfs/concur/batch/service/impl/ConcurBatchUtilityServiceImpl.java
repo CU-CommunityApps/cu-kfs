@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -26,6 +25,7 @@ import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.kfs.sys.service.FileStorageService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -126,6 +126,12 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
             IOUtils.closeQuietly(fileContents);
         }
         return fileByteContent;
+    }
+
+    @Override
+    public boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine line) {
+        return Boolean.TRUE.equals(line.getReportEntryIsPersonalFlag())
+                && StringUtils.equals(ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, line.getPaymentCode());
     }
 
     public DateTimeService getDateTimeService() {
