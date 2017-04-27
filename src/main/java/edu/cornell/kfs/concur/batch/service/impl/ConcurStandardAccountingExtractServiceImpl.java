@@ -25,6 +25,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
@@ -45,6 +46,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected BatchInputFileService batchInputFileService;
     protected CUMarshalService cuMarshalService;
     protected BatchInputFileType batchInputFileType;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     protected ConcurStandardAccountExtractPdpEntryService concurStandardAccountExtractPdpEntryService;
     protected ConcurStandardAccountingExtractCreateCollectorFileService concurStandardAccountingExtractCreateCollectorFileService;
@@ -177,14 +179,9 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     
     protected boolean shouldProcessSAELineToPDP(ConcurStandardAccountingExtractDetailLine line) {
         boolean isCashLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH);
-        /**
-         * @todo use the service call for checking these two.
-         */
-        boolean isCBCPLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID);
+        boolean isPersonalExpeseChargedToCorporateCard = getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line);
         boolean isCreditLine = StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.CREDIT);
-        boolean isPersonalExpense = true;
-        
-        return isCashLine || (isCBCPLine && isPersonalExpense && isCreditLine);
+        return isCashLine || (isPersonalExpeseChargedToCorporateCard && isCreditLine);
     }
     
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
@@ -249,6 +246,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         if (getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
             concurAccountInfo = getConcurStandardAccountingExtractCashAdvanceService().findAccountingInfoForCashAdvanceLine(line, 
                     concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines());
+        } else if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
+            concurAccountInfo = new ConcurAccountInfo(line.getReportChartOfAccountsCode(), line.getReportAccountNumber(), 
+                    line.getReportSubAccountNumber(), line.getJournalAccountCode(), line.getReportSubObjectCode(), line.getReportProjectCode(), 
+                    line.getReportOrgRefId());
         } else {
             concurAccountInfo = new ConcurAccountInfo(line.getChartOfAccountsCode(), line.getAccountNumber(), line.getSubAccountNumber(), 
                     line.getJournalAccountCode(), line.getSubObjectCode(), line.getProjectCode(), line.getOrgRefId());
@@ -401,6 +402,14 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
 
     public void setBatchInputFileType(BatchInputFileType batchInputFileType) {
         this.batchInputFileType = batchInputFileType;
+    }
+
+    public ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return concurBatchUtilityService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
     public ConcurStandardAccountingExtractValidationService getConcurStandardAccountingExtractValidationService() {
