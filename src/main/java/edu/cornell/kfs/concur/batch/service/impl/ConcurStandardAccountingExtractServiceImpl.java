@@ -163,8 +163,10 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         KualiDecimal totalReimbursementDollarAmount = KualiDecimal.ZERO;
         for (ConcurStandardAccountingExtractDetailLine line : concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines()) {
             if (shouldProcessSAELineToPDP(line)) {
-                totalReimbursementLineCount++;
-                totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
+                if (shouldLineTotalsBeAddedToReimbursementReportTotals(line)) {
+                    totalReimbursementLineCount++;
+                    totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
+                }
                 logJournalAccountCodeOverridden(line, reportData);
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line, reportData)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line, concurStandardAccountingExtractFile);
@@ -175,6 +177,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         reportData.getReimbursementsInExpenseReport().setDollarAmount(totalReimbursementDollarAmount);
         pdpFeedFileBaseEntry.setTrailer(getConcurStandardAccountExtractPdpEntryService().buildPdpFeedTrailerEntry(pdpFeedFileBaseEntry, reportData));
         return pdpFeedFileBaseEntry;
+    }
+    
+    private boolean shouldLineTotalsBeAddedToReimbursementReportTotals(ConcurStandardAccountingExtractDetailLine line ) {
+        boolean isPersonalExpenseChargedToCorporateCard = getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line);
+        boolean isCashAdvanceLine = getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line);
+        return !isPersonalExpenseChargedToCorporateCard && !isCashAdvanceLine;
     }
     
     protected boolean shouldProcessSAELineToPDP(ConcurStandardAccountingExtractDetailLine line) {
