@@ -2,6 +2,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
@@ -35,6 +36,10 @@ public class ConcurDetailLineSubGroupForCollector {
                 throw new IllegalArgumentException("Found a row with an unprocessable payment code; this should NEVER happen! Code: "
                         + detailLine.getPaymentCode());
         }
+    }
+
+    public Stream<ConcurStandardAccountingExtractDetailLine> getCashLinesAsStream() {
+        return cashLines.stream();
     }
 
     public List<ConcurStandardAccountingExtractDetailLine> getCashLines() {
