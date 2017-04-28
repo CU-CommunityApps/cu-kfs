@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +39,11 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     protected ParameterService parameterService;
     
     private Integer payeeNameFieldSize;
+    
+    protected enum DebitCreditTotal {
+        DEBIT,
+        CREDIT;
+    }
 
     @Override
     public PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
@@ -208,14 +213,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
     
     protected void cleanAccountingEntriesInDetailEntry(PdpFeedDetailEntry newDetailEntry) {
-        Map<DebitCreditTotal, KualiDecimal> totals = caluclateTotals(newDetailEntry);
+        Map<DebitCreditTotal, KualiDecimal> totals = calculateTotals(newDetailEntry);
         KualiDecimal originalDebitTotal = totals.get(DebitCreditTotal.DEBIT);
         KualiDecimal originalCreditTotal = totals.get(DebitCreditTotal.CREDIT);
         
         if (areThereMoreCreditsThanDebits(originalDebitTotal, originalCreditTotal)) {
             LOG.info("cleanAccountingEntriesInDetailEntry, credits are greater than or equal to debits, so removing PDP transactions");
             newDetailEntry.getAccounting().clear();
-        } else if (shouldDecductCreditsFromDebits(originalDebitTotal, originalCreditTotal)) {
+        } else if (shouldDeductCreditsFromDebits(originalDebitTotal, originalCreditTotal)) {
             LOG.info("cleanAccountingEntriesInDetailEntry, deduct credits from debits required");
             deductCreditAmountsFromDebitTransactions(newDetailEntry, originalCreditTotal);
         } else {
@@ -224,7 +229,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
         removeNonPositiveAccountingEntriesFromDetailEntry(newDetailEntry);
     }
     
-    protected Map<DebitCreditTotal, KualiDecimal> caluclateTotals(PdpFeedDetailEntry detailEntry) {
+    protected EnumMap<DebitCreditTotal, KualiDecimal> calculateTotals(PdpFeedDetailEntry detailEntry) {
         KualiDecimal debitTotal = KualiDecimal.ZERO;
         KualiDecimal creditTotal = KualiDecimal.ZERO;
         for (PdpFeedAccountingEntry accountingEntry : detailEntry.getAccounting()) {
@@ -234,19 +239,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
                 creditTotal = creditTotal.add(accountingEntry.getAmount());
             }
         }
-        Map<DebitCreditTotal, KualiDecimal> totals = new HashMap<DebitCreditTotal, KualiDecimal>();
+        LOG.info("calculateTotals, debitTotal: " + debitTotal + "  creditTotal: " + creditTotal) ;
+        EnumMap<DebitCreditTotal, KualiDecimal> totals = new EnumMap<DebitCreditTotal, KualiDecimal>(DebitCreditTotal.class);
         totals.put(DebitCreditTotal.CREDIT, creditTotal);
         totals.put(DebitCreditTotal.DEBIT, debitTotal);
-        LOG.info("caluclateTotals, debitTotal: " + debitTotal + "  creditTotal: " + creditTotal) ;
         return totals;
     }
     
-    protected enum DebitCreditTotal {
-        DEBIT,
-        CREDIT;
-    }
-    
-    private boolean shouldDecductCreditsFromDebits(KualiDecimal originalDebitTotal, KualiDecimal originalCreditTotal) {
+    private boolean shouldDeductCreditsFromDebits(KualiDecimal originalDebitTotal, KualiDecimal originalCreditTotal) {
         return originalDebitTotal.isPositive() && originalCreditTotal.isNegative();
     }
 
@@ -255,12 +255,12 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     }
 
     private void deductCreditAmountsFromDebitTransactions(PdpFeedDetailEntry newDetailEntry, KualiDecimal originalCreditTotal) {
-        KualiDecimal totalDeductionsLeft = new KualiDecimal(originalCreditTotal.doubleValue());
+        KualiDecimal totalDeductionsLeft = originalCreditTotal;
         for (PdpFeedAccountingEntry accountingEntry : newDetailEntry.getAccounting()) {
             if (accountingEntry.getAmount().isPositive() && totalDeductionsLeft.isNegative()) {
                 KualiDecimal newTransactionAmount = accountingEntry.getAmount().add(totalDeductionsLeft);
                 if (newTransactionAmount.isNegative()) {
-                    totalDeductionsLeft = new KualiDecimal(newTransactionAmount.doubleValue());
+                    totalDeductionsLeft = newTransactionAmount;
                     newTransactionAmount = KualiDecimal.ZERO;
                 } else {
                     totalDeductionsLeft = KualiDecimal.ZERO;

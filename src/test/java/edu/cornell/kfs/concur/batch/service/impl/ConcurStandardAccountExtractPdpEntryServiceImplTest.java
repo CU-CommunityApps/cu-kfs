@@ -156,13 +156,13 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     @Test
     public void cleanAccountingEntriesInDetailEntry_HandleOneCredit() {
         PdpFeedDetailEntry detailEntry = PdpFeedDetailEntryFixture.DETAIL_TWO_POSITIVE_1_NEGATIVE.toPdpFeedDetailEntry();
-        Map<DebitCreditTotal, KualiDecimal> totals = pdpEntryService.caluclateTotals(detailEntry);
+        Map<DebitCreditTotal, KualiDecimal> totals = pdpEntryService.calculateTotals(detailEntry);
         assertEquals("The number of accounting entries should be 3", 3, detailEntry.getAccounting().size());
         assertTotals(totals, 15, -10);
         
         pdpEntryService.cleanAccountingEntriesInDetailEntry(detailEntry);
         
-        totals = pdpEntryService.caluclateTotals(detailEntry);
+        totals = pdpEntryService.calculateTotals(detailEntry);
         assertEquals("The number of accounting entries should be 1", 1, detailEntry.getAccounting().size());
         assertTotals(totals, 5, 0);
     }
@@ -170,13 +170,13 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
     @Test
     public void cleanAccountingEntriesInDetailEntry_HandleTwoCredits() {
         PdpFeedDetailEntry detailEntry = PdpFeedDetailEntryFixture.DETAIL_TWO_POSITIVE_2_NEGATIVE.toPdpFeedDetailEntry();
-        Map<DebitCreditTotal, KualiDecimal> totals = pdpEntryService.caluclateTotals(detailEntry);
+        Map<DebitCreditTotal, KualiDecimal> totals = pdpEntryService.calculateTotals(detailEntry);
         assertEquals("The number of accounting entries should be 4", 4, detailEntry.getAccounting().size());
         assertTotals(totals, 15, -11);
         
         pdpEntryService.cleanAccountingEntriesInDetailEntry(detailEntry);
         
-        totals = pdpEntryService.caluclateTotals(detailEntry);
+        totals = pdpEntryService.calculateTotals(detailEntry);
         assertEquals("The number of accounting entries should be 1", 1, detailEntry.getAccounting().size());
         assertTotals(totals, 4, 0);
     }
