@@ -77,6 +77,7 @@
 		<property name="batchInputFileService" ref="batchInputFileService"/>
 		<property name="batchInputFileType" ref="standardAccountExtractFileType"/>
 		<property name="cuMarshalService" ref="cuMarshalService"/>
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 		<property name="concurStandardAccountExtractPdpEntryService" ref="concurStandardAccountExtractPdpEntryService"/>
 		<property name="concurStandardAccountingExtractCreateCollectorFileService" ref="concurStandardAccountingExtractCreateCollectorFileService"/>
 		<property name="concurStandardAccountingExtractValidationService" ref="concurStandardAccountingExtractValidationService"/>
