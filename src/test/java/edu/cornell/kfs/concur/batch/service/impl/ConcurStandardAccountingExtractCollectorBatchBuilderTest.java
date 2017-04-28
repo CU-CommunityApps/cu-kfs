@@ -181,36 +181,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 ConcurCollectorBatchFixture.ORPHANED_CASH_ADVANCE_TEST, ConcurSAEFileFixture.ORPHANED_CASH_ADVANCE_TEST);
     }
 
-    @Test
-    public void testCorpCardPersonalExpensesAndNoCashExpenses() throws Exception {
-        assertCollectorBatchIsBuiltProperly(
-                ConcurCollectorBatchFixture.PERSONAL_WITHOUT_CASH_TEST, ConcurSAEFileFixture.PERSONAL_WITHOUT_CASH_TEST);
-    }
-
-    @Test
-    public void testCorpCardPersonalExpensesLessThanCashExpenses() throws Exception {
-        assertCollectorBatchIsBuiltProperly(
-                ConcurCollectorBatchFixture.CASH_EXCEEDS_PERSONAL_TEST, ConcurSAEFileFixture.CASH_EXCEEDS_PERSONAL_TEST);
-    }
-
-    @Test
-    public void testCorpCardPersonalExpensesEqualToCashExpenses() throws Exception {
-        assertCollectorBatchIsBuiltProperly(
-                ConcurCollectorBatchFixture.CASH_EQUALS_PERSONAL_TEST, ConcurSAEFileFixture.CASH_EQUALS_PERSONAL_TEST);
-    }
-
-    @Test
-    public void testCorpCardPersonalExpensesGreaterThanCashExpenses() throws Exception {
-        assertCollectorBatchIsBuiltProperly(
-                ConcurCollectorBatchFixture.PERSONAL_EXCEEDS_CASH_TEST, ConcurSAEFileFixture.PERSONAL_EXCEEDS_CASH_TEST);
-    }
-
-    @Test
-    public void testCorpCardPersonalExpensesAndCashAdvancesInSameTrip() throws Exception {
-        assertCollectorBatchIsBuiltProperly(
-                ConcurCollectorBatchFixture.PERSONAL_AND_CASH_ADVANCE_TEST, ConcurSAEFileFixture.PERSONAL_AND_CASH_ADVANCE_TEST);
-    }
-
     protected void assertCollectorBatchIsBuiltProperly(
             ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();
@@ -531,8 +501,6 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_OBJECT_CODE;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE :
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_CASH_OFFSET_OBJECT_CODE;
-            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE :
-                return ConcurTestConstants.ParameterTestValues.COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE;
             default :
                 return null;
         }
