@@ -100,7 +100,6 @@ public class CuRequisitionDocument extends RequisitionDocument {
         this.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
         this.setRequestorPersonName(currentUser.getNameUnmasked());
         this.setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
-
     }
 
     protected boolean isB2BAutoPurchaseOrder() {
