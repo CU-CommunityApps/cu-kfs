@@ -250,7 +250,8 @@ public class ConcurDetailLineGroupForCollector {
             if (totalSubGroupAmount.isNonZero()) {
                 ConcurStandardAccountingExtractDetailLine firstCreditLine = corpCardPersonalCredits.get(0);
                 addOriginEntryForCorpCardPersonalExpense(
-                        entryConsumer, firstCreditLine, collectorHelper.getPrepaidOffsetObjectCode(), totalSubGroupAmount);
+                        entryConsumer, firstCreditLine, collectorHelper.getPrepaidOffsetAccountNumber(), StringUtils.EMPTY,
+                        collectorHelper.getPrepaidOffsetObjectCode(), totalSubGroupAmount);
             }
         }
     }
@@ -299,7 +300,15 @@ public class ConcurDetailLineGroupForCollector {
 
     protected void addOriginEntryForCorpCardPersonalExpense(
             Consumer<OriginEntryFull> entryConsumer, ConcurStandardAccountingExtractDetailLine detailLine, String objectCode, KualiDecimal amount) {
-        OriginEntryFull originEntry = buildCorpCardPersonalExpenseOriginEntry(detailLine, objectCode, StringUtils.EMPTY, amount);
+        addOriginEntryForCorpCardPersonalExpense(entryConsumer, detailLine,
+                detailLine.getReportAccountNumber(), detailLine.getReportSubAccountNumber(), objectCode, amount);
+    }
+
+    protected void addOriginEntryForCorpCardPersonalExpense(
+            Consumer<OriginEntryFull> entryConsumer, ConcurStandardAccountingExtractDetailLine detailLine,
+            String accountNumber, String subAccountNumber, String objectCode, KualiDecimal amount) {
+        OriginEntryFull originEntry = buildCorpCardPersonalExpenseOriginEntry(
+                detailLine, accountNumber, subAccountNumber, objectCode, StringUtils.EMPTY, amount);
         entryConsumer.accept(originEntry);
     }
 
@@ -419,13 +428,13 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildCorpCardPersonalExpenseOriginEntry(
-            ConcurStandardAccountingExtractDetailLine detailLine, String objectCode, String subObjectCode, KualiDecimal amount) {
+            ConcurStandardAccountingExtractDetailLine detailLine, String accountNumber, String subAccountNumber,
+            String objectCode, String subObjectCode, KualiDecimal amount) {
         OriginEntryFull originEntry = new OriginEntryFull();
         
         originEntry.setChartOfAccountsCode(detailLine.getReportChartOfAccountsCode());
-        originEntry.setAccountNumber(detailLine.getReportAccountNumber());
-        originEntry.setSubAccountNumber(
-                defaultToDashesIfBlank(detailLine.getReportSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
+        originEntry.setAccountNumber(accountNumber);
+        originEntry.setSubAccountNumber(defaultToDashesIfBlank(subAccountNumber, KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
         originEntry.setFinancialObjectCode(objectCode);
         originEntry.setFinancialSubObjectCode(
                 defaultToDashesIfBlank(subObjectCode, KFSPropertyConstants.SUB_OBJECT_CODE));
