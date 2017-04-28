@@ -15,14 +15,18 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.businessobject.BillingAddress;
+import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
+import org.kuali.kfs.module.purap.businessobject.options.RequisitionStatusValuesFinder;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -33,6 +37,7 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -82,7 +87,22 @@ public class CuRequisitionDocument extends RequisitionDocument {
         return super.answerSplitNodeQuestion(nodeName);
         
     }
-    
+
+    /**
+     * Overridden to unmask name and phone number. This will be able to be removed once this fix is in the base code.
+     */
+    @Override
+    public void initiateDocument() throws WorkflowException {
+        super.initiateDocument();
+
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        this.setDeliveryToName(currentUser.getNameUnmasked());
+        this.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
+        this.setRequestorPersonName(currentUser.getNameUnmasked());
+        this.setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
+
+    }
+
     protected boolean isB2BAutoPurchaseOrder() {
         boolean returnValue = false;
  
