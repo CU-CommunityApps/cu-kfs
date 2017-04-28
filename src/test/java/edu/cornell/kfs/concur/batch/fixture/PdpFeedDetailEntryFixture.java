@@ -10,12 +10,22 @@ import edu.cornell.kfs.concur.ConcurTestConstants.PdpFeedFileConstants;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 
 public enum PdpFeedDetailEntryFixture {
-    MARSHAL_TEST( 105.28, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_25_50, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_71_45)),
+    MARSHAL_TEST( 105.28, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_25_50_WITH_SUBOBJECT_350,
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_71_45_WITH_SUBOBJECT_350)),
     DETAIL_ONE_TRANS_ZERO(0, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_0)),
-    DETAIL_ONE_TRANS_ZERO_ONE_TRANS_POSITIVE(25.50, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_0, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_25_50)),
-    DETAIL_TWO_TRANS_SUM_TO_POSITIVE(61.45, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_71_45, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10)),
-    DETAIL_TWO_TRANS_SUM_TO_ZERO(0, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_10, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10)),
-    DETAIL_TWO_TRANS_SUM_TO_NEGATIVE(-5, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_5, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10));
+    DETAIL_ONE_TRANS_ZERO_ONE_TRANS_POSITIVE(25.50, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_0, 
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_25_50_WITH_SUBOBJECT_350)),
+    DETAIL_TWO_TRANS_SUM_TO_POSITIVE(61.45, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_71_45_WITH_SUBOBJECT_350, 
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10)),
+    DETAIL_TWO_TRANS_SUM_TO_ZERO(0, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_10_WITH_SUBOBJECT_350, 
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10)),
+    DETAIL_TWO_TRANS_SUM_TO_NEGATIVE(-5, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_5_WITH_SUBOBJECT_350, 
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10)),
+    
+    DETAIL_TWO_POSITIVE_1_NEGATIVE(5, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_5, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10, 
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_10)),
+    DETAIL_TWO_POSITIVE_2_NEGATIVE(4, EnumSet.of(PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_5, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_10, 
+            PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_10, PdpFeedAccountingEntryFixture.TRANSACTION_AMOUNT_NEGATIVE_1));
     
     public final String sourceDocNbr;
     public final String invoiceNbr;

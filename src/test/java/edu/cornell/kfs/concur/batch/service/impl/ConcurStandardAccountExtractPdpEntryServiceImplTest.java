@@ -3,15 +3,20 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 
+import edu.cornell.kfs.concur.batch.fixture.PdpFeedDetailEntryFixture;
 import edu.cornell.kfs.concur.batch.fixture.PdpFeedFileBaseEntryFixture;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountExtractPdpEntryServiceImpl.DebitCreditTotal;
+import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 
 public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
@@ -146,6 +151,39 @@ public class ConcurStandardAccountExtractPdpEntryServiceImplTest {
         assertEquals("Should have 2 group in original feed file", 2, pdpFeedFileBaseEntry.getGroup().size());
         PdpFeedFileBaseEntry cleaned = pdpEntryService.createPdpFileBaseEntryThatDoesNotContainNonReimbursableSections(pdpFeedFileBaseEntry, reportData);
         assertEquals("Should have 1 group in cleaned feed file", 1, cleaned.getGroup().size());
+    }
+    
+    @Test
+    public void cleanAccountingEntriesInDetailEntry_HandleOneCredit() {
+        PdpFeedDetailEntry detailEntry = PdpFeedDetailEntryFixture.DETAIL_TWO_POSITIVE_1_NEGATIVE.toPdpFeedDetailEntry();
+        Map<DebitCreditTotal, KualiDecimal> totals = pdpEntryService.calculateTotals(detailEntry);
+        assertEquals("The number of accounting entries should be 3", 3, detailEntry.getAccounting().size());
+        assertTotals(totals, 15, -10);
+        
+        pdpEntryService.cleanAccountingEntriesInDetailEntry(detailEntry);
+        
+        totals = pdpEntryService.calculateTotals(detailEntry);
+        assertEquals("The number of accounting entries should be 1", 1, detailEntry.getAccounting().size());
+        assertTotals(totals, 5, 0);
+    }
+    
+    @Test
+    public void cleanAccountingEntriesInDetailEntry_HandleTwoCredits() {
+        PdpFeedDetailEntry detailEntry = PdpFeedDetailEntryFixture.DETAIL_TWO_POSITIVE_2_NEGATIVE.toPdpFeedDetailEntry();
+        Map<DebitCreditTotal, KualiDecimal> totals = pdpEntryService.calculateTotals(detailEntry);
+        assertEquals("The number of accounting entries should be 4", 4, detailEntry.getAccounting().size());
+        assertTotals(totals, 15, -11);
+        
+        pdpEntryService.cleanAccountingEntriesInDetailEntry(detailEntry);
+        
+        totals = pdpEntryService.calculateTotals(detailEntry);
+        assertEquals("The number of accounting entries should be 1", 1, detailEntry.getAccounting().size());
+        assertTotals(totals, 4, 0);
+    }
+    
+    private void assertTotals(Map<DebitCreditTotal, KualiDecimal> totals, double debitTotal, double creditTotal) {
+        assertEquals("Debit total expected to be " + debitTotal, new KualiDecimal(debitTotal), totals.get(DebitCreditTotal.DEBIT));
+        assertEquals("Credit total expected to be " + creditTotal, new KualiDecimal(creditTotal), totals.get(DebitCreditTotal.CREDIT));
     }
 
 }
