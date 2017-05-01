@@ -178,16 +178,22 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         return null;
     }
     
-    @Deprecated
-    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
-        return validateConcurStandardAccountingExtractDetailLine(line, reportData);
+    @Override
+    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
+        valid = validateAccountingLine(line, reportData) && valid;
+        return valid;
     }
 
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
+        valid = validateAccountingLineWithObjectCodeOverrides(line, reportData) && valid;
+        return valid;
+    }
+    
+    private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean valid = validateReportId(line, reportData);
-        valid = validateAccountingLine(line, reportData) && valid;
         valid = validateEmployeeId(line, reportData) && valid;
         return valid;
     }
@@ -203,8 +209,22 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         }
         return valid;
     }
-
+    
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
+            ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line, line.getJournalAccountCode(), line.getSubObjectCode());
+            ValidationResult validationResults = buildValidationResult(accountingInformation, false);
+            if (validationResults.isNotValid()) {
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationResults.getMessages()));
+            }
+            return validationResults.isValid();
+        } else {
+            LOG.debug("validateAccountingLine, found a cash advance line, no need to validate");
+            return true;
+        }
+    }
+
+    private boolean validateAccountingLineWithObjectCodeOverrides(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
             logErrorsWithOriginalAccountingDetails(line);
     
@@ -216,7 +236,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
             return overriddenValidationResults.isValid();
         } else {
-            LOG.debug("validateAccountingLine, found a cash advance line, no need to validate");
+            LOG.debug("validateAccountingLineWithObjectCodeOverrides, found a cash advance line, no need to validate");
             return true;
         }
     }

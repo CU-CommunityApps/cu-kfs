@@ -168,7 +168,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                     totalReimbursementDollarAmount = totalReimbursementDollarAmount.add(line.getJournalAmount());
                 }
                 logJournalAccountCodeOverridden(line, reportData);
-                if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLine(line, reportData)) {
+                if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(line, reportData)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line, concurStandardAccountingExtractFile);
                 }
             }
