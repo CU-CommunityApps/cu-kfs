@@ -123,9 +123,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                     iWantDocument.setInitiatorNetID(initiatorNetID);
 
                     Person currentUser = GlobalVariables.getUserSession().getPerson();
-                    String initiatorName = currentUser.getName();
-                    String initiatorPhoneNumber = currentUser.getPhoneNumber();
-                    String initiatorEmailAddress = currentUser.getEmailAddress();
+                    String initiatorName = currentUser.getNameUnmasked();
+                    String initiatorPhoneNumber = currentUser.getPhoneNumberUnmasked();
+                    String initiatorEmailAddress = currentUser.getEmailAddressUnmasked();
 
                     String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
 
