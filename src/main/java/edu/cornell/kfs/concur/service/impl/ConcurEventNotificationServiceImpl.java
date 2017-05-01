@@ -8,9 +8,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurPropertyConstants;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
 import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.ConcurEventNotificationListDTO;
@@ -24,6 +27,7 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     protected BusinessObjectService businessObjectService;
     protected ConcurReportsService concurReportsService;
     protected ConcurEventNotificationConversionService concurEventNotificationConversionService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
     public void saveConcurEventNotification(ConcurEventNotification concurEventNotification) {
@@ -59,21 +63,30 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     
     @Override
     public void retrieveAndPersistFailedEventQueueReports() {
-        ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
-        if (areThereNotificationsToProcess(notificationList)) {
-            LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
-            for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
-                try {
-                    ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
-                    saveConcurEventNotification(concurEventNotification);
-                    getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
-                } catch (ParseException e) {
-                    LOG.error("validate():" + e.getMessage(), e);
+        if (shouldProcessFailedEventQueue()) {
+            ConcurEventNotificationListDTO notificationList = getConcurReportsService().retrieveFailedEventQueueNotificationsFromConcur();
+            if (areThereNotificationsToProcess(notificationList)) {
+                LOG.info("retrieveAndPersistFailedEventQueueReports, found " + notificationList.getConcurEventNotificationDTOs().size() + " failed events to process.");
+                for (ConcurEventNotificationDTO concurEventNotificationDTO : notificationList.getConcurEventNotificationDTOs()) {
+                    try {
+                        ConcurEventNotification concurEventNotification = getConcurEventNotificationConversionService().convertConcurEventNotification(concurEventNotificationDTO);
+                        saveConcurEventNotification(concurEventNotification);
+                        getConcurReportsService().deleteFailedEventQueueItemInConcur(findNotificationId(concurEventNotification.getNotificationURI()));
+                    } catch (ParseException e) {
+                        LOG.error("validate():" + e.getMessage(), e);
+                    }
                 }
+            } else {
+                LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
             }
         } else {
-            LOG.info("retrieveAndPersistFailedEventQueueReports, There were no failed events to process.");
+            LOG.info("retrieveAndPersistFailedEventQueueReports, failed event queue processing is turned off");
         }
+    }
+    
+    private boolean shouldProcessFailedEventQueue() {
+        String processFailedEventQueue = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_PROCESS_FAILED_EVENT_QUEUE);
+        return StringUtils.equalsIgnoreCase(processFailedEventQueue, KFSConstants.ParameterValues.YES);
     }
 
     private boolean areThereNotificationsToProcess(ConcurEventNotificationListDTO notificationList) {
@@ -111,6 +124,14 @@ public class ConcurEventNotificationServiceImpl implements ConcurEventNotificati
     public void setConcurEventNotificationConversionService(
             ConcurEventNotificationConversionService concurEventNotificationConversionService) {
         this.concurEventNotificationConversionService = concurEventNotificationConversionService;
+    }
+
+    public ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return concurBatchUtilityService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
 }

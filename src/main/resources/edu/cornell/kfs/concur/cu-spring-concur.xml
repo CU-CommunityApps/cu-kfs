@@ -253,6 +253,7 @@
 		<property name="businessObjectService" ref="businessObjectService"/>
 		<property name="concurReportsService" ref="concurReportsService"/>
 		<property name="concurEventNotificationConversionService" ref="concurEventNotificationConversionService"/>
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
 	
 	<bean id="concurAccountValidationService" parent="concurAccountValidationService-parentBean" />
