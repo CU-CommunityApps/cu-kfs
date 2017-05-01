@@ -63,6 +63,7 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_NOTIFICATION_CONTACT_EMAIL = "saecollector@somedomain.com";
         public static final String COLLECTOR_NOTIFICATION_CONTACT_PERSON = "James Smith";
         public static final String COLLECTOR_NOTIFICATION_CONTACT_PHONE = "1112223333";
+        public static final String COLLECTOR_PREPAID_OFFSET_CHART_CODE = "PQ";
         public static final String COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER = "7171717";
         public static final String COLLECTOR_PREPAID_OFFSET_OBJECT_CODE = "7711";
         public static final String COLLECTOR_CASH_OFFSET_OBJECT_CODE = "8282";
