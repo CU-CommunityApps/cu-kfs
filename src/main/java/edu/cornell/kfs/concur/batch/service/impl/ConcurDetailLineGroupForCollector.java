@@ -270,31 +270,55 @@ public class ConcurDetailLineGroupForCollector {
                 continue;
             }
             
-            ConcurStandardAccountingExtractDetailLine firstDebitLine = corpCardPersonalDebits.get(0);
             KualiDecimal newReimbursableCashAmount = currentReimbursableCashAmount.subtract(totalSubGroupAmount);
-            KualiDecimal cashOffsetAdjustment = totalSubGroupAmount;
-            KualiDecimal personalOffsetAdjustment = KualiDecimal.ZERO;
+            KualiDecimal cashOffsetAdjustment = calculateCashOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
+                    totalSubGroupAmount, currentReimbursableCashAmount, newReimbursableCashAmount);
+            KualiDecimal personalOffsetAdjustment = calculatePersonalOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
+                    totalSubGroupAmount, currentReimbursableCashAmount, newReimbursableCashAmount);
             
-            if (newReimbursableCashAmount.isNegative()) {
-                if (currentReimbursableCashAmount.isPositive()) {
-                    cashOffsetAdjustment = currentReimbursableCashAmount;
-                    personalOffsetAdjustment = newReimbursableCashAmount.negated();
-                } else {
-                    cashOffsetAdjustment = KualiDecimal.ZERO;
-                    personalOffsetAdjustment = totalSubGroupAmount;
-                }
-            }
-            
-            if (cashOffsetAdjustment.isNonZero()) {
-                addOriginEntryForCorpCardPersonalExpense(
-                        entryConsumer, firstDebitLine, collectorHelper.getCashOffsetObjectCode(), cashOffsetAdjustment);
-            }
-            if (personalOffsetAdjustment.isNonZero()) {
-                addOriginEntryForCorpCardPersonalExpense(
-                        entryConsumer, firstDebitLine, collectorHelper.getPersonalOffsetObjectCode(), personalOffsetAdjustment);
-            }
+            addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(
+                    entryConsumer, corpCardPersonalDebits, cashOffsetAdjustment, personalOffsetAdjustment);
             
             currentReimbursableCashAmount = newReimbursableCashAmount;
+        }
+    }
+
+    protected KualiDecimal calculateCashOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
+            KualiDecimal totalSubGroupAmount, KualiDecimal oldReimbursableCashAmount, KualiDecimal newReimbursableCashAmount) {
+        if (newReimbursableCashAmount.isNegative()) {
+            if (oldReimbursableCashAmount.isPositive()) {
+                return oldReimbursableCashAmount;
+            } else {
+                return KualiDecimal.ZERO;
+            }
+        } else {
+            return totalSubGroupAmount;
+        }
+    }
+
+    protected KualiDecimal calculatePersonalOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
+            KualiDecimal totalSubGroupAmount, KualiDecimal oldReimbursableCashAmount, KualiDecimal newReimbursableCashAmount) {
+        if (newReimbursableCashAmount.isNegative()) {
+            if (oldReimbursableCashAmount.isPositive()) {
+                return newReimbursableCashAmount.negated();
+            } else {
+                return totalSubGroupAmount;
+            }
+        } else {
+            return KualiDecimal.ZERO;
+        }
+    }
+
+    protected void addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(Consumer<OriginEntryFull> entryConsumer,
+            List<ConcurStandardAccountingExtractDetailLine> debitLines, KualiDecimal cashOffsetAdjustment, KualiDecimal personalOffsetAdjustment) {
+        ConcurStandardAccountingExtractDetailLine firstDebitLine = debitLines.get(0);
+        if (cashOffsetAdjustment.isNonZero()) {
+            addOriginEntryForCorpCardPersonalExpense(
+                    entryConsumer, firstDebitLine, collectorHelper.getCashOffsetObjectCode(), cashOffsetAdjustment);
+        }
+        if (personalOffsetAdjustment.isNonZero()) {
+            addOriginEntryForCorpCardPersonalExpense(
+                    entryConsumer, firstDebitLine, collectorHelper.getPersonalOffsetObjectCode(), personalOffsetAdjustment);
         }
     }
 
