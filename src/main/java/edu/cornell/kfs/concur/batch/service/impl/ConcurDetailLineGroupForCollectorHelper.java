@@ -33,6 +33,7 @@ public class ConcurDetailLineGroupForCollectorHelper {
     protected String documentTypeCode;
     protected String systemOriginationCode;
     protected String chartCode;
+    protected String prepaidOffsetChartCode;
     protected String prepaidOffsetAccountNumber;
     protected String prepaidOffsetObjectCode;
     protected String cashOffsetObjectCode;
@@ -55,6 +56,7 @@ public class ConcurDetailLineGroupForCollectorHelper {
         this.documentTypeCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_DOCUMENT_TYPE);
         this.systemOriginationCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_SYSTEM_ORIGINATION_CODE);
         this.chartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CHART_CODE);
+        this.prepaidOffsetChartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_CHART_CODE);
         this.prepaidOffsetAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
         this.prepaidOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
         this.cashOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE);
@@ -79,6 +81,10 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     public String getChartCode() {
         return chartCode;
+    }
+
+    public String getPrepaidOffsetChartCode() {
+        return prepaidOffsetChartCode;
     }
 
     public String getPrepaidOffsetAccountNumber() {

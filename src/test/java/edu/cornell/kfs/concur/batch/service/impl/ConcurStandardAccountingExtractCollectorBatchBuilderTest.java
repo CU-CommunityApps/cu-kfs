@@ -525,6 +525,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PERSON;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_PHONE :
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_NOTIFICATION_CONTACT_PHONE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_CHART_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_CHART_CODE;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER :
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE :
