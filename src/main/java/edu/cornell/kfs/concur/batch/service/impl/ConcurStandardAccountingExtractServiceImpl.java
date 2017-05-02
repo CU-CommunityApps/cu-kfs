@@ -175,7 +175,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                         CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
                 String overriddenSubObjectCode = StringUtils.EMPTY;
                 if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(line, reportData, 
-                        overriddenObjectCode, overriddenObjectCode)) {
+                        overriddenObjectCode, overriddenSubObjectCode)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line, concurStandardAccountingExtractFile);
                 }
             }

@@ -189,7 +189,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, 
             ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode) {
         boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
-        valid = validateAccountingLineWithObjectCodeOverrides(line, reportData, overriddenSubObjectCode, null) && valid;
+        valid = validateAccountingLineWithObjectCodeOverrides(line, reportData, overriddenObjectCode, overriddenSubObjectCode) && valid;
         return valid;
     }
     
@@ -246,8 +246,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
-        ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(
-                line, line.getJournalAccountCode(), line.getSubObjectCode());
+        ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line);
         buildValidationResult(accountingInformation, false);
     }
     
@@ -255,9 +254,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         String objectCode = line.getJournalAccountCode();
         String subObjectCode;
         if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
-            subObjectCode = line.getSubObjectCode();
-        } else {
             subObjectCode = line.getReportSubObjectCode();
+        } else {
+            subObjectCode = line.getSubObjectCode();
         }
         ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line, objectCode, subObjectCode);
         return accountingInformation;
