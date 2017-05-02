@@ -88,7 +88,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             employeeGroupIdValid &= validateEmployeeGroupId(line, reportData);
         }
         
-        journalTotalValidation = journalTotalValidation && journalTotal.equals(detailTotal);
+        journalTotalValidation = journalTotalValidation && detailTotal.equals(journalTotal);
         if (journalTotalValidation) {
             LOG.debug("validateAmounts, journal total: " + journalTotal.doubleValue() + " and detailTotal: " + detailTotal.doubleValue() + " do match.");
         } else {
@@ -186,9 +186,10 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
 
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode) {
         boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
-        valid = validateAccountingLineWithObjectCodeOverrides(line, reportData) && valid;
+        valid = validateAccountingLineWithObjectCodeOverrides(line, reportData, overriddenSubObjectCode, null) && valid;
         return valid;
     }
     
@@ -212,7 +213,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     private boolean validateAccountingLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
-            ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line, line.getJournalAccountCode(), line.getSubObjectCode());
+            ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line);
             ValidationResult validationResults = buildValidationResult(accountingInformation, false);
             if (validationResults.isNotValid()) {
                 reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), validationResults.getMessages()));
@@ -224,14 +225,17 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         }
     }
 
-    private boolean validateAccountingLineWithObjectCodeOverrides(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+    private boolean validateAccountingLineWithObjectCodeOverrides(ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode) {
         if (!getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceLine(line)) {
             logErrorsWithOriginalAccountingDetails(line);
     
-            ValidationResult overriddenValidationResults = buildValidationResult(buildOverriddenConcurAccountingInformation(line), true);
+            ValidationResult overriddenValidationResults = buildValidationResult(
+                    buildConcurAccountingInformation(line, overriddenObjectCode, overriddenSubObjectCode), true);
     
             if (overriddenValidationResults.isNotValid()) {
-                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line.getReportId(), line.getEmployeeId(), 
+                        line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenValidationResults.getMessages()));
             }
 
             return overriddenValidationResults.isValid();
@@ -240,12 +244,6 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             return true;
         }
     }
-    
-    private ConcurAccountInfo buildOverriddenConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
-        String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
-        return buildConcurAccountingInformation(line, overriddenObjectCode, StringUtils.EMPTY);
-    }
 
     private void logErrorsWithOriginalAccountingDetails(ConcurStandardAccountingExtractDetailLine line) {
         ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(
@@ -253,8 +251,19 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         buildValidationResult(accountingInformation, false);
     }
     
-    private ConcurAccountInfo buildConcurAccountingInformation(
-            ConcurStandardAccountingExtractDetailLine line, String objectCode, String subObjectCode) {
+    private ConcurAccountInfo buildConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line) {
+        String objectCode = line.getJournalAccountCode();
+        String subObjectCode;
+        if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
+            subObjectCode = line.getSubObjectCode();
+        } else {
+            subObjectCode = line.getReportSubObjectCode();
+        }
+        ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line, objectCode, subObjectCode);
+        return accountingInformation;
+    }
+    
+    private ConcurAccountInfo buildConcurAccountingInformation(ConcurStandardAccountingExtractDetailLine line, String objectCode, String subObjectCode) {
         if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
             return new ConcurAccountInfo(line.getReportChartOfAccountsCode(), line.getReportAccountNumber(), 
                     line.getReportSubAccountNumber(), objectCode, subObjectCode, line.getReportProjectCode());
