@@ -19,17 +19,10 @@ public interface ConcurStandardAccountingExtractValidationService {
     boolean validateDate(Date date);
     
     public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
-
-    /**
-     * If this method is used, any information placed in the ConcurStandardAccountingExtractBatchReportData
-     * object WILL NOT be placed in the physical SAE PDP/Collector KFS batch processing report that
-     * is generated when the Concur data is convert to the PDP and Collector files.
-     * It will be the callers responsibility to maintain that batch reporting information if this method is used.
-     */
-    @Deprecated
-    boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line);
-
+    
     boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
+    
+    boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode);
     
     boolean validateEmployeeGroupId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
 }
