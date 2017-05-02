@@ -257,7 +257,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected boolean shouldProcessLine(ConcurStandardAccountingExtractDetailLine saeLine) {
-        switch (saeLine.getPaymentCode()) {
+        String paymentCode = saeLine.getPaymentCode() != null ? saeLine.getPaymentCode() : StringUtils.EMPTY;
+        switch (paymentCode) {
             case ConcurConstants.PAYMENT_CODE_CASH :
                 return true;
             case ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID :
