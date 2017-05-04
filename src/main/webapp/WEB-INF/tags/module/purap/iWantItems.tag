@@ -56,7 +56,7 @@
                 </td>
                 <td class="infoline">
                     <kul:htmlControlAttribute
-                            attributeEntry="${itemAttributes.itemLineNumber}"
+                            attributeEntry="${itemAttributes.itemQuantity}"
                             property="newIWantItemLine.itemQuantity"
                             tabindexOverride="${tabindexOverrideBase + 0}"
                             readOnly="${not fullEntryMode}"
