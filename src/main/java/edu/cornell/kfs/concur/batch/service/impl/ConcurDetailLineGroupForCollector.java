@@ -44,7 +44,8 @@ public class ConcurDetailLineGroupForCollector {
     protected ConcurDetailLineGroupForCollectorHelper collectorHelper;
     protected Map<String, ConcurDetailLineSubGroupForCollector> consolidatedRegularLines;
     protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedCashAdvanceLines;
-    protected Map<String, ConcurStandardAccountingExtractDetailLine> cashAdvanceLinesByReportEntryId;
+    protected Map<String, KualiDecimal> totalCashAdvanceAmountsByReportEntryId;
+    protected Map<String, KualiDecimal> unusedCashAdvanceAmountsByReportEntryId;
     protected Map<String, ConcurRequestedCashAdvance> requestedCashAdvancesByCashAdvanceKey;
     protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedCorpCardPersonalExpenseDebits;
     protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedCorpCardPersonalExpenseCredits;
@@ -57,7 +58,8 @@ public class ConcurDetailLineGroupForCollector {
         this.collectorHelper = collectorHelper;
         this.consolidatedRegularLines = new LinkedHashMap<>();
         this.consolidatedCashAdvanceLines = new LinkedHashMap<>();
-        this.cashAdvanceLinesByReportEntryId = new LinkedHashMap<>();
+        this.totalCashAdvanceAmountsByReportEntryId = new LinkedHashMap<>();
+        this.unusedCashAdvanceAmountsByReportEntryId = new LinkedHashMap<>();
         this.requestedCashAdvancesByCashAdvanceKey = new LinkedHashMap<>();
         this.consolidatedCorpCardPersonalExpenseDebits = new LinkedHashMap<>();
         this.consolidatedCorpCardPersonalExpenseCredits = new LinkedHashMap<>();
@@ -77,7 +79,8 @@ public class ConcurDetailLineGroupForCollector {
             String accountingFieldsKey = buildAccountingFieldsKeyForCashAdvance(detailLine, requestedCashAdvance);
             consolidatedCashAdvanceLines.computeIfAbsent(accountingFieldsKey, (key) -> new ArrayList<>())
                     .add(detailLine);
-            cashAdvanceLinesByReportEntryId.put(detailLine.getReportEntryId(), detailLine);
+            totalCashAdvanceAmountsByReportEntryId.merge(
+                    detailLine.getReportEntryId(), detailLine.getJournalAmount(), KualiDecimal::add);
         } else if (collectorHelper.lineRepresentsPersonalExpenseChargedToCorporateCard(detailLine)) {
             addCorpCardPersonalExpenseDetailLine(detailLine);
         } else {
@@ -180,6 +183,8 @@ public class ConcurDetailLineGroupForCollector {
 
     public void buildAndAddOriginEntries(Consumer<OriginEntryFull> entryConsumer) {
         nextTransactionSequenceNumber = 1;
+        unusedCashAdvanceAmountsByReportEntryId.clear();
+        unusedCashAdvanceAmountsByReportEntryId.putAll(totalCashAdvanceAmountsByReportEntryId);
         
         for (ConcurDetailLineSubGroupForCollector subGroup : consolidatedRegularLines.values()) {
             addOriginEntriesForCorporateCardLines(entryConsumer, subGroup.getCorporateCardLines());
@@ -352,7 +357,7 @@ public class ConcurDetailLineGroupForCollector {
     protected Optional<OriginEntryFull> buildOriginEntryForCashOffset(
             OriginEntryFull cashEntry, List<ConcurStandardAccountingExtractDetailLine> cashLines) {
         KualiDecimal cashAmount = getSignedAmountFromOriginEntry(cashEntry);
-        KualiDecimal cashAdvanceAmount = calculateTotalAmountForCashAdvanceLinesReferencedByRegularLines(cashLines);
+        KualiDecimal cashAdvanceAmount = calculateAndUpdateUsableAmountForCashAdvanceLinesReferencedByRegularLines(cashLines);
         KualiDecimal cashAmountToOffset = cashAmount.add(cashAdvanceAmount);
         if (cashAmountToOffset.isZero()) {
             return Optional.empty();
@@ -367,28 +372,50 @@ public class ConcurDetailLineGroupForCollector {
 
     protected KualiDecimal calculateTotalAmountForCashAdvanceLinesReferencedByRegularLines(
             List<ConcurStandardAccountingExtractDetailLine> regularDetailLines) {
-        if (cashAdvanceLinesByReportEntryId.isEmpty()) {
+        if (totalCashAdvanceAmountsByReportEntryId.isEmpty()) {
             return KualiDecimal.ZERO;
         }
         
+        KualiDecimal totalAmount = KualiDecimal.ZERO;
         String[] reportEntryIds = regularDetailLines.stream()
                 .map(ConcurStandardAccountingExtractDetailLine::getReportEntryId)
                 .distinct()
                 .toArray(String[]::new);
         
-        List<ConcurStandardAccountingExtractDetailLine> cashAdvanceLines = new ArrayList<>(reportEntryIds.length);
         for (String reportEntryId : reportEntryIds) {
-            ConcurStandardAccountingExtractDetailLine cashAdvanceLine = cashAdvanceLinesByReportEntryId.get(reportEntryId);
-            if (cashAdvanceLine != null) {
-                cashAdvanceLines.add(cashAdvanceLine);
+            KualiDecimal subTotalAmount = totalCashAdvanceAmountsByReportEntryId.get(reportEntryId);
+            if (subTotalAmount != null) {
+                totalAmount = totalAmount.add(subTotalAmount);
             }
         }
         
-        if (cashAdvanceLines.isEmpty()) {
+        return totalAmount;
+    }
+
+    protected KualiDecimal calculateAndUpdateUsableAmountForCashAdvanceLinesReferencedByRegularLines(
+            List<ConcurStandardAccountingExtractDetailLine> regularDetailLines) {
+        if (unusedCashAdvanceAmountsByReportEntryId.isEmpty()) {
             return KualiDecimal.ZERO;
-        } else {
-            return calculateTotalAmountForLines(cashAdvanceLines);
         }
+        
+        KualiDecimal usableAmount = KualiDecimal.ZERO;
+        
+        for (ConcurStandardAccountingExtractDetailLine detailLine : regularDetailLines) {
+            KualiDecimal lineAmount = detailLine.getJournalAmount();
+            KualiDecimal oldUnusedAmount = unusedCashAdvanceAmountsByReportEntryId.getOrDefault(
+                    detailLine.getReportEntryId(), KualiDecimal.ZERO);
+            if (lineAmount.isPositive() && oldUnusedAmount.isNegative()) {
+                KualiDecimal newUnusedAmount = unusedCashAdvanceAmountsByReportEntryId.merge(
+                        detailLine.getReportEntryId(), lineAmount, KualiDecimal::add);
+                if (newUnusedAmount.isPositive()) {
+                    usableAmount = usableAmount.add(oldUnusedAmount);
+                } else {
+                    usableAmount = usableAmount.add(lineAmount.negated());
+                }
+            }
+        }
+        
+        return usableAmount;
     }
 
     protected Optional<OriginEntryFull> buildOriginEntryForCorporateCardOffset(
