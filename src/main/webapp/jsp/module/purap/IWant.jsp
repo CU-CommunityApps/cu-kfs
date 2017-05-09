@@ -120,6 +120,8 @@
         </c:if>
     </c:if>
 
+    <kul:superUserActions/>
+
     <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
 
     <sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}"
