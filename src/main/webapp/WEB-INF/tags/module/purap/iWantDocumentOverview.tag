@@ -22,7 +22,7 @@
                 <kul:htmlControlAttribute
                         property="document.documentHeader.documentDescription"
                         attributeEntry="${docHeaderAttributes.documentDescription}"
-                        readOnly="${readOnly}"/>
+                        readOnly="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT_DOCUMENT_OVERVIEW]}"/>
             </td>
             <kul:htmlAttributeHeaderCell
                     labelFor="document.documentHeader.explanation"
