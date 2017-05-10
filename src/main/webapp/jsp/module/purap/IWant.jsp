@@ -83,6 +83,10 @@
 
         <purap:iWantNotes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}"
                           defaultOpen="true"/>
+        
+        <c:if test="${!isRegularStep}">
+            <kul:superUserActions/>
+        </c:if>
     </c:if>
 
     <%-- Display routing and submission tab, if at the regular or routing steps. --%>
@@ -118,6 +122,8 @@
                 <purap:iWantOrderCompleted documentAttributes="${DataDictionary.IWantDocument.attributes}" />
             </kul:tab>
         </c:if>
+        
+        <kul:superUserActions/>
     </c:if>
 
     <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
