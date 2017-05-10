@@ -15,7 +15,10 @@ public class ExpenseEntryDTO {
     @XmlElementWrapper(name = "ItemizationsList")
     @XmlElement(name = "ItemizationEntryDetails")
     private List<ItemizationEntryDTO> itemizationsList;
-
+       
+    @XmlElement(name = "IsPersonal")
+    private String isPersonal;
+    
     @XmlElement(name = "OrgUnit6")
     private String orgUnit6;
     
@@ -28,6 +31,14 @@ public class ExpenseEntryDTO {
 
     public void setItemizationsList(List<ItemizationEntryDTO> itemizationsList) {
         this.itemizationsList = itemizationsList;
+    }
+    
+    public String getIsPersonal() {
+        return isPersonal;
+    }
+
+    public void setIsPersonal(String isPersonal) {
+        this.isPersonal = isPersonal;
     }
 
     public String getOrgUnit6() {

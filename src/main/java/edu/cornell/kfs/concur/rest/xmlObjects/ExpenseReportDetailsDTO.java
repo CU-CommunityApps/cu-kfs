@@ -20,6 +20,15 @@ public class ExpenseReportDetailsDTO {
     
     @XmlElement(name = "WorkflowActionURL")
     private String workflowActionURL;
+    
+    @XmlElement(name = "OrgUnit1")
+    private String orgUnit1;
+    
+    @XmlElement(name = "OrgUnit2")
+    private String orgUnit2;
+    
+    @XmlElement(name = "OrgUnit3")
+    private String orgUnit3;
 
     @XmlElementWrapper(name = "Entries")
     @XmlElement(name = "ExpenseEntry")
@@ -55,6 +64,30 @@ public class ExpenseReportDetailsDTO {
 
     public void setReportId(String reportId) {
         this.reportId = reportId;
+    }
+
+    public String getOrgUnit1() {
+        return orgUnit1;
+    }
+
+    public void setOrgUnit1(String orgUnit1) {
+        this.orgUnit1 = orgUnit1;
+    }
+
+    public String getOrgUnit2() {
+        return orgUnit2;
+    }
+
+    public void setOrgUnit2(String orgUnit2) {
+        this.orgUnit2 = orgUnit2;
+    }
+
+    public String getOrgUnit3() {
+        return orgUnit3;
+    }
+
+    public void setOrgUnit3(String orgUnit3) {
+        this.orgUnit3 = orgUnit3;
     }
 
 }
