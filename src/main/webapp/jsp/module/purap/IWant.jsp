@@ -84,7 +84,7 @@
         <purap:iWantNotes attachmentTypesValuesFinderClass="${documentEntry.attachmentTypesValuesFinderClass}"
                           defaultOpen="true"/>
         
-        <c:if test="${not isRegularStep}">
+        <c:if test="${!isRegularStep}">
             <kul:superUserActions/>
         </c:if>
     </c:if>
