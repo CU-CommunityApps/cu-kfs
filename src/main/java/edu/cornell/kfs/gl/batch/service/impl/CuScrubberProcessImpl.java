@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
@@ -18,6 +19,7 @@ import org.kuali.kfs.gl.businessobject.ScrubberProcessTransactionError;
 import org.kuali.kfs.gl.businessobject.Transaction;
 import org.kuali.kfs.gl.service.ScrubberReportData;
 import org.kuali.kfs.gl.service.impl.StringHelper;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.Message;
@@ -27,7 +29,6 @@ import org.kuali.kfs.sys.exception.InvalidFlexibleOffsetException;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -335,6 +336,31 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             }
         }
         return null;
+    }
+
+    /**
+     * Overridden to also reset the new entry's object type to that of the scrubbed entry
+     * if the new one is a capitalization entry. This effectively undoes the explicit
+     * Asset ("AS") object type override from the processCapitalization() method.
+     * 
+     * NOTE: It would be ideal to place this customization in the processCapitalization() method directly.
+     * However, because of the structure of that method, its contents would have to be copied and tweaked
+     * rather than just overriding and calling the superclass one. Thus, the customization
+     * has been placed here instead as a less invasive approach.
+     * 
+     * @see org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl#plantFundAccountLookup(
+     * org.kuali.kfs.gl.businessobject.OriginEntryInformation, org.kuali.kfs.gl.businessobject.OriginEntryFull)
+     */
+    @Override
+    protected void plantFundAccountLookup(OriginEntryInformation scrubbedEntry, OriginEntryFull liabilityEntry) {
+        if (isCapitalizationEntry(liabilityEntry)) {
+            liabilityEntry.setFinancialObjectTypeCode(scrubbedEntry.getFinancialObjectTypeCode());
+        }
+        super.plantFundAccountLookup(scrubbedEntry, liabilityEntry);
+    }
+
+    protected boolean isCapitalizationEntry(OriginEntryFull originEntry) {
+        return StringUtils.startsWith(originEntry.getTransactionLedgerEntryDescription(), capitalizationDescription);
     }
 
 }
