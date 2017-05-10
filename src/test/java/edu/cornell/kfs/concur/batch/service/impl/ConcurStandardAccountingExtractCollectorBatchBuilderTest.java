@@ -182,6 +182,36 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     @Test
+    public void testUniqueExpenseLinesPlusCashAdvanceWithAmountEqualToFirstExpense() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST1, ConcurSAEFileFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST1);
+    }
+
+    @Test
+    public void testUniqueExpenseLinesPlusCashAdvanceWithAmountGreaterThanFirstExpense() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST2, ConcurSAEFileFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST2);
+    }
+
+    @Test
+    public void testUniqueExpenseLinesPlusCashAdvanceWithAmountLessThanFirstExpense() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST3, ConcurSAEFileFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST3);
+    }
+
+    @Test
+    public void testUniqueExpenseLinesPlusNonUniqueLinesPlusCashAdvance() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST4, ConcurSAEFileFixture.MIXED_EXPENSES_CASH_ADVANCE_TEST4);
+    }
+
+    @Test
+    public void testMultipleCashAdvancesWithSameReportEntryId() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MANY_SAME_ENTRY_ID_CASH_ADVANCE_TEST, ConcurSAEFileFixture.MANY_SAME_ENTRY_ID_CASH_ADVANCE_TEST);
+    }
+
+    @Test
     public void testCorpCardPersonalExpensesAndNoCashExpenses() throws Exception {
         assertCollectorBatchIsBuiltProperly(
                 ConcurCollectorBatchFixture.PERSONAL_WITHOUT_CASH_TEST, ConcurSAEFileFixture.PERSONAL_WITHOUT_CASH_TEST);
