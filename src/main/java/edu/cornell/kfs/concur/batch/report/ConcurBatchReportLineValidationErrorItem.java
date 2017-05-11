@@ -93,6 +93,7 @@ public class ConcurBatchReportLineValidationErrorItem {
         this.subObjectCode = subObjectCode;
         this.projectCode = projectCode;
         this.orgRefId = orgRefId;
+        this.lineAmount = lineAmount;
         this.itemErrorResults = itemErrorResults;
     }
 

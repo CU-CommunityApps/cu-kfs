@@ -1,24 +1,22 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.File;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-
-import edu.cornell.kfs.sys.service.ReportWriterService;
-import edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractReportService;
-import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummary;
-import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummaryLine;
+import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurStandardAccountingExtractReportService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractReportServiceImpl.class);
@@ -135,71 +133,108 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
     protected void writeValidationErrorSubReport(ConcurStandardAccountingExtractBatchReportData reportData) {
         LOG.debug("writeValidationErrorSubReport, entered");
-        String rowFormat = "%-24s %-24s %-36s %-36s %-14s";
-        String hdrRowFormat = "%-24s %-24s %-36s %-36s %-14s";
-        Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Middle Initial" };
-        Object[] headerBreak = { "---------", "-----------", "---------", "----------", "--------------" };
-
-        boolean firstLine = true;
 
         if (CollectionUtils.isEmpty(reportData.getValidationErrorFileLines())) {
-            getReportWriterService().setNewPage(false);
-            getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
-            getReportWriterService().writeNewLines(1);
-            getReportWriterService().writeFormattedMessageLine(ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
-        }
-        else {
-            for(ConcurBatchReportLineValidationErrorItem errorItem : reportData.getValidationErrorFileLines()) {
-                if (getReportWriterService().isNewPage() || firstLine) {
-                    firstLine = false;
-                    getReportWriterService().setNewPage(false);
-                    getReportWriterService().writeSubTitle(getReportValidationErrorsSubTitle());
-                    getReportWriterService().writeNewLines(1);
-                }
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
-                getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(), errorItem.getFirstName(), errorItem.getMiddleInitial());
-                getReportWriterService().writeNewLines(1);
-                writeErrorItemMessages(errorItem.getItemErrorResults());
-                getReportWriterService().writeNewLines(1);
-            }
+            writeErrorSubReportWithNoLineItems(
+                    getReportValidationErrorsSubTitle(), ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
+        } else {
+            writeErrorSubReport(reportData.getValidationErrorFileLines(), getReportValidationErrorsSubTitle(), this::writeValidationErrorItem);
         }
         getReportWriterService().pageBreak();
     }
 
     protected void writeMissingObjectCodesSubReport(ConcurStandardAccountingExtractBatchReportData reportData) {
         LOG.debug("writeMissingObjectCodesSubReport, entered");
+
+        if (CollectionUtils.isEmpty(reportData.getPendingClientObjectCodeLines())) {
+            writeErrorSubReportWithNoLineItems(
+                    getReportMissingObjectCodesSubTitle(), ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE);
+        } else {
+            writeErrorSubReport(reportData.getPendingClientObjectCodeLines(), getReportMissingObjectCodesSubTitle(), this::writeMissingObjectCodeItem);
+        }
+    }
+
+    protected void writeErrorSubReportWithNoLineItems(String subTitle, String message) {
+        writeSubTitleForErrorSubReport(subTitle);
+        getReportWriterService().writeFormattedMessageLine(message);
+    }
+
+    protected <T extends ConcurBatchReportLineValidationErrorItem> void writeErrorSubReport(
+            List<T> errorItems, String subTitle, Consumer<T> itemWriter) {
+        boolean firstLine = true;
+        Map<String, List<T>> groupedErrors = groupErrorItemsByReportId(errorItems);
+        
+        for (Map.Entry<String, List<T>> grouping : groupedErrors.entrySet()) {
+            String reportId = grouping.getKey();
+            List<T> errorItemSubGroup = grouping.getValue();
+            if (!firstLine) {
+                writeReportIdHeader(reportId);
+            }
+            
+            for (T errorItem : errorItemSubGroup) {
+                if (getReportWriterService().isNewPage() || firstLine) {
+                    writeSubTitleForErrorSubReport(subTitle);
+                    if (firstLine) {
+                        writeReportIdHeader(reportId);
+                        firstLine = false;
+                    }
+                }
+                itemWriter.accept(errorItem);
+            }
+        }
+    }
+
+    protected <T extends ConcurBatchReportLineValidationErrorItem> Map<String, List<T>> groupErrorItemsByReportId(List<T> errorItems) {
+        return errorItems.stream()
+                .collect(Collectors.groupingBy(
+                        T::getReportId, LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
+    }
+
+    protected void writeSubTitleForErrorSubReport(String subTitle) {
+        getReportWriterService().setNewPage(false);
+        getReportWriterService().writeSubTitle(subTitle);
+        getReportWriterService().writeNewLines(1);
+    }
+
+    protected void writeReportIdHeader(String reportId) {
+        String reportIdHeaderFormat = "%-32s";
+        String reportIdHeaderArg = "Report ID";
+        String reportIdHeaderBreak = "---------";
+        getReportWriterService().writeFormattedMessageLine(reportIdHeaderFormat, reportIdHeaderBreak);
+        getReportWriterService().writeFormattedMessageLine(reportIdHeaderFormat, reportIdHeaderArg);
+        getReportWriterService().writeFormattedMessageLine(reportIdHeaderFormat, reportIdHeaderBreak);
+        getReportWriterService().writeFormattedMessageLine(reportIdHeaderFormat, reportId);
+        getReportWriterService().writeNewLines(1);
+    }
+
+    protected void writeValidationErrorItem(ConcurBatchReportLineValidationErrorItem errorItem) {
+        String rowFormat = "%-24s %-24s %-36s %-36s %-14s";
+        String hdrRowFormat = "%-24s %-24s %-36s %-36s %-14s";
+        Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Middle Initial" };
+        Object[] headerBreak = { "---------", "-----------", "---------", "----------", "--------------" };
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+        getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(),
+                errorItem.getFirstName(), errorItem.getMiddleInitial());
+        getReportWriterService().writeNewLines(1);
+        writeErrorItemMessages(errorItem.getItemErrorResults());
+        getReportWriterService().writeNewLines(1);
+    }
+
+    protected void writeMissingObjectCodeItem(ConcurBatchReportMissingObjectCodeItem errorItem) {
         String rowFormat = "%-20s %-20s %-20s %-20s %-20s %20s";
         String hdrRowFormat = "%-20s %-20s %-20s %-20s %-20s %20s";
         Object[] headerArgs = { "Report ID", "Employee ID", "Last Name", "First Name", "Policy Name", "Expense Type Name"};
         Object[] headerBreak = { "---------", "-----------", "---------", "----------", "-----------", "-----------------"};
-
-        boolean firstLine = true;
-
-        if (CollectionUtils.isEmpty(reportData.getPendingClientObjectCodeLines())) {
-            getReportWriterService().setNewPage(false);
-            getReportWriterService().writeSubTitle(getReportMissingObjectCodesSubTitle());
-            getReportWriterService().writeNewLines(1);
-            getReportWriterService().writeFormattedMessageLine(ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE);
-        }
-        else {
-            for(ConcurBatchReportMissingObjectCodeItem errorItem : reportData.getPendingClientObjectCodeLines()) {
-                if (getReportWriterService().isNewPage() || firstLine) {
-                    firstLine = false;
-                    getReportWriterService().setNewPage(false);
-                    getReportWriterService().writeSubTitle(getReportMissingObjectCodesSubTitle());
-                    getReportWriterService().writeNewLines(1);
-                }
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
-                getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
-                getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(), errorItem.getFirstName(), errorItem.getMiddleInitial());
-                getReportWriterService().writeNewLines(1);
-                writeErrorItemMessages(errorItem.getItemErrorResults());
-                getReportWriterService().writeNewLines(1);
-            }
-        }
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerArgs);
+        getReportWriterService().writeFormattedMessageLine(hdrRowFormat, headerBreak);
+        getReportWriterService().writeFormattedMessageLine(rowFormat, errorItem.getReportId(), errorItem.getEmployeeId(), errorItem.getLastName(),
+                errorItem.getFirstName(), errorItem.getPolicyName(), errorItem.getExpenseTypeName());
+        getReportWriterService().writeNewLines(1);
+        writeErrorItemMessages(errorItem.getItemErrorResults());
+        getReportWriterService().writeNewLines(1);
     }
 
     private void writeErrorItemMessages(List<String> errorMessages) {
