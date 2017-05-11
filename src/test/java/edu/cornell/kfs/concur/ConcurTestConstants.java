@@ -66,7 +66,7 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_PREPAID_OFFSET_CHART_CODE = "PQ";
         public static final String COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER = "7171717";
         public static final String COLLECTOR_PREPAID_OFFSET_OBJECT_CODE = "7711";
-        public static final String COLLECTOR_CASH_OFFSET_OBJECT_CODE = "8282";
+        public static final String COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE = "8282";
         public static final String COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE = "1444";
     }
     

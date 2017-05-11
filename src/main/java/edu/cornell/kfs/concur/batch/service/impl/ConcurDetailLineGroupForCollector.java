@@ -320,7 +320,7 @@ public class ConcurDetailLineGroupForCollector {
         ConcurStandardAccountingExtractDetailLine firstDebitLine = debitLines.get(0);
         if (cashOffsetAdjustment.isNonZero()) {
             addOriginEntryForCorpCardPersonalExpense(
-                    entryConsumer, firstDebitLine, collectorHelper.getCashOffsetObjectCode(), cashOffsetAdjustment);
+                    entryConsumer, firstDebitLine, collectorHelper.getPaymentOffsetObjectCode(), cashOffsetAdjustment);
         }
         if (personalOffsetAdjustment.isNonZero()) {
             addOriginEntryForCorpCardPersonalExpense(
@@ -364,7 +364,7 @@ public class ConcurDetailLineGroupForCollector {
         }
         
         OriginEntryFull offsetEntry = buildOffsetOriginEntry(cashEntry, cashAmountToOffset);
-        offsetEntry.setFinancialObjectCode(collectorHelper.getCashOffsetObjectCode());
+        offsetEntry.setFinancialObjectCode(collectorHelper.getPaymentOffsetObjectCode());
         offsetEntry.setFinancialSubObjectCode(collectorHelper.getDashOnlyPropertyValue(KFSPropertyConstants.SUB_OBJECT_CODE));
         
         return Optional.of(offsetEntry);
