@@ -29,7 +29,7 @@ public enum ConcurOriginEntryFixture {
             KFSConstants.GL_DEBIT_CODE, 50.00),
     DEFAULT_CREDIT(DEFAULT_DEBIT, null, KFSConstants.GL_CREDIT_CODE, 50.00),
     DEFAULT_CASH_OFFSET(DEFAULT_CREDIT, null,
-            buildOverride(LineField.OBJECT_CODE, ParameterTestValues.COLLECTOR_CASH_OFFSET_OBJECT_CODE)),
+            buildOverride(LineField.OBJECT_CODE, ParameterTestValues.COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE)),
     DEFAULT_CASH_OFFSET_PERSONAL_ADJUSTMENT(DEFAULT_CASH_OFFSET, null, KFSConstants.GL_DEBIT_CODE, 50.00,
             buildOverride(LineField.ACCOUNT_NUMBER, ConcurTestConstants.DEFAULT_REPORT_ACCOUNT)),
     DEFAULT_PREPAID_OFFSET(DEFAULT_CREDIT, null,

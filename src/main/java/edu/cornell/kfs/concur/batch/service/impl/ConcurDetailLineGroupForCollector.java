@@ -201,7 +201,7 @@ public class ConcurDetailLineGroupForCollector {
 
     protected void addOriginEntriesForCashLines(
             Consumer<OriginEntryFull> entryConsumer, List<ConcurStandardAccountingExtractDetailLine> cashLines) {
-        addOriginEntriesForLines(entryConsumer, cashLines, this::buildOriginEntryForCashOffset);
+        addOriginEntriesForLines(entryConsumer, cashLines, this::buildOriginEntryForPaymentOffset);
     }
 
     protected void addOriginEntriesForCorporateCardLines(
@@ -277,19 +277,19 @@ public class ConcurDetailLineGroupForCollector {
             }
             
             KualiDecimal newReimbursableCashAmount = currentReimbursableCashAmount.subtract(totalSubGroupAmount);
-            KualiDecimal cashOffsetAdjustment = calculateCashOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
+            KualiDecimal paymentOffsetAdjustment = calculatePaymentOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
                     totalSubGroupAmount, currentReimbursableCashAmount, newReimbursableCashAmount);
             KualiDecimal personalOffsetAdjustment = calculatePersonalOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
                     totalSubGroupAmount, currentReimbursableCashAmount, newReimbursableCashAmount);
             
             addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(
-                    entryConsumer, corpCardPersonalDebits, cashOffsetAdjustment, personalOffsetAdjustment);
+                    entryConsumer, corpCardPersonalDebits, paymentOffsetAdjustment, personalOffsetAdjustment);
             
             currentReimbursableCashAmount = newReimbursableCashAmount;
         }
     }
 
-    protected KualiDecimal calculateCashOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
+    protected KualiDecimal calculatePaymentOffsetAdjustmentForCorpCardPersonalExpenseSubGroup(
             KualiDecimal totalSubGroupAmount, KualiDecimal oldReimbursableCashAmount, KualiDecimal newReimbursableCashAmount) {
         if (newReimbursableCashAmount.isNegative()) {
             if (oldReimbursableCashAmount.isPositive()) {
@@ -316,11 +316,11 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected void addOriginEntriesForCorpCardPersonalExpenseDebitLinesIfNecessary(Consumer<OriginEntryFull> entryConsumer,
-            List<ConcurStandardAccountingExtractDetailLine> debitLines, KualiDecimal cashOffsetAdjustment, KualiDecimal personalOffsetAdjustment) {
+            List<ConcurStandardAccountingExtractDetailLine> debitLines, KualiDecimal paymentOffsetAdjustment, KualiDecimal personalOffsetAdjustment) {
         ConcurStandardAccountingExtractDetailLine firstDebitLine = debitLines.get(0);
-        if (cashOffsetAdjustment.isNonZero()) {
+        if (paymentOffsetAdjustment.isNonZero()) {
             addOriginEntryForCorpCardPersonalExpense(
-                    entryConsumer, firstDebitLine, collectorHelper.getCashOffsetObjectCode(), cashOffsetAdjustment);
+                    entryConsumer, firstDebitLine, collectorHelper.getPaymentOffsetObjectCode(), paymentOffsetAdjustment);
         }
         if (personalOffsetAdjustment.isNonZero()) {
             addOriginEntryForCorpCardPersonalExpense(
@@ -354,7 +354,7 @@ public class ConcurDetailLineGroupForCollector {
         return totalCashAmount.add(totalCashAdvanceAmount);
     }
 
-    protected Optional<OriginEntryFull> buildOriginEntryForCashOffset(
+    protected Optional<OriginEntryFull> buildOriginEntryForPaymentOffset(
             OriginEntryFull cashEntry, List<ConcurStandardAccountingExtractDetailLine> cashLines) {
         KualiDecimal cashAmount = getSignedAmountFromOriginEntry(cashEntry);
         KualiDecimal cashAdvanceAmount = calculateAndUpdateUsableAmountForCashAdvanceLinesReferencedByRegularLines(cashLines);
@@ -364,7 +364,7 @@ public class ConcurDetailLineGroupForCollector {
         }
         
         OriginEntryFull offsetEntry = buildOffsetOriginEntry(cashEntry, cashAmountToOffset);
-        offsetEntry.setFinancialObjectCode(collectorHelper.getCashOffsetObjectCode());
+        offsetEntry.setFinancialObjectCode(collectorHelper.getPaymentOffsetObjectCode());
         offsetEntry.setFinancialSubObjectCode(collectorHelper.getDashOnlyPropertyValue(KFSPropertyConstants.SUB_OBJECT_CODE));
         
         return Optional.of(offsetEntry);
