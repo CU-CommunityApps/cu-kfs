@@ -36,7 +36,7 @@ public class ConcurDetailLineGroupForCollectorHelper {
     protected String prepaidOffsetChartCode;
     protected String prepaidOffsetAccountNumber;
     protected String prepaidOffsetObjectCode;
-    protected String cashOffsetObjectCode;
+    protected String paymentOffsetObjectCode;
     protected String personalOffsetObjectCode;
 
     public ConcurDetailLineGroupForCollectorHelper(String actualFinancialBalanceTypeCode, Date transmissionDate,
@@ -59,7 +59,7 @@ public class ConcurDetailLineGroupForCollectorHelper {
         this.prepaidOffsetChartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_CHART_CODE);
         this.prepaidOffsetAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
         this.prepaidOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
-        this.cashOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_CASH_OFFSET_OBJECT_CODE);
+        this.paymentOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE);
         this.personalOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE);
     }
 
@@ -95,8 +95,8 @@ public class ConcurDetailLineGroupForCollectorHelper {
         return prepaidOffsetObjectCode;
     }
 
-    public String getCashOffsetObjectCode() {
-        return cashOffsetObjectCode;
+    public String getPaymentOffsetObjectCode() {
+        return paymentOffsetObjectCode;
     }
 
     public String getPersonalOffsetObjectCode() {
