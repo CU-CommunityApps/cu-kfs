@@ -29,6 +29,12 @@ public class ExpenseReportDetailsDTO {
     
     @XmlElement(name = "OrgUnit3")
     private String orgUnit3;
+    
+    @XmlElement(name = "OrgUnit4")
+    private String orgUnit4;
+    
+    @XmlElement(name = "OrgUnit5")
+    private String orgUnit5;
 
     @XmlElementWrapper(name = "Entries")
     @XmlElement(name = "ExpenseEntry")
@@ -88,6 +94,22 @@ public class ExpenseReportDetailsDTO {
 
     public void setOrgUnit3(String orgUnit3) {
         this.orgUnit3 = orgUnit3;
+    }
+
+    public String getOrgUnit4() {
+        return orgUnit4;
+    }
+
+    public void setOrgUnit4(String orgUnit4) {
+        this.orgUnit4 = orgUnit4;
+    }
+
+    public String getOrgUnit5() {
+        return orgUnit5;
+    }
+
+    public void setOrgUnit5(String orgUnit5) {
+        this.orgUnit5 = orgUnit5;
     }
 
 }

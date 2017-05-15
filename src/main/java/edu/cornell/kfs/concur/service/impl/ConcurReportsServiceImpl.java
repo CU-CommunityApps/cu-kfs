@@ -124,11 +124,10 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
         if (reportDetails.getEntries() != null) {
             for (ExpenseEntryDTO expenseEntry : reportDetails.getEntries()) {
-                if(ConcurConstants.IS_PERSONAL_EXPENSE.equalsIgnoreCase(expenseEntry.getIsPersonal())){
-                    extractAccountingInfoFromReportHeader(reportDetails);
+                if(ConcurConstants.YES.equalsIgnoreCase(expenseEntry.getIsPersonal()) && ConcurConstants.YES.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
+                    accountInfoList.add(extractAccountingInfoFromReportHeader(reportDetails));
                 }
-                else {
-                    String orgRefId = expenseEntry.getOrgUnit6();
+                else if(ConcurConstants.NO.equalsIgnoreCase(expenseEntry.getIsPersonal()) && ConcurConstants.NO.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
                     if (expenseEntry.getItemizationsList() != null) {
                         for (ItemizationEntryDTO itemizationEntry : expenseEntry.getItemizationsList()) {
                             accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocationsList()));
@@ -144,18 +143,16 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         return accountInfoList;
     }
     
-    protected List<ConcurAccountInfo> extractAccountingInfoFromReportHeader(ExpenseReportDetailsDTO reportDetails){
-        List<ConcurAccountInfo> accountInfos = new ArrayList<ConcurAccountInfo>();
-        
+    protected ConcurAccountInfo extractAccountingInfoFromReportHeader(ExpenseReportDetailsDTO reportDetails){
         String chart = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit1());
         String accountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit2());
         String subAccountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit3());
-        String objectCode = allocation.getAccountCode1();
-        String subObjectCode = allocation.getCustom4();
-        String projectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(allocation.getCustom5());
-        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);
+        String subObjectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit4());
+        String projectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit5());
+        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, null, subObjectCode, projectCode);
+        concurAccountInfo.setForPersonalCorporateCardExpense(true);
 
-        return accountInfos;
+        return concurAccountInfo;
     }
     
     protected List<ConcurAccountInfo> extractConcurAccountInfoFromAllocations(List<AllocationsDTO> allocations){

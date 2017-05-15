@@ -109,7 +109,7 @@ public class ConcurConstants {
         public static final String REQUEST_EXTRACT_VALIDATION_SUB_REPORT_TITLE_NOT_SET_IN_CONFIGURATION_FILE = "REQUEST_EXTRACT_VALIDATION_SUB_REPORT_TITLE_NOT_SET_IN_CONFIGURATION_FILE";
     }
     
-    public static final String IS_PERSONAL_EXPENSE = "Y";
-    public static final String IS_NOT_PERSONAL_EXPENSE = "N";
+    public static final String YES = "Y";
+    public static final String NO = "N";
 
 }

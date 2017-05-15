@@ -19,8 +19,8 @@ public class ExpenseEntryDTO {
     @XmlElement(name = "IsPersonal")
     private String isPersonal;
     
-    @XmlElement(name = "OrgUnit6")
-    private String orgUnit6;
+    @XmlElement(name = "IsCreditCardCharge")
+    private String isCreditCardCharge;
     
     @XmlElement(name = "Allocations")
     private List<AllocationsDTO> allocations;
@@ -40,14 +40,6 @@ public class ExpenseEntryDTO {
     public void setIsPersonal(String isPersonal) {
         this.isPersonal = isPersonal;
     }
-
-    public String getOrgUnit6() {
-        return orgUnit6;
-    }
-
-    public void setOrgUnit6(String orgUnit6) {
-        this.orgUnit6 = orgUnit6;
-    }
     
     public List<AllocationsDTO> getAllocations() {
         return allocations;
@@ -55,6 +47,14 @@ public class ExpenseEntryDTO {
 
     public void setAllocations(List<AllocationsDTO> allocations) {
         this.allocations = allocations;
+    }
+
+    public String getIsCreditCardCharge() {
+        return isCreditCardCharge;
+    }
+
+    public void setIsCreditCardCharge(String isCreditCardCharge) {
+        this.isCreditCardCharge = isCreditCardCharge;
     }
 
 }

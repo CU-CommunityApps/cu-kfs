@@ -10,9 +10,9 @@ public class ConcurAccountInfo {
     protected String subObjectCode;
     protected String projectCode;
     protected String orgRefId;
+    protected boolean forPersonalCorporateCardExpense;
     
     public ConcurAccountInfo() {
-        
     }
 
     public ConcurAccountInfo(String chart, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode) {
@@ -84,6 +84,15 @@ public class ConcurAccountInfo {
     public void setOrgRefId(String orgRefId) {
         this.orgRefId = orgRefId;
     }
+    
+    public boolean isForPersonalCorporateCardExpense() {
+        return forPersonalCorporateCardExpense;
+    }
+
+    public void setForPersonalCorporateCardExpense(
+            boolean forPersonalCorporateCardExpense) {
+        this.forPersonalCorporateCardExpense = forPersonalCorporateCardExpense;
+    }
 
     @Override
     public String toString() {
@@ -104,7 +113,10 @@ public class ConcurAccountInfo {
         result.append(KFSConstants.NEWLINE);
         result.append("orgRefId: " + orgRefId);
         result.append(KFSConstants.NEWLINE);
+        result.append("forPersonalCorporateCardExpense: " + forPersonalCorporateCardExpense);
+        result.append(KFSConstants.NEWLINE);
 
         return result.toString();
     }
+
 }
