@@ -65,7 +65,8 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
                 }
             }
         }
-        getConcurRequestExtractReportService().generateReport(reportData);
+        File reportFile = getConcurRequestExtractReportService().generateReport(reportData);
+        getConcurRequestExtractReportService().sendResultsEmail(reportData, reportFile);
         LOG.debug("method processFile:: requestExtractFile data after processing: " + KFSConstants.NEWLINE + requestExtractFile.toString());
         return processingSuccessful;
     }

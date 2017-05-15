@@ -68,19 +68,18 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
             writeValidationErrorSubReport(reportData);
         }
         finalizeReport();
-        File reportFile =  getReportWriterService().getReportFile();
-        sendResultsEmail(reportData, reportFile);
-        return reportFile;
+        return getReportWriterService().getReportFile();
     }
     
-    protected void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile) {
+    @Override
+    public void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile) {
         List<String> toAddressList = new ArrayList<>();
-        toAddressList.add(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL));
+        toAddressList.add(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_TO_ADDRESS));
         String body = readReportFileToString(reportFile);
         String subject = buildEmailSubject(reportData);
         
         BodyMailMessage message = new BodyMailMessage();
-        message.setFromAddress(emailService.getDefaultFromAddress());
+        message.setFromAddress(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_FROM_ADDRESS));
         message.setSubject(subject);
         message.getToAddresses().addAll(toAddressList);
         message.setMessage(body);
@@ -96,7 +95,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     protected String readReportFileToString(File reportFile) {
         InputStream inputStream = null;
         StringBuilder sb = new StringBuilder();
-        String fileReadingErrorMessage = "There was a problem reading the report file into an eamil";
+        String fileReadingErrorMessage = "There was a problem reading the report file into an email";
         try {
             inputStream = new FileInputStream(reportFile);
         } catch (FileNotFoundException e) {
@@ -125,7 +124,8 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     }
     
     protected String buildEmailSubject(ConcurRequestExtractBatchReportData reportData) {
-        StringBuilder sb = new StringBuilder(reportData.getConcurFileName()).append(" has been processed.");
+        StringBuilder sb = new StringBuilder("The request extract file ");
+        sb.append(reportData.getConcurFileName()).append(" has been processed.");
         if(!reportData.getHeaderValidationErrors().isEmpty()) {
             sb.append("  There are header validation errors.");
         }
@@ -134,7 +134,7 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         }
         return sb.toString();
     }
-
+    
     protected void initializeReportTitleAndFileName(ConcurRequestExtractBatchReportData  reportData) {
         LOG.debug("initializeReportTitleAndFileName, entered for Concur data file name:" + reportData.getConcurFileName());
         String concurFileName = convertConcurFileNameToDefaultWhenNotProvided(reportData.getConcurFileName());
