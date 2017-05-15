@@ -254,7 +254,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         String objectCode = line.getJournalAccountCode();
         String subObjectCode;
         if (getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line)) {
-            subObjectCode = line.getReportSubObjectCode();
+            subObjectCode = StringUtils.EMPTY;
         } else {
             subObjectCode = line.getSubObjectCode();
         }
