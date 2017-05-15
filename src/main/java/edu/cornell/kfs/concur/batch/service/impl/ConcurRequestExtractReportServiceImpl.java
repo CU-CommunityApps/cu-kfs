@@ -1,24 +1,40 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.mail.MailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
+import edu.cornell.kfs.fp.CuFPParameterConstants;
+import edu.cornell.kfs.fp.batch.LoadAchIncomeFileStep;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtractReportService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractReportServiceImpl.class);
 
     protected ReportWriterService reportWriterService;
+    protected EmailService emailService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
 
     protected String fileNamePrefixFirstPart;
     protected String fileNamePrefixSecondPart;
@@ -42,7 +58,8 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     public void setRecordsNotSentToPdpSubLabel(String recordsNotSentToPdpSubLabel) {
         this.recordsNotSentToPdpSubLabel = recordsNotSentToPdpSubLabel;
     }
-
+    
+    @Override
     public File generateReport(ConcurRequestExtractBatchReportData reportData) {
         LOG.debug("generateReport: entered");
         initializeReportTitleAndFileName(reportData);
@@ -51,7 +68,71 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
             writeValidationErrorSubReport(reportData);
         }
         finalizeReport();
-        return getReportWriterService().getReportFile();
+        File reportFile =  getReportWriterService().getReportFile();
+        sendResultsEmail(reportData, reportFile);
+        return reportFile;
+    }
+    
+    protected void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile) {
+        List<String> toAddressList = new ArrayList<>();
+        toAddressList.add(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_NOTIFICATION_CONTACT_EMAIL));
+        String body = readReportFileToString(reportFile);
+        String subject = buildEmailSubject(reportData);
+        
+        BodyMailMessage message = new BodyMailMessage();
+        message.setFromAddress(emailService.getDefaultFromAddress());
+        message.setSubject(subject);
+        message.getToAddresses().addAll(toAddressList);
+        message.setMessage(body);
+        
+        boolean htmlMessage = false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sendResultsEmail, the email subject: " + subject);
+            LOG.debug("sendResultsEmail, the email budy: " + body);
+        }
+        getEmailService().sendMessage(message, htmlMessage);
+    }
+    
+    protected String readReportFileToString(File reportFile) {
+        InputStream inputStream = null;
+        StringBuilder sb = new StringBuilder();
+        String fileReadingErrorMessage = "There was a problem reading the report file into an eamil";
+        try {
+            inputStream = new FileInputStream(reportFile);
+        } catch (FileNotFoundException e) {
+            LOG.error("readReportFileToString, unable to create a file input stream from report file", e);
+            return fileReadingErrorMessage;
+        } 
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream)); 
+        try {
+            String line = bufferedReader.readLine(); 
+             
+            while(line != null){ 
+                sb.append(line).append(KFSConstants.NEWLINE); 
+                line = bufferedReader.readLine(); 
+            } 
+        } catch (IOException e) {
+            LOG.error("readReportFileToString, unable to read the report file.", e);
+            sb.append(fileReadingErrorMessage);
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException e) {
+                LOG.error("readReportFileToString, unable to close the buffered reader", e);
+            }
+        }
+        return sb.toString();
+    }
+    
+    protected String buildEmailSubject(ConcurRequestExtractBatchReportData reportData) {
+        StringBuilder sb = new StringBuilder(reportData.getConcurFileName()).append(" has been processed.");
+        if(!reportData.getHeaderValidationErrors().isEmpty()) {
+            sb.append("  There are header validation errors.");
+        }
+        if(!reportData.getValidationErrorFileLines().isEmpty()) {
+            sb.append("  There are line level validation errors.");
+        }
+        return sb.toString();
     }
 
     protected void initializeReportTitleAndFileName(ConcurRequestExtractBatchReportData  reportData) {
@@ -200,14 +281,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         }
     }
 
-    public ReportWriterService getReportWriterService() {
-        return reportWriterService;
-    }
-
-    public void setReportWriterService(ReportWriterService reportWriterService) {
-        this.reportWriterService = reportWriterService;
-    }
-
     public String getFileNamePrefixFirstPart() {
         return fileNamePrefixFirstPart;
     }
@@ -310,6 +383,30 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
 
     public void setReportValidationErrorsSubTitle(String reportValidationErrorsSubTitle) {
         this.reportValidationErrorsSubTitle = reportValidationErrorsSubTitle;
+    }
+    
+    public ReportWriterService getReportWriterService() {
+        return reportWriterService;
+    }
+
+    public void setReportWriterService(ReportWriterService reportWriterService) {
+        this.reportWriterService = reportWriterService;
+    }
+
+    public EmailService getEmailService() {
+        return emailService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    public ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return concurBatchUtilityService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
 }
