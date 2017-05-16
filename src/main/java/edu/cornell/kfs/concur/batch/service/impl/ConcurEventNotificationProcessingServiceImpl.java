@@ -65,13 +65,14 @@ public class ConcurEventNotificationProcessingServiceImpl implements ConcurEvent
         LOG.info("validateReportAccountInfo()");
         if (concurReport.getAccountInfos() != null && concurReport.getAccountInfos().size() > 0) {            
             for (ConcurAccountInfo concurAccountInfo : concurReport.getAccountInfos()) {
-                LOG.info(concurAccountInfo.toString());            
-                reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo));            
+                LOG.info(concurAccountInfo.toString());
+                if(concurAccountInfo.isForPersonalCorporateCardExpense()){
+                    reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfoObjectCodeNotRequired(concurAccountInfo));
+                }
+                else {
+                    reportValidationResult.add(concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo));    
+                }
             }
-        } else {
-            LOG.info("No account info present.");
-            reportValidationResult.addMessage(configurationService.getPropertyValueAsString(ConcurKeyConstants.CONCUR_ACCOUNT_INFO_IS_REQUIRED));
-            reportValidationResult.setValid(false);
         }
         LOG.info("Validation Result: " + reportValidationResult.isValid() + ", validation messages: " + reportValidationResult.getErrorMessagesAsOneFormattedString());
         return reportValidationResult;

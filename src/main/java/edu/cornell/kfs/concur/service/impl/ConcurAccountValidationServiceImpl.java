@@ -1,7 +1,6 @@
 package edu.cornell.kfs.concur.service.impl;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -40,28 +39,46 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
                 concurAccountInfo.getSubAccountNumber(),
                 concurAccountInfo.getObjectCode(),
                 concurAccountInfo.getSubObjectCode(),
-                concurAccountInfo.getProjectCode());
+                concurAccountInfo.getProjectCode(),
+                true);
+    }
+    
+    @Override
+    public ValidationResult validateConcurAccountInfoObjectCodeNotRequired(ConcurAccountInfo concurAccountInfo) {
+        return checkAccountingString(
+                concurAccountInfo.getChart(),
+                concurAccountInfo.getAccountNumber(),
+                concurAccountInfo.getSubAccountNumber(),
+                concurAccountInfo.getObjectCode(),
+                concurAccountInfo.getSubObjectCode(),
+                concurAccountInfo.getProjectCode(),
+                false);
     }
 
-    public ValidationResult checkAccountingString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode) {
-        ValidationResult requiredFieldsValidationResult = checkRequiredAccountInfo(chartOfAccountsCode, accountNumber, objectCode);
+
+    public ValidationResult checkAccountingString(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode, boolean objectCodeRequired) {
+        ValidationResult requiredFieldsValidationResult = checkRequiredAccountInfo(chartOfAccountsCode, accountNumber, objectCode, objectCodeRequired);
 
         if (requiredFieldsValidationResult.isNotValid()) {
             return requiredFieldsValidationResult;
         } else {
-            return checkValuesAreValid(chartOfAccountsCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode);       
+            return checkValuesAreValid(chartOfAccountsCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, objectCodeRequired);       
         }
     }
     
-    private ValidationResult checkValuesAreValid(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode){
+    private ValidationResult checkValuesAreValid(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode, boolean objectCodeRequired){
         ValidationResult accountValidationResult = checkAccount(chartOfAccountsCode, accountNumber);
         if (accountValidationResult.isNotValid()) {
             return accountValidationResult;
         } else {           
             ValidationResult validationResult = new ValidationResult();
-            updateValidationResultAndAddErrorMessages(validationResult, checkObjectCode(chartOfAccountsCode, objectCode));
+            if(objectCodeRequired) {
+                updateValidationResultAndAddErrorMessages(validationResult, checkObjectCode(chartOfAccountsCode, objectCode));
+            }
             updateValidationResultAndAddErrorMessages(validationResult, checkSubAccount(chartOfAccountsCode, accountNumber, subAccountNumber));
-            updateValidationResultAndAddErrorMessages(validationResult, checkSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode));
+            if(objectCodeRequired) {
+                updateValidationResultAndAddErrorMessages(validationResult, checkSubObjectCode(chartOfAccountsCode, accountNumber, objectCode, subObjectCode));
+            }
             updateValidationResultAndAddErrorMessages(validationResult, checkProjectCode(projectCode));            
             return validationResult;
         }
@@ -74,7 +91,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         }
     }
 
-    public ValidationResult checkRequiredAccountInfo(String chartOfAccountsCode, String accountNumber, String objectCode) {
+    public ValidationResult checkRequiredAccountInfo(String chartOfAccountsCode, String accountNumber, String objectCode, boolean objectCodeRequired) {
         ValidationResult validationResult = new ValidationResult();
         if (chartOfAccountsCode == null || chartOfAccountsCode.isEmpty()) {
             validationResult.setValid(false);
@@ -84,7 +101,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
             validationResult.setValid(false);
             validationResult.addMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER));
         }
-        if (objectCode == null || objectCode.isEmpty()) {
+        if (objectCodeRequired && (objectCode == null || objectCode.isEmpty())) {
             validationResult.setValid(false);
             validationResult.addMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE));
         }

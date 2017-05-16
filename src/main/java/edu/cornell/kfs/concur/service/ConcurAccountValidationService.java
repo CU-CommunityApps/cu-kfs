@@ -7,4 +7,5 @@ public interface ConcurAccountValidationService {
     
     ValidationResult validateConcurAccountInfo(ConcurAccountInfo concurAccountInfo);
 
+    ValidationResult validateConcurAccountInfoObjectCodeNotRequired(ConcurAccountInfo concurAccountInfo);
 }

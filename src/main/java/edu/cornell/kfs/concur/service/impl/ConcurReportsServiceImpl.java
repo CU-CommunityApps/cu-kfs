@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -124,22 +125,46 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
         if (reportDetails.getEntries() != null) {
             for (ExpenseEntryDTO expenseEntry : reportDetails.getEntries()) {
-                String orgRefId = expenseEntry.getOrgUnit6();
-                if (expenseEntry.getItemizationsList() != null) {
-                    for (ItemizationEntryDTO itemizationEntry : expenseEntry.getItemizationsList()) {
-                        accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocationsList(), orgRefId));
-                        accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocations(), orgRefId));
-                    }
+                if (isPersonalOnCorporateCardExpense(expenseEntry)){
+                    accountInfoList.add(extractAccountingInfoFromReportHeader(reportDetails));
                 }
-                
-                accountInfoList.addAll(extractConcurAccountInfoFromAllocations(expenseEntry.getAllocations(), orgRefId));
+                else if (isNotPersonal(expenseEntry)){
+                    if (expenseEntry.getItemizationsList() != null) {
+                        for (ItemizationEntryDTO itemizationEntry : expenseEntry.getItemizationsList()) {
+                            accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocationsList()));
+                            accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocations()));
+                        }
+                    }
+                    
+                    accountInfoList.addAll(extractConcurAccountInfoFromAllocations(expenseEntry.getAllocations()));
+                }
             }
         }
 
         return accountInfoList;
     }
     
-    protected List<ConcurAccountInfo> extractConcurAccountInfoFromAllocations(List<AllocationsDTO> allocations, String orgRefId){
+    protected boolean isPersonalOnCorporateCardExpense(ExpenseEntryDTO expenseEntry){
+        return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge());
+    }
+    
+    protected boolean isNotPersonal(ExpenseEntryDTO expenseEntry){
+        return KRADConstants.NO_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal());
+    }
+    
+    protected ConcurAccountInfo extractAccountingInfoFromReportHeader(ExpenseReportDetailsDTO reportDetails){
+        String chart = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit1());
+        String accountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit2());
+        String subAccountNumber = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit3());
+        String subObjectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit4());
+        String projectCode = ConcurUtils.extractCodeFromCodeAndDescriptionValue(reportDetails.getOrgUnit5());
+        ConcurAccountInfo concurAccountInfo = new ConcurAccountInfo(chart, accountNumber, subAccountNumber, null, subObjectCode, projectCode);
+        concurAccountInfo.setForPersonalCorporateCardExpense(true);
+
+        return concurAccountInfo;
+    }
+    
+    protected List<ConcurAccountInfo> extractConcurAccountInfoFromAllocations(List<AllocationsDTO> allocations){
         List<ConcurAccountInfo> accountInfos = new ArrayList<ConcurAccountInfo>();
         
         if (allocations != null) {
