@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.krad.util.KRADConstants;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -124,10 +125,10 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
         if (reportDetails.getEntries() != null) {
             for (ExpenseEntryDTO expenseEntry : reportDetails.getEntries()) {
-                if(ConcurConstants.YES.equalsIgnoreCase(expenseEntry.getIsPersonal()) && ConcurConstants.YES.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
+                if(KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
                     accountInfoList.add(extractAccountingInfoFromReportHeader(reportDetails));
                 }
-                else if(ConcurConstants.NO.equalsIgnoreCase(expenseEntry.getIsPersonal()) && ConcurConstants.NO.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
+                else if(KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
                     if (expenseEntry.getItemizationsList() != null) {
                         for (ItemizationEntryDTO itemizationEntry : expenseEntry.getItemizationsList()) {
                             accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocationsList()));
