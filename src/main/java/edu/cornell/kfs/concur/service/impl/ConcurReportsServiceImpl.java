@@ -125,10 +125,10 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
 
         if (reportDetails.getEntries() != null) {
             for (ExpenseEntryDTO expenseEntry : reportDetails.getEntries()) {
-                if(KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
+                if(isPersonalCorporateCardExpense(expenseEntry)){
                     accountInfoList.add(extractAccountingInfoFromReportHeader(reportDetails));
                 }
-                else if(KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge())){
+                else if(isNotPersonalAndNotCorporateCardExpense(expenseEntry)){
                     if (expenseEntry.getItemizationsList() != null) {
                         for (ItemizationEntryDTO itemizationEntry : expenseEntry.getItemizationsList()) {
                             accountInfoList.addAll(extractConcurAccountInfoFromAllocations(itemizationEntry.getAllocationsList()));
@@ -142,6 +142,14 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         }
 
         return accountInfoList;
+    }
+    
+    protected boolean isPersonalCorporateCardExpense(ExpenseEntryDTO expenseEntry){
+        return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge());
+    }
+    
+    protected boolean isNotPersonalAndNotCorporateCardExpense(ExpenseEntryDTO expenseEntry){
+        return KRADConstants.NO_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsPersonal()) && KRADConstants.NO_INDICATOR_VALUE.equalsIgnoreCase(expenseEntry.getIsCreditCardCharge());
     }
     
     protected ConcurAccountInfo extractAccountingInfoFromReportHeader(ExpenseReportDetailsDTO reportDetails){
