@@ -63,19 +63,22 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     
     @Override
     public void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile) {
+        String toAddress = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_TO_ADDRESS);
+        String fromAddress = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_FROM_ADDRESS);
         List<String> toAddressList = new ArrayList<>();
-        toAddressList.add(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_TO_ADDRESS));
+        toAddressList.add(toAddress);
         String body = readReportFileToString(reportFile);
         String subject = buildEmailSubject(reportData);
         
         BodyMailMessage message = new BodyMailMessage();
-        message.setFromAddress(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_FROM_ADDRESS));
+        message.setFromAddress(fromAddress);
         message.setSubject(subject);
         message.getToAddresses().addAll(toAddressList);
         message.setMessage(body);
         
         boolean htmlMessage = false;
         if (LOG.isDebugEnabled()) {
+            LOG.debug("sendResultsEmail, from address: " + fromAddress + "  to address: " + toAddress);
             LOG.debug("sendResultsEmail, the email subject: " + subject);
             LOG.debug("sendResultsEmail, the email budy: " + body);
         }
@@ -83,24 +86,33 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     }
     
     protected String readReportFileToString(File reportFile) {
-        String contents = getConcurBatchUtilityService().getFileContents(reportFile.getAbsolutePath());
-        if (StringUtils.isEmpty(contents)) {
-            LOG.error("readReportFileToString, could not read report file into String");
-            contents = "Could not read the report file.";
+        String contents;
+        if (reportFile != null) {
+            contents = getConcurBatchUtilityService().getFileContents(reportFile.getAbsolutePath());
+            if (StringUtils.isEmpty(contents)) {
+                LOG.error("readReportFileToString, could not read report file into String");
+                contents = "Could not read the report file.";
+            }
+        } else {
+            contents = "There was no report file.";
         }
         return contents;
     }
     
     protected String buildEmailSubject(ConcurRequestExtractBatchReportData reportData) {
-        StringBuilder sb = new StringBuilder("The request extract file ");
-        sb.append(reportData.getConcurFileName()).append(" has been processed.");
-        if(!reportData.getHeaderValidationErrors().isEmpty()) {
-            sb.append("  There are header validation errors.");
+        if (reportData != null) {
+            StringBuilder sb = new StringBuilder("The request extract file ");
+            sb.append(reportData.getConcurFileName()).append(" has been processed.");
+            if(!reportData.getHeaderValidationErrors().isEmpty()) {
+                sb.append("  There are header validation errors.");
+            }
+            if(!reportData.getValidationErrorFileLines().isEmpty()) {
+                sb.append("  There are line level validation errors.");
+            }
+            return sb.toString();
+        } else {
+            return "No request extract file processed.";
         }
-        if(!reportData.getValidationErrorFileLines().isEmpty()) {
-            sb.append("  There are line level validation errors.");
-        }
-        return sb.toString();
     }
     
     protected void initializeReportTitleAndFileName(ConcurRequestExtractBatchReportData  reportData) {

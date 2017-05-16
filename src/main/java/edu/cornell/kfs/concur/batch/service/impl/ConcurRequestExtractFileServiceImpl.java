@@ -66,11 +66,7 @@ public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtract
             }
         }
         File reportFile = getConcurRequestExtractReportService().generateReport(reportData);
-        if(reportFile != null){
-            getConcurRequestExtractReportService().sendResultsEmail(reportData, reportFile);
-        } else {
-            LOG.info("processFile, where was no report file generated, so not sending an email containing the report.");
-        }
+        getConcurRequestExtractReportService().sendResultsEmail(reportData, reportFile);
         LOG.debug("method processFile:: requestExtractFile data after processing: " + KFSConstants.NEWLINE + requestExtractFile.toString());
         return processingSuccessful;
     }

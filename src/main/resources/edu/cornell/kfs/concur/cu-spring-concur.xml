@@ -346,6 +346,7 @@
 	<bean id="concurRequestExtractCreatePdpFeedService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractCreatePdpFeedServiceImpl" abstract="true">
 	    <property name="concurRequestExtractFileService" ref="concurRequestExtractFileService" />
 	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+	    <property name="concurRequestExtractReportService" ref="concurRequestExtractReportService"/>
 	</bean>
 
 	<bean id="concurRequestExtractFileService" parent="concurRequestExtractFileService-parentBean" />
