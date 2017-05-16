@@ -1,12 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,18 +9,14 @@ import org.apache.commons.lang.StringUtils;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
-import org.kuali.kfs.sys.mail.MailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
-import edu.cornell.kfs.fp.CuFPParameterConstants;
-import edu.cornell.kfs.fp.batch.LoadAchIncomeFileStep;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtractReportService {
@@ -93,34 +83,12 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     }
     
     protected String readReportFileToString(File reportFile) {
-        InputStream inputStream = null;
-        StringBuilder sb = new StringBuilder();
-        String fileReadingErrorMessage = "There was a problem reading the report file into an email";
-        try {
-            inputStream = new FileInputStream(reportFile);
-        } catch (FileNotFoundException e) {
-            LOG.error("readReportFileToString, unable to create a file input stream from report file", e);
-            return fileReadingErrorMessage;
-        } 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream)); 
-        try {
-            String line = bufferedReader.readLine(); 
-             
-            while(line != null){ 
-                sb.append(line).append(KFSConstants.NEWLINE); 
-                line = bufferedReader.readLine(); 
-            } 
-        } catch (IOException e) {
-            LOG.error("readReportFileToString, unable to read the report file.", e);
-            sb.append(fileReadingErrorMessage);
-        } finally {
-            try {
-                bufferedReader.close();
-            } catch (IOException e) {
-                LOG.error("readReportFileToString, unable to close the buffered reader", e);
-            }
+        String contents = getConcurBatchUtilityService().getFileContents(reportFile.getAbsolutePath());
+        if (StringUtils.isEmpty(contents)) {
+            LOG.error("readReportFileToString, could not read report file into String");
+            contents = "Could not read the report file.";
         }
-        return sb.toString();
+        return contents;
     }
     
     protected String buildEmailSubject(ConcurRequestExtractBatchReportData reportData) {
