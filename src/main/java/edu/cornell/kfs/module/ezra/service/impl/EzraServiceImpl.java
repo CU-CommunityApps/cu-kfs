@@ -176,11 +176,13 @@ public class EzraServiceImpl implements EzraService {
 			setAwardOrgVersionNumbers(oldAward.getAwardOrganizations(), award.getAwardOrganizations());
 			award.setVersionNumber(oldAward.getVersionNumber());
 			award.setLetterOfCreditFundCode(oldAward.getLetterOfCreditFundCode());
+			((CuAward)award).setLetterOfCreditFundGroupCode(((CuAward)oldAward).getLetterOfCreditFundGroupCode());
 			AwardExtendedAttribute awardEA = (AwardExtendedAttribute)award.getExtension();
 			awardEA.setLocAccountId(((AwardExtendedAttribute)oldAward.getExtension()).getLocAccountId());
 			award.setActive(oldAward.isActive());
 			awardEA.setProposalNumber(((AwardExtendedAttribute)oldAward.getExtension()).getProposalNumber());
-            awardEA.setVersionNumber(((AwardExtendedAttribute)oldAward.getExtension()).getVersionNumber());
+                        awardEA.setVersionNumber(((AwardExtendedAttribute)oldAward.getExtension()).getVersionNumber());
+                        awardEA.setEverify(((AwardExtendedAttribute)oldAward.getExtension()).isEverify());
 		}
 		
 		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
