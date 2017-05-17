@@ -8,17 +8,20 @@ import org.kuali.kfs.sys.exception.FileStorageException;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractCreatePdpFeedService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
+import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
 
 public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurRequestExtractCreatePdpFeedService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurRequestExtractFileService concurRequestExtractFileService;
+    protected ConcurRequestExtractReportService concurRequestExtractReportService;
 
     @Override
     public void createPdpFeedsFromRequestExtracts() {
         List<String> filesToProcess = getConcurRequestExtractFileService().getUnprocessedRequestExtractFiles();
         if (filesToProcess.isEmpty()) {
             LOG.info("createPdpFeedsFromRequestExtracts: No Request Extract files found to process.");
+            getConcurRequestExtractReportService().sendEmailThatNoFileWasProcesed();
         } else {
             LOG.info("createPdpFeedsFromRequestExtracts: Found " + filesToProcess.size() + " file(s) to process.");
 
@@ -54,6 +57,14 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
 
     public ConcurRequestExtractFileService getConcurRequestExtractFileService() {
         return concurRequestExtractFileService;
+    }
+
+    public ConcurRequestExtractReportService getConcurRequestExtractReportService() {
+        return concurRequestExtractReportService;
+    }
+
+    public void setConcurRequestExtractReportService(ConcurRequestExtractReportService concurRequestExtractReportService) {
+        this.concurRequestExtractReportService = concurRequestExtractReportService;
     }
 
 }

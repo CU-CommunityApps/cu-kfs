@@ -109,4 +109,11 @@ public interface ConcurBatchUtilityService {
      */
     boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine line);
     
+    /**
+     * Returns the contents of a file as a String.
+     * @param fileName
+     * @return
+     */
+    String getFileContents(String fileName);
+    
 }

@@ -20,4 +20,6 @@ public class ConcurKeyConstants {
     public static final String CONCUR_REQUEST_EXTRACT_HAS_NO_REQUEST_DETAIL_LINES = "validation.error.concur.request.extract.no.request.detail.lines";
     public static final String CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP = "validation.error.concur.request.extract.contains.bad.customer.profile.group";
     public static final String CONCUR_REQUEST_EXTRACT_HEADER_AMOUNT_FILE_AMOUNT_MISMATCH = "validation.error.concur.request.extract.header.amount.file.amount.mismatch";
+    public static final String CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_SUBJECT = "message.concur.requestExtract.no.report.email.subject";
+    public static final String CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_BODY = "message.concur.requestExtract.no.report.email.body";
 }

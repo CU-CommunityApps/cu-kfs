@@ -1,17 +1,23 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
@@ -19,6 +25,9 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractReportServiceImpl.class);
 
     protected ReportWriterService reportWriterService;
+    protected EmailService emailService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConfigurationService configurationService;
 
     protected String fileNamePrefixFirstPart;
     protected String fileNamePrefixSecondPart;
@@ -42,7 +51,8 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     public void setRecordsNotSentToPdpSubLabel(String recordsNotSentToPdpSubLabel) {
         this.recordsNotSentToPdpSubLabel = recordsNotSentToPdpSubLabel;
     }
-
+    
+    @Override
     public File generateReport(ConcurRequestExtractBatchReportData reportData) {
         LOG.debug("generateReport: entered");
         initializeReportTitleAndFileName(reportData);
@@ -53,7 +63,63 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
-
+    
+    @Override
+    public void sendEmailThatNoFileWasProcesed() {
+        String body = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_BODY);
+        String subject = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_SUBJECT);
+        sendEmail(subject, body);
+    }
+    
+    @Override
+    public void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile) {
+        String body = readReportFileToString(reportFile);
+        String subject = buildEmailSubject(reportData);
+        sendEmail(subject, body);
+    }
+    
+    private void sendEmail(String subject, String body) {
+        String toAddress = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_TO_ADDRESS);
+        String fromAddress = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_FROM_ADDRESS);
+        List<String> toAddressList = new ArrayList<>();
+        toAddressList.add(toAddress);
+        
+        BodyMailMessage message = new BodyMailMessage();
+        message.setFromAddress(fromAddress);
+        message.setSubject(subject);
+        message.getToAddresses().addAll(toAddressList);
+        message.setMessage(body);
+        
+        boolean htmlMessage = false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
+            LOG.debug("sendEmail, the email subject: " + subject);
+            LOG.debug("sendEmail, the email budy: " + body);
+        }
+        getEmailService().sendMessage(message, htmlMessage);
+    }
+    
+    protected String readReportFileToString(File reportFile) {
+        String contents = getConcurBatchUtilityService().getFileContents(reportFile.getAbsolutePath());
+        if (StringUtils.isEmpty(contents)) {
+            LOG.error("readReportFileToString, could not read report file into String");
+            contents = "Could not read the report file.";
+        }
+        return contents;
+    }
+    
+    protected String buildEmailSubject(ConcurRequestExtractBatchReportData reportData) {
+        StringBuilder sb = new StringBuilder("The request extract file ");
+        sb.append(reportData.getConcurFileName()).append(" has been processed.");
+        if(!reportData.getHeaderValidationErrors().isEmpty()) {
+            sb.append("  There are header validation errors.");
+        }
+        if(!reportData.getValidationErrorFileLines().isEmpty()) {
+            sb.append("  There are line level validation errors.");
+        }
+        return sb.toString();
+    }
+    
     protected void initializeReportTitleAndFileName(ConcurRequestExtractBatchReportData  reportData) {
         LOG.debug("initializeReportTitleAndFileName, entered for Concur data file name:" + reportData.getConcurFileName());
         String concurFileName = convertConcurFileNameToDefaultWhenNotProvided(reportData.getConcurFileName());
@@ -200,14 +266,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         }
     }
 
-    public ReportWriterService getReportWriterService() {
-        return reportWriterService;
-    }
-
-    public void setReportWriterService(ReportWriterService reportWriterService) {
-        this.reportWriterService = reportWriterService;
-    }
-
     public String getFileNamePrefixFirstPart() {
         return fileNamePrefixFirstPart;
     }
@@ -310,6 +368,38 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
 
     public void setReportValidationErrorsSubTitle(String reportValidationErrorsSubTitle) {
         this.reportValidationErrorsSubTitle = reportValidationErrorsSubTitle;
+    }
+    
+    public ReportWriterService getReportWriterService() {
+        return reportWriterService;
+    }
+
+    public void setReportWriterService(ReportWriterService reportWriterService) {
+        this.reportWriterService = reportWriterService;
+    }
+
+    public EmailService getEmailService() {
+        return emailService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    public ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return concurBatchUtilityService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }
