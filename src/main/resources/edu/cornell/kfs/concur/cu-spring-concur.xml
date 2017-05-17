@@ -538,6 +538,7 @@
         <property name="reportWriterService" ref="concurReportWriterService" />
         <property name="emailService" ref="emailService"/>
         <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+        <property name="configurationService" ref="configurationService"/>
         <property name="fileNamePrefixFirstPart" value="request-extract-report-for--"/>
         <property name="fileNamePrefixSecondPart" value="--"/>
         <property name="reportTitle" value="Report for Concur Request Extract File Creating KFS PDP File"/>

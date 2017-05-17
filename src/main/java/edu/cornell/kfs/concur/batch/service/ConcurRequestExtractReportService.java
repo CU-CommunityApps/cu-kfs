@@ -9,4 +9,6 @@ public interface ConcurRequestExtractReportService {
     File generateReport(ConcurRequestExtractBatchReportData reportData);
     
     void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile);
+    
+    void sendNoReportEmail();
 }

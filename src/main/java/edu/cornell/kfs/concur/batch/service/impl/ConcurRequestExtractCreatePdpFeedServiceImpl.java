@@ -21,7 +21,7 @@ public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurReque
         List<String> filesToProcess = getConcurRequestExtractFileService().getUnprocessedRequestExtractFiles();
         if (filesToProcess.isEmpty()) {
             LOG.info("createPdpFeedsFromRequestExtracts: No Request Extract files found to process.");
-            getConcurRequestExtractReportService().sendResultsEmail(null, null);
+            getConcurRequestExtractReportService().sendNoReportEmail();
         } else {
             LOG.info("createPdpFeedsFromRequestExtracts: Found " + filesToProcess.size() + " file(s) to process.");
 
