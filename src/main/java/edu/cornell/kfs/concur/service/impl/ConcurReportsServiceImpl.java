@@ -42,6 +42,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportsServiceImpl.class);
     protected ConcurAccessTokenService concurAccessTokenService;
     protected ParameterService parameterService;
+    private volatile Client client;
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
@@ -87,23 +88,29 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     }
 
     protected TravelRequestDetailsDTO buildTravelRequestDetailsOutput(String reportURI) {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
+        ClientResponse response = null;
 
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
-        TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
+            TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
 
-        return reportDetails;
+            return reportDetails;
+        } finally {
+            closeQuietly(response);
+        }
     }
 
     protected ExpenseReportDetailsDTO buildReportDetailsOutput(String reportURI) {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
+        ClientResponse response = null;
 
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
-        ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
+            ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
 
-        return reportDetails;
+            return reportDetails;
+        } finally {
+            closeQuietly(response);
+        }
     }
 
     protected ClientRequest buildReportDetailsClientRequest(String reportURI, String httpMethod) {
@@ -217,17 +224,21 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     
     protected void buildUpdateReportOutput(String workflowURI, String action, String comment) {
         LOG.info("buildUpdateReportOutput()");
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-        WebResource resource = client.resource(workflowURI);
-      
-        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).
+        ClientResponse response = null;
+
+        try {
+            WebResource resource = getClient().resource(workflowURI);
+
+            response = resource.accept(MediaType.APPLICATION_XML).
                 header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).
                 post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
 
-        response.bufferEntity();
-        String result = response.getEntity(String.class);
-        LOG.info("Update workflow response: " + result);
+            response.bufferEntity();
+            String result = response.getEntity(String.class);
+            LOG.info("Update workflow response: " + result);
+        } finally {
+            closeQuietly(response);
+        }
 
     }
 
@@ -245,25 +256,59 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
         String deleteItemURL = getConcurFailedRequestDeleteNotificationEndpoint() + noticationId;
         LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
+        ClientResponse response = null;
         
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
-        
-        int statusCode = response.getStatus();
-        String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
-        LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
-        return statusCode == ClientResponse.Status.OK.getStatusCode();
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
+            
+            int statusCode = response.getStatus();
+            String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+            LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
+            return statusCode == ClientResponse.Status.OK.getStatusCode();
+        } finally {
+            closeQuietly(response);
+        }
     }
     
     @Override
     public ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur() {
         LOG.info("retrieveFailedEventQueueNotificationsFromConcur, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-        ClientResponse response = client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
-        ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
-        return reportDetails;
+        ClientResponse response = null;
+        
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
+            ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
+            return reportDetails;
+        } finally {
+            closeQuietly(response);
+        }
+    }
+
+    // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
+    // See effective java 2nd ed. pg. 71
+    protected Client getClient() {
+        Client jerseyClient = client;
+        if (jerseyClient == null) {
+            synchronized (this) {
+                jerseyClient = client;
+                if (jerseyClient == null) {
+                    ClientConfig clientConfig = new DefaultClientConfig();
+                    jerseyClient = Client.create(clientConfig);
+                    client = jerseyClient;
+                }
+            }
+        }
+        return jerseyClient;
+    }
+
+    protected void closeQuietly(ClientResponse response) {
+        if (response != null) {
+            try {
+                response.close();
+            } catch (Exception e) {
+                LOG.error("Error closing client response", e);
+            }
+        }
     }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
