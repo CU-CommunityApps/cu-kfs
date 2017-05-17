@@ -10,5 +10,5 @@ public interface ConcurRequestExtractReportService {
     
     void sendResultsEmail(ConcurRequestExtractBatchReportData reportData, File reportFile);
     
-    void sendNoReportEmail();
+    void sendEmailThatNoFileWasProcesed();
 }

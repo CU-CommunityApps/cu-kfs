@@ -65,9 +65,9 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     }
     
     @Override
-    public void sendNoReportEmail() {
-        String body = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQQUEST_EXTRACT_NO_REPORT_EMAIL_BODY);
-        String subject = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQQUEST_EXTRACT_NO_REPORT_EMAIL_SUBJECT);
+    public void sendEmailThatNoFileWasProcesed() {
+        String body = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_BODY);
+        String subject = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_SUBJECT);
         sendEmail(subject, body);
     }
     
