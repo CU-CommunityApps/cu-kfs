@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,20 +39,24 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     protected FileStorageService fileStorageService;
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
-
+    
+    @Override
     public String getConcurParameterValue(String parameterName) {
         String parameterValue = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
         return parameterValue;
     }
     
+    @Override
     public void createDoneFileFor(String fullyQualifiedFileName) throws FileStorageException {
         getFileStorageService().createDoneFile(fullyQualifiedFileName);
     }
     
+    @Override
     public void removeDoneFileFor(String fullyQualifiedFileName) throws FileStorageException {
         getFileStorageService().removeDoneFiles(Collections.singletonList(fullyQualifiedFileName));
     }
-
+    
+    @Override
     public String formatPdpPayeeName(String lastName, String firstName, String middleInitial) {
         String fullName = lastName + KFSConstants.COMMA + KFSConstants.BLANK_SPACE + firstName;
         if (StringUtils.isNotBlank(middleInitial)) {
@@ -74,21 +77,25 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         }
         return fullName;
     }
-
+    
+    @Override
     public String formatSourceDocumentNumber(String documentTypeCode, String concurDocumentId) {
         String sourceDocNumber = (documentTypeCode + concurDocumentId);
         return StringUtils.substring(sourceDocNumber, 0, ConcurConstants.SOURCE_DOCUMENT_NUMBER_FIELD_SIZE);
     }
-
+    
+    @Override
     public String formatDate_MMddyyyy(Date date) {
         return getDateTimeService().toString(date, ConcurConstants.DATE_FORMAT);
     }
-
+    
+    @Override
     public String buildFullyQualifiedPdpOutputFileName(String paymentImportDirectory, String pdpInputfileName) {
         String fullyQualifiedPdpOutputFileName = new String(paymentImportDirectory + ConcurConstants.PDP_CONCUR_OUTPUT_FILE_NAME_PREFIX + pdpInputfileName);
         return StringUtils.replace(fullyQualifiedPdpOutputFileName, GeneralLedgerConstants.BatchFileSystem.TEXT_EXTENSION, ConcurConstants.XML_FILE_EXTENSION);
     }
-
+    
+    @Override
     public boolean createPdpFeedFile(PdpFeedFileBaseEntry pdpFeedFileBaseEntry, String fullyQualifiedPdpFileName) {
         boolean success = true;
         try {
@@ -102,12 +109,13 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
         return success;
     }
     
+    @Override
     public Object loadFile(String fullyQualifiedFileName, BatchInputFileType batchInputFileType) {
         byte[] fileByteContent = safelyLoadFileBytes(fullyQualifiedFileName);
         Object parsedObject = getBatchInputFileService().parse(batchInputFileType, fileByteContent);
         return parsedObject;
     }
-
+    
     protected byte[] safelyLoadFileBytes(String fullyQualifiedFileName) {
         InputStream fileContents;
         byte[] fileByteContent;
@@ -132,6 +140,18 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     public boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine line) {
         return Boolean.TRUE.equals(line.getReportEntryIsPersonalFlag())
                 && StringUtils.equals(ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, line.getPaymentCode());
+    }
+    
+    @Override
+    public String getFileContents(String fileName) {
+        try {
+            byte[] fileByteArray = safelyLoadFileBytes(fileName);
+            String formattedString = new String(fileByteArray);
+            return formattedString;
+        } catch (RuntimeException e) {
+            LOG.error("getFileContents, unable to read the file.", e);
+            return StringUtils.EMPTY;
+        }
     }
 
     public DateTimeService getDateTimeService() {
