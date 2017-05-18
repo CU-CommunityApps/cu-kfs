@@ -515,6 +515,9 @@
     <bean id="concurStandardAccountingExtractReportService" parent="concurStandardAccountingExtractReportService-parentBean" />
     <bean id="concurStandardAccountingExtractReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractReportServiceImpl" abstract="true">
         <property name="reportWriterService" ref="concurReportWriterService" />
+        <property name="emailService" ref="emailService" />
+        <property name="concurBatchUtilityService" ref="concurBatchUtilityService" />
+        <property name="configurationService" ref="configurationService" />
         <property name="fileNamePrefixFirstPart" value="SAE-report-for--"/>
         <property name="fileNamePrefixSecondPart" value="--"/>
         <property name="reportTitle" value="Report for Concur Standard Accounting Extract File Creating KFS PDP and KFS Collector Files"/>
