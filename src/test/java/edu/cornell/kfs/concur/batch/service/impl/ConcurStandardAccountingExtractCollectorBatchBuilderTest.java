@@ -332,18 +332,39 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         ConcurSAEDetailLineFixture[] expectedLines = lineFixtures.stream()
                 .filter(lineFilter)
                 .toArray(ConcurSAEDetailLineFixture[]::new);
+        // Expected sequence numbers are the fixtures' positions in the lineFixtures List, plus one.
+        String[] expectedSequenceNumbers = Arrays.stream(expectedLines)
+                .mapToInt(lineFixtures::indexOf)
+                .map(Math::incrementExact)
+                .mapToObj(String::valueOf)
+                .toArray(String[]::new);
         
         assertEquals("Wrong number of error-related lines in report", expectedLines.length, actualLines.size());
         
         int i = 0;
         for (ConcurSAEDetailLineFixture expectedLine : expectedLines) {
             T actualLine = actualLines.get(i);
+            String expectedObjectCode;
+            if (StringUtils.equals(ConcurConstants.PENDING_CLIENT, expectedLine.journalAccountCode)) {
+                expectedObjectCode = ConcurTestConstants.ParameterTestValues.OBJECT_CODE_OVERRIDE;
+            } else {
+                expectedObjectCode = expectedLine.journalAccountCode;
+            }
             
+            assertEquals("Wrong sequence number", expectedSequenceNumbers[i], actualLine.getLineId());
             assertEquals("Wrong report ID", expectedLine.reportId, actualLine.getReportId());
             assertEquals("Wrong employee ID", expectedLine.employee.employeeId, actualLine.getEmployeeId());
             assertEquals("Wrong last name", expectedLine.employee.lastName, actualLine.getLastName());
             assertEquals("Wrong first name", expectedLine.employee.firstName, actualLine.getFirstName());
             assertEquals("Wrong middle initial", expectedLine.employee.middleInitial, actualLine.getMiddleInitial());
+            assertEquals("Wrong chart code", expectedLine.chartOfAccountsCode, actualLine.getChartOfAccountsCode());
+            assertEquals("Wrong account number", expectedLine.accountNumber, actualLine.getAccountNumber());
+            assertEquals("Wrong sub-account number", expectedLine.subAccountNumber, actualLine.getSubAccountNumber());
+            assertEquals("Wrong object code", expectedObjectCode, actualLine.getObjectCode());
+            assertEquals("Wrong sub-object code", expectedLine.subObjectCode, actualLine.getSubObjectCode());
+            assertEquals("Wrong project code", expectedLine.projectCode, actualLine.getProjectCode());
+            assertEquals("Wrong org reference ID", expectedLine.orgRefId, actualLine.getOrgRefId());
+            assertEquals("Wrong line amount", new KualiDecimal(expectedLine.journalAmount), actualLine.getLineAmount());
             
             List<String> messages = actualLine.getItemErrorResults();
             assertNotNull("Error messages list should not be null", messages);

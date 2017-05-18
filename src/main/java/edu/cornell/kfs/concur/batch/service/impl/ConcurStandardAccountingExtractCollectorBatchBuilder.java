@@ -311,26 +311,12 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected void reportPendingClientLine(ConcurStandardAccountingExtractDetailLine saeLine) {
-        ConcurBatchReportMissingObjectCodeItem pendingClientItem = new ConcurBatchReportMissingObjectCodeItem(
-                saeLine.getReportId(),
-                saeLine.getEmployeeId(),
-                saeLine.getEmployeeLastName(),
-                saeLine.getEmployeeFirstName(),
-                saeLine.getEmployeeMiddleInitital(),
-                PENDING_CLIENT_MESSAGE,
-                saeLine.getPolicy(),
-                saeLine.getExpenseType());
+        ConcurBatchReportMissingObjectCodeItem pendingClientItem = new ConcurBatchReportMissingObjectCodeItem(saeLine, PENDING_CLIENT_MESSAGE);
         reportData.addPendingClientObjectCodeLine(pendingClientItem);
     }
 
     protected void reportUnprocessedLine(ConcurStandardAccountingExtractDetailLine saeLine, String errorMessage) {
-        ConcurBatchReportLineValidationErrorItem errorItem = new ConcurBatchReportLineValidationErrorItem(
-                saeLine.getReportId(),
-                saeLine.getEmployeeId(),
-                saeLine.getEmployeeLastName(),
-                saeLine.getEmployeeFirstName(),
-                saeLine.getEmployeeMiddleInitital(),
-                errorMessage);
+        ConcurBatchReportLineValidationErrorItem errorItem = new ConcurBatchReportLineValidationErrorItem(saeLine, errorMessage);
         reportData.addValidationErrorFileLine(errorItem);
     }
 
