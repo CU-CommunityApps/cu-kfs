@@ -202,7 +202,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         if (line.getJournalAccountCodeOverridden().booleanValue()) {
             String overriddenMessage = "The journal account code needed to be overridden.";
-            reportData.addPendingClientObjectCodeLine(new ConcurBatchReportMissingObjectCodeItem(line.getReportId(), line.getEmployeeId(), line.getEmployeeLastName(), line.getEmployeeFirstName(), line.getEmployeeMiddleInitital(), overriddenMessage, line.getPolicy(), line.getExpenseType()));
+            reportData.addPendingClientObjectCodeLine(new ConcurBatchReportMissingObjectCodeItem(line, overriddenMessage));
             LOG.error("logJournalAccountCodeOverridden, the journal account code needed to be overridden");
         }
     }
