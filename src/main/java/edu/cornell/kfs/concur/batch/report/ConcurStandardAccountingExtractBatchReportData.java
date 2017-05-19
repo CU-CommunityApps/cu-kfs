@@ -9,7 +9,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorI
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 
-public class ConcurStandardAccountingExtractBatchReportData {
+public class ConcurStandardAccountingExtractBatchReportData implements ConcurEmailableReportData {
     
     private String concurFileName;
     private List<String> headerValidationErrors;
@@ -53,6 +53,7 @@ public class ConcurStandardAccountingExtractBatchReportData {
         this.pendingClientObjectCodeLines = pendingClientObjectCodeLines;
     }
     
+    @Override
     public String getConcurFileName() {
         return concurFileName;
     }
@@ -60,7 +61,8 @@ public class ConcurStandardAccountingExtractBatchReportData {
     public void setConcurFileName(String concurFileName) {
         this.concurFileName = concurFileName;
     }
-
+    
+    @Override
     public List<String> getHeaderValidationErrors() {
         return headerValidationErrors;
     }
@@ -115,7 +117,8 @@ public class ConcurStandardAccountingExtractBatchReportData {
     public void setPdpRecordsProcessed(ConcurBatchReportSummaryItem pdpRecordsProcessed) {
         this.pdpRecordsProcessed = pdpRecordsProcessed;
     }
-
+    
+    @Override
     public List<ConcurBatchReportLineValidationErrorItem> getValidationErrorFileLines() {
         return this.validationErrorFileLines;
     }
@@ -144,6 +147,11 @@ public class ConcurStandardAccountingExtractBatchReportData {
             pendingClientObjectCodeLines = new ArrayList<ConcurBatchReportMissingObjectCodeItem>();
         }
         this.pendingClientObjectCodeLines.add(pendingClientObjectCodeLine);
+    }
+    
+    @Override
+    public String getReportTypeName() {
+        return "standard accounting extract";
     }
 
 }
