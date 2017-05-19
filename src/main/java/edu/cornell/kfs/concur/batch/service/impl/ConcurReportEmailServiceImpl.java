@@ -28,7 +28,7 @@ public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
         sendEmail(subject, body);
     }
     
-    private String readReportFileToString(ConcurEmailableReportData reportData, File reportFile) {
+    protected String readReportFileToString(ConcurEmailableReportData reportData, File reportFile) {
         String contents = getConcurBatchUtilityService().getFileContents(reportFile.getAbsolutePath());
         if (StringUtils.isEmpty(contents)) {
             LOG.error("readReportFileToString, could not read report file into a String");
@@ -37,7 +37,7 @@ public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
         return contents;
     }
     
-    private String buildEmailSubject(ConcurEmailableReportData reportData) {
+    protected String buildEmailSubject(ConcurEmailableReportData reportData) {
         StringBuilder sb = new StringBuilder("The ");
         sb.append(reportData.getReportTypeName()).append(" file ");
         sb.append(reportData.getConcurFileName()).append(" has been processed.");
@@ -69,7 +69,11 @@ public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
             LOG.debug("sendEmail, the email subject: " + subject);
             LOG.debug("sendEmail, the email budy: " + body);
         }
-        getEmailService().sendMessage(message, htmlMessage);
+        try {
+            getEmailService().sendMessage(message, htmlMessage);
+        } catch (Exception e) {
+            LOG.error("sendEmail, the email could not be sent", e);
+        }
 
     }
     

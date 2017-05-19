@@ -12,8 +12,8 @@ import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 
 public class ConcurBatchUtilityServiceImplTest {
     
-    private static final String EMPTY_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/empty.txt";
-    private static final String SIMPLE_CONTENTS_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/simpleContents.txt";
+    protected static final String EMPTY_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/empty.txt";
+    protected static final String SIMPLE_CONTENTS_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/simpleContents.txt";
     
     ConcurBatchUtilityServiceImpl utilityService;
 
@@ -47,10 +47,13 @@ public class ConcurBatchUtilityServiceImplTest {
     @Test
     public void getFileContents_simpleContentsFile() {
         String actual = utilityService.getFileContents(SIMPLE_CONTENTS_FILE_PATH);
+        assertEquals("The simple contents file should have formatted values", getExpectedFileStringContents(), actual);
+    }
+    
+    protected static String getExpectedFileStringContents() {
         StringBuilder sb = new StringBuilder("This is the first line.").append(KFSConstants.NEWLINE);
         sb.append("\t").append("This is the second line indented.");
-        String expected = sb.toString();
-        assertEquals("The simple contents file should have formatted values", expected, actual);
+        return sb.toString();
     }
 
 }
