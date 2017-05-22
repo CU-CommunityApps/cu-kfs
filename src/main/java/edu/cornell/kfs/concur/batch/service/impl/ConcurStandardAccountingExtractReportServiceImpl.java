@@ -13,11 +13,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurReportEmailService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
@@ -29,6 +32,8 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected static final String BLANK_REPORT_ID_SUBSTITUTE = "[blank value]";
 
     protected ReportWriterService reportWriterService;
+    protected ConfigurationService configurationService;
+    protected ConcurReportEmailService concurReportEmailService;
 
     protected String fileNamePrefixFirstPart;
     protected String fileNamePrefixSecondPart;
@@ -43,6 +48,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected String reportValidationErrorsSubTitle;
     protected String reportMissingObjectCodesSubTitle;
     
+    @Override
     public File generateReport(ConcurStandardAccountingExtractBatchReportData reportData) {
         LOG.debug("generateReport, entered");
         initializeReportTitleAndFileName(reportData);
@@ -53,6 +59,18 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         }
         finalizeReport();
         return getReportWriterService().getReportFile();
+    }
+    
+    @Override
+    public void sendResultsEmail(ConcurStandardAccountingExtractBatchReportData reportData, File reportFile) {
+        getConcurReportEmailService().sendResultsEmail(reportData, reportFile);
+    }
+    
+    @Override
+    public void sendEmailThatNoFileWasProcesed() {
+        String body = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NO_REPORT_EMAIL_BODY);
+        String subject = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NO_REPORT_EMAIL_SUBJECT);
+        getConcurReportEmailService().sendEmail(subject, body);
     }
     
     protected void initializeReportTitleAndFileName(ConcurStandardAccountingExtractBatchReportData  reportData) {
@@ -320,6 +338,22 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
     public void setReportWriterService(ReportWriterService reportWriterService) {
         this.reportWriterService = reportWriterService;
+    }
+    
+    public ConcurReportEmailService getConcurReportEmailService() {
+        return concurReportEmailService;
+    }
+
+    public void setConcurReportEmailService(ConcurReportEmailService concurReportEmailService) {
+        this.concurReportEmailService = concurReportEmailService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
     public String getFileNamePrefixFirstPart() {

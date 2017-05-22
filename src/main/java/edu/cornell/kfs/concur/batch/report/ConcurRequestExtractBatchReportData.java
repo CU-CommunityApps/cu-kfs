@@ -7,7 +7,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
 
-public class ConcurRequestExtractBatchReportData {
+public class ConcurRequestExtractBatchReportData implements ConcurEmailableReportData {
     
     private String concurFileName;
     private List<String> headerValidationErrors;
@@ -54,7 +54,8 @@ public class ConcurRequestExtractBatchReportData {
         this.totalsForFile = totalsForFile;
         this.validationErrorFileLines = validationErrorFileLines;
     }
-
+    
+    @Override
     public String getConcurFileName() {
         return concurFileName;
     }
@@ -62,7 +63,8 @@ public class ConcurRequestExtractBatchReportData {
     public void setConcurFileName(String concurFileName) {
         this.concurFileName = concurFileName;
     }
-
+    
+    @Override
     public List<String> getHeaderValidationErrors() {
         return headerValidationErrors;
     }
@@ -135,7 +137,8 @@ public class ConcurRequestExtractBatchReportData {
     public void setTotalsForFile(ConcurBatchReportSummaryItem totalsForFile) {
         this.totalsForFile = totalsForFile;
     }
-
+    
+    @Override
     public List<ConcurBatchReportLineValidationErrorItem> getValidationErrorFileLines() {
         return validationErrorFileLines;
     }
@@ -149,6 +152,11 @@ public class ConcurRequestExtractBatchReportData {
             validationErrorFileLines = new ArrayList<ConcurBatchReportLineValidationErrorItem>();
         }
         this.validationErrorFileLines.add(validationErrorFileLine);
+    }
+    
+    @Override
+    public String getReportTypeName() {
+        return "request extract";
     }
 
 }

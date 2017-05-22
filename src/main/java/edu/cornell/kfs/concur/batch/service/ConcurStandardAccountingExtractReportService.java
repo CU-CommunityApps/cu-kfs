@@ -7,5 +7,9 @@ import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchR
 public interface ConcurStandardAccountingExtractReportService {
     
     File generateReport(ConcurStandardAccountingExtractBatchReportData reportData);
+    
+    void sendResultsEmail(ConcurStandardAccountingExtractBatchReportData reportData, File reportFile);
+    
+    void sendEmailThatNoFileWasProcesed();
 
 }
