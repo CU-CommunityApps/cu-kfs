@@ -63,7 +63,7 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
                 }
 
                 if (newSecurityModel.isActive()) {
-                    initializeModelRole(oldSecurityModel, newSecurityModel, newMaintenanceAction);
+                    updateModelRole(oldSecurityModel, newSecurityModel, newMaintenanceAction);
                 }
             } catch (WorkflowException e) {
                 LOG.error("caught exception while handling handleRouteStatusChange -> documentService.getByDocumentHeaderId("
@@ -96,7 +96,7 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
         return getRoleService().getRoleByNamespaceCodeAndName(KFSConstants.CoreModuleNamespaces.ACCESS_SECURITY, securityModel.getName());
     }
 
-    protected void initializeModelRole(SecurityModel oldSecurityModel, SecurityModel newSecurityModel, boolean newMaintenanceAction) {
+    protected void updateModelRole(SecurityModel oldSecurityModel, SecurityModel newSecurityModel, boolean newMaintenanceAction) {
         Role modelRole = createOrUpdatePotentiallyInactiveModelRole(newSecurityModel);
         super.assignOrUpdateModelMembershipToDefinitionRoles(modelRole, oldSecurityModel, newSecurityModel, newMaintenanceAction);
         super.assignOrUpdateModelMembers(modelRole, newSecurityModel);
