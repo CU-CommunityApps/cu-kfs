@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurEmailableReportData;
+import edu.cornell.kfs.concur.batch.service.impl.fixture.EmailFileFixture;
 
 public class ConcurReportEmailServiceImplTest {
     private static final String CONCUR_FILE_NAME = "extract_travel_request_t0025645jsau_20170427121117.txt";
@@ -40,7 +41,7 @@ public class ConcurReportEmailServiceImplTest {
 
     @Test
     public void readReportFileToString_noContentFile() {
-        File emptyFile = new File(ConcurBatchUtilityServiceImplTest.EMPTY_FILE_PATH);
+        File emptyFile = new File(EmailFileFixture.EMPTY_FILE.fullFilePath);
         String expected = "Could not read the request extract file.";
         String actual = concurReportEmailServiceImpl.readReportFileToString(reportData, emptyFile);
         assertEquals("shouldn't find any lines in the empty file.", expected, actual);
@@ -56,8 +57,8 @@ public class ConcurReportEmailServiceImplTest {
     
     @Test
     public void readReportFileToString_populatedFile() {
-        File emptyFile = new File(ConcurBatchUtilityServiceImplTest.SIMPLE_CONTENTS_FILE_PATH);
-        String expected = ConcurBatchUtilityServiceImplTest.getExpectedFileStringContents();
+        File emptyFile = new File(EmailFileFixture.SIMPLE_FILE.fullFilePath);
+        String expected = EmailFileFixture.SIMPLE_FILE.fileContents;
         String actual = concurReportEmailServiceImpl.readReportFileToString(reportData, emptyFile);
         assertEquals("simiple contents file should contain the expected contents.", expected, actual);
     }
