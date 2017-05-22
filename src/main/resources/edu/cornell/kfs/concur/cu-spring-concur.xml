@@ -373,7 +373,7 @@
 	    <property name="configurationService" ref="configurationService"/>
 	</bean>
 
-	<bean id="concurCashAdvancePdpFeedFileService" parent="concurCashAdvancePdpFeedFileService-parentBean" />
+    <bean id="concurCashAdvancePdpFeedFileService" parent="concurCashAdvancePdpFeedFileService-parentBean" />
 	<bean id="concurCashAdvancePdpFeedFileService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurCashAdvancePdpFeedFileServiceImpl" abstract="true">
 	    <property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService"/>
 	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
@@ -515,6 +515,8 @@
     <bean id="concurStandardAccountingExtractReportService" parent="concurStandardAccountingExtractReportService-parentBean" />
     <bean id="concurStandardAccountingExtractReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractReportServiceImpl" abstract="true">
         <property name="reportWriterService" ref="concurReportWriterService" />
+        <property name="concurReportEmailService" ref="concurReportEmailService" />
+        <property name="configurationService" ref="configurationService" />
         <property name="fileNamePrefixFirstPart" value="SAE-report-for--"/>
         <property name="fileNamePrefixSecondPart" value="--"/>
         <property name="reportTitle" value="Report for Concur Standard Accounting Extract File Creating KFS PDP and KFS Collector Files"/>
@@ -536,8 +538,7 @@
     <bean id="concurRequestExtractReportService" parent="concurRequestExtractReportService-parentBean" />
     <bean id="concurRequestExtractReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractReportServiceImpl" abstract="true">
         <property name="reportWriterService" ref="concurReportWriterService" />
-        <property name="emailService" ref="emailService"/>
-        <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+        <property name="concurReportEmailService" ref="concurReportEmailService"/>
         <property name="configurationService" ref="configurationService"/>
         <property name="fileNamePrefixFirstPart" value="request-extract-report-for--"/>
         <property name="fileNamePrefixSecondPart" value="--"/>
@@ -554,5 +555,12 @@
         <property name="totalsForFileLabel" value="Total of All Records Listed Above:"/>
         <property name="reportValidationErrorsSubTitle" value="Concur Request Extract Records With Validation Errors"/>
     </bean>
-
+    
+    <bean id="concurReportEmailService" parent="concurReportEmailService-parentBean" />
+	<bean id="concurReportEmailService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurReportEmailServiceImpl" abstract="true">
+	    <property name="emailService" ref="emailService"/>
+	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+	    <property name="configurationService" ref="configurationService"/>
+    </bean>
+    
 </beans>

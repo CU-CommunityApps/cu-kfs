@@ -3,18 +3,14 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.types.resources.Files;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 
+import edu.cornell.kfs.concur.batch.service.impl.fixture.EmailFileFixture;
+
 public class ConcurBatchUtilityServiceImplTest {
-    
-    private static final String EMPTY_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/empty.txt";
-    private static final String SIMPLE_CONTENTS_FILE_PATH = "src/test/resources/edu/cornell/kfs/concur/batch/service/impl/fixture/simpleContents.txt";
-    
     ConcurBatchUtilityServiceImpl utilityService;
 
     @Before
@@ -39,18 +35,15 @@ public class ConcurBatchUtilityServiceImplTest {
     
     @Test
     public void getFileContents_emptyFile() {
-        String actual = utilityService.getFileContents(EMPTY_FILE_PATH);
-        String expected = StringUtils.EMPTY;
+        String actual = utilityService.getFileContents(EmailFileFixture.EMPTY_FILE.fullFilePath);
+        String expected = EmailFileFixture.EMPTY_FILE.fileContents;
         assertEquals("An empty file should have no contents", expected, actual);
     }
     
     @Test
     public void getFileContents_simpleContentsFile() {
-        String actual = utilityService.getFileContents(SIMPLE_CONTENTS_FILE_PATH);
-        StringBuilder sb = new StringBuilder("This is the first line.").append(KFSConstants.NEWLINE);
-        sb.append("\t").append("This is the second line indented.");
-        String expected = sb.toString();
-        assertEquals("The simple contents file should have formatted values", expected, actual);
+        String actual = utilityService.getFileContents(EmailFileFixture.SIMPLE_FILE.fullFilePath);
+        assertEquals("The simple contents file should have formatted values", EmailFileFixture.SIMPLE_FILE.fileContents, actual);
     }
 
 }

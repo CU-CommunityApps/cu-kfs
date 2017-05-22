@@ -1,10 +1,12 @@
 package edu.cornell.kfs.concur.batch;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.FileStorageService;
@@ -25,17 +27,23 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         List<String> listOfSaeFullyQualifiedFileNames = getConcurStandardAccountingExtractService().buildListOfFullyQualifiedFileNamesToBeProcessed();
-        for (String saeFullyQualifiedFileName : listOfSaeFullyQualifiedFileNames) {
-            LOG.debug("execute, processing: " + saeFullyQualifiedFileName);
-            ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
-            try {
-                processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(saeFullyQualifiedFileName, reportData);
-                getConcurStandardAccountingExtractReportService().generateReport(reportData);
-            } catch (Exception e) {
-                LOG.error("execute, there was an unexpected error processing a file: ", e);
-            } finally {
-                getFileStorageService().removeDoneFiles(Collections.singletonList(saeFullyQualifiedFileName));
+        if (CollectionUtils.isNotEmpty(listOfSaeFullyQualifiedFileNames)) {
+            for (String saeFullyQualifiedFileName : listOfSaeFullyQualifiedFileNames) {
+                LOG.debug("execute, processing: " + saeFullyQualifiedFileName);
+                ConcurStandardAccountingExtractBatchReportData reportData = new ConcurStandardAccountingExtractBatchReportData();
+                try {
+                    processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(saeFullyQualifiedFileName, reportData);
+                    File reportFile = getConcurStandardAccountingExtractReportService().generateReport(reportData);
+                    getConcurStandardAccountingExtractReportService().sendResultsEmail(reportData, reportFile);
+                } catch (Exception e) {
+                    LOG.error("execute, there was an unexpected error processing a file: ", e);
+                } finally {
+                    getFileStorageService().removeDoneFiles(Collections.singletonList(saeFullyQualifiedFileName));
+                }
             }
+        } else {
+            LOG.info("There were no SAE files to process");
+            getConcurStandardAccountingExtractReportService().sendEmailThatNoFileWasProcesed();
         }
         return true;
     }

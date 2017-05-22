@@ -22,4 +22,6 @@ public class ConcurKeyConstants {
     public static final String CONCUR_REQUEST_EXTRACT_HEADER_AMOUNT_FILE_AMOUNT_MISMATCH = "validation.error.concur.request.extract.header.amount.file.amount.mismatch";
     public static final String CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_SUBJECT = "message.concur.requestExtract.no.report.email.subject";
     public static final String CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_BODY = "message.concur.requestExtract.no.report.email.body";
+    public static final String CONCUR_SAE_NO_REPORT_EMAIL_SUBJECT = "message.concur.sae.no.report.email.subject";
+    public static final String CONCUR_SAE_NO_REPORT_EMAIL_BODY = "message.concur.sae.no.report.email.body";
 }
