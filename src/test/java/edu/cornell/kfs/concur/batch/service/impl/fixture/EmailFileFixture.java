@@ -10,9 +10,9 @@ public enum EmailFileFixture {
     public final String fullFilePath;
     public final String fileContents;
     
-    private EmailFileFixture(String fullFilePath, String filContents) {
+    private EmailFileFixture(String fullFilePath, String fileContents) {
         this.fullFilePath = fullFilePath;
-        this.fileContents = filContents;
+        this.fileContents = fileContents;
     }
 
 }
