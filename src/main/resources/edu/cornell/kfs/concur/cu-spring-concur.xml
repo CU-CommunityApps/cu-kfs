@@ -36,9 +36,9 @@
 		</property>
 		<property name="batchFileDirectories">
 			<list>
-				<value>${reports.directory}/concur</value>
-				<value>${staging.directory}/concur/requestExtract</value>
-				<value>${staging.directory}/concur/standardAccountingExtract</value>
+				<value>${reports.directory}/cncr</value>
+				<value>${staging.directory}/cncr/requestExtract</value>
+				<value>${staging.directory}/cncr/standardAccountingExtract</value>
 			</list>
 		</property>
 
@@ -206,7 +206,7 @@
             <value>txt</value>
         </property>
         <property name="directoryPath">
-        	<value>${staging.directory}/concur/standardAccountingExtract</value>
+        	<value>${staging.directory}/cncr/standardAccountingExtract</value>
         </property>
         <property name="fileNamePrefix" value="extract_CES_SAE_v3_"/>
     </bean>
@@ -502,7 +502,7 @@
             </bean>
         </property>
         <property name="directoryPath">
-            <value>${staging.directory}/concur/requestExtract</value>
+            <value>${staging.directory}/cncr/requestExtract</value>
         </property>
         <property name="fileExtension">
             <value>txt</value>
