@@ -9,13 +9,16 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.krad.util.KRADConstants;
 
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -33,13 +36,13 @@ import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
-import edu.cornell.kfs.sys.service.impl.AbstractJerseyClientEnabledService;
 
-public class ConcurReportsServiceImpl extends AbstractJerseyClientEnabledService implements ConcurReportsService {
+public class ConcurReportsServiceImpl implements ConcurReportsService {
     
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportsServiceImpl.class);
     protected ConcurAccessTokenService concurAccessTokenService;
     protected ParameterService parameterService;
+    private volatile Client client;
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
@@ -85,15 +88,29 @@ public class ConcurReportsServiceImpl extends AbstractJerseyClientEnabledService
     }
 
     protected TravelRequestDetailsDTO buildTravelRequestDetailsOutput(String reportURI) {
-        return handleRemoteCall(
-            (client) -> client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET)),
-            (response) -> response.getEntity(TravelRequestDetailsDTO.class));
+        ClientResponse response = null;
+
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
+            TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
+
+            return reportDetails;
+        } finally {
+            closeQuietly(response);
+        }
     }
 
     protected ExpenseReportDetailsDTO buildReportDetailsOutput(String reportURI) {
-        return handleRemoteCall(
-            (client) -> client.handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET)),
-            (response) -> response.getEntity(ExpenseReportDetailsDTO.class));
+        ClientResponse response = null;
+
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
+            ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
+
+            return reportDetails;
+        } finally {
+            closeQuietly(response);
+        }
     }
 
     protected ClientRequest buildReportDetailsClientRequest(String reportURI, String httpMethod) {
@@ -207,21 +224,22 @@ public class ConcurReportsServiceImpl extends AbstractJerseyClientEnabledService
     
     protected void buildUpdateReportOutput(String workflowURI, String action, String comment) {
         LOG.info("buildUpdateReportOutput()");
+        ClientResponse response = null;
 
-        handleRemoteCall(
-            (client) -> {
-                WebResource resource = client.resource(workflowURI);
-                return resource.accept(MediaType.APPLICATION_XML)
-                        .header(ConcurConstants.AUTHORIZATION_PROPERTY,
-                                ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken())
-                        .post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
-            },
-            (response) -> {
-                response.bufferEntity();
-                String result = response.getEntity(String.class);
-                LOG.info("Update workflow response: " + result);
-                return null;
-            });
+        try {
+            WebResource resource = getClient().resource(workflowURI);
+
+            response = resource.accept(MediaType.APPLICATION_XML).
+                header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).
+                post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
+
+            response.bufferEntity();
+            String result = response.getEntity(String.class);
+            LOG.info("Update workflow response: " + result);
+        } finally {
+            closeQuietly(response);
+        }
+
     }
 
     private String buildWorkflowUpdateXML(String workflowURI, String action, String comment) {
@@ -238,23 +256,59 @@ public class ConcurReportsServiceImpl extends AbstractJerseyClientEnabledService
         LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
         String deleteItemURL = getConcurFailedRequestDeleteNotificationEndpoint() + noticationId;
         LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
+        ClientResponse response = null;
         
-        return handleRemoteCall(
-            (client) -> client.handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE)),
-            (response) -> {
-                int statusCode = response.getStatus();
-                String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
-                LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
-                return statusCode == ClientResponse.Status.OK.getStatusCode();
-            });
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
+            
+            int statusCode = response.getStatus();
+            String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+            LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
+            return statusCode == ClientResponse.Status.OK.getStatusCode();
+        } finally {
+            closeQuietly(response);
+        }
     }
     
     @Override
     public ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur() {
         LOG.info("retrieveFailedEventQueueNotificationsFromConcur, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
-        return handleRemoteCall(
-            (client) -> client.handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET)),
-            (response) -> response.getEntity(ConcurEventNotificationListDTO.class));
+        ClientResponse response = null;
+        
+        try {
+            response = getClient().handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
+            ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
+            return reportDetails;
+        } finally {
+            closeQuietly(response);
+        }
+    }
+
+    // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
+    // See effective java 2nd ed. pg. 71
+    protected Client getClient() {
+        Client jerseyClient = client;
+        if (jerseyClient == null) {
+            synchronized (this) {
+                jerseyClient = client;
+                if (jerseyClient == null) {
+                    ClientConfig clientConfig = new DefaultClientConfig();
+                    jerseyClient = Client.create(clientConfig);
+                    client = jerseyClient;
+                }
+            }
+        }
+        return jerseyClient;
+    }
+
+    protected void closeQuietly(ClientResponse response) {
+        if (response != null) {
+            try {
+                response.close();
+            } catch (Exception e) {
+                LOG.error("Error closing client response", e);
+            }
+        }
     }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {
