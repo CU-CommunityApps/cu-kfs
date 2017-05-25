@@ -9,9 +9,10 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.util.KRADConstants;
+import org.springframework.beans.factory.DisposableBean;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -37,7 +38,7 @@ import edu.cornell.kfs.concur.service.ConcurReportsService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-public class ConcurReportsServiceImpl implements ConcurReportsService {
+public class ConcurReportsServiceImpl implements ConcurReportsService, DisposableBean {
     
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportsServiceImpl.class);
     protected ConcurAccessTokenService concurAccessTokenService;
@@ -47,7 +48,12 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
     private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
     private String concurFailedRequestDeleteNotificationEndpoint;
-    
+
+    @Override
+    public void destroy() throws Exception {
+        closeJerseyClientQuietly();
+    }
+
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
         LOG.info("Extract concur report with objectURI: " + reportURI);
@@ -284,9 +290,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
         }
     }
 
-    // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
-    // See effective java 2nd ed. pg. 71
     protected Client getClient() {
+        // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
+        // See effective java 2nd ed. pg. 71
         Client jerseyClient = client;
         if (jerseyClient == null) {
             synchronized (this) {
@@ -307,6 +313,25 @@ public class ConcurReportsServiceImpl implements ConcurReportsService {
                 response.close();
             } catch (Exception e) {
                 LOG.error("Error closing client response", e);
+            }
+        }
+    }
+
+    protected void closeJerseyClientQuietly() {
+        // Use double-checked locking to retrieve the Client object, similar to related locking in Rice.
+        // See effective java 2nd ed. pg. 71
+        Client jerseyClient = client;
+        if (jerseyClient == null) {
+            synchronized (this) {
+                jerseyClient = client;
+            }
+        }
+        
+        if (jerseyClient != null) {
+            try {
+                jerseyClient.destroy();
+            } catch (Exception e) {
+                LOG.error("Error closing client", e);
             }
         }
     }
