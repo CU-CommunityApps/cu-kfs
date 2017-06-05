@@ -79,7 +79,25 @@ public class ConcurPersonValidationServiceImplTest {
         AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.HARRY_NO_POSTAL.person.getEmployeeId());
         assertFalse(results.isValid());
         assertEquals(1, results.getErrorMessages().size());
-        assertEquals("Postal code is empty. ", results.getErrorMessages().get(0));
+        assertEquals("Postal Code is empty. ", results.getErrorMessages().get(0));
+    }
+    
+    @Test
+    public void invalidPdpAddress_noCountry() {
+        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.FRANK_NO_COUNTRY.person.getEmployeeId());
+        assertFalse(results.isValid());
+        assertEquals(1, results.getErrorMessages().size());
+        assertEquals("Country Code is empty. ", results.getErrorMessages().get(0));
+    }
+    
+    @Test
+    public void invalidPdpAddress_noMultipleBlankFields() {
+        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.ALLIE_NO_COUNTRY_STATE_ZIP.person.getEmployeeId());
+        assertFalse(results.isValid());
+        assertEquals(3, results.getErrorMessages().size());
+        assertEquals("State/Province is empty. ", results.getErrorMessages().get(0));
+        assertEquals("Postal Code is empty. ", results.getErrorMessages().get(1));
+        assertEquals("Country Code is empty. ", results.getErrorMessages().get(2));
     }
     
     private class TestablePersonService extends PersonServiceImpl {

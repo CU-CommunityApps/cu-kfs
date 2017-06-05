@@ -42,7 +42,7 @@ public class AddressValidationResults {
                 sb.append("NOT valid. ");
                 if (CollectionUtils.isNotEmpty(errorMessages)) {
                     for (String message : errorMessages) {
-                        sb.append(message).append(KFSConstants.DELIMITER).append(StringUtils.SPACE);
+                        sb.append(message).append(StringUtils.SPACE);
                     }
                 }
             }

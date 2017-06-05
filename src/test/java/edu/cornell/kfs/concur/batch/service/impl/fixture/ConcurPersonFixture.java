@@ -8,7 +8,9 @@ public enum ConcurPersonFixture {
     JANE_NO_ADDRESS("102", "John", "Doe", StringUtils.EMPTY),
     TOM_NO_CITY("103", "Tom", "Doe", "120 Maple", StringUtils.EMPTY),
     DICK_NO_STATE("104", "Dick", "Doe", "120 Maple", "Ithaca", StringUtils.EMPTY),
-    HARRY_NO_POSTAL("104", "Dick", "Doe", "120 Maple", "Ithaca", "NY", StringUtils.EMPTY);
+    HARRY_NO_POSTAL("105", "Harry", "Doe", "120 Maple", "Ithaca", "NY", StringUtils.EMPTY),
+    FRANK_NO_COUNTRY("106", "Frank", "Doe", "120 Maple", "Ithaca", "NY", "14850", StringUtils.EMPTY),
+    ALLIE_NO_COUNTRY_STATE_ZIP("107", "Frank", "Doe", "120 Maple", "Ithaca", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     
     public final Person person;
     
@@ -25,7 +27,11 @@ public enum ConcurPersonFixture {
     }
     
     private ConcurPersonFixture(String employeeId, String firstName, String lastName, String addressLine1, String city, String state, String postalCode) {
-        this(employeeId, firstName, lastName, addressLine1, StringUtils.EMPTY, StringUtils.EMPTY, city, state, postalCode, "US");
+        this(employeeId, firstName, lastName, addressLine1, city, state, postalCode, "US");
+    }
+    
+    private ConcurPersonFixture(String employeeId, String firstName, String lastName, String addressLine1, String city, String state, String postalCode, String countyCode) {
+        this(employeeId, firstName, lastName, addressLine1, StringUtils.EMPTY, StringUtils.EMPTY, city, state, postalCode, countyCode);
     }
     
     private ConcurPersonFixture(String employeeId, String firstName, String lastName, String addressLine1, String addressLine2, String addressLine3,

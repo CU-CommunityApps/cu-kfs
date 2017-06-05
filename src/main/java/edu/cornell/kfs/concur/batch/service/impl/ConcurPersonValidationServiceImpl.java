@@ -87,7 +87,8 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
         boolean valid;
         if (StringUtils.isEmpty(addressField)) {
             valid = false;
-            messageList.add(addressFieldDescription + " is empty. ");
+            String message = addressFieldDescription + " is empty. ";
+            messageList.add(message);
         } else {
             valid = true;
         }
