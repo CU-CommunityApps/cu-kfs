@@ -12,7 +12,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String employeeId; 
     private String employeeLastName; 
     private String employeeFirstName; 
-    private String employeeMiddleInitital; 
+    private String employeeMiddleInitial; 
     private String employeeGroupId; 
     private String reportId; 
     private String employeeStatus; 
@@ -89,12 +89,12 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.employeeFirstName = employeeFirstName;
     }
 
-    public String getEmployeeMiddleInitital() {
-        return employeeMiddleInitital;
+    public String getEmployeeMiddleInitial() {
+        return employeeMiddleInitial;
     }
 
-    public void setEmployeeMiddleInitital(String employeeMiddleInitital) {
-        this.employeeMiddleInitital = employeeMiddleInitital;
+    public void setEmployeeMiddleInitial(String employeeMiddleInitial) {
+        this.employeeMiddleInitial = employeeMiddleInitial;
     }
 
     public String getEmployeeGroupId() {
@@ -317,7 +317,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
         sb.append(" employeeLastName: ").append(employeeLastName).append(" employeeFirstName: ").append(employeeFirstName);
-        sb.append(" employeeMiddleInitital: ").append(employeeMiddleInitital).append(" employeeGroupId: ").append(employeeGroupId);
+        sb.append(" employeeMiddleInitial: ").append(employeeMiddleInitial).append(" employeeGroupId: ").append(employeeGroupId);
         sb.append(" reportId: ").append(reportId).append(" reportEntryId: ").append(reportEntryId);
         sb.append(" reportEntryIsPersonalFlag: ").append(reportEntryIsPersonalFlag).append(" employeeStatus: ").append(employeeStatus);
         sb.append(" paymentCode: ").append(paymentCode).append(" journalAccountCode: ").append(journalAccountCode);

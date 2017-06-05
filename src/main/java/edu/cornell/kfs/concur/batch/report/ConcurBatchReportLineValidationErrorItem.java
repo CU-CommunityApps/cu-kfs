@@ -57,14 +57,14 @@ public class ConcurBatchReportLineValidationErrorItem {
 
     public ConcurBatchReportLineValidationErrorItem(ConcurStandardAccountingExtractDetailLine saeLine, String itemErrorResult) {
         this(saeLine.getSequenceNumber(), saeLine.getReportId(), saeLine.getEmployeeId(), saeLine.getEmployeeLastName(), saeLine.getEmployeeFirstName(),
-                saeLine.getEmployeeMiddleInitital(), saeLine.getChartOfAccountsCode(), saeLine.getAccountNumber(), saeLine.getSubAccountNumber(),
+                saeLine.getEmployeeMiddleInitial(), saeLine.getChartOfAccountsCode(), saeLine.getAccountNumber(), saeLine.getSubAccountNumber(),
                 saeLine.getJournalAccountCode(), saeLine.getSubObjectCode(), saeLine.getProjectCode(), saeLine.getOrgRefId(),
                 saeLine.getJournalAmount(), itemErrorResult);
     }
 
     public ConcurBatchReportLineValidationErrorItem(ConcurStandardAccountingExtractDetailLine saeLine, List<String> itemErrorResults) {
         this(saeLine.getSequenceNumber(), saeLine.getReportId(), saeLine.getEmployeeId(), saeLine.getEmployeeLastName(), saeLine.getEmployeeFirstName(),
-                saeLine.getEmployeeMiddleInitital(), saeLine.getChartOfAccountsCode(), saeLine.getAccountNumber(), saeLine.getSubAccountNumber(),
+                saeLine.getEmployeeMiddleInitial(), saeLine.getChartOfAccountsCode(), saeLine.getAccountNumber(), saeLine.getSubAccountNumber(),
                 saeLine.getJournalAccountCode(), saeLine.getSubObjectCode(), saeLine.getProjectCode(), saeLine.getOrgRefId(),
                 saeLine.getJournalAmount(), itemErrorResults);
     }

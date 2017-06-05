@@ -46,7 +46,7 @@ public class ConcurStandardAccountingExtractFileFixture {
         line.setEmployeeGroupId(employeeGroupId);
         line.setEmployeeLastName(EMPLOYEE_LAST_NAME);
         line.setEmployeeFirstName(EMPLOYEE_FIRST_NAME);
-        line.setEmployeeMiddleInitital(EMPLOYEE_MIDDLE_INITIAL);
+        line.setEmployeeMiddleInitial(EMPLOYEE_MIDDLE_INITIAL);
         line.setPolicy(DEFAULT_POLICY);
         line.setExpenseType(DEFAULT_EXPENSE_TYPE_NAME);
         return line;

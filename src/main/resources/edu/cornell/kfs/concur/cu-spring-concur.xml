@@ -160,7 +160,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="employeeId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="5" p:propertyName="employeeLastName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="6" p:propertyName="employeeFirstName"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="7" p:propertyName="employeeMiddleInitital"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="7" p:propertyName="employeeMiddleInitial"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="8" p:propertyName="employeeGroupId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="18" p:propertyName="reportId"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="32" p:propertyName="policy"/>
