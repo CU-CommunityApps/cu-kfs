@@ -162,24 +162,28 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
+    public boolean validateConcurStandardAccountingExtractDetailLineForCollector(ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData, false);
         valid = validateAccountingLine(line, reportData) && valid;
         return valid;
     }
 
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, 
+    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverrideForPdp(ConcurStandardAccountingExtractDetailLine line, 
             ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode) {
-        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
+        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData, true);
         valid = validateAccountingLineWithObjectCodeOverrides(line, reportData, overriddenObjectCode, overriddenSubObjectCode) && valid;
         return valid;
     }
     
-    private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+    private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractBatchReportData reportData, boolean validatAddress) {
         boolean valid = validateReportId(line, reportData);
         valid = validateEmployeeId(line, reportData) && valid;
-        valid &= validateAddressIfCheckPayment(line, reportData);
+        if (validatAddress) {
+            valid &= validateAddressIfCheckPayment(line, reportData);
+        }
         return valid;
     }
     

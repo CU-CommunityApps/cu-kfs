@@ -533,7 +533,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         return buildMockService(ConcurStandardAccountingExtractValidationService.class, (service) -> {
             Capture<ConcurStandardAccountingExtractDetailLine> saeLineArg = EasyMock.newCapture();
             EasyMock.expect(
-                    service.validateConcurStandardAccountingExtractDetailLine(
+                    service.validateConcurStandardAccountingExtractDetailLineForCollector(
                             EasyMock.capture(saeLineArg), EasyMock.anyObject()))
                     .andStubAnswer(() -> validateLine(saeLineArg.getValue()));
         });

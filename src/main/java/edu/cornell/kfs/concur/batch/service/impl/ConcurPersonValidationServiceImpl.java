@@ -100,8 +100,8 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
     @Override
     public boolean isPayeeSignedUpForACH(String employeeId) {
         boolean isACH = getPayeeACHService().isPayeeSignedUpForACH("E", employeeId);
-        LOG.info("isPayeeSignedUpForACH, is employee ID " + employeeId + "signed up for ACH: " + isACH );
-        return true;
+        LOG.info("isPayeeSignedUpForACH, is employee ID " + employeeId + " signed up for ACH: " + isACH );
+        return isACH;
     }
 
     public PersonService getPersonService() {
