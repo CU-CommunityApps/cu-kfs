@@ -7,4 +7,6 @@ public interface ConcurPersonValidationService {
     boolean validPerson(String employeeId);
     
     AddressValidationResults validPdpAddress(String employeeId);
+    
+    boolean isPayeeSignedUpForACH(String employeeId);
 }

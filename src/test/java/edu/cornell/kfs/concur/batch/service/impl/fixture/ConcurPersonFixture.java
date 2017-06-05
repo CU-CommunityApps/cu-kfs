@@ -10,12 +10,17 @@ public enum ConcurPersonFixture {
     DICK_NO_STATE("104", "Dick", "Doe", "120 Maple", "Ithaca", StringUtils.EMPTY),
     HARRY_NO_POSTAL("105", "Harry", "Doe", "120 Maple", "Ithaca", "NY", StringUtils.EMPTY),
     FRANK_NO_COUNTRY("106", "Frank", "Doe", "120 Maple", "Ithaca", "NY", "14850", StringUtils.EMPTY),
-    ALLIE_NO_COUNTRY_STATE_ZIP("107", "Frank", "Doe", "120 Maple", "Ithaca", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+    ALLIE_NO_COUNTRY_STATE_ZIP("107", "Frank", "Doe", "120 Maple", "Ithaca", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY),
+    TANYA_THIRD_ADDRESS("108", "Tanyaa", "Doe", StringUtils.EMPTY);
     
     public final Person person;
     
     private ConcurPersonFixture(String employeeId, String firstName, String lastName, String addressLine1) {
         this(employeeId, firstName, lastName, addressLine1, "Ithaca");
+        if (StringUtils.equals(employeeId, "108")) {
+            ConcurTestablePerson concurPerson = (ConcurTestablePerson) this.person;
+            concurPerson.setAddressLine3("somewhere");
+        }
     }
     
     private ConcurPersonFixture(String employeeId, String firstName, String lastName, String addressLine1, String city) {

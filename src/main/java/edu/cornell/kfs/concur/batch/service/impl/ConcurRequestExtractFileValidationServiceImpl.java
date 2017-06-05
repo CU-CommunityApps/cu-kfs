@@ -25,6 +25,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEntryDetailFileLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurPersonValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -35,9 +36,9 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurAccountValidationService concurAccountValidationService;
-    protected PersonService personService;
     protected ConfigurationService configurationService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConcurPersonValidationService concurPersonValidationService;
 
     public boolean requestExtractHeaderRowValidatesToFileContents(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
         boolean headerValidationPassed;
@@ -184,17 +185,10 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             return false;
         }
         else {
-            try {
-                Person employee = getPersonService().getPersonByEmployeeId(detailFileLine.getEmployeeId());
-                if (ObjectUtils.isNotNull(employee)) {
-                    return true;
-                }
-                else {
-                    detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
-                    return false;
-                }
-            }
-            catch (Exception e) {
+            boolean validPerson = getConcurPersonValidationService().validPerson(detailFileLine.getEmployeeId());
+            if(validPerson) {
+                return true;
+            } else {
                 detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
                 return false;
             }
@@ -381,14 +375,6 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         this.concurAccountValidationService = concurAccountValidationService;
     }
 
-    public PersonService getPersonService() {
-        return personService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
-    }
-
     public ConfigurationService getConfigurationService() {
         return configurationService;
     }
@@ -403,6 +389,14 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+
+    public ConcurPersonValidationService getConcurPersonValidationService() {
+        return concurPersonValidationService;
+    }
+
+    public void setConcurPersonValidationService(ConcurPersonValidationService concurPersonValidationService) {
+        this.concurPersonValidationService = concurPersonValidationService;
     }
 
 }

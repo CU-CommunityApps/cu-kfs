@@ -115,7 +115,7 @@
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">
 		<property name="concurAccountValidationService" ref="concurAccountValidationService"/>
 		<property name="parameterService" ref="parameterService"/>
-		<property name="personService" ref="personService"/>
+		<property name="concurPersonValidationService" ref="concurPersonValidationService"/>
 		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
 		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	</bean>
@@ -368,7 +368,7 @@
 	<bean id="concurRequestExtractFileValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestExtractFileValidationServiceImpl" abstract="true">
 	    <property name="concurRequestedCashAdvanceService" ref="concurRequestedCashAdvanceService" />
 	    <property name="concurAccountValidationService" ref="concurAccountValidationService" />
-	    <property name="personService" ref="personService"/>
+	    <property name="concurPersonValidationService" ref="concurPersonValidationService"/>
 	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	    <property name="configurationService" ref="configurationService"/>
 	</bean>
@@ -561,6 +561,12 @@
 	    <property name="emailService" ref="emailService"/>
 	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	    <property name="configurationService" ref="configurationService"/>
+    </bean>
+    
+    <bean id="concurPersonValidationService" parent="concurPersonValidationService-parentBean" />
+	<bean id="concurPersonValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurPersonValidationServiceImpl" abstract="true">
+	    <property name="personService" ref="personService"/>
+	    <property name="payeeACHService" ref="payeeACHService"/>
     </bean>
     
 </beans>

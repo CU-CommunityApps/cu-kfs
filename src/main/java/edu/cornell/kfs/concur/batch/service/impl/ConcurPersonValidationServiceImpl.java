@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
@@ -16,6 +17,7 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
     private static final Logger LOG = Logger.getLogger(ConcurPersonValidationServiceImpl.class);
     
     protected PersonService personService;
+    protected PayeeACHService payeeACHService;
 
     @Override
     public boolean validPerson(String employeeId) {
@@ -25,13 +27,13 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
             if (valid) {
                 LOG.debug("validPerson, the employee id " + employeeId + " was built into the person: " + employee.getName());
             } else {
-                LOG.debug("validPerson, " + buildGoodNotBuildPersonMessage(employeeId));
+                LOG.debug("validPerson, " + getCouldNotBuildPersonMessage(employeeId));
             }
         }
         return valid;
     }
     
-    private String buildGoodNotBuildPersonMessage(String employeeId) {
+    private String getCouldNotBuildPersonMessage(String employeeId) {
         return "The employee ID " + employeeId + " could not be built into a person";
     }
     
@@ -62,7 +64,7 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
             validAddress = validateAddressFieldNotEmpty(employee.getAddressCountryCodeUnmasked(), "Country Code", messageList) && validAddress;
             
         } else {
-            messageList.add(buildGoodNotBuildPersonMessage(employeeId));
+            messageList.add(getCouldNotBuildPersonMessage(employeeId));
         }
         
         AddressValidationResults results = new AddressValidationResults(employee, validAddress, messageList);
@@ -94,6 +96,13 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
         }
         return valid;
     }
+    
+    @Override
+    public boolean isPayeeSignedUpForACH(String employeeId) {
+        boolean isACH = getPayeeACHService().isPayeeSignedUpForACH("E", employeeId);
+        LOG.info("isPayeeSignedUpForACH, is employee ID " + employeeId + "signed up for ACH: " + isACH );
+        return true;
+    }
 
     public PersonService getPersonService() {
         return personService;
@@ -101,6 +110,14 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public PayeeACHService getPayeeACHService() {
+        return payeeACHService;
+    }
+
+    public void setPayeeACHService(PayeeACHService payeeACHService) {
+        this.payeeACHService = payeeACHService;
     }
 
 }

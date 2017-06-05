@@ -5,15 +5,11 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.impl.identity.PersonServiceImpl;
-import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.ConcurPersonFixture;
@@ -24,7 +20,6 @@ public class ConcurPersonValidationServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        Logger.getLogger(ConcurPersonValidationServiceImpl.class).setLevel(Level.DEBUG);
         personValidationService = new ConcurPersonValidationServiceImpl();
         personValidationService.setPersonService(new TestablePersonService());
     }
@@ -56,6 +51,12 @@ public class ConcurPersonValidationServiceImplTest {
         assertFalse(results.isValid());
         assertEquals(1, results.getErrorMessages().size());
         assertEquals("Address is empty. ", results.getErrorMessages().get(0));
+    }
+    
+    @Test
+    public void validPdpAddress_useOtherAddressField() {
+        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.TANYA_THIRD_ADDRESS.person.getEmployeeId());
+        assertTrue(results.isValid());
     }
     
     @Test

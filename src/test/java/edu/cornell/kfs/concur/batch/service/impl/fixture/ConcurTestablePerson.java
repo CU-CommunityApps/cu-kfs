@@ -137,6 +137,10 @@ public class ConcurTestablePerson implements Person {
     public String getAddressLine2Unmasked() {
         return addressLine2;
     }
+    
+    public void setAddressLine3(String addressLine3) {
+        this.addressLine3 = addressLine3;
+    }
 
     @Override
     public String getAddressLine3() {

@@ -5,10 +5,7 @@ import java.sql.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -17,6 +14,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurPersonValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -30,9 +28,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ParameterService parameterService;
-    protected PersonService personService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConcurPersonValidationService concurPersonValidationService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -153,28 +151,13 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        Person employee = findPerson(line.getEmployeeId());
-        boolean valid = ObjectUtils.isNotNull(employee);
-        if (valid) {
-            LOG.debug("validateEmployeeId, found a valid employee: " + employee.getName());
-        } else {
+        boolean valid = getConcurPersonValidationService().validPerson(line.getEmployeeId());
+        if (!valid) {
             String validationError = "Found a an invalid employee ID: " + line.getEmployeeId();
             reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationError));
             LOG.error("validateEmployeeId, " + validationError);
         }
         return valid;
-    }
-    
-    private Person findPerson(String employeeId) {
-        if (StringUtils.isNotBlank(employeeId)) {
-            try {
-                Person employee = getPersonService().getPersonByEmployeeId(employeeId);
-                return employee;
-            } catch (Exception e) {
-                LOG.error("findPerson, Unable to create a person from employee ID: " + employeeId, e);
-            }
-        }
-        return null;
     }
     
     @Override
@@ -297,14 +280,6 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         this.parameterService = parameterService;
     }
 
-    public PersonService getPersonService() {
-        return personService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
-    }
-
     public ConcurStandardAccountingExtractCashAdvanceService getConcurStandardAccountingExtractCashAdvanceService() {
         return concurStandardAccountingExtractCashAdvanceService;
     }
@@ -319,6 +294,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+
+    public ConcurPersonValidationService getConcurPersonValidationService() {
+        return concurPersonValidationService;
+    }
+
+    public void setConcurPersonValidationService(ConcurPersonValidationService concurPersonValidationService) {
+        this.concurPersonValidationService = concurPersonValidationService;
     }
 
 }
