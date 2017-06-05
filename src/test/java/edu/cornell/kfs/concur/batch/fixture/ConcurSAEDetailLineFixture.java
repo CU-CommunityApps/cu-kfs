@@ -375,7 +375,7 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setEmployeeId(employee.employeeId);
         detailLine.setEmployeeLastName(employee.lastName);
         detailLine.setEmployeeFirstName(employee.firstName);
-        detailLine.setEmployeeMiddleInitital(employee.middleInitial);
+        detailLine.setEmployeeMiddleInitial(employee.middleInitial);
         detailLine.setEmployeeGroupId(employee.groupId);
         detailLine.setEmployeeStatus(employee.status);
         detailLine.setReportId(reportId);

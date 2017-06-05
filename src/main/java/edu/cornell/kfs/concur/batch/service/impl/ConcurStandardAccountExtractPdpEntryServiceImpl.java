@@ -59,7 +59,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public PdpFeedGroupEntry buildPdpFeedGroupEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedGroupEntry currentGroup = new PdpFeedGroupEntry();
         currentGroup.setPayeeName(buildPayeeName(line.getEmployeeLastName(), line.getEmployeeFirstName(), 
-                line.getEmployeeMiddleInitital()));
+                line.getEmployeeMiddleInitial()));
         currentGroup.setPayeeId(buildPayeeIdEntry(line));
         currentGroup.setPaymentDate(formatDate(line.getBatchDate()));
         currentGroup.setCombineGroupInd(ConcurConstants.COMBINED_GROUP_INDICATOR);
