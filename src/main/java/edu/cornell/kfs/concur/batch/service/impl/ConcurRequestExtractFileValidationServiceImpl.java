@@ -20,7 +20,9 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEntryDetailFileLine;
@@ -193,6 +195,21 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
                 return false;
             }
         }
+    }
+    private boolean validateAddressIfCheckPayment(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        boolean valid = true;
+        String employeeId = detailFileLine.getEmployeeId();
+        if (getConcurPersonValidationService().isPayeeSignedUpForACH(employeeId)) {
+            LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
+        } else {
+            AddressValidationResults addressValidationResults = getConcurPersonValidationService().validPdpAddress(employeeId);
+            valid = addressValidationResults.isValid();
+            if (!valid) {
+                detailFileLine.getValidationResult().addMessage(addressValidationResults.toString());
+            }
+            LOG.info("validateAddressIfCheckPayment, addressValidationResults: " + addressValidationResults.toString());
+        }
+        return valid;
     }
 
     private boolean payeeIdTypeIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {

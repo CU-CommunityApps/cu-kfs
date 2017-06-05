@@ -9,6 +9,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
+import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
@@ -178,6 +179,23 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean valid = validateReportId(line, reportData);
         valid = validateEmployeeId(line, reportData) && valid;
+        valid &= validateAddressIfCheckPayment(line, reportData);
+        return valid;
+    }
+    
+    private boolean validateAddressIfCheckPayment(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = true;
+        String employeeId = line.getEmployeeId();
+        if (getConcurPersonValidationService().isPayeeSignedUpForACH(employeeId)) {
+            LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
+        } else {
+            AddressValidationResults addressValidationResults = getConcurPersonValidationService().validPdpAddress(employeeId);
+            valid = addressValidationResults.isValid();
+            if (!valid) {
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, addressValidationResults.toString()));
+            }
+            LOG.info("validateAddressIfCheckPayment, addressValidationResults: " + addressValidationResults.toString());
+        }
         return valid;
     }
     
