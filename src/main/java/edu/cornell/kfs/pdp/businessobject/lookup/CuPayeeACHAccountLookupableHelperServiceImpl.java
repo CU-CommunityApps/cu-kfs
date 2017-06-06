@@ -146,6 +146,11 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends AbstractPayeeL
             return super.getSearchResultsHelper(fieldValues, unbounded);
         }
     }
+    
+    @Override
+    protected String generateBusinessObjectIdentifierForSecurityLogging(BusinessObject businessObject) {
+        return null;
+    }
 
     public PersonService getPersonService() {
         return personService;
