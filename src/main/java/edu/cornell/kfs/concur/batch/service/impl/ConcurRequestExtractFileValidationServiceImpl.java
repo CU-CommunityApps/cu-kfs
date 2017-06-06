@@ -138,6 +138,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         boolean haveDataForLookup = true;
         haveDataForLookup &= requestIdIsValid(detailFileLine);
         haveDataForLookup &= employeeIdIsValid(detailFileLine);
+        haveDataForLookup &= validateAddressIfCheckPayment(detailFileLine);
         haveDataForLookup &= payeeIdTypeIsValid(detailFileLine);
         haveDataForLookup &= requestAmountIsValid(detailFileLine);
 
