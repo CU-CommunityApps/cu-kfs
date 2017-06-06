@@ -18,7 +18,6 @@ import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
-import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
@@ -186,7 +185,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             if(validPerson) {
                 return true;
             } else {
-                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
+                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
                 return false;
             }
         }
@@ -197,12 +196,11 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         if (getConcurPersonValidationService().isPayeeSignedUpForACH(employeeId)) {
             LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
         } else {
-            AddressValidationResults addressValidationResults = getConcurPersonValidationService().validPdpAddress(employeeId);
-            valid = addressValidationResults.isValid();
+            valid = getConcurPersonValidationService().validPdpAddress(employeeId);
             if (!valid) {
-                detailFileLine.getValidationResult().addMessage(addressValidationResults.toString());
+                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS));
             }
-            LOG.info("validateAddressIfCheckPayment, addressValidationResults: " + addressValidationResults.toString());
+            LOG.info("validateAddressIfCheckPayment, Is the address valid: " + valid);
         }
         return valid;
     }

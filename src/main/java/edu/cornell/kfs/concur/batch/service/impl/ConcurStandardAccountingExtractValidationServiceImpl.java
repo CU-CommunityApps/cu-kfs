@@ -5,11 +5,12 @@ import java.sql.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
-import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
@@ -32,6 +33,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurPersonValidationService concurPersonValidationService;
+    protected ConfigurationService configurationService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -154,9 +156,9 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean valid = getConcurPersonValidationService().validPerson(line.getEmployeeId());
         if (!valid) {
-            String validationError = "Found a an invalid employee ID: " + line.getEmployeeId();
-            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationError));
-            LOG.error("validateEmployeeId, " + validationError);
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, 
+                    getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS)));
+            LOG.error("validateEmployeeId, Found a an invalid employee ID: " + line.getEmployeeId());
         }
         return valid;
     }
@@ -178,10 +180,10 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     }
     
     private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, 
-            ConcurStandardAccountingExtractBatchReportData reportData, boolean validatAddress) {
+            ConcurStandardAccountingExtractBatchReportData reportData, boolean validateAddress) {
         boolean valid = validateReportId(line, reportData);
         valid = validateEmployeeId(line, reportData) && valid;
-        if (validatAddress) {
+        if (validateAddress) {
             valid &= validateAddressIfCheckPayment(line, reportData);
         }
         return valid;
@@ -193,12 +195,11 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         if (getConcurPersonValidationService().isPayeeSignedUpForACH(employeeId)) {
             LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
         } else {
-            AddressValidationResults addressValidationResults = getConcurPersonValidationService().validPdpAddress(employeeId);
-            valid = addressValidationResults.isValid();
+            valid = getConcurPersonValidationService().validPdpAddress(employeeId);
             if (!valid) {
-                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, addressValidationResults.toString()));
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, 
+                        getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS)));
             }
-            LOG.info("validateAddressIfCheckPayment, addressValidationResults: " + addressValidationResults.toString());
         }
         return valid;
     }
@@ -324,6 +325,14 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setConcurPersonValidationService(ConcurPersonValidationService concurPersonValidationService) {
         this.concurPersonValidationService = concurPersonValidationService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

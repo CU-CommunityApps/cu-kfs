@@ -10,7 +10,6 @@ import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
-import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.service.ConcurPersonValidationService;
 
 public class ConcurPersonValidationServiceImpl implements ConcurPersonValidationService {
@@ -50,37 +49,33 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
     }
 
     @Override
-    public AddressValidationResults validPdpAddress(String employeeId) {
-        List<String> messageList = new ArrayList<String>();
+    public boolean validPdpAddress(String employeeId) {
         Person employee = findPerson(employeeId);
         boolean validPerson = ObjectUtils.isNotNull(employee);
         boolean validAddress = validPerson;
-        
         if (validPerson) {
             String state = employee.getAddressStateProvinceCodeUnmasked();
             String country = employee.getAddressCountryCodeUnmasked();
             if (StringUtils.isBlank(state) && StringUtils.isBlank(country)) {
                 validAddress = false;
-                String errorMessage = employee.getName() + " does not have a Country Code or a State/Province code.";
-                LOG.error(errorMessage);
-                messageList.add(errorMessage);
+                LOG.error("validPdpAddress, " + employee.getName() + " does not have a Country Code or a State/Province code.");
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("validPdpAddress, The employee " + employee.getName() + " had a country code or state code." );
+                }
             }
-            
         } else {
-            messageList.add(getCouldNotBuildPersonMessage(employeeId));
+            LOG.error("validPdpAddress " + getCouldNotBuildPersonMessage(employeeId));
         }
-        
-        AddressValidationResults results = new AddressValidationResults(employee, validAddress, messageList);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("validPdpAddress, " + results.toString());
-        }
-        return results;
+        return validAddress;
     }
     
     @Override
     public boolean isPayeeSignedUpForACH(String employeeId) {
         boolean isACH = getPayeeACHService().isPayeeSignedUpForACH("E", employeeId);
-        LOG.info("isPayeeSignedUpForACH, is employee ID " + employeeId + " signed up for ACH: " + isACH );
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isPayeeSignedUpForACH, is employee ID " + employeeId + " signed up for ACH: " + isACH );
+        }
         return isACH;
     }
 

@@ -118,6 +118,7 @@
 		<property name="concurPersonValidationService" ref="concurPersonValidationService"/>
 		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
 		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+		<property name="configurationService" ref="configurationService"/>
 	</bean>
 	
 	<bean id="concurStandardAccountingExtractCashAdvanceService" parent="concurStandardAccountingExtractCashAdvanceService-parentBean" />

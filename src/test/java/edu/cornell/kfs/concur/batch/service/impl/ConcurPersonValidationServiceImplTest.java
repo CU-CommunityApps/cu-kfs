@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.identity.PersonServiceImpl;
 
-import edu.cornell.kfs.concur.batch.businessobject.AddressValidationResults;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.ConcurPersonFixture;
 
 public class ConcurPersonValidationServiceImplTest {
@@ -38,26 +37,26 @@ public class ConcurPersonValidationServiceImplTest {
 
     @Test
     public void validPdpAddress_bothStateAndCountry() {
-        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.JOHN_STATE_COUNTRY.person.getEmployeeId());
-        assertTrue(results.isValid());
+        boolean results = personValidationService.validPdpAddress(ConcurPersonFixture.JOHN_STATE_COUNTRY.person.getEmployeeId());
+        assertTrue(results);
     }
     
     @Test
     public void validPdpAddress_justState() {
-        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.JANE_STATE.person.getEmployeeId());
-        assertTrue(results.isValid());
+        boolean results = personValidationService.validPdpAddress(ConcurPersonFixture.JANE_STATE.person.getEmployeeId());
+        assertTrue(results);
     }
     
     @Test
     public void validPdpAddress_justCountry() {
-        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.TOM_COUNTRY.person.getEmployeeId());
-        assertTrue(results.isValid());
+        boolean results = personValidationService.validPdpAddress(ConcurPersonFixture.TOM_COUNTRY.person.getEmployeeId());
+        assertTrue(results);
     }
     
     @Test
     public void invalidPdpAddress() {
-        AddressValidationResults results = personValidationService.validPdpAddress(ConcurPersonFixture.TINA_INVALID_ADDRESS.person.getEmployeeId());
-        assertFalse(results.isValid());
+        boolean results = personValidationService.validPdpAddress(ConcurPersonFixture.TINA_INVALID_ADDRESS.person.getEmployeeId());
+        assertFalse(results);
     }
     
     private class TestablePersonService extends PersonServiceImpl {
