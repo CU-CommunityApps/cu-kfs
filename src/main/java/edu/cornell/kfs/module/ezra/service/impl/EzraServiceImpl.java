@@ -9,6 +9,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
@@ -23,22 +31,15 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.cg.businessobject.CuAward;
+import edu.cornell.kfs.module.ezra.businessobject.Compliance;
 import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
@@ -52,6 +53,9 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 public class EzraServiceImpl implements EzraService {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraServiceImpl.class);
+
+    protected static final String PROJECT_ID_FIELD = "projectId";
+    protected static final String AWARD_PROPOSAL_ID_FIELD = "awardProposalId";
 
     private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
@@ -258,10 +262,29 @@ public class EzraServiceImpl implements EzraService {
 		aea.setBudgetEndingDate(ezraAward.getBudgetStopDate());
 		aea.setBudgetTotalAmount(ezraAward.getBudgetAmt());
 
+		Compliance ezraCompliance = getEzraCompliance(ezraAward);
+		if (ObjectUtils.isNotNull(ezraCompliance)) {
+		    boolean everify = Boolean.TRUE.equals(ezraCompliance.getEverify());
+		    aea.setEverify(everify);
+		}
+
 		award.refreshReferenceObject("proposal");
 		award.refreshNonUpdateableReferences();
 		award.setExtension(aea);
 		return award;
+	}
+	
+	protected Compliance getEzraCompliance(EzraProposalAward ezraAward) {
+	    Map<String, Object> criteria = new HashMap<>();
+	    criteria.put(PROJECT_ID_FIELD, ezraAward.getProjectId());
+	    criteria.put(AWARD_PROPOSAL_ID_FIELD, ezraAward.getAwardProposalId());
+	    
+	    Collection<Compliance> ezraCompliances = businessObjectService.findMatching(Compliance.class, criteria);
+	    if (ezraCompliances.size() == 1) {
+	        return ezraCompliances.iterator().next();
+	    } else {
+	        return null;
+	    }
 	}
 	
 	protected Proposal createProposal(EzraProposalAward ezraProposal) {
