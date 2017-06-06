@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl.fixture;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 
@@ -36,31 +37,25 @@ public class ConcurTestablePerson implements Person {
 
     @Override
     public void refresh() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public String getPrincipalId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getPrincipalName() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getEntityId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getEntityTypeCode() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -76,13 +71,11 @@ public class ConcurTestablePerson implements Person {
 
     @Override
     public String getMiddleName() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getMiddleNameUnmasked() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -98,7 +91,7 @@ public class ConcurTestablePerson implements Person {
 
     @Override
     public String getName() {
-        return getFirstName() + " " + getLastName();
+        return getFirstName() + StringUtils.SPACE + getLastName();
     }
 
     @Override
@@ -108,13 +101,11 @@ public class ConcurTestablePerson implements Person {
 
     @Override
     public String getEmailAddress() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getEmailAddressUnmasked() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -194,67 +185,56 @@ public class ConcurTestablePerson implements Person {
 
     @Override
     public String getPhoneNumber() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getPhoneNumberUnmasked() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getCampusCode() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Map<String, String> getExternalIdentifiers() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean hasAffiliationOfType(String affiliationTypeCode) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public List<String> getCampusCodesForAffiliationOfType(String affiliationTypeCode) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getEmployeeStatusCode() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getEmployeeTypeCode() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public KualiDecimal getBaseSalaryAmount() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getExternalId(String externalIdentifierTypeCode) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getPrimaryDepartmentCode() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -265,7 +245,6 @@ public class ConcurTestablePerson implements Person {
 
     @Override
     public boolean isActive() {
-        // TODO Auto-generated method stub
         return false;
     }
 

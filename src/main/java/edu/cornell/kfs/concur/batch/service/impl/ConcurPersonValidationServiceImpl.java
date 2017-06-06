@@ -57,11 +57,14 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
         boolean validAddress = validPerson;
         
         if (validPerson) {
-            validAddress = doesAnyAddressLineHaveContent(messageList, employee) && validAddress;
-            validAddress = validateAddressFieldNotEmpty(employee.getAddressCityUnmasked(), "City", messageList) && validAddress;
-            validAddress = validateAddressFieldNotEmpty(employee.getAddressStateProvinceCodeUnmasked(), "State/Province", messageList) && validAddress;
-            validAddress = validateAddressFieldNotEmpty(employee.getAddressPostalCodeUnmasked(), "Postal Code", messageList) && validAddress;
-            validAddress = validateAddressFieldNotEmpty(employee.getAddressCountryCodeUnmasked(), "Country Code", messageList) && validAddress;
+            String state = employee.getAddressStateProvinceCodeUnmasked();
+            String country = employee.getAddressCountryCodeUnmasked();
+            if (StringUtils.isBlank(state) && StringUtils.isBlank(country)) {
+                validAddress = false;
+                String errorMessage = employee.getName() + " does not have a Country Code or a State/Province code.";
+                LOG.error(errorMessage);
+                messageList.add(errorMessage);
+            }
             
         } else {
             messageList.add(getCouldNotBuildPersonMessage(employeeId));
@@ -72,29 +75,6 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
             LOG.debug("validPdpAddress, " + results.toString());
         }
         return results;
-    }
-
-    private boolean doesAnyAddressLineHaveContent(List<String> messageList, Person employee) {
-        List<String> addressMessageList = new ArrayList<String>();
-        boolean anyLineValid = validateAddressFieldNotEmpty(employee.getAddressLine1Unmasked(), StringUtils.EMPTY, addressMessageList) ||
-                validateAddressFieldNotEmpty(employee.getAddressLine2Unmasked(), StringUtils.EMPTY, addressMessageList) ||
-                validateAddressFieldNotEmpty(employee.getAddressLine3Unmasked(), StringUtils.EMPTY, addressMessageList);
-        if (!anyLineValid) {
-            messageList.add("Address is empty. ");
-        }
-        return anyLineValid;
-    }
-    
-    private boolean validateAddressFieldNotEmpty(String addressField, String addressFieldDescription, List<String> messageList) {
-        boolean valid;
-        if (StringUtils.isBlank(addressField)) {
-            valid = false;
-            String message = addressFieldDescription + " is empty. ";
-            messageList.add(message);
-        } else {
-            valid = true;
-        }
-        return valid;
     }
     
     @Override
