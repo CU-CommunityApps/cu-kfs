@@ -788,7 +788,7 @@ public class GlLineServiceImpl implements GlLineService {
         Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(documentNumber);
         Collection<CapitalAssetInformation> allCapitalAssetInformation = findAllCapitalAssetInformation(documentNumber);
 
-        int nextCapitalAssetLineNumber = findMaximumCapitalAsseetLineNumber(allCapitalAssetInformation) + 1;
+        int nextCapitalAssetLineNumber = findMaximumCapitalAssetLineNumber(allCapitalAssetInformation) + 1;
         for (GeneralLedgerEntry glEntry : glEntries) {
             // check if it has capital Asset Info
             List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
@@ -802,7 +802,7 @@ public class GlLineServiceImpl implements GlLineService {
 
     }
     
-    private int findMaximumCapitalAsseetLineNumber(Collection<CapitalAssetInformation> allCapitalAssetInformation) {
+    private int findMaximumCapitalAssetLineNumber(Collection<CapitalAssetInformation> allCapitalAssetInformation) {
         int maxLineNumber = 0;
         if (CollectionUtils.isNotEmpty(allCapitalAssetInformation)) {
             for (CapitalAssetInformation info : allCapitalAssetInformation) {
