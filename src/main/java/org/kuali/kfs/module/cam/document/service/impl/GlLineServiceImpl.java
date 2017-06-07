@@ -62,7 +62,6 @@ import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.owasp.esapi.util.CollectionsUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
