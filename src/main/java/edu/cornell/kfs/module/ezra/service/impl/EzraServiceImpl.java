@@ -280,7 +280,8 @@ public class EzraServiceImpl implements EzraService {
 	    criteria.put(AWARD_PROPOSAL_ID_FIELD, ezraAward.getAwardProposalId());
 	    
 	    Collection<Compliance> ezraCompliances = businessObjectService.findMatching(Compliance.class, criteria);
-	    if (ezraCompliances.size() == 1) {
+	    // There may be duplicate Compliance entries with the same data, but we only need to retrieve one.
+	    if (!ezraCompliances.isEmpty()) {
 	        return ezraCompliances.iterator().next();
 	    } else {
 	        return null;

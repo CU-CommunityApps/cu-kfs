@@ -6,9 +6,18 @@ public class Compliance extends PersistableBusinessObjectBase {
 
     private static final long serialVersionUID = 4199190611451784075L;
 
+    private Long complianceId;
     private String projectId;
     private String awardProposalId;
     private Boolean everify;
+
+    public Long getComplianceId() {
+        return complianceId;
+    }
+
+    public void setComplianceId(Long complianceId) {
+        this.complianceId = complianceId;
+    }
 
     public String getProjectId() {
         return projectId;
