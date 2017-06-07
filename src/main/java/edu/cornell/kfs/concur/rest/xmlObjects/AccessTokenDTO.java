@@ -13,7 +13,7 @@ public class AccessTokenDTO {
     protected String instanceURL;
     @XmlElement(name = "Token")
     protected String token;
-    @XmlElement(name = "Expiration_date")
+    @XmlElement(name = "Expiration_Date")
     protected String expirationDate;
     
     public String getInstanceURL() {
