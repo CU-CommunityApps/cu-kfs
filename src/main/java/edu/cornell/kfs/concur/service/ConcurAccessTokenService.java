@@ -10,7 +10,11 @@ public interface ConcurAccessTokenService {
     String getConsumerKey();
     
     String getSecretKey();
-    
+
+    void requestNewAccessToken();
+
     void refreshAccessToken();
+
+    void revokeAccessToken();
 
 }
