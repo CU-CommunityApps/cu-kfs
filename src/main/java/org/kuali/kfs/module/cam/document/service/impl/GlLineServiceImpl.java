@@ -19,6 +19,8 @@
 package org.kuali.kfs.module.cam.document.service.impl;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -60,6 +62,7 @@ import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.owasp.esapi.util.CollectionsUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -786,7 +789,7 @@ public class GlLineServiceImpl implements GlLineService {
         Collection<GeneralLedgerEntry> glEntries = findAllGeneralLedgerEntry(documentNumber);
         Collection<CapitalAssetInformation> allCapitalAssetInformation = findAllCapitalAssetInformation(documentNumber);
 
-        int nextCapitalAssetLineNumber = allCapitalAssetInformation.size() + 1;
+        int nextCapitalAssetLineNumber = findMaximumCapitalAsseetLineNumber(allCapitalAssetInformation) + 1;
         for (GeneralLedgerEntry glEntry : glEntries) {
             // check if it has capital Asset Info
             List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
@@ -798,6 +801,18 @@ public class GlLineServiceImpl implements GlLineService {
             }
         }
 
+    }
+    
+    private int findMaximumCapitalAsseetLineNumber(Collection<CapitalAssetInformation> allCapitalAssetInformation) {
+        int maxLineNumber = 0;
+        if (CollectionUtils.isNotEmpty(allCapitalAssetInformation)) {
+            for (CapitalAssetInformation info : allCapitalAssetInformation) {
+                if (info.getCapitalAssetLineNumber().intValue() > maxLineNumber) {
+                    maxLineNumber = info.getCapitalAssetLineNumber().intValue();
+                }
+            }
+        }
+        return maxLineNumber;
     }
 
     protected List<CapitalAccountingLines> createCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry, String distributionAmountCode) {
