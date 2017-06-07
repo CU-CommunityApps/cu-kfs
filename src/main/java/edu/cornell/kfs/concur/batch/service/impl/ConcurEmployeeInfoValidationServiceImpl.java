@@ -85,7 +85,9 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
             LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
         } else {
             boolean valid = validPdpAddress(employeeId);
-            validationMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS);
+            if (!valid) {
+                validationMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS);
+            }
         }
         return validationMessage;
     }
