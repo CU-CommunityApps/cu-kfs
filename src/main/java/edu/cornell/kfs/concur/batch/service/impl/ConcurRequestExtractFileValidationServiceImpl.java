@@ -21,7 +21,7 @@ import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurPersonValidationService;
+import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -34,7 +34,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
-    protected ConcurPersonValidationService concurPersonValidationService;
+    protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
 
     public boolean requestExtractHeaderRowValidatesToFileContents(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
         boolean headerValidationPassed;
@@ -182,7 +182,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             return false;
         }
         else {
-            boolean validPerson = getConcurPersonValidationService().validPerson(detailFileLine.getEmployeeId());
+            boolean validPerson = getConcurEmployeeInfoValidationService().validPerson(detailFileLine.getEmployeeId());
             if(validPerson) {
                 return true;
             } else {
@@ -193,15 +193,10 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     }
     private boolean validateAddressIfCheckPayment(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
         boolean valid = true;
-        String employeeId = detailFileLine.getEmployeeId();
-        if (getConcurPersonValidationService().isPayeeSignedUpForACH(employeeId)) {
-            LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
-        } else {
-            valid = getConcurPersonValidationService().validPdpAddress(employeeId);
-            if (!valid) {
-                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS));
-            }
-            LOG.info("validateAddressIfCheckPayment, Is the address valid: " + valid);
+        String validationMessage = getConcurEmployeeInfoValidationService().getAddressValidationMessageIfCheckPayment(detailFileLine.getEmployeeId());
+        if (StringUtils.isNotBlank(validationMessage)) {
+            valid = false;
+            detailFileLine.getValidationResult().addMessage(validationMessage);
         }
         return valid;
     }
@@ -402,12 +397,12 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
-    public ConcurPersonValidationService getConcurPersonValidationService() {
-        return concurPersonValidationService;
+    public ConcurEmployeeInfoValidationService getConcurEmployeeInfoValidationService() {
+        return concurEmployeeInfoValidationService;
     }
 
-    public void setConcurPersonValidationService(ConcurPersonValidationService concurPersonValidationService) {
-        this.concurPersonValidationService = concurPersonValidationService;
+    public void setConcurEmployeeInfoValidationService(ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService) {
+        this.concurEmployeeInfoValidationService = concurEmployeeInfoValidationService;
     }
 
 }

@@ -1,39 +1,38 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
-import edu.cornell.kfs.concur.batch.service.ConcurPersonValidationService;
+import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
 
-public class ConcurPersonValidationServiceImpl implements ConcurPersonValidationService {
-    private static final Logger LOG = Logger.getLogger(ConcurPersonValidationServiceImpl.class);
+public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeInfoValidationService {
+    private static final Logger LOG = Logger.getLogger(ConcurEmployeeInfoValidationServiceImpl.class);
     
     protected PersonService personService;
     protected PayeeACHService payeeACHService;
+    protected ConfigurationService configurationService;
 
     @Override
     public boolean validPerson(String employeeId) {
         Person employee = findPerson(employeeId);
+        return validPerson(employee);
+    }
+
+    private boolean validPerson(Person employee) {
         boolean valid = ObjectUtils.isNotNull(employee);
         if (LOG.isDebugEnabled()) {
             if (valid) {
-                LOG.debug("validPerson, the employee id " + employeeId + " was built into the person: " + employee.getName());
-            } else {
-                LOG.debug("validPerson, " + getCouldNotBuildPersonMessage(employeeId));
+                LOG.debug("validPerson, the employee id " + employee.getEmployeeId() + " was built into the person: " + employee.getName());
             }
         }
         return valid;
-    }
-    
-    private String getCouldNotBuildPersonMessage(String employeeId) {
-        return "The employee ID " + employeeId + " could not be built into a person";
     }
     
     private Person findPerson(String employeeId) {
@@ -42,8 +41,10 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
                 Person employee = getPersonService().getPersonByEmployeeId(employeeId);
                 return employee;
             } catch (Exception e) {
-                LOG.error("findPerson, Unable to create a person from employee ID: " + employeeId, e);
+                LOG.error("findPerson, Unable to retrieve a person from employee ID: " + employeeId, e);
             }
+        } else {
+            LOG.error("findPerson, No employee ID was provided");
         }
         return null;
     }
@@ -51,7 +52,7 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
     @Override
     public boolean validPdpAddress(String employeeId) {
         Person employee = findPerson(employeeId);
-        boolean validPerson = ObjectUtils.isNotNull(employee);
+        boolean validPerson = validPerson(employee);
         boolean validAddress = validPerson;
         if (validPerson) {
             String state = employee.getAddressStateProvinceCodeUnmasked();
@@ -64,19 +65,29 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
                     LOG.debug("validPdpAddress, The employee " + employee.getName() + " had a country code or state code." );
                 }
             }
-        } else {
-            LOG.error("validPdpAddress " + getCouldNotBuildPersonMessage(employeeId));
         }
         return validAddress;
     }
     
     @Override
     public boolean isPayeeSignedUpForACH(String employeeId) {
-        boolean isACH = getPayeeACHService().isPayeeSignedUpForACH("E", employeeId);
+        boolean isACH = getPayeeACHService().isPayeeSignedUpForACH(ConcurConstants.EMPLOYEE_PAYEE_STATUS_TYPE_CODE, employeeId);
         if (LOG.isDebugEnabled()) {
             LOG.debug("isPayeeSignedUpForACH, is employee ID " + employeeId + " signed up for ACH: " + isACH );
         }
         return isACH;
+    }
+    
+    @Override
+    public String getAddressValidationMessageIfCheckPayment(String employeeId) {
+        String validationMessage = StringUtils.EMPTY;
+        if (isPayeeSignedUpForACH(employeeId)) {
+            LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
+        } else {
+            boolean valid = validPdpAddress(employeeId);
+            validationMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS);
+        }
+        return validationMessage;
     }
 
     public PersonService getPersonService() {
@@ -93,6 +104,14 @@ public class ConcurPersonValidationServiceImpl implements ConcurPersonValidation
 
     public void setPayeeACHService(PayeeACHService payeeACHService) {
         this.payeeACHService = payeeACHService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

@@ -16,7 +16,7 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurPersonValidationService;
+import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -32,7 +32,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected ParameterService parameterService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
-    protected ConcurPersonValidationService concurPersonValidationService;
+    protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
     protected ConfigurationService configurationService;
     
     @Override
@@ -154,7 +154,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        boolean valid = getConcurPersonValidationService().validPerson(line.getEmployeeId());
+        boolean valid = getConcurEmployeeInfoValidationService().validPerson(line.getEmployeeId());
         if (!valid) {
             reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, 
                     getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS)));
@@ -191,15 +191,10 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     private boolean validateAddressIfCheckPayment(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean valid = true;
-        String employeeId = line.getEmployeeId();
-        if (getConcurPersonValidationService().isPayeeSignedUpForACH(employeeId)) {
-            LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
-        } else {
-            valid = getConcurPersonValidationService().validPdpAddress(employeeId);
-            if (!valid) {
-                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, 
-                        getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS)));
-            }
+        String validationMessage = getConcurEmployeeInfoValidationService().getAddressValidationMessageIfCheckPayment(line.getEmployeeId());
+        if (StringUtils.isNotBlank(validationMessage)) {
+            valid = false;
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line,validationMessage));
         }
         return valid;
     }
@@ -319,12 +314,12 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
-    public ConcurPersonValidationService getConcurPersonValidationService() {
-        return concurPersonValidationService;
+    public ConcurEmployeeInfoValidationService getConcurEmployeeInfoValidationService() {
+        return concurEmployeeInfoValidationService;
     }
 
-    public void setConcurPersonValidationService(ConcurPersonValidationService concurPersonValidationService) {
-        this.concurPersonValidationService = concurPersonValidationService;
+    public void setConcurEmployeeInfoValidationService(ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService) {
+        this.concurEmployeeInfoValidationService = concurEmployeeInfoValidationService;
     }
 
     public ConfigurationService getConfigurationService() {
