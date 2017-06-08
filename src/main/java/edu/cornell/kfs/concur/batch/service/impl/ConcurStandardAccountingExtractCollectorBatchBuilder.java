@@ -221,7 +221,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 reportCashAdvance(saeLine);
             }
             if (shouldProcessLine(saeLine)
-                    && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLine(saeLine, reportData)) {
+                    && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLineForCollector(saeLine, reportData)) {
                 if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
                     reportPendingClientLine(saeLine);
                 }

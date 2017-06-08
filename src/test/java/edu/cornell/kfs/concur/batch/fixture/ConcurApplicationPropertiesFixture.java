@@ -15,7 +15,7 @@ public class ConcurApplicationPropertiesFixture {
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_USED_IN_EXPENSE_REPORT, "Cash Advance has been used in expense report.");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_REQUEST_ID_INVALID, "Request ID was detected as being NULL or blank.");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NULL_OR_BLANK, "Employee ID was detected as being NULL or blank.");
-        this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS, "Person for provided Employee ID could not be found in KFS.");
+        this.definedProperties.put(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS, "Person for provided Employee ID could not be found in KFS.");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_PAYEE_ID_TYPE_INVALID, "Payee ID type was not specified as EMPLOYEE or NON-EMPOYEE.");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_REQUEST_AMOUNT_INVALID, "Requested cash advance amount was detected as being NULL or blank.");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_DUPLICATE_CASH_ADVANCE_DETECTED, "Duplicate cash advance request detected.");

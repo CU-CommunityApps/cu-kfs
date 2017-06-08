@@ -5,18 +5,18 @@ import java.sql.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -30,9 +30,10 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ParameterService parameterService;
-    protected PersonService personService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
+    protected ConfigurationService configurationService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -153,48 +154,48 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        Person employee = findPerson(line.getEmployeeId());
-        boolean valid = ObjectUtils.isNotNull(employee);
-        if (valid) {
-            LOG.debug("validateEmployeeId, found a valid employee: " + employee.getName());
-        } else {
-            String validationError = "Found a an invalid employee ID: " + line.getEmployeeId();
-            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationError));
-            LOG.error("validateEmployeeId, " + validationError);
+        boolean valid = getConcurEmployeeInfoValidationService().validPerson(line.getEmployeeId());
+        if (!valid) {
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, 
+                    getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS)));
+            LOG.error("validateEmployeeId, Found a an invalid employee ID: " + line.getEmployeeId());
         }
         return valid;
     }
     
-    private Person findPerson(String employeeId) {
-        if (StringUtils.isNotBlank(employeeId)) {
-            try {
-                Person employee = getPersonService().getPersonByEmployeeId(employeeId);
-                return employee;
-            } catch (Exception e) {
-                LOG.error("findPerson, Unable to create a person from employee ID: " + employeeId, e);
-            }
-        }
-        return null;
-    }
-    
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
+    public boolean validateConcurStandardAccountingExtractDetailLineForCollector(ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData, false);
         valid = validateAccountingLine(line, reportData) && valid;
         return valid;
     }
 
     @Override
-    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, 
+    public boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverrideForPdp(ConcurStandardAccountingExtractDetailLine line, 
             ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode) {
-        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData);
+        boolean valid = validateConcurStandardAccountingExtractDetailLineBase(line, reportData, true);
         valid = validateAccountingLineWithObjectCodeOverrides(line, reportData, overriddenObjectCode, overriddenSubObjectCode) && valid;
         return valid;
     }
     
-    private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+    private boolean validateConcurStandardAccountingExtractDetailLineBase(ConcurStandardAccountingExtractDetailLine line, 
+            ConcurStandardAccountingExtractBatchReportData reportData, boolean validateAddress) {
         boolean valid = validateReportId(line, reportData);
         valid = validateEmployeeId(line, reportData) && valid;
+        if (validateAddress) {
+            valid &= validateAddressIfCheckPayment(line, reportData);
+        }
+        return valid;
+    }
+    
+    private boolean validateAddressIfCheckPayment(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
+        boolean valid = true;
+        String validationMessage = getConcurEmployeeInfoValidationService().getAddressValidationMessageIfCheckPayment(line.getEmployeeId());
+        if (StringUtils.isNotBlank(validationMessage)) {
+            valid = false;
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationMessage));
+        }
         return valid;
     }
     
@@ -297,14 +298,6 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         this.parameterService = parameterService;
     }
 
-    public PersonService getPersonService() {
-        return personService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
-    }
-
     public ConcurStandardAccountingExtractCashAdvanceService getConcurStandardAccountingExtractCashAdvanceService() {
         return concurStandardAccountingExtractCashAdvanceService;
     }
@@ -319,6 +312,22 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+
+    public ConcurEmployeeInfoValidationService getConcurEmployeeInfoValidationService() {
+        return concurEmployeeInfoValidationService;
+    }
+
+    public void setConcurEmployeeInfoValidationService(ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService) {
+        this.concurEmployeeInfoValidationService = concurEmployeeInfoValidationService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

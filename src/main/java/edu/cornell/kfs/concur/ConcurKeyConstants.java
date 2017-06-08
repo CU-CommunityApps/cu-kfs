@@ -11,7 +11,7 @@ public class ConcurKeyConstants {
     public static final String CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_USED_IN_EXPENSE_REPORT = "validation.error.concur.request.extract.cash.advance.in.expense.report";
     public static final String CONCUR_REQUEST_EXTRACT_REQUEST_ID_INVALID = "validation.error.concur.request.extract.invalid.request.id";
     public static final String CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NULL_OR_BLANK = "validation.error.concur.request.extract.invalid.employee.id";
-    public static final String CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS = "validation.error.concur.request.extract.employee.id.not.found";
+    public static final String CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS = "validation.error.concur.id.not.found";
     public static final String CONCUR_REQUEST_EXTRACT_PAYEE_ID_TYPE_INVALID = "validation.error.concur.request.extract.invalid.payee.id.type";
     public static final String CONCUR_REQUEST_EXTRACT_REQUEST_AMOUNT_INVALID = "validation.error.concur.request.extract.invalid.request.amount";
     public static final String CONCUR_REQUEST_EXTRACT_DUPLICATE_CASH_ADVANCE_DETECTED = "validation.error.concur.request.extract.duplicate.cash.advance";
@@ -24,4 +24,5 @@ public class ConcurKeyConstants {
     public static final String CONCUR_REQUEST_EXTRACT_NO_REPORT_EMAIL_BODY = "message.concur.requestExtract.no.report.email.body";
     public static final String CONCUR_SAE_NO_REPORT_EMAIL_SUBJECT = "message.concur.sae.no.report.email.subject";
     public static final String CONCUR_SAE_NO_REPORT_EMAIL_BODY = "message.concur.sae.no.report.email.body";
+    public static final String CONCUR_INCOMPLETE_ADDRESS = "validation.error.concur.incomplete.address";
 }

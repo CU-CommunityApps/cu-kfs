@@ -20,9 +20,9 @@ public interface ConcurStandardAccountingExtractValidationService {
     
     public boolean validateEmployeeId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
     
-    boolean validateConcurStandardAccountingExtractDetailLine(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
+    boolean validateConcurStandardAccountingExtractDetailLineForCollector(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
     
-    boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode);
+    boolean validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverrideForPdp(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData, String overriddenObjectCode, String overriddenSubObjectCode);
     
     boolean validateEmployeeGroupId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData);
 }
