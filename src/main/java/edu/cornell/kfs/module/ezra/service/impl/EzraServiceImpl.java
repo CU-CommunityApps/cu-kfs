@@ -39,6 +39,7 @@ import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.module.cg.businessobject.CuAward;
+import edu.cornell.kfs.module.ezra.EzraPropertyConstants;
 import edu.cornell.kfs.module.ezra.businessobject.Compliance;
 import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProject;
@@ -53,9 +54,6 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 public class EzraServiceImpl implements EzraService {
 
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraServiceImpl.class);
-
-    protected static final String PROJECT_ID_FIELD = "projectId";
-    protected static final String AWARD_PROPOSAL_ID_FIELD = "awardProposalId";
 
     private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
@@ -276,8 +274,8 @@ public class EzraServiceImpl implements EzraService {
 	
 	protected Compliance getEzraCompliance(EzraProposalAward ezraAward) {
 	    Map<String, Object> criteria = new HashMap<>();
-	    criteria.put(PROJECT_ID_FIELD, ezraAward.getProjectId());
-	    criteria.put(AWARD_PROPOSAL_ID_FIELD, ezraAward.getAwardProposalId());
+	    criteria.put(EzraPropertyConstants.PROJECT_ID, ezraAward.getProjectId());
+	    criteria.put(EzraPropertyConstants.AWARD_PROPOSAL_ID, ezraAward.getAwardProposalId());
 	    
 	    Collection<Compliance> ezraCompliances = businessObjectService.findMatching(Compliance.class, criteria);
 	    // There may be duplicate Compliance entries with the same data, but we only need to retrieve one.
