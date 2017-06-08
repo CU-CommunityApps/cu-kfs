@@ -194,7 +194,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         String validationMessage = getConcurEmployeeInfoValidationService().getAddressValidationMessageIfCheckPayment(line.getEmployeeId());
         if (StringUtils.isNotBlank(validationMessage)) {
             valid = false;
-            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line,validationMessage));
+            reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationMessage));
         }
         return valid;
     }

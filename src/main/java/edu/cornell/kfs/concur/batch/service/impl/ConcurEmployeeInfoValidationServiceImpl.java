@@ -62,7 +62,10 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
                 LOG.error("validPdpAddress, " + employee.getName() + " does not have a Country Code or a State/Province code.");
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("validPdpAddress, The employee " + employee.getName() + " had a country code or state code." );
+                    StringBuilder sb = new StringBuilder("validPdpAddress, The employee ");
+                    sb.append(employee.getName()).append(" has a valid PDP address.  The state code was '").append(state);
+                    sb.append("' and the country code was '").append(country).append("'.");
+                    LOG.debug(sb.toString());
                 }
             }
         }
@@ -84,9 +87,11 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
         if (isPayeeSignedUpForACH(employeeId)) {
             LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " is signed up for ACH so no need to validdate address.");
         } else {
-            boolean valid = validPdpAddress(employeeId);
-            if (!valid) {
+            if (!validPdpAddress(employeeId)) {
+                LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " has an INVALID address.");
                 validationMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_INCOMPLETE_ADDRESS);
+            } else {
+                LOG.info("validateAddressIfCheckPayment, the employee ID " + employeeId + " has an valid address.");
             }
         }
         return validationMessage;
