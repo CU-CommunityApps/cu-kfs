@@ -7,7 +7,7 @@
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-
+<!-- Just creating a small change for PR that will NOT be merged -->
 	<bean id="cu-sys" parent="financialSystemModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
