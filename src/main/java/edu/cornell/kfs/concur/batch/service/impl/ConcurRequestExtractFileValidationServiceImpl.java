@@ -10,11 +10,8 @@ import org.apache.commons.lang.StringUtils;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -23,8 +20,8 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
-import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEntryDetailFileLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -35,9 +32,9 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurAccountValidationService concurAccountValidationService;
-    protected PersonService personService;
     protected ConfigurationService configurationService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
 
     public boolean requestExtractHeaderRowValidatesToFileContents(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
         boolean headerValidationPassed;
@@ -141,6 +138,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         boolean haveDataForLookup = true;
         haveDataForLookup &= requestIdIsValid(detailFileLine);
         haveDataForLookup &= employeeIdIsValid(detailFileLine);
+        haveDataForLookup &= validateAddressIfCheckPayment(detailFileLine);
         haveDataForLookup &= payeeIdTypeIsValid(detailFileLine);
         haveDataForLookup &= requestAmountIsValid(detailFileLine);
 
@@ -184,21 +182,23 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             return false;
         }
         else {
-            try {
-                Person employee = getPersonService().getPersonByEmployeeId(detailFileLine.getEmployeeId());
-                if (ObjectUtils.isNotNull(employee)) {
-                    return true;
-                }
-                else {
-                    detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
-                    return false;
-                }
-            }
-            catch (Exception e) {
-                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
+            boolean validPerson = getConcurEmployeeInfoValidationService().validPerson(detailFileLine.getEmployeeId());
+            if(validPerson) {
+                return true;
+            } else {
+                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
                 return false;
             }
         }
+    }
+    private boolean validateAddressIfCheckPayment(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        boolean valid = true;
+        String validationMessage = getConcurEmployeeInfoValidationService().getAddressValidationMessageIfCheckPayment(detailFileLine.getEmployeeId());
+        if (StringUtils.isNotBlank(validationMessage)) {
+            valid = false;
+            detailFileLine.getValidationResult().addMessage(validationMessage);
+        }
+        return valid;
     }
 
     private boolean payeeIdTypeIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
@@ -381,14 +381,6 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         this.concurAccountValidationService = concurAccountValidationService;
     }
 
-    public PersonService getPersonService() {
-        return personService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
-    }
-
     public ConfigurationService getConfigurationService() {
         return configurationService;
     }
@@ -403,6 +395,14 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+
+    public ConcurEmployeeInfoValidationService getConcurEmployeeInfoValidationService() {
+        return concurEmployeeInfoValidationService;
+    }
+
+    public void setConcurEmployeeInfoValidationService(ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService) {
+        this.concurEmployeeInfoValidationService = concurEmployeeInfoValidationService;
     }
 
 }

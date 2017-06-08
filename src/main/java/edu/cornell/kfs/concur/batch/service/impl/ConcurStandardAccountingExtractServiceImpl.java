@@ -174,7 +174,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                 String overriddenObjectCode = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                         CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_SAE_PDP_DEFAULT_OBJECT_CODE);
                 String overriddenSubObjectCode = StringUtils.EMPTY;
-                if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverride(line, reportData, 
+                if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountingExtractDetailLineWithObjectCodeOverrideForPdp(line, reportData, 
                         overriddenObjectCode, overriddenSubObjectCode)) {
                     buildAndUpdateAccountingEntryFromLine(pdpFeedFileBaseEntry, line, concurStandardAccountingExtractFile);
                 }
