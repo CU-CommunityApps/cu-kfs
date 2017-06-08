@@ -16,6 +16,8 @@ public class CUKFSConstants {
     public static final String RULE_CODE_CA = "CA";
     public static final String DELIMITER = ".";
     public static final String DATE_FORMAT_YYYY = "YYYY";
+    public static final String FILE_EXTENSION_DELIMITER = ".";
+    public static final String DONE_FILE_EXTENSION = FILE_EXTENSION_DELIMITER + "done";
 
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
