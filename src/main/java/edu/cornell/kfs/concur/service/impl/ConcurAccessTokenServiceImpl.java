@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
@@ -136,6 +137,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         }
         
         return builder.build(uri, HttpMethod.POST);
+    }
+
+    @Override
+    public boolean isCurrentAccessTokenRevoked() {
+        return StringUtils.equals(ConcurConstants.REVOKED_TOKEN_INDICATOR, getAccessToken());
     }
 
     protected String getEncodedUsernameAndPassword() {
