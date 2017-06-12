@@ -12,6 +12,7 @@ import org.kuali.kfs.fp.businessobject.lookup.AbstractPayeeLookupableHelperServi
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
+import org.kuali.kfs.pdp.businessobject.lookup.PayeeACHAccountLookupableHelperServiceImpl;
 import org.kuali.rice.core.api.criteria.CriteriaLookupService;
 import org.kuali.rice.core.api.criteria.Predicate;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
@@ -37,7 +38,7 @@ import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
  * and we can at least prevent the inquiries from being opened via KIM permissions instead.
  */
 @SuppressWarnings("deprecation")
-public class CuPayeeACHAccountLookupableHelperServiceImpl extends AbstractPayeeLookupableHelperServiceImpl {
+public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccountLookupableHelperServiceImpl {
     private static final long serialVersionUID = 9164050782113012442L;
 
     private PersonService personService;
@@ -145,6 +146,11 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends AbstractPayeeL
             // If principal name is not specified, then do the normal superclass processing.
             return super.getSearchResultsHelper(fieldValues, unbounded);
         }
+    }
+    
+    @Override
+    protected boolean isInquiryRestricted(BusinessObject bo, String propertyName) {
+        return false;
     }
 
     public PersonService getPersonService() {
