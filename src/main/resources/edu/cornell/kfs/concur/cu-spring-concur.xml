@@ -316,9 +316,11 @@
 	
 	<bean id="concurAccessTokenService" parent="concurAccessTokenService-parentBean" />
 	<bean id="concurAccessTokenService-parentBean" class="edu.cornell.kfs.concur.service.impl.ConcurAccessTokenServiceImpl" abstract="true">
-		<property name="concurRefreshAccessTokenURL">
-			<value>${concur.refresh.access.token.url}</value>
-		</property>
+		<property name="concurLoginUsername" value="${concur.login.username}"/>
+		<property name="concurLoginPassword" value="${concur.login.password}"/>
+		<property name="concurRequestAccessTokenURL" value="${concur.request.access.token.url}"/>
+		<property name="concurRefreshAccessTokenURL" value="${concur.refresh.access.token.url}"/>
+		<property name="concurRevokeAccessTokenURL" value="${concur.revoke.access.token.url}"/>
 		<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
 	</bean>
 
