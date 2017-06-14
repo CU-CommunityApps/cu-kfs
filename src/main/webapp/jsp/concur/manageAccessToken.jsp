@@ -5,7 +5,7 @@
         headerTitle="Concur Access Token Management"
         docTitle="Concur Access Token Management"
         transactionalDocument="false"
-        htmlFormAction="manageAccessToken"
+        htmlFormAction="concur/manageAccessToken"
         errorKey="*">
 
     <div class="main-panel">

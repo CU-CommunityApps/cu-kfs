@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -17,6 +16,7 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.concur.rest.xmlObjects.NewAccessTokenDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
@@ -26,11 +26,12 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
 
+    private String concurLoginUsername;
+    private String concurLoginPassword;
     private String concurRequestAccessTokenURL;
     private String concurRefreshAccessTokenURL;
     private String concurRevokeAccessTokenURL;
     protected WebServiceCredentialService webServiceCredentialService;
-    protected ConfigurationService configurationService;
 
     @Override
     public void requestNewAccessToken() {
@@ -52,10 +53,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     protected ClientRequest buildRequestAccessTokenClientRequest() {
+        String encodedCredentials = ConcurUtils.encodeCredentialsForRequestingNewAccessToken(getConcurLoginUsername(), getConcurLoginPassword());
         ClientRequest.Builder builder = new ClientRequest.Builder();
         builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE
-                + getEncodedUsernameAndPassword());
+        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials);
         builder.header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey());
         URI uri;
         try {
@@ -109,6 +111,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
             webServiceCredentialService.updateWebServiceCredentialValue(
                     ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, ConcurConstants.REVOKED_TOKEN_INDICATOR);
             webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, ConcurConstants.REVOKED_TOKEN_INDICATOR);
+        } else {
+            throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
         }
     }
 
@@ -144,10 +148,6 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         return StringUtils.equals(ConcurConstants.REVOKED_TOKEN_INDICATOR, getAccessToken());
     }
 
-    protected String getEncodedUsernameAndPassword() {
-        return configurationService.getPropertyValueAsString(ConcurConstants.CONCUR_ENCODED_USERNAME_PASSWORD);
-    }
-
     @Override
     public String getAccessToken() {
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN);
@@ -166,6 +166,22 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public String getSecretKey() {
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_SECRET_KEY);
+    }
+
+    public String getConcurLoginUsername() {
+        return concurLoginUsername;
+    }
+
+    public void setConcurLoginUsername(String concurLoginUsername) {
+        this.concurLoginUsername = concurLoginUsername;
+    }
+
+    public String getConcurLoginPassword() {
+        return concurLoginPassword;
+    }
+
+    public void setConcurLoginPassword(String concurLoginPassword) {
+        this.concurLoginPassword = concurLoginPassword;
     }
 
     public String getConcurRequestAccessTokenURL() {
@@ -198,14 +214,6 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
         this.webServiceCredentialService = webServiceCredentialService;
-    }
-
-    public ConfigurationService getConfigurationService() {
-        return configurationService;
-    }
-
-    public void setConfigurationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
     }
 
 }

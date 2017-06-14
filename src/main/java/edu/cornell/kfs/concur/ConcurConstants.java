@@ -22,7 +22,11 @@ public class ConcurConstants {
     public static final String CLIENT_SECRET_URL_PARAM = "client_secret";
     public static final String TOKEN_URL_PARAM = "token";
 
-    public static final String CONCUR_ENCODED_USERNAME_PASSWORD = "concur.encoded.username.password";
+    public static final String REQUEST_NEW_TOKEN_METHOD_TO_CALL = "requestNewToken";
+    public static final String REVOKE_TOKEN_METHOD_TO_CALL = "revokeToken";
+    public static final String OVERWRITE_ACCESS_TOKEN_QUESTION = "OverwriteAccessToken";
+    public static final String REVOKE_ACCESS_TOKEN_QUESTION = "RevokeAccessToken";
+
     public static final String CONCUR_ACCESS_TOKEN = "concur.access.token";
     public static final String CONCUR_REFRESH_TOKEN = "concur.refresh.token";
     public static final String CONCUR_CONSUMER_KEY = "concur.consumer.key";
