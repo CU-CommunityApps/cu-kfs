@@ -18,7 +18,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
-import edu.cornell.kfs.concur.rest.xmlObjects.NewAccessTokenDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
@@ -35,19 +34,19 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     @Override
     public void requestNewAccessToken() {
-        NewAccessTokenDTO newToken = buildRequestAccessTokenOutput();
+        AccessTokenDTO newToken = buildRequestAccessTokenOutput();
         
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN, newToken.getToken());
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, newToken.getExpirationDate());
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, newToken.getRefreshToken());
     }
 
-    protected NewAccessTokenDTO buildRequestAccessTokenOutput() {
+    protected AccessTokenDTO buildRequestAccessTokenOutput() {
         ClientConfig clientConfig = new DefaultClientConfig();
         Client client = Client.create(clientConfig);
 
         ClientResponse response = client.handle(buildRequestAccessTokenClientRequest());
-        NewAccessTokenDTO newToken = response.getEntity(NewAccessTokenDTO.class);
+        AccessTokenDTO newToken = response.getEntity(AccessTokenDTO.class);
 
         return newToken;
     }
