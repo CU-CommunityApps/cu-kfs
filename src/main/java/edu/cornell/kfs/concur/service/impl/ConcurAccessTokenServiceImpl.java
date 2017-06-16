@@ -129,8 +129,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     protected ClientRequest buildRevokeAccessTokenClientRequest() {
         ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
+        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
         URI uri;
         try {
             uri = new URI(getConcurRevokeAccessTokenURL()
