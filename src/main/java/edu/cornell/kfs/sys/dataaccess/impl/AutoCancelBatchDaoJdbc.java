@@ -132,7 +132,7 @@ public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements 
         sql.append("DOC_HDR_STAT_CD = '" + DocumentStatus.SAVED.getCode() + "' and (trunc(CRTE_DT) + " + daysToAutoCancel + ") <= trunc(SYSDATE)");
 
         LOG.info("SQL Statement: " + sql);
-        List<Map<String, Object>> results = getSimpleJdbcTemplate().queryForList(sql.toString());
+        List<Map<String, Object>> results = getJdbcTemplate().queryForList(sql.toString());
 
         for (Map<String, Object> result : results) {
             String docId = (String) result.get("DOC_HDR_ID");
