@@ -35,10 +35,10 @@ public class CuLedgerEntryBalanceCachingDaoJdbc extends LedgerEntryBalanceCachin
         queryBuilder.append("eh.fin_balance_typ_cd = e.fin_balance_typ_cd and eh.univ_fiscal_prd_cd = e.univ_fiscal_prd_cd and eh.trn_debit_crdt_cd = e.trn_debit_crdt_cd ");
         queryBuilder.append("where e.univ_fiscal_yr >= " + fiscalYear + " and (eh.row_cnt <> e.entry_row_cnt or eh.trn_ldgr_entr_amt <> e.entry_amt or e.entry_row_cnt is null) ");
         
-	  	getJdbcTemplate().execute(drop.toString());
-	  	getJdbcTemplate().execute(populate.toString());        
+	getJdbcTemplate().execute(drop.toString());
+	getJdbcTemplate().execute(populate.toString());        
       
-        data = getSimpleJdbcTemplate().queryForList(queryBuilder.toString());
+        data = getJdbcTemplate().queryForList(queryBuilder.toString());
         
         return data;
 
