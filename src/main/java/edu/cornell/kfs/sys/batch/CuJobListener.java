@@ -21,7 +21,7 @@ public class CuJobListener extends JobListener  {
 	
 	protected void notify(JobExecutionContext jobExecutionContext, String jobStatus) {		
 		try {
-            StringBuilder mailMessageSubject = new StringBuilder(jobExecutionContext.getJobDetail().getGroup()).append(": ").append(jobExecutionContext.getJobDetail().getName());
+            StringBuilder mailMessageSubject = new StringBuilder(jobExecutionContext.getJobDetail().getKey().getGroup()).append(": ").append(jobExecutionContext.getJobDetail().getKey().getName());
             BodyMailMessage mailMessage = new BodyMailMessage();
             mailMessage.setFromAddress(emailService.getDefaultFromAddress());
             if (jobExecutionContext.getMergedJobDataMap().containsKey(REQUESTOR_EMAIL_ADDRESS_KEY) && !StringUtils.isBlank(jobExecutionContext.getMergedJobDataMap().getString(REQUESTOR_EMAIL_ADDRESS_KEY))) {
@@ -39,7 +39,7 @@ public class CuJobListener extends JobListener  {
                 emailService.sendMessage(mailMessage, false);
             }
         } catch (Exception iae) {
-            LOG.error("Caught exception while trying to send job completion notification e-mail for " + jobExecutionContext.getJobDetail().getName(), iae);
+            LOG.error("Caught exception while trying to send job completion notification e-mail for " + jobExecutionContext.getJobDetail().getKey().getName(), iae);
         }
     }
 	

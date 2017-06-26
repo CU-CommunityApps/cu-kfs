@@ -33,8 +33,8 @@ public class ReversionUnitOfWorkDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
      */
     public void destroyAllUnitOfWorkSummaries() {
         LOG.info("Attempting to wipe out all unit of work summaries");
-        getSimpleJdbcTemplate().update("delete from GL_RVRSN_CTGRY_AMT_T");
-        getSimpleJdbcTemplate().update("delete from GL_RVRSN_UNIT_WRK_T");
+        getJdbcTemplate().update("delete from GL_RVRSN_CTGRY_AMT_T");
+        getJdbcTemplate().update("delete from GL_RVRSN_UNIT_WRK_T");
         LOG.info("All unit of work summaries should be now removed");
     }
 

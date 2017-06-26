@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.dataaccess.LevelOrganizationDao;
@@ -37,7 +37,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
 
             String sqlString = sqlBuilder.toString();
 
-            ParameterizedRowMapper<LevelOrganization> mapper = new ParameterizedRowMapper<LevelOrganization>() {
+            RowMapper<LevelOrganization> mapper = new RowMapper<LevelOrganization>() {
                 public LevelOrganization mapRow(ResultSet rs, int rowNum) throws SQLException {
                     LevelOrganization cLevelOrganization = new LevelOrganization();
                     cLevelOrganization.setCode(rs.getString("fin_coa_cd") + "-" + rs.getString("org_cd"));
@@ -47,7 +47,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
                 }
             };
 
-            return this.getSimpleJdbcTemplate().query(sqlString, mapper);
+            return this.getJdbcTemplate().query(sqlString, mapper);
         } catch (Exception ex) {
             LOG.info("LevelOrganizationDaoJdbc Exception: " + ex.getMessage());
             return null;
@@ -98,7 +98,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
 
                 // Get the SIP data from the data base, map it to the object and build a result set of objects to be returned to the user.
 
-                ParameterizedRowMapper<LevelOrganization> mapper = new ParameterizedRowMapper<LevelOrganization>() {
+                RowMapper<LevelOrganization> mapper = new RowMapper<LevelOrganization>() {
                     public LevelOrganization mapRow(ResultSet rs, int rowNum) throws SQLException {
                         LevelOrganization cLevelOrganization = new LevelOrganization();
                         cLevelOrganization.setCode(rs.getString("D_Level_Code"));
@@ -108,7 +108,7 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
                     }
                 };
 
-                return this.getSimpleJdbcTemplate().query(sqlString, mapper, chart, chart, chart, chart, chart, chart,
+                return this.getJdbcTemplate().query(sqlString, mapper, chart, chart, chart, chart, chart, chart,
                         chart, chart, cOrg);
             } catch (Exception ex) {
                 LOG.info("LevelOrganizationDaoJdbc Exception: " + ex.getMessage());
@@ -147,14 +147,14 @@ public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implement
 
             String sqlString = sqlBuilder.toString();
 
-            ParameterizedRowMapper<String> mapper = new ParameterizedRowMapper<String>() {
+            RowMapper<String> mapper = new RowMapper<String>() {
                 public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 
                     return rs.getString("C_Level_Code");
                 }
             };
 
-            List<String> results = this.getSimpleJdbcTemplate().query(sqlString, mapper, chart, chart, dOrg);
+            List<String> results = this.getJdbcTemplate().query(sqlString, mapper, chart, chart, dOrg);
             return chart + "-" + results.get(0);
 
         } catch (Exception ex) {
