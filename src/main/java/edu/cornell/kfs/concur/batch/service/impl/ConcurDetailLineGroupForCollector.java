@@ -32,7 +32,8 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  * for each Report ID in the SAE file.
  */
 public class ConcurDetailLineGroupForCollector {
-
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurDetailLineGroupForCollector.class);
+    
     protected static final String FAKE_OBJECT_CODE_PREFIX = "?NONE?";
     protected static final String ORPHANED_CASH_ADVANCES_KEY = "ORPHANED_CASH_ADVANCES";
     protected static final String ACCOUNTING_FIELDS_KEY_FORMAT = "%s|%s|%s|%s|%s|%s|%s";
@@ -73,6 +74,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     public void addDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        LOG.info("addDetailLine, entering");
         if (collectorHelper.isCashAdvanceLine(detailLine)) {
             ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey.computeIfAbsent(
                     detailLine.getCashAdvanceKey(), this::getExistingRequestedCashAdvanceByCashAdvanceKey);
@@ -91,6 +93,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected void addCorpCardPersonalExpenseDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        LOG.info("addCorpCardPersonalExpenseDetailLine, entering");
         String accountingFieldsKey = buildAccountingFieldsKeyForCorpCardPersonalExpense(detailLine);
         Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedLinesMap;
         if (detailLine.getJournalAmount().isPositive()) {
@@ -446,6 +449,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        LOG.info("entering buildOriginEntry");
         if (collectorHelper.isCashAdvanceLine(detailLine)) {
             return buildCashAdvanceOriginEntry(detailLine, amount);
         } else {
