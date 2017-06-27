@@ -470,13 +470,5 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	public void setGlobalObjectWithIndirectCostRecoveryAccountsService(GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService) {
 	    this.globalObjectWithIndirectCostRecoveryAccountsService = globalObjectWithIndirectCostRecoveryAccountsService;
 	}
-	
-	@Override
-	public List buildListOfDeletionAwareLists() {
-	    List deletionAwareList = super.buildListOfDeletionAwareLists();
-	    deletionAwareList.add(indirectCostRecoveryAccounts);
-	    deletionAwareList.add(subAccountGlobalDetails);
-	    return deletionAwareList;
-	}
 
 }

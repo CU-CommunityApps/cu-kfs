@@ -320,5 +320,12 @@ public class SubObjectCodeGlobalEdit extends PersistableBusinessObjectBase imple
 		}
 		return subObjCdGlobalEditDetails;
 	}
+	
+	@Override
+    public List buildListOfDeletionAwareLists() {
+        List deletionAwareList = super.buildListOfDeletionAwareLists();
+        deletionAwareList.add(subObjCdGlobalEditDetails);
+        return deletionAwareList;
+	}    
 
 }
