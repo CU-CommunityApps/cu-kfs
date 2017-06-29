@@ -2,7 +2,11 @@ package edu.cornell.kfs.concur.service.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
@@ -14,6 +18,7 @@ import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.client.urlconnection.HTTPSProperties;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
@@ -117,14 +122,19 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     protected boolean executeRevokeAccessTokenRequest() {
         ClientConfig clientConfig = new DefaultClientConfig();
+        clientConfig.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, buildHTTPSProperties());
         Client client = Client.create(clientConfig);
 
         ClientResponse response = client.handle(buildRevokeAccessTokenClientRequest());     
         int statusCode = response.getStatus();
         String reasonPhrase = response.getStatusInfo().getReasonPhrase();
+        String responseContent = response.getEntity(String.class);
 
         LOG.info("executeRevokeAccessTokenRequest(): Response status code: " + statusCode + ", reason phrase: " + reasonPhrase);
-        return statusCode == ClientResponse.Status.OK.getStatusCode();
+        if (StringUtils.isNotBlank(responseContent)) {
+            LOG.error("executeRevokeAccessTokenRequest(): Revoke-token request returned a non-blank response; KFS may have invalid TLS settings.");
+        }
+        return StringUtils.isBlank(responseContent) && statusCode == ClientResponse.Status.OK.getStatusCode();
     }
 
     protected ClientRequest buildRevokeAccessTokenClientRequest() {
@@ -137,8 +147,19 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         } catch (URISyntaxException e) {
             throw new RuntimeException("An error occured while building the revoke access token URI: ", e);
         }
-        
         return builder.build(uri, HttpMethod.POST);
+    }
+
+    protected HTTPSProperties buildHTTPSProperties() {
+        HostnameVerifier allowEveryoneHostnameVerifier = (hostname, session) -> true;
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance(ConcurConstants.TLS_V1_2_ALGORITHM);
+            sslContext.init(null, null, null);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RuntimeException("An error occurred while preparing the SSL context: ", e);
+        }
+        return new HTTPSProperties(allowEveryoneHostnameVerifier, sslContext);
     }
 
     @Override
