@@ -1,16 +1,22 @@
 package edu.cornell.kfs.concur.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.kuali.kfs.sys.KFSConstants;
 
 import com.sun.jersey.api.client.Client;
@@ -18,7 +24,6 @@ import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
@@ -120,26 +125,26 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         }
     }
 
+    /*
+     * NOTE: For some reason, we keep getting HTTP 400 ("Bad Request") errors when trying
+     * to invoke the revoke-single-token endpoint with the Jersey 1.x client API.
+     * To work around the problem, we use Apache's HttpClient API for those calls instead.
+     */
     protected boolean executeRevokeAccessTokenRequest() {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        clientConfig.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, buildHTTPSProperties());
-        Client client = Client.create(clientConfig);
-
-        ClientResponse response = client.handle(buildRevokeAccessTokenClientRequest());     
-        int statusCode = response.getStatus();
-        String reasonPhrase = response.getStatusInfo().getReasonPhrase();
-        String responseContent = response.getEntity(String.class);
-
-        LOG.info("executeRevokeAccessTokenRequest(): Response status code: " + statusCode + ", reason phrase: " + reasonPhrase);
-        if (StringUtils.isNotBlank(responseContent)) {
-            LOG.error("executeRevokeAccessTokenRequest(): Revoke-token request returned a non-blank response; KFS may have invalid TLS settings.");
+        CloseableHttpClient httpClient = null;
+        try {
+            httpClient = HttpClients.createDefault();
+            HttpPost request = buildRevokeAccessTokenClientRequest();
+            Boolean success = httpClient.execute(request, this::checkForRevokeTokenSuccess);
+            return Boolean.TRUE.equals(success);
+        } catch (IOException e) {
+            throw new RuntimeException("Error executing revoke-token request", e);
+        } finally {
+            IOUtils.closeQuietly(httpClient);
         }
-        return StringUtils.isBlank(responseContent) && statusCode == ClientResponse.Status.OK.getStatusCode();
     }
 
-    protected ClientRequest buildRevokeAccessTokenClientRequest() {
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
+    protected HttpPost buildRevokeAccessTokenClientRequest() {
         URI uri;
         try {
             uri = new URI(getConcurRevokeAccessTokenURL()
@@ -147,19 +152,35 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         } catch (URISyntaxException e) {
             throw new RuntimeException("An error occured while building the revoke access token URI: ", e);
         }
-        return builder.build(uri, HttpMethod.POST);
+        
+        HttpPost request = new HttpPost(uri);
+        request.addHeader(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
+        return request;
     }
 
-    protected HTTPSProperties buildHTTPSProperties() {
-        HostnameVerifier allowEveryoneHostnameVerifier = (hostname, session) -> true;
-        SSLContext sslContext;
-        try {
-            sslContext = SSLContext.getInstance(ConcurConstants.TLS_V1_2_ALGORITHM);
-            sslContext.init(null, null, null);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new RuntimeException("An error occurred while preparing the SSL context: ", e);
+    protected Boolean checkForRevokeTokenSuccess(HttpResponse response) throws IOException {
+        StatusLine statusLine = response.getStatusLine();
+        int statusCode = statusLine.getStatusCode();
+        String reasonPhrase = statusLine.getReasonPhrase();
+        String responseContent = getEntityContentAsString(response.getEntity());
+        
+        LOG.info("checkForRevokeTokenSuccess(): Response status code: " + statusCode + ", reason phrase: " + reasonPhrase);
+        if (StringUtils.isNotBlank(responseContent)) {
+            LOG.error("checkForRevokeTokenSuccess(): Revoke-token request returned a non-blank response; KFS may have invalid security settings!");
         }
-        return new HTTPSProperties(allowEveryoneHostnameVerifier, sslContext);
+        
+        return Boolean.valueOf(
+                StringUtils.isBlank(responseContent) && statusCode == ClientResponse.Status.OK.getStatusCode());
+    }
+
+    protected String getEntityContentAsString(HttpEntity entity) throws IOException {
+        InputStream entityStream = null;
+        try {
+            entityStream = entity.getContent();
+            return IOUtils.toString(entityStream, StandardCharsets.UTF_8);
+        } finally {
+            IOUtils.closeQuietly(entityStream);
+        }
     }
 
     @Override
