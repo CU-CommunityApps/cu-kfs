@@ -277,10 +277,15 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     }
     
     private String buildDVExplanation(RecurringDisbursementVoucherDocument recurringDV) {
-        String dvExplanation = CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_EXPLANATION_TO_DV_NOTE_STARTER
-                + recurringDV.getDocumentNumber() + KFSConstants.DELIMITER + KFSConstants.BLANK_SPACE + recurringDV.getDocumentHeader().getExplanation();
+        StringBuilder dvExplanation = new StringBuilder();
+        dvExplanation.append(CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_EXPLANATION_TO_DV_NOTE_STARTER).append(recurringDV.getDocumentNumber());
+        String rcdvExplanation = recurringDV.getDocumentHeader().getExplanation();
+        
+        if(StringUtils.isNotBlank(rcdvExplanation)) {
+            dvExplanation.append(KFSConstants.DELIMITER).append(KFSConstants.BLANK_SPACE).append(rcdvExplanation);
+        }
 
-        return truncateExplanationToMaxLength(dvExplanation);
+        return truncateExplanationToMaxLength(dvExplanation.toString());
     }
     
     private String truncateExplanationToMaxLength(String dvExplanation) {
