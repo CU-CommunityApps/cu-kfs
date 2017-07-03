@@ -304,6 +304,7 @@
     </bean>
     <bean id="recurringDisbursementVoucherDocumentService" parent="recurringDisbursementVoucherDocumentService-parentBean"/>
 	<bean id="recurringDisbursementVoucherDocumentService-parentBean" abstract="true" class="edu.cornell.kfs.fp.service.impl.RecurringDisbursementVoucherDocumentServiceImpl">
+		<property name="dataDictionaryService" ref="dataDictionaryService"/>
 		<property name="documentService" ref="documentService"/>
 		<property name="scheduledAccountingLineService" ref="scheduledAccountingLineService"/>
 		<property name="businessObjectService" ref="businessObjectService"/>

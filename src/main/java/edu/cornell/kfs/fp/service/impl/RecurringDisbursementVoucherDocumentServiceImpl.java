@@ -26,6 +26,7 @@ import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
@@ -36,6 +37,8 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -62,6 +65,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     private static final long serialVersionUID = -1775346783004136197L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherDocumentServiceImpl.class);
+    protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
     protected ScheduledAccountingLineService scheduledAccountingLineService;
     protected BusinessObjectService businessObjectService;
@@ -261,8 +265,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         for (DisbursementVoucherDocument dv : dvs) {
             try {
                 dv.getDocumentHeader().setDocumentDescription(recurringDV.getDocumentHeader().getDocumentDescription());
-                dv.getDocumentHeader().setExplanation(CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_EXPLANATION_TO_DV_NOTE_STARTER +
-                        recurringDV.getDocumentNumber());
+                dv.getDocumentHeader().setExplanation(buildDVExplanation(recurringDV));
                 getDocumentService().saveDocument(dv);
                 getBusinessObjectService().save(recurringDV.getRecurringDisbursementVoucherDetails());
                 updateGLPEDatesAndAddRecurringDocumentLinks(dv, recurringDV.getDocumentNumber());
@@ -271,6 +274,29 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
                 throw new RuntimeException(e);
             }
         }
+    }
+    
+    private String buildDVExplanation(RecurringDisbursementVoucherDocument recurringDV) {
+        StringBuilder dvExplanation = new StringBuilder();
+        dvExplanation.append(CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_EXPLANATION_TO_DV_NOTE_STARTER).append(recurringDV.getDocumentNumber());
+        String rcdvExplanation = recurringDV.getDocumentHeader().getExplanation();
+        
+        if(StringUtils.isNotBlank(rcdvExplanation)) {
+            dvExplanation.append(KFSConstants.DELIMITER).append(KFSConstants.BLANK_SPACE).append(rcdvExplanation);
+        }
+
+        return truncateExplanationToMaxLength(dvExplanation.toString());
+    }
+    
+    private String truncateExplanationToMaxLength(String dvExplanation) {
+        String truncatedExplanation = dvExplanation;
+        int explanationMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class.getName(), KFSPropertyConstants.EXPLANATION);
+
+        if (dvExplanation.length() > explanationMaxLength) {
+            truncatedExplanation = StringUtils.left(dvExplanation, explanationMaxLength);
+        }
+        
+        return truncatedExplanation;
     }
 
     private void updateGLPEDatesAndAddRecurringDocumentLinks(DisbursementVoucherDocument dv, String recurringDisbursemntVoucherDocumentNumber) {
@@ -667,6 +693,14 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     public void setNoteService(NoteService noteService) {
         this.noteService = noteService;
+    }
+
+    public DataDictionaryService getDataDictionaryService() {
+        return dataDictionaryService;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
 }
