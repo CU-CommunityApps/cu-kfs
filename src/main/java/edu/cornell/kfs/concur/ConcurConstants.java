@@ -34,7 +34,6 @@ public class ConcurConstants {
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
 
     public static final String REVOKED_TOKEN_INDICATOR = "REVOKED";
-    public static final String TLS_V1_2_ALGORITHM = "TLSv1.2";
 
     public static final String EXPENSE_REPORT_URI_INDICATOR = "/expense/expensereport/";
     public static final String TRAVEL_REQUEST_URI_INDICATOR = "/travelrequest/";
