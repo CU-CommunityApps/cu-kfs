@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
@@ -15,8 +18,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.kuali.kfs.sys.KFSConstants;
 
 import com.sun.jersey.api.client.Client;
@@ -35,8 +40,6 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
 
-    private String concurLoginUsername;
-    private String concurLoginPassword;
     private String concurRequestAccessTokenURL;
     private String concurRefreshAccessTokenURL;
     private String concurRevokeAccessTokenURL;
@@ -62,7 +65,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     protected ClientRequest buildRequestAccessTokenClientRequest() {
-        String encodedCredentials = ConcurUtils.encodeCredentialsForRequestingNewAccessToken(getConcurLoginUsername(), getConcurLoginPassword());
+        String encodedCredentials = ConcurUtils.encodeCredentialsForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
         ClientRequest.Builder builder = new ClientRequest.Builder();
         builder.accept(MediaType.APPLICATION_XML);
         builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,
@@ -133,15 +136,26 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     protected boolean executeRevokeAccessTokenRequest() {
         CloseableHttpClient httpClient = null;
         try {
-            httpClient = HttpClients.createDefault();
+            httpClient = buildSecureHttpClient();
             HttpPost request = buildRevokeAccessTokenClientRequest();
             Boolean success = httpClient.execute(request, this::checkForRevokeTokenSuccess);
             return Boolean.TRUE.equals(success);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
             throw new RuntimeException("Error executing revoke-token request", e);
         } finally {
             IOUtils.closeQuietly(httpClient);
         }
+    }
+
+    protected CloseableHttpClient buildSecureHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sslContext = SSLContexts.custom()
+                .useProtocol(ConcurConstants.TLS_V1_2_PROTOCOL)
+                .build();
+        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+                sslContext, new String[] {ConcurConstants.TLS_V1_2_PROTOCOL}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        return HttpClients.custom()
+                .setSSLSocketFactory(sslSocketFactory)
+                .build();
     }
 
     protected HttpPost buildRevokeAccessTokenClientRequest() {
@@ -208,20 +222,14 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_SECRET_KEY);
     }
 
-    public String getConcurLoginUsername() {
-        return concurLoginUsername;
+    @Override
+    public String getLoginUsername() {
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_LOGIN_USERNAME);
     }
 
-    public void setConcurLoginUsername(String concurLoginUsername) {
-        this.concurLoginUsername = concurLoginUsername;
-    }
-
-    public String getConcurLoginPassword() {
-        return concurLoginPassword;
-    }
-
-    public void setConcurLoginPassword(String concurLoginPassword) {
-        this.concurLoginPassword = concurLoginPassword;
+    @Override
+    public String getLoginPassword() {
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_LOGIN_PASSWORD);
     }
 
     public String getConcurRequestAccessTokenURL() {
