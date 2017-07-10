@@ -218,20 +218,16 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     protected void groupLines(List<ConcurStandardAccountingExtractDetailLine> saeLines) {
         for (ConcurStandardAccountingExtractDetailLine saeLine : saeLines) {
             if (concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(saeLine)) {
-                LOG.info("groupLines, found a cash line.");
                 reportCashAdvance(saeLine);
             }
-            if (shouldProcessLine(saeLine) && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLineForCollector(saeLine, reportData)) {
-                LOG.info("groupLines, opted to process the line.");
+            if (shouldProcessLine(saeLine)
+                    && concurSAEValidationService.validateConcurStandardAccountingExtractDetailLineForCollector(saeLine, reportData)) {
                 if (Boolean.TRUE.equals(saeLine.getJournalAccountCodeOverridden())) {
                     reportPendingClientLine(saeLine);
                 }
-                Function<? super String, ? extends ConcurDetailLineGroupForCollector> mappingFunction = 
-                        (reportId) -> new ConcurDetailLineGroupForCollector(reportId, collectorHelper);
-                ConcurDetailLineGroupForCollector lineGroup = lineGroups.computeIfAbsent(saeLine.getReportId(), mappingFunction);
+                ConcurDetailLineGroupForCollector lineGroup = lineGroups.computeIfAbsent(
+                        saeLine.getReportId(), (reportId) -> new ConcurDetailLineGroupForCollector(reportId, collectorHelper));
                 lineGroup.addDetailLine(saeLine);
-            } else {
-                LOG.info("groupLines, opted to NOT process the line.");
             }
         }
     }
