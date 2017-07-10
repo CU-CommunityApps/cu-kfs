@@ -43,7 +43,6 @@ public class ConcurDetailLineGroupForCollectorHelper {
     protected String atmFeeDebitAccountNumber;
     protected String atmFeeDebitSubAccountNumber;
     protected String atmFeeDebitObjectCode;
-    protected String atmFeeCreditAccountNumber;
     protected String atmCashAdvanceObjectCode;
 
     public ConcurDetailLineGroupForCollectorHelper(String actualFinancialBalanceTypeCode, Date transmissionDate,
@@ -73,7 +72,6 @@ public class ConcurDetailLineGroupForCollectorHelper {
         this.atmFeeDebitAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_ACCOUNT);
         this.atmFeeDebitSubAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_SUBACCOUNT);
         this.atmFeeDebitObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_OBJECT);
-        this.atmFeeCreditAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER);
         this.atmCashAdvanceObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
         
     }
@@ -132,10 +130,6 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     public String getAtmFeeDebitObjectCode() {
         return atmFeeDebitObjectCode;
-    }
-
-    public String getAtmFeeCreditAccountNumber() {
-        return atmFeeCreditAccountNumber;
     }
 
     public String getAtmCashAdvanceObjectCode() {
