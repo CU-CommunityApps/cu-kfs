@@ -158,7 +158,7 @@ public class ConcurDetailLineGroupForCollector {
                 detailLine.getReportAccountNumber(),
                 defaultToDashesIfBlank(detailLine.getReportSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
                 collectorHelper.atmCashAdvanceObjectCode,
-                defaultToDashesIfBlank(detailLine.getReportSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE),
+                KFSPropertyConstants.SUB_OBJECT_CODE,
                 defaultToDashesIfBlank(detailLine.getReportProjectCode(), KFSPropertyConstants.PROJECT_CODE),
                 StringUtils.defaultIfBlank(detailLine.getReportOrgRefId(), StringUtils.EMPTY));
     }
@@ -485,6 +485,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildOffsetOriginEntry(OriginEntryFull baseEntry, KualiDecimal amountToOffset) {
+        LOG.info("buildOffsetOriginEntry, entering");
         OriginEntryFull offsetEntry = new OriginEntryFull(baseEntry);
         KualiDecimal offsetAmount = amountToOffset.negated();
         setTransactionSequenceNumberToNextAvailableValue(offsetEntry);
@@ -493,6 +494,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        LOG.info("buildOriginEntry, entering");
         if (collectorHelper.isCashAdvanceLine(detailLine)) {
             return buildCashAdvanceOriginEntry(detailLine, amount);
         } else {
@@ -501,6 +503,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildCashAdvanceOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        LOG.info("buildCashAdvanceOriginEntry, entering");
         OriginEntryFull originEntry;
         if (isAtmCashAdvanceLine(detailLine) || isAtmFeeLine(detailLine)) {
             originEntry = buildOriginEntryFromDetailLine(detailLine);
@@ -517,6 +520,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     private OriginEntryFull buildOriginEntryFromRequestedCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine, ConcurRequestedCashAdvance requestedCashAdvance) {
+        LOG.info("buildOriginEntryFromRequestedCashAdvance, entering");
         OriginEntryFull originEntry = new OriginEntryFull();
         originEntry.setChartOfAccountsCode(requestedCashAdvance.getChart());
         originEntry.setAccountNumber(requestedCashAdvance.getAccountNumber());
@@ -530,19 +534,33 @@ public class ConcurDetailLineGroupForCollector {
 
     private OriginEntryFull buildOriginEntryFromDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         OriginEntryFull originEntry = new OriginEntryFull();
-        originEntry.setChartOfAccountsCode(detailLine.getChartOfAccountsCode());
-        originEntry.setAccountNumber(detailLine.getAccountNumber());
-        originEntry.setSubAccountNumber(defaultToDashesIfBlank(detailLine.getSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
-        originEntry.setFinancialObjectCode(detailLine.getJournalAccountCode());
-        originEntry.setFinancialSubObjectCode(defaultToDashesIfBlank(detailLine.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE));
-        originEntry.setProjectCode(defaultToDashesIfBlank(detailLine.getProjectCode(), KFSPropertyConstants.PROJECT_CODE));
+        if (isAtmCashAdvanceLine(detailLine)) {
+            LOG.info("buildOriginEntryFromDetailLine, cash advance atm");
+            originEntry.setChartOfAccountsCode(detailLine.getReportChartOfAccountsCode());
+            originEntry.setAccountNumber(detailLine.getReportAccountNumber());
+            originEntry.setSubAccountNumber(defaultToDashesIfBlank(detailLine.getReportSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
+            originEntry.setFinancialObjectCode(collectorHelper.atmCashAdvanceObjectCode);
+        } else if (isAtmFeeLine(detailLine)) {
+            LOG.info("buildOriginEntryFromDetailLine, cash advance atm FEE");
+            originEntry.setChartOfAccountsCode(collectorHelper.atmFeeDebitChartCode);
+            originEntry.setAccountNumber(collectorHelper.atmFeeDebitAccountNumber);
+            originEntry.setSubAccountNumber(collectorHelper.atmFeeDebitSubAccountNumber);
+            originEntry.setFinancialObjectCode(collectorHelper.atmFeeDebitObjectCode);
+        } else {
+            throw new IllegalStateException("This isn't an ATM transaction, should never get here.");
+        }
+        originEntry.setFinancialSubObjectCode(KFSPropertyConstants.SUB_OBJECT_CODE);
+        originEntry.setProjectCode(defaultToDashesIfBlank(detailLine.getReportProjectCode(), KFSPropertyConstants.PROJECT_CODE));
         originEntry.setOrganizationReferenceId(StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
+        LOG.info("buildOriginEntryFromDetailLine, origin entry: " + originEntry.toString());
+        LOG.info("buildOriginEntryFromDetailLine, collectorHelper: " + collectorHelper.toString());
         return originEntry;
     }
 
     protected OriginEntryFull buildCorpCardPersonalExpenseOriginEntry(
             ConcurStandardAccountingExtractDetailLine detailLine, String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, KualiDecimal amount) {
+        LOG.info("buildCorpCardPersonalExpenseOriginEntry, entering");
         OriginEntryFull originEntry = new OriginEntryFull();
         
         originEntry.setChartOfAccountsCode(chartCode);
@@ -562,6 +580,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected OriginEntryFull buildRegularOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+        LOG.info("buildRegularOriginEntry, entering");
         OriginEntryFull originEntry = new OriginEntryFull();
         
         originEntry.setChartOfAccountsCode(detailLine.getChartOfAccountsCode());

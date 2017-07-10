@@ -170,5 +170,22 @@ public class ConcurDetailLineGroupForCollectorHelper {
     public boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine detailLine) {
         return concurBatchUtilityService.lineRepresentsPersonalExpenseChargedToCorporateCard(detailLine);
     }
+    
+    public String toString() {
+        /*
+    protected String atmFeeDebitSubAccountNumber;
+    protected String atmFeeDebitObjectCode;
+    protected String atmCashAdvanceObjectCode;
+         */
+        StringBuilder sb = new StringBuilder();
+        sb.append("documentTypeCode: ").append(documentTypeCode).append(" systemOriginationCode:").append(systemOriginationCode);
+        sb.append(" chartCode: ").append(chartCode).append(" prepaidOffsetChartCode: ").append(prepaidOffsetChartCode);
+        sb.append(" prepaidOffsetAccountNumber: ").append(prepaidOffsetAccountNumber).append(" prepaidOffsetObjectCode: ").append(prepaidOffsetObjectCode);
+        sb.append(" paymentOffsetObjectCode: ").append(paymentOffsetObjectCode).append(" personalOffsetObjectCode: ").append(personalOffsetObjectCode);
+        sb.append(" atmFeeDebitChartCode: ").append(atmFeeDebitChartCode).append(" atmFeeDebitAccountNumber: ").append(atmFeeDebitAccountNumber);
+        sb.append(" atmFeeDebitSubAccountNumber: ").append(atmFeeDebitSubAccountNumber).append(" atmFeeDebitObjectCode: ").append(atmFeeDebitObjectCode);
+        sb.append(" atmCashAdvanceObjectCode: ").append(atmCashAdvanceObjectCode);
+        return sb.toString();
+    }
 
 }
