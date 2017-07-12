@@ -76,18 +76,20 @@ public class ConcurDetailLineGroupForCollector {
 
     public void addDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         if (collectorHelper.isCashAdvanceLine(detailLine)) {
+            LOG.info("addDetailLine, isCashAdvanceLine");
             String accountingFieldsKey = buildAccountingFieldsKeyForCashAdvance(detailLine);
-            
-            Function<? super String, ? extends List<ConcurStandardAccountingExtractDetailLine>> accountingKeyMappingFunction = (key) -> new ArrayList<>();
-            consolidatedCashAdvanceLines.computeIfAbsent(accountingFieldsKey, accountingKeyMappingFunction).add(detailLine);
-            
-            BiFunction<? super KualiDecimal, ? super KualiDecimal, ? extends KualiDecimal> journalAmmountRemappingFunction = KualiDecimal::add;
-            totalCashAdvanceAmountsByReportEntryId.merge(detailLine.getReportEntryId(), detailLine.getJournalAmount(), journalAmmountRemappingFunction);
+            consolidatedCashAdvanceLines.computeIfAbsent(accountingFieldsKey, (key) -> new ArrayList<>())
+                    .add(detailLine);
+            totalCashAdvanceAmountsByReportEntryId.merge(
+                    detailLine.getReportEntryId(), detailLine.getJournalAmount(), KualiDecimal::add);
         } else if (collectorHelper.lineRepresentsPersonalExpenseChargedToCorporateCard(detailLine)) {
+            LOG.info("addDetailLine, lineRepresentsPersonalExpenseChargedToCorporateCard");
             addCorpCardPersonalExpenseDetailLine(detailLine);
         } else {
+            LOG.info("addDetailLine, other line");
             String accountingFieldsKey = buildAccountingFieldsKey(detailLine);
-            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, (key) -> new ConcurDetailLineSubGroupForCollector()).addDetailLine(detailLine);
+            consolidatedRegularLines.computeIfAbsent(accountingFieldsKey, (key) -> new ConcurDetailLineSubGroupForCollector())
+                    .addDetailLine(detailLine);
         }
     }
 
@@ -112,66 +114,56 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected String buildAccountingFieldsKey(ConcurStandardAccountingExtractDetailLine detailLine) {
-        String objectCodeForKey = detailLine.getJournalAccountCode();
-        objectCodeForKey = convertToFakeObjectCodeIfNecessary(objectCodeForKey, detailLine);
-        
-        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
-                detailLine.getChartOfAccountsCode(),
-                detailLine.getAccountNumber(),
-                defaultToDashesIfBlank(detailLine.getSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
-                objectCodeForKey,
-                defaultToDashesIfBlank(detailLine.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE),
-                defaultToDashesIfBlank(detailLine.getProjectCode(), KFSPropertyConstants.PROJECT_CODE),
-                StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
-    }
-
-    protected String buildAccountingFieldsKeyForCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine) {
-        if (isAtmCashAdvanceLine(detailLine)){
-            LOG.debug("buildAccountingFieldsKeyForCashAdvance, found ATM cash advance");
-            return buildAccountingFieldsForATMCashAdvance(detailLine);
-            
-        } else if (isAtmFeeLine(detailLine)) {
-            LOG.debug("buildAccountingFieldsKeyForCashAdvance, found ATM fee");
-            return buildAccountingFieldsForATMFeeCashAdvance(detailLine);
+        if (isAtmFeeLine(detailLine)) {
+            LOG.debug("buildAccountingFieldsKey, found ATM fee");
+            return buildAccountingFieldsForATMFeeCashAdvance(detailLine); 
         } else {
-            LOG.debug("buildAccountingFieldsKeyForCashAdvance, found a non ATM related cash advance");
-            Function<? super String, ? extends ConcurRequestedCashAdvance> cashAdvanceKeyMappingFunction = this::getExistingRequestedCashAdvanceByCashAdvanceKey;
-            ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey.computeIfAbsent(detailLine.getCashAdvanceKey(), cashAdvanceKeyMappingFunction);
-            return buildAccountingFieldsKeyForCashAdvanceWithRequestedCashAdvance(detailLine, requestedCashAdvance);
+            String objectCodeForKey = detailLine.getJournalAccountCode();
+            objectCodeForKey = convertToFakeObjectCodeIfNecessary(objectCodeForKey, detailLine);
+            
+            return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
+                    detailLine.getChartOfAccountsCode(),
+                    detailLine.getAccountNumber(),
+                    defaultToDashesIfBlank(detailLine.getSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
+                    objectCodeForKey,
+                    defaultToDashesIfBlank(detailLine.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE),
+                    defaultToDashesIfBlank(detailLine.getProjectCode(), KFSPropertyConstants.PROJECT_CODE),
+                    StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
         }
     }
 
+    protected String buildAccountingFieldsKeyForCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (isAtmCashAdvanceLine(detailLine)) {
+            LOG.debug("buildAccountingFieldsKeyForCashAdvance, found ATM cash advance");
+            return buildAccountingFieldsForATMCashAdvance(detailLine);
+        } else {
+            LOG.debug("buildAccountingFieldsKeyForCashAdvance, found a non ATM related cash advance");
+            Function<? super String, ? extends ConcurRequestedCashAdvance> cashAdvanceKeyMappingFunction = this::getExistingRequestedCashAdvanceByCashAdvanceKey;
+            ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey
+                    .computeIfAbsent(detailLine.getCashAdvanceKey(), cashAdvanceKeyMappingFunction);
+            return buildAccountingFieldsKeyForCashAdvanceWithRequestedCashAdvance(detailLine, requestedCashAdvance);
+        }
+    }
+    
     private String buildAccountingFieldsForATMFeeCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
-                collectorHelper.atmFeeDebitChartCode,
-                collectorHelper.atmFeeDebitAccountNumber,
-                collectorHelper.atmFeeDebitSubAccountNumber,
-                collectorHelper.atmFeeDebitObjectCode,
-                KFSPropertyConstants.SUB_OBJECT_CODE,
+        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT, collectorHelper.atmFeeDebitChartCode,
+                collectorHelper.atmFeeDebitAccountNumber, collectorHelper.atmFeeDebitSubAccountNumber,
+                collectorHelper.atmFeeDebitObjectCode, KFSPropertyConstants.SUB_OBJECT_CODE,
                 defaultToDashesIfBlank(detailLine.getProjectCode(), KFSPropertyConstants.PROJECT_CODE),
                 StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
     }
 
     private String buildAccountingFieldsForATMCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
-                detailLine.getReportChartOfAccountsCode(),
+        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT, detailLine.getReportChartOfAccountsCode(),
                 detailLine.getReportAccountNumber(),
                 defaultToDashesIfBlank(detailLine.getReportSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
-                collectorHelper.atmCashAdvanceObjectCode,
-                KFSPropertyConstants.SUB_OBJECT_CODE,
+                collectorHelper.atmCashAdvanceObjectCode, KFSPropertyConstants.SUB_OBJECT_CODE,
                 defaultToDashesIfBlank(detailLine.getReportProjectCode(), KFSPropertyConstants.PROJECT_CODE),
                 StringUtils.defaultIfBlank(detailLine.getReportOrgRefId(), StringUtils.EMPTY));
     }
-    
-    private boolean isAtmFeeLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return StringUtils.equalsIgnoreCase(detailLine.getExpenseType(), ConcurConstants.EXPENSE_TYPE_ATM_FEE);
-    }
 
-    private boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return StringUtils.equalsIgnoreCase(detailLine.getCashAdvancePaymentCode(), ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID);
-    }
 
-    private String buildAccountingFieldsKeyForCashAdvanceWithRequestedCashAdvance(
+    protected String buildAccountingFieldsKeyForCashAdvanceWithRequestedCashAdvance(
             ConcurStandardAccountingExtractDetailLine detailLine, ConcurRequestedCashAdvance requestedCashAdvance) {
         if (ObjectUtils.isNull(requestedCashAdvance)) {
             return ORPHANED_CASH_ADVANCES_KEY;
@@ -500,40 +492,33 @@ public class ConcurDetailLineGroupForCollector {
         }
     }
 
-    protected OriginEntryFull buildCashAdvanceOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine, KualiDecimal amount) {
+    protected OriginEntryFull buildCashAdvanceOriginEntry(ConcurStandardAccountingExtractDetailLine detailLine,
+            KualiDecimal amount) {
         OriginEntryFull originEntry;
         if (isAtmCashAdvanceLine(detailLine) || isAtmFeeLine(detailLine)) {
             originEntry = buildOriginEntryFromDetailLine(detailLine);
-        }else{
-            ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey.get(detailLine.getCashAdvanceKey());
+        } else {
+            ConcurRequestedCashAdvance requestedCashAdvance = requestedCashAdvancesByCashAdvanceKey
+                    .get(detailLine.getCashAdvanceKey());
             if (requestedCashAdvance == null) {
-                throw new IllegalStateException("Did not find cash advance when building Collector line; this should NEVER happen. Key: "
-                        + detailLine.getCashAdvanceKey());
+                throw new IllegalStateException(
+                        "Did not find cash advance when building Collector line; this should NEVER happen. Key: "
+                                + detailLine.getCashAdvanceKey());
             }
             originEntry = buildOriginEntryFromRequestedCashAdvance(detailLine, requestedCashAdvance);
         }
+
         configureOriginEntryGeneratedFromLine(originEntry, detailLine, amount);
         return originEntry;
     }
-
-    private OriginEntryFull buildOriginEntryFromRequestedCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine, ConcurRequestedCashAdvance requestedCashAdvance) {
-        OriginEntryFull originEntry = new OriginEntryFull();
-        originEntry.setChartOfAccountsCode(requestedCashAdvance.getChart());
-        originEntry.setAccountNumber(requestedCashAdvance.getAccountNumber());
-        originEntry.setSubAccountNumber(defaultToDashesIfBlank(requestedCashAdvance.getSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
-        originEntry.setFinancialObjectCode(StringUtils.defaultIfBlank(requestedCashAdvance.getObjectCode(), detailLine.getJournalAccountCode()));
-        originEntry.setFinancialSubObjectCode(defaultToDashesIfBlank(requestedCashAdvance.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE));
-        originEntry.setProjectCode(defaultToDashesIfBlank(requestedCashAdvance.getProjectCode(), KFSPropertyConstants.PROJECT_CODE));
-        originEntry.setOrganizationReferenceId(StringUtils.defaultIfBlank(requestedCashAdvance.getOrgRefId(), StringUtils.EMPTY));
-        return originEntry;
-    }
-
+    
     private OriginEntryFull buildOriginEntryFromDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         OriginEntryFull originEntry = new OriginEntryFull();
         if (isAtmCashAdvanceLine(detailLine)) {
             originEntry.setChartOfAccountsCode(detailLine.getReportChartOfAccountsCode());
             originEntry.setAccountNumber(detailLine.getReportAccountNumber());
-            originEntry.setSubAccountNumber(defaultToDashesIfBlank(detailLine.getReportSubAccountNumber(), KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
+            originEntry.setSubAccountNumber(defaultToDashesIfBlank(detailLine.getReportSubAccountNumber(),
+                    KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
             originEntry.setFinancialObjectCode(collectorHelper.atmCashAdvanceObjectCode);
         } else if (isAtmFeeLine(detailLine)) {
             originEntry.setChartOfAccountsCode(collectorHelper.atmFeeDebitChartCode);
@@ -544,7 +529,8 @@ public class ConcurDetailLineGroupForCollector {
             throw new IllegalStateException("This isn't an ATM transaction, should never get here.");
         }
         originEntry.setFinancialSubObjectCode(KFSPropertyConstants.SUB_OBJECT_CODE);
-        originEntry.setProjectCode(defaultToDashesIfBlank(detailLine.getReportProjectCode(), KFSPropertyConstants.PROJECT_CODE));
+        originEntry.setProjectCode(
+                defaultToDashesIfBlank(detailLine.getReportProjectCode(), KFSPropertyConstants.PROJECT_CODE));
         originEntry.setOrganizationReferenceId(StringUtils.defaultIfBlank(detailLine.getOrgRefId(), StringUtils.EMPTY));
         if (LOG.isDebugEnabled()) {
             LOG.debug("buildOriginEntryFromDetailLine, origin entry: " + originEntry.toString());
@@ -552,6 +538,25 @@ public class ConcurDetailLineGroupForCollector {
         }
         return originEntry;
     }
+    
+    private OriginEntryFull buildOriginEntryFromRequestedCashAdvance(
+            ConcurStandardAccountingExtractDetailLine detailLine, ConcurRequestedCashAdvance requestedCashAdvance) {
+        OriginEntryFull originEntry = new OriginEntryFull();
+        originEntry.setChartOfAccountsCode(requestedCashAdvance.getChart());
+        originEntry.setAccountNumber(requestedCashAdvance.getAccountNumber());
+        originEntry.setSubAccountNumber(defaultToDashesIfBlank(requestedCashAdvance.getSubAccountNumber(),
+                KFSPropertyConstants.SUB_ACCOUNT_NUMBER));
+        originEntry.setFinancialObjectCode(
+                StringUtils.defaultIfBlank(requestedCashAdvance.getObjectCode(), detailLine.getJournalAccountCode()));
+        originEntry.setFinancialSubObjectCode(
+                defaultToDashesIfBlank(requestedCashAdvance.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE));
+        originEntry.setProjectCode(
+                defaultToDashesIfBlank(requestedCashAdvance.getProjectCode(), KFSPropertyConstants.PROJECT_CODE));
+        originEntry.setOrganizationReferenceId(
+                StringUtils.defaultIfBlank(requestedCashAdvance.getOrgRefId(), StringUtils.EMPTY));
+        return originEntry;
+    }
+                 
 
     protected OriginEntryFull buildCorpCardPersonalExpenseOriginEntry(
             ConcurStandardAccountingExtractDetailLine detailLine, String chartCode, String accountNumber, String subAccountNumber,
@@ -674,10 +679,11 @@ public class ConcurDetailLineGroupForCollector {
     protected Set<String> getSequenceNumbersForOrphanedCashAdvanceLines() {
         List<ConcurStandardAccountingExtractDetailLine> orphanedKeyList = consolidatedCashAdvanceLines.get(ORPHANED_CASH_ADVANCES_KEY);
         if (CollectionUtils.isEmpty(orphanedKeyList)) {
+            LOG.debug("getSequenceNumbersForOrphanedCashAdvanceLines, found an empty list of orphaned keys, returning empty list.");
             return Collections.EMPTY_SET;
         } else {
-            return orphanedKeyList.stream()
-                    .map(ConcurStandardAccountingExtractDetailLine::getSequenceNumber)
+            LOG.debug("getSequenceNumbersForOrphanedCashAdvanceLines, found a list of orphaned keys, streaming the list.");
+            return orphanedKeyList.stream().map(ConcurStandardAccountingExtractDetailLine::getSequenceNumber)
                     .collect(Collectors.toCollection(HashSet::new));
         }
     }
@@ -704,6 +710,14 @@ public class ConcurDetailLineGroupForCollector {
             return lengthComparison;
         }
         return line1.getSequenceNumber().compareTo(line2.getSequenceNumber());
+    }
+    
+    private boolean isAtmFeeLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return StringUtils.equalsIgnoreCase(detailLine.getExpenseType(), ConcurConstants.EXPENSE_TYPE_ATM_FEE);
+    }
+    
+    private boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return StringUtils.equalsIgnoreCase(detailLine.getCashAdvancePaymentCode(), ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID);
     }
 
 }

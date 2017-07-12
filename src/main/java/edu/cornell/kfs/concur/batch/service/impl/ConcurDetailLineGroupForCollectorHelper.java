@@ -172,11 +172,6 @@ public class ConcurDetailLineGroupForCollectorHelper {
     }
     
     public String toString() {
-        /*
-    protected String atmFeeDebitSubAccountNumber;
-    protected String atmFeeDebitObjectCode;
-    protected String atmCashAdvanceObjectCode;
-         */
         StringBuilder sb = new StringBuilder();
         sb.append("documentTypeCode: ").append(documentTypeCode).append(" systemOriginationCode:").append(systemOriginationCode);
         sb.append(" chartCode: ").append(chartCode).append(" prepaidOffsetChartCode: ").append(prepaidOffsetChartCode);
