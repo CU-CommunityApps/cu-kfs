@@ -258,4 +258,7 @@
 	<bean id="cuMarshalService-parentBean" class="edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl" abstract="true">
 	</bean>
 
+	<bean id="batchFileAdminAuthorizationService" parent="batchFileAdminAuthorizationService-parentBean"
+			class="edu.cornell.kfs.sys.batch.service.impl.CuBatchFileAdminAuthorizationServiceImpl"/>
+
 </beans>
