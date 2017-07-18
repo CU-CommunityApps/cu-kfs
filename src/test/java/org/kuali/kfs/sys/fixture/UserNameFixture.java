@@ -46,6 +46,7 @@ ccs1,
 ls35,
 // favorite account manager
 db18,
+kad13,
 kan2,
 mo14,
 nja3;
