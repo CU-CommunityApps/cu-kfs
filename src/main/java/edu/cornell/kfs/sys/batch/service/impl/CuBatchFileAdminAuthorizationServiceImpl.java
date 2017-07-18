@@ -16,8 +16,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuthorizationServiceImpl {
 
     /**
-     * Overridden to also check the "View Batch File" template, as an alternative means
-     * of authorizing the "Download" link. Uses logic similar to that of the superclass method,
+     * Overridden to also check the "Download Batch File" template, as an alternative means
+     * of authorizing the "Download" link. Uses code and logic similar to that of the superclass method,
      * in addition to calling the superclass method to check the "Administer Batch File" template.
      * 
      * @see org.kuali.kfs.sys.batch.service.impl.BatchFileAdminAuthorizationServiceImpl#canDownload(
@@ -29,11 +29,11 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
         boolean isAuthorized = false;
         if (batchFile.getFileName().indexOf(PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX) >= 0) {
             isAuthorized = getIdentityManagementService().hasPermissionByTemplateName(user.getPrincipalId(),
-                    KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.VIEW_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
+                    KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
                     generateDownloadCheckPermissionDetails(batchFile, user));
         } else {
             isAuthorized = getIdentityManagementService().isAuthorizedByTemplateName(user.getPrincipalId(),
-                    KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.VIEW_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
+                    KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
                     generateDownloadCheckPermissionDetails(batchFile, user), generateDownloadCheckRoleQualifiers(batchFile, user));
         }
         return isAuthorized || super.canDownload(batchFile, user);

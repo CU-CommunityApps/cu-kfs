@@ -21,7 +21,7 @@ public class CUKFSConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
         public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";
         public static final String CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME = "Create Done File";
-        public static final String VIEW_BATCH_FILE_PERMISSION_TEMPLATE_NAME = "View Batch File";
+        public static final String DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME = "Download Batch File";
     }       
     public static final class TaxRegionConstants {
         public static final String CREATE_TAX_REGION_FROM_LOOKUP_PARM = "createTaxRegionFromLookup";
