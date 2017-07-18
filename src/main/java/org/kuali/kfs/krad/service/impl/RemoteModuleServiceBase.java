@@ -40,7 +40,9 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.rice.krad.bo.ExternalizableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -588,48 +590,38 @@ public abstract class RemoteModuleServiceBase implements ModuleService {
     @Override
     public boolean isLocked() {
         LOG.debug("isLocked, entering Cornell customization");
-        boolean shouldLock = false;
+        return isModuleLocked() && !isUserInLockoutOverrideList();
+    }
+
+    private boolean isModuleLocked() {
         ModuleConfiguration configuration = this.getModuleConfiguration();
         if (configuration != null) {
             String namespaceCode = configuration.getNamespaceCode();
             String componentCode = KRADConstants.DetailTypes.ALL_DETAIL_TYPE;
             String parameterName = KRADConstants.SystemGroupParameterNames.OLTP_LOCKOUT_ACTIVE_IND;
             ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
-            String shouldLockout = parameterService.getParameterValueAsString(namespaceCode, componentCode, parameterName);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("isLocked, nameSpace: " + namespaceCode + " componentCode: " + componentCode + " parameterName: " + parameterName);
-                LOG.debug("isLocked, shouldLockout: " + shouldLockout);
-            }
+            String shouldLockout = parameterService.getParameterValueAsString(namespaceCode, componentCode,
+                parameterName);
             if (StringUtils.isNotBlank(shouldLockout)) {
-                shouldLock = parameterService.getParameterValueAsBoolean(namespaceCode, componentCode, parameterName) && !isUserInLockoutOverrideList();
+                return parameterService.getParameterValueAsBoolean(namespaceCode, componentCode, parameterName);
             }
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("isLocked, shouldLock: " + shouldLock);
-        }
-        return shouldLock;
+        return false;
     }
     
     protected boolean isUserInLockoutOverrideList() {
-        String[] overrideList = StringUtils.split(getOverrideUsersList(), ",");
-        String loggedInUserPrincipleName = GlobalVariables.getUserSession().getPerson().getPrincipalName();
-        Object[] filteredList = Arrays.stream(overrideList).filter(x -> x.equalsIgnoreCase(loggedInUserPrincipleName)).toArray();
-        boolean isInOverrideList = filteredList.length > 0;
+        String loggedInUserPrincipalName = GlobalVariables.getUserSession().getPerson().getPrincipalName();
+        
+        ParameterEvaluatorService parameterEvaluatorService = SpringContext.getBean(ParameterEvaluatorService.class);
+        boolean isUserInOverrideList = parameterEvaluatorService.getParameterEvaluator(KFSConstants.CoreModuleNamespaces.KFS, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.OLTP_LOCK_OVERRIDE_USERNAME_LIST, 
+                loggedInUserPrincipalName).evaluationSucceeds();
+        
         if (LOG.isDebugEnabled()) {
-            LOG.debug("isUserInLockoutOverrideList, is " + loggedInUserPrincipleName + "  In OverrideList: " + isInOverrideList);
+            LOG.debug("isUserInLockoutOverrideList, is " + loggedInUserPrincipalName + "  in OverrideList: " + isUserInOverrideList);
         }
-        return isInOverrideList;
-    }
-    
-    protected String getOverrideUsersList() {
-        String overrideList = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
-                KFSConstants.CoreModuleNamespaces.KFS, CUKFSParameterKeyConstants.ALL_COMPONENTS, 
-                CUKFSParameterKeyConstants.OLTP_LOCK_OVERRIDE_LIST);
-        if (StringUtils.isBlank(overrideList)) {
-            return StringUtils.EMPTY;
-        } else {
-            return overrideList;
-        }
+        
+        return isUserInOverrideList;
     }
 
     /**
