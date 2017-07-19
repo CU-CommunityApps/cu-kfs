@@ -1,10 +1,12 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import edu.cornell.cynergy.kew.routeheader.service.CynergyRouteHeaderService;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -74,16 +76,11 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
         
         // Find all DV documents that were finalized between the start and end dates.
-        //TODO: need to fix this when we reintroduce cynergy as a dependency
-//        BulkFinalizedDateRouteHeaderService routeHeaderService = (BulkFinalizedDateRouteHeaderService) SpringContext.getBean(
-//                RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
-//        Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
-//                new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
-
-        RouteHeaderService routeHeaderService = (RouteHeaderService) SpringContext.getBean(
+        CynergyRouteHeaderService routeHeaderService = (CynergyRouteHeaderService) SpringContext.getBean(
                 RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
-        Map<String,java.sql.Timestamp> datesMap = new HashMap<>(); //routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
-                //new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
+        Map<String,java.sql.Timestamp> datesMap = routeHeaderService.getFinalizedDatesForDocumentType(DisbursementVoucherConstants.DOCUMENT_TYPE_CODE,
+                new java.sql.Timestamp(summary.getStartDate().getTime()), new java.sql.Timestamp(endDateTime.getTime().getTime()));
+
         // Filter results to only include Foreign Draft and Wire Transfer DVs.
         finalizedDvDocuments = processingDao.findForeignDraftsAndWireTransfers(new ArrayList<String>(datesMap.keySet()), summary, DisbursementVoucherConstants.DOCUMENT_TYPE_CODE);
         if (finalizedDvDocuments.isEmpty()) {
