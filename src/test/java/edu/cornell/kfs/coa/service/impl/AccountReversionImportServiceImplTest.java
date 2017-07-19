@@ -14,7 +14,7 @@ import edu.cornell.kfs.coa.fixture.AccountReversionFixture;
 import edu.cornell.kfs.coa.service.AccountReversionImportService;
 
 public class AccountReversionImportServiceImplTest extends KualiTestBase {
-    private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/coa/fixture/AccountReversion.csv";
+    private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/coa/fixture/AccountReversion.csv";
 
     private AccountReversionImportService accountReversionImportService;
     private BusinessObjectService businessObjectService;
