@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.db18;
+import static org.kuali.kfs.sys.fixture.UserNameFixture.mgw3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
-@ConfigureContext(session = db18)
+@ConfigureContext(session = mgw3)
 public class CuUserProcurementProfileValidationServiceImplTest extends KualiTestBase {
     // TODO : validateBo is not referenced; so it can be removed from service
     // validateAccount : only referenced by validateAccounts in this service, so it should not be a published method. it 

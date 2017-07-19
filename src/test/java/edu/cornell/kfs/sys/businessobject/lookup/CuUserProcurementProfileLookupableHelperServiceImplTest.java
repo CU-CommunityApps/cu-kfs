@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.businessobject.lookup;
 
-import static org.kuali.kfs.sys.fixture.UserNameFixture.db18;
+import static org.kuali.kfs.sys.fixture.UserNameFixture.mgw3;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 
-@ConfigureContext(session = db18)
+@ConfigureContext(session = mgw3)
 public class CuUserProcurementProfileLookupableHelperServiceImplTest extends KualiTestBase {
 
     private LookupableHelperService lookupableHelperServiceImpl;
