@@ -26,59 +26,41 @@ public class ConcurManageAccessTokenAction extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward requestNewToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward replaceToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-        boolean requestNewToken;
+        boolean revokeOldToken;
         
         if (ObjectUtils.isNull(question)) {
-            if (getConcurAccessTokenService().isCurrentAccessTokenRevoked()) {
-                requestNewToken = true;
-            } else {
-                String questionText = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_TOKEN_REQUEST_QUESTION);
+            if (getConcurAccessTokenService().currentAccessTokenExists()) {
+                String questionText = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REPLACE_QUESTION);
                 return performQuestionWithoutInput(mapping, form, request, response,
-                        ConcurConstants.OVERWRITE_ACCESS_TOKEN_QUESTION, questionText,
-                        KFSConstants.CONFIRMATION_QUESTION, ConcurConstants.REQUEST_NEW_TOKEN_METHOD_TO_CALL, StringUtils.EMPTY);
+                        ConcurConstants.REPLACE_ACCESS_TOKEN_QUESTION, questionText,
+                        KFSConstants.CONFIRMATION_QUESTION, ConcurConstants.REPLACE_TOKEN_METHOD_TO_CALL, StringUtils.EMPTY);
+            } else {
+                revokeOldToken = false;
             }
         } else {
             Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
-            requestNewToken = userClickedYes(buttonClicked);
+            revokeOldToken = userClickedYes(buttonClicked);
         }
         
-        if (requestNewToken) {
+        if (revokeOldToken) {
+            getConcurAccessTokenService().revokeAndReplaceAccessToken();
+            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS);
+        } else {
             getConcurAccessTokenService().requestNewAccessToken();
-            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.CONCUR_TOKEN_REQUEST_SUCCESS);
+            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS);
         }
         
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     public ActionForward refreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (getConcurAccessTokenService().isCurrentAccessTokenRevoked()) {
-            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, ConcurKeyConstants.CONCUR_TOKEN_REFRESH_REVOKED);
-        } else {
+        if (getConcurAccessTokenService().currentAccessTokenExists()) {
             getConcurAccessTokenService().refreshAccessToken();
-            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.CONCUR_TOKEN_REFRESH_SUCCESS);
-        }
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
-    }
-
-    public ActionForward revokeToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (getConcurAccessTokenService().isCurrentAccessTokenRevoked()) {
-            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, ConcurKeyConstants.CONCUR_TOKEN_ALREADY_REVOKED);
+            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS);
         } else {
-            Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-            if (ObjectUtils.isNull(question)) {
-                String questionText = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_TOKEN_REVOKE_QUESTION);
-                return performQuestionWithoutInput(mapping, form, request, response,
-                        ConcurConstants.REVOKE_ACCESS_TOKEN_QUESTION, questionText,
-                        KFSConstants.CONFIRMATION_QUESTION, ConcurConstants.REVOKE_TOKEN_METHOD_TO_CALL, StringUtils.EMPTY);
-            }
-            
-            Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
-            if (userClickedYes(buttonClicked)) {
-                getConcurAccessTokenService().revokeAccessToken();
-                GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.CONCUR_TOKEN_REVOKE_SUCCESS);
-            }
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, ConcurKeyConstants.ERROR_CONCUR_REFRESH_NONEXISTENT_TOKEN);
         }
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

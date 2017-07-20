@@ -15,7 +15,6 @@ public class ConcurUtils {
     
     private static final String CODE_PATTERN = "\\((.*?)\\)";
     private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";
-    private static final String USERNAME_PASSWORD_FORMAT = "%s:%s";
 
     public static boolean isExpenseReportURI(String URI) {
         return StringUtils.isNotBlank(URI) && URI.contains(ConcurConstants.EXPENSE_REPORT_URI_INDICATOR);
@@ -68,21 +67,14 @@ public class ConcurUtils {
         return ConcurConstants.EXPENSE_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE.equalsIgnoreCase(statusCode) || ConcurConstants.REQUEST_AWAITING_EXTERNAL_VALIDATION_STATUS_CODE.equalsIgnoreCase(statusCode);
     }
 
-    /**
-     * Constructs a String of the form "username:password"
-     * and then returns its Base-64-encoded form.
-     */
-    public static String encodeCredentialsForRequestingNewAccessToken(String username, String password) {
-        if (StringUtils.isBlank(username)) {
-            throw new IllegalArgumentException("username cannot be blank");
-        } else if (StringUtils.isBlank(password)) {
-            throw new IllegalArgumentException("password cannot be blank");
+    public static String base64Encode(String value) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalArgumentException("value cannot be blank");
         }
-        String credentials = String.format(USERNAME_PASSWORD_FORMAT, username, password);
-        byte[] credentialsAsBytes = credentials.getBytes(StandardCharsets.UTF_8);
-        byte[] encodedCredentialsAsBytes = Base64.getEncoder().encode(credentialsAsBytes);
-        String encodedCredentials = new String(encodedCredentialsAsBytes, StandardCharsets.UTF_8);
-        return encodedCredentials;
+        byte[] valueAsBytes = value.getBytes(StandardCharsets.UTF_8);
+        byte[] encodedValueAsBytes = Base64.getEncoder().encode(valueAsBytes);
+        String encodedValue = new String(encodedValueAsBytes, StandardCharsets.UTF_8);
+        return encodedValue;
     }
 
 }

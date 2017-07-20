@@ -19,8 +19,8 @@ public interface ConcurAccessTokenService {
 
     void refreshAccessToken();
 
-    void revokeAccessToken();
+    void revokeAndReplaceAccessToken();
 
-    boolean isCurrentAccessTokenRevoked();
+    boolean currentAccessTokenExists();
 
 }
