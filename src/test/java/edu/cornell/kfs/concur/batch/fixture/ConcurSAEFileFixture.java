@@ -53,6 +53,7 @@ public enum ConcurSAEFileFixture {
     CASH_EQUALS_PERSONAL_TEST(6, 142.88),
     PERSONAL_EXCEEDS_CASH_TEST(6, 131.88),
     PERSONAL_AND_CASH_ADVANCE_TEST(6, 212.00),
+    PERSONAL_CHARGE_AND_CREDIT_TEST(6, 91.00),
     PDP_TEST(4, 550);
 
     public final String batchId;

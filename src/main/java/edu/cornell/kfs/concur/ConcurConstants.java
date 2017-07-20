@@ -73,6 +73,10 @@ public class ConcurConstants {
 
     public static final String FILE_EXTENSION_DELIMITTER = ".";
 
+    public static final String USER_PAYMENT_TYPE = "User";
+    public static final String UNIVERSITY_PAYMENT_TYPE = "University";
+    public static final String CORPORATE_CARD_PAYMENT_TYPE = "Cornell Corp Card";
+
     public static class StandardAccountingExtractReport {
         public static final String UNKNOWN_SAE_FILENAME = "UNKNOWN_SAE_FILENAME";
         public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "No records with validation errors.";

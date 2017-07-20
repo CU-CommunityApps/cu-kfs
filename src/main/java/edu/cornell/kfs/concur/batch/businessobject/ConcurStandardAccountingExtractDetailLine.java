@@ -40,6 +40,8 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String reportSubObjectCode;
     private String reportProjectCode;
     private String reportOrgRefId;
+    private String journalPayerPaymentTypeName;
+    private String journalPayeePaymentTypeName;
     
     public String getBatchID() {
         return batchID;
@@ -313,6 +315,22 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.reportOrgRefId = reportOrgRefId;
     }
 
+    public String getJournalPayerPaymentTypeName() {
+        return journalPayerPaymentTypeName;
+    }
+
+    public void setJournalPayerPaymentTypeName(String journalPayerPaymentTypeName) {
+        this.journalPayerPaymentTypeName = journalPayerPaymentTypeName;
+    }
+
+    public String getJournalPayeePaymentTypeName() {
+        return journalPayeePaymentTypeName;
+    }
+
+    public void setJournalPayeePaymentTypeName(String journalPayeePaymentTypeName) {
+        this.journalPayeePaymentTypeName = journalPayeePaymentTypeName;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
@@ -331,7 +349,8 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" reportChartOfAccountsCode: ").append(reportChartOfAccountsCode).append(" reportAccountNumber: ").append(reportAccountNumber);
         sb.append(" reportSubAccountNumber: ").append(reportSubAccountNumber).append(" reportSubObjectCode: ").append(reportSubObjectCode);
         sb.append(" reportProjectCode: ").append(reportProjectCode).append(" reportOrgRefId: ").append(reportOrgRefId);
-        sb.append(" cashAdvanceKey: ").append(cashAdvanceKey);
+        sb.append(" cashAdvanceKey: ").append(cashAdvanceKey).append(" journalPayerPaymentTypeName: ").append(journalPayerPaymentTypeName);
+        sb.append(" journalPayeePaymentTypeName: ").append(journalPayeePaymentTypeName);
         return sb.toString();
     }
 
