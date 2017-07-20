@@ -23,6 +23,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.kuali.kfs.sys.KFSConstants;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -45,6 +46,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private String concurRevokeAccessTokenURL;
     protected WebServiceCredentialService webServiceCredentialService;
 
+    @Transactional
     @Override
     public void requestNewAccessToken() {
         AccessTokenDTO newToken = buildRequestAccessTokenOutput();
@@ -65,7 +67,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     protected ClientRequest buildRequestAccessTokenClientRequest() {
-        String encodedCredentials = ConcurUtils.encodeCredentialsForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
+        String credentials = buildCredentialsStringForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
+        String encodedCredentials = ConcurUtils.base64Encode(credentials);
         ClientRequest.Builder builder = new ClientRequest.Builder();
         builder.accept(MediaType.APPLICATION_XML);
         builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,
@@ -81,6 +84,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         return builder.build(uri, HttpMethod.GET);
     }
 
+    protected String buildCredentialsStringForRequestingNewAccessToken(String loginUsername, String loginPassword) {
+        return loginUsername + ConcurConstants.USERNAME_PASSWORD_SEPARATOR + loginPassword;
+    }
+
+    @Transactional
     @Override
     public void refreshAccessToken() {
         AccessTokenDTO refreshedToken = buildRefreshAccessTokenOutput();
@@ -114,15 +122,13 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         return builder.build(uri, HttpMethod.GET);
     }
 
+    @Transactional
     @Override
-    public void revokeAccessToken() {
+    public void revokeAndReplaceAccessToken() {
         boolean success = executeRevokeAccessTokenRequest();
         
         if (success) {
-            webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN, ConcurConstants.REVOKED_TOKEN_INDICATOR);
-            webServiceCredentialService.updateWebServiceCredentialValue(
-                    ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, ConcurConstants.REVOKED_TOKEN_INDICATOR);
-            webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, ConcurConstants.REVOKED_TOKEN_INDICATOR);
+            requestNewAccessToken();
         } else {
             throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
         }
@@ -198,8 +204,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
 
     @Override
-    public boolean isCurrentAccessTokenRevoked() {
-        return StringUtils.equals(ConcurConstants.REVOKED_TOKEN_INDICATOR, getAccessToken());
+    public boolean currentAccessTokenExists() {
+        return StringUtils.isNotBlank(getAccessToken());
     }
 
     @Override

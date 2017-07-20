@@ -11,17 +11,13 @@
     <div class="main-panel">
         <div class="center" style="margin: 30px 0;">
             <html:submit
-                    property="methodToCall.requestNewToken"
+                    property="methodToCall.replaceToken"
                     styleClass="btn btn-default"
-                    value="Request New Token"/>
+                    value="Replace Token"/>
             <html:submit
                     property="methodToCall.refreshToken"
                     styleClass="btn btn-default"
                     value="Refresh Token"/>
-            <html:submit
-                    property="methodToCall.revokeToken"
-                    styleClass="btn btn-default"
-                    value="Revoke Token"/>
         </div>
     </div>
 

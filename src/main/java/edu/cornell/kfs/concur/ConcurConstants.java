@@ -22,10 +22,8 @@ public class ConcurConstants {
     public static final String CLIENT_SECRET_URL_PARAM = "client_secret";
     public static final String TOKEN_URL_PARAM = "token";
 
-    public static final String REQUEST_NEW_TOKEN_METHOD_TO_CALL = "requestNewToken";
-    public static final String REVOKE_TOKEN_METHOD_TO_CALL = "revokeToken";
-    public static final String OVERWRITE_ACCESS_TOKEN_QUESTION = "OverwriteAccessToken";
-    public static final String REVOKE_ACCESS_TOKEN_QUESTION = "RevokeAccessToken";
+    public static final String REPLACE_TOKEN_METHOD_TO_CALL = "replaceToken";
+    public static final String REPLACE_ACCESS_TOKEN_QUESTION = "ReplaceAccessToken";
 
     public static final String CONCUR_LOGIN_USERNAME = "concur.login.username";
     public static final String CONCUR_LOGIN_PASSWORD = "concur.login.password";
@@ -35,7 +33,7 @@ public class ConcurConstants {
     public static final String CONCUR_SECRET_KEY = "concur.secret.key";
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
 
-    public static final String REVOKED_TOKEN_INDICATOR = "REVOKED";
+    public static final String USERNAME_PASSWORD_SEPARATOR = ":";
     public static final String TLS_V1_2_PROTOCOL = "TLSv1.2";
 
     public static final String EXPENSE_REPORT_URI_INDICATOR = "/expense/expensereport/";
