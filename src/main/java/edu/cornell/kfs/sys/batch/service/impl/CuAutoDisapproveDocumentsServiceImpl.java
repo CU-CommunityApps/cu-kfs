@@ -26,10 +26,12 @@ import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.action.ActionTaken;
 import org.kuali.rice.kew.api.doctype.DocumentType;
 import org.kuali.rice.kew.api.document.DocumentStatus;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -47,6 +49,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     private static final String TAB = "\t";
 
     private RouteHeaderService routeHeaderService;
+    private PersonService personService;
+    
 
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation, Date documentCompareDate) {
         boolean success = true;
@@ -54,7 +58,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         if(checkIfStartDateParameterExists()){
         	documentStartDate = getDocumentStartDateParameter();
         }
-        Collection<FinancialSystemDocumentHeader> documentList = this.getFinancialSystemDocumentService().findByWorkflowStatusCode(DocumentStatus.ENROUTE);
+        Collection<FinancialSystemDocumentHeader> documentList = getDocumentsToDisapprove();
+        LOG.info("Total documents to process "  + documentList.size());
 		String documentHeaderId = null;
 
 		// CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
@@ -65,20 +70,17 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 			Document document = findDocumentForAutoDisapproval(documentHeaderId);
 			if (document != null) {
 				if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
-					if (!exceptionsToAutoDisapproveProcess(document.getDocumentHeader(), documentCompareDate, documentStartDate)) {
-						try {
-                        	String successMessage = buildSuccessMessage(document);
-							autoDisapprovalYearEndDocument(document, annotation);
-							LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
-							getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
-						} catch (Exception e) {
-							LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
-                            String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);                                    
-							getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-						}
-					} else {
-						LOG.info("Year End Auto Disapproval Exceptions:  The document: " + documentHeaderId + " is NOT AUTO DISAPPROVED.");
-					}
+				    try {
+				        String successMessage = buildSuccessMessage(document);
+			                    autoDisapprovalYearEndDocument(document, annotation);
+			                    sendAcknowledgement(document.getDocumentHeader(), annotation);
+			                    LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
+			                    getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
+			                } catch (Exception e) {
+			                    LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
+			                    String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);
+			                    getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+			                }
 				}
 			} else {
 				LOG.error("Document is NULL.  It should never have been null");
@@ -486,9 +488,38 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         
         return finalList;
     }
+    
+    /**
+     * This method finds the document for the given document header id
+     *
+     * @param documentHeaderId
+     * @return document The document in the workflow that matches the document header id.
+     */
+    protected Document findDocumentForAutoDisapproval(String documentHeaderId) {
+        Document document = null;
+
+        try {
+            document = getDocumentService().getByDocumentHeaderId(documentHeaderId);
+        } catch (WorkflowException ex) {
+            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
+        } catch (UnknownDocumentTypeException ex) {
+            // don't blow up just because a document type is not installed (but don't return it either)
+            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
+        }
+
+        return document;
+    }
 
     public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
     }
+    
+
+    protected PersonService getPersonService() {
+        if (personService == null) {
+            personService = SpringContext.getBean(PersonService.class);
+            }
+        return personService;
+        }
 
 }
