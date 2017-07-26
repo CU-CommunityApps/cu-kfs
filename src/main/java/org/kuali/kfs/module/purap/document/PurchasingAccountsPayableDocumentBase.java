@@ -1534,6 +1534,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             
     }
     
+    /*
     public void prepareForSave() {
         super.prepareForSave();
         prepareNoteExtendedAttributes();
@@ -1562,5 +1563,5 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             } 
         }
     }
-    
+  */  
 }

@@ -1463,7 +1463,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 		boolean isCreatingReasonNote = isCreatingReasonNote(form);
 		if (isCreatingReasonNote) {
 			// save here, so it can be picked up in b2b
-            SpringContext.getBean(NoteService.class).saveNoteList(purDoc.getNotes());
+            //SpringContext.getBean(NoteService.class).saveNoteList(purDoc.getNotes());
+		    createReasonNote(form);
 
 		}
        // call prorateDiscountTradeIn
