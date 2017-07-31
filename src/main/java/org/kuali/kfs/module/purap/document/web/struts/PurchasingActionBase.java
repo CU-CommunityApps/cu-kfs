@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.purap.document.web.struts;
 
+import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm;
@@ -45,7 +46,6 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.PersistenceService;
@@ -1640,25 +1640,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         		&& isAttachmentReqChanged(form);
     }
     
-    /*
-     * creating the change to vendor reason note.
-     */
 	private void createReasonNote(ActionForm form) {
-		// TODO : move to service ?
-    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        try {
-            Note noteObj = SpringContext.getBean(DocumentService.class).createNoteFromDocument(kualiDocumentFormBase.getDocument(), ((PurchasingFormBase)kualiDocumentFormBase).getReasonToChange());
-            kualiDocumentFormBase.getDocument().addNote(noteObj);
-         //   SpringContext.getBean(NoteService.class).save(noteObj);
-            SpringContext.getBean(NoteService.class).saveNoteList(kualiDocumentFormBase.getDocument().getNotes());
-            ((PurchasingFormBase)kualiDocumentFormBase).setReasonToChange(KFSConstants.EMPTY_STRING);
-        }
-        catch(Exception e){
-            String errorMessage = "Error creating and saving close note for reason change requirement with document service";
-            LOG.error("createReasonNote " + errorMessage, e);
-            throw new RuntimeException(errorMessage, e);
-        }   
-        
+	    CuPurchasingAccountsPayableModuleService cuPurchasingAccountsPayableModuleService = 
+	            (CuPurchasingAccountsPayableModuleService) SpringContext.getService("purchasingAccountsPayableModuleService");
+	    cuPurchasingAccountsPayableModuleService.createAndSaveReasonNote((PurchasingFormBase)form);
 	}
 	
  
