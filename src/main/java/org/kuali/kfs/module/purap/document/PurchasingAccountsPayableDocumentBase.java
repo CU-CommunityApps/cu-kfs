@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.TransactionalDocument;
 import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
@@ -69,6 +70,8 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.country.CountryEbo;
+
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -1530,6 +1533,36 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return errorPathPrefix +  0 + "]."+ KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + "["+0+"]";
             
     }
+    
+    public void prepareForSave() {
+        super.prepareForSave();
+        prepareNoteExtendedAttributes();
+    }
 
+    private void prepareNoteExtendedAttributes() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
+        }
+        for (Note note : getNotes()) {
+            NoteExtendedAttribute extendedAttribute;
+            if (ObjectUtils.isNull(note.getExtension())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("prepareNoteExtendedAttributes, found a note without an extentsion, note ID "
+                            + note.getNoteIdentifier());
+                }
+                extendedAttribute = new NoteExtendedAttribute();
+                note.setExtension(extendedAttribute);
+            } else {
+                extendedAttribute = (NoteExtendedAttribute) note.getExtension();
+            }
+            if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
+                            + " has an extended attribute without a note identifier.");
+                }
+                extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
+            }
+        }
+    }
 
 }

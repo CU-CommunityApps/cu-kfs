@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
@@ -73,20 +74,20 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
        }
    }
    
-    public void createAndSaveReasonNote(PurchasingFormBase purForm) {
+    @Override
+    public void createAndSaveReasonNote(Document purchasingDocument, String reasonToChange) {
         LOG.info("createAndSaveReasonNote, entering");
-        Note noteObj = documentService.createNoteFromDocument(purForm.getDocument(), purForm.getReasonToChange());
+        Note noteObj = documentService.createNoteFromDocument(purchasingDocument, reasonToChange);
         Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
         noteObj.setNoteIdentifier(newNoteId);
-        
+
         NoteExtendedAttribute noteExtension = new NoteExtendedAttribute();
         noteExtension.setNoteIdentifier(noteObj.getNoteIdentifier());
         noteObj.setExtension(noteExtension);
-        
-        purForm.getDocument().addNote(noteObj);
-        noteService.saveNoteList(purForm.getDocument().getNotes());
-        
-        purForm.setReasonToChange(StringUtils.EMPTY);
+
+        purchasingDocument.addNote(noteObj);
+        noteService.saveNoteList(purchasingDocument.getNotes());
+
     }
 
     public void setNoteService(NoteService noteService) {

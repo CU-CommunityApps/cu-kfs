@@ -1643,7 +1643,9 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 	private void createReasonNote(ActionForm form) {
 	    CuPurchasingAccountsPayableModuleService cuPurchasingAccountsPayableModuleService = 
 	            (CuPurchasingAccountsPayableModuleService) SpringContext.getService("purchasingAccountsPayableModuleService");
-	    cuPurchasingAccountsPayableModuleService.createAndSaveReasonNote((PurchasingFormBase)form);
+	    PurchasingFormBase purForm = (PurchasingFormBase) form;
+	    cuPurchasingAccountsPayableModuleService.createAndSaveReasonNote(purForm.getDocument(), purForm.getReasonToChange());
+	    purForm.setReasonToChange(StringUtils.EMPTY);
 	}
 	
  
