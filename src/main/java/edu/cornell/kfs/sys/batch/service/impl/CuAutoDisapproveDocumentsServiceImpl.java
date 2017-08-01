@@ -52,12 +52,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     private PersonService personService;
     
 
-    protected boolean processAutoDisapproveDocuments(String principalId, String annotation, Date documentCompareDate) {
+    protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
         boolean success = true;
-        Date documentStartDate = null;
-        if(checkIfStartDateParameterExists()){
-        	documentStartDate = getDocumentStartDateParameter();
-        }
+
         Collection<FinancialSystemDocumentHeader> documentList = getDocumentsToDisapprove();
         LOG.info("Total documents to process "  + documentList.size());
 		String documentHeaderId = null;
@@ -91,107 +88,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 			
         return success;
     }
-    
-    /**
-     * This method first checks the document's create date with system parameter date and then
-     * checks the document type name to the system parameter values and returns true if the type name exists
-     * @param document document to check for its document type,  documentCompareDate the system parameter specified date
-     * to compare the current date to this date.
-     * @return true if  document's create date is <= documentCompareDate and if document type is not in the
-     * system parameter document types that are set to disallow.
-     */
-    protected boolean exceptionsToAutoDisapproveProcess(DocumentHeader documentHeader, Date documentCompareDate, Date documentStartDate) {
-        boolean exceptionToDisapprove = true;
-        Date createDate = null;
 
-        String documentNumber =  documentHeader.getDocumentNumber();
-
-        DateTime documentCreateDate = documentHeader.getWorkflowDocument().getDateCreated();
-        createDate = documentCreateDate.toDate();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(documentCompareDate);
-        String strCompareDate = calendar.getTime().toString();
-
-        calendar.setTime(createDate);
-        String strCreateDate = calendar.getTime().toString();
-        
-        boolean startDateValid = documentStartDate == null  || (documentStartDate!=null && (createDate.after(documentStartDate) || createDate.equals(documentStartDate))); 
-
-        if (startDateValid && (createDate.before(documentCompareDate) || createDate.equals(documentCompareDate))) {
-            String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
-
-            ParameterEvaluator evaluatorDocumentType = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES, documentTypeName);
-            exceptionToDisapprove = !evaluatorDocumentType.evaluationSucceeds();
-            if (exceptionToDisapprove) {
-                LOG.info("Document Id: " + documentNumber + " - Exception to Auto Disapprove:  Document's type: " + documentTypeName + " is in the System Parameter For Document Types Exception List.");
-            }
-        }
-        else {
-            LOG.info("Document Id: " + documentNumber + " - Exception to Auto Disapprove:  Document's create date: " + strCreateDate + " is NOT less than or equal to System Parameter Compare Date: " + strCompareDate);
-            exceptionToDisapprove = true;
-        }
-
-        return exceptionToDisapprove;
-    }
-    
-    /**
-     * This method finds the date in the system parameters that will be used to compare the create date.
-     * It then adds 23 hours, 59 minutes and 59 seconds to the compare date.
-     * @return  documentCompareDate returns YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE from the system parameter
-     */
-    protected Date getDocumentStartDateParameter() {
-        Date documentCompareDate = null;
-
-        String yearEndAutoDisapproveDocumentDate = getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class, CUKFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_START_DATE);
-
-        if (ObjectUtils.isNull(yearEndAutoDisapproveDocumentDate)) {
-            LOG.warn("Exception: System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE can not be determined.");
-            String message = ("Exception: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE can not be determined.  The auto disapproval job is stopped.");
-            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-            throw new RuntimeException("Exception: AutoDisapprovalStep job stopped because System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE is null");
-        }
-
-        try {
-            Date compareDate = getDateTimeService().convertToDate(yearEndAutoDisapproveDocumentDate);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(compareDate);
-            calendar.set(Calendar.HOUR, 23);
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 59);
-            documentCompareDate = calendar.getTime();
-        }
-        catch (ParseException pe) {
-            LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE can not be determined.");
-            String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE is invalid.  The auto disapproval job is stopped.");
-            getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-            throw new RuntimeException("ParseException: AutoDisapprovalStep job stopped because System Parameter YEAR_END_AUTO_DISAPPROVE_START_DATE is invalid");
-        }
-
-        return documentCompareDate;
-    }
-
-    protected boolean checkIfStartDateParameterExists() {
-	   	boolean parameterExists = true;
-	   	
-	   	// check to see if a more specific document type has been specified for the search parameter as opposed to "KFS" which is the root document type
-	   	if (!getParameterService().parameterExists(AutoDisapproveDocumentsStep.class, CUKFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_START_DATE)) {
-	   		LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_START_DATE System parameter does not exist in the parameters list. Although the job can continue without this parameter, it will be less efficient");
-	   		getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine("YEAR_END_AUTO_DISAPPROVE_START_DATE System parameter does not exist in the parameters list.  The job will continue without this parameter");
-	        return false;
-	   	}
-	    try {
-	        getDateTimeService().convertToDate(getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class, CUKFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_START_DATE));
-	    }
-	    catch (ParseException pe) {
-	        LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_START_DATE can not be determined.");
-	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_START_DATE is invalid.  The auto disapproval job will not use this value.");
-	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);                         
-	        return false;
-	    }
-	   	
-	   	return parameterExists;
-   }
 
     protected boolean checkIfRunDateParameterExists() {
         boolean parameterExists = true;
@@ -422,23 +319,25 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
      * @param document
      * @return true if  document type of the document is a child of one of the the parent document types.
      */
-	protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
-		boolean documentEligible = false;
-
-		List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
-		String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
-		DocumentType childDocumentType = getDocumentTypeService().getDocumentTypeByName(documentTypeName);
-
-		for (DocumentType parentDocumentType : parentDocumentTypes) {
-			documentEligible = childDocumentType.getParentId().equals(parentDocumentType.getId());
-
-			if (documentEligible) {
-				break;
-			}
-		}
-
-		return documentEligible;
-	}
+    protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
+        boolean documentEligible = false;
+        
+        List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
+        String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
+        DocumentType childDocumentType = getDocumentTypeService().getDocumentTypeByName(documentTypeName);
+        
+        for (DocumentType parentDocumentType : parentDocumentTypes) {
+            documentEligible = childDocumentType.getParentId().equals(parentDocumentType.getId());
+            
+            if (documentEligible) {
+                break;
+            }
+            
+        }
+        
+        return documentEligible;
+        
+    }
 
     /**
      * CU Customization:
@@ -512,14 +411,13 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
     public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
-    }
-    
+    } 
 
     protected PersonService getPersonService() {
         if (personService == null) {
             personService = SpringContext.getBean(PersonService.class);
             }
         return personService;
-        }
+    }
 
 }
