@@ -50,7 +50,7 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 public class CuRequisitionAction extends RequisitionAction {
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
