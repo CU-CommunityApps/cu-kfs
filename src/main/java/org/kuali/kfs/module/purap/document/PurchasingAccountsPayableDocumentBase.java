@@ -1536,7 +1536,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     
     public void prepareForSave() {
         super.prepareForSave();
-        prepareNoteExtendedAttributes();
+        /*
+         * just testing to see if not running this fixes the unit test, to verify things, this is not ready to be merged!
+         */
+       //prepareNoteExtendedAttributes();
     }
 
     private void prepareNoteExtendedAttributes() {
