@@ -50,7 +50,6 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 public class CuRequisitionAction extends RequisitionAction {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuRequisitionAction.class);
     
     @SuppressWarnings("unchecked")
     @Override
@@ -215,7 +214,6 @@ public class CuRequisitionAction extends RequisitionAction {
     @Override
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        LOG.info("insertBONote, entering");
         KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         Note newNote = kualiDocumentFormBase.getNewNote();
         NoteExtendedAttribute extendedAttribute = (NoteExtendedAttribute) newNote.getExtension();
