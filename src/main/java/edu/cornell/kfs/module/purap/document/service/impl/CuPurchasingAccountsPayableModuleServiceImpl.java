@@ -76,7 +76,7 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
    
     @Override
     public void createAndSaveReasonNote(Document purchasingDocument, String reasonToChange) {
-        LOG.info("createAndSaveReasonNote, entering");
+        LOG.debug("createAndSaveReasonNote, entering");
         Note noteObj = documentService.createNoteFromDocument(purchasingDocument, reasonToChange);
         Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
         noteObj.setNoteIdentifier(newNoteId);
@@ -87,7 +87,10 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
 
         purchasingDocument.addNote(noteObj);
         noteService.saveNoteList(purchasingDocument.getNotes());
-
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("createAndSaveReasonNote, Created a new note with an ID of " + newNoteId + " with a reasonToChange: " + reasonToChange);
+        }
     }
 
     public void setNoteService(NoteService noteService) {
