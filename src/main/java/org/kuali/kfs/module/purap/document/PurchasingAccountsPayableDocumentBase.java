@@ -1547,24 +1547,22 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             LOG.debug("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
         }
         for (Note note : getNotes()) {
-            NoteExtendedAttribute extendedAttribute;
             if (ObjectUtils.isNull(note.getExtension())) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("prepareNoteExtendedAttributes, found a note without an extentsion, note ID "
-                            + note.getNoteIdentifier());
+                            + note.getNoteIdentifier() + " no further action needed.");
                 }
-                extendedAttribute = new NoteExtendedAttribute();
-                note.setExtension(extendedAttribute);
             } else {
-                extendedAttribute = (NoteExtendedAttribute) note.getExtension();
-            }
-            if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
-                            + " has an extended attribute without a note identifier.");
+                NoteExtendedAttribute extendedAttribute = (NoteExtendedAttribute) note.getExtension();
+                if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
+                                + " has an extended attribute without a note identifier.");
+                    }
+                    extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
                 }
-                extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
             }
+            
         }
     }
 
