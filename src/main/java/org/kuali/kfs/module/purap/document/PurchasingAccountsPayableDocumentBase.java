@@ -1540,7 +1540,11 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     
     public void prepareForSave() {
         super.prepareForSave();
-        prepareNoteExtendedAttributes();
+        try {
+            prepareNoteExtendedAttributes();
+        } catch (RuntimeException e) {
+            LOG.error("prepareForSave, error occured while parparing not extensions for save", e);
+        }
     }
 
     private void prepareNoteExtendedAttributes() {
