@@ -42,7 +42,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
 
     public void testGetSearchResultsFiscalOfficer() {
         setupSearchValues();
-        fieldValues.put("accountFiscalOfficerUser.principalName", "slm35");
+        fieldValues.put("accountFiscalOfficerUser.principalName", "tjv9");
 
         List<Account> accounts = (List<Account>) lookupableHelperServiceImpl.getSearchResults(fieldValues);
         assertTrue("should have results", accounts.size() > 0);
