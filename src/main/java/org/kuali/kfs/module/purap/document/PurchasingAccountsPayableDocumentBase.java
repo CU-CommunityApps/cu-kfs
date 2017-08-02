@@ -1540,38 +1540,32 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     
     public void prepareForSave() {
         super.prepareForSave();
-        try {
-            prepareNoteExtendedAttributes();
-        } catch (RuntimeException e) {
-            LOG.error("prepareForSave, error occured while parparing not extensions for save", e);
-        }
+        prepareNoteExtendedAttributes();
     }
 
     private void prepareNoteExtendedAttributes() {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
         }
         for (Note note : getNotes()) {
-            LOG.info("prepareNoteExtendedAttributes, note text: " + note.getNoteText());
             if (note.getNoteIdentifier() == null) {
-                LOG.info("prepareNoteExtendedAttributes, found a note without an ID, it needs to be set.");
-                Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
+                LOG.debug("prepareNoteExtendedAttributes, found a note without an ID, it needs to be set.");
+                Long newNoteId = getSequenceAccessorService().getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
                 note.setNoteIdentifier(newNoteId);
             }
             NoteExtendedAttribute extendedAttribute;
             if (ObjectUtils.isNull(note.getExtension())) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("prepareNoteExtendedAttributes, found a note without an extentsion, note ID " + note.getNoteIdentifier());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("prepareNoteExtendedAttributes, found a note without an extentsion, note ID " + note.getNoteIdentifier());
                 }
                 extendedAttribute = new NoteExtendedAttribute();
                 note.setExtension(extendedAttribute);
             } else {
-                LOG.info("prepareNoteExtendedAttributes, note has a valid extension.");
                 extendedAttribute = (NoteExtendedAttribute) note.getExtension();
             }
             if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier() + " has an extended attribute without a note identifier.");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier() + " has an extended attribute without a note identifier.");
                 }
                 extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
             }

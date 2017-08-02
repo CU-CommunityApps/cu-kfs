@@ -98,9 +98,7 @@ public class CuElectronicInvoiceHelperServiceImplTest extends KualiTestBase {
         writeXMLFile(xmlChunk, acceptFile);
 
         ElectronicInvoiceLoad load = cuElectronicInvoiceHelperService.loadElectronicInvoices();
-        for (Object key : load.getInvoiceLoadSummaries().keySet()) {
-            LOG.info("load summary, key: " + key + " value: " + load.getInvoiceLoadSummaries().get(key) );
-        }
+
         assertFalse(load.containsRejects());
         File acceptedFileInAcceptDir = new File(electronicInvoiceInputFileType.getDirectoryPath() + File.separator + "accept" + File.separator + acceptFile);
         assertTrue(acceptedFileInAcceptDir.exists());
