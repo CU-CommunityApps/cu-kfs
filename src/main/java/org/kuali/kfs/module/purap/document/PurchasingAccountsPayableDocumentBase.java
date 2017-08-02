@@ -1540,26 +1540,29 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     private void prepareNoteExtendedAttributes() {
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isInfoEnabled()) {
             LOG.debug("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
         }
         for (Note note : getNotes()) {
+            LOG.info("prepareNoteExtendedAttributes, note text: " + note.getNoteText());
+            NoteExtendedAttribute extendedAttribute;
             if (ObjectUtils.isNull(note.getExtension())) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("prepareNoteExtendedAttributes, found a note without an extentsion, note ID "
-                            + note.getNoteIdentifier() + " no further action needed.");
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("prepareNoteExtendedAttributes, found a note without an extentsion, note ID "
+                            + note.getNoteIdentifier());
                 }
+                extendedAttribute = new NoteExtendedAttribute();
+                note.setExtension(extendedAttribute);
             } else {
-                NoteExtendedAttribute extendedAttribute = (NoteExtendedAttribute) note.getExtension();
-                if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
-                                + " has an extended attribute without a note identifier.");
-                    }
-                    extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
-                }
+                extendedAttribute = (NoteExtendedAttribute) note.getExtension();
             }
-            
+            if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
+                            + " has an extended attribute without a note identifier.");
+                }
+                extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
+            }
         }
     }
 
