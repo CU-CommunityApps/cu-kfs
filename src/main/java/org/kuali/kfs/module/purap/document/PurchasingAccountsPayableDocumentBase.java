@@ -30,6 +30,7 @@ import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.service.ModuleService;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -71,6 +72,7 @@ import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.location.api.LocationConstants;
 import org.kuali.rice.location.framework.country.CountryEbo;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 import java.math.BigDecimal;
@@ -133,6 +135,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     // CU Enhancement KFSPTS-1639
     protected String vendorEmailAddress;   
+    
+    protected SequenceAccessorService sequenceAccessorService;
 
     /**
      * Default constructor to be overridden.
@@ -1545,11 +1549,15 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         }
         for (Note note : getNotes()) {
             LOG.info("prepareNoteExtendedAttributes, note text: " + note.getNoteText());
+            if (note.getNoteIdentifier() == null) {
+                LOG.info("prepareNoteExtendedAttributes, found a note without an ID, it needs to be set.");
+                Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
+                note.setNoteIdentifier(newNoteId);
+            }
             NoteExtendedAttribute extendedAttribute;
             if (ObjectUtils.isNull(note.getExtension())) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("prepareNoteExtendedAttributes, found a note without an extentsion, note ID "
-                            + note.getNoteIdentifier());
+                    LOG.info("prepareNoteExtendedAttributes, found a note without an extentsion, note ID " + note.getNoteIdentifier());
                 }
                 extendedAttribute = new NoteExtendedAttribute();
                 note.setExtension(extendedAttribute);
@@ -1559,12 +1567,22 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             }
             if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
-                            + " has an extended attribute without a note identifier.");
+                    LOG.info("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier() + " has an extended attribute without a note identifier.");
                 }
                 extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
             }
         }
     }
 
+    public SequenceAccessorService getSequenceAccessorService() {
+        if (sequenceAccessorService == null) {
+            sequenceAccessorService = SpringContext.getBean(SequenceAccessorService.class);
+        }
+        return sequenceAccessorService;
+    }
+
+    public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
+        this.sequenceAccessorService = sequenceAccessorService;
+    }
+    
 }
