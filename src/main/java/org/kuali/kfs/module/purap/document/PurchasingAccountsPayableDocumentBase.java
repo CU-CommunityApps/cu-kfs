@@ -1541,7 +1541,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     private void prepareNoteExtendedAttributes() {
         if (LOG.isInfoEnabled()) {
-            LOG.debug("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
+            LOG.info("prepareNoteExtendedAttributes, number of notes to review: " + getNotes().size());
         }
         for (Note note : getNotes()) {
             LOG.info("prepareNoteExtendedAttributes, note text: " + note.getNoteText());
@@ -1554,11 +1554,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
                 extendedAttribute = new NoteExtendedAttribute();
                 note.setExtension(extendedAttribute);
             } else {
+                LOG.info("prepareNoteExtendedAttributes, note has a valid extension.");
                 extendedAttribute = (NoteExtendedAttribute) note.getExtension();
             }
             if (ObjectUtils.isNull(extendedAttribute.getNoteIdentifier())) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.debug("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
+                    LOG.info("prepareNoteExtendedAttributes, the note " + note.getNoteIdentifier()
                             + " has an extended attribute without a note identifier.");
                 }
                 extendedAttribute.setNoteIdentifier(note.getNoteIdentifier());
