@@ -38,6 +38,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.integration.purap.ItemCapitalAsset;
+import org.kuali.kfs.integration.purap.PurchasingAccountsPayableModuleService;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
@@ -1641,7 +1642,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     
 	private void createReasonNote(ActionForm form) {
 	    CuPurchasingAccountsPayableModuleService cuPurchasingAccountsPayableModuleService = 
-	            (CuPurchasingAccountsPayableModuleService) SpringContext.getService("purchasingAccountsPayableModuleService");
+	            (CuPurchasingAccountsPayableModuleService) SpringContext.getBean(PurchasingAccountsPayableModuleService.class);
 	    PurchasingFormBase purForm = (PurchasingFormBase) form;
 	    cuPurchasingAccountsPayableModuleService.createAndSaveNote(purForm.getDocument(), purForm.getReasonToChange());
 	    purForm.setReasonToChange(StringUtils.EMPTY);
