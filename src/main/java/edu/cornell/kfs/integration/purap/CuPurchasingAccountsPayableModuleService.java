@@ -7,6 +7,6 @@ public interface CuPurchasingAccountsPayableModuleService extends PurchasingAcco
     
     public void handlePurchasingBatchCancels(String documentNumber, String financialSystemDocumentTypeCode, boolean primaryCancel, boolean disbursedPayment, boolean crCancel);
     
-    public void createAndSaveReasonNote(Document purchasingDocument, String reasonToChange);
+    public void createAndSaveNote(Document purchasingDocument, String noteText);
 
 }

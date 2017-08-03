@@ -1643,7 +1643,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 	    CuPurchasingAccountsPayableModuleService cuPurchasingAccountsPayableModuleService = 
 	            (CuPurchasingAccountsPayableModuleService) SpringContext.getService("purchasingAccountsPayableModuleService");
 	    PurchasingFormBase purForm = (PurchasingFormBase) form;
-	    cuPurchasingAccountsPayableModuleService.createAndSaveReasonNote(purForm.getDocument(), purForm.getReasonToChange());
+	    cuPurchasingAccountsPayableModuleService.createAndSaveNote(purForm.getDocument(), purForm.getReasonToChange());
 	    purForm.setReasonToChange(StringUtils.EMPTY);
 	}
 	
