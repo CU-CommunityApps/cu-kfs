@@ -100,12 +100,24 @@ public class ConcurDetailLineGroupForCollector {
     protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> getConsolidatedPersonalExpensesMapForLine(
             ConcurStandardAccountingExtractDetailLine detailLine) {
         if (detailLine.getJournalAmount().isPositive()) {
-            if (collectorHelper.lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(detailLine)) {
-                return consolidatedCorpCardPersonalExpenseCredits;
-            } else {
-                return consolidatedCorpCardPersonalExpenseDebits;
-            }
-        } else if (collectorHelper.lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(detailLine)) {
+            return getConsolidatedPersonalExpensesMapForDebitLine(detailLine);
+        } else {
+            return getConsolidatedPersonalExpensesMapForCreditLine(detailLine);
+        }
+    }
+
+    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> getConsolidatedPersonalExpensesMapForDebitLine(
+            ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (collectorHelper.lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(detailLine)) {
+            return consolidatedCorpCardPersonalExpenseCredits;
+        } else {
+            return consolidatedCorpCardPersonalExpenseDebits;
+        }
+    }
+
+    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> getConsolidatedPersonalExpensesMapForCreditLine(
+            ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (collectorHelper.lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(detailLine)) {
             return consolidatedCorpCardPersonalExpenseDebits;
         } else {
             return consolidatedCorpCardPersonalExpenseCredits;
