@@ -22,9 +22,6 @@ public class ConcurConstants {
     public static final String CLIENT_SECRET_URL_PARAM = "client_secret";
     public static final String TOKEN_URL_PARAM = "token";
 
-    public static final String REPLACE_TOKEN_METHOD_TO_CALL = "replaceToken";
-    public static final String REPLACE_ACCESS_TOKEN_QUESTION = "ReplaceAccessToken";
-
     public static final String CONCUR_LOGIN_USERNAME = "concur.login.username";
     public static final String CONCUR_LOGIN_PASSWORD = "concur.login.password";
     public static final String CONCUR_ACCESS_TOKEN = "concur.access.token";

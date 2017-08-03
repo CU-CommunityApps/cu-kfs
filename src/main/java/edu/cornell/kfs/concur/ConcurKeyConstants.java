@@ -25,9 +25,7 @@ public class ConcurKeyConstants {
     public static final String CONCUR_SAE_NO_REPORT_EMAIL_SUBJECT = "message.concur.sae.no.report.email.subject";
     public static final String CONCUR_SAE_NO_REPORT_EMAIL_BODY = "message.concur.sae.no.report.email.body";
     public static final String CONCUR_INCOMPLETE_ADDRESS = "validation.error.concur.incomplete.address";
-    public static final String MESSAGE_CONCUR_TOKEN_REPLACE_QUESTION = "message.concur.token.replace.question";
     public static final String MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS = "message.concur.token.replace.success";
     public static final String MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS = "message.concur.token.revoke.and.replace.success";
     public static final String MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS = "message.concur.token.refresh.success";
-    public static final String ERROR_CONCUR_REFRESH_NONEXISTENT_TOKEN = "error.concur.refresh.nonexistent.token";
 }
