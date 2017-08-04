@@ -257,8 +257,42 @@
 	<bean id="cuMarshalService" parent="cuMarshalService-parentBean" />
 	<bean id="cuMarshalService-parentBean" class="edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl" abstract="true">
 	</bean>
-
+	
 	<bean id="batchFileAdminAuthorizationService" parent="batchFileAdminAuthorizationService-parentBean"
 			class="edu.cornell.kfs.sys.batch.service.impl.CuBatchFileAdminAuthorizationServiceImpl"/>
+	
+	<bean id="modulesLockJob" parent="modulesLockJob-parentBean" />
+	<bean id="modulesLockJob-parentBean" parent="unscheduledJobDescriptor" abstract="true">
+		<property name="steps">
+			<list>
+				<ref bean="lockLDModuleStep" />
+				<ref bean="lockGLModuleStep" />
+				<ref bean="lockCOAModuleStep" />
+				<ref bean="lockCAMModuleStep" />
+				<ref bean="lockPURAPModuleStep" />
+				<ref bean="lockSYSModuleStep" />
+				<ref bean="lockVNDModuleStep" />
+				<ref bean="lockFPModuleStep" />
+				<ref bean="lockPDPModuleStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="modulesUnlockJob" parent="modulesUnlockJob-parentBean" />
+	<bean id="modulesUnlockJob-parentBean" parent="unscheduledJobDescriptor" abstract="true">
+		<property name="steps">
+			<list>
+				<ref bean="unlockLDModuleStep" />
+				<ref bean="unlockGLModuleStep" />
+				<ref bean="unlockCOAModuleStep" />
+				<ref bean="unlockCAMModuleStep" />
+				<ref bean="unlockPURAPModuleStep" />
+				<ref bean="unlockSYSModuleStep" />
+				<ref bean="unlockVNDModuleStep" />
+				<ref bean="unlockFPModuleStep" />
+				<ref bean="unlockPDPModuleStep" />
+			</list>
+		</property>
+	</bean>
 
 </beans>
