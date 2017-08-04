@@ -48,7 +48,9 @@ public enum ConcurCollectorBatchFixture {
     CASH_EXCEEDS_PERSONAL_TEST(1, 6, 192.88),
     CASH_EQUALS_PERSONAL_TEST(1, 6, 220.76),
     PERSONAL_EXCEEDS_CASH_TEST(1, 7, 209.76),
-    PERSONAL_AND_CASH_ADVANCE_TEST(1, 7, 315.00);
+    PERSONAL_AND_CASH_ADVANCE_TEST(1, 7, 315.00),
+    PERSONAL_CHARGE_AND_RETURN_TEST(1, 4, 91.00),
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST(1, 6, 92.00);
 
     public final Integer batchSequenceNumber;
     public final String universityFiscalYear;

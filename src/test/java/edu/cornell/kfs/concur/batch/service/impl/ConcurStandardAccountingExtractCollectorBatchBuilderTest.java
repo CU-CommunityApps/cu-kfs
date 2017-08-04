@@ -241,6 +241,18 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 ConcurCollectorBatchFixture.PERSONAL_AND_CASH_ADVANCE_TEST, ConcurSAEFileFixture.PERSONAL_AND_CASH_ADVANCE_TEST);
     }
 
+    @Test
+    public void testFullReturnOfCorpCardPersonalExpense() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.PERSONAL_CHARGE_AND_RETURN_TEST, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST);
+    }
+
+    @Test
+    public void testPartialReturnOfCorpCardPersonalExpense() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST);
+    }
+
     protected void assertCollectorBatchIsBuiltProperly(
             ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();

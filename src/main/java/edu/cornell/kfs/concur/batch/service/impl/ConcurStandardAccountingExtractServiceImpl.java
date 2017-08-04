@@ -196,7 +196,12 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         boolean isCashLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH);
         boolean isPersonalExpenseChargedToCorporateCard = getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line);
         boolean isCreditLine = StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.CREDIT);
-        return isCashLine || (isPersonalExpenseChargedToCorporateCard && isCreditLine);
+        boolean isReturnOfCorporateCardPersonalExpenseToUser = getConcurBatchUtilityService()
+                .lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(line);
+        boolean isReturnOfCorporateCardPersonalExpenseToUniversity = getConcurBatchUtilityService()
+                .lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(line);
+        return isCashLine || (isPersonalExpenseChargedToCorporateCard && !isReturnOfCorporateCardPersonalExpenseToUniversity
+                && (isCreditLine || isReturnOfCorporateCardPersonalExpenseToUser));
     }
     
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
