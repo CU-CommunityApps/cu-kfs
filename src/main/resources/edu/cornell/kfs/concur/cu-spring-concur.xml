@@ -177,6 +177,8 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="67" p:propertyName="reportEntryIsPersonalFlag"
                                         p:formatterClass="org.kuali.rice.core.web.format.BooleanFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="125" p:propertyName="paymentCode"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="162" p:propertyName="journalPayerPaymentTypeName"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="164" p:propertyName="journalPayeePaymentTypeName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCode"
                                     	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCodeOverridden"

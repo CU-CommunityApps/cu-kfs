@@ -31,20 +31,32 @@ public enum ConcurSAEDetailLineFixture {
             ConcurTestConstants.OBJ_6200, ConcurTestConstants.ACCT_1234321, null, null, null, null,
             ConcurConstants.DEBIT, 50.00, "12/24/2016", null, ConcurTestConstants.REPORT_ENTRY_ID_1,
             KRADConstants.NO_INDICATOR_VALUE, ParameterTestValues.COLLECTOR_CHART_CODE,
-            ConcurTestConstants.DEFAULT_REPORT_ACCOUNT, null, null, null, null),
-    DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00),
+            ConcurTestConstants.DEFAULT_REPORT_ACCOUNT, null, null, null, null,
+            ConcurConstants.UNIVERSITY_PAYMENT_TYPE, ConcurConstants.USER_PAYMENT_TYPE),
+    DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00,
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.USER_PAYMENT_TYPE),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
     DEFAULT_CASH_ADVANCE(DEFAULT_CREDIT, null,
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY),
             buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY),
             buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_1)),
     DEFAULT_CORP_CARD_DEBIT(DEFAULT_DEBIT, null,
-            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE)),
     DEFAULT_PERSONAL_DEBIT(DEFAULT_CORP_CARD_DEBIT, null,
             buildOverride(LineField.REPORT_ENTRY_IS_PERSONAL_FLAG, KRADConstants.YES_INDICATOR_VALUE),
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY),
             buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY),
             buildOverride(LineField.JOURNAL_ACCOUNT_CODE, ParameterTestValues.COLLECTOR_PREPAID_OFFSET_OBJECT_CODE)),
-    DEFAULT_PERSONAL_CREDIT(DEFAULT_PERSONAL_DEBIT, null, ConcurConstants.CREDIT, -50.00),
+    DEFAULT_PERSONAL_CREDIT(DEFAULT_PERSONAL_DEBIT, null, ConcurConstants.CREDIT, -50.00,
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.USER_PAYMENT_TYPE),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
+    DEFAULT_PERSONAL_RETURN_DEBIT(DEFAULT_PERSONAL_DEBIT, null,
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.USER_PAYMENT_TYPE)),
+    DEFAULT_PERSONAL_RETURN_CREDIT(DEFAULT_PERSONAL_CREDIT, null,
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
 
     MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST),
     MERGING_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 75.00),
@@ -135,7 +147,9 @@ public enum ConcurSAEDetailLineFixture {
     CASH_AND_CARD_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.CASH_AND_CARD_TEST, 5.00),
 
     CANCELED_TRIP_TEST_LINE1(DEFAULT_CREDIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, -442.40,
-            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID)),
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID),
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
     CANCELED_TRIP_TEST_LINE2(DEFAULT_CORP_CARD_DEBIT, ConcurSAEFileFixture.CANCELED_TRIP_TEST, 10.00),
 
     FULL_USE_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.FULL_USE_CASH_ADVANCE_TEST),
@@ -238,6 +252,36 @@ public enum ConcurSAEDetailLineFixture {
     PERSONAL_AND_CASH_ADVANCE_TEST_LINE5(DEFAULT_PERSONAL_DEBIT, ConcurSAEFileFixture.PERSONAL_AND_CASH_ADVANCE_TEST, 13.00),
     PERSONAL_AND_CASH_ADVANCE_TEST_LINE6(DEFAULT_PERSONAL_CREDIT, ConcurSAEFileFixture.PERSONAL_AND_CASH_ADVANCE_TEST, -13.00),
 
+    PERSONAL_CHARGE_AND_RETURN_TEST_LINE1(DEFAULT_CORP_CARD_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST, 16.00),
+    PERSONAL_CHARGE_AND_RETURN_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST, 75.00),
+    PERSONAL_CHARGE_AND_RETURN_TEST_LINE3(DEFAULT_PERSONAL_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST, 13.00),
+    PERSONAL_CHARGE_AND_RETURN_TEST_LINE4(DEFAULT_PERSONAL_CREDIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST, -13.00),
+    PERSONAL_CHARGE_AND_RETURN_TEST_LINE5(DEFAULT_PERSONAL_RETURN_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST, 13.00),
+    PERSONAL_CHARGE_AND_RETURN_TEST_LINE6(DEFAULT_PERSONAL_RETURN_CREDIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_RETURN_TEST, -13.00),
+
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE1(DEFAULT_CORP_CARD_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, 16.00),
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, 75.00),
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE3(DEFAULT_PERSONAL_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, 13.00),
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE4(DEFAULT_PERSONAL_CREDIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, -13.00),
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE5(DEFAULT_PERSONAL_RETURN_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, 12.00),
+    PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE6(DEFAULT_PERSONAL_RETURN_CREDIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, -12.00),
+
+    PDP_EXAMPLE_DEBIT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
+    PDP_EXAMPLE_CASH_ADVANCE(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PDP_EXAMPLE),
+    PDP_EXAMPLE_PRE_PAID_AMOUNT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER)),
+    PDP_EXAMPLE_UNUSED_CASH_ADVANCE_AMOUNT(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PDP_EXAMPLE,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PSEUDO)),
+    PDP_EXAMPLE_CORP_CARD_DEBIT(DEFAULT_CORP_CARD_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
+    PDP_EXAMPLE_CANCELED_TRIP_CORP_CARD_CREDIT(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_EXAMPLE,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID),
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE),
+            buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
+    PDP_EXAMPLE_PERSONAL_DEBIT(DEFAULT_PERSONAL_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
+    PDP_EXAMPLE_PERSONAL_CREDIT(DEFAULT_PERSONAL_CREDIT, ConcurSAEFileFixture.PDP_EXAMPLE),
+    PDP_EXAMPLE_PERSONAL_RETURN_DEBIT(DEFAULT_PERSONAL_RETURN_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
+    PDP_EXAMPLE_PERSONAL_RETURN_CREDIT(DEFAULT_PERSONAL_RETURN_CREDIT, ConcurSAEFileFixture.PDP_EXAMPLE),
+
     PDP_TEST_CASH_ADVANCE_500(DEFAULT_CREDIT, ConcurSAEFileFixture.PDP_TEST, -500, buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.PDP_LINE_FIXTURE_CASH_ADVANCE_KEY),
             buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.PDP_LINE_FIXTURE_REPORT_ENTRY_ID), 
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY), buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY)),
@@ -269,6 +313,8 @@ public enum ConcurSAEDetailLineFixture {
     public final String reportSubObjectCode;
     public final String reportProjectCode;
     public final String reportOrgRefId;
+    public final String journalPayerPaymentTypeName;
+    public final String journalPayeePaymentTypeName;
 
     @SafeVarargs
     private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
@@ -329,7 +375,9 @@ public enum ConcurSAEDetailLineFixture {
                 overrideMap.getOrDefault(LineField.REPORT_SUB_ACCOUNT_NUMBER, baseFixture.reportSubAccountNumber),
                 overrideMap.getOrDefault(LineField.REPORT_SUB_OBJECT_CODE, baseFixture.reportSubObjectCode),
                 overrideMap.getOrDefault(LineField.REPORT_PROJECT_CODE, baseFixture.reportProjectCode),
-                overrideMap.getOrDefault(LineField.REPORT_ORG_REF_ID, baseFixture.reportOrgRefId));
+                overrideMap.getOrDefault(LineField.REPORT_ORG_REF_ID, baseFixture.reportOrgRefId),
+                overrideMap.getOrDefault(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, baseFixture.journalPayerPaymentTypeName),
+                overrideMap.getOrDefault(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, baseFixture.journalPayeePaymentTypeName));
     }
 
     private ConcurSAEDetailLineFixture(ConcurSAEFileFixture extractFile, ConcurEmployeeFixture employee,
@@ -338,7 +386,8 @@ public enum ConcurSAEDetailLineFixture {
             String projectCode, String orgRefId, String journalDebitCredit, double journalAmount, String reportEndDate,
             String cashAdvanceKey, String reportEntryId, String reportEntryIsPersonalFlag,
             String reportChartOfAccountsCode, String reportAccountNumber, String reportSubAccountNumber,
-            String reportSubObjectCode, String reportProjectCode, String reportOrgRefId) {
+            String reportSubObjectCode, String reportProjectCode, String reportOrgRefId,
+            String journalPayerPaymentTypeName, String journalPayeePaymentTypeName) {
         this.extractFile = extractFile;
         this.employee = employee;
         this.reportId = reportId;
@@ -362,6 +411,8 @@ public enum ConcurSAEDetailLineFixture {
         this.reportSubObjectCode = reportSubObjectCode;
         this.reportProjectCode = reportProjectCode;
         this.reportOrgRefId = reportOrgRefId;
+        this.journalPayerPaymentTypeName = journalPayerPaymentTypeName;
+        this.journalPayeePaymentTypeName = journalPayeePaymentTypeName;
     }
 
     public ConcurStandardAccountingExtractDetailLine toDetailLine() {
@@ -403,6 +454,8 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setReportSubObjectCode(reportSubObjectCode);
         detailLine.setReportProjectCode(reportProjectCode);
         detailLine.setReportOrgRefId(reportOrgRefId);
+        detailLine.setJournalPayerPaymentTypeName(journalPayerPaymentTypeName);
+        detailLine.setJournalPayeePaymentTypeName(journalPayeePaymentTypeName);
         return detailLine;
     }
 
@@ -448,7 +501,9 @@ public enum ConcurSAEDetailLineFixture {
         REPORT_SUB_ACCOUNT_NUMBER,
         REPORT_SUB_OBJECT_CODE,
         REPORT_PROJECT_CODE,
-        REPORT_ORG_REF_ID;
+        REPORT_ORG_REF_ID,
+        JOURNAL_PAYER_PAYMENT_TYPE_NAME,
+        JOURNAL_PAYEE_PAYMENT_TYPE_NAME;
     }
 
 }

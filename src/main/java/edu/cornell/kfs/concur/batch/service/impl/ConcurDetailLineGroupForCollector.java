@@ -92,14 +92,36 @@ public class ConcurDetailLineGroupForCollector {
 
     protected void addCorpCardPersonalExpenseDetailLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         String accountingFieldsKey = buildAccountingFieldsKeyForCorpCardPersonalExpense(detailLine);
-        Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedLinesMap;
-        if (detailLine.getJournalAmount().isPositive()) {
-            consolidatedLinesMap = consolidatedCorpCardPersonalExpenseDebits;
-        } else {
-            consolidatedLinesMap = consolidatedCorpCardPersonalExpenseCredits;
-        }
+        Map<String, List<ConcurStandardAccountingExtractDetailLine>> consolidatedLinesMap = getConsolidatedPersonalExpensesMapForLine(detailLine);
         consolidatedLinesMap.computeIfAbsent(accountingFieldsKey, (key) -> new ArrayList<>())
                 .add(detailLine);
+    }
+
+    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> getConsolidatedPersonalExpensesMapForLine(
+            ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (detailLine.getJournalAmount().isPositive()) {
+            return getConsolidatedPersonalExpensesMapForDebitLine(detailLine);
+        } else {
+            return getConsolidatedPersonalExpensesMapForCreditLine(detailLine);
+        }
+    }
+
+    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> getConsolidatedPersonalExpensesMapForDebitLine(
+            ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (collectorHelper.lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(detailLine)) {
+            return consolidatedCorpCardPersonalExpenseCredits;
+        } else {
+            return consolidatedCorpCardPersonalExpenseDebits;
+        }
+    }
+
+    protected Map<String, List<ConcurStandardAccountingExtractDetailLine>> getConsolidatedPersonalExpensesMapForCreditLine(
+            ConcurStandardAccountingExtractDetailLine detailLine) {
+        if (collectorHelper.lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(detailLine)) {
+            return consolidatedCorpCardPersonalExpenseDebits;
+        } else {
+            return consolidatedCorpCardPersonalExpenseCredits;
+        }
     }
 
     protected ConcurRequestedCashAdvance getExistingRequestedCashAdvanceByCashAdvanceKey(String cashAdvanceKey) {

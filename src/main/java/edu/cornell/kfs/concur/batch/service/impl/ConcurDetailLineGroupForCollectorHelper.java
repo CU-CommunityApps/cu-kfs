@@ -138,4 +138,12 @@ public class ConcurDetailLineGroupForCollectorHelper {
         return concurBatchUtilityService.lineRepresentsPersonalExpenseChargedToCorporateCard(detailLine);
     }
 
+    public boolean lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurBatchUtilityService.lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(detailLine);
+    }
+
+    public boolean lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurBatchUtilityService.lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(detailLine);
+    }
+
 }

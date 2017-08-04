@@ -110,6 +110,26 @@ public interface ConcurBatchUtilityService {
     boolean lineRepresentsPersonalExpenseChargedToCorporateCard(ConcurStandardAccountingExtractDetailLine line);
     
     /**
+     * Determines whether the given SAE detail line represents a corporate-card-paid
+     * personal expense that was returned/credited to the user. Such transactions should be deducted
+     * from corporate-card-paid personal amounts that the user owes to the university.
+     * 
+     * @param line The SAE line object to examine.
+     * @return True if the SAE line is a corporate-card-paid personal debit with the university as the payer and the user as the payee, false otherwise.
+     */
+    boolean lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(ConcurStandardAccountingExtractDetailLine line);
+    
+    /**
+     * Determines whether the given SAE detail line represents a corporate-card-paid
+     * personal expense that was returned/credited to the university. Such transactions should be deducted
+     * from corporate-card-paid personal amounts that the university owes to the credit card company.
+     * 
+     * @param line The SAE line object to examine.
+     * @return True if the SAE line is a corporate-card-paid personal credit with the corp card as the payer and the university as the payee, false otherwise.
+     */
+    boolean lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(ConcurStandardAccountingExtractDetailLine line);
+    
+    /**
      * Returns the contents of a file as a String.
      * @param fileName
      * @return
