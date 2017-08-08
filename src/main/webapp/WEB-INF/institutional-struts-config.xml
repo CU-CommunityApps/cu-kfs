@@ -203,8 +203,15 @@
 			<set-property property="cancellable" value="true" />
 			<forward name="basic" path="/jsp/fp/YearEndJournalVoucher.jsp" />
 		</action>
-		
-		<action path="/concur/manageAccessToken" name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.ConcurManageAccessTokenAction" 
+        
+        <action path="/financialAdvanceDeposit.jsp" name="AdvanceDepositForm" input="/jsp/fp/AdvanceDeposit.jsp"
+                type="edu.cornell.kfs.fp.document.web.struts.CuAdvanceDepositAction" scope="request"
+                parameter="methodToCall" validate="true" attribute="KualiForm">
+            <set-property property="cancellable" value="true"/>
+            <forward name="basic" path="/jsp/fp/AdvanceDeposit.jsp"/>
+        </action>
+
+        <action path="/concur/manageAccessToken" name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.ConcurManageAccessTokenAction" 
         		scope="request" parameter="methodToCall" attribute="KualiForm">
             <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
