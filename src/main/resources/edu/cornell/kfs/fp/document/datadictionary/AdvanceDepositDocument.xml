@@ -18,6 +18,7 @@
 		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentPresentationController"/>
 		<property name="documentAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentAuthorizer"/>
 		<property name="allowsErrorCorrection" value="false"/>
+		<property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
 	</bean>
 	
 	<bean id="AdvanceDepositDocument-sourceAccountingLineGroup" parent="AdvanceDepositDocument-sourceAccountingLineGroup-parentBean">
