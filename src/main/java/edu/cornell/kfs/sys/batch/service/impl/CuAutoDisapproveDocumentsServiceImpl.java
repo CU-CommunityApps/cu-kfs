@@ -52,39 +52,42 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     private PersonService personService;
     
 
+    @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
         boolean success = true;
 
         Collection<FinancialSystemDocumentHeader> documentList = getDocumentsToDisapprove();
         LOG.info("Total documents to process "  + documentList.size());
-		String documentHeaderId = null;
+	String documentHeaderId = null;
 
-		// CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
-		documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
+	// CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
+	documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
 		
-		for (FinancialSystemDocumentHeader result : documentList) {
-			documentHeaderId = result.getDocumentNumber();
-			Document document = findDocumentForAutoDisapproval(documentHeaderId);
-			if (document != null) {
-				if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
-				    try {
-				        String successMessage = buildSuccessMessage(document);
-			                    autoDisapprovalYearEndDocument(document, annotation);
-			                    sendAcknowledgement(document.getDocumentHeader(), annotation);
-			                    LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
-			                    getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
-			                } catch (Exception e) {
-			                    LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
-			                    String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);
-			                    getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-			                }
-				}
-			} else {
-				LOG.error("Document is NULL.  It should never have been null");
-				String message = ("Error: Document with id: ").concat(documentHeaderId).concat(" - Document is NULL.  It should never have been null");
-				getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
-			}
-		}
+	for (FinancialSystemDocumentHeader result : documentList) {
+	    documentHeaderId = result.getDocumentNumber();
+	    Document document = findDocumentForAutoDisapproval(documentHeaderId);
+	    
+	    if (document != null) {
+	        if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
+	            try {
+	                String successMessage = buildSuccessMessage(document);
+	                autoDisapprovalYearEndDocument(document, annotation);
+	                sendAcknowledgement(document.getDocumentHeader(), annotation);
+	                LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
+	                getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
+
+	            } catch (Exception e) {
+	                LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
+	                String message = ("Exception encountered trying to auto disapprove the document: ").concat(documentHeaderId);
+	                getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+	            }
+	         }
+	    } else {
+	        LOG.error("Document is NULL.  It should never have been null");
+	        String message = ("Error: Document with id: ").concat(documentHeaderId).concat(" - Document is NULL.  It should never have been null");
+	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
+	      }
+	}
 			
         return success;
     }
@@ -114,8 +117,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
     private String buildSuccessMessage(Document document) throws Exception{
 
-    	PersonService ps = SpringContext.getBean(PersonService.class);//.getPerson(max.getPrincipalId()).getPrincipalName()
-    	
     	StringBuilder headerBuilder = new StringBuilder();
     	headerBuilder.append(document.getDocumentNumber());
     	headerBuilder.append(TAB);
@@ -123,9 +124,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     	headerBuilder.append(TAB);
     	headerBuilder.append(document.getDocumentHeader().getDocumentDescription());
     	headerBuilder.append(TAB);
-    	headerBuilder.append(ps.getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getPrincipalName());
+    	headerBuilder.append(personService.getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getPrincipalName());
     	headerBuilder.append(TAB);
-    	headerBuilder.append(ps.getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getName());
+    	headerBuilder.append(personService.getPerson(document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId()).getName());
     	headerBuilder.append(TAB);
     	headerBuilder.append(document.getDocumentHeader().getWorkflowDocument().getDateCreated());
     	headerBuilder.append(TAB);
@@ -156,10 +157,10 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 
 		}
 
-		headerBuilder.append(ps.getPerson(max.getPrincipalId())
+		headerBuilder.append(personService.getPerson(max.getPrincipalId())
 				.getPrincipalName());
 		headerBuilder.append(TAB);
-		headerBuilder.append(ps.getPerson(max.getPrincipalId()).getName());
+		headerBuilder.append(personService.getPerson(max.getPrincipalId()).getName());
 		headerBuilder.append(TAB);
 		headerBuilder.append(max.getActionDate());
 		headerBuilder.append(TAB);
@@ -202,9 +203,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     		}
     	}
     	
-    	
-    
-
     	return builder.toString();
     }
 
@@ -296,7 +294,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     }
 
     protected void autoDisapprovalYearEndDocument(Document document, String annotationForAutoDisapprovalDocument)  throws Exception {
-        Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
+        Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
         
         Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
         approveNote.setNoteText(annotationForAutoDisapprovalDocument);
@@ -313,12 +311,11 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         getDocumentService().superUserDisapproveDocumentWithoutSaving(document, "Disapproval of Outstanding Documents - Year End Cancellation Process");
         UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(),document.getDocumentHeader().getWorkflowDocument());
    }
-    
+
     /**
-     * This method will check the document's document type against the parent document types as specified in the system parameter
-     * @param document
-     * @return true if  document type of the document is a child of one of the the parent document types.
+     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.rice.krad.bo.DocumentHeader)
      */
+    @Override
     protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
         boolean documentEligible = false;
         
@@ -413,11 +410,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         this.routeHeaderService = routeHeaderService;
     } 
 
-    protected PersonService getPersonService() {
-        if (personService == null) {
-            personService = SpringContext.getBean(PersonService.class);
-            }
-        return personService;
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
+
 
 }
