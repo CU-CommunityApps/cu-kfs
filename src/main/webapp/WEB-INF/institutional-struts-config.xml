@@ -209,11 +209,6 @@
             <forward name="basic" path="/jsp/fp/AdvanceDeposit.jsp"/>
         </action>
         
-        <action path="/concur/manageAccessToken" name="KualiForm" type="edu.cornell.kfs.concur.web.struts.ConcurManageAccessTokenAction"
-            scope="request" parameter="methodToCall" attribute="KualiForm">
-            <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
-        </action>
-        
     </action-mappings>
     
 </struts-config>
