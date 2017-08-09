@@ -411,7 +411,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     } 
 
     public void setPersonService(PersonService personService) {
-        this.personService = personService;
+        super.setPersonService(personService);
+        this.personService = personService;       
     }
 
 
