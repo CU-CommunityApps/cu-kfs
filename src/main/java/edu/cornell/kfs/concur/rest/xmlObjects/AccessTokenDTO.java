@@ -9,14 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccessTokenDTO {
 
-    @XmlElement(name = "Instance_Url")
+    @XmlElement(name = "Instance_URL")
     protected String instanceURL;
     @XmlElement(name = "Token")
     protected String token;
     @XmlElement(name = "Expiration_date")
     protected String expirationDate;
-    @XmlElement(name = "Refresh_Token")
-    protected String refreshToken;
     
     public String getInstanceURL() {
         return instanceURL;
@@ -35,12 +33,6 @@ public class AccessTokenDTO {
     }
     public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
-    }
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
     }
 
 }
