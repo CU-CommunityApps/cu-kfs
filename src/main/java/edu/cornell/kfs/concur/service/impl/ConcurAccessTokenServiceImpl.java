@@ -1,29 +1,18 @@
 package edu.cornell.kfs.concur.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.net.ssl.SSLContext;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.springframework.transaction.annotation.Transactional;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientRequest;
@@ -32,63 +21,19 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
 
-    private String concurRequestAccessTokenURL;
     private String concurRefreshAccessTokenURL;
-    private String concurRevokeAccessTokenURL;
     protected WebServiceCredentialService webServiceCredentialService;
 
-    @Transactional
-    @Override
-    public void requestNewAccessToken() {
-        AccessTokenDTO newToken = buildRequestAccessTokenOutput();
-        
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN, newToken.getToken());
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, newToken.getExpirationDate());
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, newToken.getRefreshToken());
-    }
-
-    protected AccessTokenDTO buildRequestAccessTokenOutput() {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-
-        ClientResponse response = client.handle(buildRequestAccessTokenClientRequest());
-        AccessTokenDTO newToken = response.getEntity(AccessTokenDTO.class);
-
-        return newToken;
-    }
-
-    protected ClientRequest buildRequestAccessTokenClientRequest() {
-        String credentials = buildCredentialsStringForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
-        String encodedCredentials = ConcurUtils.base64Encode(credentials);
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,
-                ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials);
-        builder.header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey());
-        URI uri;
-        try {
-            uri = new URI(getConcurRequestAccessTokenURL());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("An error occured while building the request access token URI: ", e);
-        }
-        
-        return builder.build(uri, HttpMethod.GET);
-    }
-
-    protected String buildCredentialsStringForRequestingNewAccessToken(String loginUsername, String loginPassword) {
-        return loginUsername + ConcurConstants.USERNAME_PASSWORD_SEPARATOR + loginPassword;
-    }
-
-    @Transactional
     @Override
     public void refreshAccessToken() {
         AccessTokenDTO refreshedToken = buildRefreshAccessTokenOutput();
@@ -122,92 +67,6 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         return builder.build(uri, HttpMethod.GET);
     }
 
-    @Transactional
-    @Override
-    public void revokeAndReplaceAccessToken() {
-        boolean success = executeRevokeAccessTokenRequest();
-        
-        if (success) {
-            requestNewAccessToken();
-        } else {
-            throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
-        }
-    }
-
-    /*
-     * NOTE: For some reason, we keep getting HTTP 400 ("Bad Request") errors when trying
-     * to invoke the revoke-single-token endpoint with the Jersey 1.x client API.
-     * To work around the problem, we use Apache's HttpClient API for those calls instead.
-     */
-    protected boolean executeRevokeAccessTokenRequest() {
-        CloseableHttpClient httpClient = null;
-        try {
-            httpClient = buildSecureHttpClient();
-            HttpPost request = buildRevokeAccessTokenClientRequest();
-            Boolean success = httpClient.execute(request, this::checkForRevokeTokenSuccess);
-            return Boolean.TRUE.equals(success);
-        } catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
-            throw new RuntimeException("Error executing revoke-token request", e);
-        } finally {
-            IOUtils.closeQuietly(httpClient);
-        }
-    }
-
-    protected CloseableHttpClient buildSecureHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
-        SSLContext sslContext = SSLContexts.custom()
-                .useProtocol(ConcurConstants.TLS_V1_2_PROTOCOL)
-                .build();
-        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext, new String[] {ConcurConstants.TLS_V1_2_PROTOCOL}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
-        return HttpClients.custom()
-                .setSSLSocketFactory(sslSocketFactory)
-                .build();
-    }
-
-    protected HttpPost buildRevokeAccessTokenClientRequest() {
-        URI uri;
-        try {
-            uri = new URI(getConcurRevokeAccessTokenURL()
-                    + ConcurConstants.TOKEN_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getAccessToken());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("An error occured while building the revoke access token URI: ", e);
-        }
-        
-        HttpPost request = new HttpPost(uri);
-        request.addHeader(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
-        return request;
-    }
-
-    protected Boolean checkForRevokeTokenSuccess(HttpResponse response) throws IOException {
-        StatusLine statusLine = response.getStatusLine();
-        int statusCode = statusLine.getStatusCode();
-        String reasonPhrase = statusLine.getReasonPhrase();
-        String responseContent = getEntityContentAsString(response.getEntity());
-        
-        LOG.info("checkForRevokeTokenSuccess(): Response status code: " + statusCode + ", reason phrase: " + reasonPhrase);
-        if (StringUtils.isNotBlank(responseContent)) {
-            LOG.error("checkForRevokeTokenSuccess(): Revoke-token request returned a non-blank response; KFS may have invalid security settings!");
-        }
-        
-        return Boolean.valueOf(
-                StringUtils.isBlank(responseContent) && statusCode == ClientResponse.Status.OK.getStatusCode());
-    }
-
-    protected String getEntityContentAsString(HttpEntity entity) throws IOException {
-        InputStream entityStream = null;
-        try {
-            entityStream = entity.getContent();
-            return IOUtils.toString(entityStream, StandardCharsets.UTF_8);
-        } finally {
-            IOUtils.closeQuietly(entityStream);
-        }
-    }
-
-    @Override
-    public boolean currentAccessTokenExists() {
-        return StringUtils.isNotBlank(getAccessToken());
-    }
-
     @Override
     public String getAccessToken() {
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN);
@@ -227,39 +86,13 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     public String getSecretKey() {
         return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_SECRET_KEY);
     }
-
-    @Override
-    public String getLoginUsername() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_LOGIN_USERNAME);
-    }
-
-    @Override
-    public String getLoginPassword() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_LOGIN_PASSWORD);
-    }
-
-    public String getConcurRequestAccessTokenURL() {
-        return concurRequestAccessTokenURL;
-    }
-
-    public void setConcurRequestAccessTokenURL(String concurRequestAccessTokenURL) {
-        this.concurRequestAccessTokenURL = concurRequestAccessTokenURL;
-    }
-
+    
     public String getConcurRefreshAccessTokenURL() {
         return concurRefreshAccessTokenURL;
     }
 
     public void setConcurRefreshAccessTokenURL(String concurRefreshAccessTokenURL) {
         this.concurRefreshAccessTokenURL = concurRefreshAccessTokenURL;
-    }
-
-    public String getConcurRevokeAccessTokenURL() {
-        return concurRevokeAccessTokenURL;
-    }
-
-    public void setConcurRevokeAccessTokenURL(String concurRevokeAccessTokenURL) {
-        this.concurRevokeAccessTokenURL = concurRevokeAccessTokenURL;
     }
 
     public WebServiceCredentialService getWebServiceCredentialService() {
@@ -269,5 +102,4 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
         this.webServiceCredentialService = webServiceCredentialService;
     }
-
 }

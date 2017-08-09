@@ -2,7 +2,6 @@ package edu.cornell.kfs.concur;
 
 public class ConcurConstants {
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
-    public static final String CONSUMER_KEY_PROPERTY = "X-ConsumerKey";
     public static final String BASIC_AUTHENTICATION_SCHEME = "Basic";
     public static final String OAUTH_AUTHENTICATION_SCHEME = "OAuth";
 
@@ -20,18 +19,12 @@ public class ConcurConstants {
     public static final String REFRESH_TOKEN_URL_PARAM = "refresh_token";
     public static final String CLIENT_ID_URL_PARAM = "client_id";
     public static final String CLIENT_SECRET_URL_PARAM = "client_secret";
-    public static final String TOKEN_URL_PARAM = "token";
 
-    public static final String CONCUR_LOGIN_USERNAME = "concur.login.username";
-    public static final String CONCUR_LOGIN_PASSWORD = "concur.login.password";
     public static final String CONCUR_ACCESS_TOKEN = "concur.access.token";
     public static final String CONCUR_REFRESH_TOKEN = "concur.refresh.token";
     public static final String CONCUR_CONSUMER_KEY = "concur.consumer.key";
     public static final String CONCUR_SECRET_KEY = "concur.secret.key";
     public static final String CONCUR_ACCESS_TOKEN_EXPIRATION_DATE = "concur.access.token.expiration.date";
-
-    public static final String USERNAME_PASSWORD_SEPARATOR = ":";
-    public static final String TLS_V1_2_PROTOCOL = "TLSv1.2";
 
     public static final String EXPENSE_REPORT_URI_INDICATOR = "/expense/expensereport/";
     public static final String TRAVEL_REQUEST_URI_INDICATOR = "/travelrequest/";

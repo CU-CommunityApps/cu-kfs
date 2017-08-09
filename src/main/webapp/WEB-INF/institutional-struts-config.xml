@@ -213,7 +213,6 @@
             scope="request" parameter="methodToCall" attribute="KualiForm">
             <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
-        
     </action-mappings>
     
 </struts-config>
