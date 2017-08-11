@@ -10,6 +10,7 @@ import org.kuali.kfs.kns.web.struts.action.KualiAction;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigContext;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -62,9 +63,14 @@ public class ConcurManageAccessTokenAction extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
-    public ActionForward deleteToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        getConcurAccessTokenService().deleteTokensFromDatabase();
-        GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_DELETE_SUCCESS);
+    public ActionForward resetTokenToEmptyString(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (!isProduction()) {
+            getConcurAccessTokenService().resetTokenToEmptyStringInDatabase();
+            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_RESET_SUCCESS);
+        } else {
+            LOG.error("resetTokenToEmptyString, we are in production, should not reset the token to an empty string.");
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION);
+        }
         updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -72,9 +78,18 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     protected void updateAccessTokenExpirationDateOnForm(ConcurManageAccessTokenForm concurTokenForm) {
         String accessTokenExpirationDate = getWebServiceCredentialService().getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE);
         concurTokenForm.setAccessTokenExpirationDate(accessTokenExpirationDate);
+        concurTokenForm.setShowResetTokenToEmptyStringButton(!isProduction());
         if (LOG.isDebugEnabled()) {
             LOG.debug("updateAccessTokenExpirationDateOnForm, accessTokenExpirationDate: " + accessTokenExpirationDate);
         }
+    }
+    
+    protected boolean isProduction() {
+        boolean isProd = ConfigContext.getCurrentContextConfig().isProductionEnvironment();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isProduction, isProd: " + isProd);
+        }
+        return isProd;
     }
 
     protected ConcurAccessTokenService getConcurAccessTokenService() {

@@ -30,5 +30,6 @@ public class ConcurKeyConstants {
     public static final String MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS = "message.concur.token.refresh.success";
     public static final String MESSAGE_CONCUR_TOKEN_REVOKE_SUCCESS = "message.concur.token.revoke.success";
     public static final String ERROR_CONCUR_TOKEN_REVOKE_NO_TOKEN = "error.concur.token.revoke.no.token";
-    public static final String MESSAGE_CONCUR_TOKEN_DELETE_SUCCESS = "message.concur.token.delete.success";
+    public static final String MESSAGE_CONCUR_TOKEN_RESET_SUCCESS = "message.concur.token.reset.success";
+    public static final String ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION = "error.concur.token.retet.production"; 
 }

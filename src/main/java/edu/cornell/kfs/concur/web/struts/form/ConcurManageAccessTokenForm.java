@@ -8,6 +8,7 @@ public class ConcurManageAccessTokenForm extends KualiForm {
     private static final long serialVersionUID = -8345711992403008219L;
     
     private String accessTokenExpirationDate;
+    private boolean showResetTokenToEmptyStringButton;
 
     public String getAccessTokenExpirationDate() {
         return accessTokenExpirationDate;
@@ -19,6 +20,14 @@ public class ConcurManageAccessTokenForm extends KualiForm {
     
     public boolean getShowRevokeAndRefreshButtons() {
         return StringUtils.isNotEmpty(accessTokenExpirationDate);
+    }
+    
+    public boolean getShowResetTokenToEmptyStringButton() {
+        return showResetTokenToEmptyStringButton;
+    }
+
+    public void setShowResetTokenToEmptyStringButton(boolean showResetTokenToEmptyStringButton) {
+        this.showResetTokenToEmptyStringButton = showResetTokenToEmptyStringButton;
     }
 
 }

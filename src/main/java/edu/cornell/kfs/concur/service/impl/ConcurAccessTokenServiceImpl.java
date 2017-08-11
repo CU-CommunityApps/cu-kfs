@@ -155,7 +155,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
     
     @Override
-    public void deleteTokensFromDatabase() {
+    public void resetTokenToEmptyStringInDatabase() {
         setWebserivceCredentialValues(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
