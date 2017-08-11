@@ -50,10 +50,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public void requestNewAccessToken() {
         AccessTokenDTO newToken = buildRequestAccessTokenOutput();
-        
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN, newToken.getToken());
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, newToken.getExpirationDate());
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, newToken.getRefreshToken());
+        setWebserivceCredentialValues(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
     }
 
     protected AccessTokenDTO buildRequestAccessTokenOutput() {
@@ -64,6 +61,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         AccessTokenDTO newToken = response.getEntity(AccessTokenDTO.class);
 
         return newToken;
+    }
+    
+    protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN, accessToken);
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, expirationDate);
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
     }
 
     protected ClientRequest buildRequestAccessTokenClientRequest() {
@@ -78,9 +81,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         try {
             uri = new URI(getConcurRequestAccessTokenURL());
         } catch (URISyntaxException e) {
+            LOG.error("buildRequestAccessTokenClientRequest, problem building request acces token request", e);
             throw new RuntimeException("An error occured while building the request access token URI: ", e);
         }
-        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildRequestAccessTokenClientRequest, URI: " + uri);
+        }
         return builder.build(uri, HttpMethod.GET);
     }
 
@@ -116,9 +122,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
                     + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_ID_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getConsumerKey()
                     + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_SECRET_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getSecretKey());
         } catch (URISyntaxException e) {
+            LOG.error("buildRefreshAccessTokenClientRequest, there was a problem building refresh access token client request.", e);
             throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
         }
-        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildRefreshAccessTokenClientRequest, URI: " + uri);
+        }
         return builder.build(uri, HttpMethod.GET);
     }
 
@@ -132,6 +141,22 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         } else {
             throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
         }
+    }
+    
+    @Transactional
+    @Override
+    public void revokeAccessToken() {
+        boolean success = executeRevokeAccessTokenRequest();
+        if (success) {
+            setWebserivceCredentialValues(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        } else {
+            throw new RuntimeException("Error revoking access token: Unsuccessful response from Concur");
+        }
+    }
+    
+    @Override
+    public void deleteTokensFromDatabase() {
+        setWebserivceCredentialValues(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
     /*
@@ -147,6 +172,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
             Boolean success = httpClient.execute(request, this::checkForRevokeTokenSuccess);
             return Boolean.TRUE.equals(success);
         } catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
+            LOG.error("executeRevokeAccessTokenRequest, there was a problem revoking an access token. ", e);
             throw new RuntimeException("Error executing revoke-token request", e);
         } finally {
             IOUtils.closeQuietly(httpClient);
@@ -170,9 +196,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
             uri = new URI(getConcurRevokeAccessTokenURL()
                     + ConcurConstants.TOKEN_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getAccessToken());
         } catch (URISyntaxException e) {
+            LOG.error("buildRevokeAccessTokenClientRequest, there was an error building revoke access token client request.", e);
             throw new RuntimeException("An error occured while building the revoke access token URI: ", e);
         }
-        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildRevokeAccessTokenClientRequest, URI: " + uri);
+        }
         HttpPost request = new HttpPost(uri);
         request.addHeader(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
         return request;

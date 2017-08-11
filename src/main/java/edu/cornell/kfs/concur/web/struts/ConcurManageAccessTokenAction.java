@@ -49,6 +49,26 @@ public class ConcurManageAccessTokenAction extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
+    public ActionForward revokeToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (getConcurAccessTokenService().currentAccessTokenExists()) {
+            getConcurAccessTokenService().revokeAccessToken();
+            LOG.debug("revokeToken, revoke was successful");
+            //GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS);
+        } else {
+            LOG.debug("revokeToken, no existing token to revoke");
+            //GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS);
+        }
+        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    public ActionForward deleteToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        getConcurAccessTokenService().deleteTokensFromDatabase();
+        //GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS);
+        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
     protected void updateAccessTokenExpirationDateOnForm(ConcurManageAccessTokenForm concurTokenForm) {
         String accessTokenExpirationDate = getWebServiceCredentialService().getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE);
         concurTokenForm.setAccessTokenExpirationDate(accessTokenExpirationDate);

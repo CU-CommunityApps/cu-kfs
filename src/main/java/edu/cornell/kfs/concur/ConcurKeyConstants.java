@@ -28,6 +28,4 @@ public class ConcurKeyConstants {
     public static final String MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS = "message.concur.token.replace.success";
     public static final String MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS = "message.concur.token.revoke.and.replace.success";
     public static final String MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS = "message.concur.token.refresh.success";
-    public static final String MESSAGE_CONCUR_REPLACE_TOKEN_ACTION_EXPLANATION = "message.concur.replace.token.action.explanation";
-    public static final String MESSAGE_CONCUR_REFRESH_TOKEN_ACTION_EXPLANATION = "message.concur.refresh.token.action.explanation";
 }

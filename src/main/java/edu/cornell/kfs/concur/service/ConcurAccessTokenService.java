@@ -20,6 +20,10 @@ public interface ConcurAccessTokenService {
     void refreshAccessToken();
 
     void revokeAndReplaceAccessToken();
+    
+    void revokeAccessToken();
+    
+    void deleteTokensFromDatabase();
 
     boolean currentAccessTokenExists();
 
