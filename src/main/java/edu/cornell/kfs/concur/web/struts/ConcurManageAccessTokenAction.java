@@ -53,10 +53,10 @@ public class ConcurManageAccessTokenAction extends KualiAction {
         if (getConcurAccessTokenService().currentAccessTokenExists()) {
             getConcurAccessTokenService().revokeAccessToken();
             LOG.debug("revokeToken, revoke was successful");
-            //GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS);
+            GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REVOKE_SUCCESS);
         } else {
             LOG.debug("revokeToken, no existing token to revoke");
-            //GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS);
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.ERROR_CONCUR_TOKEN_REVOKE_NO_TOKEN);
         }
         updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -64,7 +64,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     
     public ActionForward deleteToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         getConcurAccessTokenService().deleteTokensFromDatabase();
-        //GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REVOKE_AND_REPLACE_SUCCESS);
+        GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_DELETE_SUCCESS);
         updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
