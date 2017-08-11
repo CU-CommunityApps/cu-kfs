@@ -24,7 +24,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOG.debug("start, entering");
-        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        updateFormValues((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -38,7 +38,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
             LOG.debug("replaceToken, replace was successful, there was no existing token to revoke");
             GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REPLACE_SUCCESS);
         }
-        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        updateFormValues((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -46,7 +46,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
         getConcurAccessTokenService().refreshAccessToken();
         LOG.debug("refreshToken, refresh was successful");
         GlobalVariables.getMessageMap().putInfo(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.MESSAGE_CONCUR_TOKEN_REFRESH_SUCCESS);
-        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        updateFormValues((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
@@ -59,7 +59,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
             LOG.debug("revokeToken, no existing token to revoke");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.ERROR_CONCUR_TOKEN_REVOKE_NO_TOKEN);
         }
-        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        updateFormValues((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
@@ -71,16 +71,16 @@ public class ConcurManageAccessTokenAction extends KualiAction {
             LOG.error("resetTokenToEmptyString, we are in production, should not reset the token to an empty string.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_MESSAGES, ConcurKeyConstants.ERROR_CONCUR_TOKEN_RESET_IN_PRODUCTION);
         }
-        updateAccessTokenExpirationDateOnForm((ConcurManageAccessTokenForm) form);
+        updateFormValues((ConcurManageAccessTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
-    protected void updateAccessTokenExpirationDateOnForm(ConcurManageAccessTokenForm concurTokenForm) {
+    protected void updateFormValues(ConcurManageAccessTokenForm concurTokenForm) {
         String accessTokenExpirationDate = getWebServiceCredentialService().getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE);
         concurTokenForm.setAccessTokenExpirationDate(accessTokenExpirationDate);
         concurTokenForm.setShowResetTokenToEmptyStringButton(!isProduction());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("updateAccessTokenExpirationDateOnForm, accessTokenExpirationDate: " + accessTokenExpirationDate);
+            LOG.debug("updateFormValues, accessTokenExpirationDate: " + accessTokenExpirationDate);
         }
     }
     
