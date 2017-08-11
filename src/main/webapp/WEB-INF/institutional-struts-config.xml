@@ -54,6 +54,8 @@
 			
 		<form-bean name="YearEndJournalVoucherForm"
 			type="edu.cornell.kfs.fp.document.web.struts.YearEndJournalVoucherForm" />
+		
+		<form-bean name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm" />
 
     </form-beans>
     
@@ -207,6 +209,11 @@
                 parameter="methodToCall" validate="true" attribute="KualiForm">
             <set-property property="cancellable" value="true"/>
             <forward name="basic" path="/jsp/fp/AdvanceDeposit.jsp"/>
+        </action>
+
+        <action path="/concur/manageAccessToken" name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.ConcurManageAccessTokenAction" 
+        		scope="request" parameter="methodToCall" attribute="KualiForm">
+            <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
         
     </action-mappings>
