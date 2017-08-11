@@ -38,7 +38,7 @@
 			<c:when test="${KualiForm.showResetTokenToEmptyStringButton}">
 				<div class="center" style="margin: 30px 0;">
 					<div style="font-weight: bold">Reset existing token to empty string in the KFS database.</div>
-					<div>(Do this before revoking tokens in devloocal, dev or test otherwise you'll need to update non-prod SQL refresh scripts.)</div>
+					<div>(Do this in non-prod databases to test revoke access token.)</div>
 					<div>
 						<html:submit property="methodToCall.resetTokenToEmptyString" styleClass="btn btn-default" value="Reset Token To Empty String" />
 					</div>
