@@ -60,7 +60,6 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @throws Exception
      */
     public ActionForward process(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        LOG.debug("process, entering");
         
         CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
         String glAcctId = request.getParameter(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER);
@@ -78,7 +77,6 @@ public class CapitalAssetInformationAction extends CabActionBase {
     }
 
     protected void prepareRecordsForDisplay(CapitalAssetInformationForm capitalAssetForm, GeneralLedgerEntry entry) {
-        LOG.debug("prepareRecordsForDisplay, entering");
         GlLineService glLineService = SpringContext.getBean(GlLineService.class);
 
         entry.setSelected(true);
