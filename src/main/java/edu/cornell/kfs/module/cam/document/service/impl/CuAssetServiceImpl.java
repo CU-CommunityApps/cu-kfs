@@ -17,22 +17,34 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 
 public class CuAssetServiceImpl extends AssetServiceImpl {
+    private BusinessObjectService businessObjectService;
+    private ParameterService parameterService;
 
     public List<Asset> findActiveAssetsMatchingTagNumber(String campusTagNumber) {
         List<Asset> activeMatches = new ArrayList<Asset>();
         // find all assets matching this tag number
         Map<String, String> params = new HashMap<String, String>();
         params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, campusTagNumber);
-        Collection<Asset> tagMatches = SpringContext.getBean(BusinessObjectService.class).findMatching(Asset.class, params);
+        Collection<Asset> tagMatches = businessObjectService.findMatching(Asset.class, params);
         if (tagMatches != null && !tagMatches.isEmpty()) {
             for (Asset asset : tagMatches) {
                 // if found matching, check if status is not retired
-                if (!isAssetRetired(asset) || SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE))  {
+                if (!isAssetRetired(asset) || parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE))  {
                     activeMatches.add(asset);
                 }
             }
         }
         return activeMatches;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        super.setBusinessObjectService(businessObjectService);
+        this.businessObjectService = businessObjectService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        super.setParameterService(parameterService);
+        this.parameterService = parameterService;
     }
 
 }

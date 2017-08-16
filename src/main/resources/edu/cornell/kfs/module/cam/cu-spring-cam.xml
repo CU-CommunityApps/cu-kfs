@@ -45,7 +45,10 @@
  	     
 	<bean id="assetDepreciationService"  parent="assetDepreciationService-parentBean" class="edu.cornell.kfs.module.cam.batch.service.impl.CuAssetDepreciationServiceImpl" />
  	<bean id="assetService"  parent="assetService-parentBean"
- 	     class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl" />
+ 	     class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl" >
+ 	     <property name="businessObjectService" ref="businessObjectService" />
+ 	     <property name="parameterService" ref="parameterService" />
+ 	</bean>
 
     <bean id="cuAssetSubAccountService" class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetSubAccountServiceImpl">
         <property name="parameterService" ref="parameterService" />
