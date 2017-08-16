@@ -29,13 +29,12 @@ import edu.cornell.kfs.module.cam.CuCamsConstants;
 import org.easymock.EasyMock;
 
 public class CuAssetServiceImplTest {
-
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAssetServiceImpl.class);
     
     private static final String NON_EXISTING_TAG_NUMBER = "non-existing tag number";
     private static final String EXISTING_TAG_NUMBER = "existing tag";
     private static final String RETIRED_STATUS_CD = "R";
-    private static final String NOT_RETIRED_STATUS_CD = "NR";
+    private static final String NON_RETIRED_STATUS_CD = "NR";
+    
     private CuAssetServiceImpl cuAssetServiceImpl;
 
     @Before
@@ -45,8 +44,8 @@ public class CuAssetServiceImplTest {
 
     @Test
     public void testFindActiveAssetsMatchingTagNumberNoMatches() {
-        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectServiceToReturnNoAssets());
-        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowReiredAssets());
+        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(NON_EXISTING_TAG_NUMBER, null));
+        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowRetiredAssets(true));
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(NON_EXISTING_TAG_NUMBER);
 
@@ -55,8 +54,8 @@ public class CuAssetServiceImplTest {
     
     @Test
     public void testFindActiveAssetsMatchingTagNumberRetiredAssetsAllowedMatchingRetiredAsset() {
-        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectServiceToReturnRetiredAsset());
-        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowReiredAssets());
+        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(EXISTING_TAG_NUMBER, createAssetWithGivenInventoryStatusCode(RETIRED_STATUS_CD)));
+        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowRetiredAssets(true));
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
@@ -66,8 +65,8 @@ public class CuAssetServiceImplTest {
     
     @Test
     public void testFindActiveAssetsMatchingTagNumberRetiredAssetsAllowedMatchingNotRetiredAsset() {
-        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectServiceToReturnNotRetiredAsset());
-        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowReiredAssets());
+        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(EXISTING_TAG_NUMBER, createAssetWithGivenInventoryStatusCode(NON_RETIRED_STATUS_CD)));
+        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowRetiredAssets(true));
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
@@ -76,9 +75,9 @@ public class CuAssetServiceImplTest {
     }
     
     @Test
-    public void testFindActiveAssetsMatchingTagNumberRetiredAssetsDisallowedNotMatching() {
-        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectServiceToReturnRetiredAsset());
-        cuAssetServiceImpl.setParameterService(createMockParameterServiceDisallowReiredAssets());
+    public void testFindActiveAssetsMatchingTagNumberRetiredAssetsDisallowedNotMatchingRetiredAsset() {
+        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(EXISTING_TAG_NUMBER, null));
+        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowRetiredAssets(false));
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
@@ -87,9 +86,9 @@ public class CuAssetServiceImplTest {
     }
     
     @Test
-    public void testFindActiveAssetsMatchingTagNumberRetiredAssetsDisallowedMatching() {
-        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectServiceToReturnNotRetiredAsset());
-        cuAssetServiceImpl.setParameterService(createMockParameterServiceDisallowReiredAssets());
+    public void testFindActiveAssetsMatchingTagNumberRetiredAssetsDisallowedMatchingNonRetiredAsset() {
+        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(EXISTING_TAG_NUMBER, createAssetWithGivenInventoryStatusCode(NON_RETIRED_STATUS_CD)));
+        cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowRetiredAssets(false));
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
@@ -97,9 +96,9 @@ public class CuAssetServiceImplTest {
 
     }
 
-    protected ParameterService createMockParameterServiceAllowReiredAssets() {
+    protected ParameterService createMockParameterServiceAllowRetiredAssets(boolean result) {
         ParameterService parameterService = EasyMock.createMock(ParameterServiceImpl.class);
-        EasyMock.expect(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).andStubReturn(true);
+        EasyMock.expect(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).andStubReturn(result);
         List<String> statusCodes = new ArrayList<String>();
         statusCodes.add(RETIRED_STATUS_CD);
         EasyMock.expect(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.Parameters.RETIRED_STATUS_CODES)).andStubReturn(statusCodes);
@@ -108,63 +107,22 @@ public class CuAssetServiceImplTest {
         return parameterService;
     }
     
-    protected ParameterService createMockParameterServiceDisallowReiredAssets() {
-        ParameterService parameterService = EasyMock.createMock(ParameterServiceImpl.class);
-        EasyMock.expect(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).andStubReturn(false);
-        List<String> statusCodes = new ArrayList<String>();
-        statusCodes.add(RETIRED_STATUS_CD);
-        EasyMock.expect(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.Parameters.RETIRED_STATUS_CODES)).andStubReturn(statusCodes);
-
-        EasyMock.replay(parameterService);
-        return parameterService;
-    }
-    
-    protected BusinessObjectService createMockBusinessObjectServiceToReturnNoAssets() {
+    protected BusinessObjectService createMockBusinessObjectService(String tagNumber, List<Asset> result) {
         BusinessObjectService businessObjectService = EasyMock.createMock(BusinessObjectServiceImpl.class);
         Map<String, String> params = new HashMap<String, String>();
-        params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, NON_EXISTING_TAG_NUMBER);
-        EasyMock.expect(businessObjectService.findMatching(Asset.class, params)).andStubReturn(null);
-        
-        EasyMock.replay(businessObjectService);
-        return businessObjectService;
-    }
-    
-    protected BusinessObjectService createMockBusinessObjectServiceToReturnRetiredAsset() {
-        BusinessObjectService businessObjectService = EasyMock.createMock(BusinessObjectServiceImpl.class);
-        
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, EXISTING_TAG_NUMBER);
-        List<Asset> result = new ArrayList<Asset>();
-        result.add(createRetiredAsset());
+        params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, tagNumber);
         EasyMock.expect(businessObjectService.findMatching(Asset.class, params)).andStubReturn(result);
         
         EasyMock.replay(businessObjectService);
         return businessObjectService;
     }
     
-    protected BusinessObjectService createMockBusinessObjectServiceToReturnNotRetiredAsset() {
-        BusinessObjectService businessObjectService = EasyMock.createMock(BusinessObjectServiceImpl.class);
-        
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, EXISTING_TAG_NUMBER);
-        List<Asset> result = new ArrayList<Asset>();
-        result.add(createNotRetiredAsset());
-        EasyMock.expect(businessObjectService.findMatching(Asset.class, params)).andStubReturn(result);
-        
-        EasyMock.replay(businessObjectService);
-        return businessObjectService;
-    }
-    
-    protected Asset createRetiredAsset(){
+    protected List<Asset> createAssetWithGivenInventoryStatusCode(String inventoryStatusCode){
+        List<Asset> assetsList = new ArrayList<Asset>();
         Asset asset = new Asset();
-        asset.setInventoryStatusCode(RETIRED_STATUS_CD);
-        return asset;
-    }
-    
-    protected Asset createNotRetiredAsset(){
-        Asset asset = new Asset();
-        asset.setInventoryStatusCode(NOT_RETIRED_STATUS_CD);
-        return asset;
+        asset.setInventoryStatusCode(inventoryStatusCode);
+        assetsList.add(asset);
+        return assetsList;
     }
 
 }
