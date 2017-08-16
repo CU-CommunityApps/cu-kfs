@@ -47,8 +47,8 @@ public enum VendorCreditMemoDocumentFixture {
 
 	private VendorCreditMemoDocumentFixture(String documentNumber, String documentDescription,
 	        Integer vendorDetailAssignedIdentifier,
-            Integer vendorHeaderGeneratedIdentifier, Integer purchaseOrderIdentifier, String creditMemoNumber,
-            String creditMemoDate, KualiDecimal creditMemoAmount) {
+	        Integer vendorHeaderGeneratedIdentifier, Integer purchaseOrderIdentifier, String creditMemoNumber,
+	        String creditMemoDate, KualiDecimal creditMemoAmount) {
 	    this.documentNumber = documentNumber;
 	    this.documentDescription = documentDescription;
 	    this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
