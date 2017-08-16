@@ -51,12 +51,12 @@ public enum VendorCreditMemoDocumentFixture {
             String creditMemoDate, KualiDecimal creditMemoAmount) {
 	    this.documentNumber = documentNumber;
 	    this.documentDescription = documentDescription;
-        this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
-        this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
-        this.creditMemoNumber = creditMemoNumber;
-        this.creditMemoDate = creditMemoDate;
-        this.purchaseOrderIdentifier = purchaseOrderIdentifier;
-        this.creditMemoAmount = creditMemoAmount;
+	    this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
+	    this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
+	    this.creditMemoNumber = creditMemoNumber;
+	    this.creditMemoDate = creditMemoDate;
+	    this.purchaseOrderIdentifier = purchaseOrderIdentifier;
+	    this.creditMemoAmount = creditMemoAmount;
 	}
 
 	public VendorCreditMemoDocument createVendorCreditMemoDocument()
@@ -87,11 +87,11 @@ public enum VendorCreditMemoDocumentFixture {
 	    creditMemoDocument.setDocumentHeader(documentHeader);
 	    creditMemoDocument.setDocumentNumber(this.documentNumber);
 	    creditMemoDocument.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
-        creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
-        creditMemoDocument.setPurchaseOrderIdentifier(this.purchaseOrderIdentifier);
-        creditMemoDocument.setCreditMemoNumber(this.creditMemoNumber);
-        creditMemoDocument.setCreditMemoDate(getParsedCreditMemoDate());
-        creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
+	    creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
+	    creditMemoDocument.setPurchaseOrderIdentifier(this.purchaseOrderIdentifier);
+	    creditMemoDocument.setCreditMemoNumber(this.creditMemoNumber);
+	    creditMemoDocument.setCreditMemoDate(getParsedCreditMemoDate());
+	    creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
 	    
 	    return creditMemoDocument;
 	}
@@ -99,11 +99,11 @@ public enum VendorCreditMemoDocumentFixture {
 	public java.sql.Date getParsedCreditMemoDate() {
 	    try {
 	        SimpleDateFormat dateFormat = new SimpleDateFormat(CM_DATE_FORMAT);
-            java.util.Date parsedDate = dateFormat.parse(this.creditMemoDate);
-            return new java.sql.Date(parsedDate.getTime());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+	        java.util.Date parsedDate = dateFormat.parse(this.creditMemoDate);
+	        return new java.sql.Date(parsedDate.getTime());
+	    } catch (ParseException e) {
+	        throw new RuntimeException(e);
+	    }
 	}
 
 }
