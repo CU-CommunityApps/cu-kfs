@@ -59,7 +59,7 @@ public class CuAssetServiceImplTest {
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
-        assertTrue("There should have been matching assets when retired assets are allowed", 0 != resultsArray.size());
+        assertTrue("There should have been matching assets when retired assets are allowed and a retired asset was retrieved", 0 != resultsArray.size());
     }
     
     @Test
@@ -69,12 +69,12 @@ public class CuAssetServiceImplTest {
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
-        assertTrue("There should have been matching assets when retired assets are allowed", 0 != resultsArray.size());
+        assertTrue("There should have been matching assets when retired assets are allowed and a non-retired asset was retrieved", 0 != resultsArray.size());
     }
     
     @Test
     public void testFindActiveAssetsMatchingTagNumberRetiredAssetsDisallowedNotMatchingRetiredAsset() {
-        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(EXISTING_TAG_NUMBER, null));
+        cuAssetServiceImpl.setBusinessObjectService(createMockBusinessObjectService(EXISTING_TAG_NUMBER, createAssetWithGivenInventoryStatusCode(RETIRED_STATUS_CD)));
         cuAssetServiceImpl.setParameterService(createMockParameterServiceAllowRetiredAssets(false));
 
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
