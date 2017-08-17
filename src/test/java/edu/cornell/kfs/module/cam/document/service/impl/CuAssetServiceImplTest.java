@@ -31,7 +31,7 @@ import org.easymock.EasyMock;
 public class CuAssetServiceImplTest {
     
     private static final String NON_EXISTING_TAG_NUMBER = "non-existing tag number";
-    private static final String EXISTING_TAG_NUMBER = "existing tag";
+    private static final String EXISTING_TAG_NUMBER = "existing tag number";
     private static final String RETIRED_STATUS_CD = "R";
     private static final String NON_RETIRED_STATUS_CD = "NR";
     
@@ -60,7 +60,6 @@ public class CuAssetServiceImplTest {
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
         assertTrue("There should have been matching assets when retired assets are allowed", 0 != resultsArray.size());
-
     }
     
     @Test
@@ -71,7 +70,6 @@ public class CuAssetServiceImplTest {
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
         assertTrue("There should have been matching assets when retired assets are allowed", 0 != resultsArray.size());
-
     }
     
     @Test
@@ -82,7 +80,6 @@ public class CuAssetServiceImplTest {
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
         assertTrue("There should have been no matching assets when retired assets are not allowed", 0 == resultsArray.size());
-
     }
     
     @Test
@@ -93,7 +90,6 @@ public class CuAssetServiceImplTest {
         List<Asset> resultsArray = cuAssetServiceImpl.findActiveAssetsMatchingTagNumber(EXISTING_TAG_NUMBER);
 
         assertTrue("There should have been matching assets when retired assets are not allowed and non retired assets exist", 0 != resultsArray.size());
-
     }
 
     protected ParameterService createMockParameterServiceAllowRetiredAssets(boolean result) {
