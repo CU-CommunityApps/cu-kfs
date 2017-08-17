@@ -49,42 +49,38 @@ public class CuBatchExtractServiceImplTest {
 
     @Test
     public void testFindCreditMemoDocument() {
-        VendorCreditMemoDocument vendorCreditMemoDocument = cuBatchExtractServiceImpl.findCreditMemoDocument(EntryFixture.VCM_TWO.createEntry());
-        assertNotNull("vendor credit memo should have been non-null", vendorCreditMemoDocument);
-        assertEquals("Wrong credit memo document was retrieved", CuCamsTestConstants.DOC_5686500, vendorCreditMemoDocument.getDocumentNumber());
-        
-        vendorCreditMemoDocument = cuBatchExtractServiceImpl.findCreditMemoDocument(EntryFixture.VCM_ONE.createEntry());
+        VendorCreditMemoDocument vendorCreditMemoDocument = cuBatchExtractServiceImpl.findCreditMemoDocument(EntryFixture.VCM_5319793.createEntry());
         assertNotNull("vendor credit memo should have been non-null", vendorCreditMemoDocument);
         assertEquals("Wrong credit memo document was retrieved", CuCamsTestConstants.DOC_5319793, vendorCreditMemoDocument.getDocumentNumber());
         
-        vendorCreditMemoDocument = cuBatchExtractServiceImpl.findCreditMemoDocument(EntryFixture.VCM_THREE.createEntry());
+        vendorCreditMemoDocument = cuBatchExtractServiceImpl.findCreditMemoDocument(EntryFixture.VCM_NONEXISTENT_DOC.createEntry());
         assertNull("vendor credit memo should have been null", vendorCreditMemoDocument);
     }
 
     @Test
     public void testFindPaymentRequestDocument() {
-        PaymentRequestDocument paymentRequestDocument = cuBatchExtractServiceImpl.findPaymentRequestDocument(EntryFixture.PREQ_ONE.createEntry());
+        PaymentRequestDocument paymentRequestDocument = cuBatchExtractServiceImpl.findPaymentRequestDocument(EntryFixture.PREQ_5773686.createEntry());
         assertNotNull("Payment request document should have been non-null", paymentRequestDocument);
         assertEquals("Wrong payment request document was retrieved", CuCamsTestConstants.DOC_5773686, paymentRequestDocument.getDocumentNumber());
         
-        paymentRequestDocument = cuBatchExtractServiceImpl.findPaymentRequestDocument(EntryFixture.PREQ_THREE.createEntry());
+        paymentRequestDocument = cuBatchExtractServiceImpl.findPaymentRequestDocument(EntryFixture.PREQ_NONEXISTENT_DOC.createEntry());
         assertNull("Payment request document should have been null", paymentRequestDocument);
     }
 
     @Test
     public void testSeparatePOLines() {
         EntryFixture[] expectedFpEntries = {};
-        EntryFixture[] expectedPurapEntries = { EntryFixture.VCM_ONE, EntryFixture.VCM_TWO, EntryFixture.PREQ_ONE, EntryFixture.PREQ_TWO };
+        EntryFixture[] expectedPurapEntries = { EntryFixture.VCM_5319793, EntryFixture.VCM_5686500, EntryFixture.PREQ_5773686, EntryFixture.PREQ_5773687 };
         assertPOLinesAreSeparatedCorrectly(expectedFpEntries, expectedPurapEntries,
-                EntryFixture.VCM_ONE, EntryFixture.VCM_TWO, EntryFixture.PREQ_ONE, EntryFixture.PREQ_TWO);
+                EntryFixture.VCM_5319793, EntryFixture.VCM_5686500, EntryFixture.PREQ_5773686, EntryFixture.PREQ_5773687);
     }
 
     @Test
     public void testSeparatePOLinesContainingCreditMemoWithoutPurchaseOrder() {
-        EntryFixture[] expectedFpEntries = { EntryFixture.VCM_FOUR };
-        EntryFixture[] expectedPurapEntries = { EntryFixture.VCM_ONE, EntryFixture.PREQ_ONE, EntryFixture.PREQ_TWO };
+        EntryFixture[] expectedFpEntries = { EntryFixture.VCM_5686501 };
+        EntryFixture[] expectedPurapEntries = { EntryFixture.VCM_5319793, EntryFixture.PREQ_5773686, EntryFixture.PREQ_5773687 };
         assertPOLinesAreSeparatedCorrectly(expectedFpEntries, expectedPurapEntries,
-                EntryFixture.VCM_ONE, EntryFixture.VCM_FOUR, EntryFixture.PREQ_ONE, EntryFixture.PREQ_TWO);
+                EntryFixture.VCM_5319793, EntryFixture.VCM_5686501, EntryFixture.PREQ_5773686, EntryFixture.PREQ_5773687);
     }
 
     private void assertPOLinesAreSeparatedCorrectly(
