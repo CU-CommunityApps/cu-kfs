@@ -7,17 +7,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.kfs.gl.businessobject.Entry;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.batch.ExtractProcessLog;
-import org.kuali.kfs.module.cam.batch.service.ReconciliationService;
 import org.kuali.kfs.module.cam.batch.service.impl.BatchExtractServiceImpl;
 import org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry;
 import org.kuali.kfs.module.cam.businessobject.GlAccountLineGroup;
 import org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableItemAsset;
 import org.kuali.kfs.module.cam.businessobject.PurchasingAccountsPayableLineAssetAccount;
-import org.kuali.kfs.gl.businessobject.Entry;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -25,14 +27,12 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
-	
+
+    protected DataDictionaryService dataDictionaryService;
 
     /**
      * Retrieves a credit memo document for a specific document number
@@ -40,72 +40,69 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      * @param entry GL Line
      * @return CreditMemoDocument
      */
+    @Override
     protected VendorCreditMemoDocument findCreditMemoDocument(Entry entry) {
         VendorCreditMemoDocument creditMemoDocument = null;
         Map<String, String> keys = new LinkedHashMap<String, String>();
         keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
-        DataDictionaryService dDS = SpringContext.getBean(DataDictionaryService.class);
-        Class docClass = dDS.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
+        Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
         
-        Collection<VendorCreditMemoDocument> matchingCms;
-        matchingCms = (Collection<VendorCreditMemoDocument>)businessObjectService.findMatching(docClass, keys);
+        Collection<? extends Document> matchingCms = businessObjectService.findMatching(docClass, keys);
         if (matchingCms != null && matchingCms.size() == 1) {
-            creditMemoDocument = matchingCms.iterator().next();
+            creditMemoDocument = (VendorCreditMemoDocument) matchingCms.iterator().next();
         }
         return creditMemoDocument;
     }
-	
+
     /**
      * Retrieves a payment request document for a specific document number
      * 
      * @param entry GL Line
      * @return PaymentRequestDocument
      */
+    @Override
     protected PaymentRequestDocument findPaymentRequestDocument(Entry entry) {
         PaymentRequestDocument paymentRequestDocument = null;
         Map<String, String> keys = new LinkedHashMap<String, String>();
         keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
-        Collection<PaymentRequestDocument> matchingPreqs = (Collection<PaymentRequestDocument>)businessObjectService.findMatching(
-                SpringContext.getBean(DataDictionaryService.class)
-                        .getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT), keys);
+        Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
+        
+        Collection<? extends Document> matchingPreqs = businessObjectService.findMatching(docClass, keys);
         if (matchingPreqs != null && matchingPreqs.size() == 1) {
-            paymentRequestDocument = matchingPreqs.iterator().next();
+            paymentRequestDocument = (PaymentRequestDocument) matchingPreqs.iterator().next();
         }
         return paymentRequestDocument;
     }
 
-
-	 /**
+    /**
      * @see org.kuali.kfs.module.cam.batch.service.BatchExtractService#separatePOLines(java.util.List, java.util.List,
      *      java.util.Collection)
      */
+    @Override
     public void separatePOLines(List<Entry> fpLines, List<Entry> purapLines, Collection<Entry> elgibleGLEntries) {
         for (Entry entry : elgibleGLEntries) {
             if (CamsConstants.PREQ.equals(entry.getFinancialDocumentTypeCode())) {
                 purapLines.add(entry);
-            }
-            else if (!CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
+            } else if (!CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
                 fpLines.add(entry);
-            }
-            else if (CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
+            } else if (CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
                 Map<String, String> fieldValues = new HashMap<String, String>();
                 fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, entry.getDocumentNumber());
+                Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
                 // check if vendor credit memo, then include as FP line
-                Collection<VendorCreditMemoDocument> matchingCreditMemos = (Collection<VendorCreditMemoDocument>)businessObjectService.findMatching(
-                        SpringContext.getBean(DataDictionaryService.class)
-                                .getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT), fieldValues);
-                for (VendorCreditMemoDocument creditMemoDocument : matchingCreditMemos) {
+                Collection<? extends Document> matchingCreditMemos = businessObjectService.findMatching(docClass, fieldValues);
+                for (Document document : matchingCreditMemos) {
+                    VendorCreditMemoDocument creditMemoDocument = (VendorCreditMemoDocument) document;
                     if (creditMemoDocument.getPurchaseOrderIdentifier() == null) {
                         fpLines.add(entry);
-                    }
-                    else {
+                    } else {
                         purapLines.add(entry);
                     }
                 }
             }
         }
     }
-    
+
     /**
      * @see org.kuali.kfs.module.cam.batch.service.BatchExtractService#savePOLines(List, ExtractProcessLog)
      */
@@ -113,7 +110,6 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Override
     public HashSet<PurchasingAccountsPayableDocument> savePOLines(List<Entry> poLines, ExtractProcessLog processLog) {
         HashSet<PurchasingAccountsPayableDocument> purApDocuments = new HashSet<PurchasingAccountsPayableDocument>();
-        ReconciliationService reconciliationService = SpringContext.getBean(ReconciliationService.class);
 
         // This is a list of pending GL entries created after last GL process and Cab Batch extract
         // PurAp Account Line history comes from PURAP module
@@ -401,5 +397,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         return false;
     }
 
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
+    }
 
 }
