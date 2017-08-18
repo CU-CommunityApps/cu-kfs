@@ -231,80 +231,86 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         
     }
     
-    @Override
-    public void doRouteStatusChange(DocumentHeader header) {
-    	LOG.debug("doRouteStatusChange, entering");
-        super.doRouteStatusChange(header);
-        VendorDetail vendorDetail = (VendorDetail) getBusinessObject();
-        WorkflowDocument workflowDoc = header.getWorkflowDocument();
-        if (workflowDoc.isProcessed()) {
-        	LOG.debug("doRouteStatusChange, workflow is processed");
-        	boolean isExistingPaymentWorksVendor = getPaymentWorksVendorService().isExistingPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
-        	
-            if (isExistingPaymentWorksVendor) {
-            	LOG.debug("doRouteStatusChange, isExistingPaymentWorksVendor");
-            	this.saveBusinessObject();
-                processExistingPaymentWorksVendor(vendorDetail);
-            } else if (StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())
-                    || StringUtils.equals(KFSConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, this.getMaintenanceAction())) {
-            	LOG.debug("doRouteStatusChange, new action");
-            	this.saveBusinessObject();
-                processNewAction(vendorDetail);
-            } else if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, this.getMaintenanceAction())) {
-            	LOG.debug("doRouteStatusChange, edit action");
-                processEditAction(vendorDetail);
-            }
-        } else if (workflowDoc.isDisapproved()) {
-        	LOG.debug("doRouteStatusChange, disapproved");
-            processDissapprovedDocument();
-        }
-    }
-
-	protected void processExistingPaymentWorksVendor(VendorDetail vendorDetail) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("processExistingPaymentWorksVendor, Updating new vendor request to vendor approved for document number: " + this.getDocumentNumber());
-			LOG.debug("vendorDetail.getVendorDetailAssignedIdentifier(): " + vendorDetail.getVendorDetailAssignedIdentifier());
-			LOG.debug("vendorDetail.getVendorHeaderGeneratedIdentifier(): " + vendorDetail.getVendorHeaderGeneratedIdentifier());
-		}
-		PaymentWorksVendor vendor = getPaymentWorksVendorService().getPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
-
-		vendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
-		vendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
-		vendor.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
-		vendor.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
-
-		getPaymentWorksVendorService().updatePaymentWorksVendor(vendor);
-	}
-
-	protected void processNewAction(VendorDetail vendorDetail) {
-		LOG.debug("processNewAction, Creating new vendor request (from new KFS Vendor) as vendor approved for document number: " + this.getDocumentNumber());
-		getPaymentWorksVendorService().savePaymentWorksVendorRecord(vendorDetail, this.getDocumentNumber(), PaymentWorksConstants.TransactionType.NEW_VENDOR);
-	}
-
-	protected void processEditAction(VendorDetail vendorDetail) {
-		LOG.debug("processEditAction, Creating vendor update (from KFS Vendor Edit) as vendor approved for document number: " + this.getDocumentNumber());
-		getPaymentWorksVendorService().savePaymentWorksVendorRecord(vendorDetail, this.getDocumentNumber(), PaymentWorksConstants.TransactionType.VENDOR_UPDATE);
-	}
-
-	protected void processDissapprovedDocument() {
-		if (StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())) {
-			boolean isExistingNewVendor = getPaymentWorksVendorService().isExistingPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
-		    if (isExistingNewVendor) {
-		        LOG.debug("processDissapprovedDocument, Updating new vendor request to vendor disapproved for document number: " + this.getDocumentNumber());
-		        getPaymentWorksVendorService().updatePaymentWorksVendorProcessStatusByDocumentNumber(this.getDocumentNumber(), PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED);
-		    }
-		}
-	}
-
-	public PaymentWorksVendorService getPaymentWorksVendorService() {
-		if (paymentWorksVendorService == null) {
-			paymentWorksVendorService = SpringContext.getBean(PaymentWorksVendorService.class);
-		}
-		return paymentWorksVendorService;
-	}
-
-	public void setPaymentWorksVendorService(PaymentWorksVendorService paymentWorksVendorService) {
-		this.paymentWorksVendorService = paymentWorksVendorService;
-	}
+/*
+ * Commenting out code that performs PaymentWorks staging table updates until full functionality is is place.
+ * This code will be reused with only slight modifications when full PaymentWorks functionality is restored;
+ * therefore, it is being commented out instead of being removed and added back in.
+ *
+ */
+//    @Override
+//    public void doRouteStatusChange(DocumentHeader header) {
+//    	LOG.debug("doRouteStatusChange, entering");
+//        super.doRouteStatusChange(header);
+//        VendorDetail vendorDetail = (VendorDetail) getBusinessObject();
+//        WorkflowDocument workflowDoc = header.getWorkflowDocument();
+//        if (workflowDoc.isProcessed()) {
+//        	LOG.debug("doRouteStatusChange, workflow is processed");
+//        	boolean isExistingPaymentWorksVendor = getPaymentWorksVendorService().isExistingPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
+//
+//            if (isExistingPaymentWorksVendor) {
+//            	LOG.debug("doRouteStatusChange, isExistingPaymentWorksVendor");
+//            	this.saveBusinessObject();
+//                processExistingPaymentWorksVendor(vendorDetail);
+//            } else if (StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())
+//                    || StringUtils.equals(KFSConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, this.getMaintenanceAction())) {
+//            	LOG.debug("doRouteStatusChange, new action");
+//            	this.saveBusinessObject();
+//                processNewAction(vendorDetail);
+//            } else if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, this.getMaintenanceAction())) {
+//            	LOG.debug("doRouteStatusChange, edit action");
+//                processEditAction(vendorDetail);
+//            }
+//        } else if (workflowDoc.isDisapproved()) {
+//        	LOG.debug("doRouteStatusChange, disapproved");
+//            processDissapprovedDocument();
+//        }
+//    }
+//
+//	protected void processExistingPaymentWorksVendor(VendorDetail vendorDetail) {
+//		if (LOG.isDebugEnabled()) {
+//			LOG.debug("processExistingPaymentWorksVendor, Updating new vendor request to vendor approved for document number: " + this.getDocumentNumber());
+//			LOG.debug("vendorDetail.getVendorDetailAssignedIdentifier(): " + vendorDetail.getVendorDetailAssignedIdentifier());
+//			LOG.debug("vendorDetail.getVendorHeaderGeneratedIdentifier(): " + vendorDetail.getVendorHeaderGeneratedIdentifier());
+//		}
+//		PaymentWorksVendor vendor = getPaymentWorksVendorService().getPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
+//
+//		vendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
+//		vendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
+//		vendor.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+//		vendor.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+//
+//		getPaymentWorksVendorService().updatePaymentWorksVendor(vendor);
+//	}
+//
+//	protected void processNewAction(VendorDetail vendorDetail) {
+//		LOG.debug("processNewAction, Creating new vendor request (from new KFS Vendor) as vendor approved for document number: " + this.getDocumentNumber());
+//		getPaymentWorksVendorService().savePaymentWorksVendorRecord(vendorDetail, this.getDocumentNumber(), PaymentWorksConstants.TransactionType.NEW_VENDOR);
+//	}
+//
+//	protected void processEditAction(VendorDetail vendorDetail) {
+//		LOG.debug("processEditAction, Creating vendor update (from KFS Vendor Edit) as vendor approved for document number: " + this.getDocumentNumber());
+//		getPaymentWorksVendorService().savePaymentWorksVendorRecord(vendorDetail, this.getDocumentNumber(), PaymentWorksConstants.TransactionType.VENDOR_UPDATE);
+//	}
+//
+//	protected void processDissapprovedDocument() {
+//		if (StringUtils.equals(KFSConstants.MAINTENANCE_NEW_ACTION, this.getMaintenanceAction())) {
+//			boolean isExistingNewVendor = getPaymentWorksVendorService().isExistingPaymentWorksVendorByDocumentNumber(this.getDocumentNumber());
+//		    if (isExistingNewVendor) {
+//		        LOG.debug("processDissapprovedDocument, Updating new vendor request to vendor disapproved for document number: " + this.getDocumentNumber());
+//		        getPaymentWorksVendorService().updatePaymentWorksVendorProcessStatusByDocumentNumber(this.getDocumentNumber(), PaymentWorksConstants.ProcessStatus.VENDOR_DISAPPROVED);
+//		    }
+//		}
+//	}
+//
+//	public PaymentWorksVendorService getPaymentWorksVendorService() {
+//		if (paymentWorksVendorService == null) {
+//			paymentWorksVendorService = SpringContext.getBean(PaymentWorksVendorService.class);
+//		}
+//		return paymentWorksVendorService;
+//	}
+//
+//	public void setPaymentWorksVendorService(PaymentWorksVendorService paymentWorksVendorService) {
+//		this.paymentWorksVendorService = paymentWorksVendorService;
+//	}
 
 }
