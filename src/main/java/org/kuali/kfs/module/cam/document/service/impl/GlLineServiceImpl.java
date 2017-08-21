@@ -22,6 +22,7 @@ import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAt
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jetty.util.log.Log;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;
@@ -71,6 +72,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GlLineServiceImpl implements GlLineService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GlLineService.class);
     private static final String CAB_DESC_PREFIX = "CAB created for FP ";
 
     protected BusinessObjectService businessObjectService;
@@ -89,6 +91,7 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @NonTransactional
     public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) throws WorkflowException {
+        LOG.info("createAssetGlobalDocument, entering");
         // initiate a new document
         MaintenanceDocument document = (MaintenanceDocument) documentService.getNewDocument(DocumentTypeName.ASSET_ADD_GLOBAL);
 
@@ -128,15 +131,19 @@ public class GlLineServiceImpl implements GlLineService {
 
     protected void deactivateGLEntries(GeneralLedgerEntry entry, Document document, Integer capitalAssetLineNumber) {
         //now deactivate the gl line..
+        LOG.info("deactivateGLEntries, entering");
         CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(entry.getDocumentNumber(), capitalAssetLineNumber);
 
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
+            LOG.info("deactivateGLEntries, cap asset info object is not null");
             List<CapitalAssetAccountsGroupDetails> groupAccountingLines = capitalAssetInformation.getCapitalAssetAccountsGroupDetails();
             Collection<GeneralLedgerEntry> documentGlEntries = findAllGeneralLedgerEntry(entry.getDocumentNumber());
             for (CapitalAssetAccountsGroupDetails accountingLine : groupAccountingLines) {
+                LOG.info("deactivateGLEntries, accountingLine getCapitalAssetLineNumber: " + accountingLine.getCapitalAssetLineNumber());
                 //find the matching GL entry for this accounting line.
                 Collection<GeneralLedgerEntry> glEntries = findMatchingGeneralLedgerEntries(documentGlEntries, accountingLine);
                 for (GeneralLedgerEntry glEntry : glEntries) {
+                    LOG.info("deactivateGLEntries, glEntry getGeneralLedgerAccountIdentifier: " + glEntry.getGeneralLedgerAccountIdentifier());
                     KualiDecimal lineAmount = accountingLine.getAmount();
 
                     //update submitted amount on the gl entry and save the results.
@@ -342,9 +349,11 @@ public class GlLineServiceImpl implements GlLineService {
     @NonTransactional
     public Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries( Collection<GeneralLedgerEntry> allGLEntries, CapitalAssetAccountsGroupDetails accountingDetails ) {
         Collection<GeneralLedgerEntry> matchingGLEntries = new ArrayList<GeneralLedgerEntry>();
-
+        LOG.info("findMatchingGeneralLedgerEntries, number of allGLEntries: " + allGLEntries.size());
         for ( GeneralLedgerEntry entry : allGLEntries ) {
-            if ( doesGeneralLedgerEntryMatchAssetAccountingDetails(entry, accountingDetails) ) {
+            boolean doesGeneralLedgerEntryMatchAssetAccountingDetails = doesGeneralLedgerEntryMatchAssetAccountingDetails(entry, accountingDetails);
+            LOG.info("findMatchingGeneralLedgerEntries, doesGeneralLedgerEntryMatchAssetAccountingDetails: " + doesGeneralLedgerEntryMatchAssetAccountingDetails);
+            if (doesGeneralLedgerEntryMatchAssetAccountingDetails) {
                 matchingGLEntries.add(entry);
             }
         }
@@ -355,22 +364,28 @@ public class GlLineServiceImpl implements GlLineService {
 
     protected boolean doesGeneralLedgerEntryMatchAssetAccountingDetails( GeneralLedgerEntry entry, CapitalAssetAccountsGroupDetails accountingDetails ) {
         // this method will short-circuit and return false as soon as possible
-
+        
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getDocumentNumber(): " + entry.getDocumentNumber() + " accountingDetails.getDocumentNumber(): " + accountingDetails.getDocumentNumber());
         // sanity check - the arguments should already have the same document number
         if ( !StringUtils.equals( entry.getDocumentNumber(), accountingDetails.getDocumentNumber() ) ) {
             return false;
         }
-
+        
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getAccountNumber(): " + entry.getAccountNumber() + " accountingDetails.getAccountNumber(): " + accountingDetails.getAccountNumber());
         // required attributes - easy to compare
         if ( !StringUtils.equals( entry.getAccountNumber(), accountingDetails.getAccountNumber() ) ) {
             return false;
         }
+        
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getFinancialObjectCode(): " + entry.getFinancialObjectCode() + " accountingDetails.getFinancialObjectCode(): " + accountingDetails.getFinancialObjectCode());
         if ( !StringUtils.equals( entry.getFinancialObjectCode(), accountingDetails.getFinancialObjectCode() ) ) {
             return false;
         }
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getChartOfAccountsCode(): " + entry.getChartOfAccountsCode() + " accountingDetails.getChartOfAccountsCode(): " + accountingDetails.getChartOfAccountsCode());
         if ( !StringUtils.equals( entry.getChartOfAccountsCode(), accountingDetails.getChartOfAccountsCode() ) ) {
             return false;
         }
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getOrganizationReferenceId(): " + entry.getOrganizationReferenceId() + " accountingDetails.getOrganizationReferenceId(): " + accountingDetails.getOrganizationReferenceId());
         // account for blank equaling null
         if ( !StringUtils.equals( entry.getOrganizationReferenceId(), accountingDetails.getOrganizationReferenceId() ) ) {
             if ( StringUtils.isBlank( entry.getOrganizationReferenceId() )
@@ -382,6 +397,7 @@ public class GlLineServiceImpl implements GlLineService {
         }
         // optional attributes - need to account for blank being equivalent to dashes
         // it's always dashes on the CAB GL Entry table - but could be blank on the accounting details
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getSubAccountNumber(): " + entry.getSubAccountNumber() + " accountingDetails.getSubAccountNumber(): " + accountingDetails.getSubAccountNumber());
         if ( !StringUtils.equals( entry.getSubAccountNumber(), accountingDetails.getSubAccountNumber() ) ) {
             if ( StringUtils.equals( entry.getSubAccountNumber(), KFSConstants.getDashSubAccountNumber() )
                     && StringUtils.isBlank( accountingDetails.getSubAccountNumber() ) ) {
@@ -390,6 +406,7 @@ public class GlLineServiceImpl implements GlLineService {
                 return false;
             }
         }
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getFinancialSubObjectCode(): " + entry.getFinancialSubObjectCode() + " accountingDetails.getFinancialSubObjectCode(): " + accountingDetails.getFinancialSubObjectCode());
         if ( !StringUtils.equals( entry.getFinancialSubObjectCode(), accountingDetails.getFinancialSubObjectCode() ) ) {
             if ( StringUtils.equals( entry.getFinancialSubObjectCode(), KFSConstants.getDashFinancialSubObjectCode() )
                     && StringUtils.isBlank( accountingDetails.getFinancialSubObjectCode() ) ) {
@@ -398,6 +415,7 @@ public class GlLineServiceImpl implements GlLineService {
                 return false;
             }
         }
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getProjectCode(): " + entry.getProjectCode() + " accountingDetails.getProjectCode(): " + accountingDetails.getProjectCode());
         if ( !StringUtils.equals( entry.getProjectCode(), accountingDetails.getProjectCode() ) ) {
             if ( StringUtils.equals( entry.getProjectCode(), KFSConstants.getDashProjectCode() )
                     && StringUtils.isBlank( accountingDetails.getProjectCode() ) ) {
@@ -408,8 +426,15 @@ public class GlLineServiceImpl implements GlLineService {
         }
         
         //check if GL Debit matches acct line type target and Credit matches Source
-		if ((StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE) && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE))
-				|| (StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE) && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE))) {
+        
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, entry.getTransactionDebitCreditCode(): " + entry.getTransactionDebitCreditCode() + " accountingDetails.getFinancialDocumentLineTypeCode(): " + accountingDetails.getFinancialDocumentLineTypeCode());        
+		boolean isGlDebitAndAccountingDetailsTarget = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE) 
+		        && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
+        boolean isGlCreditAndAccountingDetailsSource = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE) 
+                && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
+        LOG.info("doesGeneralLedgerEntryMatchAssetAccountingDetails, isGlDebitAndAccountingDetailsTarget: " + isGlDebitAndAccountingDetailsTarget + " isGlCreditAndAccountingDetailsSource: " + isGlCreditAndAccountingDetailsSource);
+
+        if (isGlDebitAndAccountingDetailsTarget || isGlCreditAndAccountingDetailsSource) {
 			// this is a match, keep going
 		} else {
 			return false;
@@ -429,14 +454,18 @@ public class GlLineServiceImpl implements GlLineService {
 
     protected void createGeneralLedgerEntryAsset(GeneralLedgerEntry entry, Document document, Integer capitalAssetLineNumber) {
         // KFSMI-9645 : check if the document is already referenced to prevent an OJB locking error
+        LOG.info("createGeneralLedgerEntryAsset, entering, capitalAssetLineNumber: " + capitalAssetLineNumber.intValue() +  " document: " + 
+        document.getDocumentNumber() + " entry: " + entry.getObjectId());
         for ( GeneralLedgerEntryAsset glEntryAsset : entry.getGeneralLedgerEntryAssets() ) {
             if ( glEntryAsset.getCapitalAssetManagementDocumentNumber().equals(document.getDocumentNumber() )
                     && glEntryAsset.getCapitalAssetBuilderLineNumber().equals(capitalAssetLineNumber ) ) {
                 // an object with this key already exists, abort and don't attempt to add another
+                LOG.info("createGeneralLedgerEntryAsset, found a match, returning");
                 return;
             }
         }
         // If we get here, add a child record with the document number
+        LOG.info("createGeneralLedgerEntryAsset, adding a new entry");
         GeneralLedgerEntryAsset entryAsset = new GeneralLedgerEntryAsset();
         entryAsset.setGeneralLedgerAccountIdentifier(entry.getGeneralLedgerAccountIdentifier());
         entryAsset.setCapitalAssetBuilderLineNumber(capitalAssetLineNumber);
@@ -481,6 +510,7 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @NonTransactional
     public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber) throws WorkflowException {
+        LOG.info("createAssetPaymentDocument, entering");
         // Find out the GL Entry
         // initiate a new document
         AssetPaymentDocument document = (AssetPaymentDocument) documentService.getNewDocument(DocumentTypeName.ASSET_PAYMENT);
