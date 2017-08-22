@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -34,6 +35,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
     protected ConfigurationService configurationService;
+    protected ParameterEvaluatorService parameterEvaluatorService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -115,22 +117,16 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeGroupId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        String expectedGroupId = findEmployeeGroupId();
-        boolean valid = StringUtils.equalsIgnoreCase(line.getEmployeeGroupId(), expectedGroupId);
+        boolean valid = parameterEvaluatorService.getParameterEvaluator(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, line.getEmployeeGroupId()).evaluationSucceeds();      
         if (valid) {
             LOG.debug("Found a valid employee group id.");
         } else {
-            String validationError = ("Found an invalid employee group id: " + line.getEmployeeGroupId() + ".  We expected the group ID to be " + expectedGroupId);
+            String validationError = ("Found an invalid employee group id: " + line.getEmployeeGroupId() + ".  We expected the group ID to be in this list:" + concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID));
             reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationError));
             LOG.error("validateEmployeeGroupId, " + validationError);
         }
         return valid;
-    }
-    
-    protected String findEmployeeGroupId() {
-        String expectedGroupId = getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
-        return expectedGroupId;
     }
 
     @Override
@@ -290,14 +286,6 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         this.concurAccountValidationService = concurAccountValidationService;
     }
 
-    public ParameterService getParameterService() {
-        return parameterService;
-    }
-
-    public void setParameterService(ParameterService parameterService) {
-        this.parameterService = parameterService;
-    }
-
     public ConcurStandardAccountingExtractCashAdvanceService getConcurStandardAccountingExtractCashAdvanceService() {
         return concurStandardAccountingExtractCashAdvanceService;
     }
@@ -328,6 +316,11 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setParameterEvaluatorService(
+            ParameterEvaluatorService parameterEvaluatorService) {
+        this.parameterEvaluatorService = parameterEvaluatorService;
     }
 
 }
