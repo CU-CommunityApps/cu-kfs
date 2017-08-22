@@ -131,8 +131,6 @@
 		<property name="documentService" ref="documentService" />
 		<property name="purapService" ref="purapService"/>
 		<property name="purchaseOrderService" ref="purchaseOrderService"/>
-		<property name="noteService" ref="noteService"/>
-		<property name="sequenceAccessorService" ref="sequenceAccessorService"/>
 	</bean>
 	
 	<!-- Lookupables -->
