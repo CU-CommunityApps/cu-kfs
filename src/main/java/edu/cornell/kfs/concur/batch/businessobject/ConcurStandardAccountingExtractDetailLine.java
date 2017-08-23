@@ -42,6 +42,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String reportOrgRefId;
     private String journalPayerPaymentTypeName;
     private String journalPayeePaymentTypeName;
+    private String cashAdvancePaymentCode;
     
     public String getBatchID() {
         return batchID;
@@ -331,6 +332,14 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.journalPayeePaymentTypeName = journalPayeePaymentTypeName;
     }
 
+    public String getCashAdvancePaymentCode() {
+        return cashAdvancePaymentCode;
+    }
+
+    public void setCashAdvancePaymentCode(String cashAdvancePaymentCode) {
+        this.cashAdvancePaymentCode = cashAdvancePaymentCode;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder(" batchID: ").append(batchID).append(" batchDate: ").append(batchDate);
         sb.append(" sequenceNumber: ").append(sequenceNumber).append(" employeeId: ").append(employeeId);
@@ -349,7 +358,8 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" reportChartOfAccountsCode: ").append(reportChartOfAccountsCode).append(" reportAccountNumber: ").append(reportAccountNumber);
         sb.append(" reportSubAccountNumber: ").append(reportSubAccountNumber).append(" reportSubObjectCode: ").append(reportSubObjectCode);
         sb.append(" reportProjectCode: ").append(reportProjectCode).append(" reportOrgRefId: ").append(reportOrgRefId);
-        sb.append(" cashAdvanceKey: ").append(cashAdvanceKey).append(" journalPayerPaymentTypeName: ").append(journalPayerPaymentTypeName);
+        sb.append(" cashAdvanceKey: ").append(cashAdvanceKey).append(" cashAdvancePaymentCode: ").append(cashAdvancePaymentCode);
+        sb.append(" journalPayerPaymentTypeName: ").append(journalPayerPaymentTypeName);
         sb.append(" journalPayeePaymentTypeName: ").append(journalPayeePaymentTypeName);
         return sb.toString();
     }

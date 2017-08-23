@@ -38,6 +38,12 @@ public class ConcurDetailLineGroupForCollectorHelper {
     protected String prepaidOffsetObjectCode;
     protected String paymentOffsetObjectCode;
     protected String personalOffsetObjectCode;
+    
+    protected String atmFeeDebitChartCode;
+    protected String atmFeeDebitAccountNumber;
+    protected String atmFeeDebitSubAccountNumber;
+    protected String atmFeeDebitObjectCode;
+    protected String atmCashAdvanceObjectCode;
 
     public ConcurDetailLineGroupForCollectorHelper(String actualFinancialBalanceTypeCode, Date transmissionDate,
             ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
@@ -61,6 +67,13 @@ public class ConcurDetailLineGroupForCollectorHelper {
         this.prepaidOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
         this.paymentOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE);
         this.personalOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE);
+        
+        this.atmFeeDebitChartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_CHART);
+        this.atmFeeDebitAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_ACCOUNT);
+        this.atmFeeDebitSubAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_SUBACCOUNT);
+        this.atmFeeDebitObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_OBJECT);
+        this.atmCashAdvanceObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
+        
     }
 
     public String getActualFinancialBalanceTypeCode() {
@@ -101,6 +114,26 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     public String getPersonalOffsetObjectCode() {
         return personalOffsetObjectCode;
+    }
+
+    public String getAtmFeeDebitChartCode() {
+        return atmFeeDebitChartCode;
+    }
+
+    public String getAtmFeeDebitAccountNumber() {
+        return atmFeeDebitAccountNumber;
+    }
+
+    public String getAtmFeeDebitSubAccountNumber() {
+        return atmFeeDebitSubAccountNumber;
+    }
+
+    public String getAtmFeeDebitObjectCode() {
+        return atmFeeDebitObjectCode;
+    }
+
+    public String getAtmCashAdvanceObjectCode() {
+        return atmCashAdvanceObjectCode;
     }
 
     public String getDashOnlyPropertyValue(String propertyName) {
