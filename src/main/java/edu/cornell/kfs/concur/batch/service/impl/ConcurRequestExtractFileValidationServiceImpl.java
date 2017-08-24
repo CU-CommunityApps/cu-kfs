@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -26,8 +25,6 @@ import edu.cornell.kfs.concur.batch.service.ConcurRequestedCashAdvanceService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequestExtractFileValidationService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
@@ -36,7 +33,6 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     protected ConfigurationService configurationService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
-    protected ParameterEvaluatorService parameterEvaluatorService;
 
     public boolean requestExtractHeaderRowValidatesToFileContents(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
         boolean headerValidationPassed;
@@ -265,8 +261,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             List<ConcurRequestExtractRequestDetailFileLine> requestDetailLines = requestExtractFile.getRequestDetails();
             boolean foundOnAllLines = true;
             for (ConcurRequestExtractRequestDetailFileLine detailLine : requestDetailLines) {
-                foundOnAllLines &= (StringUtils.isNotEmpty(detailLine.getEmployeeGroupId()) && 
-                        parameterEvaluatorService.getParameterEvaluator(CUKFSConstants.ParameterNamespaces.CONCUR, CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, detailLine.getEmployeeGroupId()).evaluationSucceeds());
+                foundOnAllLines &= concurEmployeeInfoValidationService.isEmployeeGroupIdValid(detailLine.getEmployeeGroupId());
            }
             return foundOnAllLines;
         }
@@ -404,10 +399,6 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
 
     public void setConcurEmployeeInfoValidationService(ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService) {
         this.concurEmployeeInfoValidationService = concurEmployeeInfoValidationService;
-    }
-
-    public void setParameterEvaluatorService(ParameterEvaluator parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
     }
 
 }

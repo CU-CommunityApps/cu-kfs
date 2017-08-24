@@ -4,9 +4,7 @@ import java.sql.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
@@ -23,19 +21,15 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValid
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurStandardAccountingExtractValidationServiceImpl implements ConcurStandardAccountingExtractValidationService {
     private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class);
     
     protected ConcurAccountValidationService concurAccountValidationService;
-    protected ParameterService parameterService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEmployeeInfoValidationService concurEmployeeInfoValidationService;
     protected ConfigurationService configurationService;
-    protected ParameterEvaluatorService parameterEvaluatorService;
     
     @Override
     public boolean validateConcurStandardAccountExtractFile(ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile,
@@ -117,8 +111,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
     @Override
     public boolean validateEmployeeGroupId(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        boolean valid = parameterEvaluatorService.getParameterEvaluator(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, line.getEmployeeGroupId()).evaluationSucceeds();      
+        boolean valid = concurEmployeeInfoValidationService.isEmployeeGroupIdValid(line.getEmployeeGroupId());      
         if (valid) {
             LOG.debug("Found a valid employee group id.");
         } else {
@@ -317,10 +310,4 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
-
-    public void setParameterEvaluatorService(
-            ParameterEvaluatorService parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
-    }
-
 }

@@ -114,7 +114,6 @@
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">
 		<property name="concurAccountValidationService" ref="concurAccountValidationService"/>
-		<property name="parameterService" ref="parameterService"/>
 		<property name="concurEmployeeInfoValidationService" ref="concurEmployeeInfoValidationService"/>
 		<property name="concurStandardAccountingExtractCashAdvanceService" ref="concurStandardAccountingExtractCashAdvanceService"/>
 		<property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>

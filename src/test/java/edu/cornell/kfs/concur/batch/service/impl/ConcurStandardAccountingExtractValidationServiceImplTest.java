@@ -3,9 +3,9 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -13,39 +13,54 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.fixture.ConcurParameterConstantsFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurStandardAccountingExtractFileFixture;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
-import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractValidationServiceImplTest {
-    private static final String DEFAULT_GROUP_ID  = "CORNELL";
+    private static final String CORNELL_UPPERCASE_GROUP_ID  = "CORNELL";
+    private static final String EXECUTIVES_GROUP_ID  = "Executives";
     private static final String NULL_GROUP_ID  = null;
     private static final String FOO_GROUP_ID  = "foo";
+    private static final String PARAM_VALUES_SPLIT_CHAR = ";";
     
-    private ConcurStandardAccountingExtractValidationService concurStandardAccountingValidationService;
+    private ConcurStandardAccountingExtractValidationServiceImpl concurStandardAccountingValidationService;
     private ConcurStandardAccountingExtractFile file;
+    private ConcurStandardAccountingExtractFile executivesFile;
     private ConcurStandardAccountingExtractFile nullGroupIdFile;
     private ConcurStandardAccountingExtractFile fooGroupIdFile;
     private ConcurStandardAccountingExtractBatchReportData reportData;
+    private ConcurBatchUtilityServiceImpl concurBatchUtilityService;
+    private ConcurParameterConstantsFixture concurParameterConstantsFixture;
+    private ConcurEmployeeInfoValidationServiceImpl concurEmployeeInfoValidationService;
     
     @Before
     public void setUp() throws Exception {
         Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class).setLevel(Level.DEBUG);
-        concurStandardAccountingValidationService = new TestableConcurStandardAccountingExtractValidationServiceImpl();
+        concurBatchUtilityService = new TestableConcurBatchUtilityServiceImpl();
+        concurEmployeeInfoValidationService = new TestableConcurEmployeeInfoValidationServiceImpl();
+        concurStandardAccountingValidationService = new ConcurStandardAccountingExtractValidationServiceImpl();
+        concurStandardAccountingValidationService.setConcurBatchUtilityService(concurBatchUtilityService);
+        concurStandardAccountingValidationService.setConcurEmployeeInfoValidationService(concurEmployeeInfoValidationService);
         
         KualiDecimal[] debits = {new KualiDecimal(100.75), new KualiDecimal(-50.45)};
         KualiDecimal[] credits  = {};
-        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, DEFAULT_GROUP_ID);
+        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, CORNELL_UPPERCASE_GROUP_ID);
+        executivesFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, EXECUTIVES_GROUP_ID);
         nullGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, NULL_GROUP_ID);
         fooGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, FOO_GROUP_ID);
         reportData = new ConcurStandardAccountingExtractBatchReportData();
+        concurParameterConstantsFixture = new ConcurParameterConstantsFixture();
+        
     }
 
     @After
     public void tearDown() throws Exception {
         concurStandardAccountingValidationService = null;
         file = null;
+        executivesFile = null;
         nullGroupIdFile = null;
         fooGroupIdFile = null;
         reportData = null;
@@ -127,6 +142,12 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     }
     
     @Test 
+    public void validateExecutivesEmployeeGroupIdGood() {
+        assertTrue("Executives should be a good group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId(executivesFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
+    }
+    
+    @Test 
     public void validateEmployeeGroupIdNull() {
         assertFalse("This should be a bad group", 
                 concurStandardAccountingValidationService.validateEmployeeGroupId(nullGroupIdFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
@@ -157,11 +178,30 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         file.setRecordCount(new Integer(5));
     }
     
-    private class TestableConcurStandardAccountingExtractValidationServiceImpl extends ConcurStandardAccountingExtractValidationServiceImpl {
+    private class TestableConcurEmployeeInfoValidationServiceImpl extends ConcurEmployeeInfoValidationServiceImpl {
         @Override
-        protected String findEmployeeGroupId() {
-            return DEFAULT_GROUP_ID;
+        public boolean isEmployeeGroupIdValid(String employeeGroupId) {
+            if(StringUtils.isNotBlank(employeeGroupId)){
+                String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+                
+                if(StringUtils.isNotBlank(parameterValue) && StringUtils.contains(parameterValue, PARAM_VALUES_SPLIT_CHAR)){
+                    String[] parameterValues = parameterValue.split(PARAM_VALUES_SPLIT_CHAR);
+                    for(String value : parameterValues){
+                        if(StringUtils.equalsIgnoreCase(value, employeeGroupId)){
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;           
         }
     }
-
+    
+    private class TestableConcurBatchUtilityServiceImpl extends ConcurBatchUtilityServiceImpl {
+        @Override
+        public String getConcurParameterValue(String parameterName) {
+            return concurParameterConstantsFixture.getValueForConcurParameter(parameterName);          
+        }
+    }
+    
 }
