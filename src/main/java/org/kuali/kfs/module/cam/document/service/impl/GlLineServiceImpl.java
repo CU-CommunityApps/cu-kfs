@@ -90,7 +90,6 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @NonTransactional
     public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) throws WorkflowException {
-        LOG.debug("createAssetGlobalDocument, entering");
         // initiate a new document
         MaintenanceDocument document = (MaintenanceDocument) documentService.getNewDocument(DocumentTypeName.ASSET_ADD_GLOBAL);
 
@@ -120,7 +119,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     protected void markCapitalAssetProcessed(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) {
-        LOG.debug("markCapitalAssetProcessed, entering");
         CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(primary.getDocumentNumber(), capitalAssetLineNumber);
         //if it is create asset...
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
@@ -130,7 +128,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     protected void deactivateGLEntries(GeneralLedgerEntry entry, Document document, Integer capitalAssetLineNumber) {
-        LOG.debug("deactivateGLEntries, entering");
         //now deactivate the gl line..
         CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(entry.getDocumentNumber(), capitalAssetLineNumber);
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
@@ -142,7 +139,9 @@ public class GlLineServiceImpl implements GlLineService {
             for (CapitalAssetAccountsGroupDetails accountingLine : groupAccountingLines) {
                 //find the matching GL entry for this accounting line.
                 Collection<GeneralLedgerEntry> glEntries = findMatchingGeneralLedgerEntries(documentGlEntries, accountingLine);
-                LOG.debug("deactivateGLEntries, accountingLine: " + accountingLine + "  glEntries.size(): " + glEntries.size());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("deactivateGLEntries, accountingLine: " + accountingLine + "  glEntries.size(): " + glEntries.size());
+                }
                 for (GeneralLedgerEntry glEntry : glEntries) {
                     KualiDecimal lineAmount = accountingLine.getAmount();
 
@@ -419,13 +418,12 @@ public class GlLineServiceImpl implements GlLineService {
         boolean isGlEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
         boolean isAccountingDetailTarget = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
         boolean isAccountingDetailSource = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
-        boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(), "GEC");
+        boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(), KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
         if (LOG.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("doesGeneralLedgerEntryMatchAssetAccountingDetails, isGlEntryDebit: ");
             sb.append(isGlEntryDebit).append(" isGlEntryCredit: ").append(isGlEntryCredit).append(" isAccountingDetailTarget: ");
             sb.append(isAccountingDetailTarget).append(" isAccountingDetailSource: ").append(isAccountingDetailSource);
-            sb.append(" (isGlEntryDebit && isAccountingDetailTarget): " + (isGlEntryDebit && isAccountingDetailTarget));
-            sb.append(" (isGlEntryCredit && isAccountingDetailSource): " + (isGlEntryCredit && isAccountingDetailSource));
+            sb.append(" isGeneralErrorCorrection: ").append(isGeneralErrorCorrection);
             LOG.info(sb.toString());
         }
         if ((isGlEntryDebit && isAccountingDetailTarget) || (isGlEntryCredit && isAccountingDetailSource) ||
@@ -501,7 +499,6 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @NonTransactional
     public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber) throws WorkflowException {
-        LOG.debug("createAssetPaymentDocument, entering");
         // Find out the GL Entry
         // initiate a new document
         AssetPaymentDocument document = (AssetPaymentDocument) documentService.getNewDocument(DocumentTypeName.ASSET_PAYMENT);
@@ -692,18 +689,14 @@ public class GlLineServiceImpl implements GlLineService {
      * @param accountLineAmount
      */
     protected void updateTransactionSumbitGlEntryAmount(GeneralLedgerEntry matchingGLEntry, KualiDecimal accountLineAmount) {
-        LOG.debug("updateTransactionSumbitGlEntryAmount, entering");
         //update submitted amount on the gl entry and save the results.
         KualiDecimal submitTotalAmount = KualiDecimal.ZERO;
         if (ObjectUtils.isNotNull(matchingGLEntry.getTransactionLedgerSubmitAmount())) {
-            LOG.debug("updateTransactionSumbitGlEntryAmount, submitTotalAmount: " + submitTotalAmount);
             submitTotalAmount = matchingGLEntry.getTransactionLedgerSubmitAmount();
         }
 
         matchingGLEntry.setTransactionLedgerSubmitAmount(submitTotalAmount.add(accountLineAmount.abs()));
-        LOG.debug("updateTransactionSumbitGlEntryAmount, matchingGLEntry.getTransactionLedgerSubmitAmount(): " + matchingGLEntry.getTransactionLedgerSubmitAmount() + " matchingGLEntry.getTransactionLedgerEntryAmount(): " + matchingGLEntry.getTransactionLedgerEntryAmount());
         if (matchingGLEntry.getTransactionLedgerSubmitAmount().equals(matchingGLEntry.getTransactionLedgerEntryAmount())) {
-            LOG.debug("updateTransactionSumbitGlEntryAmount, setting the GL entry status to enroute");
             matchingGLEntry.setActivityStatusCode(CamsConstants.ActivityStatusCode.ENROUTE);
         }
 
