@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.cam.web.struts;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -32,6 +33,7 @@ import org.kuali.kfs.module.cam.businessobject.GeneralLedgerEntry;
 import org.kuali.kfs.module.cam.document.service.GlAndPurApHelperService;
 import org.kuali.kfs.module.cam.document.service.GlLineService;
 import org.kuali.kfs.module.cam.document.web.struts.CabActionBase;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -88,7 +90,7 @@ public class CapitalAssetInformationAction extends CabActionBase {
         
         if(shouldBuildMissingCapitalAssetInformation(capitalAssetInformations, glEntries)){
         	// we need to generate missing capital asset info
-            LOG.info("prepareRecordsForDisplay, Need to creating missing information objects.");
+            LOG.debug("prepareRecordsForDisplay, Need to creating missing information objects.");
         	glLineService.setupMissingCapitalAssetInformation(entry.getDocumentNumber());
         }
         
@@ -110,17 +112,40 @@ public class CapitalAssetInformationAction extends CabActionBase {
 
     private boolean shouldBuildMissingCapitalAssetInformation(List<CapitalAssetInformation> capitalAssetInformations,
             Collection<GeneralLedgerEntry> glEntries) {
+        boolean isCapitalAssetInformationAndGLEntriesDifferentSizes = !capitalAssetInformations.isEmpty() && capitalAssetInformations.size() != glEntries.size();
+        if (isGeneralErrorCorrectionDocument(glEntries)) {
+            return isCapitalAssetInformationAndGLEntriesDifferentSizes && isCapitalAssetInformationAndGLEntryTotalsDifferent(capitalAssetInformations, glEntries);
+        } else {
+            return isCapitalAssetInformationAndGLEntriesDifferentSizes;
+        }
+    }
+    
+    private boolean isGeneralErrorCorrectionDocument(Collection<GeneralLedgerEntry> glEntries) {
+        boolean isGeneralErrorCorrection = false;
+        if (CollectionUtils.isNotEmpty(glEntries)) {
+            GeneralLedgerEntry firstEntry = glEntries.iterator().next();
+            isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(firstEntry.getFinancialDocumentTypeCode(), 
+                    KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isGeneralErrorCorrectionDocument: " + isGeneralErrorCorrection);
+        }
+        return isGeneralErrorCorrection;
+    }
+    
+    private boolean isCapitalAssetInformationAndGLEntryTotalsDifferent(List<CapitalAssetInformation> capitalAssetInformations,
+            Collection<GeneralLedgerEntry> glEntries) {
         KualiDecimal entriesTotal = findTotalGLEntries(glEntries);
         KualiDecimal informationTotal = findTotalAmountForAssetInformation(capitalAssetInformations);
         if (LOG.isDebugEnabled()) {
             int capAssetInfoSize = CollectionUtils.isNotEmpty(capitalAssetInformations) ? capitalAssetInformations.size() : 0;
             int glEntreisSzie = CollectionUtils.isNotEmpty(glEntries) ? glEntries.size() : 0;
-            StringBuilder sb = new StringBuilder("shouldBuildMissingCapitalAssetInformation, the number of capitalAssetInformations size: ");
+            StringBuilder sb = new StringBuilder("isCapitalAssetInformationAndGLEntryTotalsDifferent, the number of capitalAssetInformations size: ");
             sb.append(capAssetInfoSize).append(" glEntries size: ").append(glEntreisSzie);
             sb.append(" informationTotal: ").append(informationTotal).append(" entriesTotal: ").append(entriesTotal);
             LOG.debug(sb.toString());
         }
-        return !capitalAssetInformations.isEmpty() && capitalAssetInformations.size() != glEntries.size() && !entriesTotal.equals(informationTotal);
+        return !entriesTotal.equals(informationTotal);
     }
     
     private KualiDecimal findTotalAmountForAssetInformation(List<CapitalAssetInformation> informationList) {
