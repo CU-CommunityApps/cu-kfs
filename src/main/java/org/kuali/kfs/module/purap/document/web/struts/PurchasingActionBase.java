@@ -18,15 +18,16 @@
  */
 package org.kuali.kfs.module.purap.document.web.struts;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm;
-import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderBase;
-import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderForDistribution;
-import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderForLineItem;
-import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
-import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
-import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -37,6 +38,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.integration.purap.CapitalAssetLocation;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.integration.purap.ItemCapitalAsset;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
@@ -49,9 +51,11 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.PersistenceService;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -102,16 +106,20 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderForm;
+import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderBase;
+import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderForDistribution;
+import edu.cornell.kfs.module.purap.util.PurchasingFavoriteAccountLineBuilderForLineItem;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
+import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
+import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 /**
  * Struts Action for Purchasing documents.
@@ -1647,9 +1655,11 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         try {
             Note noteObj = SpringContext.getBean(DocumentService.class).createNoteFromDocument(kualiDocumentFormBase.getDocument(), ((PurchasingFormBase)kualiDocumentFormBase).getReasonToChange());
+            populateIdentifierOnNoteAndExtension(noteObj);
             kualiDocumentFormBase.getDocument().addNote(noteObj);
-         //   SpringContext.getBean(NoteService.class).save(noteObj);
-            SpringContext.getBean(NoteService.class).saveNoteList(kualiDocumentFormBase.getDocument().getNotes());
+            if (doesDocumentAllowImmediateSaveOfNewNote(kualiDocumentFormBase.getDocument(), noteObj)) {
+                getNoteService().save(noteObj);
+            }
             ((PurchasingFormBase)kualiDocumentFormBase).setReasonToChange(KFSConstants.EMPTY_STRING);
         }
         catch(Exception e){
@@ -1659,8 +1669,22 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }   
         
 	}
-	
- 
+
+    private void populateIdentifierOnNoteAndExtension(Note note) {
+        Long nextNoteId = getSequenceAccessorService().getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
+        NoteExtendedAttribute extension = (NoteExtendedAttribute) note.getExtension();
+        note.setNoteIdentifier(nextNoteId);
+        extension.setNoteIdentifier(nextNoteId);
+    }
+
+    private boolean doesDocumentAllowImmediateSaveOfNewNote(Document document, Note note) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        PersistableBusinessObject noteTarget = document.getNoteTarget();
+        // This is the same logic used by the KualiDocumentActionBase.insertBONote() method.
+        return !workflowDocument.isInitiated() && StringUtils.isNotBlank(noteTarget.getObjectId())
+                && !(document instanceof MaintenanceDocument && StringUtils.equals(NoteType.BUSINESS_OBJECT.getCode(), note.getNoteTypeCode()));
+    }
+
     private List<Note> getPersistedBoNotesNotes(Document document) {
     	
         List<Note> notes = new ArrayList<Note>();
@@ -1786,6 +1810,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 		favoriteAccountBuilder.addNewFavoriteAccountLineToListIfPossible();
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+    protected SequenceAccessorService getSequenceAccessorService() {
+        return SpringContext.getBean(SequenceAccessorService.class);
     }
 
 }
