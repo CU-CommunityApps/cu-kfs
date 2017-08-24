@@ -373,7 +373,6 @@
 	    <property name="concurEmployeeInfoValidationService" ref="concurEmployeeInfoValidationService"/>
 	    <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
 	    <property name="configurationService" ref="configurationService"/>
-	    <property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
 	</bean>
 
     <bean id="concurCashAdvancePdpFeedFileService" parent="concurCashAdvancePdpFeedFileService-parentBean" />
