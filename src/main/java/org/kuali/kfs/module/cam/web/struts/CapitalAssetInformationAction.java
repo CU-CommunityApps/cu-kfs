@@ -18,7 +18,6 @@
  */
 package org.kuali.kfs.module.cam.web.struts;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -34,7 +33,6 @@ import org.kuali.kfs.module.cam.document.service.GlLineService;
 import org.kuali.kfs.module.cam.document.web.struts.CabActionBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,8 +45,7 @@ import java.util.Map;
  * Struts action class that handles Capital Asset Information Screen actions
  */
 public class CapitalAssetInformationAction extends CabActionBase {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CapitalAssetInformationAction.class);
-    
+
     /**
      * Action "process" from CAB GL Lookup screen is processed by this method
      *
@@ -60,7 +57,6 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @throws Exception
      */
     public ActionForward process(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        
         CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
         String glAcctId = request.getParameter(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER);
         Long cabGlEntryId = Long.valueOf(glAcctId);
@@ -86,9 +82,8 @@ public class CapitalAssetInformationAction extends CabActionBase {
         List<CapitalAssetInformation> capitalAssetInformations = glLineService.findAllCapitalAssetInformation(entry.getDocumentNumber());
         Collection<GeneralLedgerEntry> glEntries = glLineService.findAllGeneralLedgerEntry(entry.getDocumentNumber()); 
         
-        if(shouldBuildMissingCapitalAssetInformation(capitalAssetInformations, glEntries)){
+        if(!capitalAssetInformations.isEmpty() && capitalAssetInformations.size() != glEntries.size()){
         	// we need to generate missing capital asset info
-            LOG.info("prepareRecordsForDisplay, Need to creating missing information objects.");
         	glLineService.setupMissingCapitalAssetInformation(entry.getDocumentNumber());
         }
         
@@ -106,41 +101,6 @@ public class CapitalAssetInformationAction extends CabActionBase {
         }
 
         capitalAssetForm.setCapitalAssetInformation(capitalAssetInformation);
-    }
-
-    private boolean shouldBuildMissingCapitalAssetInformation(List<CapitalAssetInformation> capitalAssetInformations,
-            Collection<GeneralLedgerEntry> glEntries) {
-        KualiDecimal entriesTotal = findTotalGLEntries(glEntries);
-        KualiDecimal informationTotal = findTotalAmountForAssetInformation(capitalAssetInformations);
-        if (LOG.isDebugEnabled()) {
-            int capAssetInfoSize = CollectionUtils.isNotEmpty(capitalAssetInformations) ? capitalAssetInformations.size() : 0;
-            int glEntreisSzie = CollectionUtils.isNotEmpty(glEntries) ? glEntries.size() : 0;
-            StringBuilder sb = new StringBuilder("shouldBuildMissingCapitalAssetInformation, the number of capitalAssetInformations size: ");
-            sb.append(capAssetInfoSize).append(" glEntries size: ").append(glEntreisSzie);
-            sb.append(" informationTotal: ").append(informationTotal).append(" entriesTotal: ").append(entriesTotal);
-            LOG.debug(sb.toString());
-        }
-        return !capitalAssetInformations.isEmpty() && capitalAssetInformations.size() != glEntries.size() && !entriesTotal.equals(informationTotal);
-    }
-    
-    private KualiDecimal findTotalAmountForAssetInformation(List<CapitalAssetInformation> informationList) {
-        KualiDecimal amount = KualiDecimal.ZERO;
-        if (CollectionUtils.isNotEmpty(informationList)) {
-            for (CapitalAssetInformation info : informationList) {
-                amount = amount.abs().add(info.getCapitalAssetLineAmount().abs());
-            }
-        }
-        return amount;
-    }
-    
-    private KualiDecimal findTotalGLEntries(Collection<GeneralLedgerEntry> glEntries) {
-        KualiDecimal amount = KualiDecimal.ZERO;
-        if (CollectionUtils.isNotEmpty(glEntries)) {
-            for (GeneralLedgerEntry entry : glEntries)  {
-                amount = amount.abs().add(entry.getAmount().abs());
-            }
-        }
-        return amount;
     }
 
     /**
