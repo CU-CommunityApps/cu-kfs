@@ -1657,7 +1657,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             Note noteObj = SpringContext.getBean(DocumentService.class).createNoteFromDocument(kualiDocumentFormBase.getDocument(), ((PurchasingFormBase)kualiDocumentFormBase).getReasonToChange());
             populateIdentifierOnNoteAndExtension(noteObj);
             kualiDocumentFormBase.getDocument().addNote(noteObj);
-            if (isNoteReadyToBeSaved(kualiDocumentFormBase.getDocument(), noteObj)) {
+            if (doesDocumentAllowImmediateSaveOfNewNote(kualiDocumentFormBase.getDocument(), noteObj)) {
                 getNoteService().save(noteObj);
             }
             ((PurchasingFormBase)kualiDocumentFormBase).setReasonToChange(KFSConstants.EMPTY_STRING);
@@ -1677,7 +1677,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         extension.setNoteIdentifier(nextNoteId);
     }
 
-    private boolean isNoteReadyToBeSaved(Document document, Note note) {
+    private boolean doesDocumentAllowImmediateSaveOfNewNote(Document document, Note note) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         PersistableBusinessObject noteTarget = document.getNoteTarget();
         // This is the same logic used by the KualiDocumentActionBase.insertBONote() method.
