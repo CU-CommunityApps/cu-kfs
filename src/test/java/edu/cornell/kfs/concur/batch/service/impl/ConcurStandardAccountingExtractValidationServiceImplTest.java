@@ -187,7 +187,7 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
                 if(StringUtils.isNotBlank(parameterValue) && StringUtils.contains(parameterValue, PARAM_VALUES_SPLIT_CHAR)){
                     String[] parameterValues = parameterValue.split(PARAM_VALUES_SPLIT_CHAR);
                     for(String value : parameterValues){
-                        if(StringUtils.equalsIgnoreCase(value, employeeGroupId)){
+                        if(StringUtils.equals(value, employeeGroupId)){
                             return true;
                         }
                     }
