@@ -570,6 +570,7 @@
 	    <property name="personService" ref="personService"/>
 	    <property name="payeeACHService" ref="payeeACHService"/>
 	    <property name="configurationService" ref="configurationService"/>
+	    <property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>	    
     </bean>
     
 </beans>
