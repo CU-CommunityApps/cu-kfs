@@ -158,6 +158,14 @@ public class ConcurDetailLineGroupForCollectorHelper {
         return concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(detailLine);
     }
 
+    public boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurStandardAccountingExtractCashAdvanceService.isAtmCashAdvanceLine(detailLine);
+    }
+
+    public boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurStandardAccountingExtractCashAdvanceService.isAtmFeeDebitLine(detailLine);
+    }
+
     public String getValidationMessage(String messageKey) {
         return configurationService.getPropertyValueAsString(messageKey);
     }

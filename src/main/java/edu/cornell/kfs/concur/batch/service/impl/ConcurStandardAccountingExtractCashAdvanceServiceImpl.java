@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
@@ -15,6 +16,18 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
     @Override
     public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
         return StringUtils.isNotBlank(line.getCashAdvanceKey());
+    }
+    
+    @Override
+    public boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
+        return isCashAdvanceLine(line)
+                && StringUtils.equalsIgnoreCase(ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, line.getCashAdvancePaymentCode());
+    }
+    
+    @Override
+    public boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine line) {
+        return StringUtils.equalsIgnoreCase(ConcurConstants.EXPENSE_TYPE_ATM_FEE, line.getExpenseType())
+                && StringUtils.equalsIgnoreCase(ConcurConstants.DEBIT, line.getJounalDebitCredit());
     }
     
     @Override 
