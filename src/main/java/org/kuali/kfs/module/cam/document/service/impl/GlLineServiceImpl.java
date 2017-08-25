@@ -273,22 +273,43 @@ public class GlLineServiceImpl implements GlLineService {
      * @param entry
      * @param capitalAssetLineType
      */
-    protected void addToCapitalAssetsMatchingLineType(List<CapitalAssetInformation> matchingAssets, CapitalAssetInformation capitalAsset, GeneralLedgerEntry entry) {
+    protected void addToCapitalAssetsMatchingLineType(List<CapitalAssetInformation> matchingAssets,
+            CapitalAssetInformation capitalAsset, GeneralLedgerEntry entry) {
         List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
 
         for (CapitalAssetAccountsGroupDetails groupAccountLine : groupAccountLines) {
-            if (groupAccountLine.getDocumentNumber().equals(entry.getDocumentNumber()) &&
-                    groupAccountLine.getChartOfAccountsCode().equals(entry.getChartOfAccountsCode()) &&
-                    groupAccountLine.getAccountNumber().equals(entry.getAccountNumber()) &&
-                    groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
-            	// check that debit matches target acct lines and credit matches source accounting lines
-            	if((StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE))
-            			|| (StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE))){
-            	matchingAssets.add(capitalAsset);
-            	  break;
-              }
+            if (groupAccountLine.getDocumentNumber().equals(entry.getDocumentNumber())
+                    && groupAccountLine.getChartOfAccountsCode().equals(entry.getChartOfAccountsCode())
+                    && groupAccountLine.getAccountNumber().equals(entry.getAccountNumber())
+                    && groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
+                // check that debit matches target acct lines and credit matches
+                // source accounting lines
+                boolean isGroupLineSource = StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
+                boolean isGroupLineTarget = StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
+                boolean isGLEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
+                boolean isGLEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
+                boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(),
+                        KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
+                logAddToCapitalAssetsMatchingLineTypeDetails(isGroupLineSource, isGroupLineTarget, isGLEntryCredit, isGLEntryDebit, isGeneralErrorCorrection);
+                if ((isGroupLineSource && isGLEntryCredit) || (isGroupLineTarget && isGLEntryDebit) || 
+                        (isGeneralErrorCorrection && isGroupLineSource && isGLEntryDebit) ||
+                        (isGeneralErrorCorrection && isGroupLineTarget && isGLEntryCredit)){
+                    matchingAssets.add(capitalAsset);
+                    break;
+                }
 
             }
+        }
+    }
+    
+    private void logAddToCapitalAssetsMatchingLineTypeDetails(boolean isGroupLineSource, boolean isGroupLineTarget, boolean isGLEntryCredit, 
+            boolean isGLEntryDebit, boolean isGeneralErrorCorrection) {
+        if (LOG.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder("logAddToCapitalAssetsMatchingLineTypeDetails, ");
+            sb.append(" isGroupLineSource: ").append(isGroupLineSource).append(" isGroupLineTarget: ").append(isGroupLineTarget);
+            sb.append(" isGLEntryCredit: ").append(isGLEntryCredit).append(" isGLEntryDebit: ").append(isGLEntryDebit);
+            sb.append(" isGeneralErrorCorrection: ").append(isGeneralErrorCorrection);
+            LOG.debug(sb.toString());
         }
     }
 
@@ -800,6 +821,7 @@ public class GlLineServiceImpl implements GlLineService {
      */
     @Override
     public void setupMissingCapitalAssetInformation(String documentNumber) {
+        LOG.debug("setupMissingCapitalAssetInformation, entering");
         List<CapitalAccountingLines> capitalAccountingLines;
 
         // get all related entries and create capital asset record for each
@@ -811,6 +833,7 @@ public class GlLineServiceImpl implements GlLineService {
             // check if it has capital Asset Info
             List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
             if (entryCapitalAssetInfo.isEmpty()) {
+                LOG.debug("setupMissingCapitalAssetInformation, found a condition to add entryCapitalAssetInfo");
                 capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
                 createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
                 createNewCapitalAsset(capitalAccountingLines, documentNumber, null, nextCapitalAssetLineNumber);
