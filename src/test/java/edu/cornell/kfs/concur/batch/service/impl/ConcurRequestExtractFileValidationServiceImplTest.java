@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +15,9 @@ import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -35,19 +34,24 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurRequestExtractFileValidationServiceImplTest {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImplTest.class);
+    
+    private static final String PARAM_VALUES_SPLIT_CHAR = ";";
 
     private ConcurRequestExtractFileValidationServiceImpl concurRequestExtractFileValidationService;
     private ConcurParameterConstantsFixture concurParameterConstantsFixture;
     private ConcurBatchUtilityServiceImpl concurBatchUtilityService;
     private ConcurApplicationPropertiesFixture concurApplicationPropertiesFixture;
     private TestableConfigurationServiceImpl configurationService;
+    private ConcurEmployeeInfoValidationServiceImpl concurEmployeeInfoValidationService;
     
     @Before
     public void setUp() throws Exception {
         Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class).setLevel(Level.DEBUG);
         concurRequestExtractFileValidationService = new ConcurRequestExtractFileValidationServiceImpl();
         concurBatchUtilityService = new TestableConcurBatchUtilityServiceImpl();
+        concurEmployeeInfoValidationService = new TestableConcurEmployeeInfoValidationServiceImpl();
         concurRequestExtractFileValidationService.setConcurBatchUtilityService(concurBatchUtilityService);
+        concurRequestExtractFileValidationService.setConcurEmployeeInfoValidationService(concurEmployeeInfoValidationService);
         configurationService = new TestableConfigurationServiceImpl();
         concurRequestExtractFileValidationService.setConfigurationService(configurationService);
         concurParameterConstantsFixture = new ConcurParameterConstantsFixture();
@@ -163,6 +167,20 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
 
         public boolean getPropertyValueAsBoolean(String key, boolean defaultValue) {
             return false;
+        }
+    }
+    
+    private class TestableConcurEmployeeInfoValidationServiceImpl extends ConcurEmployeeInfoValidationServiceImpl {
+        @Override
+        public boolean isEmployeeGroupIdValid(String employeeGroupId) {
+            if(StringUtils.isNotBlank(employeeGroupId)){
+                String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);              
+                if(StringUtils.isNotBlank(parameterValue) && StringUtils.contains(parameterValue, PARAM_VALUES_SPLIT_CHAR)){
+                    List<String> parameterValues = Arrays.asList(parameterValue.split(PARAM_VALUES_SPLIT_CHAR));
+                    return parameterValues.contains(employeeGroupId);                   
+                }
+            }
+            return false;        
         }
     }
 
