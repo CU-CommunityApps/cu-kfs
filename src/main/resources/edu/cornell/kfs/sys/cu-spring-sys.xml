@@ -294,5 +294,7 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="paymentSourceHelperService" parent="paymentSourceHelperService-parentBean" class="org.kuali.kfs.sys.document.service.impl.PaymentSourceHelperServiceImpl" />
 
 </beans>

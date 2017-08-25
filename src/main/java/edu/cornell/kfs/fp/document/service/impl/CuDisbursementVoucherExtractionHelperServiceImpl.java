@@ -148,6 +148,211 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         return pg;
     }
 
+    protected PaymentDetail buildPaymentDetail(DisbursementVoucherDocument document, Date processRunDate) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildPaymentDetail() started");
+        }
+        final String maxNoteLinesParam = getParameterService().getParameterValueAsString(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
+
+        int maxNoteLines;
+        try {
+            maxNoteLines = Integer.parseInt(maxNoteLinesParam);
+        }
+        catch (NumberFormatException nfe) {
+            throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: "+maxNoteLinesParam+" cannot be converted to an integer");
+        }
+
+        PaymentDetail pd = new PaymentDetail();
+        if (StringUtils.isNotEmpty(document.getDocumentHeader().getOrganizationDocumentNumber())) {
+            pd.setOrganizationDocNbr(document.getDocumentHeader().getOrganizationDocumentNumber());
+        }
+        pd.setCustPaymentDocNbr(document.getDocumentNumber());
+        pd.setInvoiceDate(new java.sql.Date(processRunDate.getTime()));
+        pd.setOrigInvoiceAmount(document.getDisbVchrCheckTotalAmount());
+        pd.setInvTotDiscountAmount(KualiDecimal.ZERO);
+        pd.setInvTotOtherCreditAmount(KualiDecimal.ZERO);
+        pd.setInvTotOtherDebitAmount(KualiDecimal.ZERO);
+        pd.setInvTotShipAmount(KualiDecimal.ZERO);
+        pd.setNetPaymentAmount(document.getDisbVchrCheckTotalAmount());
+        pd.setPrimaryCancelledPayment(Boolean.FALSE);
+        pd.setFinancialDocumentTypeCode(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH);
+        pd.setFinancialSystemOriginCode(KFSConstants.ORIGIN_CODE_KUALI);
+
+        // Handle accounts
+        for (SourceAccountingLine sal : (List<? extends SourceAccountingLine>)document.getSourceAccountingLines()) {
+            PaymentAccountDetail pad = new PaymentAccountDetail();
+            pad.setFinChartCode(sal.getChartOfAccountsCode());
+            pad.setAccountNbr(sal.getAccountNumber());
+            if (StringUtils.isNotEmpty(sal.getSubAccountNumber())) {
+                pad.setSubAccountNbr(sal.getSubAccountNumber());
+            }
+            else {
+                pad.setSubAccountNbr(KFSConstants.getDashSubAccountNumber());
+            }
+            pad.setFinObjectCode(sal.getFinancialObjectCode());
+            if (StringUtils.isNotEmpty(sal.getFinancialSubObjectCode())) {
+                pad.setFinSubObjectCode(sal.getFinancialSubObjectCode());
+            }
+            else {
+                pad.setFinSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
+            }
+            if (StringUtils.isNotEmpty(sal.getOrganizationReferenceId())) {
+                pad.setOrgReferenceId(sal.getOrganizationReferenceId());
+            }
+            if (StringUtils.isNotEmpty(sal.getProjectCode())) {
+                pad.setProjectCode(sal.getProjectCode());
+            }
+            else {
+                pad.setProjectCode(KFSConstants.getDashProjectCode());
+            }
+            pad.setAccountNetAmount(sal.getAmount());
+            pd.addAccountDetail(pad);
+        }
+
+        // Handle notes
+        DisbursementVoucherPayeeDetail dvpd = document.getDvPayeeDetail();
+
+        int line = 0;
+        PaymentNoteText pnt = new PaymentNoteText();
+        pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+        pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_PREPARER + document.getDisbVchrContactPersonName() + " " + document.getDisbVchrContactPhoneNumber());
+        pd.addNote(pnt);
+
+        String dvSpecialHandlingPersonName = null;
+        String dvSpecialHandlingLine1Address = null;
+        String dvSpecialHandlingLine2Address = null;
+        String dvSpecialHandlingCity = null;
+        String dvSpecialHandlingState = null;
+        String dvSpecialHandlingZip = null;
+
+        dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
+        dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
+        dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
+        dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
+        dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
+        dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
+
+        if (StringUtils.isNotEmpty(dvSpecialHandlingPersonName)) {
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText("Send Check To: " + dvSpecialHandlingPersonName);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating special handling person name note: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+        }
+        if (StringUtils.isNotEmpty(dvSpecialHandlingLine1Address)) {
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS1 + dvSpecialHandlingLine1Address);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating special handling address 1 note: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+        }
+        if (StringUtils.isNotEmpty(dvSpecialHandlingLine2Address)) {
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS2 + dvSpecialHandlingLine2Address);
+           if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating special handling address 2 note: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+        }
+        if (StringUtils.isNotEmpty(dvSpecialHandlingCity)) {
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS3 + dvSpecialHandlingCity + ", " + dvSpecialHandlingState + " " + dvSpecialHandlingZip);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating special handling city note: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+        }
+        if (document.isDisbVchrAttachmentCode()) {
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText("Attachment Included");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("create attachment note: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+        }
+
+        String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
+        if (/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+            DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
+
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText("Reimbursement associated with " + dvnet.getDisbVchrServicePerformedDesc());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating non employee travel notes: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText("The total per diem amount for your daily expenses is " + dvnet.getDisbVchrPerdiemCalculatedAmt());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating non employee travel notes: "+pnt.getCustomerNoteText());
+            }
+            pd.addNote(pnt);
+
+            if (dvnet.getDisbVchrPersonalCarAmount() != null && dvnet.getDisbVchrPersonalCarAmount().compareTo(KualiDecimal.ZERO) != 0) {
+                pnt = new PaymentNoteText();
+                pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+                pnt.setCustomerNoteText("The total dollar amount for your vehicle mileage is " + dvnet.getDisbVchrPersonalCarAmount());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Creating non employee travel vehicle note: "+pnt.getCustomerNoteText());
+                }
+                pd.addNote(pnt);
+
+                for (DisbursementVoucherNonEmployeeExpense exp : (List<DisbursementVoucherNonEmployeeExpense>)dvnet.getDvNonEmployeeExpenses()) {
+                    if (line < (maxNoteLines - 8)) {
+                        pnt = new PaymentNoteText();
+                        pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+                        pnt.setCustomerNoteText(exp.getDisbVchrExpenseCompanyName() + " " + exp.getDisbVchrExpenseAmount());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Creating non employee travel expense note: "+pnt.getCustomerNoteText());
+                        }
+                        pd.addNote(pnt);
+                    }
+                }
+            }
+        }
+        else if (/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+            pnt = new PaymentNoteText();
+            pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+            pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
+            pd.addNote(pnt);
+            if (LOG.isDebugEnabled()) {
+                LOG.info("Creating prepaid travel note note: "+pnt.getCustomerNoteText());
+            }
+
+            DisbursementVoucherPreConferenceDetail dvpcd = document.getDvPreConferenceDetail();
+
+            for (DisbursementVoucherPreConferenceRegistrant dvpcr : (List<DisbursementVoucherPreConferenceRegistrant>)dvpcd.getDvPreConferenceRegistrants()) {
+                if (line < (maxNoteLines - 8)) {
+                    pnt = new PaymentNoteText();
+                    pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
+                    pnt.setCustomerNoteText(dvpcr.getDvConferenceRegistrantName() + " " + dvpcr.getDisbVchrExpenseAmount());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Creating pre-paid conference registrants note: "+pnt.getCustomerNoteText());
+                    }
+                    pd.addNote(pnt);
+                }
+            }
+        }
+
+        // Get the original, raw form, note text from the DV document.
+        final String text = document.getDisbVchrCheckStubText();
+        if (!StringUtils.isBlank(text)) {
+            pd.addNotes(getPaymentSourceHelperService().buildNotesForCheckStubText(text, line));
+        }
+
+        return pd;
+    }
+
     public Map<String, List<DisbursementVoucherDocument>> retrievePaymentSourcesByCampus(boolean immediatesOnly) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("retrievePaymentSourcesByCampus() started");
