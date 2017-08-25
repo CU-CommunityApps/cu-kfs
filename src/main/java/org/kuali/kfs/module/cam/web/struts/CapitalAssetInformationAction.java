@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
+import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -153,9 +154,10 @@ public class CapitalAssetInformationAction extends CabActionBase {
     private KualiDecimal findTotalAmountForAssetInformation(List<CapitalAssetInformation> informationList) {
         KualiDecimal amount = KualiDecimal.ZERO;
         if (CollectionUtils.isNotEmpty(informationList)) {
-            for (CapitalAssetInformation info : informationList) {
-                amount = amount.abs().add(info.getCapitalAssetLineAmount().abs());
-            }
+            amount = informationList.stream()
+                    .map(CapitalAssetInformation::getCapitalAssetLineAmount)
+                    .map(KualiDecimal::abs)
+                    .reduce(KualiDecimal.ZERO, KualiDecimal::add);
         }
         return amount;
     }
@@ -163,9 +165,10 @@ public class CapitalAssetInformationAction extends CabActionBase {
     private KualiDecimal findTotalGLEntries(Collection<GeneralLedgerEntry> glEntries) {
         KualiDecimal amount = KualiDecimal.ZERO;
         if (CollectionUtils.isNotEmpty(glEntries)) {
-            for (GeneralLedgerEntry entry : glEntries)  {
-                amount = amount.abs().add(entry.getAmount().abs());
-            }
+            amount = glEntries.stream()
+                    .map(GeneralLedgerEntry::getAmount)
+                    .map(KualiDecimal::abs)
+                    .reduce(KualiDecimal.ZERO, KualiDecimal::add);
         }
         return amount;
     }
