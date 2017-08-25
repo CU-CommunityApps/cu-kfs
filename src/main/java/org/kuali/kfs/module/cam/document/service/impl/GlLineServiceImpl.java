@@ -133,15 +133,9 @@ public class GlLineServiceImpl implements GlLineService {
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
             List<CapitalAssetAccountsGroupDetails> groupAccountingLines = capitalAssetInformation.getCapitalAssetAccountsGroupDetails();
             Collection<GeneralLedgerEntry> documentGlEntries = findAllGeneralLedgerEntry(entry.getDocumentNumber());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("deactivateGLEntries, entry.getDocumentNumber(): " + entry.getDocumentNumber() + "  documentGlEntries.size(): " + documentGlEntries.size());
-            }
             for (CapitalAssetAccountsGroupDetails accountingLine : groupAccountingLines) {
                 //find the matching GL entry for this accounting line.
                 Collection<GeneralLedgerEntry> glEntries = findMatchingGeneralLedgerEntries(documentGlEntries, accountingLine);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("deactivateGLEntries, accountingLine: " + accountingLine + "  glEntries.size(): " + glEntries.size());
-                }
                 for (GeneralLedgerEntry glEntry : glEntries) {
                     KualiDecimal lineAmount = accountingLine.getAmount();
 
@@ -414,26 +408,33 @@ public class GlLineServiceImpl implements GlLineService {
         }
         
         //check if GL Debit matches acct line type target and Credit matches Source
-		boolean isGlEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
+        boolean isGlEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
         boolean isGlEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
         boolean isAccountingDetailTarget = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
         boolean isAccountingDetailSource = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
-        boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(), KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
+        boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(), 
+                KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
+        logAccountingLineMatchingValues(isGlEntryDebit, isGlEntryCredit, isAccountingDetailTarget, isAccountingDetailSource, isGeneralErrorCorrection);
+        if ((isGlEntryDebit && isAccountingDetailTarget) || (isGlEntryCredit && isAccountingDetailSource)
+                || (isGeneralErrorCorrection && isGlEntryDebit && isAccountingDetailSource)
+                || (isGeneralErrorCorrection && isGlEntryCredit && isAccountingDetailTarget)) {
+            // this is a match, keep going
+        } else {
+            return false;
+        }    
+
+        return true;
+    }
+
+    private void logAccountingLineMatchingValues(boolean isGlEntryDebit, boolean isGlEntryCredit,
+            boolean isAccountingDetailTarget, boolean isAccountingDetailSource, boolean isGeneralErrorCorrection) {
         if (LOG.isDebugEnabled()) {
-            StringBuilder sb = new StringBuilder("doesGeneralLedgerEntryMatchAssetAccountingDetails, isGlEntryDebit: ");
+            StringBuilder sb = new StringBuilder("logAccountingLineMatchingValues, isGlEntryDebit: ");
             sb.append(isGlEntryDebit).append(" isGlEntryCredit: ").append(isGlEntryCredit).append(" isAccountingDetailTarget: ");
             sb.append(isAccountingDetailTarget).append(" isAccountingDetailSource: ").append(isAccountingDetailSource);
             sb.append(" isGeneralErrorCorrection: ").append(isGeneralErrorCorrection);
-            LOG.info(sb.toString());
+            LOG.debug(sb.toString());
         }
-        if ((isGlEntryDebit && isAccountingDetailTarget) || (isGlEntryCredit && isAccountingDetailSource) ||
-                (isGeneralErrorCorrection && isGlEntryDebit && isAccountingDetailSource) || (isGeneralErrorCorrection && isGlEntryCredit && isAccountingDetailTarget)) {
-			// this is a match, keep going
-		} else {
-			return false;
-		}     
-
-        return true;
     }
 
     @Override

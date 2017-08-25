@@ -127,9 +127,6 @@ public class CapitalAssetInformationAction extends CabActionBase {
             isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(firstEntry.getFinancialDocumentTypeCode(), 
                     KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("isGeneralErrorCorrectionDocument: " + isGeneralErrorCorrection);
-        }
         return isGeneralErrorCorrection;
     }
     
@@ -137,15 +134,20 @@ public class CapitalAssetInformationAction extends CabActionBase {
             Collection<GeneralLedgerEntry> glEntries) {
         KualiDecimal entriesTotal = findTotalGLEntries(glEntries);
         KualiDecimal informationTotal = findTotalAmountForAssetInformation(capitalAssetInformations);
+        logCapAsseetInformationAndGLEntryComparison(capitalAssetInformations, glEntries, entriesTotal, informationTotal);
+        return !entriesTotal.equals(informationTotal);
+    }
+
+    private void logCapAsseetInformationAndGLEntryComparison(List<CapitalAssetInformation> capitalAssetInformations,
+            Collection<GeneralLedgerEntry> glEntries, KualiDecimal entriesTotal, KualiDecimal informationTotal) {
         if (LOG.isDebugEnabled()) {
             int capAssetInfoSize = CollectionUtils.isNotEmpty(capitalAssetInformations) ? capitalAssetInformations.size() : 0;
             int glEntreisSzie = CollectionUtils.isNotEmpty(glEntries) ? glEntries.size() : 0;
-            StringBuilder sb = new StringBuilder("isCapitalAssetInformationAndGLEntryTotalsDifferent, the number of capitalAssetInformations size: ");
+            StringBuilder sb = new StringBuilder("logCapitalAssetAmountComparisons, the number of capitalAssetInformations size: ");
             sb.append(capAssetInfoSize).append(" glEntries size: ").append(glEntreisSzie);
             sb.append(" informationTotal: ").append(informationTotal).append(" entriesTotal: ").append(entriesTotal);
             LOG.debug(sb.toString());
         }
-        return !entriesTotal.equals(informationTotal);
     }
     
     private KualiDecimal findTotalAmountForAssetInformation(List<CapitalAssetInformation> informationList) {
