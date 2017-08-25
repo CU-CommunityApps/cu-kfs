@@ -819,7 +819,6 @@ public class GlLineServiceImpl implements GlLineService {
      */
     @Override
     public void setupMissingCapitalAssetInformation(String documentNumber) {
-        LOG.debug("setupMissingCapitalAssetInformation, entering");
         List<CapitalAccountingLines> capitalAccountingLines;
 
         // get all related entries and create capital asset record for each
@@ -831,7 +830,6 @@ public class GlLineServiceImpl implements GlLineService {
             // check if it has capital Asset Info
             List<CapitalAssetInformation> entryCapitalAssetInfo = findCapitalAssetInformationForGLLineMatchLineType(glEntry);
             if (entryCapitalAssetInfo.isEmpty()) {
-                LOG.debug("setupMissingCapitalAssetInformation, found a condition to add entryCapitalAssetInfo");
                 capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
                 createCapitalAccountingLine(capitalAccountingLines, glEntry, null);
                 createNewCapitalAsset(capitalAccountingLines, documentNumber, null, nextCapitalAssetLineNumber);
