@@ -3,7 +3,9 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -182,18 +184,13 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         @Override
         public boolean isEmployeeGroupIdValid(String employeeGroupId) {
             if(StringUtils.isNotBlank(employeeGroupId)){
-                String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
-                
+                String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);              
                 if(StringUtils.isNotBlank(parameterValue) && StringUtils.contains(parameterValue, PARAM_VALUES_SPLIT_CHAR)){
-                    String[] parameterValues = parameterValue.split(PARAM_VALUES_SPLIT_CHAR);
-                    for(String value : parameterValues){
-                        if(StringUtils.equals(value, employeeGroupId)){
-                            return true;
-                        }
-                    }
+                    List<String> parameterValues = Arrays.asList(parameterValue.split(PARAM_VALUES_SPLIT_CHAR));
+                    return parameterValues.contains(employeeGroupId);                   
                 }
             }
-            return false;           
+            return false;
         }
     }
     
