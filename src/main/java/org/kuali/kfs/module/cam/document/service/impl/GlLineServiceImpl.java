@@ -288,12 +288,11 @@ public class GlLineServiceImpl implements GlLineService {
                 boolean isGroupLineTarget = StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
                 boolean isGLEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
                 boolean isGLEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
-                boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(),
-                        KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
-                logAddToCapitalAssetsMatchingLineTypeDetails(isGroupLineSource, isGroupLineTarget, isGLEntryCredit, isGLEntryDebit, isGeneralErrorCorrection);
+                boolean isErrorCorrection = groupAccountLine.getAmount().isNegative();
+                logAddToCapitalAssetsMatchingLineTypeDetails(isGroupLineSource, isGroupLineTarget, isGLEntryCredit, isGLEntryDebit, isErrorCorrection);
                 if ((isGroupLineSource && isGLEntryCredit) || (isGroupLineTarget && isGLEntryDebit) || 
-                        (isGeneralErrorCorrection && isGroupLineSource && isGLEntryDebit) ||
-                        (isGeneralErrorCorrection && isGroupLineTarget && isGLEntryCredit)){
+                        (isErrorCorrection && isGroupLineSource && isGLEntryDebit) ||
+                        (isErrorCorrection && isGroupLineTarget && isGLEntryCredit)){
                     matchingAssets.add(capitalAsset);
                     break;
                 }
@@ -303,12 +302,12 @@ public class GlLineServiceImpl implements GlLineService {
     }
     
     private void logAddToCapitalAssetsMatchingLineTypeDetails(boolean isGroupLineSource, boolean isGroupLineTarget, boolean isGLEntryCredit, 
-            boolean isGLEntryDebit, boolean isGeneralErrorCorrection) {
+            boolean isGLEntryDebit, boolean isErrorCorrection) {
         if (LOG.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("logAddToCapitalAssetsMatchingLineTypeDetails, ");
             sb.append(" isGroupLineSource: ").append(isGroupLineSource).append(" isGroupLineTarget: ").append(isGroupLineTarget);
             sb.append(" isGLEntryCredit: ").append(isGLEntryCredit).append(" isGLEntryDebit: ").append(isGLEntryDebit);
-            sb.append(" isGeneralErrorCorrection: ").append(isGeneralErrorCorrection);
+            sb.append(" isErrorCorrection: ").append(isErrorCorrection);
             LOG.debug(sb.toString());
         }
     }
@@ -433,12 +432,11 @@ public class GlLineServiceImpl implements GlLineService {
         boolean isGlEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
         boolean isAccountingDetailTarget = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
         boolean isAccountingDetailSource = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
-        boolean isGeneralErrorCorrection = StringUtils.equalsIgnoreCase(entry.getFinancialDocumentTypeCode(), 
-                KFSConstants.FinancialDocumentTypeCodes.GENERAL_ERROR_CORRECTION);
-        logAccountingLineMatchingValues(isGlEntryDebit, isGlEntryCredit, isAccountingDetailTarget, isAccountingDetailSource, isGeneralErrorCorrection);
+        boolean isErrorCorrection = accountingDetails.getAmount().isNegative();
+        logDoesGeneralLedgerEntryMatchAssetAccountingDetails(isGlEntryDebit, isGlEntryCredit, isAccountingDetailTarget, isAccountingDetailSource, isErrorCorrection);
         if ((isGlEntryDebit && isAccountingDetailTarget) || (isGlEntryCredit && isAccountingDetailSource)
-                || (isGeneralErrorCorrection && isGlEntryDebit && isAccountingDetailSource)
-                || (isGeneralErrorCorrection && isGlEntryCredit && isAccountingDetailTarget)) {
+                || (isErrorCorrection && isGlEntryDebit && isAccountingDetailSource)
+                || (isErrorCorrection && isGlEntryCredit && isAccountingDetailTarget)) {
             // this is a match, keep going
         } else {
             return false;
@@ -447,13 +445,13 @@ public class GlLineServiceImpl implements GlLineService {
         return true;
     }
 
-    private void logAccountingLineMatchingValues(boolean isGlEntryDebit, boolean isGlEntryCredit,
-            boolean isAccountingDetailTarget, boolean isAccountingDetailSource, boolean isGeneralErrorCorrection) {
+    private void logDoesGeneralLedgerEntryMatchAssetAccountingDetails(boolean isGlEntryDebit, boolean isGlEntryCredit,
+            boolean isAccountingDetailTarget, boolean isAccountingDetailSource, boolean isErrorCorrection) {
         if (LOG.isDebugEnabled()) {
-            StringBuilder sb = new StringBuilder("logAccountingLineMatchingValues, isGlEntryDebit: ");
+            StringBuilder sb = new StringBuilder("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, isGlEntryDebit: ");
             sb.append(isGlEntryDebit).append(" isGlEntryCredit: ").append(isGlEntryCredit).append(" isAccountingDetailTarget: ");
             sb.append(isAccountingDetailTarget).append(" isAccountingDetailSource: ").append(isAccountingDetailSource);
-            sb.append(" isGeneralErrorCorrection: ").append(isGeneralErrorCorrection);
+            sb.append(" isErrorCorrection: ").append(isErrorCorrection);
             LOG.debug(sb.toString());
         }
     }
