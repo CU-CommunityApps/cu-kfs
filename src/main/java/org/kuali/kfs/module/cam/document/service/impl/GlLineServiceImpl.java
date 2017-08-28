@@ -289,10 +289,11 @@ public class GlLineServiceImpl implements GlLineService {
                 boolean isGLEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
                 boolean isGLEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
                 boolean isErrorCorrection = groupAccountLine.getAmount().isNegative();
-                logAddToCapitalAssetsMatchingLineTypeDetails(isGroupLineSource, isGroupLineTarget, isGLEntryCredit, isGLEntryDebit, isErrorCorrection);
+                logAddToCapitalAssetsMatchingLineTypeDetails(isGroupLineSource, isGroupLineTarget, isGLEntryCredit, isGLEntryDebit, isErrorCorrection, 
+                        groupAccountLine, entry);
                 if ((isGroupLineSource && isGLEntryCredit) || (isGroupLineTarget && isGLEntryDebit) || 
                         (isErrorCorrection && isGroupLineSource && isGLEntryDebit) ||
-                        (isErrorCorrection && isGroupLineTarget && isGLEntryCredit)){
+                        (isErrorCorrection && isGroupLineTarget && isGLEntryCredit)) {
                     matchingAssets.add(capitalAsset);
                     break;
                 }
@@ -302,13 +303,15 @@ public class GlLineServiceImpl implements GlLineService {
     }
     
     private void logAddToCapitalAssetsMatchingLineTypeDetails(boolean isGroupLineSource, boolean isGroupLineTarget, boolean isGLEntryCredit, 
-            boolean isGLEntryDebit, boolean isErrorCorrection) {
+            boolean isGLEntryDebit, boolean isErrorCorrection, CapitalAssetAccountsGroupDetails groupAccountLine, GeneralLedgerEntry entry) {
         if (LOG.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("logAddToCapitalAssetsMatchingLineTypeDetails, ");
             sb.append(" isGroupLineSource: ").append(isGroupLineSource).append(" isGroupLineTarget: ").append(isGroupLineTarget);
             sb.append(" isGLEntryCredit: ").append(isGLEntryCredit).append(" isGLEntryDebit: ").append(isGLEntryDebit);
             sb.append(" isErrorCorrection: ").append(isErrorCorrection);
             LOG.debug(sb.toString());
+            LOG.debug("logAddToCapitalAssetsMatchingLineTypeDetails, groupAccountLine: " + groupAccountLine);
+            LOG.debug("logAddToCapitalAssetsMatchingLineTypeDetails, entry: " + entry);
         }
     }
 
@@ -433,7 +436,8 @@ public class GlLineServiceImpl implements GlLineService {
         boolean isAccountingDetailTarget = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
         boolean isAccountingDetailSource = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
         boolean isErrorCorrection = accountingDetails.getAmount().isNegative();
-        logDoesGeneralLedgerEntryMatchAssetAccountingDetails(isGlEntryDebit, isGlEntryCredit, isAccountingDetailTarget, isAccountingDetailSource, isErrorCorrection);
+        logDoesGeneralLedgerEntryMatchAssetAccountingDetails(isGlEntryDebit, isGlEntryCredit, isAccountingDetailTarget, isAccountingDetailSource, 
+                isErrorCorrection, entry, accountingDetails);
         if ((isGlEntryDebit && isAccountingDetailTarget) || (isGlEntryCredit && isAccountingDetailSource)
                 || (isErrorCorrection && isGlEntryDebit && isAccountingDetailSource)
                 || (isErrorCorrection && isGlEntryCredit && isAccountingDetailTarget)) {
@@ -446,13 +450,16 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     private void logDoesGeneralLedgerEntryMatchAssetAccountingDetails(boolean isGlEntryDebit, boolean isGlEntryCredit,
-            boolean isAccountingDetailTarget, boolean isAccountingDetailSource, boolean isErrorCorrection) {
+            boolean isAccountingDetailTarget, boolean isAccountingDetailSource, boolean isErrorCorrection,
+            GeneralLedgerEntry entry, CapitalAssetAccountsGroupDetails accountingDetails) {
         if (LOG.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, isGlEntryDebit: ");
             sb.append(isGlEntryDebit).append(" isGlEntryCredit: ").append(isGlEntryCredit).append(" isAccountingDetailTarget: ");
             sb.append(isAccountingDetailTarget).append(" isAccountingDetailSource: ").append(isAccountingDetailSource);
             sb.append(" isErrorCorrection: ").append(isErrorCorrection);
             LOG.debug(sb.toString());
+            LOG.debug("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, entry: " + entry);
+            LOG.debug("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, accountingDetails: " + accountingDetails);
         }
     }
 
