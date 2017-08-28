@@ -71,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GlLineServiceImpl implements GlLineService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GlLineServiceImpl.class);
     private static final String CAB_DESC_PREFIX = "CAB created for FP ";
 
     protected BusinessObjectService businessObjectService;
@@ -129,7 +130,6 @@ public class GlLineServiceImpl implements GlLineService {
     protected void deactivateGLEntries(GeneralLedgerEntry entry, Document document, Integer capitalAssetLineNumber) {
         //now deactivate the gl line..
         CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(entry.getDocumentNumber(), capitalAssetLineNumber);
-
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
             List<CapitalAssetAccountsGroupDetails> groupAccountingLines = capitalAssetInformation.getCapitalAssetAccountsGroupDetails();
             Collection<GeneralLedgerEntry> documentGlEntries = findAllGeneralLedgerEntry(entry.getDocumentNumber());
@@ -273,22 +273,45 @@ public class GlLineServiceImpl implements GlLineService {
      * @param entry
      * @param capitalAssetLineType
      */
-    protected void addToCapitalAssetsMatchingLineType(List<CapitalAssetInformation> matchingAssets, CapitalAssetInformation capitalAsset, GeneralLedgerEntry entry) {
+    protected void addToCapitalAssetsMatchingLineType(List<CapitalAssetInformation> matchingAssets,
+            CapitalAssetInformation capitalAsset, GeneralLedgerEntry entry) {
         List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
 
         for (CapitalAssetAccountsGroupDetails groupAccountLine : groupAccountLines) {
-            if (groupAccountLine.getDocumentNumber().equals(entry.getDocumentNumber()) &&
-                    groupAccountLine.getChartOfAccountsCode().equals(entry.getChartOfAccountsCode()) &&
-                    groupAccountLine.getAccountNumber().equals(entry.getAccountNumber()) &&
-                    groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
-            	// check that debit matches target acct lines and credit matches source accounting lines
-            	if((StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE))
-            			|| (StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE) && StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE))){
-            	matchingAssets.add(capitalAsset);
-            	  break;
-              }
+            if (groupAccountLine.getDocumentNumber().equals(entry.getDocumentNumber())
+                    && groupAccountLine.getChartOfAccountsCode().equals(entry.getChartOfAccountsCode())
+                    && groupAccountLine.getAccountNumber().equals(entry.getAccountNumber())
+                    && groupAccountLine.getFinancialObjectCode().equals(entry.getFinancialObjectCode())) {
+                // check that debit matches target acct lines and credit matches
+                // source accounting lines
+                boolean isGroupLineSource = StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
+                boolean isGroupLineTarget = StringUtils.equals(groupAccountLine.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
+                boolean isGLEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
+                boolean isGLEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
+                boolean isErrorCorrection = groupAccountLine.getAmount().isNegative();
+                logAddToCapitalAssetsMatchingLineTypeDetails(isGroupLineSource, isGroupLineTarget, isGLEntryCredit, isGLEntryDebit, isErrorCorrection, 
+                        groupAccountLine, entry);
+                if ((isGroupLineSource && isGLEntryCredit) || (isGroupLineTarget && isGLEntryDebit) || 
+                        (isErrorCorrection && isGroupLineSource && isGLEntryDebit) ||
+                        (isErrorCorrection && isGroupLineTarget && isGLEntryCredit)) {
+                    matchingAssets.add(capitalAsset);
+                    break;
+                }
 
             }
+        }
+    }
+    
+    private void logAddToCapitalAssetsMatchingLineTypeDetails(boolean isGroupLineSource, boolean isGroupLineTarget, boolean isGLEntryCredit, 
+            boolean isGLEntryDebit, boolean isErrorCorrection, CapitalAssetAccountsGroupDetails groupAccountLine, GeneralLedgerEntry entry) {
+        if (LOG.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder("logAddToCapitalAssetsMatchingLineTypeDetails, ");
+            sb.append(" isGroupLineSource: ").append(isGroupLineSource).append(" isGroupLineTarget: ").append(isGroupLineTarget);
+            sb.append(" isGLEntryCredit: ").append(isGLEntryCredit).append(" isGLEntryDebit: ").append(isGLEntryDebit);
+            sb.append(" isErrorCorrection: ").append(isErrorCorrection);
+            LOG.debug(sb.toString());
+            LOG.debug("logAddToCapitalAssetsMatchingLineTypeDetails, groupAccountLine: " + groupAccountLine);
+            LOG.debug("logAddToCapitalAssetsMatchingLineTypeDetails, entry: " + entry);
         }
     }
 
@@ -408,14 +431,36 @@ public class GlLineServiceImpl implements GlLineService {
         }
         
         //check if GL Debit matches acct line type target and Credit matches Source
-		if ((StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE) && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE))
-				|| (StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE) && StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE))) {
-			// this is a match, keep going
-		} else {
-			return false;
-		}     
+        boolean isGlEntryDebit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_DEBIT_CODE);
+        boolean isGlEntryCredit = StringUtils.equals(entry.getTransactionDebitCreditCode(), KFSConstants.GL_CREDIT_CODE);
+        boolean isAccountingDetailTarget = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
+        boolean isAccountingDetailSource = StringUtils.equals(accountingDetails.getFinancialDocumentLineTypeCode(), KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE);
+        boolean isErrorCorrection = accountingDetails.getAmount().isNegative();
+        logDoesGeneralLedgerEntryMatchAssetAccountingDetails(isGlEntryDebit, isGlEntryCredit, isAccountingDetailTarget, isAccountingDetailSource, 
+                isErrorCorrection, entry, accountingDetails);
+        if ((isGlEntryDebit && isAccountingDetailTarget) || (isGlEntryCredit && isAccountingDetailSource)
+                || (isErrorCorrection && isGlEntryDebit && isAccountingDetailSource)
+                || (isErrorCorrection && isGlEntryCredit && isAccountingDetailTarget)) {
+            // this is a match, keep going
+        } else {
+            return false;
+        }    
 
         return true;
+    }
+
+    private void logDoesGeneralLedgerEntryMatchAssetAccountingDetails(boolean isGlEntryDebit, boolean isGlEntryCredit,
+            boolean isAccountingDetailTarget, boolean isAccountingDetailSource, boolean isErrorCorrection,
+            GeneralLedgerEntry entry, CapitalAssetAccountsGroupDetails accountingDetails) {
+        if (LOG.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, isGlEntryDebit: ");
+            sb.append(isGlEntryDebit).append(" isGlEntryCredit: ").append(isGlEntryCredit).append(" isAccountingDetailTarget: ");
+            sb.append(isAccountingDetailTarget).append(" isAccountingDetailSource: ").append(isAccountingDetailSource);
+            sb.append(" isErrorCorrection: ").append(isErrorCorrection);
+            LOG.debug(sb.toString());
+            LOG.debug("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, entry: " + entry);
+            LOG.debug("logDoesGeneralLedgerEntryMatchAssetAccountingDetails, accountingDetails: " + accountingDetails);
+        }
     }
 
     @Override
@@ -678,7 +723,6 @@ public class GlLineServiceImpl implements GlLineService {
         }
 
         matchingGLEntry.setTransactionLedgerSubmitAmount(submitTotalAmount.add(accountLineAmount.abs()));
-
         if (matchingGLEntry.getTransactionLedgerSubmitAmount().equals(matchingGLEntry.getTransactionLedgerEntryAmount())) {
             matchingGLEntry.setActivityStatusCode(CamsConstants.ActivityStatusCode.ENROUTE);
         }
