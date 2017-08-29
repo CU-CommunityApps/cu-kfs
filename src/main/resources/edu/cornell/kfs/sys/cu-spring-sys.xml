@@ -295,4 +295,7 @@
 		</property>
 	</bean>
 
+	<bean id="paymentSourceHelperService" parent="paymentSourceHelpService-parentBean"
+			class="edu.cornell.kfs.sys.document.service.impl.CuPaymentSourceHelperServiceImpl"/>
+
 </beans>
