@@ -292,7 +292,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-            pnt.setCustomerNoteText("The total per diem amount for your daily expenses is " + dvnet.getDisbVchrPerdiemCalculatedAmt());
+            pnt.setCustomerNoteText("The total per diem amount for your daily expenses is " + dvnet.getDisbVchrPerdiemActualAmount());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating non employee travel notes: "+pnt.getCustomerNoteText());
             }

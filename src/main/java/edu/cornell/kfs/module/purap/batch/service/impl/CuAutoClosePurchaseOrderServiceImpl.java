@@ -15,10 +15,11 @@ import java.util.List;
 public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAutoClosePurchaseOrderServiceImpl.class);
 
+    @Override
     public boolean autoCloseFullyDisencumberedOrders() {
         LOG.debug("autoCloseFullyDisencumberedOrders() started");
 
-        List<AutoClosePurchaseOrderView> autoCloseList = getAllOpenPurchaseOrdersForAutoClose();
+        List<AutoClosePurchaseOrderView> autoCloseList = this.getAllOpenPurchaseOrdersForAutoClose();
 
         for (AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
             if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
@@ -32,7 +33,7 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
                     String annotation = "This PO was automatically closed in batch.";
                     String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
                     PurchaseOrderDocument document = purchaseOrderService.getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
-                    createNoteForAutoCloseOrders(document, annotation);
+                    this.createNoteForAutoCloseOrders(document, annotation);
                     purchaseOrderService.createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);
                 }
             }
