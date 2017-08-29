@@ -18,7 +18,7 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
     public boolean autoCloseFullyDisencumberedOrders() {
         LOG.debug("autoCloseFullyDisencumberedOrders() started");
 
-        List<AutoClosePurchaseOrderView> autoCloseList = purchaseOrderService.getAllOpenPurchaseOrdersForAutoClose();
+        List<AutoClosePurchaseOrderView> autoCloseList = getAllOpenPurchaseOrdersForAutoClose();
 
         for (AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
             if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
@@ -32,7 +32,7 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
                     String annotation = "This PO was automatically closed in batch.";
                     String documentType = PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_CLOSE_DOCUMENT;
                     PurchaseOrderDocument document = purchaseOrderService.getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
-                    purchaseOrderService.createNoteForAutoCloseOrders(document, annotation);
+                    createNoteForAutoCloseOrders(document, annotation);
                     purchaseOrderService.createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);
                 }
             }
