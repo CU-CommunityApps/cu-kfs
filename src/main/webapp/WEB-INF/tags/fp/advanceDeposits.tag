@@ -66,7 +66,7 @@
             </tr>
         </c:if>
         <c:set var="numAdvanceDeposits" value="${document.advanceDeposits.size}"/>
-        <logic:iterate id="advanceDepositDetail" name="KualiForm" property="document.advanceDeposits" indexId="ctr">
+        <logic:iterate id="advanceDeposits" name="KualiForm" property="document.advanceDeposits" indexId="ctr">
             <c:set var="rowClass" value="line"/>
             <c:choose>
                 <c:when test="${ctr == 0}">
@@ -79,25 +79,25 @@
 
             <tr class="${rowClass}">
                 <kul:htmlAttributeHeaderCell literalLabel="${ctr+1}" scope="row"/>
-                <sys:bankControl property="document.advanceDepositDetail[${ctr}].financialDocumentBankCode" objectProperty="document.advanceDepositDetail[${ctr}].bank" depositOnly="true" readOnly="${readOnly}"/>
+                <sys:bankControl property="document.advanceDeposits[${ctr}].financialDocumentBankCode" objectProperty="document.advanceDeposits[${ctr}].bank" depositOnly="true" readOnly="${readOnly}"/>
                 <td class="datacell">
                 	<c:choose>
                         <c:when test="${readOnly}">
-                            <kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositDate}" property="document.advanceDepositDetail[${ctr}].financialDocumentAdvanceDepositDate" readOnly="true" />
+                            <kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositDate}" property="document.advanceDeposits[${ctr}].financialDocumentAdvanceDepositDate" readOnly="true" />
                         </c:when>
                         <c:otherwise>
-                            <kul:dateInput attributeEntry="${adAttributes.financialDocumentAdvanceDepositDate}" property="document.advanceDepositDetail[${ctr}].financialDocumentAdvanceDepositDate" />
+                            <kul:dateInput attributeEntry="${adAttributes.financialDocumentAdvanceDepositDate}" property="document.advanceDeposits[${ctr}].financialDocumentAdvanceDepositDate" />
                         </c:otherwise>
                     </c:choose>
                 </td>
                 <td class="datacell">
-                	<kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositReferenceNumber}" property="document.advanceDepositDetail[${ctr}].financialDocumentAdvanceDepositReferenceNumber" readOnly="${readOnly}"/>
+                	<kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositReferenceNumber}" property="document.advanceDeposits[${ctr}].financialDocumentAdvanceDepositReferenceNumber" readOnly="${readOnly}"/>
                 </td>
                 <td class="datacell">
-                	<kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositDescription}" property="document.advanceDepositDetail[${ctr}].financialDocumentAdvanceDepositDescription" readOnly="${readOnly}"/>
+                	<kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositDescription}" property="document.advanceDeposits[${ctr}].financialDocumentAdvanceDepositDescription" readOnly="${readOnly}"/>
                 </td>
                 <td class="datacell right">
-                	<kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositAmount}" property="document.advanceDepositDetail[${ctr}].financialDocumentAdvanceDepositAmount" readOnly="${readOnly}" styleClass="right"/>
+                	<kul:htmlControlAttribute attributeEntry="${adAttributes.financialDocumentAdvanceDepositAmount}" property="document.advanceDeposits[${ctr}].financialDocumentAdvanceDepositAmount" readOnly="${readOnly}" styleClass="right"/>
                 </td>
                 <c:if test="${not readOnly}">
                     <td class="datacell">
