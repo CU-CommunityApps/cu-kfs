@@ -7,7 +7,9 @@ import java.util.ListIterator;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.kuali.kfs.sys.KFSConstants;
+
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -241,11 +243,12 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             return false;
         }
         else {
-            if (customerProfileIsValidOnAllRequestDetailLines(requestExtractFile)) {
+            String ourCustomerProfile = getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+            if (StringUtils.isNotEmpty(ourCustomerProfile) && ourCustomerProfileIsOnAllRequestDetailLines(requestExtractFile, ourCustomerProfile)) {
                 return true;
             }
             else {
-                String fileValidationError = MessageFormat.format(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP), getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID));
+                String fileValidationError = MessageFormat.format(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP), ourCustomerProfile);
                 reportData.getHeaderValidationErrors().add(fileValidationError);
                 LOG.error("fileOnlyContainsOurEmployeeCustomerIndicator: " + fileValidationError);
                 return false;
@@ -253,7 +256,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         }
     }
 
-    private boolean customerProfileIsValidOnAllRequestDetailLines(ConcurRequestExtractFile requestExtractFile) {
+    private boolean ourCustomerProfileIsOnAllRequestDetailLines(ConcurRequestExtractFile requestExtractFile, String ourCustomerProfile) {
         if ( CollectionUtils.isEmpty(requestExtractFile.getRequestDetails()) ) {
             return false;
         }
@@ -261,8 +264,9 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
             List<ConcurRequestExtractRequestDetailFileLine> requestDetailLines = requestExtractFile.getRequestDetails();
             boolean foundOnAllLines = true;
             for (ConcurRequestExtractRequestDetailFileLine detailLine : requestDetailLines) {
-                foundOnAllLines &= concurEmployeeInfoValidationService.isEmployeeGroupIdValid(detailLine.getEmployeeGroupId());
-           }
+                foundOnAllLines &= (StringUtils.isNotEmpty(detailLine.getEmployeeGroupId()) &&
+                                   detailLine.getEmployeeGroupId().equalsIgnoreCase(ourCustomerProfile));
+            }
             return foundOnAllLines;
         }
     }
