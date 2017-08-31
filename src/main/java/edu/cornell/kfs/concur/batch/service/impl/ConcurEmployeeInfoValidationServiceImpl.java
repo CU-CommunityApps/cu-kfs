@@ -5,16 +5,12 @@ import org.apache.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
-import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeInfoValidationService {
     private static final Logger LOG = Logger.getLogger(ConcurEmployeeInfoValidationServiceImpl.class);
@@ -22,7 +18,6 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
     protected PersonService personService;
     protected PayeeACHService payeeACHService;
     protected ConfigurationService configurationService;
-    protected ParameterEvaluatorService parameterEvaluatorService;
 
     @Override
     public boolean validPerson(String employeeId) {
@@ -100,15 +95,6 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
             }
         }
         return validationMessage;
-    }   
-
-    @Override
-    public boolean isEmployeeGroupIdValid(String employeeGroupId) {
-        if(StringUtils.isNotBlank(employeeGroupId)){
-            return parameterEvaluatorService.getParameterEvaluator(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, employeeGroupId).evaluationSucceeds();
-        }
-        return false;
     }
 
     public PersonService getPersonService() {
@@ -133,10 +119,6 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
     }
 
 }

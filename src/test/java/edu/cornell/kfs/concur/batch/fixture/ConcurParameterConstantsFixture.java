@@ -12,7 +12,7 @@ public class ConcurParameterConstantsFixture {
         this.definedParameters = new HashMap<String, String>();
         this.definedParameters.put(ConcurParameterConstants.CONCUR_AP_PDP_ORIGINATION_CODE, "Z6");
         this.definedParameters.put(ConcurParameterConstants.CONCUR_SAE_PDP_DOCUMENT_TYPE, "APTR");
-        this.definedParameters.put(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, "CORNELL;Executives;Athletics");
+        this.definedParameters.put(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, "CORNELL");
         this.definedParameters.put(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION, "IT");
         this.definedParameters.put(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT, "CRNL");
         this.definedParameters.put(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT, "CNCR");
