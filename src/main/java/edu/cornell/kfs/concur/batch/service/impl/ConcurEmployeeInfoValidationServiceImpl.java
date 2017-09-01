@@ -1,7 +1,10 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.Collection;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -22,6 +25,7 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
     protected PersonService personService;
     protected PayeeACHService payeeACHService;
     protected ConfigurationService configurationService;
+    protected ParameterService parameterService;
     protected ParameterEvaluatorService parameterEvaluatorService;
 
     @Override
@@ -105,8 +109,9 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
     @Override
     public boolean isEmployeeGroupIdValid(String employeeGroupId) {
         if(StringUtils.isNotBlank(employeeGroupId)){
-            return parameterEvaluatorService.getParameterEvaluator(CUKFSConstants.ParameterNamespaces.CONCUR, 
-                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID, employeeGroupId).evaluationSucceeds();
+            Collection<String> acceptedValuesForGroupId = parameterService.getParameterValuesAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+            return acceptedValuesForGroupId.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(employeeGroupId)).count() > 0;
         }
         return false;
     }
@@ -137,6 +142,10 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
 
     public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
         this.parameterEvaluatorService = parameterEvaluatorService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }

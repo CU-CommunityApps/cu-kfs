@@ -177,7 +177,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
                 String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);              
                 if(StringUtils.isNotBlank(parameterValue) && StringUtils.contains(parameterValue, PARAM_VALUES_SPLIT_CHAR)){
                     List<String> parameterValues = Arrays.asList(parameterValue.split(PARAM_VALUES_SPLIT_CHAR));
-                    return parameterValues.contains(employeeGroupId);                   
+                    return parameterValues.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(employeeGroupId)).count() > 0;                  
                 }
             }
             return false;        

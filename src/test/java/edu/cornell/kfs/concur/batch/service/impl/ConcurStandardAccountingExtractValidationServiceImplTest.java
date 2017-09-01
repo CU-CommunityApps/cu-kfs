@@ -23,13 +23,15 @@ import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchR
 
 public class ConcurStandardAccountingExtractValidationServiceImplTest {
     private static final String CORNELL_UPPERCASE_GROUP_ID  = "CORNELL";
+    private static final String CORNELL_MIXED_CASE_GROUP_ID  = "Cornell";
     private static final String EXECUTIVES_GROUP_ID  = "Executives";
     private static final String NULL_GROUP_ID  = null;
     private static final String FOO_GROUP_ID  = "foo";
     private static final String PARAM_VALUES_SPLIT_CHAR = ";";
     
     private ConcurStandardAccountingExtractValidationServiceImpl concurStandardAccountingValidationService;
-    private ConcurStandardAccountingExtractFile file;
+    private ConcurStandardAccountingExtractFile cornellUppercasefile;
+    private ConcurStandardAccountingExtractFile cornellMixedcaseFile;
     private ConcurStandardAccountingExtractFile executivesFile;
     private ConcurStandardAccountingExtractFile nullGroupIdFile;
     private ConcurStandardAccountingExtractFile fooGroupIdFile;
@@ -49,7 +51,8 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
         
         KualiDecimal[] debits = {new KualiDecimal(100.75), new KualiDecimal(-50.45)};
         KualiDecimal[] credits  = {};
-        file = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, CORNELL_UPPERCASE_GROUP_ID);
+        cornellUppercasefile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, CORNELL_UPPERCASE_GROUP_ID);
+        cornellMixedcaseFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, CORNELL_MIXED_CASE_GROUP_ID);
         executivesFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, EXECUTIVES_GROUP_ID);
         nullGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, NULL_GROUP_ID);
         fooGroupIdFile = ConcurStandardAccountingExtractFileFixture.buildConcurStandardAccountingExtractFile(debits, credits, FOO_GROUP_ID);
@@ -61,7 +64,8 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     @After
     public void tearDown() throws Exception {
         concurStandardAccountingValidationService = null;
-        file = null;
+        cornellUppercasefile = null;
+        cornellMixedcaseFile = null;
         executivesFile = null;
         nullGroupIdFile = null;
         fooGroupIdFile = null;
@@ -70,30 +74,30 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateDetailCountGood() {
-        assertTrue("The counts should be been the same.", concurStandardAccountingValidationService.validateDetailCount(file, reportData));
+        assertTrue("The counts should be been the same.", concurStandardAccountingValidationService.validateDetailCount(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateDetailCountIncorrectMatch() {
         setBadRecordCount();
-        assertFalse("The counts should NOT be been the same.", concurStandardAccountingValidationService.validateDetailCount(file, reportData));
+        assertFalse("The counts should NOT be been the same.", concurStandardAccountingValidationService.validateDetailCount(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateAmountsGood() {
-        assertTrue("The amounts should equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file, reportData));
+        assertTrue("The amounts should equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateAmountsAmountMismatch() {
         setBadJournalTotal();
-        assertFalse("The amounts should NOT be equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file, reportData));
+        assertFalse("The amounts should NOT be equal.", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateAmountsIncorrectDebitCredit() {
         setBadDebitCredit();
-        assertFalse("The should throw an error due to incorrect debitCredit field", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(file, reportData));
+        assertFalse("The should throw an error due to incorrect debitCredit field", concurStandardAccountingValidationService.validateAmountsAndDebitCreditCode(cornellUppercasefile, reportData));
     }
     
     @Test
@@ -110,37 +114,43 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateGeneralValidationGood() {
-        assertTrue("General Validation should be good.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
+        assertTrue("General Validation should be good.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadDate() {
-        file.setBatchDate(null);
-        assertFalse("General validation should be false, bad date.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
+        cornellUppercasefile.setBatchDate(null);
+        assertFalse("General validation should be false, bad date.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadAmount() {
         setBadJournalTotal();
-        assertFalse("General validation should be false, bad journal total.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
+        assertFalse("General validation should be false, bad journal total.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadDebitCredit() {
         setBadDebitCredit();
-        assertFalse("General validation should be false, bad debit credit field.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
+        assertFalse("General validation should be false, bad debit credit field.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));
     }
     
     @Test
     public void validateGeneralValidationBadCount() {
         setBadRecordCount();
-        assertFalse("General validation should be false, bad line count.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
+        assertFalse("General validation should be false, bad line count.", concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));
     }
     
     @Test 
-    public void validateEmployeeGroupIdGood() {
+    public void validateEmployeeGroupIdUppercaseIsGood() {
         assertTrue("This should be a good group", 
-                concurStandardAccountingValidationService.validateEmployeeGroupId(file.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
+                concurStandardAccountingValidationService.validateEmployeeGroupId(cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
+    }
+    
+    @Test 
+    public void validateEmployeeGroupIdMixedcaseIsGood() {
+        assertTrue("This should be a good group", 
+                concurStandardAccountingValidationService.validateEmployeeGroupId(cornellMixedcaseFile.getConcurStandardAccountingExtractDetailLines().get(0), reportData));
     }
     
     @Test 
@@ -163,21 +173,21 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Test
     public void validateGeneralValidationBadEmoployeeGroup() {
-        file.getConcurStandardAccountingExtractDetailLines().get(0).setEmployeeGroupId("testMe");
+        cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0).setEmployeeGroupId("testMe");
         assertFalse("General validation should be false, bad employee group id.", 
-                concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(file, reportData));
+                concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));
     }
     
     private void setBadJournalTotal() {
-        file.getConcurStandardAccountingExtractDetailLines().get(0).setJournalAmount(new KualiDecimal(200));
+        cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0).setJournalAmount(new KualiDecimal(200));
     }
     
     private void setBadDebitCredit() {
-        file.getConcurStandardAccountingExtractDetailLines().get(0).setJounalDebitCredit("foo");
+        cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0).setJounalDebitCredit("foo");
     }
 
     private void setBadRecordCount() {
-        file.setRecordCount(new Integer(5));
+        cornellUppercasefile.setRecordCount(new Integer(5));
     }
     
     private class TestableConcurEmployeeInfoValidationServiceImpl extends ConcurEmployeeInfoValidationServiceImpl {
@@ -187,7 +197,7 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
                 String parameterValue = concurParameterConstantsFixture.getValueForConcurParameter(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);              
                 if(StringUtils.isNotBlank(parameterValue) && StringUtils.contains(parameterValue, PARAM_VALUES_SPLIT_CHAR)){
                     List<String> parameterValues = Arrays.asList(parameterValue.split(PARAM_VALUES_SPLIT_CHAR));
-                    return parameterValues.contains(employeeGroupId);                   
+                    return parameterValues.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(employeeGroupId)).count() > 0;                 
                 }
             }
             return false;
