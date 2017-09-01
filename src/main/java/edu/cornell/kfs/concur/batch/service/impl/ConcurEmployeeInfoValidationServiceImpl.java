@@ -1,7 +1,12 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -10,7 +15,10 @@ import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurEmployeeInfoValidationService;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeInfoValidationService {
     private static final Logger LOG = Logger.getLogger(ConcurEmployeeInfoValidationServiceImpl.class);
@@ -18,6 +26,7 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
     protected PersonService personService;
     protected PayeeACHService payeeACHService;
     protected ConfigurationService configurationService;
+    protected ParameterService parameterService;
 
     @Override
     public boolean validPerson(String employeeId) {
@@ -95,6 +104,18 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
             }
         }
         return validationMessage;
+    }   
+
+    @Override
+    public boolean isEmployeeGroupIdValid(String employeeGroupId) {
+        if(StringUtils.isNotBlank(employeeGroupId)){
+            Collection<String> acceptedValuesForGroupId = parameterService.getParameterValuesAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
+            if(CollectionUtils.isNotEmpty(acceptedValuesForGroupId)){
+                return acceptedValuesForGroupId.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(employeeGroupId)).count() > 0;
+            }
+        }
+        return false;
     }
 
     public PersonService getPersonService() {
@@ -119,6 +140,10 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }
