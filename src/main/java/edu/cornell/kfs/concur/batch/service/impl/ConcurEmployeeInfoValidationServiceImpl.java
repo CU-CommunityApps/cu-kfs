@@ -26,7 +26,6 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
     protected PayeeACHService payeeACHService;
     protected ConfigurationService configurationService;
     protected ParameterService parameterService;
-    protected ParameterEvaluatorService parameterEvaluatorService;
 
     @Override
     public boolean validPerson(String employeeId) {
@@ -138,10 +137,6 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
-        this.parameterEvaluatorService = parameterEvaluatorService;
     }
 
     public void setParameterService(ParameterService parameterService) {
