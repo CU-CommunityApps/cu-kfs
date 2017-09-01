@@ -1,14 +1,15 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
@@ -110,7 +111,9 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
         if(StringUtils.isNotBlank(employeeGroupId)){
             Collection<String> acceptedValuesForGroupId = parameterService.getParameterValuesAsString(CUKFSConstants.ParameterNamespaces.CONCUR, 
                     CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID);
-            return acceptedValuesForGroupId.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(employeeGroupId)).count() > 0;
+            if(CollectionUtils.isNotEmpty(acceptedValuesForGroupId)){
+                return acceptedValuesForGroupId.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(employeeGroupId)).count() > 0;
+            }
         }
         return false;
     }
