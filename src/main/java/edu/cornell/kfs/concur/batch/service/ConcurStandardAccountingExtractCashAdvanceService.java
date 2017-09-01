@@ -13,6 +13,10 @@ public interface ConcurStandardAccountingExtractCashAdvanceService {
     
     boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine line);
     
+    boolean isAtmFeeCreditLine(ConcurStandardAccountingExtractDetailLine line);
+    
+    boolean isAtmCashAdvanceLineWithUnusedAmount(ConcurStandardAccountingExtractDetailLine line);
+    
     ConcurAccountInfo findAccountingInfoForCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line, 
             List<ConcurStandardAccountingExtractDetailLine> saeLines);
     

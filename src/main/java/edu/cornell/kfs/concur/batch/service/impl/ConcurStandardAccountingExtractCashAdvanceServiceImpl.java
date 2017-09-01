@@ -20,14 +20,27 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
     
     @Override
     public boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {
-        return isCashAdvanceLine(line)
-                && StringUtils.equalsIgnoreCase(ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, line.getCashAdvancePaymentCode());
+        return isCashAdvanceLine(line) && StringUtils.equalsIgnoreCase(
+                ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, line.getCashAdvancePaymentCodeName());
     }
     
     @Override
     public boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine line) {
         return StringUtils.equalsIgnoreCase(ConcurConstants.EXPENSE_TYPE_ATM_FEE, line.getExpenseType())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.DEBIT, line.getJounalDebitCredit());
+    }
+    
+    @Override
+    public boolean isAtmFeeCreditLine(ConcurStandardAccountingExtractDetailLine line) {
+        return isCashAdvanceLine(line)
+                && StringUtils.equalsIgnoreCase(ConcurConstants.EXPENSE_TYPE_ATM_FEE, line.getExpenseType())
+                && StringUtils.equalsIgnoreCase(ConcurConstants.CREDIT, line.getJounalDebitCredit());
+    }
+    
+    @Override
+    public boolean isAtmCashAdvanceLineWithUnusedAmount(ConcurStandardAccountingExtractDetailLine line) {
+        return isAtmCashAdvanceLine(line)
+                && StringUtils.equalsIgnoreCase(ConcurConstants.PAYMENT_CODE_PSEUDO, line.getPaymentCode());
     }
     
     @Override 

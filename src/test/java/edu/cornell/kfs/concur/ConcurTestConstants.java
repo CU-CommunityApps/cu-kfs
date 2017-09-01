@@ -36,6 +36,7 @@ public class ConcurTestConstants {
     public static final String REPORT_ENTRY_ID_3 = "2234";
     public static final String CASH_ADVANCE_KEY_1 = "101";
     public static final String CASH_ADVANCE_KEY_2 = "102";
+    public static final String CASH_ADVANCE_KEY_ATM_1 = "500";
     public static final String CASH_ADVANCE_KEY_NONEXISTENT = "999";
     public static final String REQUEST_ID_1 = "A1B2C3D4E5F6G7H8I9J0";
     public static final String REQUEST_ID_2 = "ZZ11YY22XX33WW44VV55";
@@ -68,6 +69,10 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_PREPAID_OFFSET_OBJECT_CODE = "7711";
         public static final String COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE = "8282";
         public static final String COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE = "1444";
+        public static final String COLLECTOR_ATM_FEE_DEBIT_CHART_CODE = "TI";
+        public static final String COLLECTOR_ATM_FEE_DEBIT_ACCOUNT_NUMBER = "G333555";
+        public static final String COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE = "6699";
+        public static final String COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE = "1488";
     }
     
     public static final String PDP_LINE_FIXTURE_CASH_ADVANCE_KEY = "ABC123";

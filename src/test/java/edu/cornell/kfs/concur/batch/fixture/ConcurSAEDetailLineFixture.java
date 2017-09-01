@@ -32,14 +32,16 @@ public enum ConcurSAEDetailLineFixture {
             ConcurConstants.DEBIT, 50.00, "12/24/2016", null, ConcurTestConstants.REPORT_ENTRY_ID_1,
             KRADConstants.NO_INDICATOR_VALUE, ParameterTestValues.COLLECTOR_CHART_CODE,
             ConcurTestConstants.DEFAULT_REPORT_ACCOUNT, null, null, null, null,
-            ConcurConstants.UNIVERSITY_PAYMENT_TYPE, ConcurConstants.USER_PAYMENT_TYPE),
+            ConcurConstants.UNIVERSITY_PAYMENT_TYPE, ConcurConstants.USER_PAYMENT_TYPE,
+            ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME, null),
     DEFAULT_CREDIT(DEFAULT_DEBIT, null, ConcurConstants.CREDIT, -50.00,
             buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.USER_PAYMENT_TYPE),
             buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
     DEFAULT_CASH_ADVANCE(DEFAULT_CREDIT, null,
             buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, StringUtils.EMPTY),
             buildOverride(LineField.ACCOUNT_NUMBER, StringUtils.EMPTY),
-            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_1)),
+            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_1),
+            buildOverride(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME, ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_CASH)),
     DEFAULT_CORP_CARD_DEBIT(DEFAULT_DEBIT, null,
             buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID),
             buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE)),
@@ -57,6 +59,16 @@ public enum ConcurSAEDetailLineFixture {
     DEFAULT_PERSONAL_RETURN_CREDIT(DEFAULT_PERSONAL_CREDIT, null,
             buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE),
             buildOverride(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, ConcurConstants.UNIVERSITY_PAYMENT_TYPE)),
+    DEFAULT_ATM_CASH_ADVANCE(DEFAULT_CASH_ADVANCE, null,
+            buildOverride(LineField.CASH_ADVANCE_KEY, ConcurTestConstants.CASH_ADVANCE_KEY_ATM_1),
+            buildOverride(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME,
+                    ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID)),
+    DEFAULT_UNUSED_ATM_CASH_ADVANCE(DEFAULT_ATM_CASH_ADVANCE, null,
+            buildOverride(LineField.PAYMENT_CODE, ConcurConstants.PAYMENT_CODE_PSEUDO)),
+    DEFAULT_ATM_FEE_DEBIT(DEFAULT_DEBIT, null,
+            buildOverride(LineField.EXPENSE_TYPE, ConcurConstants.EXPENSE_TYPE_ATM_FEE)),
+    DEFAULT_ATM_FEE_CREDIT(DEFAULT_ATM_CASH_ADVANCE, null,
+            buildOverride(LineField.EXPENSE_TYPE, ConcurConstants.EXPENSE_TYPE_ATM_FEE)),
 
     MERGING_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST),
     MERGING_TEST_LINE2(DEFAULT_DEBIT, ConcurSAEFileFixture.MERGING_TEST, 75.00),
@@ -266,6 +278,15 @@ public enum ConcurSAEDetailLineFixture {
     PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE5(DEFAULT_PERSONAL_RETURN_DEBIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, 12.00),
     PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST_LINE6(DEFAULT_PERSONAL_RETURN_CREDIT, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, -12.00),
 
+    ATM_CASH_ADVANCE_TEST_LINE1(DEFAULT_DEBIT, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST, 4.00),
+    ATM_CASH_ADVANCE_TEST_LINE2(DEFAULT_ATM_CASH_ADVANCE, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST, -4.00),
+    ATM_CASH_ADVANCE_TEST_LINE3(DEFAULT_ATM_FEE_DEBIT, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST, 3.50,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2)),
+    ATM_CASH_ADVANCE_TEST_LINE4(DEFAULT_ATM_FEE_CREDIT, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST, -3.50,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2)),
+    ATM_CASH_ADVANCE_TEST_LINE5(DEFAULT_UNUSED_ATM_CASH_ADVANCE, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST, -6.00,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_3)),
+
     PDP_EXAMPLE_DEBIT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
     PDP_EXAMPLE_CASH_ADVANCE(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PDP_EXAMPLE),
     PDP_EXAMPLE_PRE_PAID_AMOUNT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE,
@@ -315,6 +336,8 @@ public enum ConcurSAEDetailLineFixture {
     public final String reportOrgRefId;
     public final String journalPayerPaymentTypeName;
     public final String journalPayeePaymentTypeName;
+    public final String expenseType;
+    public final String cashAdvancePaymentCodeName;
 
     @SafeVarargs
     private ConcurSAEDetailLineFixture(ConcurSAEDetailLineFixture baseFixture, ConcurSAEFileFixture extractFile,
@@ -377,7 +400,9 @@ public enum ConcurSAEDetailLineFixture {
                 overrideMap.getOrDefault(LineField.REPORT_PROJECT_CODE, baseFixture.reportProjectCode),
                 overrideMap.getOrDefault(LineField.REPORT_ORG_REF_ID, baseFixture.reportOrgRefId),
                 overrideMap.getOrDefault(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, baseFixture.journalPayerPaymentTypeName),
-                overrideMap.getOrDefault(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, baseFixture.journalPayeePaymentTypeName));
+                overrideMap.getOrDefault(LineField.JOURNAL_PAYEE_PAYMENT_TYPE_NAME, baseFixture.journalPayeePaymentTypeName),
+                overrideMap.getOrDefault(LineField.EXPENSE_TYPE, baseFixture.expenseType),
+                overrideMap.getOrDefault(LineField.CASH_ADVANCE_PAYMENT_CODE_NAME, baseFixture.cashAdvancePaymentCodeName));
     }
 
     private ConcurSAEDetailLineFixture(ConcurSAEFileFixture extractFile, ConcurEmployeeFixture employee,
@@ -387,7 +412,8 @@ public enum ConcurSAEDetailLineFixture {
             String cashAdvanceKey, String reportEntryId, String reportEntryIsPersonalFlag,
             String reportChartOfAccountsCode, String reportAccountNumber, String reportSubAccountNumber,
             String reportSubObjectCode, String reportProjectCode, String reportOrgRefId,
-            String journalPayerPaymentTypeName, String journalPayeePaymentTypeName) {
+            String journalPayerPaymentTypeName, String journalPayeePaymentTypeName,
+            String expenseType, String cashAdvancePaymentCodeName) {
         this.extractFile = extractFile;
         this.employee = employee;
         this.reportId = reportId;
@@ -413,6 +439,8 @@ public enum ConcurSAEDetailLineFixture {
         this.reportOrgRefId = reportOrgRefId;
         this.journalPayerPaymentTypeName = journalPayerPaymentTypeName;
         this.journalPayeePaymentTypeName = journalPayeePaymentTypeName;
+        this.expenseType = expenseType;
+        this.cashAdvancePaymentCodeName = cashAdvancePaymentCodeName;
     }
 
     public ConcurStandardAccountingExtractDetailLine toDetailLine() {
@@ -444,7 +472,7 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setJournalAmountString(String.valueOf(journalAmount));
         detailLine.setReportEndDate(ConcurFixtureUtils.toSqlDate(reportEndDate));
         detailLine.setPolicy(ConcurTestConstants.DEFAULT_POLICY_NAME);
-        detailLine.setExpenseType(ConcurTestConstants.DEFAULT_EXPENSE_TYPE_NAME);
+        detailLine.setExpenseType(expenseType);
         detailLine.setCashAdvanceKey(cashAdvanceKey);
         detailLine.setReportEntryId(reportEntryId);
         detailLine.setReportEntryIsPersonalFlag(getReportEntryIsPersonalFlagAsBoolean());
@@ -456,6 +484,7 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setReportOrgRefId(reportOrgRefId);
         detailLine.setJournalPayerPaymentTypeName(journalPayerPaymentTypeName);
         detailLine.setJournalPayeePaymentTypeName(journalPayeePaymentTypeName);
+        detailLine.setCashAdvancePaymentCodeName(cashAdvancePaymentCodeName);
         return detailLine;
     }
 
@@ -503,7 +532,9 @@ public enum ConcurSAEDetailLineFixture {
         REPORT_PROJECT_CODE,
         REPORT_ORG_REF_ID,
         JOURNAL_PAYER_PAYMENT_TYPE_NAME,
-        JOURNAL_PAYEE_PAYMENT_TYPE_NAME;
+        JOURNAL_PAYEE_PAYMENT_TYPE_NAME,
+        EXPENSE_TYPE,
+        CASH_ADVANCE_PAYMENT_CODE_NAME;
     }
 
 }
