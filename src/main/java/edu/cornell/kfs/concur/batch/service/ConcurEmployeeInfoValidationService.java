@@ -9,4 +9,6 @@ public interface ConcurEmployeeInfoValidationService {
     boolean isPayeeSignedUpForACH(String employeeId);
     
     String getAddressValidationMessageIfCheckPayment(String employeeId);
+    
+    boolean isEmployeeGroupIdValid(String employeeGroupId);
 }
