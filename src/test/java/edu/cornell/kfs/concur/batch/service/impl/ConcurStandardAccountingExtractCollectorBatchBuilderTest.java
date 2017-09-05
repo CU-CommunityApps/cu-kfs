@@ -254,8 +254,38 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     @Test
-    public void testAtmCashAdvanceWithAtmFeeAndUnusedAmount() throws Exception {
+    public void testAtmCashAdvance() throws Exception {
         assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithAtmFee() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_WITH_FEE_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_WITH_FEE_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithUnusedAmount() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_UNUSED_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_UNUSED_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithAtmFeeAndUnusedAmount() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_FEE_AND_UNUSED_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_FEE_AND_UNUSED_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithMultipleAtmFees() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_MULTI_FEE_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_MULTI_FEE_TEST);
+    }
+
+    @Test
+    public void testAtmAndRequestedCashAdvanceInSameReport() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_AND_REQUESTED_CASH_ADVANCE_TEST, ConcurSAEFileFixture.ATM_AND_REQUESTED_CASH_ADVANCE_TEST);
     }
 
     protected void assertCollectorBatchIsBuiltProperly(
