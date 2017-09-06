@@ -13,7 +13,7 @@
 		<property name="attributes">
 			<list>
 				<ref bean="PaymentWorksFieldMapping-paymentWorksFieldMappingId" />
-				<ref bean="PaymentWorksFieldMapping-paymentWorksFieldName" />
+				<ref bean="PaymentWorksFieldMapping-paymentWorksFieldLabel" />
 				<ref bean="PaymentWorksFieldMapping-kfsFieldName" />
 			</list>
 		</property>
@@ -31,11 +31,11 @@
 		</property>
 	</bean>
 	
-	<bean id="PaymentWorksFieldMapping-paymentWorksFieldName" parent="PaymentWorksFieldMapping-paymentWorksFieldName-parentBean" />
-	<bean id="PaymentWorksFieldMapping-paymentWorksFieldName-parentBean" abstract="true" parent="AttributeDefinition">
-		<property name="name" value="paymentWorksFieldName" />
-		<property name="label" value="PaymentWorks Field Name" />
-		<property name="shortLabel" value="PMW Field" />
+	<bean id="PaymentWorksFieldMapping-paymentWorksFieldLabel" parent="PaymentWorksFieldMapping-paymentWorksFieldLabel-parentBean" />
+	<bean id="PaymentWorksFieldMapping-paymentWorksFieldLabel-parentBean" abstract="true" parent="AttributeDefinition">
+		<property name="name" value="paymentWorksFieldLabel" />
+		<property name="label" value="PaymentWorks Field Label" />
+		<property name="shortLabel" value="PMW Field Label" />
 		<property name="forceUppercase" value="false" />
 		<property name="maxLength" value="200" />
 	   <property name="control">
@@ -71,14 +71,14 @@
 		<property name="lookupFields">
 			<list>
 				<bean parent="FieldDefinition" p:attributeName="paymentWorksFieldMappingId" />
-				<bean parent="FieldDefinition" p:attributeName="paymentWorksFieldName" />
+				<bean parent="FieldDefinition" p:attributeName="paymentWorksFieldLabel" />
 				<bean parent="FieldDefinition" p:attributeName="kfsFieldName" />
 			</list>
 		</property>
 		<property name="resultFields">
 			<list>
 				<bean parent="FieldDefinition" p:attributeName="paymentWorksFieldMappingId" />
-				<bean parent="FieldDefinition" p:attributeName="paymentWorksFieldName" />
+				<bean parent="FieldDefinition" p:attributeName="paymentWorksFieldLabel" />
 				<bean parent="FieldDefinition" p:attributeName="kfsFieldName" />
 			</list>
 		</property>

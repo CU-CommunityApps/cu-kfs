@@ -41,6 +41,9 @@ public class PaymentWorksConstants {
 	public static final String SOURCE_USER = "PaymentWorks";
 	public static final String VENDOR_REQUEST_ID_KFS_TEMP_ID_STARTER = "KFS";
 	public static final String PAYEE_ACH_ACCOUNT_DEFAULT_TRANSACTION_TYPE = "PRAP";
+	public static final String OUTPUT_ATTRIBUTE_BEGIN_DELIMITER = ":<";
+	public static final String OUTPUT_ATTRIBUTE_END_DELIMITER = "> ";
+	public static final String OUTPUT_RESTRICTED_DATA_PRESENT = "RestrictedDataPresent";
 	
 	public static class FieldNames {
 		public static final String ROUTING_NUMBER = "Routing num";
@@ -130,7 +133,7 @@ public class PaymentWorksConstants {
 	}
 	
 	public static class PaymentWorksFieldMappingDatabaseFieldNames {
-		public static final String PAYMENT_WORKS_FIELD_NAME = "PMW_FIELD";
+		public static final String PAYMENT_WORKS_FIELD_LABEL = "PMW_FIELD_LABEL";
 		public static final String KFS_FIELD_NAME = "KFS_FIELD";
 	}
 	

@@ -18,38 +18,13 @@
  */
 package edu.cornell.kfs.paymentworks.xmlObjects;
 
-public interface PaymentWorksAddress {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-	public String getId();
+@XmlRootElement(name = "bank_address")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class PaymentWorksBankAddressDTO extends PaymentWorksAddressBaseDTO {
 
-	public void setId(String id);
-
-	public String getName();
-
-	public void setName(String name);
-
-	public String getStreet1();
-
-	public void setStreet1(String street1);
-
-	public String getStreet2();
-
-	public void setStreet2(String street2);
-
-	public String getCity();
-
-	public void setCity(String city);
-
-	public String getState();
-
-	public void setState(String state);
-
-	public String getCountry();
-
-	public void setCountry(String country);
-
-	public String getZipcode();
-
-	public void setZipcode(String zipcode);
-
+    //just needed so XML naming would work with the base address class
 }

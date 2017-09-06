@@ -12,16 +12,20 @@ public class PaymentWorksRequestingCompanyDTO {
 	private String legal_name;
 	private String desc;
 	private String name;
-	private PaymentWorksTaxClassificationDTO tax_classification;
+	private String legal_last_name;
+	private String legal_first_name;
 	private String url;
 	private String tin;
 	private String tin_type;
+	private String tin_name_validation_status;
 	private String tax_country;
 	private String w8_w9;
 	private String telephone;
 	private String duns;
+	private String corporate_email;
 	private PaymentWorksCorpAddressDTO corp_address;
 	private PaymentWorksRemittanceAddressesDTO remittance_addresses;
+	private PaymentWorksTaxClassificationDTO tax_classification;
 
 	public String getId() {
 		return id;
@@ -134,5 +138,37 @@ public class PaymentWorksRequestingCompanyDTO {
 	public void setTax_country(String tax_country) {
 		this.tax_country = tax_country;
 	}
+
+	public String getLegal_last_name() {
+        return legal_last_name;
+    }
+
+	public void setLegal_last_name(String legal_last_name) {
+        this.legal_last_name = legal_last_name;
+    }
+
+	public String getLegal_first_name() {
+        return legal_first_name;
+    }
+
+	public void setLegal_first_name(String legal_first_name) {
+        this.legal_first_name = legal_first_name;
+    }
+
+	public String getTin_name_validation_status() {
+        return tin_name_validation_status;
+    }
+
+	public void setTin_name_validation_status(String tin_name_validation_status) {
+        this.tin_name_validation_status = tin_name_validation_status;
+    }
+
+	public String getCorporate_email() {
+        return corporate_email;
+    }
+
+	public void setCorporate_email(String corporate_email) {
+        this.corporate_email = corporate_email;
+    }
 
 }

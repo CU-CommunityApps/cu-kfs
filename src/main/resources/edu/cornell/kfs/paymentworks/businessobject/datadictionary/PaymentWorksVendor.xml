@@ -30,6 +30,7 @@
 				<ref bean="PaymentWorksVendor-requestingCompanyTaxClassificationCode" />
 				<ref bean="PaymentWorksVendor-requestingCompanyUrl" />
 				<ref bean="PaymentWorksVendor-requestingCompanyW8W9" />
+				<ref bean="PaymentWorksVendor-requestingCompanyCorporateEmail" />
 				<ref bean="PaymentWorksVendor-remittanceAddressId" />
 				<ref bean="PaymentWorksVendor-remittanceAddressName" />
 				<ref bean="PaymentWorksVendor-remittanceAddressStreet1" />
@@ -59,17 +60,14 @@
 				<ref bean="PaymentWorksVendor-documentNumberList" />
 				<ref bean="PaymentWorksVendor-vendorNumberList" />
 				<!-- Custom Fields -->
-				<ref bean="PaymentWorksVendor-businessPurpose" />
 				<ref bean="PaymentWorksVendor-servicesProvided" />
 				<ref bean="PaymentWorksVendor-vendorType" />
-				<ref bean="PaymentWorksVendor-emailAddress" />
 				<ref bean="PaymentWorksVendor-initiatorNetId" />
 				<ref bean="PaymentWorksVendor-invoicing" />
 				<ref bean="PaymentWorksVendor-eInvoiceContactName" />
 				<ref bean="PaymentWorksVendor-eInvoiceContactPhoneNumber" />
 				<ref bean="PaymentWorksVendor-eInvoicePhoneExtension" />
 				<ref bean="PaymentWorksVendor-eInvoiceEmail" />
-				<ref bean="PaymentWorksVendor-vendorInformationContact" />
 				<ref bean="PaymentWorksVendor-vendorInformationContactName" />
 				<ref bean="PaymentWorksVendor-vendorInformationPhoneNumber" />
 				<ref bean="PaymentWorksVendor-vendorInformationPhoneExtension" />
@@ -88,7 +86,7 @@
 				<ref bean="PaymentWorksVendor-conflictOfInterestRelationshipToEmployee" />
 				<ref bean="PaymentWorksVendor-conflictOfInterestEmployeeName" />
 				<ref bean="PaymentWorksVendor-conflictOfInterestEmployeePhoneNumber" />
-				<ref bean="PaymentWorksVendor-insurance" />
+				<ref bean="PaymentWorksVendor-insuranceCertificate" />
 				<ref bean="PaymentWorksVendor-insuranceContactName" />
 				<ref bean="PaymentWorksVendor-insuranceContactPhoneNumber" />
 				<ref bean="PaymentWorksVendor-insuranceContactPhoneExtension" />
@@ -101,7 +99,7 @@
 				<ref bean="PaymentWorksVendor-accountsReceivableContactPhone" />
 				<ref bean="PaymentWorksVendor-accountsReceivableContactPhoneExtension" />
 				<ref bean="PaymentWorksVendor-accountsReceivableContactEmail" />
-				<ref bean="PaymentWorksVendor-diversityClassification" />
+				<ref bean="PaymentWorksVendor-diversityClassifications" />
 				<ref bean="PaymentWorksVendor-veteranCertificationExpirationDate" />
 				<ref bean="PaymentWorksVendor-mbeCertificationExpirationDate" />
 				<ref bean="PaymentWorksVendor-womanOwned" />
@@ -240,19 +238,25 @@
 	</bean>
 
 	<bean id="PaymentWorksVendor-requestingCompanyTelephone" parent="PaymentWorksVendor-requestingCompanyTelephone-parentBean" />
-	<bean id="PaymentWorksVendor-requestingCompanyTelephone-parentBean" abstract="true" parent="GenericAttributes-phoneNumberNoValidation">
+	<bean id="PaymentWorksVendor-requestingCompanyTelephone-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="requestingCompanyTelephone" />
 		<property name="label" value="Requesting Company Phone" />
 		<property name="required" value="true" />
-		<property name="maxLength" value="14" />
+		<property name="maxLength" value="25" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="25" />
+        </property>
 	</bean>
 
 	<bean id="PaymentWorksVendor-requestingCompanyTelephoneOldValue" parent="PaymentWorksVendor-requestingCompanyTelephoneOldValue-parentBean" />
-	<bean id="PaymentWorksVendor-requestingCompanyTelephoneOldValue-parentBean" abstract="true" parent="GenericAttributes-phoneNumberNoValidation">
+	<bean id="PaymentWorksVendor-requestingCompanyTelephoneOldValue-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="requestingCompanyTelephoneOldValue" />
-		<property name="label" value="Requesting Comapny Phone (Old Value)" />
+		<property name="label" value="Requesting Company Phone (Old Value)" />
 		<property name="required" value="true" />
-		<property name="maxLength" value="14" />
+		<property name="maxLength" value="25" />
+		<property name="control">
+            <bean parent="TextControlDefinition" p:size="25" />
+        </property>
 	</bean>
 
 	<bean id="PaymentWorksVendor-requestingCompanyDuns" parent="PaymentWorksVendor-requestingCompanyDuns-parentBean" />
@@ -303,13 +307,32 @@
 	<bean id="PaymentWorksVendor-requestingCompanyW8W9" parent="PaymentWorksVendor-requestingCompanyW8W9-parentBean" />
 	<bean id="PaymentWorksVendor-requestingCompanyW8W9-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="requestingCompanyW8W9" />
-		<property name="label" value="Requesting Compnay W8 W9" />
+		<property name="label" value="Requesting Company W8 W9" />
 		<property name="forceUppercase" value="false" />
 		<property name="maxLength" value="255" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="255" />
 		</property>
-	</bean>
+		<property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true" />
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*********" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+	<bean id="PaymentWorksVendor-requestingCompanyCorporateEmail" parent="PaymentWorksVendor-requestingCompanyCorporateEmail-parentBean" />
+    <bean id="PaymentWorksVendor-requestingCompanyCorporateEmail-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="requestingCompanyCorporateEmail" />
+        <property name="label" value="Requesting Company Corporate Email Address" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressId" parent="PaymentWorksVendor-remittanceAddressId-parentBean" />
 	<bean id="PaymentWorksVendor-remittanceAddressId-parentBean" abstract="true" parent="AttributeDefinition">
@@ -539,17 +562,6 @@
 		</property>
 	</bean>
 	
-	<bean id="PaymentWorksVendor-businessPurpose" parent="PaymentWorksVendor-businessPurpose-parentBean" />
-	<bean id="PaymentWorksVendor-businessPurpose-parentBean" abstract="true" parent="AttributeDefinition">
-		<property name="name" value="businessPurpose" />
-		<property name="label" value="Business Purpose" />
-		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="50" />
-		</property>
-	</bean>
-	
 	<bean id="PaymentWorksVendor-servicesProvided" parent="PaymentWorksVendor-servicesProvided-parentBean" />
 	<bean id="PaymentWorksVendor-servicesProvided-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="servicesProvided" />
@@ -565,17 +577,6 @@
 	<bean id="PaymentWorksVendor-vendorType-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="vendorType" />
 		<property name="label" value="Vendor Type" />
-		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="50" />
-		</property>
-	</bean>
-	
-	<bean id="PaymentWorksVendor-emailAddress" parent="PaymentWorksVendor-emailAddress-parentBean" />
-	<bean id="PaymentWorksVendor-emailAddress-parentBean" abstract="true" parent="AttributeDefinition">
-		<property name="name" value="emailAddress" />
-		<property name="label" value="Email Address" />
 		<property name="forceUppercase" value="false" />
 		<property name="maxLength" value="50" />
 		<property name="control">
@@ -642,17 +643,6 @@
 	<bean id="PaymentWorksVendor-eInvoiceEmail-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="eInvoiceEmail" />
 		<property name="label" value="E Invoice Contact Email" />
-		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
-		<property name="control">
-			<bean parent="TextControlDefinition" p:size="50" />
-		</property>
-	</bean>
-	
-	<bean id="PaymentWorksVendor-vendorInformationContact" parent="PaymentWorksVendor-vendorInformationContact-parentBean" />
-	<bean id="PaymentWorksVendor-vendorInformationContact-parentBean" abstract="true" parent="AttributeDefinition">
-		<property name="name" value="vendorInformationContact" />
-		<property name="label" value="Vendor Contact" />
 		<property name="forceUppercase" value="false" />
 		<property name="maxLength" value="50" />
 		<property name="control">
@@ -858,10 +848,10 @@
 		</property>
 	</bean>
 	
-	<bean id="PaymentWorksVendor-insurance" parent="PaymentWorksVendor-insurance-parentBean" />
-	<bean id="PaymentWorksVendor-insurance-parentBean" abstract="true" parent="AttributeDefinition">
-		<property name="name" value="insurance" />
-		<property name="label" value="Insurance" />
+	<bean id="PaymentWorksVendor-insuranceCertificate" parent="PaymentWorksVendor-insuranceCertificate-parentBean" />
+	<bean id="PaymentWorksVendor-insuranceCertificate-parentBean" abstract="true" parent="AttributeDefinition">
+		<property name="name" value="insuranceCertificate" />
+		<property name="label" value="Insurance Certificate" />
 		<property name="forceUppercase" value="false" />
 		<property name="maxLength" value="50" />
 		<property name="control">
@@ -1001,10 +991,10 @@
 		</property>
 	</bean>
 	
-	<bean id="PaymentWorksVendor-diversityClassification" parent="PaymentWorksVendor-diversityClassification-parentBean" />
-	<bean id="PaymentWorksVendor-diversityClassification-parentBean" abstract="true" parent="AttributeDefinition">
-		<property name="name" value="diversityClassification" />
-		<property name="label" value="Diversity Classification" />
+	<bean id="PaymentWorksVendor-diversityClassifications" parent="PaymentWorksVendor-diversityClassifications-parentBean" />
+	<bean id="PaymentWorksVendor-diversityClassifications-parentBean" abstract="true" parent="AttributeDefinition">
+		<property name="name" value="diversityClassifications" />
+		<property name="label" value="Diversity Classifications" />
 		<property name="forceUppercase" value="false" />
 		<property name="maxLength" value="50" />
 		<property name="control">
@@ -1013,15 +1003,25 @@
 	</bean>
 	
 	<bean id="PaymentWorksVendor-veteranCertificationExpirationDate" parent="PaymentWorksVendor-veteranCertificationExpirationDate-parentBean"/>
-	<bean id="PaymentWorksVendor-veteranCertificationExpirationDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+	<bean id="PaymentWorksVendor-veteranCertificationExpirationDate-parentBean" abstract="true" parent="AttributeDefinition">
 	    <property name="name" value="veteranCertificationExpirationDate"/>
 	    <property name="label" value="Veteran Certification Expiration Date"/>
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
 	</bean>
 	
 	<bean id="PaymentWorksVendor-mbeCertificationExpirationDate" parent="PaymentWorksVendor-mbeCertificationExpirationDate-parentBean"/>
-	<bean id="PaymentWorksVendor-mbeCertificationExpirationDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+	<bean id="PaymentWorksVendor-mbeCertificationExpirationDate-parentBean" abstract="true" parent="AttributeDefinition">
 	    <property name="name" value="mbeCertificationExpirationDate"/>
 	    <property name="label" value="MBE Certification Expiration Date"/>
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
 	</bean>
 	
 	<bean id="PaymentWorksVendor-womanOwned" parent="PaymentWorksVendor-womanOwned-parentBean" />
@@ -1036,10 +1036,15 @@
 	</bean>
 	
 	<bean id="PaymentWorksVendor-wbeCertificationExpirationDate" parent="PaymentWorksVendor-wbeCertificationExpirationDate-parentBean"/>
-	<bean id="PaymentWorksVendor-wbeCertificationExpirationDate-parentBean" abstract="true" parent="GenericAttributes-genericDate">
+	<bean id="PaymentWorksVendor-wbeCertificationExpirationDate-parentBean" abstract="true" parent="AttributeDefinition">
 	    <property name="name" value="wbeCertificationExpirationDate"/>
 	    <property name="label" value="WBE Certification Expiration Date"/>
-	</bean>
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
 	
 	<bean id="PaymentWorksVendor-disabledVeteran" parent="PaymentWorksVendor-disabledVeteran-parentBean" />
 	<bean id="PaymentWorksVendor-disabledVeteran-parentBean" abstract="true" parent="AttributeDefinition">
@@ -1255,6 +1260,7 @@
 							<bean parent="FieldDefinition" p:attributeName="requestingCompanyTaxClassificationCode" />
 							<bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
 							<bean parent="FieldDefinition" p:attributeName="requestingCompanyW8W9" />
+							<bean parent="FieldDefinition" p:attributeName="requestingCompanyCorporateEmail" />
 							<bean parent="FieldDefinition" p:attributeName="remittanceAddressId" />
 							<bean parent="FieldDefinition" p:attributeName="remittanceAddressName" />
 							<bean parent="FieldDefinition" p:attributeName="remittanceAddressStreet1" />
@@ -1282,17 +1288,14 @@
 							<bean parent="FieldDefinition" p:attributeName="vendorDetailAssignedIdentifier" />
 							<bean parent="FieldDefinition" p:attributeName="documentNumberList" />
 							<bean parent="FieldDefinition" p:attributeName="vendorNumberList" />
-							<bean parent="FieldDefinition" p:attributeName="businessPurpose" />
 							<bean parent="FieldDefinition" p:attributeName="servicesProvided" />
 							<bean parent="FieldDefinition" p:attributeName="vendorType" />
-							<bean parent="FieldDefinition" p:attributeName="emailAddress" />
 							<bean parent="FieldDefinition" p:attributeName="initiatorNetId" />
 							<bean parent="FieldDefinition" p:attributeName="invoicing" />
 							<bean parent="FieldDefinition" p:attributeName="eInvoiceContactName" />
 							<bean parent="FieldDefinition" p:attributeName="eInvoiceContactPhoneNumber" />
 							<bean parent="FieldDefinition" p:attributeName="eInvoicePhoneExtension" />
 							<bean parent="FieldDefinition" p:attributeName="eInvoiceEmail" />
-							<bean parent="FieldDefinition" p:attributeName="vendorInformationContact" />
 							<bean parent="FieldDefinition" p:attributeName="vendorInformationContactName" />
 							<bean parent="FieldDefinition" p:attributeName="vendorInformationPhoneNumber" />
 							<bean parent="FieldDefinition" p:attributeName="vendorInformationPhoneExtension" />
@@ -1311,7 +1314,7 @@
 							<bean parent="FieldDefinition" p:attributeName="conflictOfInterestRelationshipToEmployee" />
 							<bean parent="FieldDefinition" p:attributeName="conflictOfInterestEmployeeName" />
 							<bean parent="FieldDefinition" p:attributeName="conflictOfInterestEmployeePhoneNumber" />
-							<bean parent="FieldDefinition" p:attributeName="insurance" />
+							<bean parent="FieldDefinition" p:attributeName="insuranceCertificate" />
 							<bean parent="FieldDefinition" p:attributeName="insuranceContactName" />
 							<bean parent="FieldDefinition" p:attributeName="insuranceContactPhoneNumber" />
 							<bean parent="FieldDefinition" p:attributeName="insuranceContactPhoneExtension" />
@@ -1324,7 +1327,7 @@
 							<bean parent="FieldDefinition" p:attributeName="accountsReceivableContactPhone" />
 							<bean parent="FieldDefinition" p:attributeName="accountsReceivableContactPhoneExtension" />
 							<bean parent="FieldDefinition" p:attributeName="accountsReceivableContactEmail" />
-							<bean parent="FieldDefinition" p:attributeName="diversityClassification" />
+							<bean parent="FieldDefinition" p:attributeName="diversityClassifications" />
 							<bean parent="FieldDefinition" p:attributeName="veteranCertificationExpirationDate" />
 							<bean parent="FieldDefinition" p:attributeName="mbeCertificationExpirationDate" />
 							<bean parent="FieldDefinition" p:attributeName="womanOwned" />
