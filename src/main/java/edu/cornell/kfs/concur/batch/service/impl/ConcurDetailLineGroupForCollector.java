@@ -35,8 +35,6 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtra
  * for each Report ID in the SAE file.
  */
 public class ConcurDetailLineGroupForCollector {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurDetailLineGroupForCollector.class);
-
     protected static final String FAKE_OBJECT_CODE_PREFIX = "?NONE?";
     protected static final String ORPHANED_CASH_ADVANCES_KEY = "ORPHANED_CASH_ADVANCES";
     protected static final String ACCOUNTING_FIELDS_KEY_FORMAT = "%s|%s|%s|%s|%s|%s|%s";
@@ -131,7 +129,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected void addAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine detailLine) {
-        String accountingFieldsKey = buildAccountingFieldsKey(detailLine);
+        String accountingFieldsKey = buildAccountingFieldsKeyForAtmFeeDebit(detailLine);
         addLineToSubGroup(ConcurSAELineType.ATM_FEE_DEBIT, accountingFieldsKey, detailLine);
     }
 
@@ -211,7 +209,8 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected String buildAccountingFieldsKeyForAtmCashAdvance(ConcurStandardAccountingExtractDetailLine detailLine) {
-        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT, collectorHelper.getPrepaidOffsetChartCode(),
+        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
+                collectorHelper.getPrepaidOffsetChartCode(),
                 collectorHelper.getPrepaidOffsetAccountNumber(),
                 collectorHelper.getDashOnlyPropertyValue(KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
                 collectorHelper.getPrepaidOffsetObjectCode(),
@@ -238,6 +237,17 @@ public class ConcurDetailLineGroupForCollector {
                 defaultToDashesIfBlank(requestedCashAdvance.getSubObjectCode(), KFSPropertyConstants.SUB_OBJECT_CODE),
                 defaultToDashesIfBlank(requestedCashAdvance.getProjectCode(), KFSPropertyConstants.PROJECT_CODE),
                 StringUtils.defaultIfBlank(requestedCashAdvance.getOrgRefId(), StringUtils.EMPTY));
+    }
+
+    protected String buildAccountingFieldsKeyForAtmFeeDebit(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return String.format(ACCOUNTING_FIELDS_KEY_FORMAT,
+                collectorHelper.getAtmFeeDebitChartCode(),
+                collectorHelper.getAtmFeeDebitAccountNumber(),
+                collectorHelper.getDashOnlyPropertyValue(KFSPropertyConstants.SUB_ACCOUNT_NUMBER),
+                collectorHelper.getAtmFeeDebitObjectCode(),
+                collectorHelper.getDashOnlyPropertyValue(KFSPropertyConstants.SUB_OBJECT_CODE),
+                defaultToDashesIfBlank(detailLine.getReportProjectCode(), KFSPropertyConstants.PROJECT_CODE),
+                StringUtils.defaultIfBlank(detailLine.getReportOrgRefId(), StringUtils.EMPTY));
     }
 
     protected String buildAccountingFieldsKeyForCorpCardPersonalExpense(ConcurStandardAccountingExtractDetailLine detailLine) {
