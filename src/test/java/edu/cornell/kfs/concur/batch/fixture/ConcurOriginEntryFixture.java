@@ -52,8 +52,7 @@ public enum ConcurOriginEntryFixture {
             buildOverride(LineField.ACCOUNT_NUMBER, ParameterTestValues.COLLECTOR_ATM_FEE_DEBIT_ACCOUNT_NUMBER),
             buildOverride(LineField.OBJECT_CODE, ParameterTestValues.COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE)),
     DEFAULT_UNUSED_ATM_AMOUNT_OFFSET(DEFAULT_DEBIT, null,
-            buildOverride(LineField.CHART_OF_ACCOUNTS_CODE, ParameterTestValues.COLLECTOR_PREPAID_OFFSET_CHART_CODE),
-            buildOverride(LineField.ACCOUNT_NUMBER, ParameterTestValues.COLLECTOR_PREPAID_OFFSET_ACCOUNT_NUMBER),
+            buildOverride(LineField.ACCOUNT_NUMBER, ConcurTestConstants.DEFAULT_REPORT_ACCOUNT),
             buildOverride(LineField.OBJECT_CODE, ParameterTestValues.COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE)),
 
     MERGING_TEST_ENTRY1(DEFAULT_DEBIT, ConcurCollectorBatchFixture.MERGING_TEST, 225.00),
