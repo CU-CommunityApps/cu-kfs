@@ -48,6 +48,8 @@ import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksFieldMapping;
 import edu.cornell.kfs.paymentworks.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksNewVendorConversionService;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUtilityService;
+import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksBankAccountDTO;
+import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksBankAddressDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksCorpAddressDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksNewVendorDetailDTO;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksRemittanceAddressDTO;
@@ -289,92 +291,135 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 	@Override
 	public PaymentWorksVendor createPaymentWorksVendor(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
 		PaymentWorksVendor paymentWorksNewVendor = new PaymentWorksVendor();
-
-		// Requesting company info
-		paymentWorksNewVendor.setRequestingCompanyId(paymentWorksNewVendorDetailDTO.getRequesting_company().getId());
-		paymentWorksNewVendor.setRequestingCompanyTin(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin());
-		paymentWorksNewVendor
-				.setRequestingCompanyTinType(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin_type());
-		paymentWorksNewVendor.setRequestingCompanyTaxCountry(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_country());
-		// KPS-316 restrict field size to db column length
-		paymentWorksNewVendor.setRequestingCompanyLegalName(getPaymentWorksUtilityService().trimFieldToMax(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_name(), "requestingCompanyLegalName"));
-		paymentWorksNewVendor.setRequestingCompanyName(getPaymentWorksUtilityService().trimFieldToMax(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getName(), "requestingCompanyName"));
-		paymentWorksNewVendor.setRequestingCompanyDesc(getPaymentWorksUtilityService().trimFieldToMax(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getDesc(), "requestingCompanyDesc"));
-		String companyPhone = getPaymentWorksUtilityService().trimFieldToMax(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getTelephone(), "requestingCompanyTelephone");
-		paymentWorksNewVendor.setRequestingCompanyTelephone(getPaymentWorksUtilityService().convertPhoneNumber(companyPhone));
-		// end KPS-316 company info
-		paymentWorksNewVendor
-				.setRequestingCompanyDuns(paymentWorksNewVendorDetailDTO.getRequesting_company().getDuns());
-		paymentWorksNewVendor.setRequestingCompanyTaxClassificationName(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getName());
-		paymentWorksNewVendor.setRequestingCompanyTaxClassificationCode(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getCode());
-		paymentWorksNewVendor.setRequestingCompanyUrl(getPaymentWorksUtilityService().trimFieldToMax(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getUrl(), "requestingCompanyUrl"));
-		paymentWorksNewVendor.setRequestingCompanyW8W9(getPaymentWorksUtilityService().trimFieldToMax(
-				paymentWorksNewVendorDetailDTO.getRequesting_company().getW8_w9(), "requestingCompanyW8W9"));
-
-		extractCustomFields(paymentWorksNewVendorDetailDTO, paymentWorksNewVendor);
-		
-		
-		// remittance address
-		if (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses())
-				&& ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company()
-						.getRemittance_addresses().getRemittance_address())
-				&& paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses()
-						.getRemittance_address().size() > 0) {
-
-			// should only be 1 address
-			PaymentWorksRemittanceAddressDTO remittanceAddress = paymentWorksNewVendorDetailDTO.getRequesting_company()
-					.getRemittance_addresses().getRemittance_address().get(0);
-
-			paymentWorksNewVendor.setRemittanceAddressId(remittanceAddress.getId());
-			paymentWorksNewVendor.setRemittanceAddressName(
-					getPaymentWorksUtilityService().trimFieldToMax(remittanceAddress.getName(), "remittanceAddressName"));
-			paymentWorksNewVendor.setRemittanceAddressStreet1(
-					getPaymentWorksUtilityService().trimFieldToMax(remittanceAddress.getStreet1(), "remittanceAddressStreet1"));
-			paymentWorksNewVendor.setRemittanceAddressStreet2(
-					getPaymentWorksUtilityService().trimFieldToMax(remittanceAddress.getStreet2(), "remittanceAddressStreet2"));
-			paymentWorksNewVendor.setRemittanceAddressCity(
-					getPaymentWorksUtilityService().trimFieldToMax(remittanceAddress.getCity(), "remittanceAddressCity"));
-			paymentWorksNewVendor.setRemittanceAddressState(remittanceAddress.getState());
-			paymentWorksNewVendor.setRemittanceAddressCountry(remittanceAddress.getCountry());
-			paymentWorksNewVendor.setRemittanceAddressZipCode(remittanceAddress.getZipcode());
+		if (newVendorDetailExists(paymentWorksNewVendorDetailDTO)) {
+		    paymentWorksNewVendor.setVendorRequestId(paymentWorksNewVendorDetailDTO.getId());
+		    populateNewVendorRequestingCompanyAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
+		    populateNewVendorRemittanceAddressAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
+		    populateNewVendorCorporateAddressAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
+		    extractCustomFields(paymentWorksNewVendorDetailDTO, paymentWorksNewVendor);
 		}
-
-		// corp address
-		if (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getCorp_address())) {
-
-			PaymentWorksCorpAddressDTO corpAddress = paymentWorksNewVendorDetailDTO.getRequesting_company()
-					.getCorp_address();
-
-			paymentWorksNewVendor.setCorpAddressId(corpAddress.getId());
-			paymentWorksNewVendor
-					.setCorpAddressName(getPaymentWorksUtilityService().trimFieldToMax(corpAddress.getName(), "corpAddressName"));
-			paymentWorksNewVendor.setCorpAddressStreet1(
-					getPaymentWorksUtilityService().trimFieldToMax(corpAddress.getStreet1(), "corpAddressStreet1"));
-			paymentWorksNewVendor.setCorpAddressStreet2(
-					getPaymentWorksUtilityService().trimFieldToMax(corpAddress.getStreet2(), "corpAddressStreet2"));
-			paymentWorksNewVendor
-					.setCorpAddressCity(getPaymentWorksUtilityService().trimFieldToMax(corpAddress.getCity(), "corpAddressCity"));
-			paymentWorksNewVendor.setCorpAddressState(corpAddress.getState());
-			paymentWorksNewVendor.setCorpAddressCountry(corpAddress.getCountry());
-			paymentWorksNewVendor.setCorpAddressZipCode(corpAddress.getZipcode());
-		}
-
-		paymentWorksNewVendor.setVendorRequestId(paymentWorksNewVendorDetailDTO.getId());
-
 		return paymentWorksNewVendor;
 	}
 
+	private void populateNewVendorRequestingCompanyAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+		if (requestingCompanyExists(paymentWorksNewVendorDetailDTO)) {
+		    paymentWorksNewVendor.setRequestingCompanyId(paymentWorksNewVendorDetailDTO.getRequesting_company().getId());
+		    paymentWorksNewVendor.setRequestingCompanyLegalName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_name());
+		    paymentWorksNewVendor.setRequestingCompanyDesc(paymentWorksNewVendorDetailDTO.getRequesting_company().getDesc());
+		    paymentWorksNewVendor.setRequestingCompanyName(paymentWorksNewVendorDetailDTO.getRequesting_company().getName());
+		    paymentWorksNewVendor.setRequestingCompanyLegalLastName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_last_name());
+		    paymentWorksNewVendor.setRequestingCompanyLegalFirstName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_first_name());
+		    paymentWorksNewVendor.setRequestingCompanyUrl(paymentWorksNewVendorDetailDTO.getRequesting_company().getUrl());
+		    paymentWorksNewVendor.setRequestingCompanyTin(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin());
+		    paymentWorksNewVendor.setRequestingCompanyTinType(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin_type());
+		    paymentWorksNewVendor.setRequestingCompanyTaxCountry(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_country());
+		    paymentWorksNewVendor.setRequestingCompanyW8W9(paymentWorksNewVendorDetailDTO.getRequesting_company().getW8_w9());
+		    paymentWorksNewVendor.setRequestingCompanyTelephone(paymentWorksNewVendorDetailDTO.getRequesting_company().getTelephone());
+		    paymentWorksNewVendor.setRequestingCompanyDuns(paymentWorksNewVendorDetailDTO.getRequesting_company().getDuns());
+		    paymentWorksNewVendor.setRequestingCompanyCorporateEmail(paymentWorksNewVendorDetailDTO.getRequesting_company().getCorporate_email());
+		    paymentWorksNewVendor.setRequestingCompanyTaxClassificationName(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getName());
+		    paymentWorksNewVendor.setRequestingCompanyTaxClassificationCode(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getCode());
+		}
+	}
+
+	private void populateNewVendorRemittanceAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        if (singleRemittanceAddressExists(paymentWorksNewVendorDetailDTO)) {
+            PaymentWorksRemittanceAddressDTO paymentWorksRemittanceAddressDTO = paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address().get(0);
+
+            paymentWorksNewVendor.setRemittanceAddressId(paymentWorksRemittanceAddressDTO.getId());
+            paymentWorksNewVendor.setRemittanceAddressName(paymentWorksRemittanceAddressDTO.getName());
+            paymentWorksNewVendor.setRemittanceAddressStreet1(paymentWorksRemittanceAddressDTO.getStreet1());
+            paymentWorksNewVendor.setRemittanceAddressStreet2(paymentWorksRemittanceAddressDTO.getStreet2());
+            paymentWorksNewVendor.setRemittanceAddressCity(paymentWorksRemittanceAddressDTO.getCity());
+            paymentWorksNewVendor.setRemittanceAddressState(paymentWorksRemittanceAddressDTO.getState());
+            paymentWorksNewVendor.setRemittanceAddressCountry(paymentWorksRemittanceAddressDTO.getCountry());
+            paymentWorksNewVendor.setRemittanceAddressZipCode(paymentWorksRemittanceAddressDTO.getZipcode());
+            paymentWorksNewVendor.setRemittanceAddressValidated(paymentWorksRemittanceAddressDTO.getValidated());
+
+            populateNewVendorBankAccountAttributes(paymentWorksNewVendor, paymentWorksRemittanceAddressDTO);
+        }
+	}
+
+	private void populateNewVendorBankAccountAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksRemittanceAddressDTO paymentWorksRemittanceAddressDTO) {
+        if (bankAccountDataExists(paymentWorksRemittanceAddressDTO)) {
+            PaymentWorksBankAccountDTO paymentWorksBankAccountDTO = paymentWorksRemittanceAddressDTO.getBank_acct();
+
+            paymentWorksNewVendor.setBankAcctId(paymentWorksBankAccountDTO.getId());
+            paymentWorksNewVendor.setBankAcctBankName(paymentWorksBankAccountDTO.getBank_name());
+            paymentWorksNewVendor.setBankAcctBankAccountNumber(paymentWorksBankAccountDTO.getBank_acct_num());
+            paymentWorksNewVendor.setBankAcctBankValidationFile(paymentWorksBankAccountDTO.getValidation_file());
+            paymentWorksNewVendor.setBankAcctAchEmail(paymentWorksBankAccountDTO.getAch_email());
+            paymentWorksNewVendor.setBankAcctRoutingNumber(paymentWorksBankAccountDTO.getRouting_num());
+            paymentWorksNewVendor.setBankAcctType(paymentWorksBankAccountDTO.getBank_acct_type());
+            paymentWorksNewVendor.setBankAcctAuthorized(paymentWorksBankAccountDTO.getAuthorized());
+            paymentWorksNewVendor.setBankAcctCompanyId(paymentWorksBankAccountDTO.getAcct_company());
+            paymentWorksNewVendor.setBankAcctSwiftCode(paymentWorksBankAccountDTO.getSwift_code());
+            paymentWorksNewVendor.setBankAcctNameOnAccount(paymentWorksBankAccountDTO.getName_on_acct());
+
+            populateNewVendorBankAddressAttributes(paymentWorksNewVendor, paymentWorksBankAccountDTO);
+        }
+	}
+
+	private void populateNewVendorBankAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksBankAccountDTO paymentWorksBankAccountDTO) {
+        if (bankAddressExists(paymentWorksBankAccountDTO)) {
+            PaymentWorksBankAddressDTO paymentWorksBankAddressDTO = paymentWorksBankAccountDTO.getBank_address();
+
+            paymentWorksNewVendor.setBankAddressId(paymentWorksBankAddressDTO.getId());
+            paymentWorksNewVendor.setBankAddressName(paymentWorksBankAddressDTO.getName());
+            paymentWorksNewVendor.setBankAddressStreet1(paymentWorksBankAddressDTO.getStreet1());
+            paymentWorksNewVendor.setBankAddressStreet2(paymentWorksBankAddressDTO.getStreet2());
+            paymentWorksNewVendor.setBankAddressCity(paymentWorksBankAddressDTO.getCity());
+            paymentWorksNewVendor.setBankAddressState(paymentWorksBankAddressDTO.getState());
+            paymentWorksNewVendor.setBankAddressCountry(paymentWorksBankAddressDTO.getCountry());
+            paymentWorksNewVendor.setBankAddressZipCode(paymentWorksBankAddressDTO.getZipcode());
+            paymentWorksNewVendor.setBankAddressValidated(paymentWorksBankAddressDTO.getValidated());
+        }
+	}
+
+	private void populateNewVendorCorporateAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        if (corporateAddressExists(paymentWorksNewVendorDetailDTO)) {
+            PaymentWorksCorpAddressDTO corpAddress = paymentWorksNewVendorDetailDTO.getRequesting_company().getCorp_address();
+
+            paymentWorksNewVendor.setCorpAddressId(corpAddress.getId());
+            paymentWorksNewVendor.setCorpAddressName(corpAddress.getName());
+            paymentWorksNewVendor.setCorpAddressStreet1(corpAddress.getStreet1());
+            paymentWorksNewVendor.setCorpAddressStreet2(corpAddress.getStreet2());
+            paymentWorksNewVendor.setCorpAddressCity(corpAddress.getCity());
+            paymentWorksNewVendor.setCorpAddressState(corpAddress.getState());
+            paymentWorksNewVendor.setCorpAddressCountry(corpAddress.getCountry());
+            paymentWorksNewVendor.setCorpAddressZipCode(corpAddress.getZipcode());
+            paymentWorksNewVendor.setCorpAddressValidated(corpAddress.getValidated());
+        }
+	}
+
+	private boolean newVendorDetailExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO));
+	}
+
+	private boolean requestingCompanyExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company()));
+	}
+
+    private boolean singleRemittanceAddressExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses()) &&
+                ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address()) &&
+                paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address().size() == 1);
+    }
+
+    private boolean corporateAddressExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getCorp_address()));
+    }
+
+    private boolean bankAccountDataExists(PaymentWorksRemittanceAddressDTO paymentWorksRemittanceAddressDTO) {
+        return (ObjectUtils.isNotNull(paymentWorksRemittanceAddressDTO.getBank_acct()));
+    }
+
+    private boolean bankAddressExists(PaymentWorksBankAccountDTO paymentWorksBankAccountDTO) {
+        return (ObjectUtils.isNotNull(paymentWorksBankAccountDTO.getBank_address()));
+    }
+
 	protected void extractCustomFields(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO, PaymentWorksVendor paymentWorksNewVendor) {
 		Map<String, String> customFieldsMap = getPaymentWorksUtilityService().convertFieldArrayToMap(paymentWorksNewVendorDetailDTO.getCustom_fields());
-		logCustomFieldsFromPaymentWorks(customFieldsMap);
 		for (String payamentWorkCustomFieldName : customFieldsMap.keySet()) {
 			String customFieldValueFromPaymentWorks = customFieldsMap.get(payamentWorkCustomFieldName);
 			
@@ -386,36 +431,27 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 					try {
 						ObjectUtils.setObjectProperty(paymentWorksNewVendor, fieldMapping.getKfsFieldName(), propertyValueForSetter);
 						if (LOG.isDebugEnabled()) {
-							LOG.debug("extractCustomFields setting KFS field " + fieldMapping.getKfsFieldName() + " with a value of " + 
-									propertyValueForSetter.toString() + " and is of object type " + propertyValueForSetter.getClass());
+							LOG.debug("extractCustomFields setting KFS field " + fieldMapping.getKfsFieldName() +
+							          "' for PaymentWorks field '" + payamentWorkCustomFieldName +
+							          " and is of object type " + propertyValueForSetter.getClass());
 						}
-					} catch (FormatException | IllegalAccessException | InvocationTargetException
-							| NoSuchMethodException e) {
+					} catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 						paymentWorksNewVendor.setCustomFieldConversionErrors(true);
-						LOG.error("extractCustomFields Unable to set kfs field '" + fieldMapping.getKfsFieldName() + "' with a value of '" + 
-							propertyValueForSetter.toString() + "'  Due to the error: " +  e.getMessage(), e);
+						LOG.error("extractCustomFields Unable to set KFS field '" + fieldMapping.getKfsFieldName() +
+						          "' for PaymentWorks field '" + payamentWorkCustomFieldName +
+						          "'  Due to the error: " +  e.getMessage(), e);
 					}
 				}
-				
 			} else {
 				paymentWorksNewVendor.setCustomFieldConversionErrors(true);
-				LOG.error("extractCustomFields, Unable to find a KFS field for the PaymentWorks field of '" + payamentWorkCustomFieldName + KRADConstants.SINGLE_QUOTE);
-			}
-		}
-	}
-	
-	private void logCustomFieldsFromPaymentWorks(Map<String, String> customFieldsMap) {
-		if (LOG.isDebugEnabled()) {
-			for (String key : customFieldsMap.keySet()) {
-				String val = customFieldsMap.get(key);
-				LOG.debug("logCustomFieldsFromPaymentWorks  key:'" + key + "'  value: '" + val + KRADConstants.SINGLE_QUOTE);
+				LOG.error("extractCustomFields, Unable to find a KFS field for the PaymentWorks field of '" + payamentWorkCustomFieldName + "'");
 			}
 		}
 	}
 
 	protected PaymentWorksFieldMapping findPaymentWorksFieldMapping(String payamentWorkCustomFieldName) {
 		Map fieldValues = new HashMap();
-		fieldValues.put(PaymentWorksConstants.PaymentWorksFieldMappingDatabaseFieldNames.PAYMENT_WORKS_FIELD_NAME, StringUtils.trim(payamentWorkCustomFieldName));
+		fieldValues.put(PaymentWorksConstants.PaymentWorksFieldMappingDatabaseFieldNames.PAYMENT_WORKS_FIELD_LABEL, StringUtils.trim(payamentWorkCustomFieldName));
 		Collection mappings = getBusinessObjectService().findMatching(PaymentWorksFieldMapping.class, fieldValues);
 		if (!mappings.isEmpty()) {
 			return (PaymentWorksFieldMapping)mappings.iterator().next();
