@@ -30,7 +30,7 @@
             <list>
             	<bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldMappingId" p:unconditionallyReadOnly="true"/>
             	<bean parent="MaintainableFieldDefinition" p:name="kfsFieldName" p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldName"/>
+                <bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldLabel"/>
             </list>
         </property>
     </bean>

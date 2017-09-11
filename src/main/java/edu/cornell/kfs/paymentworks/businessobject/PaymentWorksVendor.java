@@ -21,7 +21,12 @@ package edu.cornell.kfs.paymentworks.businessobject;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
+
+import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private static final long serialVersionUID = -4431128959859612352L;
@@ -31,6 +36,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String requestingCompanyTinType;
 	private String requestingCompanyTaxCountry;
 	private String requestingCompanyLegalName;
+	private String requestingCompanyLegalFirstName;
+	private String requestingCompanyLegalLastName;
 	private String requestingCompanyName;
 	private String requestingCompanyNameOldValue;
 	private String requestingCompanyDesc;
@@ -41,7 +48,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String requestingCompanyTaxClassificationCode;
 	private String requestingCompanyUrl;
 	private String requestingCompanyW8W9;
-	
+	private String requestingCompanyCorporateEmail;
+
 	private String remittanceAddressId;
 	private String remittanceAddressName;
 	private String remittanceAddressStreet1;
@@ -50,6 +58,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String remittanceAddressState;
 	private String remittanceAddressCountry;
 	private String remittanceAddressZipCode;
+	private boolean remittanceAddressValidated;
+	private String remittanceAddressCompanyId;
 
 	private String corpAddressId;
 	private String corpAddressName;
@@ -59,6 +69,31 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String corpAddressState;
 	private String corpAddressCountry;
 	private String corpAddressZipCode;
+	private boolean corpAddressValidated;
+	private String corpAddressCompanyId;
+
+	private String bankAcctId;
+	private String bankAcctBankName;
+	private String bankAcctRoutingNumber;
+	private String bankAcctBankAccountNumber;
+	private String bankAcctBankValidationFile;
+	private String bankAcctAchEmail;
+	private String bankAcctType;
+	private String bankAcctAuthorized;
+	private String bankAcctCompanyId;
+	private String bankAcctSwiftCode;
+	private String bankAcctNameOnAccount;
+
+	private String bankAddressId;
+	private String bankAddressName;
+	private String bankAddressStreet1;
+	private String bankAddressStreet2;
+	private String bankAddressCity;
+	private String bankAddressState;
+	private String bankAddressCountry;
+	private String bankAddressZipCode;
+	private boolean bankAddressValidated;
+	private String bankAddressCompanyId;
 
 	private String vendorRequestId; // primary key
 	private String requestStatus;
@@ -76,24 +111,37 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private transient boolean customFieldConversionErrors = false;
 	
 	//custom fields
-	private String businessPurpose;
-	private String servicesProvided;
-	private String vendorType;
-	private String emailAddress;
 	private String initiatorNetId;
+	private String vendorType;
 	
-	private boolean invoicing;
-	private String eInvoiceContactName;
-	private String eInvoiceContactPhoneNumber;
-	private String eInvoicePhoneExtension;
-	private String eInvoiceEmail;
-	
-	private String vendorInformationContact;
 	private String vendorInformationContactName;
 	private String vendorInformationPhoneNumber;
 	private String vendorInformationPhoneExtension;
 	private String vendorInformationEmail;
 	
+	private boolean diverseBusiness;
+	private String diversityClassifications;
+	private String minorityStatus;
+	private String mbeCertificationExpirationDate;
+	private String womanOwned;
+	private String wbeCertificationExpirationDate;
+	private String disabledVeteran;
+	private String veteranCertificationExpirationDate;
+
+	private boolean conflictOfInterest;
+	private String conflictOfInterestRelationshipToEmployee;
+	private String conflictOfInterestEmployeeName;
+	private String conflictOfInterestEmployeePhoneNumber;
+
+	private boolean acceptCreditCards;
+
+	private String servicesProvided;
+	private String emailAddress;
+	private boolean invoicing;
+	private String eInvoiceContactName;
+	private String eInvoiceContactPhoneNumber;
+	private String eInvoicePhoneExtension;
+	private String eInvoiceEmail;
 	private String poAttention;
 	private String poTransmissionMethod;
 	private String poAddress1;
@@ -104,48 +152,29 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private String poCountry;
 	private String poFaxNumber;
 	private String poCountryName;
-	
-	private boolean conflictOfInterest;
-	private String conflictOfInterestRelationshipToEmployee;
-	private String conflictOfInterestEmployeeName;
-	private String conflictOfInterestEmployeePhoneNumber;
-	
-	private String insurance;
+	private String taxCountry;
+	private String insuranceCertificate;
 	private String insuranceContactName;
 	private String insuranceContactPhoneNumber;
 	private String insuranceContactPhoneExtension;
 	private String insuranceContactEmail;
-	
 	private String salesContactName;
 	private String salesContactPhoneNumber;
 	private String salesContactPhoneExtension;
 	private String salesContactEmail;
-	
 	private String accountsReceivableContactName;
 	private String accountsReceivableContactPhone;
 	private String accountsReceivableContactPhoneExtension;
 	private String accountsReceivableContactEmail;
-	
-	private String diversityClassification;
-	private Date veteranCertificationExpirationDate;
-	private Date mbeCertificationExpirationDate;
-	private String womanOwned;
-	private Date wbeCertificationExpirationDate;
-	private String disabledVeteran;
-	private String minorityStatus;
-	
 	private String state;
 	private String australianProvince;
 	private String stateProvince;
 	private String canadianProvince;
-	
 	private boolean seperateLegalEntityProvidingServices;
 	private boolean cornellProvidedTrainingOrEquipmentRequired;
 	private boolean informalMarketing;
-	private boolean diverseBusiness;
 	private boolean currentlyPaidThroughPayroll;
 	private boolean everPaidThroughPayroll;
-	private boolean acceptCreditCards;
 	private boolean servicesProvidedWithoutInsurance;
 
 	public String getRequestingCompanyId() {
@@ -500,14 +529,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.customFieldConversionErrors = customFieldConversionErrors;
 	}
 
-	public String getBusinessPurpose() {
-		return businessPurpose;
-	}
-
-	public void setBusinessPurpose(String businessPurpose) {
-		this.businessPurpose = businessPurpose;
-	}
-
 	public String getServicesProvided() {
 		return servicesProvided;
 	}
@@ -578,14 +599,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 
 	public void seteInvoiceEmail(String eInvoiceEmail) {
 		this.eInvoiceEmail = eInvoiceEmail;
-	}
-
-	public String getVendorInformationContact() {
-		return vendorInformationContact;
-	}
-
-	public void setVendorInformationContact(String vendorInformationContact) {
-		this.vendorInformationContact = vendorInformationContact;
 	}
 
 	public String getVendorInformationContactName() {
@@ -732,12 +745,12 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.conflictOfInterestEmployeePhoneNumber = conflictOfInterestEmployeePhoneNumber;
 	}
 
-	public String getInsurance() {
-		return insurance;
+	public String getInsuranceCertificate() {
+		return insuranceCertificate;
 	}
 
-	public void setInsurance(String inusrance) {
-		this.insurance = insurance;
+	public void setInsuranceCertificate(String insuranceCertificate) {
+		this.insuranceCertificate = insuranceCertificate;
 	}
 
 	public String getInsuranceContactName() {
@@ -836,27 +849,19 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.accountsReceivableContactEmail = accountsReceivableContactEmail;
 	}
 
-	public String getDiversityClassification() {
-		return diversityClassification;
-	}
-
-	public void setDiversityClassification(String diversityClassification) {
-		this.diversityClassification = diversityClassification;
-	}
-
-	public Date getVeteranCertificationExpirationDate() {
+	public String getVeteranCertificationExpirationDate() {
 		return veteranCertificationExpirationDate;
 	}
 
-	public void setVeteranCertificationExpirationDate(Date veteranCertificationExpirationDate) {
+	public void setVeteranCertificationExpirationDate(String veteranCertificationExpirationDate) {
 		this.veteranCertificationExpirationDate = veteranCertificationExpirationDate;
 	}
 
-	public Date getMbeCertificationExpirationDate() {
+	public String getMbeCertificationExpirationDate() {
 		return mbeCertificationExpirationDate;
 	}
 
-	public void setMbeCertificationExpirationDate(Date mbeCertificationExpirationDate) {
+	public void setMbeCertificationExpirationDate(String mbeCertificationExpirationDate) {
 		this.mbeCertificationExpirationDate = mbeCertificationExpirationDate;
 	}
 
@@ -868,11 +873,11 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.womanOwned = womanOwned;
 	}
 
-	public Date getWbeCertificationExpirationDate() {
+	public String getWbeCertificationExpirationDate() {
 		return wbeCertificationExpirationDate;
 	}
 
-	public void setWbeCertificationExpirationDate(Date wbeCertificationExpirationDate) {
+	public void setWbeCertificationExpirationDate(String wbeCertificationExpirationDate) {
 		this.wbeCertificationExpirationDate = wbeCertificationExpirationDate;
 	}
 
@@ -988,4 +993,320 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 		this.servicesProvidedWithoutInsurance = servicesProvidedWithoutInsurance;
 	}
 
+	public String getRequestingCompanyLegalFirstName() {
+	        return requestingCompanyLegalFirstName;
+	}
+
+	public void setRequestingCompanyLegalFirstName(String requestingCompanyLegalFirstName) {
+	    this.requestingCompanyLegalFirstName = requestingCompanyLegalFirstName;
+	}
+
+	public String getRequestingCompanyLegalLastName() {
+	    return requestingCompanyLegalLastName;
+	}
+
+	public void setRequestingCompanyLegalLastName(String requestingCompanyLegalLastName) {
+	    this.requestingCompanyLegalLastName = requestingCompanyLegalLastName;
+	}
+
+	public String getRequestingCompanyCorporateEmail() {
+	    return requestingCompanyCorporateEmail;
+	}
+
+	public void setRequestingCompanyCorporateEmail(String requestingCompanyCorporateEmail) {
+	    this.requestingCompanyCorporateEmail = requestingCompanyCorporateEmail;
+	}
+
+	public boolean isRemittanceAddressValidated() {
+	    return remittanceAddressValidated;
+	}
+
+	public void setRemittanceAddressValidated(boolean remittanceAddressValidated) {
+	    this.remittanceAddressValidated = remittanceAddressValidated;
+	}
+
+	public String getRemittanceAddressCompanyId() {
+	    return remittanceAddressCompanyId;
+	}
+
+	public void setRemittanceAddressCompanyId(String remittanceAddressCompanyId) {
+	    this.remittanceAddressCompanyId = remittanceAddressCompanyId;
+	}
+
+	public boolean isCorpAddressValidated() {
+	    return corpAddressValidated;
+	}
+
+	public void setCorpAddressValidated(boolean corpAddressValidated) {
+	    this.corpAddressValidated = corpAddressValidated;
+	}
+
+	public String getCorpAddressCompanyId() {
+	    return corpAddressCompanyId;
+	}
+
+	public void setCorpAddressCompanyId(String corpAddressCompanyId) {
+	    this.corpAddressCompanyId = corpAddressCompanyId;
+	}
+
+	public String getBankAcctId() {
+	    return bankAcctId;
+	}
+
+	public void setBankAcctId(String bankAcctId) {
+	    this.bankAcctId = bankAcctId;
+	}
+
+	public String getBankAcctBankName() {
+	    return bankAcctBankName;
+	}
+
+	public void setBankAcctBankName(String bankAcctBankName) {
+	    this.bankAcctBankName = bankAcctBankName;
+	}
+
+	public String getBankAcctRoutingNumber() {
+	    return bankAcctRoutingNumber;
+	}
+
+	public void setBankAcctRoutingNumber(String bankAcctRoutingNumber) {
+	    this.bankAcctRoutingNumber = bankAcctRoutingNumber;
+	}
+
+	public String getBankAcctBankAccountNumber() {
+	    return bankAcctBankAccountNumber;
+	}
+
+	public void setBankAcctBankAccountNumber(String bankAcctBankAccountNumber) {
+	    this.bankAcctBankAccountNumber = bankAcctBankAccountNumber;
+	}
+
+	public String getBankAcctBankValidationFile() {
+	    return bankAcctBankValidationFile;
+	}
+
+	public void setBankAcctBankValidationFile(String bankAcctBankValidationFile) {
+	    this.bankAcctBankValidationFile = bankAcctBankValidationFile;
+	}
+
+	public String getBankAcctAchEmail() {
+	    return bankAcctAchEmail;
+	}
+
+	public void setBankAcctAchEmail(String bankAcctAchEmail) {
+	    this.bankAcctAchEmail = bankAcctAchEmail;
+	}
+
+	public String getBankAcctType() {
+	    return bankAcctType;
+	}
+
+	public void setBankAcctType(String bankAcctType) {
+	    this.bankAcctType = bankAcctType;
+	}
+
+	public String getBankAcctAuthorized() {
+	    return bankAcctAuthorized;
+	}
+
+	public void setBankAcctAuthorized(String bankAcctAuthorized) {
+	    this.bankAcctAuthorized = bankAcctAuthorized;
+	}
+
+	public String getBankAcctCompanyId() {
+	    return bankAcctCompanyId;
+	}
+
+	public void setBankAcctCompanyId(String bankAcctCompanyId) {
+	    this.bankAcctCompanyId = bankAcctCompanyId;
+	}
+
+	public String getBankAcctSwiftCode() {
+	    return bankAcctSwiftCode;
+	}
+
+	public void setBankAcctSwiftCode(String bankAcctSwiftCode) {
+	    this.bankAcctSwiftCode = bankAcctSwiftCode;
+	}
+
+	public String getBankAcctNameOnAccount() {
+	    return bankAcctNameOnAccount;
+	}
+
+	public void setBankAcctNameOnAccount(String bankAcctNameOnAccount) {
+	    this.bankAcctNameOnAccount = bankAcctNameOnAccount;
+	}
+
+	public String getBankAddressId() {
+	    return bankAddressId;
+	}
+
+	public void setBankAddressId(String bankAddressId) {
+	    this.bankAddressId = bankAddressId;
+	}
+
+	public String getBankAddressName() {
+	    return bankAddressName;
+	}
+
+	public void setBankAddressName(String bankAddressName) {
+	    this.bankAddressName = bankAddressName;
+	}
+
+	public String getBankAddressStreet1() {
+	    return bankAddressStreet1;
+	}
+
+	public void setBankAddressStreet1(String bankAddressStreet1) {
+	    this.bankAddressStreet1 = bankAddressStreet1;
+	}
+
+	public String getBankAddressStreet2() {
+	    return bankAddressStreet2;
+	}
+
+	public void setBankAddressStreet2(String bankAddressStreet2) {
+	    this.bankAddressStreet2 = bankAddressStreet2;
+	}
+
+	public String getBankAddressCity() {
+	    return bankAddressCity;
+	}
+
+	public void setBankAddressCity(String bankAddressCity) {
+	    this.bankAddressCity = bankAddressCity;
+	}
+
+	public String getBankAddressState() {
+	    return bankAddressState;
+	}
+
+	public void setBankAddressState(String bankAddressState) {
+	    this.bankAddressState = bankAddressState;
+	}
+
+	public String getBankAddressCountry() {
+	    return bankAddressCountry;
+	}
+
+	public void setBankAddressCountry(String bankAddressCountry) {
+	    this.bankAddressCountry = bankAddressCountry;
+	}
+
+	public String getBankAddressZipCode() {
+	    return bankAddressZipCode;
+	}
+
+	public void setBankAddressZipCode(String bankAddressZipCode) {
+	    this.bankAddressZipCode = bankAddressZipCode;
+	}
+
+	public boolean isBankAddressValidated() {
+	    return bankAddressValidated;
+	}
+
+	public void setBankAddressValidated(boolean bankAddressValidated) {
+	    this.bankAddressValidated = bankAddressValidated;
+	}
+
+	public String getBankAddressCompanyId() {
+	    return bankAddressCompanyId;
+	}
+
+	public void setBankAddressCompanyId(String bankAddressCompanyId) {
+	    this.bankAddressCompanyId = bankAddressCompanyId;
+	}
+
+	public String getDiversityClassifications() {
+	    return diversityClassifications;
+	}
+
+	public void setDiversityClassifications(String diversityClassifications) {
+	    this.diversityClassifications = diversityClassifications;
+	}
+
+	public String getTaxCountry() {
+	    return taxCountry;
+	}
+
+	public void setTaxCountry(String taxCountry) {
+	    this.taxCountry = taxCountry;
+	}
+
+	public String toString() {
+	    StringBuilder sb = new StringBuilder("PaymentWorksVendor::").append(KFSConstants.NEWLINE);
+	    sb.append("requestingCompanyId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyLegalName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyLegalName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTin").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((StringUtils.isNotBlank(requestingCompanyTin) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTinType").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyTinType).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTaxCountry").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyTaxCountry).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyLegalName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyLegalName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyLegalFirstName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyLegalFirstName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyLegalLastName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyLegalLastName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyNameOldValue").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyNameOldValue).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyDesc").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyDesc).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTelephone").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyTelephone).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTelephoneOldValue").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyTelephoneOldValue).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyDuns").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyDuns).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTaxClassificationName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyTaxClassificationName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyTaxClassificationCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyTaxClassificationCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyUrl").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyUrl).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyW8W9").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((StringUtils.isNotBlank(requestingCompanyW8W9) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("requestingCompanyCorporateEmail").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(requestingCompanyCorporateEmail).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+
+	    sb.append("remittanceAddressId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressStreet1").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressStreet1).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressStreet2").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressStreet2).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressCity").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressCity).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressState").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressState).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressCountry").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressCountry).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressZipCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressZipCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressValidated").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((remittanceAddressValidated ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("remittanceAddressCompanyId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(remittanceAddressCompanyId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+
+	    sb.append("corpAddressId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressStreet1").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressStreet1).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressStreet2").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressStreet2).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressCity").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressCity).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressState").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressState).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressCountry").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressCountry).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressZipCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressZipCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressValidated").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((corpAddressValidated ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("corpAddressCompanyId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(corpAddressCompanyId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+
+	    sb.append("bankAcctId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctBankName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctBankName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctRoutingNumber").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((StringUtils.isNotBlank(bankAcctRoutingNumber) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctBankAccountNumber").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((StringUtils.isNotBlank(bankAcctBankAccountNumber) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctBankValidationFile").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((StringUtils.isNotBlank(bankAcctBankValidationFile) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctAchEmail").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctAchEmail).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctType").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctType).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctAuthorized").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctAuthorized).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctCompanyId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctCompanyId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctSwiftCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctSwiftCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAcctNameOnAccount").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAcctNameOnAccount).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+
+	    sb.append("bankAddressId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressName").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressName).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressStreet1").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressStreet1).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressStreet2").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressStreet2).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressCity").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressCity).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressState").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressState).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressCountry").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressCountry).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressZipCode").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressZipCode).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressValidated").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER)
+	        .append((bankAddressValidated ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+	    sb.append("bankAddressCompanyId").append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_BEGIN_DELIMITER).append(bankAddressCompanyId).append(PaymentWorksConstants.OUTPUT_ATTRIBUTE_END_DELIMITER);
+        return sb.toString();
+    }
 }

@@ -24,7 +24,7 @@ import edu.cornell.kfs.vnd.CUVendorConstants;
 public class PaymentWorksUtilityServiceImplTest {
 	
 	PaymentWorksUtilityServiceImpl paymentworksService;
-	private static final String PAYMENT_WORKS_FIELD_NAME = "field name";
+	private static final String PAYMENT_WORKS_FIELD_LABEL = "field label";
 	private static final String PAYMENT_WORKS_FIELD_FROM_VALUE = "old value";
 	private static final String PAYMENT_WORKS_FIELD_TO_VALUE = "new value";
 
@@ -42,7 +42,7 @@ public class PaymentWorksUtilityServiceImplTest {
 	@Test
 	public void pojoToJsonString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("{\"field_changes\":[{\"field_name\":\"").append(PAYMENT_WORKS_FIELD_NAME).append("\",\"from_value\":\"").append(PAYMENT_WORKS_FIELD_FROM_VALUE)
+		builder.append("{\"field_changes\":[{\"field_name\":\"").append(PAYMENT_WORKS_FIELD_LABEL).append("\",\"from_value\":\"").append(PAYMENT_WORKS_FIELD_FROM_VALUE)
 			.append("\",\"to_value\":\"").append(PAYMENT_WORKS_FIELD_TO_VALUE).append("\"}]}");
 		assertEquals("Conversion wasn't what was expected", builder.toString(), paymentworksService.pojoToJsonString(buildPaymentWorksFieldChangesDTO()));
 	}
@@ -66,13 +66,13 @@ public class PaymentWorksUtilityServiceImplTest {
 	@Test
 	public void convertFieldArrayToMapPaymentWorksFieldChangesDTO() {
 		Map<String, String> results = paymentworksService.convertFieldArrayToMap(buildPaymentWorksFieldChangesDTO());
-		assertEquals("the value was not what we expected", PAYMENT_WORKS_FIELD_TO_VALUE, results.get(PAYMENT_WORKS_FIELD_NAME));
+		assertEquals("the value was not what we expected", PAYMENT_WORKS_FIELD_TO_VALUE, results.get(PAYMENT_WORKS_FIELD_LABEL));
 	}
 
 	@Test
 	public void convertFieldArrayToMapFromValues() {
 		Map<String, String> results = paymentworksService.convertFieldArrayToMapFromValues(buildPaymentWorksFieldChangesDTO());
-		assertEquals("the value was not what we expected", PAYMENT_WORKS_FIELD_FROM_VALUE, results.get(PAYMENT_WORKS_FIELD_NAME));
+		assertEquals("the value was not what we expected", PAYMENT_WORKS_FIELD_FROM_VALUE, results.get(PAYMENT_WORKS_FIELD_LABEL));
 	}
 	
 	@Test
@@ -117,7 +117,7 @@ public class PaymentWorksUtilityServiceImplTest {
 		PaymentWorksFieldChangesDTO fieldChanges = new PaymentWorksFieldChangesDTO();
 		List<PaymentWorksFieldChangeDTO> field_changes = new ArrayList<PaymentWorksFieldChangeDTO>();
 		PaymentWorksFieldChangeDTO dto = new PaymentWorksFieldChangeDTO();
-		dto.setField_name(PAYMENT_WORKS_FIELD_NAME);
+		dto.setField_name(PAYMENT_WORKS_FIELD_LABEL);
 		dto.setFrom_value(PAYMENT_WORKS_FIELD_FROM_VALUE);
 		dto.setTo_value(PAYMENT_WORKS_FIELD_TO_VALUE);
 		field_changes.add(dto);

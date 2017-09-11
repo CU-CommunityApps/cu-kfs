@@ -8,7 +8,7 @@ public class PaymentWorksFieldMapping extends PersistableBusinessObjectBase impl
 	
 	private static final long serialVersionUID = -2187008550220892821L;
 	private long paymentWorksFieldMappingId;
-	private String paymentWorksFieldName;
+	private String paymentWorksFieldLabel;
 	private String kfsFieldName;
 	
 	public long getPaymentWorksFieldMappingId() {
@@ -17,11 +17,11 @@ public class PaymentWorksFieldMapping extends PersistableBusinessObjectBase impl
 	public void setPaymentWorksFieldMappingId(long paymentWorksFieldMappingId) {
 		this.paymentWorksFieldMappingId = paymentWorksFieldMappingId;
 	}
-	public String getPaymentWorksFieldName() {
-		return paymentWorksFieldName;
+	public String getPaymentWorksFieldLabel() {
+		return paymentWorksFieldLabel;
 	}
-	public void setPaymentWorksFieldName(String paymentWorksFieldName) {
-		this.paymentWorksFieldName = paymentWorksFieldName;
+	public void setPaymentWorksFieldLabel(String paymentWorksFieldLabel) {
+		this.paymentWorksFieldLabel = paymentWorksFieldLabel;
 	}
 	public String getKfsFieldName() {
 		return kfsFieldName;
