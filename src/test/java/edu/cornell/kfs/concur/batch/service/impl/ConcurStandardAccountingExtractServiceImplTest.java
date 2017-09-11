@@ -9,6 +9,7 @@ import org.junit.Test;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.fixture.ConcurSAEDetailLineFixture;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
 
 public class ConcurStandardAccountingExtractServiceImplTest {
     
@@ -17,8 +18,10 @@ public class ConcurStandardAccountingExtractServiceImplTest {
     @Before
     public void setUp() throws Exception {
         ConcurBatchUtilityService concurBatchUtilityService = new ConcurBatchUtilityServiceImpl();
+        ConcurStandardAccountingExtractCashAdvanceService concurSAECashAdvanceService = new ConcurStandardAccountingExtractCashAdvanceServiceImpl();
         concurStandardAccountingExtractServiceImpl = new ConcurStandardAccountingExtractServiceImpl();
         concurStandardAccountingExtractServiceImpl.setConcurBatchUtilityService(concurBatchUtilityService);
+        concurStandardAccountingExtractServiceImpl.setConcurStandardAccountingExtractCashAdvanceService(concurSAECashAdvanceService);
     }
 
     @After

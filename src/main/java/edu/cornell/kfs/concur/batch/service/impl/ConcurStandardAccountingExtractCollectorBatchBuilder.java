@@ -268,9 +268,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 reportUnprocessedLine(saeLine, "The line has the Pre-Paid/Other (COPD) payment code");
                 return false;
             case ConcurConstants.PAYMENT_CODE_PSEUDO :
-                reportBypassOfLineWithPseudoPaymentCode(saeLine);
-                reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code");
-                return false;
+                if (concurStandardAccountingExtractCashAdvanceService.isAtmCashAdvanceLineWithUnusedAmount(saeLine)) {
+                    return true;
+                } else {
+                    reportBypassOfLineWithPseudoPaymentCode(saeLine);
+                    reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code");
+                    return false;
+                }
             default :
                 reportUnprocessedLine(saeLine, "The line has an unrecognized payment code");
                 return false;

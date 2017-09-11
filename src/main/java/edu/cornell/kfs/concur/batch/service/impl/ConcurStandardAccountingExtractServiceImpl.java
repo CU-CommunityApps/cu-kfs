@@ -200,8 +200,11 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
                 .lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(line);
         boolean isReturnOfCorporateCardPersonalExpenseToUniversity = getConcurBatchUtilityService()
                 .lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(line);
-        return isCashLine || (isPersonalExpenseChargedToCorporateCard && !isReturnOfCorporateCardPersonalExpenseToUniversity
-                && (isCreditLine || isReturnOfCorporateCardPersonalExpenseToUser));
+        boolean isAtmFeeDebit = getConcurStandardAccountingExtractCashAdvanceService().isAtmFeeDebitLine(line);
+        boolean isAtmFeeCredit = getConcurStandardAccountingExtractCashAdvanceService().isAtmFeeCreditLine(line);
+        return (isCashLine && !isAtmFeeDebit && !isAtmFeeCredit)
+                || (isPersonalExpenseChargedToCorporateCard && !isReturnOfCorporateCardPersonalExpenseToUniversity
+                        && (isCreditLine || isReturnOfCorporateCardPersonalExpenseToUser));
     }
     
     private void logJournalAccountCodeOverridden(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {

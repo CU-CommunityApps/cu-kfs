@@ -253,6 +253,59 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 ConcurCollectorBatchFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST, ConcurSAEFileFixture.PERSONAL_CHARGE_AND_PARTIAL_RETURN_TEST);
     }
 
+    @Test
+    public void testAtmCashAdvance() throws Exception {
+        assertCollectorBatchIsBuiltProperly(ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWhereExpensesExceedAdvance() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.CASH_EXCEEDS_ATM_ADVANCE_TEST, ConcurSAEFileFixture.CASH_EXCEEDS_ATM_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithAtmFee() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_WITH_FEE_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_WITH_FEE_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithUnusedAmount() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_UNUSED_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_UNUSED_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithAtmFeeAndUnusedAmount() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_FEE_AND_UNUSED_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_FEE_AND_UNUSED_TEST);
+    }
+
+    @Test
+    public void testMultipleAtmCashAdvancesWithSameReportId() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MULTI_ATM_CASH_ADVANCE_TEST, ConcurSAEFileFixture.MULTI_ATM_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testMultipleAtmCashAdvancesAcrossDifferentReportIds() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.MULTI_REPORT_ATM_CASH_ADVANCE_TEST, ConcurSAEFileFixture.MULTI_REPORT_ATM_CASH_ADVANCE_TEST);
+    }
+
+    @Test
+    public void testAtmCashAdvanceWithMultipleAtmFees() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_CASH_ADVANCE_MULTI_FEE_TEST, ConcurSAEFileFixture.ATM_CASH_ADVANCE_MULTI_FEE_TEST);
+    }
+
+    @Test
+    public void testAtmAndRequestedCashAdvanceInSameReport() throws Exception {
+        assertCollectorBatchIsBuiltProperly(
+                ConcurCollectorBatchFixture.ATM_AND_REQUESTED_CASH_ADVANCE_TEST, ConcurSAEFileFixture.ATM_AND_REQUESTED_CASH_ADVANCE_TEST);
+    }
+
     protected void assertCollectorBatchIsBuiltProperly(
             ConcurCollectorBatchFixture expectedFixture, ConcurSAEFileFixture fixtureToBuildFrom) throws Exception {
         CollectorBatch expected = expectedFixture.toCollectorBatch();
@@ -410,7 +463,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected void assertReportHasCorrectPseudoPaymentCodeStatistics(List<ConcurSAEDetailLineFixture> lineFixtures,
             ConcurStandardAccountingExtractBatchReportData reportData) throws Exception {
         assertReportStatisticHasCorrectTotals(lineFixtures,
-                this::fixtureRepresentsPseudoPaymentCodeLine, reportData.getTransactionsBypassed());
+                this::fixtureRepresentsNonAtmPseudoPaymentCodeLine, reportData.getTransactionsBypassed());
     }
 
     protected void assertReportStatisticHasCorrectTotals(List<ConcurSAEDetailLineFixture> lineFixtures,
@@ -433,11 +486,19 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected boolean fixturePassesMinimalTestValidation(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.isNotBlank(fixture.reportId) && StringUtils.isNotBlank(fixture.journalAccountCode)
-                && (fixtureRepresentsCashLine(fixture) || fixtureRepresentsCorporateCardLine(fixture));
+                && (fixtureRepresentsCashLine(fixture) || fixtureRepresentsCorporateCardLine(fixture)
+                        || fixtureRepresentsUnusedAtmCashAdvanceLine(fixture));
     }
 
     protected boolean fixtureRepresentsCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.isNotBlank(fixture.cashAdvanceKey);
+    }
+
+    protected boolean fixtureRepresentsUnusedAtmCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
+        return fixtureRepresentsCashAdvanceLine(fixture)
+                && StringUtils.equals(ConcurConstants.PAYMENT_CODE_PSEUDO, fixture.paymentCode)
+                && StringUtils.equalsIgnoreCase(
+                        ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, fixture.cashAdvancePaymentCodeName);
     }
 
     protected boolean fixtureRepresentsOrphanedCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
@@ -452,8 +513,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         return StringUtils.equals(ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID, fixture.paymentCode);
     } 
 
-    protected boolean fixtureRepresentsPseudoPaymentCodeLine(ConcurSAEDetailLineFixture fixture) {
-        return StringUtils.equals(ConcurConstants.PAYMENT_CODE_PSEUDO, fixture.paymentCode);
+    protected boolean fixtureRepresentsNonAtmPseudoPaymentCodeLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(ConcurConstants.PAYMENT_CODE_PSEUDO, fixture.paymentCode)
+                && !StringUtils.equalsIgnoreCase(
+                        ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, fixture.cashAdvancePaymentCodeName);
     }
 
     protected boolean fixtureRepresentsPendingClientLine(ConcurSAEDetailLineFixture fixture) {
@@ -598,6 +661,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE;
             case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE :
                 return ConcurTestConstants.ParameterTestValues.COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_CHART_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_ATM_FEE_DEBIT_CHART_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_ACCOUNT_NUMBER :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_ATM_FEE_DEBIT_ACCOUNT_NUMBER;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE;
+            case ConcurParameterConstants.CONCUR_SAE_COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE :
+                return ConcurTestConstants.ParameterTestValues.COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE;
             default :
                 return null;
         }

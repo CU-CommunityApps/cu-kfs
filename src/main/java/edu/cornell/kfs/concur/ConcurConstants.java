@@ -63,6 +63,9 @@ public class ConcurConstants {
     public static final String PAYMENT_CODE_PRE_PAID_OR_OTHER = "COPD";
     public static final String PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID = "CBCP";
     public static final String PAYMENT_CODE_PSEUDO = "XXXX";
+    public static final String CASH_ADVANCE_PAYMENT_CODE_NAME_CASH = "Cash";
+    public static final String CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID = "University Billed/University Paid";
+    public static final String EXPENSE_TYPE_ATM_FEE = "Corporate Card Fees";
     public static final String PENDING_CLIENT = "Pending Client";
     public static final String EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "E";
     public static final String NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE = "Y";
