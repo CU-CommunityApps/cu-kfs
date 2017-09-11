@@ -14,7 +14,7 @@ public class CuAuxiliaryVoucherForm extends AuxiliaryVoucherForm {
 	 * 
 	 * @see org.kuali.kfs.fp.document.web.struts.AuxiliaryVoucherForm#getAvReversalDate()
 	 */
-	@Override
+	//@Override
 	protected Date getAvReversalDate() {
 		Date documentReveralDate = getAuxiliaryVoucherDocument().getReversalDate();
 		if (ObjectUtils.isNotNull(documentReveralDate)) {
@@ -39,7 +39,7 @@ public class CuAuxiliaryVoucherForm extends AuxiliaryVoucherForm {
 		// reversal date July
 		cal.set(Calendar.MONTH, (thisMonth));
 
-		int reversalDateDefaultDayOfMonth = this.getReversalDateDefaultDayOfMonth();
+		int reversalDateDefaultDayOfMonth = 0; //this.getReversalDateDefaultDayOfMonth();
 
 		cal.set(Calendar.DAY_OF_MONTH, reversalDateDefaultDayOfMonth);
 

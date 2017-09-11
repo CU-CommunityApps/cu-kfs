@@ -111,7 +111,7 @@ public class GlTransactionStep extends AbstractStep {
                         if(ObjectUtils.isNull(lastUpdate)) {
                             lastUpdate = new Date();
                         }
-                        paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
+                        paymentGroup.setLastUpdatedTimestamp(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -158,7 +158,7 @@ public class GlTransactionStep extends AbstractStep {
                         if(ObjectUtils.isNull(lastUpdate)) {
                             lastUpdate = new Date();
                         }
-                        paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
+                        paymentGroup.setLastUpdatedTimestamp(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
 
 						// update cancel flag on payment details
@@ -215,7 +215,7 @@ public class GlTransactionStep extends AbstractStep {
                         if(ObjectUtils.isNull(lastUpdate)) {
                             lastUpdate = new Date();
                         }
-                        paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
+                        paymentGroup.setLastUpdatedTimestamp(new Timestamp(lastUpdate.getTime()));
                         businessObjectService.save(paymentGroup);
                     
                         // Update status
@@ -267,7 +267,7 @@ public class GlTransactionStep extends AbstractStep {
                          if(ObjectUtils.isNull(lastUpdate)) {
                             lastUpdate = new Date();
                          }
-                         paymentGroup.setLastUpdate(new Timestamp(lastUpdate.getTime()));
+                         paymentGroup.setLastUpdatedTimestamp(new Timestamp(lastUpdate.getTime()));
                          businessObjectService.save(paymentGroup);
                     
                          // Update status

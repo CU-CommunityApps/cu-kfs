@@ -22,22 +22,6 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpParameterConstants;
-import org.kuali.kfs.pdp.service.PaymentGroupService;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.api.util.type.KualiInteger;
-
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -46,7 +30,24 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class PaymentDetail extends TimestampedBusinessObjectBase {
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.PdpParameterConstants;
+import org.kuali.kfs.pdp.service.PaymentGroupService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.api.util.type.KualiInteger;
+
+import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
+
+public class PaymentDetail extends PersistableBusinessObjectBase {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentDetail.class);
     private static KualiDecimal zero = KualiDecimal.ZERO;
 
@@ -603,7 +604,7 @@ public class PaymentDetail extends TimestampedBusinessObjectBase {
     // ==== CU Customization (KFSUPGRADE-605) ====
 
     public Timestamp getPaymentGroupLastUpdateForLookup() {
-        return (paymentGroup != null) ? paymentGroup.getLastUpdate() : null;
+        return (paymentGroup != null) ? paymentGroup.getLastUpdatedTimestamp() : null;
     }
 
     public void setPaymentGroupLastUpdateForLookup(Timestamp paymentGroupLastUpdateForLookup) {
