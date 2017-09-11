@@ -95,7 +95,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private boolean bankAddressValidated;
 	private String bankAddressCompanyId;
 
-	//below not reviewed yet
 	private String vendorRequestId; // primary key
 	private String requestStatus;
 	private String transactionType; // NV,VU,ACH
@@ -177,9 +176,6 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase {
 	private boolean currentlyPaidThroughPayroll;
 	private boolean everPaidThroughPayroll;
 	private boolean servicesProvidedWithoutInsurance;
-
-	public PaymentWorksVendor() {
-	}
 
 	public String getRequestingCompanyId() {
 		return requestingCompanyId;

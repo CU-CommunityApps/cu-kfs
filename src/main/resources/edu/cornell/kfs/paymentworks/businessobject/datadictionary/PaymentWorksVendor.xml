@@ -122,22 +122,25 @@
 		</property>
 	</bean>
 
-	<bean id="PaymentWorksVendor-requestingCompanyId" parent="PaymentWorksVendor-requestingCompanyId-parentBean" />
-	<bean id="PaymentWorksVendor-requestingCompanyId-parentBean"
-		abstract="true" parent="AttributeDefinition">
-		<property name="name" value="requestingCompanyId" />
-		<property name="label" value="Requesting Company ID" />
+    <bean id="PaymentWorksVendor-genericCompanyId" parent="PaymentWorksVendor-genericCompanyId-parentBean" />
+	<bean id="PaymentWorksVendor-genericCompanyId-parentBean" abstract="true" parent="AttributeDefinition">
+		<property name="name" value="companyId" />
+		<property name="label" value="Company ID" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="20" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="20" />
 		</property>
 	</bean>
 
-	<bean id="PaymentWorksVendor-requestingCompanyTin" parent="PaymentWorksVendor-requestingCompanyTin-parentBean" />
+	<bean id="PaymentWorksVendor-requestingCompanyId" parent="PaymentWorksVendor-requestingCompanyId-parentBean" />
+	<bean id="PaymentWorksVendor-requestingCompanyId-parentBean" abstract="true" parent="PaymentWorksVendor-genericCompanyId">
+        <property name="name" value="requestingCompanyId" />
+        <property name="label" value="Requesting Company ID" />
+    </bean>
 
-	<bean id="PaymentWorksVendor-requestingCompanyTin-parentBean"
-		abstract="true" parent="AttributeDefinition">
+	<bean id="PaymentWorksVendor-requestingCompanyTin" parent="PaymentWorksVendor-requestingCompanyTin-parentBean" />
+	<bean id="PaymentWorksVendor-requestingCompanyTin-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="requestingCompanyTin" />
 		<property name="forceUppercase" value="true" />
 		<property name="label" value="US Tax Number" />
@@ -160,12 +163,11 @@
 	</bean>
 
 	<bean id="PaymentWorksVendor-requestingCompanyTinType" parent="PaymentWorksVendor-requestingCompanyTinType-parentBean" />
-	<bean id="PaymentWorksVendor-requestingCompanyTinType-parentBean"
-		abstract="true" parent="AttributeDefinition">
+	<bean id="PaymentWorksVendor-requestingCompanyTinType-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="requestingCompanyTinType" />
 		<property name="label" value="Requesting Company TIN Type" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="2" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="2" />
 		</property>
@@ -174,7 +176,7 @@
 	<bean id="PaymentWorksVendor-requestingCompanyTaxCountry" parent="PaymentWorksVendor-requestingCompanyTaxCountry-parentBean" />
 	<bean id="PaymentWorksVendor-requestingCompanyTaxCountry-parentBean" abstract="true" parent="VendorGenericAttributes-countryCode">
 		<property name="name" value="requestingCompanyTaxCountry" />
-		<property name="label" value="Rwquesting Company Tax Country" />
+		<property name="label" value="Requesting Company Tax Country" />
 		<property name="required" value="true" />
 	</bean>
 
@@ -184,7 +186,7 @@
 		<property name="label" value="Requesting Company Legal Name" />
 		<property name="forceUppercase" value="false" />
 		<property name="shortLabel" value="Vendor Name" />
-		<property name="maxLength" value="45" />
+		<property name="maxLength" value="200" />
 		<property name="validationPattern">
 			<bean parent="UTF8AnyCharacterValidationPattern"
 				p:allowWhitespace="true" />
@@ -194,13 +196,45 @@
 		</property>
 	</bean>
 
+	<bean id="PaymentWorksVendor-requestingCompanyLegalFirstName" parent="PaymentWorksVendor-requestingCompanyLegalFirstName-parentBean" />
+    <bean id="PaymentWorksVendor-requestingCompanyLegalFirstName-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="requestingCompanyLegalFirstName" />
+        <property name="label" value="Requesting Company Legal First Name" />
+        <property name="forceUppercase" value="false" />
+        <property name="shortLabel" value="Vendor First Name" />
+        <property name="maxLength" value="50" />
+        <property name="validationPattern">
+            <bean parent="UTF8AnyCharacterValidationPattern"
+                p:allowWhitespace="true" />
+        </property>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="45" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-requestingCompanyLegalLastName" parent="PaymentWorksVendor-requestingCompanyLegalLastName-parentBean" />
+    <bean id="PaymentWorksVendor-requestingCompanyLegalLastName-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="requestingCompanyLegalLastName" />
+        <property name="label" value="Requesting Company Legal Last Name" />
+        <property name="forceUppercase" value="false" />
+        <property name="shortLabel" value="Vendor Last Name" />
+        <property name="maxLength" value="50" />
+        <property name="validationPattern">
+            <bean parent="UTF8AnyCharacterValidationPattern"
+                p:allowWhitespace="true" />
+        </property>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="45" />
+        </property>
+    </bean>
+
 	<bean id="PaymentWorksVendor-requestingCompanyName" parent="PaymentWorksVendor-requestingCompanyName-parentBean" />
 	<bean id="PaymentWorksVendor-requestingCompanyName-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="requestingCompanyName" />
 		<property name="forceUppercase" value="false" />
 		<property name="label" value="Search Alias Name" />
 		<property name="shortLabel" value="Search Alias" />
-		<property name="maxLength" value="45" />
+		<property name="maxLength" value="100" />
 		<property name="validationPattern">
 			<ref bean="AnyCharacterWithWhitespaceValidation" />
 		</property>
@@ -216,7 +250,7 @@
 		<property name="forceUppercase" value="false" />
 		<property name="label" value="Search Alias Name" />
 		<property name="shortLabel" value="Search Alias" />
-		<property name="maxLength" value="45" />
+		<property name="maxLength" value="100" />
 		<property name="validationPattern">
 			<ref bean="AnyCharacterWithWhitespaceValidation" />
 		</property>
@@ -242,7 +276,7 @@
 		<property name="name" value="requestingCompanyTelephone" />
 		<property name="label" value="Requesting Company Phone" />
 		<property name="required" value="true" />
-		<property name="maxLength" value="25" />
+		<property name="maxLength" value="50" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="25" />
         </property>
@@ -253,7 +287,7 @@
 		<property name="name" value="requestingCompanyTelephoneOldValue" />
 		<property name="label" value="Requesting Company Phone (Old Value)" />
 		<property name="required" value="true" />
-		<property name="maxLength" value="25" />
+		<property name="maxLength" value="50" />
 		<property name="control">
             <bean parent="TextControlDefinition" p:size="25" />
         </property>
@@ -264,7 +298,7 @@
 		<property name="name" value="requestingCompanyDuns" />
 		<property name="label" value="Requseting Company DUNS" />
 		<property name="shortLabel" value="DUNS #" />
-		<property name="maxLength" value="9" />
+		<property name="maxLength" value="50" />
 		<property name="validationPattern">
 			<ref bean="AnyCharacterValidation" />
 		</property>
@@ -278,7 +312,7 @@
 		<property name="name" value="requestingCompanyTaxClassificationName" />
 		<property name="label" value="Requesting Company Tax Classification Name" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="90" />
+		<property name="maxLength" value="100" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="45" />
 		</property>
@@ -289,7 +323,7 @@
 		<property name="name" value="requestingCompanyTaxClassificationCode" />
 		<property name="label" value="Requesting Company Tax Classification Code" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="2" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="2" />
 		</property>
@@ -328,7 +362,7 @@
         <property name="name" value="requestingCompanyCorporateEmail" />
         <property name="label" value="Requesting Company Corporate Email Address" />
         <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
+        <property name="maxLength" value="200" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="50" />
         </property>
@@ -339,14 +373,14 @@
 		<property name="name" value="remittanceAddressId" />
 		<property name="label" value="Remittance Address ID" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="20" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="20" />
 		</property>
 	</bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressName" parent="PaymentWorksVendor-remittanceAddressName-parentBean" />
-	<bean id="PaymentWorksVendor-remittanceAddressName-parentBean" abstract="true" parent="VendorGenericAttributes-attentionName">
+	<bean id="PaymentWorksVendor-remittanceAddressName-parentBean" abstract="true" parent="PaymentWorksVendor-genericAddressName-parentBean">
 		<property name="name" value="remittanceAddressName" />
 		<property name="label" value="Remittance Address Name" />
 	</bean>
@@ -356,12 +390,14 @@
 		<property name="name" value="remittanceAddressStreet1" />
 		<property name="label" value="Remittance Address Street 1" />
 		<property name="required" value="true" />
+		<property name="maxLength" value="100" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressStreet2" parent="PaymentWorksVendor-remittanceAddressStreet2-parentBean" />
 	<bean id="PaymentWorksVendor-remittanceAddressStreet2-parentBean" abstract="true" parent="VendorGenericAttributes-line2Address">
 		<property name="name" value="remittanceAddressStreet2" />
 		<property name="label" value="Remittance Address Street 2" />
+		<property name="maxLength" value="100" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressCity" parent="PaymentWorksVendor-remittanceAddressCity-parentBean" />
@@ -369,13 +405,14 @@
 		<property name="name" value="remittanceAddressCity" />
 		<property name="label" value="Remittance Address City" />
 		<property name="required" value="true" />
+		<property name="maxLength" value="50" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressState" parent="PaymentWorksVendor-remittanceAddressState-parentBean" />
 	<bean id="PaymentWorksVendor-remittanceAddressState-parentBean" abstract="true" parent="VendorGenericAttributes-stateCode">
 		<property name="name" value="remittanceAddressState" />
 		<property name="label" value="Remittance Address State" />
-		<property name="maxLength" value="45" />
+		<property name="maxLength" value="50" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressCountry" parent="PaymentWorksVendor-remittanceAddressCountry-parentBean" />
@@ -383,27 +420,51 @@
 		<property name="name" value="remittanceAddressCountry" />
 		<property name="label" value="Remittance Address County" />
 		<property name="required" value="true" />
+		<property name="maxLength" value="50" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-remittanceAddressZipCode" parent="PaymentWorksVendor-remittanceAddressZipCode-parentBean" />
 	<bean id="PaymentWorksVendor-remittanceAddressZipCode-parentBean" abstract="true" parent="VendorGenericAttributes-zipCode">
 		<property name="name" value="remittanceAddressZipCode" />
 		<property name="label" value="Remittance Address Zip Code" />
+		<property name="maxLength" value="50" />
 	</bean>
+
+	<bean id="PaymentWorksVendor-remittanceAddressValidated" parent="PaymentWorksVendor-remittanceAddressValidated-parentBean" />
+    <bean id="PaymentWorksVendor-remittanceAddressValidated-parentBean" abstract="true" parent="PaymentWorksVendor-genericAddressValidated-parentBean">
+        <property name="name" value="remittanceAddressValidated" />
+        <property name="label" value="Remittance Address Validated" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-remittanceAddressCompanyId" parent="PaymentWorksVendor-remittanceAddressCompanyId-parentBean" />
+    <bean id="PaymentWorksVendor-remittanceAddressCompanyId-parentBean" abstract="true" parent="PaymentWorksVendor-genericCompanyId">
+        <property name="name" value="remittanceAddressCompanyId" />
+        <property name="label" value="Remittance Address Company ID" />
+    </bean>
 
 	<bean id="PaymentWorksVendor-corpAddressId" parent="PaymentWorksVendor-corpAddressId-parentBean" />
 	<bean id="PaymentWorksVendor-corpAddressId-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="corpAddressId" />
 		<property name="label" value="Corporate Address ID" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="20" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="20" />
 		</property>
 	</bean>
 	
+    <bean id="PaymentWorksVendor-genericAddressName-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="addressName" />
+        <property name="label" value="Address Name" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
 	<bean id="PaymentWorksVendor-corpAddressName" parent="PaymentWorksVendor-corpAddressName-parentBean" />
-	<bean id="PaymentWorksVendor-corpAddressName-parentBean" abstract="true" parent="VendorGenericAttributes-attentionName">
+	<bean id="PaymentWorksVendor-corpAddressName-parentBean" abstract="true" parent="PaymentWorksVendor-genericAddressName-parentBean">
 		<property name="name" value="corpAddressName" />
 		<property name="label" value="Corporate Address Name" />
 	</bean>
@@ -413,12 +474,14 @@
 		<property name="name" value="corpAddressStreet1" />
 		<property name="label" value="Corporate Address Street 1" />
 		<property name="required" value="true" />
+		<property name="maxLength" value="100" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-corpAddressStreet2" parent="PaymentWorksVendor-corpAddressStreet2-parentBean" />
 	<bean id="PaymentWorksVendor-corpAddressStreet2-parentBean" abstract="true" parent="VendorGenericAttributes-line2Address">
 		<property name="name" value="corpAddressStreet2" />
 		<property name="label" value="Corporate Address Street 2" />
+		<property name="maxLength" value="100" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-corpAddressCity" parent="PaymentWorksVendor-corpAddressCity-parentBean" />
@@ -426,13 +489,14 @@
 		<property name="name" value="corpAddressCity" />
 		<property name="label" value="Corporate Address City" />
 		<property name="required" value="true" />
+		<property name="maxLength" value="50" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-corpAddressState" parent="PaymentWorksVendor-corpAddressState-parentBean" />
 	<bean id="PaymentWorksVendor-corpAddressState-parentBean" abstract="true" parent="VendorGenericAttributes-stateCode">
 		<property name="name" value="corpAddressState" />
 		<property name="label" value="Corporate Address State" />
-		<property name="maxLength" value="45" />
+		<property name="maxLength" value="50" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-corpAddressCountry" parent="PaymentWorksVendor-corpAddressCountry-parentBean" />
@@ -440,13 +504,251 @@
 		<property name="name" value="corpAddressCountry" />
 		<property name="label" value="Corporate Address Country" />
 		<property name="required" value="true" />
+		<property name="maxLength" value="50" />
 	</bean>
 	
 	<bean id="PaymentWorksVendor-corpAddressZipCode" parent="PaymentWorksVendor-corpAddressZipCode-parentBean" />
 	<bean id="PaymentWorksVendor-corpAddressZipCode-parentBean" abstract="true" parent="VendorGenericAttributes-zipCode">
 		<property name="name" value="corpAddressZipCode" />
 		<property name="label" value="Corporate Address Zip" />
+		<property name="maxLength" value="50" />
 	</bean>
+
+    <bean id="PaymentWorksVendor-genericAddressValidated-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="addressValidated" />
+        <property name="label" value="Address Validated" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-corpAddressValidated" parent="PaymentWorksVendor-corpAddressValidated-parentBean" />
+    <bean id="PaymentWorksVendor-corpAddressValidated-parentBean" abstract="true" parent="PaymentWorksVendor-genericAddressValidated-parentBean">
+        <property name="name" value="corpAddressValidated" />
+        <property name="label" value="Corporate Address Validated" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-corpAddressCompanyId" parent="PaymentWorksVendor-corpAddressCompanyId-parentBean" />
+    <bean id="PaymentWorksVendor-corpAddressCompanyId-parentBean" abstract="true" parent="PaymentWorksVendor-genericCompanyId">
+        <property name="name" value="corpAddressCompanyId" />
+        <property name="label" value="Corporate Address Company ID" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAccountId" parent="PaymentWorksVendor-bankAccountId-parentBean" />
+    <bean id="PaymentWorksVendor-bankAccountId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAccountId" />
+        <property name="label" value="Bank Account ID" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="20" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctBankName" parent="PaymentWorksVendor-bankAcctBankName-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctBankName-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAccountBankName" />
+        <property name="label" value="Bank Account Bank Name" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="100" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctRoutingNumber" parent="PaymentWorksVendor-bankAcctRoutingNumber-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctRoutingNumber-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctRoutingNumber" />
+        <property name="label" value="Bank Routing Number" />
+        <property name="shortLabel" value="Routing Number" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="11" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true" />
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*********" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctBankAccountNumber" parent="PaymentWorksVendor-bankAcctBankAccountNumber-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctBankAccountNumber-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctBankAccountNumber" />
+        <property name="label" value="Bank Account Number" />
+        <property name="shortLabel" value="Account Number" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="11" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true" />
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*********" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctBankValidationFile" parent="PaymentWorksVendor-bankAcctBankValidationFile-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctBankValidationFile-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctBankValidationFile" />
+        <property name="label" value="Bank Account Validation File" />
+        <property name="shortLabel" value="Account Validation File" />
+        <property name="maxLength" value="200" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="11" />
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true" />
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*********" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctAchEmail" parent="PaymentWorksVendor-bankAcctAchEmail-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctAchEmail-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctAchEmail" />
+        <property name="label" value="ACH Email Address" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="200" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctType" parent="PaymentWorksVendor-bankAcctType-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctType-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctType" />
+        <property name="label" value="Bank Account Type" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctAuthorized" parent="PaymentWorksVendor-bankAcctAuthorized-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctAuthorized-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctAuthorized" />
+        <property name="label" value="Bank Account Authorized" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctCompanyId" parent="PaymentWorksVendor-bankAcctCompanyId-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctCompanyId-parentBean" abstract="true" parent="PaymentWorksVendor-genericCompanyId">
+        <property name="name" value="bankAcctCompanyId" />
+        <property name="label" value="Bank Account Company ID" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctSwiftCode" parent="PaymentWorksVendor-bankAcctSwiftCode-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctSwiftCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctSwiftCode" />
+        <property name="label" value="Bank Account Swift Code" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAcctNameOnAccount" parent="PaymentWorksVendor-bankAcctNameOnAccount-parentBean" />
+    <bean id="PaymentWorksVendor-bankAcctNameOnAccount-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAcctNameOnAccount" />
+        <property name="label" value="Bank Account Name on Account" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="100" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressId" parent="PaymentWorksVendor-bankAddressId-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="bankAddressId" />
+        <property name="label" value="Bank Address ID" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="20" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressName" parent="PaymentWorksVendor-bankAddressName-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressName-parentBean" abstract="true" parent="PaymentWorksVendor-genericAddressName-parentBean">
+        <property name="name" value="bankAddressName" />
+        <property name="label" value="Bank Address Name" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressStreet1" parent="PaymentWorksVendor-bankAddressStreet1-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressStreet1-parentBean" abstract="true" parent="VendorGenericAttributes-line1Address">
+        <property name="name" value="bankAddressStreet1" />
+        <property name="label" value="Bank Address Street 1" />
+        <property name="required" value="true" />
+        <property name="maxLength" value="100" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressStreet2" parent="PaymentWorksVendor-bankAddressStreet2-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressStreet2-parentBean" abstract="true" parent="VendorGenericAttributes-line2Address">
+        <property name="name" value="bankAddressStreet2" />
+        <property name="label" value="Bank Address Street 2" />
+        <property name="maxLength" value="100" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressCity" parent="PaymentWorksVendor-bankAddressCity-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressCity-parentBean" abstract="true" parent="VendorGenericAttributes-cityName">
+        <property name="name" value="bankAddressCity" />
+        <property name="label" value="Bank Address City" />
+        <property name="required" value="true" />
+        <property name="maxLength" value="50" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressState" parent="PaymentWorksVendor-bankAddressState-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressState-parentBean" abstract="true" parent="VendorGenericAttributes-stateCode">
+        <property name="name" value="bankAddressState" />
+        <property name="label" value="Bank Address State" />
+        <property name="maxLength" value="50" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressCountry" parent="PaymentWorksVendor-bankAddressCountry-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressCountry-parentBean" abstract="true" parent="VendorGenericAttributes-countryCode">
+        <property name="name" value="bankAddressCountry" />
+        <property name="label" value="Bank Address Country" />
+        <property name="required" value="true" />
+        <property name="maxLength" value="50" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressZipCode" parent="PaymentWorksVendor-bankAddressZipCode-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressZipCode-parentBean" abstract="true" parent="VendorGenericAttributes-zipCode">
+        <property name="name" value="bankAddressZipCode" />
+        <property name="label" value="Bank Address Zip" />
+        <property name="maxLength" value="50" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressValidated" parent="PaymentWorksVendor-bankAddressValidated-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressValidated-parentBean" abstract="true" parent="PaymentWorksVendor-genericAddressValidated-parentBean">
+        <property name="name" value="bankAddressValidated" />
+        <property name="label" value="Bank Address Validated" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-bankAddressCompanyId" parent="PaymentWorksVendor-bankAddressCompanyId-parentBean" />
+    <bean id="PaymentWorksVendor-bankAddressCompanyId-parentBean" abstract="true" parent="PaymentWorksVendor-genericCompanyId">
+        <property name="name" value="corpAddressCompanyId" />
+        <property name="label" value="Bank Address Company ID" />
+    </bean>
 
 	<bean id="PaymentWorksVendor-vendorRequestId" parent="PaymentWorksVendor-vendorRequestId-parentBean" />
 	<bean id="PaymentWorksVendor-vendorRequestId-parentBean" abstract="true" parent="AttributeDefinition">
@@ -513,7 +815,7 @@
 		<property name="name" value="processStatus" />
 		<property name="label" value="Process Status" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="20" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="20" />
 		</property>
@@ -655,7 +957,7 @@
 		<property name="name" value="vendorInformationContactName" />
 		<property name="label" value="Vendor Contact Name" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -666,7 +968,7 @@
 		<property name="name" value="vendorInformationPhoneNumber" />
 		<property name="label" value="Vendor Phone Number" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -677,7 +979,7 @@
 		<property name="name" value="vendorInformationPhoneExtension" />
 		<property name="label" value="Vendor Phone Extension" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -688,7 +990,7 @@
 		<property name="name" value="vendorInformationEmail" />
 		<property name="label" value="Vendor Email" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -809,6 +1111,7 @@
 		<property name="name" value="conflictOfInterest" />
 		<property name="label" value="Conflict of Interest" />
 		<property name="forceUppercase" value="false" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="CheckboxControlDefinition" />
 		</property>
@@ -820,7 +1123,7 @@
 		<property name="name" value="conflictOfInterestRelationshipToEmployee" />
 		<property name="label" value="Conflict of Interest Relationship" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -831,7 +1134,7 @@
 		<property name="name" value="conflictOfInterestEmployeeName" />
 		<property name="label" value="Conflict of Interest Employee Name" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -842,7 +1145,7 @@
 		<property name="name" value="conflictOfInterestEmployeePhoneNumber" />
 		<property name="label" value="Conflict of Interest Employee Phone" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -996,7 +1299,7 @@
 		<property name="name" value="diversityClassifications" />
 		<property name="label" value="Diversity Classifications" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="200" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -1007,7 +1310,7 @@
 	    <property name="name" value="veteranCertificationExpirationDate"/>
 	    <property name="label" value="Veteran Certification Expiration Date"/>
         <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
+        <property name="maxLength" value="100" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="50" />
         </property>
@@ -1018,7 +1321,7 @@
 	    <property name="name" value="mbeCertificationExpirationDate"/>
 	    <property name="label" value="MBE Certification Expiration Date"/>
         <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
+        <property name="maxLength" value="100" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="50" />
         </property>
@@ -1029,7 +1332,7 @@
 		<property name="name" value="womanOwned" />
 		<property name="label" value="Woman Owned" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="100" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -1040,7 +1343,7 @@
 	    <property name="name" value="wbeCertificationExpirationDate"/>
 	    <property name="label" value="WBE Certification Expiration Date"/>
         <property name="forceUppercase" value="false" />
-        <property name="maxLength" value="50" />
+        <property name="maxLength" value="100" />
         <property name="control">
             <bean parent="TextControlDefinition" p:size="50" />
         </property>
@@ -1051,7 +1354,7 @@
 		<property name="name" value="disabledVeteran" />
 		<property name="label" value="Disabled Veteran" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="100" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -1062,7 +1365,7 @@
 		<property name="name" value="minorityStatus" />
 		<property name="label" value="Minority Status" />
 		<property name="forceUppercase" value="false" />
-		<property name="maxLength" value="50" />
+		<property name="maxLength" value="100" />
 		<property name="control">
 			<bean parent="TextControlDefinition" p:size="50" />
 		</property>
@@ -1149,6 +1452,7 @@
 	<bean id="PaymentWorksVendor-diverseBusiness-parentBean" abstract="true" parent="AttributeDefinition">
 		<property name="name" value="diverseBusiness" />
 		<property name="label" value="Diverse Business" />
+		<property name="maxLength" value="50" />
 		<property name="forceUppercase" value="false" />
 		<property name="control">
 			<bean parent="CheckboxControlDefinition" />
@@ -1183,6 +1487,7 @@
 		<property name="name" value="acceptCreditCards" />
 		<property name="label" value="Accept Credit Cards" />
 		<property name="forceUppercase" value="false" />
+		<property name="maxLength" value="50" />
 		<property name="control">
 			<bean parent="CheckboxControlDefinition" />
 		</property>

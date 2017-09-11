@@ -25,6 +25,4 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "bank_address")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksBankAddressDTO extends PaymentWorksAddressBaseDTO {
-
-    //just needed so XML naming would work with the base address class
 }
