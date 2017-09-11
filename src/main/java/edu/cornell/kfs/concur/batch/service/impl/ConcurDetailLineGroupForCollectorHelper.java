@@ -38,6 +38,11 @@ public class ConcurDetailLineGroupForCollectorHelper {
     protected String prepaidOffsetObjectCode;
     protected String paymentOffsetObjectCode;
     protected String personalOffsetObjectCode;
+    
+    protected String atmFeeDebitChartCode;
+    protected String atmFeeDebitAccountNumber;
+    protected String atmFeeDebitObjectCode;
+    protected String atmUnusedAmountOffsetObjectCode;
 
     public ConcurDetailLineGroupForCollectorHelper(String actualFinancialBalanceTypeCode, Date transmissionDate,
             ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService,
@@ -61,6 +66,12 @@ public class ConcurDetailLineGroupForCollectorHelper {
         this.prepaidOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PREPAID_OFFSET_OBJECT_CODE);
         this.paymentOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PAYMENT_OFFSET_OBJECT_CODE);
         this.personalOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_PERSONAL_OFFSET_OBJECT_CODE);
+        
+        this.atmFeeDebitChartCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_CHART_CODE);
+        this.atmFeeDebitAccountNumber = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_ACCOUNT_NUMBER);
+        this.atmFeeDebitObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE);
+        this.atmUnusedAmountOffsetObjectCode = concurParameterGetter.apply(ConcurParameterConstants.CONCUR_SAE_COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE);
+        
     }
 
     public String getActualFinancialBalanceTypeCode() {
@@ -103,6 +114,22 @@ public class ConcurDetailLineGroupForCollectorHelper {
         return personalOffsetObjectCode;
     }
 
+    public String getAtmFeeDebitChartCode() {
+        return atmFeeDebitChartCode;
+    }
+
+    public String getAtmFeeDebitAccountNumber() {
+        return atmFeeDebitAccountNumber;
+    }
+
+    public String getAtmFeeDebitObjectCode() {
+        return atmFeeDebitObjectCode;
+    }
+
+    public String getAtmUnusedAmountOffsetObjectCode() {
+        return atmUnusedAmountOffsetObjectCode;
+    }
+
     public String getDashOnlyPropertyValue(String propertyName) {
         return dashPropertyValueGetter.apply(propertyName);
     }
@@ -123,6 +150,22 @@ public class ConcurDetailLineGroupForCollectorHelper {
 
     public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
         return concurStandardAccountingExtractCashAdvanceService.isCashAdvanceLine(detailLine);
+    }
+
+    public boolean isAtmCashAdvanceLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurStandardAccountingExtractCashAdvanceService.isAtmCashAdvanceLine(detailLine);
+    }
+
+    public boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurStandardAccountingExtractCashAdvanceService.isAtmFeeDebitLine(detailLine);
+    }
+
+    public boolean isAtmFeeCreditLine(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurStandardAccountingExtractCashAdvanceService.isAtmFeeCreditLine(detailLine);
+    }
+
+    public boolean isAtmCashAdvanceLineWithUnusedAmount(ConcurStandardAccountingExtractDetailLine detailLine) {
+        return concurStandardAccountingExtractCashAdvanceService.isAtmCashAdvanceLineWithUnusedAmount(detailLine);
     }
 
     public String getValidationMessage(String messageKey) {

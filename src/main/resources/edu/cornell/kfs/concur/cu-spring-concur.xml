@@ -186,6 +186,7 @@
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmountString"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="183" p:propertyName="cashAdvancePaymentCodeName"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="186" p:propertyName="cashAdvanceKey"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="190" p:propertyName="chartOfAccountsCode"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="191" p:propertyName="accountNumber"/>
