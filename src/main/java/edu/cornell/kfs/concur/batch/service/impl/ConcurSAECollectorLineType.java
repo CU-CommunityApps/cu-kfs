@@ -1,9 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-/**
- * Helper enum for categorizing various types of SAE lines.
- */
-public enum ConcurSAELineType {
+public enum ConcurSAECollectorLineType {
     CASH,
     CORP_CARD,
     REQUESTED_CASH_ADVANCE,
