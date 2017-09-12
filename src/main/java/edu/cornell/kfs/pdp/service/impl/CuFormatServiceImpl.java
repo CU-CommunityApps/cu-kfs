@@ -86,7 +86,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
 
         while (groupIterator.hasNext()) {
             PaymentGroup paymentGroup = (PaymentGroup) groupIterator.next();
-            paymentGroup.setLastUpdatedTimestamp(paydateTs);// delete this one
+            paymentGroup.setLastUpdatedTimestamp(paydateTs);
             paymentGroup.setPaymentStatus(format);
             paymentGroup.setProcess(paymentProcess);
             businessObjectService.save(paymentGroup);

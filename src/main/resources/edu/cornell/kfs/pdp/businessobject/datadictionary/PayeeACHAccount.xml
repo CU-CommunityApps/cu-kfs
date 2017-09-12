@@ -41,7 +41,7 @@
         <ref bean="PayeeACHAccount-bankRoutingNumber"/>
         <ref bean="PayeeACHAccount-active"/>
         <ref bean="PayeeACHAccount-autoInactivationIndicator"/>
-        <ref bean="PayeeACHAccount-lastUpdate"/>
+        <ref bean="PayeeACHAccount-lastUpdatedTimestamp"/>
         <ref bean="PayeeACHAccount-bankRouting.bankName"/>
       </list>
     </property>
@@ -213,10 +213,10 @@
     <property name="shortLabel" value="Auto-Inactivation"/>
   </bean>
   
-  <bean id="PayeeACHAccount-lastUpdate" parent="PayeeACHAccount-lastUpdate-parentBean"/>
+  <bean id="PayeeACHAccount-lastUpdatedTimestamp" parent="PayeeACHAccount-lastUpdatedTimestamp-parentBean"/>
 
-  <bean id="PayeeACHAccount-lastUpdate-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
-	  <property name="name" value="lastUpdate"/>
+  <bean id="PayeeACHAccount-lastUpdatedTimestamp-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
+	  <property name="name" value="lastUpdatedTimestamp"/>
 	  <property name="label" value="Last Update Time"/>
 	  <property name="shortLabel" value="Last Update"/>
 	  <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter"/>
@@ -260,8 +260,8 @@
               <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
               <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
-			        <bean parent="FieldDefinition" p:attributeName="autoInactivationIndicator"/>
-			        <bean parent="FieldDefinition" p:attributeName="lastUpdate"/>
+			  <bean parent="FieldDefinition" p:attributeName="autoInactivationIndicator"/>
+			  <bean parent="FieldDefinition" p:attributeName="lastUpdatedTimestamp"/>
               <bean parent="FieldDefinition" p:attributeName="bankAccountTypeCode"/>
             </list>
           </property>
