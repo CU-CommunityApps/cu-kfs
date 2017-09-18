@@ -40,201 +40,205 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 @TransactionalNoValidationExceptionRollback
 public class PaymentWorksVendorServiceImpl implements PaymentWorksVendorService {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorServiceImpl.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorServiceImpl.class);
 
-	protected DateTimeService dateTimeService;
-	protected BusinessObjectService businessObjectService;
-	protected NoteService noteService;
-	protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
-	protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
+    protected DateTimeService dateTimeService;
+    protected BusinessObjectService businessObjectService;
+    protected NoteService noteService;
+    protected PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService;
+    protected PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService;
 
-	@Override
-	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
-		PaymentWorksVendor paymentWorksVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(paymentWorksNewVendorDetailDTO);
-		paymentWorksVendor.setRequestStatus(paymentWorksNewVendorDetailDTO.getRequest_status());
-		paymentWorksVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_REQUESTED);
-		paymentWorksVendor.setTransactionType(PaymentWorksConstants.TransactionType.NEW_VENDOR);
+    @Override
+    public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        PaymentWorksVendor paymentWorksVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(paymentWorksNewVendorDetailDTO);
+        paymentWorksVendor.setRequestStatus(paymentWorksNewVendorDetailDTO.getRequest_status());
+        paymentWorksVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_REQUESTED);
+        paymentWorksVendor.setTransactionType(PaymentWorksConstants.TransactionType.NEW_VENDOR);
 
-		paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
-		
-		return paymentWorksVendor;
-	}
+        paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
 
-	@Override
-	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdateDTO, String processStatus, String transactionType) {
-		PaymentWorksVendor paymentWorksVendor = getPaymentWorksVendorUpdateConversionService().createPaymentWorksVendorUpdate(paymentWorksVendorUpdateDTO);
-		paymentWorksVendor.setRequestStatus(paymentWorksVendorUpdateDTO.getStatus());
-		paymentWorksVendor.setProcessStatus(processStatus);
-		paymentWorksVendor.setTransactionType(transactionType);
+        return paymentWorksVendor;
+    }
 
-		paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
+    @Override
+    public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdateDTO, String processStatus, String transactionType) {
+        PaymentWorksVendor paymentWorksVendor = getPaymentWorksVendorUpdateConversionService().createPaymentWorksVendorUpdate(paymentWorksVendorUpdateDTO);
+        paymentWorksVendor.setRequestStatus(paymentWorksVendorUpdateDTO.getStatus());
+        paymentWorksVendor.setProcessStatus(processStatus);
+        paymentWorksVendor.setTransactionType(transactionType);
 
-		return paymentWorksVendor;
-	}
+        paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
 
-	@Override
-	public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber, String transactionType) {
-		PaymentWorksVendor paymentWorksVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(vendorDetail, documentNumber);
-		paymentWorksVendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
-		paymentWorksVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
-		paymentWorksVendor.setTransactionType(transactionType);
-		paymentWorksVendor.setVendorName(vendorDetail.getVendorName());
+        return paymentWorksVendor;
+    }
 
-		paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
+    @Override
+    public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber, String transactionType) {
+        PaymentWorksVendor paymentWorksVendor = getPaymentWorksNewVendorConversionService().createPaymentWorksVendor(vendorDetail, documentNumber);
+        paymentWorksVendor.setRequestStatus(PaymentWorksConstants.PaymentWorksStatusText.APPROVED);
+        paymentWorksVendor.setProcessStatus(PaymentWorksConstants.ProcessStatus.VENDOR_APPROVED);
+        paymentWorksVendor.setTransactionType(transactionType);
+        paymentWorksVendor.setVendorName(vendorDetail.getVendorName());
 
-		return paymentWorksVendor;
-	}
+        paymentWorksVendor = updatePaymentWorksVendor(paymentWorksVendor);
 
-	@Override
-	public PaymentWorksVendor updatePaymentWorksVendor(PaymentWorksVendor paymentWorksVendor) {
-		LOG.debug("updatePaymentWorksVendor, Entering");
-		
-		if (ObjectUtils.isNotNull(paymentWorksVendor)) {
-			paymentWorksVendor.setProcessTimestamp(dateTimeService.getCurrentTimestamp());
-			paymentWorksVendor = getBusinessObjectService().save(paymentWorksVendor);
-			
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("updatePaymentWorksVendor, saving payment works vendor with ID " + paymentWorksVendor.getVendorRequestId() + 
-						" and a  request status of " + paymentWorksVendor.getRequestStatus() + " and a process status of " + 
-						paymentWorksVendor.getProcessStatus());
-			}
-		} else {
-			LOG.error("updatePaymentWorksVendor a NULL paymentWorksVendor was supplied.");
-		}
+        return paymentWorksVendor;
+    }
 
-		return paymentWorksVendor;
-	}
+    @Override
+    public PaymentWorksVendor updatePaymentWorksVendor(PaymentWorksVendor paymentWorksVendor) {
+        LOG.debug("updatePaymentWorksVendor, Entering");
 
-	@Override
-	public void updatePaymentWorksVendorProcessStatusByDocumentNumber(String documentNumber, String processStatus) {
-		Map<String, String> fieldValues = new HashMap<String, String>();
-		fieldValues.put("documentNumber", documentNumber);
+        if (ObjectUtils.isNotNull(paymentWorksVendor)) {
+            paymentWorksVendor.setProcessTimestamp(dateTimeService.getCurrentTimestamp());
+            paymentWorksVendor = getBusinessObjectService().save(paymentWorksVendor);
 
-		Collection<PaymentWorksVendor> newVendors = businessObjectService.findMatching(PaymentWorksVendor.class, fieldValues);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("updatePaymentWorksVendor, saving payment works vendor with ID "
+                        + paymentWorksVendor.getVendorRequestId() + " and a  request status of "
+                        + paymentWorksVendor.getRequestStatus() + " and a process status of "
+                        + paymentWorksVendor.getProcessStatus());
+            }
+        } else {
+            LOG.error("updatePaymentWorksVendor a NULL paymentWorksVendor was supplied.");
+        }
 
-		if (!newVendors.isEmpty()) {
-			PaymentWorksVendor newVendor = newVendors.iterator().next();
+        return paymentWorksVendor;
+    }
 
-			newVendor.setProcessStatus(processStatus);
-			updatePaymentWorksVendor(newVendor);
-		}
+    @Override
+    public void updatePaymentWorksVendorProcessStatusByDocumentNumber(String documentNumber, String processStatus) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("documentNumber", documentNumber);
 
-	}
+        Collection<PaymentWorksVendor> newVendors = businessObjectService.findMatching(PaymentWorksVendor.class, fieldValues);
 
-	@Override
-	public boolean isExistingPaymentWorksVendor(String vendorRequestId, String transactionType) {
-		Map<String, String> fieldValues = new HashMap<String, String>();
-		fieldValues.put("vendorRequestId", vendorRequestId);
-		fieldValues.put("transactionType", transactionType);
-		
-		boolean isExists = getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0;
-		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("isExistingPaymentWorksVendor, vendorRequestId: " + vendorRequestId + " transactionType: " + transactionType + 
-					".  Is it an esiting PaymentWorksVendor: " + isExists);
-		}
-		
-		return isExists;
-	}
+        if (!newVendors.isEmpty()) {
+            PaymentWorksVendor newVendor = newVendors.iterator().next();
 
-	@Override
-	public boolean isExistingPaymentWorksVendorByDocumentNumber(String documentNumber) {
-		Map<String, String> fieldValues = new HashMap<String, String>();
-		fieldValues.put("documentNumber", documentNumber);
-		
-		boolean isExists = getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0;
+            newVendor.setProcessStatus(processStatus);
+            updatePaymentWorksVendor(newVendor);
+        }
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("isExistingPaymentWorksVendorByDocumentNumber, documentNumber: " + documentNumber + ".  Is it an esiting PaymentWorksVendor: " + isExists);
-		}
+    }
 
-		return isExists;
-	}
+    @Override
+    public boolean isExistingPaymentWorksVendor(String vendorRequestId, String transactionType) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("vendorRequestId", vendorRequestId);
+        fieldValues.put("transactionType", transactionType);
 
-	@Override
-	public PaymentWorksVendor getPaymentWorksVendorByDocumentNumber(String documentNumber) {
-		Collection<PaymentWorksVendor> newVendorCollection = null;
-		Map<String, String> fieldValues = new HashMap<String, String>();
-		fieldValues.put("documentNumber", documentNumber);
+        boolean isExists = getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0;
 
-		newVendorCollection = getBusinessObjectService().findMatching(PaymentWorksVendor.class, fieldValues);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isExistingPaymentWorksVendor, vendorRequestId: " + vendorRequestId + " transactionType: "
+                    + transactionType + ".  Is it an esiting PaymentWorksVendor: " + isExists);
+        }
 
-		if (!newVendorCollection.isEmpty()) {
-			return newVendorCollection.iterator().next();
-		} else {
-			return null;
-		}
+        return isExists;
+    }
 
-	}
+    @Override
+    public boolean isExistingPaymentWorksVendorByDocumentNumber(String documentNumber) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("documentNumber", documentNumber);
 
-	@Override
-	public Collection<PaymentWorksVendor> getPaymentWorksVendorRecords(String processStatus, String requestStatus, String transactionType) {
-		Map<String, String> fieldValues = new HashMap<String, String>();
+        boolean isExists = getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0;
 
-		if (StringUtils.isNotEmpty(processStatus)) {
-			fieldValues.put("processStatus", processStatus);
-		}
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isExistingPaymentWorksVendorByDocumentNumber, documentNumber: " + documentNumber
+                    + ".  Is it an esiting PaymentWorksVendor: " + isExists);
+        }
 
-		if (StringUtils.isNotEmpty(requestStatus)) {
-			fieldValues.put("requestStatus", requestStatus);
-		}
+        return isExists;
+    }
 
-		if (StringUtils.isNotEmpty(transactionType)) {
-			fieldValues.put("transactionType", transactionType);
-		}
+    @Override
+    public PaymentWorksVendor getPaymentWorksVendorByDocumentNumber(String documentNumber) {
+        Collection<PaymentWorksVendor> newVendorCollection = null;
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put("documentNumber", documentNumber);
 
-		Collection<PaymentWorksVendor> newVendorCollection = getBusinessObjectService().findMatching(PaymentWorksVendor.class, fieldValues);
+        newVendorCollection = getBusinessObjectService().findMatching(PaymentWorksVendor.class, fieldValues);
 
-		return newVendorCollection;
-	}
+        if (!newVendorCollection.isEmpty()) {
+            return newVendorCollection.iterator().next();
+        } else {
+            return null;
+        }
 
-	@Override
-	public boolean isVendorUpdateEligibleForRouting(PaymentWorksVendor paymentWorksVendor) {
-		boolean isEligibleForRouting = false;
+    }
 
-		if (StringUtils.equals(paymentWorksVendor.getGroupName(), "Company")
-				&& (StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTin())
-						|| StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTinType())
-						|| StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyLegalName())
-						|| StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTaxClassificationCode())
-						|| StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTaxCountry()))) {
+    @Override
+    public Collection<PaymentWorksVendor> getPaymentWorksVendorRecords(String processStatus, String requestStatus, String transactionType) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
 
-			isEligibleForRouting = true;
-		}
+        if (StringUtils.isNotEmpty(processStatus)) {
+            fieldValues.put("processStatus", processStatus);
+        }
 
-		return isEligibleForRouting;
-	}
+        if (StringUtils.isNotEmpty(requestStatus)) {
+            fieldValues.put("requestStatus", requestStatus);
+        }
 
-	public DateTimeService getDateTimeService() {
-		return dateTimeService;
-	}
+        if (StringUtils.isNotEmpty(transactionType)) {
+            fieldValues.put("transactionType", transactionType);
+        }
 
-	public void setDateTimeService(DateTimeService dateTimeService) {
-		this.dateTimeService = dateTimeService;
-	}
+        Collection<PaymentWorksVendor> newVendorCollection = getBusinessObjectService().findMatching(PaymentWorksVendor.class, fieldValues);
 
-	public BusinessObjectService getBusinessObjectService() {
-		return businessObjectService;
-	}
+        return newVendorCollection;
+    }
 
-	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-		this.businessObjectService = businessObjectService;
-	}
+    @Override
+    public boolean isVendorUpdateEligibleForRouting(PaymentWorksVendor paymentWorksVendor) {
+        boolean isEligibleForRouting = false;
 
-	public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
-		return paymentWorksNewVendorConversionService;
-	}
+        if (StringUtils.equals(paymentWorksVendor.getGroupName(), "Company")
+                && (StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTin())
+                        || StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTinType())
+                        || StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyLegalName())
+                        || StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTaxClassificationCode())
+                        || StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTaxCountry()))) {
 
-	public void setPaymentWorksNewVendorConversionService(PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
-		this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
-	}
+            isEligibleForRouting = true;
+        }
 
-	public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {
-		return paymentWorksVendorUpdateConversionService;
-	}
+        return isEligibleForRouting;
+    }
 
-	public void setPaymentWorksVendorUpdateConversionService(PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
-		this.paymentWorksVendorUpdateConversionService = paymentWorksVendorUpdateConversionService;
-	}
-	
+    public DateTimeService getDateTimeService() {
+        return dateTimeService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public PaymentWorksNewVendorConversionService getPaymentWorksNewVendorConversionService() {
+        return paymentWorksNewVendorConversionService;
+    }
+
+    public void setPaymentWorksNewVendorConversionService(
+            PaymentWorksNewVendorConversionService paymentWorksNewVendorConversionService) {
+        this.paymentWorksNewVendorConversionService = paymentWorksNewVendorConversionService;
+    }
+
+    public PaymentWorksVendorUpdateConversionService getPaymentWorksVendorUpdateConversionService() {
+        return paymentWorksVendorUpdateConversionService;
+    }
+
+    public void setPaymentWorksVendorUpdateConversionService(
+            PaymentWorksVendorUpdateConversionService paymentWorksVendorUpdateConversionService) {
+        this.paymentWorksVendorUpdateConversionService = paymentWorksVendorUpdateConversionService;
+    }
+
 }

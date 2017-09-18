@@ -10,15 +10,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "results")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksNewVendorsResultsDTO {
-	@XmlElement(name = "list-item")
-	private List<PaymentWorksNewVendorDTO> newVendorList;
+    @XmlElement(name = "list-item")
+    private List<PaymentWorksNewVendorDTO> newVendorList;
 
-	public List<PaymentWorksNewVendorDTO> getNewVendorList() {
-		return newVendorList;
-	}
+    public List<PaymentWorksNewVendorDTO> getNewVendorList() {
+        return newVendorList;
+    }
 
-	public void setNewVendorList(List<PaymentWorksNewVendorDTO> newVendorList) {
-		this.newVendorList = newVendorList;
-	}
+    public void setNewVendorList(List<PaymentWorksNewVendorDTO> newVendorList) {
+        this.newVendorList = newVendorList;
+    }
 
 }

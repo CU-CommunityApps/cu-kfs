@@ -20,41 +20,41 @@ package edu.cornell.kfs.paymentworks.batch.report;
 
 public class AchUpdateSummaryLine {
 
-	private String vendorRequestId;
-	private String vendorName;
-	private String vendorNumber;
-	private String errorMessage;
+    private String vendorRequestId;
+    private String vendorName;
+    private String vendorNumber;
+    private String errorMessage;
 
-	public String getVendorRequestId() {
-		return vendorRequestId;
-	}
+    public String getVendorRequestId() {
+        return vendorRequestId;
+    }
 
-	public void setVendorRequestId(String vendorRequestId) {
-		this.vendorRequestId = vendorRequestId;
-	}
+    public void setVendorRequestId(String vendorRequestId) {
+        this.vendorRequestId = vendorRequestId;
+    }
 
-	public String getVendorName() {
-		return vendorName;
-	}
+    public String getVendorName() {
+        return vendorName;
+    }
 
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
-	}
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-	public String getVendorNumber() {
-		return vendorNumber;
-	}
+    public String getVendorNumber() {
+        return vendorNumber;
+    }
 
-	public void setVendorNumber(String vendorNumber) {
-		this.vendorNumber = vendorNumber;
-	}
+    public void setVendorNumber(String vendorNumber) {
+        this.vendorNumber = vendorNumber;
+    }
 
 }

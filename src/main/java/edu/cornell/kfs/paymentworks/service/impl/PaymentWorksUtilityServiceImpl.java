@@ -44,186 +44,186 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksFieldChangesDTO;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksUtilityServiceImpl implements PaymentWorksUtilityService {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUtilityServiceImpl.class);
-	
-	protected DataDictionaryService dataDictionaryService;
-	protected PhoneNumberService phoneNumberService;
-	protected ConfigurationService configurationService;
-	protected VendorService vendorService;
-	
-	@Override
-	public String getGlobalErrorMessage() {
-		String errorMessage = "";
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUtilityServiceImpl.class);
 
-		if (GlobalVariables.getMessageMap().getErrorCount() > 0) {
-			errorMessage = StringEscapeUtils
-					.unescapeHtml(getAutoPopulatingErrorMessages(GlobalVariables.getMessageMap().getErrorMessages()));
-			GlobalVariables.getMessageMap().clearErrorMessages();
-		}
+    protected DataDictionaryService dataDictionaryService;
+    protected PhoneNumberService phoneNumberService;
+    protected ConfigurationService configurationService;
+    protected VendorService vendorService;
 
-		return errorMessage;
-	}
-	
-	@Override
-	public String getAutoPopulatingErrorMessages(Map<String, AutoPopulatingList<ErrorMessage>> errorMap) {
+    @Override
+    public String getGlobalErrorMessage() {
+        String errorMessage = "";
 
-		AutoPopulatingList<ErrorMessage> errorMessages = null;
-		ErrorMessage errorMessage = null;
-		StringBuffer errorList = new StringBuffer("");
-		String errorText = null;
+        if (GlobalVariables.getMessageMap().getErrorCount() > 0) {
+            errorMessage = StringEscapeUtils.unescapeHtml(getAutoPopulatingErrorMessages(GlobalVariables.getMessageMap().getErrorMessages()));
+            GlobalVariables.getMessageMap().clearErrorMessages();
+        }
 
-		for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> errorEntry : errorMap.entrySet()) {
+        return errorMessage;
+    }
 
-			errorMessages = errorEntry.getValue();
+    @Override
+    public String getAutoPopulatingErrorMessages(Map<String, AutoPopulatingList<ErrorMessage>> errorMap) {
 
-			for (int i = 0; i < errorMessages.size(); i++) {
+        AutoPopulatingList<ErrorMessage> errorMessages = null;
+        ErrorMessage errorMessage = null;
+        StringBuffer errorList = new StringBuffer("");
+        String errorText = null;
 
-				errorMessage = errorMessages.get(i);
+        for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> errorEntry : errorMap.entrySet()) {
 
-				// get error text
-				errorText = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
-				// apply parameters
-				errorText = MessageFormat.format(errorText, (Object[]) errorMessage.getMessageParameters());
+            errorMessages = errorEntry.getValue();
 
-				// add key and error message together
-				errorList.append(errorText + "\n");
-			}
-		}
+            for (int i = 0; i < errorMessages.size(); i++) {
 
-		return errorList.toString();
-	}
-	
-	@Override
-	public String pojoToJsonString(Object object) {
-		ObjectMapper mapper = new ObjectMapper();
+                errorMessage = errorMessages.get(i);
 
-		// Object to JSON in String
-		String jsonVendorStatusString = null;
-		try {
-			jsonVendorStatusString = mapper.writeValueAsString(object);
-		} catch (Exception e) {
-			jsonVendorStatusString = null;
-		}
+                // get error text
+                errorText = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
+                // apply parameters
+                errorText = MessageFormat.format(errorText, (Object[]) errorMessage.getMessageParameters());
 
-		return jsonVendorStatusString;
-	}
+                // add key and error message together
+                errorList.append(errorText + "\n");
+            }
+        }
 
-	@Override
-	public Map<String, String> convertFieldArrayToMap(PaymentWorksCustomFieldsDTO customFields) {
+        return errorList.toString();
+    }
 
-		Map<String, String> customFieldMap = new HashMap<String, String>();
+    @Override
+    public String pojoToJsonString(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
 
-		if (ObjectUtils.isNotNull(customFields) && ObjectUtils.isNotNull(customFields.getCustom_fields())) {
-			for (PaymentWorksCustomFieldDTO customField : customFields.getCustom_fields()) {
-				customFieldMap.put(customField.getField_label(), customField.getField_value());
-			}
-		}
+        // Object to JSON in String
+        String jsonVendorStatusString = null;
+        try {
+            jsonVendorStatusString = mapper.writeValueAsString(object);
+        } catch (Exception e) {
+            jsonVendorStatusString = null;
+        }
 
-		return customFieldMap;
-	}
-	
-	@Override
-	public Map<String, String> convertFieldArrayToMap(PaymentWorksFieldChangesDTO fieldChanges) {
+        return jsonVendorStatusString;
+    }
 
-		Map<String, String> customFieldMap = new HashMap<String, String>();
+    @Override
+    public Map<String, String> convertFieldArrayToMap(PaymentWorksCustomFieldsDTO customFields) {
 
-		if (ObjectUtils.isNotNull(fieldChanges) && ObjectUtils.isNotNull(fieldChanges.getField_changes())) {
-			for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges.getField_changes()) {
-				customFieldMap.put(fieldChange.getField_name(), fieldChange.getTo_value());
-			}
-		}
+        Map<String, String> customFieldMap = new HashMap<String, String>();
 
-		return customFieldMap;
-	}
-	
-	@Override
-	public Map<String, String> convertFieldArrayToMapFromValues(PaymentWorksFieldChangesDTO fieldChanges) {
+        if (ObjectUtils.isNotNull(customFields) && ObjectUtils.isNotNull(customFields.getCustom_fields())) {
+            for (PaymentWorksCustomFieldDTO customField : customFields.getCustom_fields()) {
+                customFieldMap.put(customField.getField_label(), customField.getField_value());
+            }
+        }
 
-		Map<String, String> customFieldMap = new HashMap<String, String>();
+        return customFieldMap;
+    }
 
-		if (ObjectUtils.isNotNull(fieldChanges) && ObjectUtils.isNotNull(fieldChanges.getField_changes())) {
-			for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges.getField_changes()) {
-				customFieldMap.put(fieldChange.getField_name(), fieldChange.getFrom_value());
-			}
-		}
+    @Override
+    public Map<String, String> convertFieldArrayToMap(PaymentWorksFieldChangesDTO fieldChanges) {
 
-		return customFieldMap;
-	}
-	
-	@Override
-	public String trimFieldToMax(String field, String fieldName) {
-		String returnField = field;
+        Map<String, String> customFieldMap = new HashMap<String, String>();
 
-		try {
-			returnField = StringUtils.substring(returnField, 0,
-					getDataDictionaryService().getAttributeMaxLength(PaymentWorksVendor.class.getName(), fieldName));
-		} catch (Exception e) {
-			// ignore and return original value
-		}
+        if (ObjectUtils.isNotNull(fieldChanges) && ObjectUtils.isNotNull(fieldChanges.getField_changes())) {
+            for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges.getField_changes()) {
+                customFieldMap.put(fieldChange.getField_name(), fieldChange.getTo_value());
+            }
+        }
 
-		return returnField;
-	}
-	
-	@Override
-	public String convertPhoneNumber(String phoneNumber) {
-		return getPhoneNumberService().formatNumberIfPossible(phoneNumber);
-	}
-	
-	@Override
-	public boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail) {
-		boolean sendToPaymentWorks = vendorDetail.isActiveIndicator()
-				&& isVendorTypeSendableToPaymentWorks(vendorDetail.getVendorHeader().getVendorTypeCode());
-		
-		LOG.debug("shouldVendorBeSentToPaymentWorks1, sendToPaymentWorks: " + sendToPaymentWorks);
-		return sendToPaymentWorks;
-	}
-	
-	protected boolean isVendorTypeSendableToPaymentWorks(String vendorTypeCode) {
-		return StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_DV) ||
-				StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_PO);
-	}
-	
-	@Override
-	public boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor) {
-		Integer headerId = paymentWorksVendor.getVendorHeaderGeneratedIdentifier();
-		Integer detailId = paymentWorksVendor.getVendorDetailAssignedIdentifier();
-		VendorDetail vendorDetail = getVendorService().getVendorDetail(headerId, detailId);
-		if (ObjectUtils.isNotNull(vendorDetail)) {
-			return shouldVendorBeSentToPaymentWorks(vendorDetail);
-		}
-		LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by headerId: " + headerId + " and detailId: " + detailId);
-		return false;
-	}
+        return customFieldMap;
+    }
 
-	protected DataDictionaryService getDataDictionaryService() {
-		return dataDictionaryService;
-	}
+    @Override
+    public Map<String, String> convertFieldArrayToMapFromValues(PaymentWorksFieldChangesDTO fieldChanges) {
 
-	public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-		this.dataDictionaryService = dataDictionaryService;
-	}
+        Map<String, String> customFieldMap = new HashMap<String, String>();
 
-	public PhoneNumberService getPhoneNumberService() {
-		return phoneNumberService;
-	}
+        if (ObjectUtils.isNotNull(fieldChanges) && ObjectUtils.isNotNull(fieldChanges.getField_changes())) {
+            for (PaymentWorksFieldChangeDTO fieldChange : fieldChanges.getField_changes()) {
+                customFieldMap.put(fieldChange.getField_name(), fieldChange.getFrom_value());
+            }
+        }
 
-	public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
-		this.phoneNumberService = phoneNumberService;
-	}
+        return customFieldMap;
+    }
 
-	public ConfigurationService getConfigurationService() {
-		return configurationService;
-	}
+    @Override
+    public String trimFieldToMax(String field, String fieldName) {
+        String returnField = field;
 
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
+        try {
+            returnField = StringUtils.substring(returnField, 0,
+                    getDataDictionaryService().getAttributeMaxLength(PaymentWorksVendor.class.getName(), fieldName));
+        } catch (Exception e) {
+            // ignore and return original value
+        }
 
-	public VendorService getVendorService() {
-		return vendorService;
-	}
+        return returnField;
+    }
 
-	public void setVendorService(VendorService vendorService) {
-		this.vendorService = vendorService;
-	}
+    @Override
+    public String convertPhoneNumber(String phoneNumber) {
+        return getPhoneNumberService().formatNumberIfPossible(phoneNumber);
+    }
+
+    @Override
+    public boolean shouldVendorBeSentToPaymentWorks(VendorDetail vendorDetail) {
+        boolean sendToPaymentWorks = vendorDetail.isActiveIndicator()
+                && isVendorTypeSendableToPaymentWorks(vendorDetail.getVendorHeader().getVendorTypeCode());
+
+        LOG.debug("shouldVendorBeSentToPaymentWorks1, sendToPaymentWorks: " + sendToPaymentWorks);
+        return sendToPaymentWorks;
+    }
+
+    protected boolean isVendorTypeSendableToPaymentWorks(String vendorTypeCode) {
+        return StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_DV)
+                || StringUtils.equalsIgnoreCase(vendorTypeCode, CUVendorConstants.PROC_METHOD_PO);
+    }
+
+    @Override
+    public boolean shouldVendorBeSentToPaymentWorks(PaymentWorksVendor paymentWorksVendor) {
+        Integer headerId = paymentWorksVendor.getVendorHeaderGeneratedIdentifier();
+        Integer detailId = paymentWorksVendor.getVendorDetailAssignedIdentifier();
+        VendorDetail vendorDetail = getVendorService().getVendorDetail(headerId, detailId);
+        if (ObjectUtils.isNotNull(vendorDetail)) {
+            return shouldVendorBeSentToPaymentWorks(vendorDetail);
+        }
+        LOG.error("shouldVendorBeSentToPaymentWorks2, unable to find a vendor by headerId: " + headerId
+                + " and detailId: " + detailId);
+        return false;
+    }
+
+    protected DataDictionaryService getDataDictionaryService() {
+        return dataDictionaryService;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public PhoneNumberService getPhoneNumberService() {
+        return phoneNumberService;
+    }
+
+    public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
+        this.phoneNumberService = phoneNumberService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
+
+    public VendorService getVendorService() {
+        return vendorService;
+    }
+
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
 }

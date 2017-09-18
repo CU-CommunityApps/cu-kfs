@@ -27,43 +27,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksVendorUpdatesRootDTO {
 
-	private Integer count;
-	private String next;
-	private String previous;
+    private Integer count;
+    private String next;
+    private String previous;
 
-	@XmlElement(name = "results")
-	private PaymentWorksVendorUpdatesResultsDTO vendorUpdates;
+    @XmlElement(name = "results")
+    private PaymentWorksVendorUpdatesResultsDTO vendorUpdates;
 
-	public Integer getCount() {
-		return count;
-	}
+    public Integer getCount() {
+        return count;
+    }
 
-	public void setCount(Integer count) {
-		this.count = count;
-	}
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 
-	public String getNext() {
-		return next;
-	}
+    public String getNext() {
+        return next;
+    }
 
-	public void setNext(String next) {
-		this.next = next;
-	}
+    public void setNext(String next) {
+        this.next = next;
+    }
 
-	public String getPrevious() {
-		return previous;
-	}
+    public String getPrevious() {
+        return previous;
+    }
 
-	public void setPrevious(String previous) {
-		this.previous = previous;
-	}
+    public void setPrevious(String previous) {
+        this.previous = previous;
+    }
 
-	public PaymentWorksVendorUpdatesResultsDTO getVendorUpdates() {
-		return vendorUpdates;
-	}
+    public PaymentWorksVendorUpdatesResultsDTO getVendorUpdates() {
+        return vendorUpdates;
+    }
 
-	public void setVendorUpdates(PaymentWorksVendorUpdatesResultsDTO vendorUpdates) {
-		this.vendorUpdates = vendorUpdates;
-	}
+    public void setVendorUpdates(PaymentWorksVendorUpdatesResultsDTO vendorUpdates) {
+        this.vendorUpdates = vendorUpdates;
+    }
 
 }

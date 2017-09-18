@@ -26,30 +26,30 @@ import edu.cornell.kfs.paymentworks.batch.report.SupplierUploadSummary;
 import edu.cornell.kfs.paymentworks.service.PaymentWorksUploadSupplierService;
 
 public class PaymentWorksUploadSuppliersStep extends AbstractStep {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersStep.class);
-	
-	protected PaymentWorksUploadSupplierService paymentWorksUploadSupplierService;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersStep.class);
 
-	@Override
-	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		SupplierUploadSummary supplierUploadSummary = new SupplierUploadSummary();
-		
-		getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile(supplierUploadSummary);
-		getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus(supplierUploadSummary);
-		getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile(supplierUploadSummary);
-		
-		getPaymentWorksUploadSupplierService().writePaymentWorksSupplierUploadSummaryReport(supplierUploadSummary);
-		
-		LOG.debug("execute, the PaymentWorksUploadSupplierStep finished. ");
-		return true;
-	}
+    protected PaymentWorksUploadSupplierService paymentWorksUploadSupplierService;
 
-	public PaymentWorksUploadSupplierService getPaymentWorksUploadSupplierService() {
-		return paymentWorksUploadSupplierService;
-	}
+    @Override
+    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+        SupplierUploadSummary supplierUploadSummary = new SupplierUploadSummary();
 
-	public void setPaymentWorksUploadSupplierService(PaymentWorksUploadSupplierService paymentWorksUploadSupplierService) {
-		this.paymentWorksUploadSupplierService = paymentWorksUploadSupplierService;
-	}
+        getPaymentWorksUploadSupplierService().uploadNewVendorApprovedSupplierFile(supplierUploadSummary);
+        getPaymentWorksUploadSupplierService().updateNewVendorDisapprovedStatus(supplierUploadSummary);
+        getPaymentWorksUploadSupplierService().uploadVendorUpdateApprovedSupplierFile(supplierUploadSummary);
+
+        getPaymentWorksUploadSupplierService().writePaymentWorksSupplierUploadSummaryReport(supplierUploadSummary);
+
+        LOG.debug("execute, the PaymentWorksUploadSupplierStep finished. ");
+        return true;
+    }
+
+    public PaymentWorksUploadSupplierService getPaymentWorksUploadSupplierService() {
+        return paymentWorksUploadSupplierService;
+    }
+
+    public void setPaymentWorksUploadSupplierService(PaymentWorksUploadSupplierService paymentWorksUploadSupplierService) {
+        this.paymentWorksUploadSupplierService = paymentWorksUploadSupplierService;
+    }
 
 }

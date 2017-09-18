@@ -30,39 +30,39 @@ import edu.cornell.kfs.paymentworks.service.PaymentWorksWebService;
 import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public class PaymentWorksRetrieveAchUpdatesStep extends AbstractStep {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksRetrieveAchUpdatesStep.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksRetrieveAchUpdatesStep.class);
 
-	protected PaymentWorksWebService paymentWorksWebService;
-	protected PaymentWorksAchService paymentWorksAchService;
+    protected PaymentWorksWebService paymentWorksWebService;
+    protected PaymentWorksAchService paymentWorksAchService;
 
-	@Override
-	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		boolean routed = false;
-		List<PaymentWorksVendorUpdatesDTO> pendingACHUpdates = getPaymentWorksWebService().getPendingAchUpdatesFromPaymentWorks();
-		LOG.info("execute, number of ACH Updates retrieved: " + pendingACHUpdates.size());
-		PaymentWorksVendorUpdateResults resultsDTO = new PaymentWorksVendorUpdateResults();
-		routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates, resultsDTO);
-		if (resultsDTO.isHasErrors()) {
-			throw new NoRollbackRuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
-		}
-		LOG.debug("execute, were all the changes routed: " + routed);
-		return routed;
-	}
+    @Override
+    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
+        boolean routed = false;
+        List<PaymentWorksVendorUpdatesDTO> pendingACHUpdates = getPaymentWorksWebService().getPendingAchUpdatesFromPaymentWorks();
+        LOG.info("execute, number of ACH Updates retrieved: " + pendingACHUpdates.size());
+        PaymentWorksVendorUpdateResults resultsDTO = new PaymentWorksVendorUpdateResults();
+        routed = getPaymentWorksAchService().processACHUpdates(pendingACHUpdates, resultsDTO);
+        if (resultsDTO.isHasErrors()) {
+            throw new NoRollbackRuntimeException("processACHUpdates, there was at least one error processing ACH Updates.");
+        }
+        LOG.debug("execute, were all the changes routed: " + routed);
+        return routed;
+    }
 
-	public PaymentWorksWebService getPaymentWorksWebService() {
-		return paymentWorksWebService;
-	}
+    public PaymentWorksWebService getPaymentWorksWebService() {
+        return paymentWorksWebService;
+    }
 
-	public void setPaymentWorksWebService(PaymentWorksWebService paymentWorksWebService) {
-		this.paymentWorksWebService = paymentWorksWebService;
-	}
+    public void setPaymentWorksWebService(PaymentWorksWebService paymentWorksWebService) {
+        this.paymentWorksWebService = paymentWorksWebService;
+    }
 
-	public PaymentWorksAchService getPaymentWorksAchService() {
-		return paymentWorksAchService;
-	}
+    public PaymentWorksAchService getPaymentWorksAchService() {
+        return paymentWorksAchService;
+    }
 
-	public void setPaymentWorksAchService(PaymentWorksAchService paymentWorksAchService) {
-		this.paymentWorksAchService = paymentWorksAchService;
-	}
+    public void setPaymentWorksAchService(PaymentWorksAchService paymentWorksAchService) {
+        this.paymentWorksAchService = paymentWorksAchService;
+    }
 
 }

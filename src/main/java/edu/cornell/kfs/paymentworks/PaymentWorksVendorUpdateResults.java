@@ -1,19 +1,19 @@
 package edu.cornell.kfs.paymentworks;
 
 public class PaymentWorksVendorUpdateResults {
-	
-	private boolean hasErrors;
 
-	public PaymentWorksVendorUpdateResults() {
-		hasErrors = false;
-	}
+    private boolean hasErrors;
 
-	public boolean isHasErrors() {
-		return hasErrors;
-	}
+    public PaymentWorksVendorUpdateResults() {
+        hasErrors = false;
+    }
 
-	public void setHasErrors(boolean hasErrors) {
-		this.hasErrors = hasErrors;
-	}
+    public boolean isHasErrors() {
+        return hasErrors;
+    }
+
+    public void setHasErrors(boolean hasErrors) {
+        this.hasErrors = hasErrors;
+    }
 
 }

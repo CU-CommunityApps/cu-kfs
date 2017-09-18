@@ -23,28 +23,28 @@ import java.util.List;
 
 public class NewVendorSummary {
 
-	private List<NewVendorSummaryLine> approvedVendors;
-	private List<NewVendorSummaryLine> rejectedVendors;
+    private List<NewVendorSummaryLine> approvedVendors;
+    private List<NewVendorSummaryLine> rejectedVendors;
 
-	public NewVendorSummary() {
-		approvedVendors = new ArrayList<NewVendorSummaryLine>();
-		rejectedVendors = new ArrayList<NewVendorSummaryLine>();
-	}
+    public NewVendorSummary() {
+        approvedVendors = new ArrayList<NewVendorSummaryLine>();
+        rejectedVendors = new ArrayList<NewVendorSummaryLine>();
+    }
 
-	public List<NewVendorSummaryLine> getApprovedVendors() {
-		return approvedVendors;
-	}
+    public List<NewVendorSummaryLine> getApprovedVendors() {
+        return approvedVendors;
+    }
 
-	public void setApprovedVendors(List<NewVendorSummaryLine> approvedVendors) {
-		this.approvedVendors = approvedVendors;
-	}
+    public void setApprovedVendors(List<NewVendorSummaryLine> approvedVendors) {
+        this.approvedVendors = approvedVendors;
+    }
 
-	public List<NewVendorSummaryLine> getRejectedVendors() {
-		return rejectedVendors;
-	}
+    public List<NewVendorSummaryLine> getRejectedVendors() {
+        return rejectedVendors;
+    }
 
-	public void setRejectedVendors(List<NewVendorSummaryLine> rejectedVendors) {
-		this.rejectedVendors = rejectedVendors;
-	}
+    public void setRejectedVendors(List<NewVendorSummaryLine> rejectedVendors) {
+        this.rejectedVendors = rejectedVendors;
+    }
 
 }
