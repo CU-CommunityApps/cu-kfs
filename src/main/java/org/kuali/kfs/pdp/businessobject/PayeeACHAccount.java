@@ -57,14 +57,10 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     private boolean active;
     private boolean autoInactivationIndicator;
 
-
     private ACHBank bankRouting;
     private ACHTransactionType transactionType;
     private ACHPayee achPayee;
 
-    /**
-     * Default constructor.
-     */
     public PayeeACHAccount() {
 
     }

@@ -600,17 +600,5 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         }
         return nbrOfPaymentsInDisbursement;
     }
-    
-    // ==== CU Customization (KFSUPGRADE-605) ====
-
-    public Timestamp getPaymentGroupLastUpdateForLookup() {
-        return (paymentGroup != null) ? paymentGroup.getLastUpdatedTimestamp() : null;
-    }
-
-    public void setPaymentGroupLastUpdateForLookup(Timestamp paymentGroupLastUpdateForLookup) {
-        // Do nothing.
-    }
-
-    // ==== End CU Customization ====
 
 }

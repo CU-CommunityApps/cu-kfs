@@ -1,13 +1,13 @@
-/*
+/**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
- * 
+ *
  * Copyright 2005-2017 Kuali, Inc.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -70,12 +70,12 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Constructs a AssetSeparatePaymentDistributor.java.
-     * 
-     * @param sourceAsset Source Asset
-     * @param sourcePayments Source Payments
+     *
+     * @param sourceAsset     Source Asset
+     * @param sourcePayments  Source Payments
      * @param maxPaymentSeqNo Current max of payment number used by source Asset
-     * @param assetGlobal AssetGlobal Document performing the separate action
-     * @param newAssets List of new assets to be created for this separate request document
+     * @param assetGlobal     AssetGlobal Document performing the separate action
+     * @param newAssets       List of new assets to be created for this separate request document
      */
     public AssetSeparatePaymentDistributor(Asset sourceAsset, List<AssetPayment> sourcePayments, Integer maxPaymentSeqNo, AssetGlobal assetGlobal, List<Asset> newAssets) {
         super();
@@ -85,7 +85,6 @@ public class AssetSeparatePaymentDistributor {
         this.assetGlobal = assetGlobal;
         this.newAssets = newAssets;
     }
-
 
     public void distribute() {
         KualiDecimal totalSourceAmount = this.assetGlobal.getTotalCostAmount();
@@ -141,8 +140,6 @@ public class AssetSeparatePaymentDistributor {
                 applyRatioToPaymentAmounts(assetPayment, new AssetPayment[] { separatePayment, remainingPayment }, new double[] { separateRatio, retainRatio });
             }
         }
-
-
     }
 
     /**
@@ -155,8 +152,7 @@ public class AssetSeparatePaymentDistributor {
             ObjectValueUtils.copySimpleProperties(separatePayment, offsetPayment);
             try {
                 negatePaymentAmounts(offsetPayment);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException();
             }
             offsetPayment.setDocumentNumber(assetGlobal.getDocumentNumber());
@@ -246,10 +242,10 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Utility method which can take one payment and distribute its amount by ratio to the target payments
-     * 
-     * @param source Source Payment
+     *
+     * @param source  Source Payment
      * @param targets Target Payment
-     * @param ratios Ratio to be applied for each target
+     * @param ratios  Ratio to be applied for each target
      */
     private void applyRatioToPaymentAmounts(AssetPayment source, AssetPayment[] targets, double[] ratios) {
         try {
@@ -268,17 +264,15 @@ public class AssetSeparatePaymentDistributor {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
      * Utility method which can compute the difference between source amount and consumed amounts, then will adjust the last amount
-     * 
-     * @param source Source payments
+     *
+     * @param source       Source payments
      * @param consumedList Consumed Payments
      */
     private void applyBalanceToPaymentAmounts(AssetPayment source, List<AssetPayment> consumedList) {
@@ -304,16 +298,14 @@ public class AssetSeparatePaymentDistributor {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
      * Utility method which will negate the payment amounts for a given payment
-     * 
+     *
      * @param assetPayment Payment to be negated
      */
     public void negatePaymentAmounts(AssetPayment assetPayment) {
@@ -329,8 +321,7 @@ public class AssetSeparatePaymentDistributor {
 
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -363,7 +354,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sums up periodic amounts for a payment
-     * 
+     *
      * @param currPayment Payment
      * @return Sum of payment
      */
@@ -372,15 +363,17 @@ public class AssetSeparatePaymentDistributor {
         try {
             for (PropertyDescriptor propertyDescriptor : assetPaymentProperties) {
                 Method readMethod = propertyDescriptor.getReadMethod();
-                if (readMethod != null && Pattern.matches(CamsConstants.GET_PERIOD_DEPRECIATION_AMOUNT_REGEX, readMethod.getName().toLowerCase()) && propertyDescriptor.getPropertyType() != null && KualiDecimal.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                if (readMethod != null && Pattern.matches(CamsConstants.GET_PERIOD_DEPRECIATION_AMOUNT_REGEX,
+                        readMethod.getName().toLowerCase()) && propertyDescriptor
+                        .getPropertyType() != null && KualiDecimal.class
+                        .isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     KualiDecimal amount = (KualiDecimal) readMethod.invoke(currPayment);
                     if (amount != null) {
                         ytdAmount = ytdAmount.add(amount);
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return ytdAmount;
@@ -388,7 +381,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the remainingPayments attribute.
-     * 
+     *
      * @return Returns the remainingPayments.
      */
     public List<AssetPayment> getRemainingPayments() {
@@ -398,7 +391,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the remainingPayments attribute value.
-     * 
+     *
      * @param remainingPayments The remainingPayments to set.
      */
     public void setRemainingPayments(List<AssetPayment> remainingPayments) {
@@ -408,7 +401,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the offsetPayments attribute.
-     * 
+     *
      * @return Returns the offsetPayments.
      */
     public List<AssetPayment> getOffsetPayments() {
@@ -418,7 +411,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the offsetPayments attribute value.
-     * 
+     *
      * @param offsetPayments The offsetPayments to set.
      */
     public void setOffsetPayments(List<AssetPayment> offsetPayments) {
@@ -428,7 +421,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the separatedPayments attribute.
-     * 
+     *
      * @return Returns the separatedPayments.
      */
     public List<AssetPayment> getSeparatedPayments() {
@@ -438,7 +431,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the separatedPayments attribute value.
-     * 
+     *
      * @param separatedPayments The separatedPayments to set.
      */
     public void setSeparatedPayments(List<AssetPayment> separatedPayments) {
@@ -448,7 +441,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the assetGlobal attribute.
-     * 
+     *
      * @return Returns the assetGlobal.
      */
     public AssetGlobal getAssetGlobal() {
@@ -458,7 +451,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the assetGlobal attribute value.
-     * 
+     *
      * @param assetGlobal The assetGlobal to set.
      */
     public void setAssetGlobal(AssetGlobal assetGlobal) {
@@ -468,7 +461,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the newAssets attribute.
-     * 
+     *
      * @return Returns the newAssets.
      */
     public List<Asset> getNewAssets() {
@@ -478,7 +471,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the newAssets attribute value.
-     * 
+     *
      * @param newAssets The newAssets to set.
      */
     public void setNewAssets(List<Asset> newAssets) {
@@ -488,7 +481,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the assetAllocateRatios attribute.
-     * 
+     *
      * @return Returns the assetAllocateRatios.
      */
     public double[] getAssetAllocateRatios() {
@@ -498,7 +491,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the assetAllocateRatios attribute value.
-     * 
+     *
      * @param assetAllocateRatios The assetAllocateRatios to set.
      */
     public void setAssetAllocateRatios(double[] assetAllocateRatios) {
@@ -508,7 +501,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the separateRatio attribute.
-     * 
+     *
      * @return Returns the separateRatio.
      */
     public double getSeparateRatio() {
@@ -518,7 +511,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the separateRatio attribute value.
-     * 
+     *
      * @param separateRatio The separateRatio to set.
      */
     public void setSeparateRatio(double separateRatio) {
@@ -528,7 +521,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the retainRatio attribute.
-     * 
+     *
      * @return Returns the retainRatio.
      */
     public double getRetainRatio() {
@@ -538,7 +531,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the retainRatio attribute value.
-     * 
+     *
      * @param retainRatio The retainRatio to set.
      */
     public void setRetainRatio(double retainRatio) {
@@ -548,7 +541,7 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Gets the sourcePayments attribute.
-     * 
+     *
      * @return Returns the sourcePayments.
      */
     public List<AssetPayment> getSourcePayments() {
@@ -558,12 +551,10 @@ public class AssetSeparatePaymentDistributor {
 
     /**
      * Sets the sourcePayments attribute value.
-     * 
+     *
      * @param sourcePayments The sourcePayments to set.
      */
     public void setSourcePayments(List<AssetPayment> sourcePayments) {
         this.sourcePayments = sourcePayments;
     }
-
-
 }
