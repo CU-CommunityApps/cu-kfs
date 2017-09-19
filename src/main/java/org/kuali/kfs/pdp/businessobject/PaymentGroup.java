@@ -1271,8 +1271,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         } else {
             this.setLastUpdatedTimestamp(lastUpdateTemp);
         }
-        // TODO: Do we still need an equivalent of lastUpdateUserId?
-        //this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 
 
@@ -1286,8 +1284,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         } else {
             this.setLastUpdatedTimestamp(lastUpdateTemp);
         }
-        // TODO: Do we still need an equivalent of lastUpdateUserId?
-        //this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 
 }
