@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-    <bean id="PaymentWorksFieldMappingMaintenanceDocument" parent="PaymentWorksFieldMappingMaintenanceDocument-parentBean"/>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    <bean id="PaymentWorksFieldMappingMaintenanceDocument" parent="PaymentWorksFieldMappingMaintenanceDocument-parentBean" />
     <bean id="PaymentWorksFieldMappingMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.paymentworks.businessobject.PaymentWorksFieldMapping"/>
+        <property name="businessObjectClass" value="edu.cornell.kfs.paymentworks.businessobject.PaymentWorksFieldMapping" />
         <property name="maintainableClass" value=" org.kuali.kfs.sys.document.FinancialSystemMaintainable " />
         <property name="maintainableSections">
             <list>
-                <ref bean="PaymentWorksFieldMappingMaintenanceDocument-EditMapping"/>
+                <ref bean="PaymentWorksFieldMappingMaintenanceDocument-EditMapping" />
             </list>
         </property>
         <property name="lockingKeys">
@@ -14,28 +15,28 @@
                 <value>paymentWorksFieldMappingId</value>
             </list>
         </property>
-        <property name="documentTypeName" value="PMWM"/>
+        <property name="documentTypeName" value="PMWM" />
         <property name="allowsNewOrCopy" value="false" />
         <property name="workflowAttributes">
-            <ref bean="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes"/>
+            <ref bean="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes" />
         </property>
     </bean>
 
     <!-- Maintenance Section Definitions -->
-    <bean id="PaymentWorksFieldMappingMaintenanceDocument-EditMapping" parent="PaymentWorksFieldMappingMaintenanceDocument-EditMapping-parentBean"/>
+    <bean id="PaymentWorksFieldMappingMaintenanceDocument-EditMapping" parent="PaymentWorksFieldMappingMaintenanceDocument-EditMapping-parentBean" />
     <bean id="PaymentWorksFieldMappingMaintenanceDocument-EditMapping-parentBean" abstract="true" parent="MaintainableSectionDefinition">
-        <property name="id" value="Edit PaymentWorks Field Mappings"/>
-        <property name="title" value="Edit PaymentWorks Field Mappings"/>
+        <property name="id" value="Edit PaymentWorks Field Mappings" />
+        <property name="title" value="Edit PaymentWorks Field Mappings" />
         <property name="maintainableItems">
             <list>
-            	<bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldMappingId" p:unconditionallyReadOnly="true"/>
-            	<bean parent="MaintainableFieldDefinition" p:name="kfsFieldName" p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldLabel"/>
+                <bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldMappingId" p:unconditionallyReadOnly="true" />
+                <bean parent="MaintainableFieldDefinition" p:name="kfsFieldName" p:unconditionallyReadOnly="true" />
+                <bean parent="MaintainableFieldDefinition" p:name="paymentWorksFieldLabel" />
             </list>
         </property>
     </bean>
 
     <!-- workflow attributes -->
-    <bean id="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes" parent="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes-parentBean"/>
-    <bean id="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+    <bean id="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes" parent="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes-parentBean" />
+    <bean id="PaymentWorksFieldMappingMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true" />
 </beans>

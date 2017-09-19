@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksRemittanceAddressDTO extends PaymentWorksAddressBaseDTO {
 
-	private PaymentWorksBankAccountDTO bank_acct;
+    private PaymentWorksBankAccountDTO bank_acct;
 
-	public PaymentWorksBankAccountDTO getBank_acct() {
+    public PaymentWorksBankAccountDTO getBank_acct() {
         return bank_acct;
     }
 
-	public void setBank_acct(PaymentWorksBankAccountDTO bank_acct) {
+    public void setBank_acct(PaymentWorksBankAccountDTO bank_acct) {
         this.bank_acct = bank_acct;
     }
 

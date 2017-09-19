@@ -23,38 +23,38 @@ import java.util.List;
 
 public class VendorUpdateSummary {
 
-	private List<VendorUpdateSummaryLine> vendorsCreated;
-	private List<VendorUpdateSummaryLine> vendorsDirectUpdate;
-	private List<VendorUpdateSummaryLine> vendorsRejected;
+    private List<VendorUpdateSummaryLine> vendorsCreated;
+    private List<VendorUpdateSummaryLine> vendorsDirectUpdate;
+    private List<VendorUpdateSummaryLine> vendorsRejected;
 
-	public VendorUpdateSummary() {
-		vendorsCreated = new ArrayList<VendorUpdateSummaryLine>();
-		vendorsDirectUpdate = new ArrayList<VendorUpdateSummaryLine>();
-		vendorsRejected = new ArrayList<VendorUpdateSummaryLine>();
-	}
+    public VendorUpdateSummary() {
+        vendorsCreated = new ArrayList<VendorUpdateSummaryLine>();
+        vendorsDirectUpdate = new ArrayList<VendorUpdateSummaryLine>();
+        vendorsRejected = new ArrayList<VendorUpdateSummaryLine>();
+    }
 
-	public List<VendorUpdateSummaryLine> getVendorsCreated() {
-		return vendorsCreated;
-	}
+    public List<VendorUpdateSummaryLine> getVendorsCreated() {
+        return vendorsCreated;
+    }
 
-	public void setVendorsCreated(List<VendorUpdateSummaryLine> vendorsCreated) {
-		this.vendorsCreated = vendorsCreated;
-	}
+    public void setVendorsCreated(List<VendorUpdateSummaryLine> vendorsCreated) {
+        this.vendorsCreated = vendorsCreated;
+    }
 
-	public List<VendorUpdateSummaryLine> getVendorsDirectUpdate() {
-		return vendorsDirectUpdate;
-	}
+    public List<VendorUpdateSummaryLine> getVendorsDirectUpdate() {
+        return vendorsDirectUpdate;
+    }
 
-	public void setVendorsDirectUpdate(List<VendorUpdateSummaryLine> vendorsDirectUpdate) {
-		this.vendorsDirectUpdate = vendorsDirectUpdate;
-	}
+    public void setVendorsDirectUpdate(List<VendorUpdateSummaryLine> vendorsDirectUpdate) {
+        this.vendorsDirectUpdate = vendorsDirectUpdate;
+    }
 
-	public List<VendorUpdateSummaryLine> getVendorsRejected() {
-		return vendorsRejected;
-	}
+    public List<VendorUpdateSummaryLine> getVendorsRejected() {
+        return vendorsRejected;
+    }
 
-	public void setVendorsRejected(List<VendorUpdateSummaryLine> vendorsRejected) {
-		this.vendorsRejected = vendorsRejected;
-	}
+    public void setVendorsRejected(List<VendorUpdateSummaryLine> vendorsRejected) {
+        this.vendorsRejected = vendorsRejected;
+    }
 
 }

@@ -25,157 +25,157 @@ import edu.cornell.kfs.paymentworks.PaymentWorksConstants;
 
 public class PaymentWorksSupplierUploadDTO {
 
-	private String vendorNum;
-	private String supplierName;
-	private String siteCode;
-	private String Address1;
-	private String Address2;
-	private String City;
-	private String State;
-	private String Country;
-	private String Zipcode;
-	private String tin;
-	private String contactEmail;
+    private String vendorNum;
+    private String supplierName;
+    private String siteCode;
+    private String Address1;
+    private String Address2;
+    private String City;
+    private String State;
+    private String Country;
+    private String Zipcode;
+    private String tin;
+    private String contactEmail;
 
-	private boolean sendToPaymentWorks;
+    private boolean sendToPaymentWorks;
 
-	public String getVendorNum() {
-		return vendorNum;
-	}
+    public String getVendorNum() {
+        return vendorNum;
+    }
 
-	public void setVendorNum(String vendorNum) {
-		this.vendorNum = vendorNum;
-	}
+    public void setVendorNum(String vendorNum) {
+        this.vendorNum = vendorNum;
+    }
 
-	public String getSupplierName() {
-		return supplierName;
-	}
+    public String getSupplierName() {
+        return supplierName;
+    }
 
-	public void setSupplierName(String supplierName) {
-		this.supplierName = supplierName;
-	}
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+    }
 
-	public String getSiteCode() {
-		return siteCode;
-	}
+    public String getSiteCode() {
+        return siteCode;
+    }
 
-	public void setSiteCode(String siteCode) {
-		this.siteCode = siteCode;
-	}
+    public void setSiteCode(String siteCode) {
+        this.siteCode = siteCode;
+    }
 
-	public String getAddress1() {
-		return Address1;
-	}
+    public String getAddress1() {
+        return Address1;
+    }
 
-	public void setAddress1(String address1) {
-		Address1 = address1;
-	}
+    public void setAddress1(String address1) {
+        Address1 = address1;
+    }
 
-	public String getAddress2() {
-		return Address2;
-	}
+    public String getAddress2() {
+        return Address2;
+    }
 
-	public void setAddress2(String address2) {
-		Address2 = address2;
-	}
+    public void setAddress2(String address2) {
+        Address2 = address2;
+    }
 
-	public String getCity() {
-		return City;
-	}
+    public String getCity() {
+        return City;
+    }
 
-	public void setCity(String city) {
-		City = city;
-	}
+    public void setCity(String city) {
+        City = city;
+    }
 
-	public String getState() {
-		return State;
-	}
+    public String getState() {
+        return State;
+    }
 
-	public void setState(String state) {
-		State = state;
-	}
+    public void setState(String state) {
+        State = state;
+    }
 
-	public String getCountry() {
-		return Country;
-	}
+    public String getCountry() {
+        return Country;
+    }
 
-	public void setCountry(String country) {
-		Country = country;
-	}
+    public void setCountry(String country) {
+        Country = country;
+    }
 
-	public String getZipcode() {
-		return Zipcode;
-	}
+    public String getZipcode() {
+        return Zipcode;
+    }
 
-	public void setZipcode(String zipcode) {
-		Zipcode = zipcode;
-	}
+    public void setZipcode(String zipcode) {
+        Zipcode = zipcode;
+    }
 
-	public String getTin() {
-		return tin;
-	}
+    public String getTin() {
+        return tin;
+    }
 
-	public void setTin(String tin) {
-		this.tin = tin;
-	}
+    public void setTin(String tin) {
+        this.tin = tin;
+    }
 
-	public String getContactEmail() {
-		return contactEmail;
-	}
+    public String getContactEmail() {
+        return contactEmail;
+    }
 
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
-	}
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
 
-	public boolean isSendToPaymentWorks() {
-		return sendToPaymentWorks;
-	}
+    public boolean isSendToPaymentWorks() {
+        return sendToPaymentWorks;
+    }
 
-	public void setSendToPaymentWorks(boolean sendToPaymentWorks) {
-		this.sendToPaymentWorks = sendToPaymentWorks;
-	}
+    public void setSendToPaymentWorks(boolean sendToPaymentWorks) {
+        this.sendToPaymentWorks = sendToPaymentWorks;
+    }
 
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
 
-		sb.append(getVendorNum());
-		sb.append(KFSConstants.COMMA);
-		sb.append(StringUtils.defaultIfEmpty(getSiteCode(), ""));
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getSupplierName(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getAddress1(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getAddress2(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getCity(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getState(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getCountry(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(KFSConstants.COMMA);
-		sb.append(StringUtils.defaultIfEmpty(getZipcode(), ""));
-		sb.append(KFSConstants.COMMA);
-		sb.append(StringUtils.defaultIfEmpty(getTin(), ""));
-		sb.append(KFSConstants.COMMA);
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
-		sb.append(StringUtils.defaultIfEmpty(getContactEmail(), ""));
-		sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(getVendorNum());
+        sb.append(KFSConstants.COMMA);
+        sb.append(StringUtils.defaultIfEmpty(getSiteCode(), ""));
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getSupplierName(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getAddress1(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getAddress2(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getCity(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getState(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getCountry(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(KFSConstants.COMMA);
+        sb.append(StringUtils.defaultIfEmpty(getZipcode(), ""));
+        sb.append(KFSConstants.COMMA);
+        sb.append(StringUtils.defaultIfEmpty(getTin(), ""));
+        sb.append(KFSConstants.COMMA);
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
+        sb.append(StringUtils.defaultIfEmpty(getContactEmail(), ""));
+        sb.append(PaymentWorksConstants.DOUBLE_QUOTE);
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
 }

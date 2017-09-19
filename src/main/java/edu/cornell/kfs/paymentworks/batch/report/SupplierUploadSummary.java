@@ -23,59 +23,59 @@ import java.util.List;
 
 public class SupplierUploadSummary {
 
-	private List<SupplierUploadSummaryLine> paymentWorksNewVendors;
-	private List<SupplierUploadSummaryLine> kfsNewVendors;
-	private List<SupplierUploadSummaryLine> vendorUpdates;
-	private List<SupplierUploadSummaryLine> newVendorDisapproved;
-	private List<SupplierUploadSummaryLine> uploadedVendors;
+    private List<SupplierUploadSummaryLine> paymentWorksNewVendors;
+    private List<SupplierUploadSummaryLine> kfsNewVendors;
+    private List<SupplierUploadSummaryLine> vendorUpdates;
+    private List<SupplierUploadSummaryLine> newVendorDisapproved;
+    private List<SupplierUploadSummaryLine> uploadedVendors;
 
-	public SupplierUploadSummary() {
-		paymentWorksNewVendors = new ArrayList<SupplierUploadSummaryLine>();
-		kfsNewVendors = new ArrayList<SupplierUploadSummaryLine>();
-		vendorUpdates = new ArrayList<SupplierUploadSummaryLine>();
-		newVendorDisapproved = new ArrayList<SupplierUploadSummaryLine>();
-		uploadedVendors = new ArrayList<SupplierUploadSummaryLine>();
+    public SupplierUploadSummary() {
+        paymentWorksNewVendors = new ArrayList<SupplierUploadSummaryLine>();
+        kfsNewVendors = new ArrayList<SupplierUploadSummaryLine>();
+        vendorUpdates = new ArrayList<SupplierUploadSummaryLine>();
+        newVendorDisapproved = new ArrayList<SupplierUploadSummaryLine>();
+        uploadedVendors = new ArrayList<SupplierUploadSummaryLine>();
 
-	}
+    }
 
-	public List<SupplierUploadSummaryLine> getPaymentWorksNewVendors() {
-		return paymentWorksNewVendors;
-	}
+    public List<SupplierUploadSummaryLine> getPaymentWorksNewVendors() {
+        return paymentWorksNewVendors;
+    }
 
-	public void setPaymentWorksNewVendors(List<SupplierUploadSummaryLine> paymentWorksNewVendors) {
-		this.paymentWorksNewVendors = paymentWorksNewVendors;
-	}
+    public void setPaymentWorksNewVendors(List<SupplierUploadSummaryLine> paymentWorksNewVendors) {
+        this.paymentWorksNewVendors = paymentWorksNewVendors;
+    }
 
-	public List<SupplierUploadSummaryLine> getKfsNewVendors() {
-		return kfsNewVendors;
-	}
+    public List<SupplierUploadSummaryLine> getKfsNewVendors() {
+        return kfsNewVendors;
+    }
 
-	public void setKfsNewVendors(List<SupplierUploadSummaryLine> kfsNewVendors) {
-		this.kfsNewVendors = kfsNewVendors;
-	}
+    public void setKfsNewVendors(List<SupplierUploadSummaryLine> kfsNewVendors) {
+        this.kfsNewVendors = kfsNewVendors;
+    }
 
-	public List<SupplierUploadSummaryLine> getNewVendorDisapproved() {
-		return newVendorDisapproved;
-	}
+    public List<SupplierUploadSummaryLine> getNewVendorDisapproved() {
+        return newVendorDisapproved;
+    }
 
-	public void setNewVendorDisapproved(List<SupplierUploadSummaryLine> newVendorDisapproved) {
-		this.newVendorDisapproved = newVendorDisapproved;
-	}
+    public void setNewVendorDisapproved(List<SupplierUploadSummaryLine> newVendorDisapproved) {
+        this.newVendorDisapproved = newVendorDisapproved;
+    }
 
-	public List<SupplierUploadSummaryLine> getVendorUpdates() {
-		return vendorUpdates;
-	}
+    public List<SupplierUploadSummaryLine> getVendorUpdates() {
+        return vendorUpdates;
+    }
 
-	public void setVendorUpdates(List<SupplierUploadSummaryLine> vendorUpdates) {
-		this.vendorUpdates = vendorUpdates;
-	}
+    public void setVendorUpdates(List<SupplierUploadSummaryLine> vendorUpdates) {
+        this.vendorUpdates = vendorUpdates;
+    }
 
-	public List<SupplierUploadSummaryLine> getUploadedVendors() {
-		return uploadedVendors;
-	}
+    public List<SupplierUploadSummaryLine> getUploadedVendors() {
+        return uploadedVendors;
+    }
 
-	public void setUploadedVendors(List<SupplierUploadSummaryLine> uploadedVendors) {
-		this.uploadedVendors = uploadedVendors;
-	}
+    public void setUploadedVendors(List<SupplierUploadSummaryLine> uploadedVendors) {
+        this.uploadedVendors = uploadedVendors;
+    }
 
 }

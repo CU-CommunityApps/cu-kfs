@@ -26,23 +26,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksVendorNumberDTO {
 
-	private String vendor_num;
-	private PaymentWorksSiteCodesDTO site_codes;
+    private String vendor_num;
+    private PaymentWorksSiteCodesDTO site_codes;
 
-	public String getVendor_num() {
-		return vendor_num;
-	}
+    public String getVendor_num() {
+        return vendor_num;
+    }
 
-	public void setVendor_num(String vendor_num) {
-		this.vendor_num = vendor_num;
-	}
+    public void setVendor_num(String vendor_num) {
+        this.vendor_num = vendor_num;
+    }
 
-	public PaymentWorksSiteCodesDTO getSite_codes() {
-		return site_codes;
-	}
+    public PaymentWorksSiteCodesDTO getSite_codes() {
+        return site_codes;
+    }
 
-	public void setSite_codes(PaymentWorksSiteCodesDTO site_codes) {
-		this.site_codes = site_codes;
-	}
+    public void setSite_codes(PaymentWorksSiteCodesDTO site_codes) {
+        this.site_codes = site_codes;
+    }
 
 }

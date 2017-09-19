@@ -57,272 +57,270 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksNewVendorConversionService {
-	
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorConversionServiceImpl.class);
-	
-	protected SequenceAccessorService sequenceAccessorService;
-	protected BusinessObjectService businessObjectService;
-	protected VendorService vendorService;
-	protected PaymentWorksUtilityService paymentWorksUtilityService;
-	
-	@Override
-	public VendorDetail createVendorDetail(PaymentWorksVendor paymentWorksVendor) {
-		VendorDetail vendorDetail = new VendorDetail();
-		vendorDetail.setVendorHeader(createVendorHeader(paymentWorksVendor));
-		vendorDetail.setVendorAddresses(buildVendorAddresses(paymentWorksVendor));
 
-		vendorDetail.setVendorParentIndicator(true);
-		vendorDetail.setVendorName(paymentWorksVendor.getRequestingCompanyLegalName());
-		vendorDetail.setVendorPaymentTermsCode(PaymentWorksConstants.VENDOR_PAYMENT_TERMS_CODE_DEFAULT);
-		
-		vendorDetail.setTaxableIndicator(isVendorTaxable(paymentWorksVendor));
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorConversionServiceImpl.class);
 
-		vendorDetail.setExtension(buildVendorDetailExtension());
+    protected SequenceAccessorService sequenceAccessorService;
+    protected BusinessObjectService businessObjectService;
+    protected VendorService vendorService;
+    protected PaymentWorksUtilityService paymentWorksUtilityService;
 
-		vendorDetail.setVendorDunsNumber(paymentWorksVendor.getRequestingCompanyDuns());
-		vendorDetail.setVendorUrlAddress(paymentWorksVendor.getRequestingCompanyUrl());
-		vendorDetail.setActiveIndicator(true);
+    @Override
+    public VendorDetail createVendorDetail(PaymentWorksVendor paymentWorksVendor) {
+        VendorDetail vendorDetail = new VendorDetail();
+        vendorDetail.setVendorHeader(createVendorHeader(paymentWorksVendor));
+        vendorDetail.setVendorAddresses(buildVendorAddresses(paymentWorksVendor));
 
-		vendorDetail.setVendorAliases(buldVendorAliasList(paymentWorksVendor));
+        vendorDetail.setVendorParentIndicator(true);
+        vendorDetail.setVendorName(paymentWorksVendor.getRequestingCompanyLegalName());
+        vendorDetail.setVendorPaymentTermsCode(PaymentWorksConstants.VENDOR_PAYMENT_TERMS_CODE_DEFAULT);
 
-		if (StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTelephone())) {
-			vendorDetail.setVendorPhoneNumbers(buildVendorPhoneNumberList(paymentWorksVendor.getRequestingCompanyTelephone()));
-		}
+        vendorDetail.setTaxableIndicator(isVendorTaxable(paymentWorksVendor));
 
-		return vendorDetail;
-	}
-	
-	protected VendorHeader createVendorHeader(PaymentWorksVendor paymentWorksVendor) {
-		VendorHeader vendorHeader = new VendorHeader();
-		vendorHeader.setVendorTypeCode(KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER);
-		vendorHeader.setVendorForeignIndicator(!isUnitedStatesVendor(paymentWorksVendor));
-		vendorHeader.setVendorTaxNumber(paymentWorksVendor.getRequestingCompanyTin());
-		vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.TinType.fromTinCode(
-				paymentWorksVendor.getRequestingCompanyTinType()).taxTypeCode);
-		vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.OwnershipTaxClassification.fromTaxClassification(
-				paymentWorksVendor.getRequestingCompanyTaxClassificationCode()).ownershipCode);
-		vendorHeader.setVendorCorpCitizenCode(paymentWorksVendor.getRequestingCompanyTaxCountry());
-		return vendorHeader;
-	}
-	
-	protected List<VendorAddress> buildVendorAddresses(PaymentWorksVendor paymentWorksVendor) {
-		List<VendorAddress> vendorAddresses = new ArrayList<VendorAddress>();
-		vendorAddresses.add(createCorpAddress(paymentWorksVendor));
-		vendorAddresses.add(createRemittanceAddress(paymentWorksVendor));
-		return vendorAddresses;
-	}
-	
-	protected VendorAddress createCorpAddress(PaymentWorksVendor paymentWorksVendor) {
+        vendorDetail.setExtension(buildVendorDetailExtension());
 
-		VendorAddress vendorAddress = new VendorAddress();
+        vendorDetail.setVendorDunsNumber(paymentWorksVendor.getRequestingCompanyDuns());
+        vendorDetail.setVendorUrlAddress(paymentWorksVendor.getRequestingCompanyUrl());
+        vendorDetail.setActiveIndicator(true);
 
-		vendorAddress.setVendorAddressTypeCode(VendorConstants.AddressTypes.PURCHASE_ORDER);
-		vendorAddress.setVendorAttentionName("");
-		vendorAddress.setVendorBusinessToBusinessUrlAddress("");
-		vendorAddress.setVendorLine1Address(paymentWorksVendor.getCorpAddressStreet1());
-		vendorAddress.setVendorLine2Address(paymentWorksVendor.getCorpAddressStreet2());
-		vendorAddress.setVendorCityName(paymentWorksVendor.getCorpAddressCity());
-		vendorAddress.setVendorZipCode(paymentWorksVendor.getCorpAddressZipCode());
-		vendorAddress.setVendorCountryCode(paymentWorksVendor.getCorpAddressCountry());
-		
-		if (StringUtils.equalsIgnoreCase(paymentWorksVendor.getCorpAddressCountry(), "US")) {
-			vendorAddress.setVendorStateCode(paymentWorksVendor.getCorpAddressState());
-		} else {
-			vendorAddress.setVendorAddressInternationalProvinceName(paymentWorksVendor.getCorpAddressState());
-		}
-		
-		
-		if (StringUtils.isNotBlank(paymentWorksVendor.getPoFaxNumber())) {
-			vendorAddress.setVendorFaxNumber(paymentWorksVendor.getPoFaxNumber());
-		}
-		
-		vendorAddress.setVendorDefaultAddressIndicator(true);
-		vendorAddress.setActive(true);
-		vendorAddress.setExtension(buildCuVendorAddressExtension(vendorAddress));
-		return vendorAddress;
-	}
-	
-	protected CuVendorAddressExtension buildCuVendorAddressExtension(VendorAddress address) {
-		CuVendorAddressExtension extension = new CuVendorAddressExtension();
-		if (StringUtils.isNotBlank(address.getVendorFaxNumber())) {
-			extension.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.FAX);
-		} else if (StringUtils.isNotBlank(address.getVendorAddressEmailAddress())) {
-			extension.setPurchaseOrderTransmissionMethodCode(CUPurapConstants.POTransmissionMethods.EMAIL);
-		} else if (isValidManualTransmission(address)) {
-			extension.setPurchaseOrderTransmissionMethodCode(CUPurapConstants.POTransmissionMethods.MANUAL);
-		} else {
-			LOG.error("Unable to calculate the purchase order transmission method code.");
-		}
-		return extension;
-	}
-	
-	protected boolean isValidManualTransmission(VendorAddress address) {
-		return StringUtils.isNotBlank(address.getVendorCountryCode())
-				&& StringUtils.isNotBlank(address.getVendorCountryCode())
-				&& StringUtils.isNotBlank(address.getVendorStateCode())
-				&& StringUtils.isNotBlank(address.getVendorZipCode())
-				&& StringUtils.isNotBlank(address.getVendorLine1Address())
-				&& StringUtils.isNotBlank(address.getVendorCityName());
-	}
-	
-	protected VendorAddress createRemittanceAddress(PaymentWorksVendor paymentWorksVendor) {
-		VendorAddress vendorAddress = new VendorAddress();
+        vendorDetail.setVendorAliases(buldVendorAliasList(paymentWorksVendor));
 
-		vendorAddress.setVendorAddressTypeCode(VendorConstants.AddressTypes.REMIT);
-		vendorAddress.setVendorAttentionName(StringUtils.EMPTY);
-		vendorAddress.setVendorBusinessToBusinessUrlAddress(StringUtils.EMPTY);
-		vendorAddress.setVendorLine1Address(paymentWorksVendor.getRemittanceAddressStreet1());
-		vendorAddress.setVendorLine2Address(paymentWorksVendor.getRemittanceAddressStreet2());
-		vendorAddress.setVendorCityName(paymentWorksVendor.getRemittanceAddressCity());
+        if (StringUtils.isNotBlank(paymentWorksVendor.getRequestingCompanyTelephone())) {
+            vendorDetail.setVendorPhoneNumbers(buildVendorPhoneNumberList(paymentWorksVendor.getRequestingCompanyTelephone()));
+        }
 
-		if (StringUtils.equalsIgnoreCase(paymentWorksVendor.getRemittanceAddressCountry(), "US")) {
-			vendorAddress.setVendorStateCode(paymentWorksVendor.getRemittanceAddressState());
-		} else {
-			vendorAddress.setVendorAddressInternationalProvinceName(paymentWorksVendor.getRemittanceAddressState());
-		}
+        return vendorDetail;
+    }
 
-		vendorAddress.setVendorZipCode(paymentWorksVendor.getRemittanceAddressZipCode());
-		vendorAddress.setVendorCountryCode(paymentWorksVendor.getRemittanceAddressCountry());
-		vendorAddress.setVendorDefaultAddressIndicator(true);
-		vendorAddress.setActive(true);
-		return vendorAddress;
-	}
-	
-	protected boolean isVendorTaxable(PaymentWorksVendor paymentWorksVendor) {
-		boolean isNonTaxable = (StringUtils.equals(paymentWorksVendor.getRequestingCompanyTaxClassificationCode(), "1")
-				|| StringUtils.equals(paymentWorksVendor.getRequestingCompanyTaxClassificationCode(), "2"))
-				&& StringUtils.equals(paymentWorksVendor.getVendorType(), "Other");
-		return !isNonTaxable;
-	}
-	
-	protected VendorDetailExtension buildVendorDetailExtension() {
-		VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
-		vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
-		return vendorDetailExtension;
-	}
-	
-	protected List<VendorAlias> buldVendorAliasList(PaymentWorksVendor paymentWorksVendor) {
-		VendorAlias vendorAlias = new VendorAlias();
-		vendorAlias.setVendorAliasName(paymentWorksVendor.getRequestingCompanyName());
-		vendorAlias.setActive(true);
-		List<VendorAlias> vendorAliasList = new ArrayList<VendorAlias>();
-		vendorAliasList.add(vendorAlias);
-		return vendorAliasList;
-	}
+    protected VendorHeader createVendorHeader(PaymentWorksVendor paymentWorksVendor) {
+        VendorHeader vendorHeader = new VendorHeader();
+        vendorHeader.setVendorTypeCode(KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER);
+        vendorHeader.setVendorForeignIndicator(!isUnitedStatesVendor(paymentWorksVendor));
+        vendorHeader.setVendorTaxNumber(paymentWorksVendor.getRequestingCompanyTin());
+        vendorHeader.setVendorTaxTypeCode(PaymentWorksConstants.TinType.fromTinCode(paymentWorksVendor.getRequestingCompanyTinType()).taxTypeCode);
+        vendorHeader.setVendorOwnershipCode(PaymentWorksConstants.OwnershipTaxClassification
+                .fromTaxClassification(paymentWorksVendor.getRequestingCompanyTaxClassificationCode()).ownershipCode);
+        vendorHeader.setVendorCorpCitizenCode(paymentWorksVendor.getRequestingCompanyTaxCountry());
+        return vendorHeader;
+    }
 
-	protected List<VendorPhoneNumber> buildVendorPhoneNumberList(String phoneNumber) {
-		VendorPhoneNumber vendorPhoneNumber = new VendorPhoneNumber();
-		vendorPhoneNumber.setVendorPhoneNumber(phoneNumber);
-		vendorPhoneNumber.setVendorPhoneTypeCode(PaymentWorksConstants.VENDOR_PHONE_TYPE_CODE_PHONE);
-		vendorPhoneNumber.setActive(true);
+    protected List<VendorAddress> buildVendorAddresses(PaymentWorksVendor paymentWorksVendor) {
+        List<VendorAddress> vendorAddresses = new ArrayList<VendorAddress>();
+        vendorAddresses.add(createCorpAddress(paymentWorksVendor));
+        vendorAddresses.add(createRemittanceAddress(paymentWorksVendor));
+        return vendorAddresses;
+    }
 
-		List<VendorPhoneNumber> vendorPhoneNumberList = new ArrayList<VendorPhoneNumber>();
-		vendorPhoneNumberList.add(vendorPhoneNumber);
-		return vendorPhoneNumberList;
-	}
+    protected VendorAddress createCorpAddress(PaymentWorksVendor paymentWorksVendor) {
 
-	protected boolean isUnitedStatesVendor(PaymentWorksVendor paymentWorksVendor) {
-		return StringUtils.equals(paymentWorksVendor.getRequestingCompanyTaxCountry(), "US");
-	}
-	
-	@Override
-	public PaymentWorksVendor createPaymentWorksVendor(VendorDetail vendorDetail, String documentNumber) {
-		PaymentWorksVendor paymentWorksVendor = new PaymentWorksVendor();
+        VendorAddress vendorAddress = new VendorAddress();
 
-		String sequence = getSequenceAccessorService().getNextAvailableSequenceNumber(PaymentWorksConstants.PAYMENT_WORKS_VENDOR_SEQUENCE_NAME).toString();
-		paymentWorksVendor.setVendorRequestId(PaymentWorksConstants.VENDOR_REQUEST_ID_KFS_TEMP_ID_STARTER + sequence);
-		
-		paymentWorksVendor.setDocumentNumber(documentNumber);
-		paymentWorksVendor.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
-		paymentWorksVendor.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
-		paymentWorksVendor.setRequestingCompanyLegalName(vendorDetail.getVendorName());
-		paymentWorksVendor.setRequestingCompanyTin(vendorDetail.getVendorHeader().getVendorTaxNumber());
+        vendorAddress.setVendorAddressTypeCode(VendorConstants.AddressTypes.PURCHASE_ORDER);
+        vendorAddress.setVendorAttentionName("");
+        vendorAddress.setVendorBusinessToBusinessUrlAddress("");
+        vendorAddress.setVendorLine1Address(paymentWorksVendor.getCorpAddressStreet1());
+        vendorAddress.setVendorLine2Address(paymentWorksVendor.getCorpAddressStreet2());
+        vendorAddress.setVendorCityName(paymentWorksVendor.getCorpAddressCity());
+        vendorAddress.setVendorZipCode(paymentWorksVendor.getCorpAddressZipCode());
+        vendorAddress.setVendorCountryCode(paymentWorksVendor.getCorpAddressCountry());
 
-		setPOAddressOnPaymentWorksVendor(vendorDetail, paymentWorksVendor);
+        if (StringUtils.equalsIgnoreCase(paymentWorksVendor.getCorpAddressCountry(), "US")) {
+            vendorAddress.setVendorStateCode(paymentWorksVendor.getCorpAddressState());
+        } else {
+            vendorAddress.setVendorAddressInternationalProvinceName(paymentWorksVendor.getCorpAddressState());
+        }
 
-		setRemitAddressOnPaymentWorksVendor(vendorDetail, paymentWorksVendor);
+        if (StringUtils.isNotBlank(paymentWorksVendor.getPoFaxNumber())) {
+            vendorAddress.setVendorFaxNumber(paymentWorksVendor.getPoFaxNumber());
+        }
 
-		return paymentWorksVendor;
-	}
+        vendorAddress.setVendorDefaultAddressIndicator(true);
+        vendorAddress.setActive(true);
+        vendorAddress.setExtension(buildCuVendorAddressExtension(vendorAddress));
+        return vendorAddress;
+    }
 
-	protected void setRemitAddressOnPaymentWorksVendor(VendorDetail vendorDetail,
-			PaymentWorksVendor paymentWorksVendor) {
-		VendorAddress remitAddress = getVendorService().getVendorDefaultAddress(
-				vendorDetail.getVendorHeaderGeneratedIdentifier(), vendorDetail.getVendorDetailAssignedIdentifier(),
-				VendorConstants.AddressTypes.REMIT, null);
+    protected CuVendorAddressExtension buildCuVendorAddressExtension(VendorAddress address) {
+        CuVendorAddressExtension extension = new CuVendorAddressExtension();
+        if (StringUtils.isNotBlank(address.getVendorFaxNumber())) {
+            extension.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.FAX);
+        } else if (StringUtils.isNotBlank(address.getVendorAddressEmailAddress())) {
+            extension.setPurchaseOrderTransmissionMethodCode(CUPurapConstants.POTransmissionMethods.EMAIL);
+        } else if (isValidManualTransmission(address)) {
+            extension.setPurchaseOrderTransmissionMethodCode(CUPurapConstants.POTransmissionMethods.MANUAL);
+        } else {
+            LOG.error("Unable to calculate the purchase order transmission method code.");
+        }
+        return extension;
+    }
 
-		if (ObjectUtils.isNotNull(remitAddress)) {
-			paymentWorksVendor.setRemittanceAddressStreet1(remitAddress.getVendorLine1Address());
-			paymentWorksVendor.setRemittanceAddressStreet2(remitAddress.getVendorLine2Address());
-			paymentWorksVendor.setRemittanceAddressCity(remitAddress.getVendorCityName());
+    protected boolean isValidManualTransmission(VendorAddress address) {
+        return StringUtils.isNotBlank(address.getVendorCountryCode())
+                && StringUtils.isNotBlank(address.getVendorCountryCode())
+                && StringUtils.isNotBlank(address.getVendorStateCode())
+                && StringUtils.isNotBlank(address.getVendorZipCode())
+                && StringUtils.isNotBlank(address.getVendorLine1Address())
+                && StringUtils.isNotBlank(address.getVendorCityName());
+    }
 
-			if (StringUtils.equalsIgnoreCase(remitAddress.getVendorCountryCode(), "US")) {
-				paymentWorksVendor.setRemittanceAddressState(remitAddress.getVendorStateCode());
-			} else {
-				paymentWorksVendor.setRemittanceAddressState(remitAddress.getVendorAddressInternationalProvinceName());
-			}
+    protected VendorAddress createRemittanceAddress(PaymentWorksVendor paymentWorksVendor) {
+        VendorAddress vendorAddress = new VendorAddress();
 
-			paymentWorksVendor.setRemittanceAddressZipCode(remitAddress.getVendorZipCode());
-			paymentWorksVendor.setRemittanceAddressCountry(remitAddress.getVendorCountryCode());
-		}
-	}
+        vendorAddress.setVendorAddressTypeCode(VendorConstants.AddressTypes.REMIT);
+        vendorAddress.setVendorAttentionName(StringUtils.EMPTY);
+        vendorAddress.setVendorBusinessToBusinessUrlAddress(StringUtils.EMPTY);
+        vendorAddress.setVendorLine1Address(paymentWorksVendor.getRemittanceAddressStreet1());
+        vendorAddress.setVendorLine2Address(paymentWorksVendor.getRemittanceAddressStreet2());
+        vendorAddress.setVendorCityName(paymentWorksVendor.getRemittanceAddressCity());
 
-	protected void setPOAddressOnPaymentWorksVendor(VendorDetail vendorDetail, PaymentWorksVendor paymentWorksVendor) {
-		VendorAddress poAddress = getVendorService().getVendorDefaultAddress(
-				vendorDetail.getVendorHeaderGeneratedIdentifier(), vendorDetail.getVendorDetailAssignedIdentifier(),
-				VendorConstants.AddressTypes.PURCHASE_ORDER, null);
+        if (StringUtils.equalsIgnoreCase(paymentWorksVendor.getRemittanceAddressCountry(), "US")) {
+            vendorAddress.setVendorStateCode(paymentWorksVendor.getRemittanceAddressState());
+        } else {
+            vendorAddress.setVendorAddressInternationalProvinceName(paymentWorksVendor.getRemittanceAddressState());
+        }
 
-		if (ObjectUtils.isNotNull(poAddress)) {
-			paymentWorksVendor.setCorpAddressStreet1(poAddress.getVendorLine1Address());
-			paymentWorksVendor.setCorpAddressStreet2(poAddress.getVendorLine2Address());
-			paymentWorksVendor.setCorpAddressCity(poAddress.getVendorCityName());
+        vendorAddress.setVendorZipCode(paymentWorksVendor.getRemittanceAddressZipCode());
+        vendorAddress.setVendorCountryCode(paymentWorksVendor.getRemittanceAddressCountry());
+        vendorAddress.setVendorDefaultAddressIndicator(true);
+        vendorAddress.setActive(true);
+        return vendorAddress;
+    }
 
-			if (StringUtils.equalsIgnoreCase(poAddress.getVendorCountryCode(), "US")) {
-				paymentWorksVendor.setCorpAddressState(poAddress.getVendorStateCode());
-			} else {
-				paymentWorksVendor.setCorpAddressState(poAddress.getVendorAddressInternationalProvinceName());
-			}
+    protected boolean isVendorTaxable(PaymentWorksVendor paymentWorksVendor) {
+        boolean isNonTaxable = (StringUtils.equals(paymentWorksVendor.getRequestingCompanyTaxClassificationCode(), "1")
+                || StringUtils.equals(paymentWorksVendor.getRequestingCompanyTaxClassificationCode(), "2"))
+                && StringUtils.equals(paymentWorksVendor.getVendorType(), "Other");
+        return !isNonTaxable;
+    }
 
-			paymentWorksVendor.setCorpAddressZipCode(poAddress.getVendorZipCode());
-			paymentWorksVendor.setCorpAddressCountry(poAddress.getVendorCountryCode());
-		}
-	}
+    protected VendorDetailExtension buildVendorDetailExtension() {
+        VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
+        vendorDetailExtension.setDefaultB2BPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+        return vendorDetailExtension;
+    }
 
-	@Override
-	public PaymentWorksVendor createPaymentWorksVendor(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
-		PaymentWorksVendor paymentWorksNewVendor = new PaymentWorksVendor();
-		if (newVendorDetailExists(paymentWorksNewVendorDetailDTO)) {
-		    paymentWorksNewVendor.setVendorRequestId(paymentWorksNewVendorDetailDTO.getId());
-		    populateNewVendorRequestingCompanyAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
-		    populateNewVendorRemittanceAddressAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
-		    populateNewVendorCorporateAddressAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
-		    extractCustomFields(paymentWorksNewVendorDetailDTO, paymentWorksNewVendor);
-		}
-		return paymentWorksNewVendor;
-	}
+    protected List<VendorAlias> buldVendorAliasList(PaymentWorksVendor paymentWorksVendor) {
+        VendorAlias vendorAlias = new VendorAlias();
+        vendorAlias.setVendorAliasName(paymentWorksVendor.getRequestingCompanyName());
+        vendorAlias.setActive(true);
+        List<VendorAlias> vendorAliasList = new ArrayList<VendorAlias>();
+        vendorAliasList.add(vendorAlias);
+        return vendorAliasList;
+    }
 
-	private void populateNewVendorRequestingCompanyAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
-		if (requestingCompanyExists(paymentWorksNewVendorDetailDTO)) {
-		    paymentWorksNewVendor.setRequestingCompanyId(paymentWorksNewVendorDetailDTO.getRequesting_company().getId());
-		    paymentWorksNewVendor.setRequestingCompanyLegalName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_name());
-		    paymentWorksNewVendor.setRequestingCompanyDesc(paymentWorksNewVendorDetailDTO.getRequesting_company().getDesc());
-		    paymentWorksNewVendor.setRequestingCompanyName(paymentWorksNewVendorDetailDTO.getRequesting_company().getName());
-		    paymentWorksNewVendor.setRequestingCompanyLegalLastName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_last_name());
-		    paymentWorksNewVendor.setRequestingCompanyLegalFirstName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_first_name());
-		    paymentWorksNewVendor.setRequestingCompanyUrl(paymentWorksNewVendorDetailDTO.getRequesting_company().getUrl());
-		    paymentWorksNewVendor.setRequestingCompanyTin(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin());
-		    paymentWorksNewVendor.setRequestingCompanyTinType(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin_type());
-		    paymentWorksNewVendor.setRequestingCompanyTaxCountry(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_country());
-		    paymentWorksNewVendor.setRequestingCompanyW8W9(paymentWorksNewVendorDetailDTO.getRequesting_company().getW8_w9());
-		    paymentWorksNewVendor.setRequestingCompanyTelephone(paymentWorksNewVendorDetailDTO.getRequesting_company().getTelephone());
-		    paymentWorksNewVendor.setRequestingCompanyDuns(paymentWorksNewVendorDetailDTO.getRequesting_company().getDuns());
-		    paymentWorksNewVendor.setRequestingCompanyCorporateEmail(paymentWorksNewVendorDetailDTO.getRequesting_company().getCorporate_email());
-		    paymentWorksNewVendor.setRequestingCompanyTaxClassificationName(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getName());
-		    paymentWorksNewVendor.setRequestingCompanyTaxClassificationCode(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getCode());
-		}
-	}
+    protected List<VendorPhoneNumber> buildVendorPhoneNumberList(String phoneNumber) {
+        VendorPhoneNumber vendorPhoneNumber = new VendorPhoneNumber();
+        vendorPhoneNumber.setVendorPhoneNumber(phoneNumber);
+        vendorPhoneNumber.setVendorPhoneTypeCode(PaymentWorksConstants.VENDOR_PHONE_TYPE_CODE_PHONE);
+        vendorPhoneNumber.setActive(true);
 
-	private void populateNewVendorRemittanceAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        List<VendorPhoneNumber> vendorPhoneNumberList = new ArrayList<VendorPhoneNumber>();
+        vendorPhoneNumberList.add(vendorPhoneNumber);
+        return vendorPhoneNumberList;
+    }
+
+    protected boolean isUnitedStatesVendor(PaymentWorksVendor paymentWorksVendor) {
+        return StringUtils.equals(paymentWorksVendor.getRequestingCompanyTaxCountry(), "US");
+    }
+
+    @Override
+    public PaymentWorksVendor createPaymentWorksVendor(VendorDetail vendorDetail, String documentNumber) {
+        PaymentWorksVendor paymentWorksVendor = new PaymentWorksVendor();
+
+        String sequence = getSequenceAccessorService().getNextAvailableSequenceNumber(PaymentWorksConstants.PAYMENT_WORKS_VENDOR_SEQUENCE_NAME).toString();
+        paymentWorksVendor.setVendorRequestId(PaymentWorksConstants.VENDOR_REQUEST_ID_KFS_TEMP_ID_STARTER + sequence);
+
+        paymentWorksVendor.setDocumentNumber(documentNumber);
+        paymentWorksVendor.setVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+        paymentWorksVendor.setVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+        paymentWorksVendor.setRequestingCompanyLegalName(vendorDetail.getVendorName());
+        paymentWorksVendor.setRequestingCompanyTin(vendorDetail.getVendorHeader().getVendorTaxNumber());
+
+        setPOAddressOnPaymentWorksVendor(vendorDetail, paymentWorksVendor);
+
+        setRemitAddressOnPaymentWorksVendor(vendorDetail, paymentWorksVendor);
+
+        return paymentWorksVendor;
+    }
+
+    protected void setRemitAddressOnPaymentWorksVendor(VendorDetail vendorDetail, PaymentWorksVendor paymentWorksVendor) {
+        VendorAddress remitAddress = getVendorService().getVendorDefaultAddress(
+                vendorDetail.getVendorHeaderGeneratedIdentifier(), vendorDetail.getVendorDetailAssignedIdentifier(),
+                VendorConstants.AddressTypes.REMIT, null);
+
+        if (ObjectUtils.isNotNull(remitAddress)) {
+            paymentWorksVendor.setRemittanceAddressStreet1(remitAddress.getVendorLine1Address());
+            paymentWorksVendor.setRemittanceAddressStreet2(remitAddress.getVendorLine2Address());
+            paymentWorksVendor.setRemittanceAddressCity(remitAddress.getVendorCityName());
+
+            if (StringUtils.equalsIgnoreCase(remitAddress.getVendorCountryCode(), "US")) {
+                paymentWorksVendor.setRemittanceAddressState(remitAddress.getVendorStateCode());
+            } else {
+                paymentWorksVendor.setRemittanceAddressState(remitAddress.getVendorAddressInternationalProvinceName());
+            }
+
+            paymentWorksVendor.setRemittanceAddressZipCode(remitAddress.getVendorZipCode());
+            paymentWorksVendor.setRemittanceAddressCountry(remitAddress.getVendorCountryCode());
+        }
+    }
+
+    protected void setPOAddressOnPaymentWorksVendor(VendorDetail vendorDetail, PaymentWorksVendor paymentWorksVendor) {
+        VendorAddress poAddress = getVendorService().getVendorDefaultAddress(
+                vendorDetail.getVendorHeaderGeneratedIdentifier(), vendorDetail.getVendorDetailAssignedIdentifier(),
+                VendorConstants.AddressTypes.PURCHASE_ORDER, null);
+
+        if (ObjectUtils.isNotNull(poAddress)) {
+            paymentWorksVendor.setCorpAddressStreet1(poAddress.getVendorLine1Address());
+            paymentWorksVendor.setCorpAddressStreet2(poAddress.getVendorLine2Address());
+            paymentWorksVendor.setCorpAddressCity(poAddress.getVendorCityName());
+
+            if (StringUtils.equalsIgnoreCase(poAddress.getVendorCountryCode(), "US")) {
+                paymentWorksVendor.setCorpAddressState(poAddress.getVendorStateCode());
+            } else {
+                paymentWorksVendor.setCorpAddressState(poAddress.getVendorAddressInternationalProvinceName());
+            }
+
+            paymentWorksVendor.setCorpAddressZipCode(poAddress.getVendorZipCode());
+            paymentWorksVendor.setCorpAddressCountry(poAddress.getVendorCountryCode());
+        }
+    }
+
+    @Override
+    public PaymentWorksVendor createPaymentWorksVendor(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        PaymentWorksVendor paymentWorksNewVendor = new PaymentWorksVendor();
+        if (newVendorDetailExists(paymentWorksNewVendorDetailDTO)) {
+            paymentWorksNewVendor.setVendorRequestId(paymentWorksNewVendorDetailDTO.getId());
+            populateNewVendorRequestingCompanyAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
+            populateNewVendorRemittanceAddressAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
+            populateNewVendorCorporateAddressAttributes(paymentWorksNewVendor, paymentWorksNewVendorDetailDTO);
+            extractCustomFields(paymentWorksNewVendorDetailDTO, paymentWorksNewVendor);
+        }
+        return paymentWorksNewVendor;
+    }
+
+    private void populateNewVendorRequestingCompanyAttributes(PaymentWorksVendor paymentWorksNewVendor,
+            PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+        if (requestingCompanyExists(paymentWorksNewVendorDetailDTO)) {
+            paymentWorksNewVendor.setRequestingCompanyId(paymentWorksNewVendorDetailDTO.getRequesting_company().getId());
+            paymentWorksNewVendor.setRequestingCompanyLegalName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_name());
+            paymentWorksNewVendor.setRequestingCompanyDesc(paymentWorksNewVendorDetailDTO.getRequesting_company().getDesc());
+            paymentWorksNewVendor.setRequestingCompanyName(paymentWorksNewVendorDetailDTO.getRequesting_company().getName());
+            paymentWorksNewVendor.setRequestingCompanyLegalLastName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_last_name());
+            paymentWorksNewVendor.setRequestingCompanyLegalFirstName(paymentWorksNewVendorDetailDTO.getRequesting_company().getLegal_first_name());
+            paymentWorksNewVendor.setRequestingCompanyUrl(paymentWorksNewVendorDetailDTO.getRequesting_company().getUrl());
+            paymentWorksNewVendor.setRequestingCompanyTin(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin());
+            paymentWorksNewVendor.setRequestingCompanyTinType(paymentWorksNewVendorDetailDTO.getRequesting_company().getTin_type());
+            paymentWorksNewVendor.setRequestingCompanyTaxCountry(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_country());
+            paymentWorksNewVendor.setRequestingCompanyW8W9(paymentWorksNewVendorDetailDTO.getRequesting_company().getW8_w9());
+            paymentWorksNewVendor.setRequestingCompanyTelephone(paymentWorksNewVendorDetailDTO.getRequesting_company().getTelephone());
+            paymentWorksNewVendor.setRequestingCompanyDuns(paymentWorksNewVendorDetailDTO.getRequesting_company().getDuns());
+            paymentWorksNewVendor.setRequestingCompanyCorporateEmail(paymentWorksNewVendorDetailDTO.getRequesting_company().getCorporate_email());
+            paymentWorksNewVendor.setRequestingCompanyTaxClassificationName(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getName());
+            paymentWorksNewVendor.setRequestingCompanyTaxClassificationCode(paymentWorksNewVendorDetailDTO.getRequesting_company().getTax_classification().getCode());
+        }
+    }
+
+    private void populateNewVendorRemittanceAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
         if (singleRemittanceAddressExists(paymentWorksNewVendorDetailDTO)) {
             PaymentWorksRemittanceAddressDTO paymentWorksRemittanceAddressDTO = paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address().get(0);
 
@@ -338,9 +336,9 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 
             populateNewVendorBankAccountAttributes(paymentWorksNewVendor, paymentWorksRemittanceAddressDTO);
         }
-	}
+    }
 
-	private void populateNewVendorBankAccountAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksRemittanceAddressDTO paymentWorksRemittanceAddressDTO) {
+    private void populateNewVendorBankAccountAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksRemittanceAddressDTO paymentWorksRemittanceAddressDTO) {
         if (bankAccountDataExists(paymentWorksRemittanceAddressDTO)) {
             PaymentWorksBankAccountDTO paymentWorksBankAccountDTO = paymentWorksRemittanceAddressDTO.getBank_acct();
 
@@ -358,9 +356,9 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
 
             populateNewVendorBankAddressAttributes(paymentWorksNewVendor, paymentWorksBankAccountDTO);
         }
-	}
+    }
 
-	private void populateNewVendorBankAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksBankAccountDTO paymentWorksBankAccountDTO) {
+    private void populateNewVendorBankAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksBankAccountDTO paymentWorksBankAccountDTO) {
         if (bankAddressExists(paymentWorksBankAccountDTO)) {
             PaymentWorksBankAddressDTO paymentWorksBankAddressDTO = paymentWorksBankAccountDTO.getBank_address();
 
@@ -374,9 +372,9 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
             paymentWorksNewVendor.setBankAddressZipCode(paymentWorksBankAddressDTO.getZipcode());
             paymentWorksNewVendor.setBankAddressValidated(paymentWorksBankAddressDTO.getValidated());
         }
-	}
+    }
 
-	private void populateNewVendorCorporateAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+    private void populateNewVendorCorporateAddressAttributes(PaymentWorksVendor paymentWorksNewVendor, PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
         if (corporateAddressExists(paymentWorksNewVendorDetailDTO)) {
             PaymentWorksCorpAddressDTO corpAddress = paymentWorksNewVendorDetailDTO.getRequesting_company().getCorp_address();
 
@@ -390,20 +388,20 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
             paymentWorksNewVendor.setCorpAddressZipCode(corpAddress.getZipcode());
             paymentWorksNewVendor.setCorpAddressValidated(corpAddress.getValidated());
         }
-	}
+    }
 
-	private boolean newVendorDetailExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+    private boolean newVendorDetailExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
         return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO));
-	}
+    }
 
-	private boolean requestingCompanyExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
+    private boolean requestingCompanyExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
         return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company()));
-	}
+    }
 
     private boolean singleRemittanceAddressExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
-        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses()) &&
-                ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address()) &&
-                paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address().size() == 1);
+        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses())
+                && ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address())
+                && paymentWorksNewVendorDetailDTO.getRequesting_company().getRemittance_addresses().getRemittance_address().size() == 1);
     }
 
     private boolean corporateAddressExists(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO) {
@@ -418,105 +416,105 @@ public class PaymentWorksNewVendorConversionServiceImpl implements PaymentWorksN
         return (ObjectUtils.isNotNull(paymentWorksBankAccountDTO.getBank_address()));
     }
 
-	protected void extractCustomFields(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO, PaymentWorksVendor paymentWorksNewVendor) {
-		Map<String, String> customFieldsMap = getPaymentWorksUtilityService().convertFieldArrayToMap(paymentWorksNewVendorDetailDTO.getCustom_fields());
-		for (String payamentWorkCustomFieldName : customFieldsMap.keySet()) {
-			String customFieldValueFromPaymentWorks = customFieldsMap.get(payamentWorkCustomFieldName);
-			
-			PaymentWorksFieldMapping fieldMapping = findPaymentWorksFieldMapping(payamentWorkCustomFieldName);
-			
-			if (ObjectUtils.isNotNull(fieldMapping)) {
-				Object propertyValueForSetter = convertStringValueToObjectForPropertySetting(customFieldsMap.get(payamentWorkCustomFieldName));
-				if (ObjectUtils.isNotNull(propertyValueForSetter)) {
-					try {
-						ObjectUtils.setObjectProperty(paymentWorksNewVendor, fieldMapping.getKfsFieldName(), propertyValueForSetter);
-						if (LOG.isDebugEnabled()) {
-							LOG.debug("extractCustomFields setting KFS field " + fieldMapping.getKfsFieldName() +
-							          "' for PaymentWorks field '" + payamentWorkCustomFieldName +
-							          " and is of object type " + propertyValueForSetter.getClass());
-						}
-					} catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-						paymentWorksNewVendor.setCustomFieldConversionErrors(true);
-						LOG.error("extractCustomFields Unable to set KFS field '" + fieldMapping.getKfsFieldName() +
-						          "' for PaymentWorks field '" + payamentWorkCustomFieldName +
-						          "'  Due to the error: " +  e.getMessage(), e);
-					}
-				}
-			} else {
-				paymentWorksNewVendor.setCustomFieldConversionErrors(true);
-				LOG.error("extractCustomFields, Unable to find a KFS field for the PaymentWorks field of '" + payamentWorkCustomFieldName + "'");
-			}
-		}
-	}
+    protected void extractCustomFields(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO, PaymentWorksVendor paymentWorksNewVendor) {
+        Map<String, String> customFieldsMap = getPaymentWorksUtilityService().convertFieldArrayToMap(paymentWorksNewVendorDetailDTO.getCustom_fields());
+        for (String payamentWorkCustomFieldName : customFieldsMap.keySet()) {
+            String customFieldValueFromPaymentWorks = customFieldsMap.get(payamentWorkCustomFieldName);
 
-	protected PaymentWorksFieldMapping findPaymentWorksFieldMapping(String payamentWorkCustomFieldName) {
-		Map fieldValues = new HashMap();
-		fieldValues.put(PaymentWorksConstants.PaymentWorksFieldMappingDatabaseFieldNames.PAYMENT_WORKS_FIELD_LABEL, StringUtils.trim(payamentWorkCustomFieldName));
-		Collection mappings = getBusinessObjectService().findMatching(PaymentWorksFieldMapping.class, fieldValues);
-		if (!mappings.isEmpty()) {
-			return (PaymentWorksFieldMapping)mappings.iterator().next();
-		}
-		return null;
-	}
-	
-	protected Object convertStringValueToObjectForPropertySetting(String value) {
-		if (StringUtils.equalsIgnoreCase(value, "YES") || StringUtils.equalsIgnoreCase(value, "NO")) {
-			return StringUtils.equalsIgnoreCase(value, "YES");
-		} else if (StringUtils.isBlank(value)) {
-			return null;
-		} else {
-			return value;
-		}
-	}
-	
-	@Override
-	public PaymentWorksVendor createPaymentWorksVendorFromDetail(PaymentWorksVendor vendor) {
+            PaymentWorksFieldMapping fieldMapping = findPaymentWorksFieldMapping(payamentWorkCustomFieldName);
 
-		VendorDetail vendorDetail = getVendorService().getVendorDetail(
-				vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier());
-		PaymentWorksVendor newVendor = null;
+            if (ObjectUtils.isNotNull(fieldMapping)) {
+                Object propertyValueForSetter = convertStringValueToObjectForPropertySetting(customFieldsMap.get(payamentWorkCustomFieldName));
+                if (ObjectUtils.isNotNull(propertyValueForSetter)) {
+                    try {
+                        ObjectUtils.setObjectProperty(paymentWorksNewVendor, fieldMapping.getKfsFieldName(), propertyValueForSetter);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("extractCustomFields setting KFS field " + fieldMapping.getKfsFieldName()
+                                    + "' for PaymentWorks field '" + payamentWorkCustomFieldName
+                                    + " and is of object type " + propertyValueForSetter.getClass());
+                        }
+                    } catch (FormatException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        paymentWorksNewVendor.setCustomFieldConversionErrors(true);
+                        LOG.error("extractCustomFields Unable to set KFS field '" + fieldMapping.getKfsFieldName()
+                                + "' for PaymentWorks field '" + payamentWorkCustomFieldName + "'  Due to the error: "
+                                + e.getMessage(), e);
+                    }
+                }
+            } else {
+                paymentWorksNewVendor.setCustomFieldConversionErrors(true);
+                LOG.error("extractCustomFields, Unable to find a KFS field for the PaymentWorks field of '" + payamentWorkCustomFieldName + "'");
+            }
+        }
+    }
 
-		if (ObjectUtils.isNotNull(vendorDetail)) {
-			newVendor = createPaymentWorksVendor(vendorDetail, vendor.getDocumentNumber());
+    protected PaymentWorksFieldMapping findPaymentWorksFieldMapping(String payamentWorkCustomFieldName) {
+        Map fieldValues = new HashMap();
+        fieldValues.put(PaymentWorksConstants.PaymentWorksFieldMappingDatabaseFieldNames.PAYMENT_WORKS_FIELD_LABEL, StringUtils.trim(payamentWorkCustomFieldName));
+        Collection mappings = getBusinessObjectService().findMatching(PaymentWorksFieldMapping.class, fieldValues);
+        if (!mappings.isEmpty()) {
+            return (PaymentWorksFieldMapping) mappings.iterator().next();
+        }
+        return null;
+    }
 
-			newVendor.setVendorRequestId(vendor.getVendorRequestId());
-			newVendor.setObjectId(vendor.getObjectId());
-			newVendor.setVersionNumber(vendor.getVersionNumber());
-		}
+    protected Object convertStringValueToObjectForPropertySetting(String value) {
+        if (StringUtils.equalsIgnoreCase(value, "YES") || StringUtils.equalsIgnoreCase(value, "NO")) {
+            return StringUtils.equalsIgnoreCase(value, "YES");
+        } else if (StringUtils.isBlank(value)) {
+            return null;
+        } else {
+            return value;
+        }
+    }
 
-		return newVendor;
-	}
+    @Override
+    public PaymentWorksVendor createPaymentWorksVendorFromDetail(PaymentWorksVendor vendor) {
 
-	public SequenceAccessorService getSequenceAccessorService() {
-		return sequenceAccessorService;
-	}
+        VendorDetail vendorDetail = getVendorService().getVendorDetail(vendor.getVendorHeaderGeneratedIdentifier(),
+                vendor.getVendorDetailAssignedIdentifier());
+        PaymentWorksVendor newVendor = null;
 
-	public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
-		this.sequenceAccessorService = sequenceAccessorService;
-	}
+        if (ObjectUtils.isNotNull(vendorDetail)) {
+            newVendor = createPaymentWorksVendor(vendorDetail, vendor.getDocumentNumber());
 
-	public VendorService getVendorService() {
-		return vendorService;
-	}
+            newVendor.setVendorRequestId(vendor.getVendorRequestId());
+            newVendor.setObjectId(vendor.getObjectId());
+            newVendor.setVersionNumber(vendor.getVersionNumber());
+        }
 
-	public void setVendorService(VendorService vendorService) {
-		this.vendorService = vendorService;
-	}
+        return newVendor;
+    }
 
-	public BusinessObjectService getBusinessObjectService() {
-		return businessObjectService;
-	}
+    public SequenceAccessorService getSequenceAccessorService() {
+        return sequenceAccessorService;
+    }
 
-	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-		this.businessObjectService = businessObjectService;
-	}
+    public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
+        this.sequenceAccessorService = sequenceAccessorService;
+    }
 
-	public PaymentWorksUtilityService getPaymentWorksUtilityService() {
-		return paymentWorksUtilityService;
-	}
+    public VendorService getVendorService() {
+        return vendorService;
+    }
 
-	public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
-		this.paymentWorksUtilityService = paymentWorksUtilityService;
-	}
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public PaymentWorksUtilityService getPaymentWorksUtilityService() {
+        return paymentWorksUtilityService;
+    }
+
+    public void setPaymentWorksUtilityService(PaymentWorksUtilityService paymentWorksUtilityService) {
+        this.paymentWorksUtilityService = paymentWorksUtilityService;
+    }
 
 }

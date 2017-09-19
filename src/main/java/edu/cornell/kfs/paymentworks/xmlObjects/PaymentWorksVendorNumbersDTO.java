@@ -29,15 +29,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksVendorNumbersDTO {
 
-	@XmlElement(name = "list-item")
-	private List<PaymentWorksVendorNumberDTO> vendorNumbers;
+    @XmlElement(name = "list-item")
+    private List<PaymentWorksVendorNumberDTO> vendorNumbers;
 
-	public List<PaymentWorksVendorNumberDTO> getVendorNumbers() {
-		return vendorNumbers;
-	}
+    public List<PaymentWorksVendorNumberDTO> getVendorNumbers() {
+        return vendorNumbers;
+    }
 
-	public void setVendorNumbers(List<PaymentWorksVendorNumberDTO> vendorNumbers) {
-		this.vendorNumbers = vendorNumbers;
-	}
+    public void setVendorNumbers(List<PaymentWorksVendorNumberDTO> vendorNumbers) {
+        this.vendorNumbers = vendorNumbers;
+    }
 
 }

@@ -28,74 +28,70 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public interface PaymentWorksVendorService {
 
-	/**
-	 * Saves a new PaymentWorks vendor record in KFS
-	 *
-	 * @return
-	 */
-	public PaymentWorksVendor savePaymentWorksVendorRecord(
-			PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO);
+    /**
+     * Saves a new PaymentWorks vendor record in KFS
+     *
+     * @return
+     */
+    public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksNewVendorDetailDTO paymentWorksNewVendorDetailDTO);
 
-	public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdatesDTO,
-			String processStatus, String transactionType);
+    public PaymentWorksVendor savePaymentWorksVendorRecord(PaymentWorksVendorUpdatesDTO paymentWorksVendorUpdatesDTO, String processStatus, String transactionType);
 
-	/**
-	 * Saves a KFS vendor record in PaymentWorks new vendor table
-	 *
-	 * @return
-	 */
-	public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber,
-			String transactionType);
+    /**
+     * Saves a KFS vendor record in PaymentWorks new vendor table
+     *
+     * @return
+     */
+    public PaymentWorksVendor savePaymentWorksVendorRecord(VendorDetail vendorDetail, String documentNumber, String transactionType);
 
-	/**
-	 * Updates a new vendor request in KFS
-	 *
-	 */
-	public PaymentWorksVendor updatePaymentWorksVendor(PaymentWorksVendor paymentWorksNewVendor);
+    /**
+     * Updates a new vendor request in KFS
+     *
+     */
+    public PaymentWorksVendor updatePaymentWorksVendor(PaymentWorksVendor paymentWorksNewVendor);
 
-	/**
-	 * Updates a new vendor request in KFS for status by document number
-	 *
-	 * @param documentNumber
-	 * @param processStatus
-	 */
-	public void updatePaymentWorksVendorProcessStatusByDocumentNumber(String documentNumber, String processStatus);
+    /**
+     * Updates a new vendor request in KFS for status by document number
+     *
+     * @param documentNumber
+     * @param processStatus
+     */
+    public void updatePaymentWorksVendorProcessStatusByDocumentNumber(String documentNumber, String processStatus);
 
-	/**
-	 * Checks if the vendor request is already in the staging table
-	 *
-	 * @param newVendorRequestId
-	 * @return
-	 */
-	public boolean isExistingPaymentWorksVendor(String newVendorRequestId, String transactionType);
+    /**
+     * Checks if the vendor request is already in the staging table
+     *
+     * @param newVendorRequestId
+     * @return
+     */
+    public boolean isExistingPaymentWorksVendor(String newVendorRequestId, String transactionType);
 
-	/**
-	 * checks for existing new vendor record by document number
-	 *
-	 * @param documentNumber
-	 * @return
-	 */
-	public boolean isExistingPaymentWorksVendorByDocumentNumber(String documentNumber);
+    /**
+     * checks for existing new vendor record by document number
+     *
+     * @param documentNumber
+     * @return
+     */
+    public boolean isExistingPaymentWorksVendorByDocumentNumber(String documentNumber);
 
-	/**
-	 * retrieves existing new vendor record by document numbers
-	 *
-	 * @param documentNumber
-	 * @return
-	 */
-	public PaymentWorksVendor getPaymentWorksVendorByDocumentNumber(String documentNumber);
+    /**
+     * retrieves existing new vendor record by document numbers
+     *
+     * @param documentNumber
+     * @return
+     */
+    public PaymentWorksVendor getPaymentWorksVendorByDocumentNumber(String documentNumber);
 
-	/**
-	 * Retrieves PaymentWorks vendor records in KFS by process and request
-	 * status and transaction type
-	 *
-	 * @param processStatus
-	 * @param requestStatus
-	 * @return
-	 */
-	public Collection<PaymentWorksVendor> getPaymentWorksVendorRecords(String processStatus, String requestStatus,
-			String transactionType);
+    /**
+     * Retrieves PaymentWorks vendor records in KFS by process and request
+     * status and transaction type
+     *
+     * @param processStatus
+     * @param requestStatus
+     * @return
+     */
+    public Collection<PaymentWorksVendor> getPaymentWorksVendorRecords(String processStatus, String requestStatus, String transactionType);
 
-	public boolean isVendorUpdateEligibleForRouting(PaymentWorksVendor paymentWorksVendor);
+    public boolean isVendorUpdateEligibleForRouting(PaymentWorksVendor paymentWorksVendor);
 
 }
