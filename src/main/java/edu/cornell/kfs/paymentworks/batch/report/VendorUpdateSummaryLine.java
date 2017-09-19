@@ -20,59 +20,59 @@ package edu.cornell.kfs.paymentworks.batch.report;
 
 public class VendorUpdateSummaryLine {
 
-	private String vendorRequestId;
-	private String documentNumber;
-	private String vendorNumber;
-	private String vendorName;
-	private String groupName;
-	private String errorMessage;
+    private String vendorRequestId;
+    private String documentNumber;
+    private String vendorNumber;
+    private String vendorName;
+    private String groupName;
+    private String errorMessage;
 
-	public String getVendorRequestId() {
-		return vendorRequestId;
-	}
+    public String getVendorRequestId() {
+        return vendorRequestId;
+    }
 
-	public void setVendorRequestId(String vendorRequestId) {
-		this.vendorRequestId = vendorRequestId;
-	}
+    public void setVendorRequestId(String vendorRequestId) {
+        this.vendorRequestId = vendorRequestId;
+    }
 
-	public String getDocumentNumber() {
-		return documentNumber;
-	}
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
 
-	public void setDocumentNumber(String documentNumber) {
-		this.documentNumber = documentNumber;
-	}
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-	public String getVendorNumber() {
-		return vendorNumber;
-	}
+    public String getVendorNumber() {
+        return vendorNumber;
+    }
 
-	public void setVendorNumber(String vendorNumber) {
-		this.vendorNumber = vendorNumber;
-	}
+    public void setVendorNumber(String vendorNumber) {
+        this.vendorNumber = vendorNumber;
+    }
 
-	public String getGroupName() {
-		return groupName;
-	}
+    public String getGroupName() {
+        return groupName;
+    }
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
-	public String getVendorName() {
-		return vendorName;
-	}
+    public String getVendorName() {
+        return vendorName;
+    }
 
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
-	}
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
 
 }

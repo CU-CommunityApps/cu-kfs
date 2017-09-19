@@ -30,45 +30,40 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
-@JsonPropertyOrder({
-"field_name",
-"from_value",
-"to_value"
-})
+@JsonPropertyOrder({ "field_name", "from_value", "to_value" })
 public class PaymentWorksFieldChangeDTO {
-	
-	@JsonProperty("field_name")
-	private String field_name;
-	@JsonProperty("from_value")
-	private String from_value;
-	@JsonProperty("to_value")
-	private String to_value;
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    @JsonProperty("field_name")
+    private String field_name;
+    @JsonProperty("from_value")
+    private String from_value;
+    @JsonProperty("to_value")
+    private String to_value;
+    @JsonIgnore
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	public String getField_name() {
-		return field_name;
-	}
+    public String getField_name() {
+        return field_name;
+    }
 
-	public void setField_name(String field_name) {
-		this.field_name = field_name;
-	}
+    public void setField_name(String field_name) {
+        this.field_name = field_name;
+    }
 
-	public String getFrom_value() {
-		return from_value;
-	}
+    public String getFrom_value() {
+        return from_value;
+    }
 
-	public void setFrom_value(String from_value) {
-		this.from_value = from_value;
-	}
+    public void setFrom_value(String from_value) {
+        this.from_value = from_value;
+    }
 
-	public String getTo_value() {
-		return to_value;
-	}
+    public String getTo_value() {
+        return to_value;
+    }
 
-	public void setTo_value(String to_value) {
-		this.to_value = to_value;
-	}
+    public void setTo_value(String to_value) {
+        this.to_value = to_value;
+    }
 
 }

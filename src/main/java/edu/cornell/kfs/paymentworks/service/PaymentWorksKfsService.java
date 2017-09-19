@@ -25,16 +25,16 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public interface PaymentWorksKfsService {
 
-	public boolean routeNewVendor(PaymentWorksVendor paymentWorksVendor);
+    public boolean routeNewVendor(PaymentWorksVendor paymentWorksVendor);
 
-	public boolean routeVendorEdit(PaymentWorksVendor paymentWorksVendor);
+    public boolean routeVendorEdit(PaymentWorksVendor paymentWorksVendor);
 
-	public boolean directVendorEdit(PaymentWorksVendor paymentWorksVendor);
+    public boolean directVendorEdit(PaymentWorksVendor paymentWorksVendor);
 
-	public boolean directAchEdit(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumberList);
+    public boolean directAchEdit(PaymentWorksVendorUpdatesDTO vendorUpdate, String vendorNumberList);
 
-	public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail);
+    public void sendVendorInitiatedEmail(String documentNumber, String vendorName, String contactEmail);
 
-	public void sendVendorApprovedEmail(String vendorNumber, String contactEmail, String vendorName);
+    public void sendVendorApprovedEmail(String vendorNumber, String contactEmail, String vendorName);
 
 }

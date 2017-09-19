@@ -26,59 +26,59 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksVendorUpdatesDTO {
 
-	private String id;
-	private PaymentWorksVendorNumbersDTO vendor_nums;
-	private String vendor_name;
-	private String group_name;
-	private String status;
-	private PaymentWorksFieldChangesDTO field_changes;
+    private String id;
+    private PaymentWorksVendorNumbersDTO vendor_nums;
+    private String vendor_name;
+    private String group_name;
+    private String status;
+    private PaymentWorksFieldChangesDTO field_changes;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public PaymentWorksVendorNumbersDTO getVendor_nums() {
-		return vendor_nums;
-	}
+    public PaymentWorksVendorNumbersDTO getVendor_nums() {
+        return vendor_nums;
+    }
 
-	public void setVendor_nums(PaymentWorksVendorNumbersDTO vendor_nums) {
-		this.vendor_nums = vendor_nums;
-	}
+    public void setVendor_nums(PaymentWorksVendorNumbersDTO vendor_nums) {
+        this.vendor_nums = vendor_nums;
+    }
 
-	public String getVendor_name() {
-		return vendor_name;
-	}
+    public String getVendor_name() {
+        return vendor_name;
+    }
 
-	public void setVendor_name(String vendor_name) {
-		this.vendor_name = vendor_name;
-	}
+    public void setVendor_name(String vendor_name) {
+        this.vendor_name = vendor_name;
+    }
 
-	public String getGroup_name() {
-		return group_name;
-	}
+    public String getGroup_name() {
+        return group_name;
+    }
 
-	public void setGroup_name(String group_name) {
-		this.group_name = group_name;
-	}
+    public void setGroup_name(String group_name) {
+        this.group_name = group_name;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public PaymentWorksFieldChangesDTO getField_changes() {
-		return field_changes;
-	}
+    public PaymentWorksFieldChangesDTO getField_changes() {
+        return field_changes;
+    }
 
-	public void setField_changes(PaymentWorksFieldChangesDTO field_changes) {
-		this.field_changes = field_changes;
-	}
+    public void setField_changes(PaymentWorksFieldChangesDTO field_changes) {
+        this.field_changes = field_changes;
+    }
 
 }

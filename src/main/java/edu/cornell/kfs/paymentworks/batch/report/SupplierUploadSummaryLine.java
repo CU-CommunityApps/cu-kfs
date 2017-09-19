@@ -20,50 +20,50 @@ package edu.cornell.kfs.paymentworks.batch.report;
 
 public class SupplierUploadSummaryLine {
 
-	private String vendorRequestId;
-	private String vendorName;
-	private String documentNumber;
-	private String vendorNumber;
-	private boolean sendToPaymentWorks;
+    private String vendorRequestId;
+    private String vendorName;
+    private String documentNumber;
+    private String vendorNumber;
+    private boolean sendToPaymentWorks;
 
-	public String getVendorRequestId() {
-		return vendorRequestId;
-	}
+    public String getVendorRequestId() {
+        return vendorRequestId;
+    }
 
-	public void setVendorRequestId(String vendorRequestId) {
-		this.vendorRequestId = vendorRequestId;
-	}
+    public void setVendorRequestId(String vendorRequestId) {
+        this.vendorRequestId = vendorRequestId;
+    }
 
-	public String getVendorName() {
-		return vendorName;
-	}
+    public String getVendorName() {
+        return vendorName;
+    }
 
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
-	}
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
 
-	public String getDocumentNumber() {
-		return documentNumber;
-	}
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
 
-	public void setDocumentNumber(String documentNumber) {
-		this.documentNumber = documentNumber;
-	}
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
 
-	public String getVendorNumber() {
-		return vendorNumber;
-	}
+    public String getVendorNumber() {
+        return vendorNumber;
+    }
 
-	public void setVendorNumber(String vendorNumber) {
-		this.vendorNumber = vendorNumber;
-	}
+    public void setVendorNumber(String vendorNumber) {
+        this.vendorNumber = vendorNumber;
+    }
 
-	public boolean isSendToPaymentWorks() {
-		return sendToPaymentWorks;
-	}
+    public boolean isSendToPaymentWorks() {
+        return sendToPaymentWorks;
+    }
 
-	public void setSendToPaymentWorks(boolean sendToPaymentWorks) {
-		this.sendToPaymentWorks = sendToPaymentWorks;
-	}
+    public void setSendToPaymentWorks(boolean sendToPaymentWorks) {
+        this.sendToPaymentWorks = sendToPaymentWorks;
+    }
 
 }

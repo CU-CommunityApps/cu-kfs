@@ -27,42 +27,42 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksNewVendorDetailDTO {
 
-	private String id;
-	private String request_status;
-	@XmlElement(name = "custom_fields")
-	private PaymentWorksCustomFieldsDTO custom_fields;
-	private PaymentWorksRequestingCompanyDTO requesting_company;
+    private String id;
+    private String request_status;
+    @XmlElement(name = "custom_fields")
+    private PaymentWorksCustomFieldsDTO custom_fields;
+    private PaymentWorksRequestingCompanyDTO requesting_company;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getRequest_status() {
-		return request_status;
-	}
+    public String getRequest_status() {
+        return request_status;
+    }
 
-	public void setRequest_status(String request_status) {
-		this.request_status = request_status;
-	}
+    public void setRequest_status(String request_status) {
+        this.request_status = request_status;
+    }
 
-	public PaymentWorksRequestingCompanyDTO getRequesting_company() {
-		return requesting_company;
-	}
+    public PaymentWorksRequestingCompanyDTO getRequesting_company() {
+        return requesting_company;
+    }
 
-	public void setRequesting_company(PaymentWorksRequestingCompanyDTO requesting_company) {
-		this.requesting_company = requesting_company;
-	}
+    public void setRequesting_company(PaymentWorksRequestingCompanyDTO requesting_company) {
+        this.requesting_company = requesting_company;
+    }
 
-	public PaymentWorksCustomFieldsDTO getCustom_fields() {
-		return custom_fields;
-	}
+    public PaymentWorksCustomFieldsDTO getCustom_fields() {
+        return custom_fields;
+    }
 
-	public void setCustom_fields(PaymentWorksCustomFieldsDTO custom_fields) {
-		this.custom_fields = custom_fields;
-	}
+    public void setCustom_fields(PaymentWorksCustomFieldsDTO custom_fields) {
+        this.custom_fields = custom_fields;
+    }
 
 }

@@ -29,64 +29,65 @@ import edu.cornell.kfs.paymentworks.xmlObjects.PaymentWorksVendorUpdatesDTO;
 
 public interface PaymentWorksWebService {
 
-	/**
-	 * Retrieves new vendor requests from PaymentWorks where the status is
-	 * Pending (0)
-	 *
-	 * @return
-	 */
-	public List<PaymentWorksNewVendorDTO> getPendingNewVendorRequestsFromPaymentWorks();
+    /**
+     * Retrieves new vendor requests from PaymentWorks where the status is
+     * Pending (0)
+     *
+     * @return
+     */
+    public List<PaymentWorksNewVendorDTO> getPendingNewVendorRequestsFromPaymentWorks();
 
-	/**
-	 * Retrieves company vendor updates from PaymentWorks where the status is
-	 * Pending (0)
-	 *
-	 * @return
-	 */
-	public List<PaymentWorksVendorUpdatesDTO> getPendingCompanyVendorUpdatesFromPaymentWorks();
+    /**
+     * Retrieves company vendor updates from PaymentWorks where the status is
+     * Pending (0)
+     *
+     * @return
+     */
+    public List<PaymentWorksVendorUpdatesDTO> getPendingCompanyVendorUpdatesFromPaymentWorks();
 
-	/**
-	 * Retrieves address vendor updates from PaymentWorks where the status is
-	 * Pending (0)
-	 *
-	 * @return
-	 */
-	public List<PaymentWorksVendorUpdatesDTO> getPendingAddressVendorUpdatesFromPaymentWorks();
+    /**
+     * Retrieves address vendor updates from PaymentWorks where the status is
+     * Pending (0)
+     *
+     * @return
+     */
+    public List<PaymentWorksVendorUpdatesDTO> getPendingAddressVendorUpdatesFromPaymentWorks();
 
-	/**
-	 * Retrieves ach updates from PaymentWorks where the status is Pending (0)
-	 *
-	 * @return
-	 */
-	public List<PaymentWorksVendorUpdatesDTO> getPendingAchUpdatesFromPaymentWorks();
+    /**
+     * Retrieves ach updates from PaymentWorks where the status is Pending (0)
+     *
+     * @return
+     */
+    public List<PaymentWorksVendorUpdatesDTO> getPendingAchUpdatesFromPaymentWorks();
 
-	/**
-	 * Retrieves a single vendor detail record from PaymentWorks
-	 *
-	 * @return
-	 */
-	public PaymentWorksNewVendorDetailDTO getVendorDetailFromPaymentWorks(String newVendorRequestId);
+    /**
+     * Retrieves a single vendor detail record from PaymentWorks
+     *
+     * @return
+     */
+    public PaymentWorksNewVendorDetailDTO getVendorDetailFromPaymentWorks(String newVendorRequestId);
 
-	/**
-	 * Uploads supplier csv created from input DTO to PaymentWorks
-	 *
-	 * @return
-	 */
-	public boolean uploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO);
+    /**
+     * Uploads supplier csv created from input DTO to PaymentWorks
+     *
+     * @return
+     */
+    public boolean uploadSuppliers(List<PaymentWorksSupplierUploadDTO> paymentWorksSupplierUploadDTO);
 
-	/**
-	 * Updates new vendor request status (processed or rejected) in PaymentWorks
-	 */
-	public void updateNewVendorStatusInPaymentWorks(List<PaymentWorksNewVendorUpdateVendorStatus> paymentWorksUpdateNewVendorStatus);
+    /**
+     * Updates new vendor request status (processed or rejected) in PaymentWorks
+     */
+    public void updateNewVendorStatusInPaymentWorks(List<PaymentWorksNewVendorUpdateVendorStatus> paymentWorksUpdateNewVendorStatus);
 
-	/**
-	 * Updates new vendor update status (processed or rejected) in PaymentWorks
-	 */
-	public void updateNewVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
-	
-	/**
-	 * Updates existing vendor update status (processed or rejected) in PaymentWorks
-	 */
-	public void updateExistingVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
+    /**
+     * Updates new vendor update status (processed or rejected) in PaymentWorks
+     */
+    public void updateNewVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
+
+    /**
+     * Updates existing vendor update status (processed or rejected) in
+     * PaymentWorks
+     */
+    public void updateExistingVendorUpdatesStatusInPaymentWorks(List<PaymentWorksUpdateVendorStatus> paymentWorksUpdateVendorStatus);
 
 }

@@ -20,41 +20,41 @@ package edu.cornell.kfs.paymentworks.batch.report;
 
 public class NewVendorSummaryLine {
 
-	private String vendorRequestId;
-	private String vendorName;
-	private String documentNumber;
-	private String errorMessage;
+    private String vendorRequestId;
+    private String vendorName;
+    private String documentNumber;
+    private String errorMessage;
 
-	public String getVendorRequestId() {
-		return vendorRequestId;
-	}
+    public String getVendorRequestId() {
+        return vendorRequestId;
+    }
 
-	public void setVendorRequestId(String vendorRequestId) {
-		this.vendorRequestId = vendorRequestId;
-	}
+    public void setVendorRequestId(String vendorRequestId) {
+        this.vendorRequestId = vendorRequestId;
+    }
 
-	public String getVendorName() {
-		return vendorName;
-	}
+    public String getVendorName() {
+        return vendorName;
+    }
 
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
-	}
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
 
-	public String getDocumentNumber() {
-		return documentNumber;
-	}
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
 
-	public void setDocumentNumber(String documentNumber) {
-		this.documentNumber = documentNumber;
-	}
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
 }

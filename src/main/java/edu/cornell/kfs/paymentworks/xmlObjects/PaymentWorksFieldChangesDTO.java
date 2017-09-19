@@ -29,15 +29,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksFieldChangesDTO {
 
-	@XmlElement(name = "list-item")
-	private List<PaymentWorksFieldChangeDTO> field_changes;
+    @XmlElement(name = "list-item")
+    private List<PaymentWorksFieldChangeDTO> field_changes;
 
-	public List<PaymentWorksFieldChangeDTO> getField_changes() {
-		return field_changes;
-	}
+    public List<PaymentWorksFieldChangeDTO> getField_changes() {
+        return field_changes;
+    }
 
-	public void setField_changes(List<PaymentWorksFieldChangeDTO> field_changes) {
-		this.field_changes = field_changes;
-	}
+    public void setField_changes(List<PaymentWorksFieldChangeDTO> field_changes) {
+        this.field_changes = field_changes;
+    }
 
 }
