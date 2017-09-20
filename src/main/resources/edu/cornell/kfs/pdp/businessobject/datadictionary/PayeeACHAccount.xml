@@ -260,8 +260,8 @@
               <bean parent="FieldDefinition" p:attributeName="payeePrincipalName"/><!-- CU Customization: Added principal name. -->
               <bean parent="FieldDefinition" p:attributeName="achTransactionType"/>
               <bean parent="FieldDefinition" p:attributeName="active"/>
-			  <bean parent="FieldDefinition" p:attributeName="autoInactivationIndicator"/>
-			  <bean parent="FieldDefinition" p:attributeName="lastUpdatedTimestamp"/>
+              <bean parent="FieldDefinition" p:attributeName="autoInactivationIndicator"/>
+              <bean parent="FieldDefinition" p:attributeName="lastUpdatedTimestamp"/>
               <bean parent="FieldDefinition" p:attributeName="bankAccountTypeCode"/>
             </list>
           </property>
