@@ -96,5 +96,11 @@ public class LaborLedgerEnterpriseFeedServiceImplTest extends TestCase {
         public void clearCache() {
 
         }
+
+        @Override
+        public Date getAccountingPeriodReversalDateByType(
+                String avTypeCode, String selectedPostingPeriodCode, Integer selectedPostingYear, Date documentCreateDate) {
+            return null;
+        }
     }
 }

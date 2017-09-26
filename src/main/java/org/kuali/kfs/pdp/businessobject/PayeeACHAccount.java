@@ -18,15 +18,19 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
-import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -39,11 +43,7 @@ import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.krad.bo.BusinessObject;
 
-import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-public class PayeeACHAccount extends TimestampedBusinessObjectBase implements MutableInactivatable {
+public class PayeeACHAccount extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private KualiInteger achAccountGeneratedIdentifier;
     private String bankRoutingNumber;
@@ -57,14 +57,10 @@ public class PayeeACHAccount extends TimestampedBusinessObjectBase implements Mu
     private boolean active;
     private boolean autoInactivationIndicator;
 
-
     private ACHBank bankRouting;
     private ACHTransactionType transactionType;
     private ACHPayee achPayee;
 
-    /**
-     * Default constructor.
-     */
     public PayeeACHAccount() {
 
     }

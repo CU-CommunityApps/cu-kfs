@@ -18,9 +18,19 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import com.rsmart.kuali.kfs.cr.CRConstants;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KeyValuesService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -32,7 +42,6 @@ import org.kuali.kfs.pdp.service.AchService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.businessobject.TimestampedBusinessObjectBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -41,20 +50,12 @@ import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.rsmart.kuali.kfs.cr.CRConstants;
 
 /**
  * This class represents the PaymentGroup
  */
-public class PaymentGroup extends TimestampedBusinessObjectBase {
+public class PaymentGroup extends PersistableBusinessObjectBase {
 	private static final long serialVersionUID = 1L;
 
 	protected static KualiDecimal zero = KualiDecimal.ZERO;
@@ -1263,28 +1264,26 @@ public class PaymentGroup extends TimestampedBusinessObjectBase {
     @Override
     public void prePersist() {
         super.prePersist();
-        Timestamp lastUpdateTemp = this.getLastUpdate();
+        Timestamp lastUpdateTemp = this.getLastUpdatedTimestamp();
 
         if (ObjectUtils.isNull(lastUpdateTemp)) {
-            this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
+            this.setLastUpdatedTimestamp(new Timestamp(new java.util.Date().getTime()));
         } else {
-            this.setLastUpdate(lastUpdateTemp);
+            this.setLastUpdatedTimestamp(lastUpdateTemp);
         }
-        this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 
 
     @Override
     public void preUpdate() {
         super.preUpdate();
-        Timestamp lastUpdateTemp = this.getLastUpdate();
+        Timestamp lastUpdateTemp = this.getLastUpdatedTimestamp();
 
         if (ObjectUtils.isNull(lastUpdateTemp)) {
-            this.setLastUpdate(new Timestamp(new java.util.Date().getTime()));
+            this.setLastUpdatedTimestamp(new Timestamp(new java.util.Date().getTime()));
         } else {
-            this.setLastUpdate(lastUpdateTemp);
+            this.setLastUpdatedTimestamp(lastUpdateTemp);
         }
-        this.setLastUpdateUserId(GlobalVariables.getUserSession().getPerson().getPrincipalName());
     }
 
 }

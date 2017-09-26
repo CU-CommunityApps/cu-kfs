@@ -1073,7 +1073,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                 KualiCode code = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, defaultStatus);
                 if (paymentGroup.getPaymentStatus() != ((PaymentStatus) code)) {
                     paymentGroup.setPaymentStatus((PaymentStatus) code);
-                    paymentGroup.setLastUpdate(new Timestamp(cr.getStatusChangeDate().getTime()));
+                    paymentGroup.setLastUpdatedTimestamp(new Timestamp(cr.getStatusChangeDate().getTime()));
                 }
                 
                 // Update PDP if the check status is cleared from the bank file
