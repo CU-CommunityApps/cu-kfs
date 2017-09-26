@@ -78,8 +78,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
         payeeAchAccount.setBankAccountTypeCode(PdpConstants.ACH_TRANSACTION_TYPE_DEFAULT);
         payeeAchAccount.setAchTransactionType(PdpConstants.DisbursementTypeCodes.ACH);
         payeeAchAccount.setActive(true);
-        payeeAchAccount.setLastUpdateUserId(PaymentWorksConstants.SOURCE_USER);
-        payeeAchAccount.setLastUpdate(getDateTimeService().getCurrentTimestamp());
+        payeeAchAccount.setLastUpdatedTimestamp(getDateTimeService().getCurrentTimestamp());
         return payeeAchAccount;
     }
 
@@ -103,8 +102,7 @@ public class PaymentWorksAchServiceImpl implements PaymentWorksAchService {
         payeeAchAccount.setVersionNumber(null);
         payeeAchAccount.setAchAccountGeneratedIdentifier(null);
         payeeAchAccount.setActive(true);
-        payeeAchAccount.setLastUpdateUserId(PaymentWorksConstants.SOURCE_USER);
-        payeeAchAccount.setLastUpdate(getDateTimeService().getCurrentTimestamp());
+        payeeAchAccount.setLastUpdatedTimestamp(getDateTimeService().getCurrentTimestamp());
         return payeeAchAccount;
     }
 

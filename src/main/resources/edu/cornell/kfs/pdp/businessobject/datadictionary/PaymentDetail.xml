@@ -16,38 +16,12 @@
 -->
 
   <bean id="PaymentDetail" parent="PaymentDetail-parentBean">
-  		
   		<property name="lookupDefinition">
       		<ref bean="PaymentDetail-lookupDefinition"/>
     	</property>
-    	<property name="attributes">
-  		<list merge="true">
-  				<ref bean="PaymentDetail-paymentGroupLastUpdateForLookup"/>   <!-- KFSUPGRADE-605 added -->
-  		</list>
-  </property>
   </bean>
   
-  <!-- CU Customization (KFSUPGRADE-605) -->
-  
-  <bean id="PaymentDetail-paymentGroup.lastUpdate" parent="PaymentDetail-paymentGroup.lastUpdate-parentBean"/>
-
-  <bean id="PaymentDetail-paymentGroup.lastUpdate-parentBean" abstract="true" parent="PaymentGroup-lastUpdate">
-    <property name="name" value="paymentGroup.lastUpdate"/>
-    <property name="label" value="Status Last Updated"/>
-  </bean>
-  
-  <bean id="PaymentDetail-paymentGroupLastUpdateForLookup" parent="PaymentDetail-paymentGroupLastUpdateForLookup-parentBean"/>
-
-  <bean id="PaymentDetail-paymentGroupLastUpdateForLookup-parentBean" abstract="true" parent="PaymentGroup-lastUpdate">
-    <property name="name" value="paymentGroupLastUpdateForLookup"/>
-    <property name="label" value="Status Last Updated"/>
-    <property name="formatterClass" value="org.kuali.rice.core.web.format.DateFormatter"/>
-  </bean>
-  
-  <!-- End CU Customization -->
-  
-  
- <bean parent="DataDictionaryBeanOverride">
+  <bean parent="DataDictionaryBeanOverride">
        <property name="beanName" value="PaymentDetail-lookupDefinition" />
        <property name="fieldOverrides">
            <list>
@@ -55,19 +29,19 @@
                    <property name="propertyName" value="lookupFields" />
                    <property name="propertyNameForElementCompare" value="attributeName" />
                    <property name="element">
-                       <bean parent="FieldDefinition" p:attributeName="paymentGroup.paymentStatusCodeWithHistory" />
+                       <bean parent="FieldDefinition" p:attributeName="paymentGroup.paymentStatusCode" />
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean parent="FieldDefinition" p:attributeName="paymentGroupLastUpdateForLookup" />
+                           <bean parent="FieldDefinition" p:attributeName="paymentGroup.lastUpdatedTimestamp" />
                        </list>
                    </property>
                </bean>
            </list>
        </property>
-   </bean>
+  </bean>
    
-      <bean parent="DataDictionaryBeanOverride">
+  <bean parent="DataDictionaryBeanOverride">
        <property name="beanName" value="PaymentDetail-lookupDefinition" />
        <property name="fieldOverrides">
            <list>
@@ -79,12 +53,12 @@
                    </property>
                    <property name="insertBefore">
                        <list>
-                           <bean parent="FieldDefinition" p:attributeName="paymentGroupLastUpdateForLookup" />
+                           <bean parent="FieldDefinition" p:attributeName="paymentGroup.lastUpdatedTimestamp" />
                        </list>
                    </property>
                </bean>
            </list>
        </property>
-   </bean>
+  </bean>
    
 </beans>

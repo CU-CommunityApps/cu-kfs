@@ -193,9 +193,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected RecurringPaymentFrequency recurringPaymentFrequency;
     protected ContractManager contractManager;
 
-    /**
-     * Default constructor.
-     */
     public PurchaseOrderDocument() {
         super();
         this.purchaseOrderVendorStipulations = new ArrayList<PurchaseOrderVendorStipulation>();
@@ -417,7 +414,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
 
     /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#customPrepareForSave()
+     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#customPrepareForSave(KualiDocumentEvent)
      */
     @Override
     public void customPrepareForSave(KualiDocumentEvent event) {
@@ -685,7 +682,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
 
     /**
-     * @see org.kuali.kfs.sys.document.GeneralLedgerPostingDocumentBase#doRouteStatusChange()
+     * @see org.kuali.kfs.sys.document.GeneralLedgerPostingDocumentBase#doRouteStatusChange(DocumentRouteStatusChange)
      */
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
@@ -781,7 +778,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * Sends FYI workflow request to the given user on this document.
      *
      * @param workflowDocument the associated workflow document.
-     * @param userNetworkId the network ID of the user to be sent to.
+     * @param routePrincipalId the network ID of the user to be sent to.
      * @param annotation the annotation notes contained in this document.
      * @param responsibility the responsibility specified in the request.
      * @throws WorkflowException
@@ -821,39 +818,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
         LOG.debug("handleRouteLevelChange() started");
         super.doRouteLevelChange(levelChangeEvent);
-
-        /*LOG.debug("handleRouteLevelChange() started");
-        String newNodeName = levelChangeEvent.getNewNodeName();
-        if (StringUtils.isNotBlank(newNodeName)) {
-            ReportCriteriaDTO reportCriteriaDTO = new ReportCriteriaDTO(Long.valueOf(getDocumentNumber()));
-            reportCriteriaDTO.setTargetNodeName(newNodeName);
-            try {
-                String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(getDocumentHeader().getWorkflowDocument());
-                String disapprovalStatus = PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
-
-                //NodeDetails newNodeDetails = NodeDetailEnum.getNodeDetailEnumByName(newNodeName);
-                if (ObjectUtils.isNotNull(newNodeDetails)) {
-                    String newStatusCode = newNodeDetails.getAwaitingStatusCode();
-                    if (StringUtils.isNotBlank(newStatusCode)) {
-                        if (SpringContext.getBean(KualiWorkflowInfo.class).documentWillHaveAtLeastOneActionRequest(reportCriteriaDTO, new String[] { KewApiConstants.ACTION_REQUEST_APPROVE_REQ, KewApiConstants.ACTION_REQUEST_COMPLETE_REQ }, false)) {
-                            // if an approve or complete request will be created then we need to set the status as awaiting for
-                            // the new node
-                            SpringContext.getBean(PurapService.class).updateStatus(this, newStatusCode);
-                            setApplicationDocumentStatus(PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(newStatusCode));
-                            SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
-                        }
-                    }
-                }
-            }
-            catch (WorkflowException e) {
-                String errorMsg = "Workflow Error found checking actions requests on document with id " + getDocumentNumber() + ". *** WILL NOT UPDATE PURAP STATUS ***";
-                LOG.warn(errorMsg, e);
-            }
-        }*/
         }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#doActionTaken(org.kuali.rice.kew.clientapp.vo.ActionTakenEventDTO)
+     * @see org.kuali.kfs.krad.document.DocumentBase#doActionTaken(ActionTakenEvent)
      */
     @Override
     public void doActionTaken(ActionTakenEvent event) {
@@ -1255,7 +1223,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     /**
      * Sets the alternateVendorNumber attribute value.
      *
-     * @param alternateVendorNumber The vendorNumber to set.
+     * @param vendorNumber The vendorNumber to set.
      */
     public void setAlternateVendorNumber(String vendorNumber) {
         if (!StringUtils.isEmpty(vendorNumber)) {
@@ -1634,7 +1602,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * Validates whether we can indeed close the PO. Return false and give error if
      * the outstanding encumbrance amount of the trade in item is less than 0.
      *
-     * @param po
      * @return
      */
     public boolean canClosePOForTradeIn () {

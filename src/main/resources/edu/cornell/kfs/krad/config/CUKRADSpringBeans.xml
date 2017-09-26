@@ -67,6 +67,4 @@
         </property>
     </bean>
 
-    <bean id="cf.documentDao" parent="documentDaoOjb" class="edu.cornell.kfs.krad.dao.impl.CuDocumentDaoOjb"/>
-
 </beans>
