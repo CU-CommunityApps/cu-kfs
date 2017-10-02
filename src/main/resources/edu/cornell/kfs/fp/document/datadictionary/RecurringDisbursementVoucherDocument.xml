@@ -55,6 +55,7 @@
 				<ref bean="DisbursementVoucherDocument-disbVchrPdpBankCode" />
 				<ref bean="DisbursementVoucherDocument-disbExcptAttachedIndicator" />
 				<ref bean="DisbursementVoucherDocument-immediatePaymentIndicator" />
+				<ref bean="DisbursementVoucherDocument-achSignUpStatusFlag"/>
 				<ref bean="RecurringDisbursementVoucherDocument-paymentCancelReason" />
 			</list>
 		</property>
