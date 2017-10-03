@@ -50,6 +50,13 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     public static final String DV_EXTRACT_SUB_UNIT_CODE = "DV";
     public static final String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
     
+    private static final String PAYER_NAME = "Cornell University";
+    private static final String PAYER_ADDRESS_LINE1 = "Procurement and Payment Services";
+    private static final String PAYER_ADDRESS_LINE2 = "395 Pine Tree Rd Suite 330";
+    private static final String PAYER_CITY = "Ithaca";
+    private static final String PAYER_STATE = "NY";
+    private static final String PAYER_ZIP_CODE = "148502826";
+
     private static final  Logger LOG = org.apache.log4j.Logger.getLogger(CuExtractPaymentServiceImpl.class);
     
     protected AchBundlerHelperService achBundlerHelperService;
@@ -797,18 +804,18 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     "PR" + cDelim +                                     // Name qualifier - 3 bytes (PR = Payer)
                                     cDelim +                                            // ID code qualifier - 2 bytes
                                     cDelim +                                            // ID code - 80 bytes
-                                    "Cornell University" + cDelim +                     // Name - 35 bytes
+                                    PAYER_NAME + cDelim +                               // Name - 35 bytes
                                     cDelim +                                            // Additional name 1 - 60 bytes
                                     cDelim +                                            // Additional name 2 - 60 bytes
-                                    "Division of Financial Affairs" + cDelim +          // Address line 1 - 35 bytes
-                                    "341 Pine Tree Road" + cDelim +                     // Address line 2 - 35 bytes
+                                    PAYER_ADDRESS_LINE1 + cDelim +                      // Address line 1 - 35 bytes
+                                    PAYER_ADDRESS_LINE2 + cDelim +                      // Address line 2 - 35 bytes
                                     cDelim +                                            // Address line 3 - 35 bytes
                                     cDelim +                                            // Address line 4 - 35 bytes
                                     cDelim +                                            // Address line 5 - 35 bytes
                                     cDelim +                                            // Address line 6 - 35 bytes
-                                    "Ithaca" + cDelim +                                 // City - 30 bytes
-                                    "NY" + cDelim +                                     // State/Province - 2 bytes
-                                    "148502820" + cDelim +                              // Postal code - 15 bytes
+                                    PAYER_CITY + cDelim +                               // City - 30 bytes
+                                    PAYER_STATE + cDelim +                              // State/Province - 2 bytes
+                                    PAYER_ZIP_CODE + cDelim +                           // Postal code - 15 bytes
                                     cDelim +                                            // Country code - 3 bytes
                                     cDelim +                                            // Country name - 30 bytes
                                     cDelim +                                            // Ref qualifier 1 - 3 bytes
@@ -1721,18 +1728,18 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                                     "PR" + cDelim +                                 // Name qualifier - 3 bytes
                                     cDelim +                                        // ID code qualifier - 2 bytes
                                     cDelim +                                        // ID code - 80 bytes
-                                    "Cornell University" + cDelim +                 // Name - 60 bytes
+                                    PAYER_NAME + cDelim +                           // Name - 60 bytes
                                     cDelim +                                        // Additional name 1 - 60 bytes
                                     cDelim +                                        // Additional name 2 - 60 bytes
-                                    "Division of Financial Affairs" + cDelim +      // Address line 1 - 55 bytes
-                                    "341 Pine Tree Road" + cDelim +                 // Address line 2 - 55 bytes
+                                    PAYER_ADDRESS_LINE1 + cDelim +                  // Address line 1 - 55 bytes
+                                    PAYER_ADDRESS_LINE2 + cDelim +                  // Address line 2 - 55 bytes
                                     cDelim +                                        // Address line 3 - 55 bytes
                                     cDelim +                                        // Address line 4 - 55 bytes
                                     cDelim +                                        // Address line 5 - 55 bytes
                                     cDelim +                                        // Address line 6 - 55 bytes
-                                    "Ithaca" + cDelim +                             // City - 30 bytes
-                                    "NY" + cDelim +                                 // State/Province - 2 bytes
-                                    "148502820" + cDelim +                          // Postal code - 15 bytes
+                                    PAYER_CITY + cDelim +                           // City - 30 bytes
+                                    PAYER_STATE + cDelim +                          // State/Province - 2 bytes
+                                    PAYER_ZIP_CODE + cDelim +                       // Postal code - 15 bytes
                                     cDelim +                                        // Country code - 3 bytes
                                     cDelim +                                        // Country name - 30 bytes
                                     cDelim +                                        // Ref qualifier 1 - 3 bytes
