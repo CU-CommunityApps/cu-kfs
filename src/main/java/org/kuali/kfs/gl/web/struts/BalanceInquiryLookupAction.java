@@ -127,17 +127,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
             throw new RuntimeException("Lookupable is null.");
         }
 
-        Collection displayList = new ArrayList();
-        CollectionIncomplete incompleteDisplayList;
-        List<ResultRow> resultTable = new ArrayList<ResultRow>();
-        Long totalSize;
-        boolean bounded = true;
-
         lookupable.validateSearchParameters(lookupForm.getFields());
-
-        displayList = performMultipleValueLookup(lookupForm, resultTable, getMaxRowsPerPage(lookupForm), bounded);
-        incompleteDisplayList = (CollectionIncomplete) displayList;
-        totalSize = incompleteDisplayList.getActualSizeIfTruncated();
 
         if (lookupable.isSearchUsingOnlyPrimaryKeyValues()) {
             lookupForm.setSearchUsingOnlyPrimaryKeyValues(true);
@@ -174,10 +164,12 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
                 GlobalVariables.getUserSession().addObject(TOTALS_TABLE_KEY, totalsTable);
             }
             catch (NumberFormatException e) {
-                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, KFSKeyConstants.ERROR_CUSTOM, new String[] { "Fiscal Year must be a four-digit number" });
-            }
-            catch (Exception e) {
-                GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, KFSKeyConstants.ERROR_CUSTOM, new String[] { "Please report the server error." });
+                GlobalVariables.getMessageMap()
+                        .putError(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, KFSKeyConstants.ERROR_CUSTOM,
+                                new String[]{"Fiscal Year must be a four-digit number"});           
+            } catch (Exception e) {
+                GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, KFSKeyConstants.ERROR_CUSTOM,
+                        new String[]{"Please report the server error."});
                 LOG.error("Application Errors", e);
             }
         }
