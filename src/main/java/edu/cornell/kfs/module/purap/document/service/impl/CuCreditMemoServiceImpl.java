@@ -44,87 +44,9 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuCreditMemoServiceImpl.class);
-    private AccountsPayableService accountsPayableService;
-    private CreditMemoDao creditMemoDao;
-    private DataDictionaryService dataDictionaryService;
-    private DocumentService documentService;
-    private ConfigurationService kualiConfigurationService;
-    private NoteService noteService;
-    private PaymentRequestService paymentRequestService;
-    private PurapAccountingService purapAccountingService;
-    private PurapGeneralLedgerService purapGeneralLedgerService;
-    private PurapService purapService;
-    private PurchaseOrderService purchaseOrderService;
-    private VendorService vendorService;
-    private WorkflowDocumentService workflowDocumentService;
+
     // KFSPTS-1891
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
-
-
-    public void setAccountsPayableService(AccountsPayableService accountsPayableService) {
-        this.accountsPayableService = accountsPayableService;
-        super.setAccountsPayableService(accountsPayableService);
-    }
-
-    public void setCreditMemoDao(CreditMemoDao creditMemoDao) {
-        this.creditMemoDao = creditMemoDao;
-        super.setCreditMemoDao(creditMemoDao);
-    }
-
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
-        super.setDataDictionaryService(dataDictionaryService);
-    }
-
-    public void setDocumentService(DocumentService documentService) {
-        this.documentService = documentService;
-        super.setDocumentService(documentService);
-    }
-
-    public void setConfigurationService(ConfigurationService kualiConfigurationService) {
-        this.kualiConfigurationService = kualiConfigurationService;
-        super.setConfigurationService(kualiConfigurationService);
-    }
-
-    public void setNoteService(NoteService noteService) {
-        this.noteService = noteService;
-        super.setNoteService(noteService);
-    }
-
-    public void setPaymentRequestService(PaymentRequestService paymentRequestService) {
-        this.paymentRequestService = paymentRequestService;
-        super.setPaymentRequestService(paymentRequestService);
-    }
-
-    public void setPurapAccountingService(PurapAccountingService purapAccountingService) {
-        this.purapAccountingService = purapAccountingService;
-        super.setPurapAccountingService(purapAccountingService);
-    }
-
-    public void setPurapGeneralLedgerService(PurapGeneralLedgerService purapGeneralLedgerService) {
-        this.purapGeneralLedgerService = purapGeneralLedgerService;
-        super.setPurapGeneralLedgerService(purapGeneralLedgerService);
-    }
-
-    public void setPurapService(PurapService purapService) {
-        this.purapService = purapService;
-        super.setPurapService(purapService);
-    }
-
-    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
-        this.purchaseOrderService = purchaseOrderService;
-        super.setPurchaseOrderService(purchaseOrderService);
-    }
-
-    public void setVendorService(VendorService vendorService) {
-        this.vendorService = vendorService;
-        super.setVendorService(vendorService);
-    }
-
-    public void setWorkflowDocumentService(WorkflowDocumentService workflowDocumentService){
-        this.workflowDocumentService = workflowDocumentService;
-        super.setWorkflowDocumentService(workflowDocumentService);
-    }
 
     @Override
     public VendorCreditMemoDocument addHoldOnCreditMemo(VendorCreditMemoDocument cmDocument, String note) throws Exception {

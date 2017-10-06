@@ -85,7 +85,7 @@ public class CuElectronicInvoiceOrderHolder extends ElectronicInvoiceOrderHolder
         if (items != null){
             for (int i = 0; i < items.size(); i++) {
             	CuElectronicInvoiceItemHolder itemHolder = items.get(i);
-                if (itemHolder.getInvoiceItemLineNumber().intValue() == lineNumber){
+            	if (itemHolder.getInvoiceItemLineNumber() != null && itemHolder.getInvoiceItemLineNumber().intValue() == lineNumber) {
                     return itemHolder;
                 }
             }
