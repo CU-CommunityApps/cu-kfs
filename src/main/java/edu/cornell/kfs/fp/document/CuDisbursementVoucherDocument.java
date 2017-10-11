@@ -165,7 +165,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
 
-
         if (ObjectUtils.isNotNull(vendorAddress) && ObjectUtils.isNotNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
             this.getDvPayeeDetail().setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
             this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(vendorAddress.getVendorLine1Address());
@@ -185,7 +184,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         }
 
         this.getDvPayeeDetail().setDisbVchrAlienPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
-        this.getDvPayeeDetail().setDvPayeeSubjectPaymentCode(VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
+        this.getDvPayeeDetail().setDvPayeeSubjectPaymentCode(
+                VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
         this.getDvPayeeDetail().setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService()
                 .isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
 
