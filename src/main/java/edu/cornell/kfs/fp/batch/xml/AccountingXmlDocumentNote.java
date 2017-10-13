@@ -18,6 +18,14 @@ public class AccountingXmlDocumentNote {
     @XmlElement(name = "Description", namespace = StringUtils.EMPTY, required = true)
     protected String description;
 
+    public AccountingXmlDocumentNote() {
+        
+    }
+
+    public AccountingXmlDocumentNote(String description) {
+        setDescription(description);
+    }
+
     public String getDescription() {
         return description;
     }

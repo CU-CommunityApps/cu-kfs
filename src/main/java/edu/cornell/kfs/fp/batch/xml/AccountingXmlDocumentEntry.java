@@ -59,7 +59,7 @@ public class AccountingXmlDocumentEntry {
     @XmlElement(name = "Note", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentNote> notes;
 
-    @XmlElementWrapper(name = "AdHocRecipientList", namespace = StringUtils.EMPTY, required = false)
+    @XmlElementWrapper(name = "AdhocRecipientList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Recipient", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentAdHocRecipient> adHocRecipients;
 

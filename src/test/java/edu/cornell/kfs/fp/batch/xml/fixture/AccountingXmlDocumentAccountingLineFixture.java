@@ -1,11 +1,20 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
+import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
+
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 
 public enum AccountingXmlDocumentAccountingLineFixture {
-    TEST_ACCOUNT1(null, null, null, null, null, null, null, null, 0);
+    ACCT_R504700_OBJ_2640_AMOUNT_100("IT", "R504700", null, "2640", null, null, null, null, 100.00),
+    ACCT_1000718_OBJ_4000_AMOUNT_50("IT", "1000718", null, "4000", null, null, null, null, 50.00),
+    ACCT_R504706_OBJ_2640_AMOUNT_100("IT", "R504706", null, "2640", null, null, null, null, 100.00),
+    ACCT_1000710_OBJ_4000_AMOUNT_50("IT", "1000710", null, "4000", null, null, null, null, 50.00),
+    ACCT_R504700_OBJ_2640_AMOUNT_1000(ACCT_R504700_OBJ_2640_AMOUNT_100, 1000.00),
+    ACCT_1000718_OBJ_4000_AMOUNT_500(ACCT_1000718_OBJ_4000_AMOUNT_50, 500.00),
+    ACCT_R504706_OBJ_2640_AMOUNT_1000(ACCT_R504706_OBJ_2640_AMOUNT_100, 1000.00),
+    ACCT_1000710_OBJ_4000_AMOUNT_500(ACCT_1000710_OBJ_4000_AMOUNT_50, 500.00);
 
     public final String chartCode;
     public final String accountNumber;
@@ -17,17 +26,24 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     public final String lineDescription;
     public final KualiDecimal amount;
 
+    private AccountingXmlDocumentAccountingLineFixture(
+            AccountingXmlDocumentAccountingLineFixture baseFixture, double newAmount) {
+        this(baseFixture.chartCode, baseFixture.accountNumber, baseFixture.subAccountNumber,
+                baseFixture.objectCode, baseFixture.subObjectCode, baseFixture.projectCode, baseFixture.orgRefId,
+                baseFixture.lineDescription, newAmount);
+    }
+
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
             String lineDescription, double amount) {
         this.chartCode = chartCode;
         this.accountNumber = accountNumber;
-        this.subAccountNumber = subAccountNumber;
+        this.subAccountNumber = defaultToEmptyStringIfBlank(subAccountNumber);
         this.objectCode = objectCode;
-        this.subObjectCode = subObjectCode;
-        this.projectCode = projectCode;
-        this.orgRefId = orgRefId;
-        this.lineDescription = lineDescription;
+        this.subObjectCode = defaultToEmptyStringIfBlank(subObjectCode);
+        this.projectCode = defaultToEmptyStringIfBlank(projectCode);
+        this.orgRefId = defaultToEmptyStringIfBlank(orgRefId);
+        this.lineDescription = defaultToEmptyStringIfBlank(lineDescription);
         this.amount = new KualiDecimal(amount);
     }
 

@@ -7,15 +7,21 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+
 public class AccountingXmlDocumentFixtureUtils {
+
+    public static String defaultToEmptyStringIfBlank(String value) {
+        return StringUtils.defaultIfBlank(value, StringUtils.EMPTY);
+    }
 
     public static <T> List<T> toImmutableList(T[] values) {
         return Collections.unmodifiableList(Arrays.asList(values));
     }
 
-    public static <E extends Enum<E>, T> List<T> convertToPojoList(List<E> fixtures, Function<E, T> fixtureToPojoConverter) {
-        return fixtures.stream()
-                .map(fixtureToPojoConverter)
+    public static <T, U> List<U> convertToPojoList(List<T> testObjects, Function<T, U> testObjectToPojoConverter) {
+        return testObjects.stream()
+                .map(testObjectToPojoConverter)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

@@ -8,7 +8,11 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum AccountingXmlDocumentListWrapperFixture {
-    TEST_WRAPPER1("01/01/2017", null, null, null);
+    MULTI_DI_DOCUMENT_TEST("09/28/2017", "abc123@cornell.edu", "Example XML file",
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC2,
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3));
 
     public final DateTime createDate;
     public final String reportEmail;
@@ -31,6 +35,11 @@ public enum AccountingXmlDocumentListWrapperFixture {
         listWrapper.setDocuments(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(documents, AccountingXmlDocumentEntryFixture::toDocumentEntryPojo));
         return listWrapper;
+    }
+
+    // This method is only meant to improve the setup and readability of this enum's constants.
+    private static AccountingXmlDocumentEntryFixture[] documents(AccountingXmlDocumentEntryFixture... fixtures) {
+        return fixtures;
     }
 
 }

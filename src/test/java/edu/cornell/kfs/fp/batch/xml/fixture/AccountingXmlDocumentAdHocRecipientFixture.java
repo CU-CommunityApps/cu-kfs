@@ -3,7 +3,10 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAdHocRecipient;
 
 public enum AccountingXmlDocumentAdHocRecipientFixture {
-    TEST_RECIPIENT1(null, null);
+    JDH34_APPROVE("jdh34", "Approve"),
+    SE12_FYI("se12", "FYI"),
+    CCS1_COMPLETE("ccs1", "Complete"),
+    NKK4_ACKNOWLEDGE("nkk4", "Acknowledge");
 
     public final String netId;
     public final String actionRequested;
