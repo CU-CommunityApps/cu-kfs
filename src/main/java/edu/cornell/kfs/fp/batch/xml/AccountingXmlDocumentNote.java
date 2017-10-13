@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
     "description"
 })
 @XmlRootElement(name = "Note", namespace = StringUtils.EMPTY)
-public class AwsBillingDocumentNote {
+public class AccountingXmlDocumentNote {
 
     @XmlElement(name = "Description", namespace = StringUtils.EMPTY, required = true)
     protected String description;

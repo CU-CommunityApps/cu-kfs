@@ -26,7 +26,7 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
     "amount"
 })
 @XmlRootElement(name = "Accounting", namespace = StringUtils.EMPTY)
-public class AwsBillingAccountingLine {
+public class AccountingXmlDocumentAccountingLine {
 
     @XmlElement(name = "coa_cd", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

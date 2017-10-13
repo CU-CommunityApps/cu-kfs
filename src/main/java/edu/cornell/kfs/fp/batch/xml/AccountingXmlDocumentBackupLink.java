@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
     "description"
 })
 @XmlRootElement(name = "BackupLink", namespace = StringUtils.EMPTY)
-public class AwsBillingBackupLink {
+public class AccountingXmlDocumentBackupLink {
 
     @XmlElement(name = "Link", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -25,5 +25,21 @@ public class AwsBillingBackupLink {
     @XmlElement(name = "Description", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String description;
+
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

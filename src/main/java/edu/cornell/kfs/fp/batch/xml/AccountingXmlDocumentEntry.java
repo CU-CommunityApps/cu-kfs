@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
     "backupLinks"
 })
 @XmlRootElement(name = "Document", namespace = StringUtils.EMPTY)
-public class AwsBillingDocumentEntry {
+public class AccountingXmlDocumentEntry {
 
     @XmlElement(name = "Index", namespace = StringUtils.EMPTY, required = true)
     protected Long index;
@@ -49,23 +49,23 @@ public class AwsBillingDocumentEntry {
 
     @XmlElementWrapper(name = "AccountingListFrom", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
-    protected List<AwsBillingAccountingLine> sourceAccountingLines;
+    protected List<AccountingXmlDocumentAccountingLine> sourceAccountingLines;
 
     @XmlElementWrapper(name = "AccountingListTo", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
-    protected List<AwsBillingAccountingLine> targetAccountingLines;
+    protected List<AccountingXmlDocumentAccountingLine> targetAccountingLines;
 
     @XmlElementWrapper(name = "NoteList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Note", namespace = StringUtils.EMPTY, required = false)
-    protected List<AwsBillingDocumentNote> notes;
+    protected List<AccountingXmlDocumentNote> notes;
 
     @XmlElementWrapper(name = "AdHocRecipientList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Recipient", namespace = StringUtils.EMPTY, required = false)
-    protected List<AwsBillingAdHocRecipient> adHocRecipients;
+    protected List<AccountingXmlDocumentAdHocRecipient> adHocRecipients;
 
     @XmlElementWrapper(name = "BackupDocumentLinks", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "BackupLink", namespace = StringUtils.EMPTY, required = false)
-    protected List<AwsBillingBackupLink> backupLinks;
+    protected List<AccountingXmlDocumentBackupLink> backupLinks;
 
     public Long getIndex() {
         return index;
@@ -107,43 +107,43 @@ public class AwsBillingDocumentEntry {
         this.organizationDocumentNumber = organizationDocumentNumber;
     }
 
-    public List<AwsBillingAccountingLine> getSourceAccountingLines() {
+    public List<AccountingXmlDocumentAccountingLine> getSourceAccountingLines() {
         return sourceAccountingLines;
     }
 
-    public void setSourceAccountingLines(List<AwsBillingAccountingLine> sourceAccountingLines) {
+    public void setSourceAccountingLines(List<AccountingXmlDocumentAccountingLine> sourceAccountingLines) {
         this.sourceAccountingLines = sourceAccountingLines;
     }
 
-    public List<AwsBillingAccountingLine> getTargetAccountingLines() {
+    public List<AccountingXmlDocumentAccountingLine> getTargetAccountingLines() {
         return targetAccountingLines;
     }
 
-    public void setTargetAccountingLines(List<AwsBillingAccountingLine> targetAccountingLines) {
+    public void setTargetAccountingLines(List<AccountingXmlDocumentAccountingLine> targetAccountingLines) {
         this.targetAccountingLines = targetAccountingLines;
     }
 
-    public List<AwsBillingDocumentNote> getNotes() {
+    public List<AccountingXmlDocumentNote> getNotes() {
         return notes;
     }
 
-    public void setNotes(List<AwsBillingDocumentNote> notes) {
+    public void setNotes(List<AccountingXmlDocumentNote> notes) {
         this.notes = notes;
     }
 
-    public List<AwsBillingAdHocRecipient> getAdHocRecipients() {
+    public List<AccountingXmlDocumentAdHocRecipient> getAdHocRecipients() {
         return adHocRecipients;
     }
 
-    public void setAdHocRecipients(List<AwsBillingAdHocRecipient> adHocRecipients) {
+    public void setAdHocRecipients(List<AccountingXmlDocumentAdHocRecipient> adHocRecipients) {
         this.adHocRecipients = adHocRecipients;
     }
 
-    public List<AwsBillingBackupLink> getBackupLinks() {
+    public List<AccountingXmlDocumentBackupLink> getBackupLinks() {
         return backupLinks;
     }
 
-    public void setBackupLinks(List<AwsBillingBackupLink> backupLinks) {
+    public void setBackupLinks(List<AccountingXmlDocumentBackupLink> backupLinks) {
         this.backupLinks = backupLinks;
     }
 

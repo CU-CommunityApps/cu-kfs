@@ -24,7 +24,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
     "documents"
 })
 @XmlRootElement(name = "DocumentWrapper", namespace = StringUtils.EMPTY)
-public class AwsBillingDocumentListWrapper {
+public class AccountingXmlDocumentListWrapper {
 
     @XmlElement(name = "CreateDate", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
@@ -40,7 +40,7 @@ public class AwsBillingDocumentListWrapper {
 
     @XmlElementWrapper(name = "DocumentList", namespace = StringUtils.EMPTY, required = true)
     @XmlElement(name = "Document", namespace = StringUtils.EMPTY, required = true)
-    protected List<AwsBillingDocumentEntry> documents;
+    protected List<AccountingXmlDocumentEntry> documents;
 
     public Date getCreateDate() {
         return createDate;
@@ -66,11 +66,11 @@ public class AwsBillingDocumentListWrapper {
         this.overview = overview;
     }
 
-    public List<AwsBillingDocumentEntry> getDocuments() {
+    public List<AccountingXmlDocumentEntry> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<AwsBillingDocumentEntry> documents) {
+    public void setDocuments(List<AccountingXmlDocumentEntry> documents) {
         this.documents = documents;
     }
 

@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -19,12 +20,16 @@ public class StringToJavaDateAdapter extends XmlAdapter<String, Date> {
 
     @Override
     public Date unmarshal(String value) throws Exception {
-        return StringUtils.isNotBlank(value) ? DATE_FORMATTER.parseDateTime(value).toDate() : null;
+        return StringUtils.isNotBlank(value) ? parseToDateTime(value).toDate() : null;
     }
 
     @Override
     public String marshal(Date value) throws Exception {
         return (value != null) ? DATE_FORMATTER.print(value.getTime()) : null;
+    }
+
+    public static DateTime parseToDateTime(String value) {
+        return DateTime.parse(value, DATE_FORMATTER);
     }
 
 }

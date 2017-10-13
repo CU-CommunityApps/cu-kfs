@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
     "actionRequested"
 })
 @XmlRootElement(name = "Recipient", namespace = StringUtils.EMPTY)
-public class AwsBillingAdHocRecipient {
+public class AccountingXmlDocumentAdHocRecipient {
 
     @XmlElement(name = "Netid", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
