@@ -48,6 +48,68 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_500),
             notes(),
             adHocRecipients(),
+            backupLinks()),
+
+    SINGLE_DI_DOCUMENT_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50),
+            notes(
+                    "A fun testing note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+
+    DI_FULL_ACCOUNT_LINE_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504701_OBJ_2641_AMOUNT_100_04),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504707_OBJ_2643_AMOUNT_100_04),
+            notes(
+                    "A fun testing note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+
+    DI_SINGLE_ELEMENT_LISTS_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100),
+            notes(
+                    "A fun testing note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+
+    DI_EMPTY_ELEMENT_LISTS_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+            sourceAccountingLines(),
+            targetAccountingLines(),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+
+    DI_WITHOUT_ELEMENT_LISTS_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+            sourceAccountingLines(),
+            targetAccountingLines(),
+            notes(),
+            adHocRecipients(),
             backupLinks());
 
     public final Long index;

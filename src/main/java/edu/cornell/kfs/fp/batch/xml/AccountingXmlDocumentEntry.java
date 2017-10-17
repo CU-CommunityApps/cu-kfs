@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -66,6 +67,14 @@ public class AccountingXmlDocumentEntry {
     @XmlElementWrapper(name = "BackupDocumentLinks", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "BackupLink", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentBackupLink> backupLinks;
+
+    public AccountingXmlDocumentEntry() {
+        this.sourceAccountingLines = new ArrayList<>();
+        this.targetAccountingLines = new ArrayList<>();
+        this.notes = new ArrayList<>();
+        this.adHocRecipients = new ArrayList<>();
+        this.backupLinks = new ArrayList<>();
+    }
 
     public Long getIndex() {
         return index;

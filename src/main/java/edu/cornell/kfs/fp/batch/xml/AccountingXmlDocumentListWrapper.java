@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,6 +42,10 @@ public class AccountingXmlDocumentListWrapper {
     @XmlElementWrapper(name = "DocumentList", namespace = StringUtils.EMPTY, required = true)
     @XmlElement(name = "Document", namespace = StringUtils.EMPTY, required = true)
     protected List<AccountingXmlDocumentEntry> documents;
+
+    public AccountingXmlDocumentListWrapper() {
+        this.documents = new ArrayList<>();
+    }
 
     public Date getCreateDate() {
         return createDate;

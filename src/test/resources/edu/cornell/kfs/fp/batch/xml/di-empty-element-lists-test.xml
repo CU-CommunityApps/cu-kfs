@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DocumentWrapper>
+    <CreateDate>09/28/2017</CreateDate>
+    <ReportEmail>abc123@cornell.edu</ReportEmail>
+    <Overview>Example XML file</Overview>
+    <DocumentList>
+        <Document>
+            <Index>1</Index>
+            <DocumentType>DI</DocumentType>
+            <Description>Document Description</Description>
+            <Explanation>Document Explanation</Explanation>
+            <OrganizationDocumentNumber>Org doc number</OrganizationDocumentNumber>
+            <AccountingListFrom>
+            </AccountingListFrom>
+            <AccountingListTo>
+            </AccountingListTo>
+            <NoteList>
+            </NoteList>
+            <AdhocRecipientList>
+            </AdhocRecipientList>
+            <BackupDocumentLinks>
+            </BackupDocumentLinks>
+        </Document>
+    </DocumentList>
+</DocumentWrapper>

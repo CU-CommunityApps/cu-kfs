@@ -8,28 +8,61 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum AccountingXmlDocumentListWrapperFixture {
-    MULTI_DI_DOCUMENT_TEST("09/28/2017", "abc123@cornell.edu", "Example XML file",
+    BASE_WRAPPER("09/28/2017", "abc123@cornell.edu", "Example XML file", documents()),
+
+    MULTI_DI_DOCUMENT_TEST(
+            BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC2,
-                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3));
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3)),
+    SINGLE_DI_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_DI_DOCUMENT_TEST_DOC1)),
+    DI_FULL_ACCOUNT_LINE_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.DI_FULL_ACCOUNT_LINE_TEST_DOC1)),
+    DI_SINGLE_ELEMENT_LISTS_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.DI_SINGLE_ELEMENT_LISTS_TEST_DOC1)),
+    DI_EMPTY_ELEMENT_LISTS_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.DI_EMPTY_ELEMENT_LISTS_TEST_DOC1)),
+    DI_WITHOUT_ELEMENT_LISTS_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.DI_WITHOUT_ELEMENT_LISTS_TEST_DOC1)),
+    EMPTY_DOCUMENT_LIST_TEST(
+            BASE_WRAPPER, documents()),
+    NO_DOCUMENT_LIST_TEST(
+            BASE_WRAPPER, documents());
 
-    public final DateTime createDate;
+    public final String createDate;
     public final String reportEmail;
     public final String overview;
     public final List<AccountingXmlDocumentEntryFixture> documents;
 
+    private AccountingXmlDocumentListWrapperFixture(
+            AccountingXmlDocumentListWrapperFixture baseFixture, AccountingXmlDocumentEntryFixture[] documents) {
+        this(baseFixture.createDate, baseFixture.reportEmail, baseFixture.overview, documents);
+    }
+
     private AccountingXmlDocumentListWrapperFixture(String createDate, String reportEmail,
             String overview, AccountingXmlDocumentEntryFixture[] documents) {
-        this.createDate = StringToJavaDateAdapter.parseToDateTime(createDate);
+        this.createDate = createDate;
         this.reportEmail = reportEmail;
         this.overview = overview;
         this.documents = AccountingXmlDocumentFixtureUtils.toImmutableList(documents);
     }
 
     public AccountingXmlDocumentListWrapper toDocumentListWrapperPojo() {
+        DateTime parsedCreateDate = StringToJavaDateAdapter.parseToDateTime(createDate);
         AccountingXmlDocumentListWrapper listWrapper = new AccountingXmlDocumentListWrapper();
-        listWrapper.setCreateDate(createDate.toDate());
+        listWrapper.setCreateDate(parsedCreateDate.toDate());
         listWrapper.setReportEmail(reportEmail);
         listWrapper.setOverview(overview);
         listWrapper.setDocuments(

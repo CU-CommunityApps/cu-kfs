@@ -1,13 +1,11 @@
 package edu.cornell.kfs.fp.batch.xml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,6 +28,48 @@ public class AccountingXmlDocumentPojoTest {
     public void testLoadMultipleDIsFromSameFile() throws Exception {
         assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_TEST, "multi-di-document-test.xml");
+    }
+
+    @Test
+    public void testLoadSingleDIFromFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST, "single-di-document-test.xml");
+    }
+
+    @Test
+    public void testLoadDIWithFullyFilledAccountingLines() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.DI_FULL_ACCOUNT_LINE_TEST, "di-full-account-line-test.xml");
+    }
+
+    @Test
+    public void testLoadDIWithSingletonElementLists() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.DI_SINGLE_ELEMENT_LISTS_TEST, "di-single-element-lists-test.xml");
+    }
+
+    @Test
+    public void testLoadDIWithEmptyElementLists() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.DI_EMPTY_ELEMENT_LISTS_TEST, "di-empty-element-lists-test.xml");
+    }
+
+    @Test
+    public void testLoadDIWithoutAnyElementLists() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.DI_WITHOUT_ELEMENT_LISTS_TEST, "di-without-element-lists-test.xml");
+    }
+
+    @Test
+    public void testLoadXmlWithEmptyDocumentList() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_LIST_TEST, "empty-document-list-test.xml");
+    }
+
+    @Test
+    public void testLoadXmlWithoutAnyDocumentList() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.NO_DOCUMENT_LIST_TEST, "no-document-list-test.xml");
     }
 
     private void assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
@@ -75,13 +115,9 @@ public class AccountingXmlDocumentPojoTest {
 
     private <T> void assertListOfXmlPojosWasUnmarshalledCorrectly(
             List<T> expectedItems, List<T> actualItems, String listName, BiConsumer<T, T> itemValidator) {
-        if (expectedItems.isEmpty()) {
-            assertTrue(listName + " list should have been null or empty", CollectionUtils.isEmpty(actualItems));
-        } else {
-            assertEquals(listName + " list has the wrong number of items", expectedItems.size(), actualItems.size());
-            for (int i = 0; i < expectedItems.size(); i++) {
-                itemValidator.accept(expectedItems.get(i), actualItems.get(i));
-            }
+        assertEquals(listName + " list has the wrong number of items", expectedItems.size(), actualItems.size());
+        for (int i = 0; i < expectedItems.size(); i++) {
+            itemValidator.accept(expectedItems.get(i), actualItems.get(i));
         }
     }
 
