@@ -46,6 +46,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected String transactionsBypassedLabel;
     protected String pdpRecordsProcessedLabel;
     protected String reportValidationErrorsSubTitle;
+    protected String reportValidationErrorsSubTitleByPassedTransactionNote;
     protected String reportMissingObjectCodesSubTitle;
     
     @Override
@@ -160,8 +161,8 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         LOG.debug("writeValidationErrorSubReport, entered");
 
         if (CollectionUtils.isEmpty(reportData.getValidationErrorFileLines())) {
-            writeErrorSubReportWithNoLineItems(
-                    getReportValidationErrorsSubTitle(), ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
+            String[] subTitles = {getReportValidationErrorsSubTitle()};
+            writeErrorSubReportWithNoLineItems(subTitles, ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
         } else {
             String rowFormat = "%-15s %-24s %-36s %-36s %-14s %-10s %-14s %-18s %-11s %-15s %-12s %-10s %-23s";
             Object[] headerArgs = getValidationErrorItemHeaders();
@@ -172,8 +173,8 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
                 writeValidationErrorItemFields(rowFormat, errorItem);
                 writeErrorResultsForErrorItem(errorItem);
             };
-            
-            writeErrorSubReport(reportData.getValidationErrorFileLines(), getReportValidationErrorsSubTitle(), errorItemWriter);
+            String[] subTitles = {getReportValidationErrorsSubTitle(), getReportValidationErrorsSubTitleByPassedTransactionNote()};
+            writeErrorSubReport(reportData.getValidationErrorFileLines(), subTitles, errorItemWriter);
         }
         getReportWriterService().pageBreak();
     }
@@ -182,8 +183,8 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         LOG.debug("writeMissingObjectCodesSubReport, entered");
 
         if (CollectionUtils.isEmpty(reportData.getPendingClientObjectCodeLines())) {
-            writeErrorSubReportWithNoLineItems(
-                    getReportMissingObjectCodesSubTitle(), ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE);
+            String[] subTitles = {getReportMissingObjectCodesSubTitle()};
+            writeErrorSubReportWithNoLineItems(subTitles, ConcurConstants.StandardAccountingExtractReport.NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE);
         } else {
             String rowFormat = "%-15s %-24s %-36s %-36s %-14s %-10s %-14s %-18s %-11s %-15s %-12s %-10s %-23s %-64s %-64s";
             Object[] headerArgs = getMissingObjectCodeItemHeaders();
@@ -194,8 +195,8 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
                 writeMissingObjectCodeItemFields(rowFormat, errorItem);
                 writeErrorResultsForErrorItem(errorItem);
             };
-            
-            writeErrorSubReport(reportData.getPendingClientObjectCodeLines(), getReportMissingObjectCodesSubTitle(), errorItemWriter);
+            String[] subTitles = {getReportMissingObjectCodesSubTitle()};
+            writeErrorSubReport(reportData.getPendingClientObjectCodeLines(), subTitles, errorItemWriter);
         }
     }
 
@@ -220,13 +221,13 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         return StringUtils.repeat(KFSConstants.DASH, header.toString().length());
     }
 
-    protected void writeErrorSubReportWithNoLineItems(String subTitle, String message) {
-        writeSubTitleForErrorSubReport(subTitle);
+    protected void writeErrorSubReportWithNoLineItems(String[] subTitles, String message) {
+        writeSubTitleForErrorSubReport(subTitles);
         getReportWriterService().writeFormattedMessageLine(message);
     }
 
     protected <T extends ConcurBatchReportLineValidationErrorItem> void writeErrorSubReport(
-            List<T> errorItems, String subTitle, Consumer<T> errorItemWriter) {
+            List<T> errorItems, String[] subTitles, Consumer<T> errorItemWriter) {
         boolean firstLine = true;
         Map<String, List<T>> groupedErrors = groupErrorItemsByReportId(errorItems);
         
@@ -239,7 +240,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
             
             for (T errorItem : errorItemSubGroup) {
                 if (getReportWriterService().isNewPage() || firstLine) {
-                    writeSubTitleForErrorSubReport(subTitle);
+                    writeSubTitleForErrorSubReport(subTitles);
                     if (firstLine) {
                         writeReportIdHeader(reportId);
                         firstLine = false;
@@ -260,9 +261,11 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
         return StringUtils.defaultIfBlank(errorItem.getReportId(), BLANK_REPORT_ID_SUBSTITUTE);
     }
 
-    protected void writeSubTitleForErrorSubReport(String subTitle) {
+    protected void writeSubTitleForErrorSubReport(String[] subTitles) {
         getReportWriterService().setNewPage(false);
-        getReportWriterService().writeSubTitle(subTitle);
+        for (String title : subTitles) {
+            getReportWriterService().writeSubTitle(title);
+        }
         getReportWriterService().writeNewLines(1);
     }
 
@@ -475,6 +478,17 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
     public void setReportValidationErrorsSubTitle(String reportValidationErrorsSubTitle) {
         this.reportValidationErrorsSubTitle = reportValidationErrorsSubTitle;
+    }
+
+    public String getReportValidationErrorsSubTitleByPassedTransactionNote() {
+        if (StringUtils.isEmpty(reportValidationErrorsSubTitle)) {
+            setReportValidationErrorsSubTitle(ConcurConstants.StandardAccountingExtractReport.SAE_VALIDATION_SUB_REPORT_BYPASSED_NOTE_NOT_SET_IN_CONFIGURATION_FILE);
+        }
+        return reportValidationErrorsSubTitleByPassedTransactionNote;
+    }
+
+    public void setReportValidationErrorsSubTitleByPassedTransactionNote(String reportValidationErrorsSubTitleByPassedTransactionNote) {
+        this.reportValidationErrorsSubTitleByPassedTransactionNote = reportValidationErrorsSubTitleByPassedTransactionNote;
     }
 
     public String getReportMissingObjectCodesSubTitle() {
