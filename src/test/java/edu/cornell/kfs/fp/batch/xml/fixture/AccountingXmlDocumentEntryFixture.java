@@ -4,11 +4,18 @@ import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureU
 
 import java.util.List;
 
+import org.kuali.kfs.sys.KFSConstants;
+
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 
+@SuppressWarnings("deprecation")
 public enum AccountingXmlDocumentEntryFixture {
-    MULTI_DI_DOCUMENT_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+    BASE_DOCUMENT(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Test Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
+
+    MULTI_DI_DOCUMENT_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
                     AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
@@ -26,7 +33,9 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
-    MULTI_DI_DOCUMENT_TEST_DOC2(2, "DI", "Document Description 2", "Document Explanation 2", "Org doc number 2",
+    MULTI_DI_DOCUMENT_TEST_DOC2(
+            2, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            "Test Document 2", "This is another test document.", "GGGG4444",
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_1000,
                     AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_500),
@@ -39,7 +48,9 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks()),
-    MULTI_DI_DOCUMENT_TEST_DOC3(3, "DI", "Document Description 3", "Document Explanation 3", "Org doc number 3",
+    MULTI_DI_DOCUMENT_TEST_DOC3(
+            3, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            "Test Document 3", "A third document for testing!!!", "ZYXW9876",
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_1000,
                     AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_500),
@@ -50,7 +61,8 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks()),
 
-    SINGLE_DI_DOCUMENT_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+    SINGLE_DI_DOCUMENT_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
                     AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
@@ -69,7 +81,8 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
 
-    DI_FULL_ACCOUNT_LINE_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+    DI_FULL_ACCOUNT_LINE_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504701_OBJ_2641_AMOUNT_100_04),
             targetAccountingLines(
@@ -86,7 +99,8 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
 
-    DI_SINGLE_ELEMENT_LISTS_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+    DI_SINGLE_ELEMENT_LISTS_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100),
             targetAccountingLines(
@@ -98,14 +112,16 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
 
-    DI_EMPTY_ELEMENT_LISTS_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+    DI_EMPTY_ELEMENT_LISTS_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(),
             targetAccountingLines(),
             notes(),
             adHocRecipients(),
             backupLinks()),
 
-    DI_WITHOUT_ELEMENT_LISTS_TEST_DOC1(1, "DI", "Document Description", "Document Explanation", "Org doc number",
+    DI_WITHOUT_ELEMENT_LISTS_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(),
             targetAccountingLines(),
             notes(),
@@ -122,6 +138,14 @@ public enum AccountingXmlDocumentEntryFixture {
     public final List<String> notes;
     public final List<AccountingXmlDocumentAdHocRecipientFixture> adHocRecipients;
     public final List<AccountingXmlDocumentBackupLinkFixture> backupLinks;
+
+    private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index,
+            String documentTypeCode, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
+                sourceAccountingLines, targetAccountingLines, notes, adHocRecipients, backupLinks);
+    }
 
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,

@@ -7,9 +7,9 @@
         <Document>
             <Index>1</Index>
             <DocumentType>DI</DocumentType>
-            <Description>Document Description</Description>
-            <Explanation>Document Explanation</Explanation>
-            <OrganizationDocumentNumber>Org doc number</OrganizationDocumentNumber>
+            <Description>Test Document</Description>
+            <Explanation>This is only a test document!</Explanation>
+            <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
         </Document>
     </DocumentList>
 </DocumentWrapper>
