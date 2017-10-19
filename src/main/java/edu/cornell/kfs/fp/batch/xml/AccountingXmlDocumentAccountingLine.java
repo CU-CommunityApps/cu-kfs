@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -14,17 +13,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = StringUtils.EMPTY, propOrder = {
-    "chartCode",
-    "accountNumber",
-    "subAccountNumber",
-    "objectCode",
-    "subObjectCode",
-    "projectCode",
-    "orgRefId",
-    "lineDescription",
-    "amount"
-})
 @XmlRootElement(name = "Accounting", namespace = StringUtils.EMPTY)
 public class AccountingXmlDocumentAccountingLine {
 
