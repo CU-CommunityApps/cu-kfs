@@ -25,6 +25,5 @@
 	<import resource="module/receiptProcessing/cu-spring-receiptProcessing.xml" />
 	
 	<import resource="tax/cu-spring-tax.xml" />
-	<import resource="paymentworks/cu-spring-paymentworks.xml" />
 	<import resource="concur/cu-spring-concur.xml" />
 </beans>
