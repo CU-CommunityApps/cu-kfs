@@ -10,7 +10,7 @@
             <Description>Test Document</Description>
             <Explanation>This is only a test document!</Explanation>
             <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
-            <AccountingListFrom>
+            <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
                     <account_nbr>R504700</account_nbr>
@@ -33,8 +33,8 @@
                     <line_description></line_description>
                     <amount>50</amount>
                 </Accounting>
-            </AccountingListFrom>
-            <AccountingListTo>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
                     <account_nbr>R504706</account_nbr>
@@ -57,7 +57,7 @@
                     <line_description></line_description>
                     <amount>50</amount>
                 </Accounting>
-            </AccountingListTo>
+            </TargetAccountingLineList>
             <NoteList>
                 <Note>
                     <Description>A fun testing note</Description>
@@ -101,7 +101,7 @@
             <Description>Test Document 2</Description>
             <Explanation>This is another test document.</Explanation>
             <OrganizationDocumentNumber>GGGG4444</OrganizationDocumentNumber>
-            <AccountingListFrom>
+            <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
                     <account_nbr>R504700</account_nbr>
@@ -124,8 +124,8 @@
                     <line_description></line_description>
                     <amount>500</amount>
                 </Accounting>
-            </AccountingListFrom>
-            <AccountingListTo>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
                     <account_nbr>R504706</account_nbr>
@@ -148,7 +148,7 @@
                     <line_description></line_description>
                     <amount>500</amount>
                 </Accounting>
-            </AccountingListTo>
+            </TargetAccountingLineList>
             <NoteList>
                 <Note>
                     <Description>A fun testing note on the second DI</Description>
@@ -170,7 +170,7 @@
             <Description>Test Document 3</Description>
             <Explanation>A third document for testing!!!</Explanation>
             <OrganizationDocumentNumber>ZYXW9876</OrganizationDocumentNumber>
-            <AccountingListFrom>
+            <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
                     <account_nbr>R504700</account_nbr>
@@ -193,8 +193,8 @@
                     <line_description></line_description>
                     <amount>500</amount>
                 </Accounting>
-            </AccountingListFrom>
-            <AccountingListTo>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
                     <account_nbr>R504706</account_nbr>
@@ -217,7 +217,7 @@
                     <line_description></line_description>
                     <amount>500</amount>
                 </Accounting>
-            </AccountingListTo>
+            </TargetAccountingLineList>
         </Document>
     </DocumentList>
 </DocumentWrapper>

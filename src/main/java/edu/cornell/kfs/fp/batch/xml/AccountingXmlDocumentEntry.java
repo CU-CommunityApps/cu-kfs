@@ -35,11 +35,11 @@ public class AccountingXmlDocumentEntry {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String organizationDocumentNumber;
 
-    @XmlElementWrapper(name = "AccountingListFrom", namespace = StringUtils.EMPTY, required = false)
+    @XmlElementWrapper(name = "SourceAccountingLineList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentAccountingLine> sourceAccountingLines;
 
-    @XmlElementWrapper(name = "AccountingListTo", namespace = StringUtils.EMPTY, required = false)
+    @XmlElementWrapper(name = "TargetAccountingLineList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentAccountingLine> targetAccountingLines;
 

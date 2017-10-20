@@ -10,10 +10,10 @@
             <Description>Test Document</Description>
             <Explanation>This is only a test document!</Explanation>
             <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
-            <AccountingListFrom>
-            </AccountingListFrom>
-            <AccountingListTo>
-            </AccountingListTo>
+            <SourceAccountingLineList>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+            </TargetAccountingLineList>
             <NoteList>
             </NoteList>
             <AdhocRecipientList>
