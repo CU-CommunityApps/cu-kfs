@@ -6,20 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientRequest;
+import org.glassfish.jersey.client.ClientResponse;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.springframework.beans.factory.DisposableBean;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -96,31 +93,36 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
     protected TravelRequestDetailsDTO buildTravelRequestDetailsOutput(String reportURI) {
         ClientResponse response = null;
 
-        try {
+        // TODO: Refactor for JAX-RS 2.0
+        /*try {
             response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
             TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
 
             return reportDetails;
         } finally {
             closeQuietly(response);
-        }
+        }*/
+        return null;
     }
 
     protected ExpenseReportDetailsDTO buildReportDetailsOutput(String reportURI) {
         ClientResponse response = null;
 
-        try {
+        // TODO: Refactor for JAX-RS 2.0
+        /*try {
             response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
             ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
 
             return reportDetails;
         } finally {
             closeQuietly(response);
-        }
+        }*/
+        return null;
     }
 
     protected ClientRequest buildReportDetailsClientRequest(String reportURI, String httpMethod) {
-        ClientRequest.Builder builder = new ClientRequest.Builder();
+        // TODO: Refactor for JAX-RS 2.0
+        /*ClientRequest.Builder builder = new ClientRequest.Builder();
         builder.accept(MediaType.APPLICATION_XML);
         builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken());
         URI uri;
@@ -130,7 +132,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             throw new RuntimeException("An error occured while building the report details URI: ", e);
         }
 
-        return builder.build(uri, httpMethod);
+        return builder.build(uri, httpMethod);*/
+        return null;
     }
 
     protected List<ConcurAccountInfo> extractAccountInfoFromExpenseReportDetails(ExpenseReportDetailsDTO reportDetails) {
@@ -232,7 +235,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         LOG.info("buildUpdateReportOutput()");
         ClientResponse response = null;
 
-        try {
+        // TODO: Refactor for JAX-RS 2.0
+        /*try {
             WebResource resource = getClient().resource(workflowURI);
 
             response = resource.accept(MediaType.APPLICATION_XML).
@@ -244,7 +248,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             LOG.info("Update workflow response: " + result);
         } finally {
             closeQuietly(response);
-        }
+        }*/
 
     }
 
@@ -264,7 +268,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
         ClientResponse response = null;
         
-        try {
+        // TODO: Refactor for JAX-RS 2.0
+        /*try {
             response = getClient().handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
             
             int statusCode = response.getStatus();
@@ -273,7 +278,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             return statusCode == ClientResponse.Status.OK.getStatusCode();
         } finally {
             closeQuietly(response);
-        }
+        }*/
+        return false;
     }
     
     @Override
@@ -281,13 +287,15 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         LOG.info("retrieveFailedEventQueueNotificationsFromConcur, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
         ClientResponse response = null;
         
-        try {
+        // TODO: Refactor for JAX-RS 2.0
+        /*try {
             response = getClient().handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
             ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
             return reportDetails;
         } finally {
             closeQuietly(response);
-        }
+        }*/
+        return null;
     }
 
     protected Client getClient() {
@@ -298,8 +306,9 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             synchronized (this) {
                 jerseyClient = client;
                 if (jerseyClient == null) {
-                    ClientConfig clientConfig = new DefaultClientConfig();
-                    jerseyClient = Client.create(clientConfig);
+                    // TODO: Refactor for JAX-RS 2.0
+                    //ClientConfig clientConfig = new DefaultClientConfig();
+                    //jerseyClient = Client.create(clientConfig);
                     client = jerseyClient;
                 }
             }
@@ -327,13 +336,14 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             }
         }
         
-        if (jerseyClient != null) {
+        // TODO: Refactor for JAX-RS 2.0
+        /*if (jerseyClient != null) {
             try {
                 jerseyClient.destroy();
             } catch (Exception e) {
                 LOG.error("Error closing client", e);
             }
-        }
+        }*/
     }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {

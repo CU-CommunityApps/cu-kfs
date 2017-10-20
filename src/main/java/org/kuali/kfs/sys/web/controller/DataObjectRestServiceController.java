@@ -15,11 +15,17 @@
  */
 package org.kuali.kfs.sys.web.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.datadictionary.InquirySectionDefinition;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
@@ -54,13 +60,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Controller
 public class DataObjectRestServiceController {
@@ -102,16 +104,16 @@ public class DataObjectRestServiceController {
             List<Map<String, String>> resultMap = generateResultMap(request, boe);
 
             ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.configure(SerializationConfig.Feature.WRAP_ROOT_VALUE, true);
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
             String jsonData = null;
             if (resultMap.size() == 1) {
-                jsonData = mapper.defaultPrettyPrintingWriter()
+                jsonData = mapper.writerWithDefaultPrettyPrinter()
                         .writeValueAsString(resultMap.get(0))
                         .replaceFirst(HashMap.class.getSimpleName(), boe.getBusinessObjectClass().getName());
             } else {
-                jsonData = mapper.defaultPrettyPrintingWriter()
+                jsonData = mapper.writerWithDefaultPrettyPrinter()
                         .writeValueAsString(resultMap)
                         .replaceFirst(ArrayList.class.getSimpleName(), ArrayList.class.getSimpleName()+"<"+boe.getBusinessObjectClass().getName()+">");
             }

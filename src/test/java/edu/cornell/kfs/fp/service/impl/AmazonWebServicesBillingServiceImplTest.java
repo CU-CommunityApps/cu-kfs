@@ -1,21 +1,22 @@
 package edu.cornell.kfs.fp.service.impl;
 
-import com.sun.jersey.api.client.ClientRequest;
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
-import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
-import org.apache.commons.lang.StringUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.lang.StringUtils;
+import org.glassfish.jersey.client.ClientRequest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
+import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
 
 public class AmazonWebServicesBillingServiceImplTest {
 
@@ -173,7 +174,8 @@ public class AmazonWebServicesBillingServiceImplTest {
         amazonService.setBillingPeriodParameterValue(DEC_2015_PARAM_VALUE);
         
         ClientRequest cr = amazonService.buildClientRequest();
-        String resultsURL = cr.getURI().toString();
+        // TODO: Refactor for JAX-RS 2.0
+        String resultsURL = ""; // cr.getURI().toString();
         String expectedURL = awsURL + "year=2015&month=12";
         assertEquals(expectedURL, resultsURL);
     }
