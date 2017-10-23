@@ -481,7 +481,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     }
 
     public String getReportValidationErrorsSubTitleByPassedTransactionNote() {
-        if (StringUtils.isEmpty(reportValidationErrorsSubTitle)) {
+        if (StringUtils.isEmpty(reportValidationErrorsSubTitleByPassedTransactionNote)) {
             setReportValidationErrorsSubTitleByPassedTransactionNote(
                     ConcurConstants.StandardAccountingExtractReport.SAE_VALIDATION_SUB_REPORT_BYPASSED_NOTE_NOT_SET_IN_CONFIGURATION_FILE);
         }
