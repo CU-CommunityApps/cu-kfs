@@ -7,11 +7,13 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.function.Function;
 
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,8 +26,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientRequest;
-import org.glassfish.jersey.client.ClientResponse;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +35,7 @@ import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
@@ -47,20 +48,9 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Transactional
     @Override
     public void requestNewAccessToken() {
-        AccessTokenDTO newToken = buildRequestAccessTokenOutput();
+        AccessTokenDTO newToken = callConcurEndpoint(
+                this::callRequestAccessTokenEndpoint, AccessTokenDTO.class);
         setWebserivceCredentialValues(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
-    }
-
-    protected AccessTokenDTO buildRequestAccessTokenOutput() {
-        // TODO: Refactor for JAX-RS 2.0
-        /*ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-
-        ClientResponse response = client.handle(buildRequestAccessTokenClientRequest());
-        AccessTokenDTO newToken = response.getEntity(AccessTokenDTO.class);
-
-        return newToken;*/
-        return null;
     }
     
     protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
@@ -69,27 +59,28 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
     }
 
-    protected ClientRequest buildRequestAccessTokenClientRequest() {
+    protected Response callRequestAccessTokenEndpoint(Client client) {
         String credentials = buildCredentialsStringForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
         String encodedCredentials = ConcurUtils.base64Encode(credentials);
-        // TODO: Refactor for JAX-RS 2.0
-        /*ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,
-                ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials);
-        builder.header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey());
+        
         URI uri;
         try {
             uri = new URI(getConcurRequestAccessTokenURL());
         } catch (URISyntaxException e) {
-            LOG.error("buildRequestAccessTokenClientRequest, problem building request acces token request", e);
+            LOG.error("callRequestAccessTokenEndpoint, problem building request acces token request", e);
             throw new RuntimeException("An error occured while building the request access token URI: ", e);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("buildRequestAccessTokenClientRequest, URI: " + uri);
+            LOG.debug("callRequestAccessTokenEndpoint, URI: " + uri);
         }
-        return builder.build(uri, HttpMethod.GET);*/
-        return null;
+        
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_XML)
+                .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                        ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials)
+                .header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey())
+                .get();
     }
 
     protected String buildCredentialsStringForRequestingNewAccessToken(String loginUsername, String loginPassword) {
@@ -99,27 +90,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Transactional
     @Override
     public void refreshAccessToken() {
-        AccessTokenDTO refreshedToken = buildRefreshAccessTokenOutput();
+        AccessTokenDTO refreshedToken = callConcurEndpoint(
+                this::callRefreshAccessTokenEndpoint, AccessTokenDTO.class);
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, refreshedToken.getExpirationDate()); 
     }
 
-    private AccessTokenDTO buildRefreshAccessTokenOutput() {
-        // TODO: Refactor for JAX-RS 2.0
-        /*ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-
-        ClientResponse response = client.handle(buildRefreshAccessTokenClientRequest());     
-        AccessTokenDTO refreshedToken = response.getEntity(AccessTokenDTO.class);
-
-        return refreshedToken;*/
-        return null;
-    }
-
-    protected ClientRequest buildRefreshAccessTokenClientRequest() {
-        // TODO: Refactor for JAX-RS 2.0
-        /*ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
+    protected Response callRefreshAccessTokenEndpoint(Client client) {
         URI uri;
         try {
             uri = new URI(getConcurRefreshAccessTokenURL()
@@ -127,14 +103,34 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
                     + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_ID_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getConsumerKey()
                     + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_SECRET_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getSecretKey());
         } catch (URISyntaxException e) {
-            LOG.error("buildRefreshAccessTokenClientRequest, there was a problem building refresh access token client request.", e);
+            LOG.error("callRefreshAccessTokenEndpoint, there was a problem building refresh access token client request.", e);
             throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("buildRefreshAccessTokenClientRequest, URI: " + uri);
+            LOG.debug("callRefreshAccessTokenEndpoint, URI: " + uri);
         }
-        return builder.build(uri, HttpMethod.GET);*/
-        return null;
+        
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_XML)
+                .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                        ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken())
+                .get();
+    }
+
+    protected <T> T callConcurEndpoint(Function<Client, Response> endpointCaller, Class<T> responseEntityType) {
+        Client client = null;
+        Response response = null;
+        
+        try {
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            response = endpointCaller.apply(client);
+            return response.readEntity(responseEntityType);
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+            CURestClientUtils.closeQuietly(client);
+        }
     }
 
     @Transactional
@@ -224,10 +220,8 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
             LOG.error("checkForRevokeTokenSuccess(): Revoke-token request returned a non-blank response; KFS may have invalid security settings!");
         }
         
-        // TODO: Refactor for JAX-RS 2.0
-        /*return Boolean.valueOf(
-                StringUtils.isBlank(responseContent) && statusCode == ClientResponse.Status.OK.getStatusCode());*/
-        return null;
+        return Boolean.valueOf(
+                StringUtils.isBlank(responseContent) && statusCode == Response.Status.OK.getStatusCode());
     }
 
     protected String getEntityContentAsString(HttpEntity entity) throws IOException {

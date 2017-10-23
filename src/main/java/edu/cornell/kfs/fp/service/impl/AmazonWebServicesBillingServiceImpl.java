@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientRequest;
-import org.glassfish.jersey.client.ClientResponse;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
@@ -55,6 +55,7 @@ import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.AmazonWebServicesBillingService;
 import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
 import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetailContainer;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBillingService, Serializable {
 
@@ -105,35 +106,42 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         }
     }
     
-    // TODO: Refactor for JAX-RS 2.0
     private String buildJsonOutput() {
-        /*ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
+        Client client = null;
+        Response response = null;
         
-        ClientResponse response = client.handle(buildClientRequest());
-        
-        response.bufferEntity();
-        String results = response.getEntity(String.class);
-        return results;*/
-        return "";
+        try {
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            
+            response = callAwsService(client);
+            
+            response.bufferEntity();
+            String results = response.readEntity(String.class);
+            return results;
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+            CURestClientUtils.closeQuietly(client);
+        }
     }
     
-    // TODO: Refactor for JAX-RS 2.0
-    protected ClientRequest buildClientRequest() {
-        /*ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_JSON);
-        builder.header(CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_HEADER_NAME, 
-                CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getAwsToken());
-        URI uri;
+    protected Response callAwsService(Client client) {
+        URI uri = buildAwsServiceUrl();
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_HEADER_NAME, 
+                        CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getAwsToken())
+                .get();
+    }
+    
+    protected URI buildAwsServiceUrl() {
         try {
-            uri = new URI(getAwsURL() + CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_YEAR + findProcessYear() + 
+            return new URI(getAwsURL() + CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_YEAR + findProcessYear() + 
                     CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_MONTH + findProcessMonthNumber());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        ClientRequest request = builder.build(uri, CuFPConstants.AmazonWebServiceBillingConstants.HTTP_METHOD_GET_NAME);
-        return request;*/
-        return null;
     }
     
     protected List<AmazonAccountDetail> buildAmazonAcountListFromJson(String jsonResults) {

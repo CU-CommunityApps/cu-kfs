@@ -41,7 +41,7 @@
 <c:set var="amendmentEntry" value="${(not empty KualiForm.editingMode['amendmentEntry'])}" />
 <c:set var="lockB2BEntry" value="${(not empty KualiForm.editingMode['lockB2BEntry'])}" />
 <c:set var="editPreExtract"	value="${(not empty KualiForm.editingMode['editPreExtract'])}" />
-<c:set var="currentUserCampusCode" value="${UserSession.person.campusCode}" />
+<c:set var="currentUserCampusCode" value="${sessionScope['cf.UserSession'].person.campusCode}" />
 <c:set var="restrictFiscalEntry" value="${(not empty KualiForm.editingMode['restrictFiscalEntry'])}" />
 <c:set var="tabindexOverrideBase" value="30" />
 

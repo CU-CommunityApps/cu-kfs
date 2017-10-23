@@ -3,12 +3,12 @@ package edu.cornell.kfs.fp.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.client.ClientRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -165,7 +165,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     }
     
     @Test
-    public void testBuildClientRequest() {
+    public void testBuildAwsUrlForClientRequest() {
         String awsURL = "http://www.foo.bar/service?";
         String awsToken = "someDummyText";
         
@@ -173,9 +173,8 @@ public class AmazonWebServicesBillingServiceImplTest {
         amazonService.setAwsToken(awsToken);
         amazonService.setBillingPeriodParameterValue(DEC_2015_PARAM_VALUE);
         
-        ClientRequest cr = amazonService.buildClientRequest();
-        // TODO: Refactor for JAX-RS 2.0
-        String resultsURL = ""; // cr.getURI().toString();
+        URI awsServiceUrl = amazonService.buildAwsServiceUrl();
+        String resultsURL = awsServiceUrl.toString();
         String expectedURL = awsURL + "year=2015&month=12";
         assertEquals(expectedURL, resultsURL);
     }
