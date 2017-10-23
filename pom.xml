@@ -46,7 +46,7 @@
         <spring-security-core.version>4.2.2.RELEASE</spring-security-core.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <velocity.version>1.7</velocity.version>
-        <xapool.version>1.5.0-patch6</xapool.version>
+        <xapool.version>1.5.0-patch7</xapool.version>
     </properties>
 
     <profiles>
@@ -342,37 +342,85 @@
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-core-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-core-framework</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-kew-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-kew-framework</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-kim-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-location-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-location-framework</artifactId>
             <version>${rice.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.kuali.rice</groupId>
                     <artifactId>rice-krad-app-framework</artifactId>
@@ -521,6 +569,10 @@
                     <groupId>javax.ws.rs</groupId>
                     <artifactId>jsr311-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -648,10 +700,20 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>xapool</groupId>
+            <groupId>co.kuali</groupId>
             <artifactId>xapool</artifactId>
             <version>${xapool.version}</version>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+		        <exclusion>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc7</artifactId>
+                </exclusion>    
+	        </exclusions>
         </dependency>
     </dependencies>
 
