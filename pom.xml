@@ -713,7 +713,7 @@
                     <groupId>com.oracle</groupId>
                     <artifactId>ojdbc7</artifactId>
                 </exclusion>    
-	        </exclusions>
+            </exclusions>
         </dependency>
     </dependencies>
 

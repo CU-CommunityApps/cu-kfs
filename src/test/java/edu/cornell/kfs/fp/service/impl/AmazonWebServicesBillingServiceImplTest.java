@@ -64,12 +64,12 @@ public class AmazonWebServicesBillingServiceImplTest {
         try {
             List<AmazonAccountDetail> details = amazonService.buildAmazonAcountListFromJson("");
         } catch (RuntimeException e) {
-            if (StringUtils.contains(e.getMessage(), "java.io.EOFException")){
-                assertTrue("Expected an EOF error", true);
+            if (StringUtils.contains(e.getMessage(), "com.fasterxml.jackson.databind.exc.MismatchedInputException")){
+                assertTrue("Expected a Mismatched Input error", true);
                 return;
             }
         }
-        assertTrue("Expected an EOF error", false);
+        assertTrue("Expected a Mismatched Input error", false);
     }
     
     @Test
