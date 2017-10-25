@@ -709,7 +709,7 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
-		        <exclusion>
+                <exclusion>
                     <groupId>com.oracle</groupId>
                     <artifactId>ojdbc7</artifactId>
                 </exclusion>    
