@@ -230,7 +230,7 @@
 	
     <bean id="AccountGlobal-financialIcrSeriesIdentifier" parent="AccountGlobal-financialIcrSeriesIdentifier-parentBean" />
 	<bean id="AccountGlobal-financialIcrSeriesIdentifier-parentBean" abstract="true"
-		parent="Account-financialIcrSeriesIdentifier">
+		parent="Account-acctFinancialIcrSeriesIdentifier">
 	</bean>
 	
 	<bean id="AccountGlobal-everify" parent="AccountGlobal-everify-parentBean" />
