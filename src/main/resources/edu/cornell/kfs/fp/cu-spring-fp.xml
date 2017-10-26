@@ -670,6 +670,8 @@
         <property name="steps">
             <list>
                 <ref bean="cbcpLoadFlatFileStep" />
+                <ref bean="cbcpCreateDocumentsStep" />
+                <ref bean="cbcpRouteDocumentsStep"/>
             </list>
         </property>
     </bean>
@@ -685,7 +687,19 @@
         <property name="cbcpInputFileType">
             <ref bean="cbcpFlatInputFileType"/>
         </property>
-        <property name="reportWriterService" ref="procurementCardLoadReportWriterService"/>
+        <property name="reportWriterService" ref="cbcpLoadReportWriterService"/>
+    </bean>
+    
+    <bean id="cbcpCreateDocumentsStep" class="org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep" parent="step">
+        <property name="procurementCardCreateDocumentService">
+            <ref bean="cbcpCreateDocumentService"/>
+        </property>
+    </bean>
+    
+    <bean id="cbcpRouteDocumentsStep" class="org.kuali.kfs.fp.batch.ProcurementCardRouteDocumentsStep" parent="step">
+        <property name="procurementCardCreateDocumentService">
+            <ref bean="cbcpCreateDocumentService"/>
+        </property>
     </bean>
     
     <bean id="cbcpFlatInputFileType" class="edu.cornell.kfs.fp.batch.CbcpFlatInputFileType"> 
@@ -699,10 +713,19 @@
             <ref bean="parameterService"/>
         </property>
         <property name="procurementCardErrorEmailService">
-            <ref bean="procurementCardErrorEmailService"/>
+            <ref bean="cbcpErrorEmailService"/>
         </property>
         <property name="dateTimeService">
            <ref bean="dateTimeService"/>
+        </property>
+    </bean>
+    
+    <bean id="cbcpErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.CbcpErrorEmailServiceImpl">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+        <property name="emailService">
+            <ref bean="emailService"/>
         </property>
     </bean>
     
@@ -711,6 +734,28 @@
         <property name="procurementCardInputFileType">
             <ref bean="cbcpFlatInputFileType" />
         </property>
+    </bean>
+    
+    <bean id="cbcpCreateDocumentService" parent="cbcpCreateDocumentService-parentBean"/>
+    <bean id="cbcpCreateDocumentService-parentBean" class="org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" abstract="true">
+        <property name="parameterService" ref="parameterService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="documentService" ref="documentService"/>
+        <property name="workflowDocumentService" ref="workflowDocumentService"/>
+        <property name="dataDictionaryService" ref="dataDictionaryService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="accountingLineRuleUtil" ref="accountingLineRuleHelperService"/>
+        <property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService"/>
+        <property name="emailService" ref="emailService"/>
+        <property name="financialSystemDocumentService" ref="financialSystemDocumentService"/>
+        <property name="emailTemplateUrl" value="org/kuali/kfs/fp/batch/template/pcard-create-doc-summary-email-plain-text.vm"/>
+    </bean>
+    
+    <bean id="cbcpLoadReportWriterService" parent="cbcoLoadReportWriterService-parentBean"/>
+    <bean id="cbcoLoadReportWriterService-parentBean" parent="reportWriterService" abstract="true">
+        <property name="filePath" value="${reports.directory}/fp"/>
+        <property name="fileNamePrefix" value="cbcp_load_"/>
+        <property name="title" value="CBCP Load File"/>
     </bean>
     
 </beans>

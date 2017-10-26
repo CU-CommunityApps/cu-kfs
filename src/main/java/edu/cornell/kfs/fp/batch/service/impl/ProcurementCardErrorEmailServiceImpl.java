@@ -23,22 +23,26 @@ public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErro
 
 	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardErrorEmailServiceImpl.class);
 	
-	private EmailService emailService;
-	private ParameterService parameterService;
+	protected EmailService emailService;
+	protected ParameterService parameterService;
 	
 	public void sendErrorEmail(ArrayList<String> errorMessages) {
         BodyMailMessage message = new BodyMailMessage();
 
         message.setFromAddress(emailService.getDefaultFromAddress());
-        message.setSubject("Error occurred during PCard batch upload process");
+        message.setSubject(buildErrorEmailSubject());
         message.setToAddresses(getToAddresses());
         message.setMessage(generateBody(errorMessages));
 
         emailService.sendMessage(message, false);
 
 	}
+
+    protected String buildErrorEmailSubject() {
+        return "Error occurred during PCard batch upload process";
+    }
 	
-	private Set<String> getToAddresses() {
+	protected Set<String> getToAddresses() {
 		Set<String> addresses = new HashSet<String>();
 		addresses.add(parameterService.getParameterValueAsString("KFS-FP", "ProcurementCard", "PCARD_UPLOAD_ERROR_EMAIL_ADDR"));
 		return addresses;
@@ -46,7 +50,7 @@ public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErro
 
 	private String generateBody(ArrayList<String> errorMessages) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Errors occured during the PCard upload process.");
+		sb.append(buildErrorMessageBodyStarter());
 		sb.append("\r\n\r\n");
 		sb.append("Error details: \r\n\r\n");
 		for (String message: errorMessages) {
@@ -55,6 +59,10 @@ public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErro
 		}
 		return sb.toString();
 	}
+
+    protected String buildErrorMessageBodyStarter() {
+        return "Errors occured during the PCard upload process.";
+    }
 
 	public EmailService getEmailService() {
 		return emailService;
