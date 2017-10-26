@@ -9,6 +9,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -96,7 +97,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         Response response = null;
 
         try {
-            response = callReportDetailsEndpoint(reportURI, HttpMethod.GET);
+            Invocation request = buildReportDetailsClientRequest(reportURI, HttpMethod.GET);
+            response = request.invoke();
             TravelRequestDetailsDTO reportDetails = response.readEntity(TravelRequestDetailsDTO.class);
 
             return reportDetails;
@@ -109,7 +111,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         Response response = null;
 
         try {
-            response = callReportDetailsEndpoint(reportURI, HttpMethod.GET);
+            Invocation request = buildReportDetailsClientRequest(reportURI, HttpMethod.GET);
+            response = request.invoke();
             ExpenseReportDetailsDTO reportDetails = response.readEntity(ExpenseReportDetailsDTO.class);
 
             return reportDetails;
@@ -118,7 +121,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         }
     }
 
-    protected Response callReportDetailsEndpoint(String reportURI, String httpMethod) {
+    protected Invocation buildReportDetailsClientRequest(String reportURI, String httpMethod) {
         URI uri;
         try {
             uri = new URI(reportURI);
@@ -131,7 +134,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
                 .accept(MediaType.APPLICATION_XML)
                 .header(ConcurConstants.AUTHORIZATION_PROPERTY,
                         ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken())
-                .method(httpMethod);
+                .build(httpMethod);
     }
 
     protected List<ConcurAccountInfo> extractAccountInfoFromExpenseReportDetails(ExpenseReportDetailsDTO reportDetails) {
@@ -268,7 +271,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         Response response = null;
         
         try {
-            response = callReportDetailsEndpoint(deleteItemURL, HttpMethod.DELETE);
+            Invocation request = buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE);
+            response = request.invoke();
             int statusCode = response.getStatus();
             String statusResponsePhrase = response.getStatusInfo().getReasonPhrase();
             LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
@@ -284,7 +288,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         Response response = null;
         
         try {
-            response = callReportDetailsEndpoint(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET);
+            Invocation request = buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET);
+            response = request.invoke();
             ConcurEventNotificationListDTO reportDetails = response.readEntity(ConcurEventNotificationListDTO.class);
             return reportDetails;
         } finally {

@@ -12,6 +12,7 @@ import java.util.function.Function;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -49,7 +50,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public void requestNewAccessToken() {
         AccessTokenDTO newToken = callConcurEndpoint(
-                this::callRequestAccessTokenEndpoint, AccessTokenDTO.class);
+                this::buildRequestAccessTokenClientRequest, AccessTokenDTO.class);
         setWebserivceCredentialValues(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
     }
     
@@ -59,7 +60,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
     }
 
-    protected Response callRequestAccessTokenEndpoint(Client client) {
+    protected Invocation buildRequestAccessTokenClientRequest(Client client) {
         String credentials = buildCredentialsStringForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
         String encodedCredentials = ConcurUtils.base64Encode(credentials);
         
@@ -67,11 +68,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         try {
             uri = new URI(getConcurRequestAccessTokenURL());
         } catch (URISyntaxException e) {
-            LOG.error("callRequestAccessTokenEndpoint, problem building request acces token request", e);
+            LOG.error("buildRequestAccessTokenClientRequest, problem building request acces token request", e);
             throw new RuntimeException("An error occured while building the request access token URI: ", e);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("callRequestAccessTokenEndpoint, URI: " + uri);
+            LOG.debug("buildRequestAccessTokenClientRequest, URI: " + uri);
         }
         
         return client.target(uri)
@@ -80,7 +81,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
                 .header(ConcurConstants.AUTHORIZATION_PROPERTY,
                         ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials)
                 .header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey())
-                .get();
+                .buildGet();
     }
 
     protected String buildCredentialsStringForRequestingNewAccessToken(String loginUsername, String loginPassword) {
@@ -91,11 +92,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Override
     public void refreshAccessToken() {
         AccessTokenDTO refreshedToken = callConcurEndpoint(
-                this::callRefreshAccessTokenEndpoint, AccessTokenDTO.class);
+                this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, refreshedToken.getExpirationDate()); 
     }
 
-    protected Response callRefreshAccessTokenEndpoint(Client client) {
+    protected Invocation buildRefreshAccessTokenClientRequest(Client client) {
         URI uri;
         try {
             uri = new URI(getConcurRefreshAccessTokenURL()
@@ -103,11 +104,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
                     + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_ID_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getConsumerKey()
                     + CUKFSConstants.AMPERSAND + ConcurConstants.CLIENT_SECRET_URL_PARAM + CUKFSConstants.EQUALS_SIGN + getSecretKey());
         } catch (URISyntaxException e) {
-            LOG.error("callRefreshAccessTokenEndpoint, there was a problem building refresh access token client request.", e);
+            LOG.error("buildRefreshAccessTokenClientRequest, there was a problem building refresh access token client request.", e);
             throw new RuntimeException("An error occured while building the refresh access token URI: ", e);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("callRefreshAccessTokenEndpoint, URI: " + uri);
+            LOG.debug("buildRefreshAccessTokenClientRequest, URI: " + uri);
         }
         
         return client.target(uri)
@@ -115,17 +116,18 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
                 .accept(MediaType.APPLICATION_XML)
                 .header(ConcurConstants.AUTHORIZATION_PROPERTY,
                         ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken())
-                .get();
+                .buildGet();
     }
 
-    protected <T> T callConcurEndpoint(Function<Client, Response> endpointCaller, Class<T> responseEntityType) {
+    protected <T> T callConcurEndpoint(Function<Client, Invocation> requestBuilder, Class<T> responseEntityType) {
         Client client = null;
         Response response = null;
         
         try {
             ClientConfig clientConfig = new ClientConfig();
             client = ClientBuilder.newClient(clientConfig);
-            response = endpointCaller.apply(client);
+            Invocation request = requestBuilder.apply(client);
+            response = request.invoke();
             return response.readEntity(responseEntityType);
         } finally {
             CURestClientUtils.closeQuietly(response);

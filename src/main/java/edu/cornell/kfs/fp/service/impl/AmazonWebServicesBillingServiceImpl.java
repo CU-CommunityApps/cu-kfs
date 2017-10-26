@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -114,7 +115,8 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             ClientConfig clientConfig = new ClientConfig();
             client = ClientBuilder.newClient(clientConfig);
             
-            response = callAwsService(client);
+            Invocation request = buildClientRequest(client);
+            response = request.invoke();
             
             response.bufferEntity();
             String results = response.readEntity(String.class);
@@ -125,14 +127,14 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         }
     }
     
-    protected Response callAwsService(Client client) {
+    protected Invocation buildClientRequest(Client client) {
         URI uri = buildAwsServiceUrl();
         return client.target(uri)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .header(CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_HEADER_NAME, 
                         CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getAwsToken())
-                .get();
+                .buildGet();
     }
     
     protected URI buildAwsServiceUrl() {
