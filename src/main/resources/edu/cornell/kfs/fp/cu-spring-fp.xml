@@ -69,6 +69,7 @@
                 <value>procurementCardSummaryFeedJob</value>
                 <value>loadAWSBillsBatchJob</value>
                 <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
+                <value>cbcpDocumentJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -664,4 +665,52 @@
     </bean>
     
     <bean id="scheduledAccountingLineService" class="edu.cornell.kfs.fp.service.impl.ScheduledAccountingLineServiceImpl"/>
+    
+    <bean id="cbcpDocumentJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="cbcpLoadFlatFileStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="cbcpLoadFlatFileStep" parent="cbcpLoadFlatFileStep-parentBean"/>
+    <bean id="cbcpLoadFlatFileStep-parentBean" abstract="true" class="edu.cornell.kfs.fp.batch.CbcpLoadFlatFileStep" parent="step">
+        <property name="procurementCardLoadTransactionsService">
+            <ref bean="cbcpLoadTransactionsService"/>
+        </property>
+        <property name="batchInputFileService">
+            <ref bean="batchInputFileService"/>
+        </property>
+        <property name="cbcpInputFileType">
+            <ref bean="cbcpFlatInputFileType"/>
+        </property>
+        <property name="reportWriterService" ref="procurementCardLoadReportWriterService"/>
+    </bean>
+    
+    <bean id="cbcpFlatInputFileType" class="edu.cornell.kfs.fp.batch.CbcpFlatInputFileType"> 
+        <property name="directoryPath">
+           <value>${staging.directory}/fp/cbcp</value>
+        </property>
+        <property name="fileExtension">
+           <value>data</value>
+        </property>
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+        <property name="procurementCardErrorEmailService">
+            <ref bean="procurementCardErrorEmailService"/>
+        </property>
+        <property name="dateTimeService">
+           <ref bean="dateTimeService"/>
+        </property>
+    </bean>
+    
+    <bean id="cbcpLoadTransactionsService"  parent="cbcpLoadTransactionsService-parentBean"/> 
+    <bean id="cbcpLoadTransactionsService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
+        <property name="procurementCardInputFileType">
+            <ref bean="cbcpFlatInputFileType" />
+        </property>
+    </bean>
+    
 </beans>
