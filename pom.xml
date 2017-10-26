@@ -22,7 +22,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2017-08-10</kfs.version>
+        <kfs.version>2017-08-24</kfs.version>
         <rice.version>2.6.1</rice.version>
         <cynergy.version>2.6.1</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
@@ -33,7 +33,7 @@
         <hibernate-validator-annotation-processor.version>5.4.1.Final</hibernate-validator-annotation-processor.version>
         <jasperreports.version>2.0.4</jasperreports.version>
         <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
-        <jersey.version>1.18.1</jersey.version>
+        <jersey.version>2.25.1</jersey.version>
         <jotm-core.version>2.1.10-kuali-1</jotm-core.version>
         <jsp-api.version>2.2</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
@@ -46,7 +46,7 @@
         <spring-security-core.version>4.2.2.RELEASE</spring-security-core.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <velocity.version>1.7</velocity.version>
-        <xapool.version>1.5.0-patch6</xapool.version>
+        <xapool.version>1.5.0-patch7</xapool.version>
     </properties>
 
     <profiles>
@@ -142,6 +142,9 @@
                             <groupId>org.kuali.kfs</groupId>
                             <artifactId>kfs-web</artifactId>
                             <filtered>false</filtered>
+                            <excludes>
+                                <exclude>WEB-INF/lib/xapool-1.5.0-patch6.jar</exclude>
+                            </excludes>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -267,6 +270,12 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -342,37 +351,85 @@
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-core-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-core-framework</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-kew-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-kew-framework</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-kim-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-location-api</artifactId>
             <version>${rice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.rice</groupId>
             <artifactId>rice-location-framework</artifactId>
             <version>${rice.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.kuali.rice</groupId>
                     <artifactId>rice-krad-app-framework</artifactId>
@@ -517,6 +574,14 @@
                     <groupId>org.kuali.rice</groupId>
                     <artifactId>rice-krad-service-impl</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xapool</groupId>
+                    <artifactId>xapool</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -630,6 +695,12 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <version>${spring-security-core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -644,10 +715,20 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>xapool</groupId>
+            <groupId>co.kuali</groupId>
             <artifactId>xapool</artifactId>
             <version>${xapool.version}</version>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc7</artifactId>
+                </exclusion>    
+            </exclusions>
         </dependency>
     </dependencies>
 

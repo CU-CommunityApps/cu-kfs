@@ -6,20 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.springframework.beans.factory.DisposableBean;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -37,6 +36,7 @@ import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurReportsServiceImpl implements ConcurReportsService, DisposableBean {
     
@@ -51,7 +51,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
 
     @Override
     public void destroy() throws Exception {
-        closeJerseyClientQuietly();
+        closeClientQuietly();
     }
 
     @Override
@@ -94,35 +94,34 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
     }
 
     protected TravelRequestDetailsDTO buildTravelRequestDetailsOutput(String reportURI) {
-        ClientResponse response = null;
+        Response response = null;
 
         try {
-            response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
-            TravelRequestDetailsDTO reportDetails = response.getEntity(TravelRequestDetailsDTO.class);
+            Invocation request = buildReportDetailsClientRequest(reportURI, HttpMethod.GET);
+            response = request.invoke();
+            TravelRequestDetailsDTO reportDetails = response.readEntity(TravelRequestDetailsDTO.class);
 
             return reportDetails;
         } finally {
-            closeQuietly(response);
+            CURestClientUtils.closeQuietly(response);
         }
     }
 
     protected ExpenseReportDetailsDTO buildReportDetailsOutput(String reportURI) {
-        ClientResponse response = null;
+        Response response = null;
 
         try {
-            response = getClient().handle(buildReportDetailsClientRequest(reportURI, HttpMethod.GET));
-            ExpenseReportDetailsDTO reportDetails = response.getEntity(ExpenseReportDetailsDTO.class);
+            Invocation request = buildReportDetailsClientRequest(reportURI, HttpMethod.GET);
+            response = request.invoke();
+            ExpenseReportDetailsDTO reportDetails = response.readEntity(ExpenseReportDetailsDTO.class);
 
             return reportDetails;
         } finally {
-            closeQuietly(response);
+            CURestClientUtils.closeQuietly(response);
         }
     }
 
-    protected ClientRequest buildReportDetailsClientRequest(String reportURI, String httpMethod) {
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken());
+    protected Invocation buildReportDetailsClientRequest(String reportURI, String httpMethod) {
         URI uri;
         try {
             uri = new URI(reportURI);
@@ -130,7 +129,12 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             throw new RuntimeException("An error occured while building the report details URI: ", e);
         }
 
-        return builder.build(uri, httpMethod);
+        return getClient().target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_XML)
+                .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                        ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken())
+                .build(httpMethod);
     }
 
     protected List<ConcurAccountInfo> extractAccountInfoFromExpenseReportDetails(ExpenseReportDetailsDTO reportDetails) {
@@ -230,20 +234,22 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
     
     protected void buildUpdateReportOutput(String workflowURI, String action, String comment) {
         LOG.info("buildUpdateReportOutput()");
-        ClientResponse response = null;
+        Response response = null;
 
         try {
-            WebResource resource = getClient().resource(workflowURI);
-
-            response = resource.accept(MediaType.APPLICATION_XML).
-                header(ConcurConstants.AUTHORIZATION_PROPERTY, ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken()).
-                post(ClientResponse.class, buildWorkflowUpdateXML(workflowURI, action, comment));
+            String workflowUpdateXml = buildWorkflowUpdateXML(workflowURI, action, comment);
+            response = getClient().target(workflowURI)
+                    .request()
+                    .accept(MediaType.APPLICATION_XML)
+                    .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                            ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + concurAccessTokenService.getAccessToken())
+                    .post(Entity.xml(workflowUpdateXml));
 
             response.bufferEntity();
-            String result = response.getEntity(String.class);
+            String result = response.readEntity(String.class);
             LOG.info("Update workflow response: " + result);
         } finally {
-            closeQuietly(response);
+            CURestClientUtils.closeQuietly(response);
         }
 
     }
@@ -262,31 +268,32 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         LOG.info("deleteFailedEventQueueItem(), noticationId: " + noticationId);
         String deleteItemURL = getConcurFailedRequestDeleteNotificationEndpoint() + noticationId;
         LOG.info("deleteFailedEventQueueItem(), the delete item URL: " + deleteItemURL);
-        ClientResponse response = null;
+        Response response = null;
         
         try {
-            response = getClient().handle(buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE));
-            
+            Invocation request = buildReportDetailsClientRequest(deleteItemURL, HttpMethod.DELETE);
+            response = request.invoke();
             int statusCode = response.getStatus();
-            String statusResponsePhrase = ClientResponse.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+            String statusResponsePhrase = response.getStatusInfo().getReasonPhrase();
             LOG.info("deleteFailedEventQueueItem(), the resonse status code was " + statusCode + " and the response phrase was " + statusResponsePhrase);
-            return statusCode == ClientResponse.Status.OK.getStatusCode();
+            return statusCode == Response.Status.OK.getStatusCode();
         } finally {
-            closeQuietly(response);
+            CURestClientUtils.closeQuietly(response);
         }
     }
     
     @Override
     public ConcurEventNotificationListDTO retrieveFailedEventQueueNotificationsFromConcur() {
         LOG.info("retrieveFailedEventQueueNotificationsFromConcur, the failed event queue endpoint: " + getConcurFailedRequestQueueEndpoint());
-        ClientResponse response = null;
+        Response response = null;
         
         try {
-            response = getClient().handle(buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET));
-            ConcurEventNotificationListDTO reportDetails = response.getEntity(ConcurEventNotificationListDTO.class);
+            Invocation request = buildReportDetailsClientRequest(getConcurFailedRequestQueueEndpoint(), HttpMethod.GET);
+            response = request.invoke();
+            ConcurEventNotificationListDTO reportDetails = response.readEntity(ConcurEventNotificationListDTO.class);
             return reportDetails;
         } finally {
-            closeQuietly(response);
+            CURestClientUtils.closeQuietly(response);
         }
     }
 
@@ -298,8 +305,8 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             synchronized (this) {
                 jerseyClient = client;
                 if (jerseyClient == null) {
-                    ClientConfig clientConfig = new DefaultClientConfig();
-                    jerseyClient = Client.create(clientConfig);
+                    ClientConfig clientConfig = new ClientConfig();
+                    jerseyClient = ClientBuilder.newClient(clientConfig);
                     client = jerseyClient;
                 }
             }
@@ -307,17 +314,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         return jerseyClient;
     }
 
-    protected void closeQuietly(ClientResponse response) {
-        if (response != null) {
-            try {
-                response.close();
-            } catch (Exception e) {
-                LOG.error("Error closing client response", e);
-            }
-        }
-    }
-
-    protected void closeJerseyClientQuietly() {
+    protected void closeClientQuietly() {
         // Use double-checked locking to retrieve the Client object, similar to related locking in Rice.
         // See effective java 2nd ed. pg. 71
         Client jerseyClient = client;
@@ -327,13 +324,7 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
             }
         }
         
-        if (jerseyClient != null) {
-            try {
-                jerseyClient.destroy();
-            } catch (Exception e) {
-                LOG.error("Error closing client", e);
-            }
-        }
+        CURestClientUtils.closeQuietly(jerseyClient);
     }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {

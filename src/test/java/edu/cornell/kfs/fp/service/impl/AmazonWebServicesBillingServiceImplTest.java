@@ -1,21 +1,22 @@
 package edu.cornell.kfs.fp.service.impl;
 
-import com.sun.jersey.api.client.ClientRequest;
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
-import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.net.URI;
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
+import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
 
 public class AmazonWebServicesBillingServiceImplTest {
 
@@ -63,12 +64,12 @@ public class AmazonWebServicesBillingServiceImplTest {
         try {
             List<AmazonAccountDetail> details = amazonService.buildAmazonAcountListFromJson("");
         } catch (RuntimeException e) {
-            if (StringUtils.contains(e.getMessage(), "java.io.EOFException")){
-                assertTrue("Expected an EOF error", true);
+            if (StringUtils.contains(e.getMessage(), "com.fasterxml.jackson.databind.exc.MismatchedInputException")){
+                assertTrue("Expected a Mismatched Input error", true);
                 return;
             }
         }
-        assertTrue("Expected an EOF error", false);
+        assertTrue("Expected a Mismatched Input error", false);
     }
     
     @Test
@@ -164,7 +165,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     }
     
     @Test
-    public void testBuildClientRequest() {
+    public void testBuildAwsUrlForClientRequest() {
         String awsURL = "http://www.foo.bar/service?";
         String awsToken = "someDummyText";
         
@@ -172,8 +173,8 @@ public class AmazonWebServicesBillingServiceImplTest {
         amazonService.setAwsToken(awsToken);
         amazonService.setBillingPeriodParameterValue(DEC_2015_PARAM_VALUE);
         
-        ClientRequest cr = amazonService.buildClientRequest();
-        String resultsURL = cr.getURI().toString();
+        URI awsServiceUrl = amazonService.buildAwsServiceUrl();
+        String resultsURL = awsServiceUrl.toString();
         String expectedURL = awsURL + "year=2015&month=12";
         assertEquals(expectedURL, resultsURL);
     }
