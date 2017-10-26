@@ -737,7 +737,7 @@
     </bean>
     
     <bean id="cbcpCreateDocumentService" parent="cbcpCreateDocumentService-parentBean"/>
-    <bean id="cbcpCreateDocumentService-parentBean" class="org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" abstract="true">
+    <bean id="cbcpCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CbcpCreateDocumentServiceImpl" abstract="true">
         <property name="parameterService" ref="parameterService"/>
         <property name="businessObjectService" ref="businessObjectService"/>
         <property name="documentService" ref="documentService"/>

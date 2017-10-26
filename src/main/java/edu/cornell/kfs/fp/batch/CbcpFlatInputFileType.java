@@ -37,6 +37,9 @@ public class CbcpFlatInputFileType extends ProcurementCardFlatInputFileType {
         sb.append(getFooterTransactionCount());
         sb.append(" Transactions counted while parsing file: ");
         sb.append(getTransactionCount());
+        /**
+         * @todo after we get a good file, we should start throwing an error here
+         */
         LOG.error("handleRecordCountMisMatch, there was a record count mis match: " + sb.toString());
     }
     

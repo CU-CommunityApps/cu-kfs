@@ -37,12 +37,12 @@ import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 
 public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
-    private static final int CARD_HOLDER_MAX_LENGTH = 15;
-    private static int VENDOR_NAME_MAX_LENGTH = 19;
-    private static final int CC_LAST_FOUR = 4;
-    private static final int MAX_DOC_DESC_LENGTH = 40;
+    protected static final int CARD_HOLDER_MAX_LENGTH = 15;
+    protected static int VENDOR_NAME_MAX_LENGTH = 19;
+    protected static final int CC_LAST_FOUR = 4;
+    protected static final int MAX_DOC_DESC_LENGTH = 40;
     
-    private DataDictionaryService dataDictionaryService;
+    protected DataDictionaryService dataDictionaryService;
 
     /**
      * Creates a ProcurementCardDocument from the List of transactions given.
