@@ -11,10 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
@@ -27,27 +31,22 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
-import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
@@ -57,7 +56,7 @@ import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.AmazonWebServicesBillingService;
 import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
 import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetailContainer;
-import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBillingService, Serializable {
 
@@ -109,30 +108,42 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     private String buildJsonOutput() {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
+        Client client = null;
+        Response response = null;
         
-        ClientResponse response = client.handle(buildClientRequest());
-        
-        response.bufferEntity();
-        String results = response.getEntity(String.class);
-        return results;
+        try {
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            
+            Invocation request = buildClientRequest(client);
+            response = request.invoke();
+            
+            response.bufferEntity();
+            String results = response.readEntity(String.class);
+            return results;
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+            CURestClientUtils.closeQuietly(client);
+        }
     }
     
-    protected ClientRequest buildClientRequest() {
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_JSON);
-        builder.header(CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_HEADER_NAME, 
-                CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getAwsToken());
-        URI uri;
+    protected Invocation buildClientRequest(Client client) {
+        URI uri = buildAwsServiceUrl();
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .header(CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_HEADER_NAME, 
+                        CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getAwsToken())
+                .buildGet();
+    }
+    
+    protected URI buildAwsServiceUrl() {
         try {
-            uri = new URI(getAwsURL() + CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_YEAR + findProcessYear() + 
+            return new URI(getAwsURL() + CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_YEAR + findProcessYear() + 
                     CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_MONTH + findProcessMonthNumber());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        ClientRequest request = builder.build(uri, CuFPConstants.AmazonWebServiceBillingConstants.HTTP_METHOD_GET_NAME);
-        return request;
     }
     
     protected List<AmazonAccountDetail> buildAmazonAcountListFromJson(String jsonResults) {

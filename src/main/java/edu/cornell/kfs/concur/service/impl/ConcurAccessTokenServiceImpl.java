@@ -7,10 +7,14 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.function.Function;
 
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.HttpMethod;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -22,14 +26,9 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
+import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
@@ -37,6 +36,7 @@ import edu.cornell.kfs.concur.rest.xmlObjects.AccessTokenDTO;
 import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
@@ -49,18 +49,9 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Transactional
     @Override
     public void requestNewAccessToken() {
-        AccessTokenDTO newToken = buildRequestAccessTokenOutput();
+        AccessTokenDTO newToken = callConcurEndpoint(
+                this::buildRequestAccessTokenClientRequest, AccessTokenDTO.class);
         setWebserivceCredentialValues(newToken.getToken(), newToken.getExpirationDate(), newToken.getRefreshToken());
-    }
-
-    protected AccessTokenDTO buildRequestAccessTokenOutput() {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-
-        ClientResponse response = client.handle(buildRequestAccessTokenClientRequest());
-        AccessTokenDTO newToken = response.getEntity(AccessTokenDTO.class);
-
-        return newToken;
     }
     
     protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
@@ -69,14 +60,10 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
     }
 
-    protected ClientRequest buildRequestAccessTokenClientRequest() {
+    protected Invocation buildRequestAccessTokenClientRequest(Client client) {
         String credentials = buildCredentialsStringForRequestingNewAccessToken(getLoginUsername(), getLoginPassword());
         String encodedCredentials = ConcurUtils.base64Encode(credentials);
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,
-                ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials);
-        builder.header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey());
+        
         URI uri;
         try {
             uri = new URI(getConcurRequestAccessTokenURL());
@@ -87,7 +74,14 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("buildRequestAccessTokenClientRequest, URI: " + uri);
         }
-        return builder.build(uri, HttpMethod.GET);
+        
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_XML)
+                .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                        ConcurConstants.BASIC_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + encodedCredentials)
+                .header(ConcurConstants.CONSUMER_KEY_PROPERTY, getConsumerKey())
+                .buildGet();
     }
 
     protected String buildCredentialsStringForRequestingNewAccessToken(String loginUsername, String loginPassword) {
@@ -97,24 +91,12 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     @Transactional
     @Override
     public void refreshAccessToken() {
-        AccessTokenDTO refreshedToken = buildRefreshAccessTokenOutput();
+        AccessTokenDTO refreshedToken = callConcurEndpoint(
+                this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
         webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, refreshedToken.getExpirationDate()); 
     }
 
-    private AccessTokenDTO buildRefreshAccessTokenOutput() {
-        ClientConfig clientConfig = new DefaultClientConfig();
-        Client client = Client.create(clientConfig);
-
-        ClientResponse response = client.handle(buildRefreshAccessTokenClientRequest());     
-        AccessTokenDTO refreshedToken = response.getEntity(AccessTokenDTO.class);
-
-        return refreshedToken;
-    }
-
-    protected ClientRequest buildRefreshAccessTokenClientRequest() {
-        ClientRequest.Builder builder = new ClientRequest.Builder();
-        builder.accept(MediaType.APPLICATION_XML);
-        builder.header(ConcurConstants.AUTHORIZATION_PROPERTY,ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken());
+    protected Invocation buildRefreshAccessTokenClientRequest(Client client) {
         URI uri;
         try {
             uri = new URI(getConcurRefreshAccessTokenURL()
@@ -128,7 +110,29 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         if (LOG.isDebugEnabled()) {
             LOG.debug("buildRefreshAccessTokenClientRequest, URI: " + uri);
         }
-        return builder.build(uri, HttpMethod.GET);
+        
+        return client.target(uri)
+                .request()
+                .accept(MediaType.APPLICATION_XML)
+                .header(ConcurConstants.AUTHORIZATION_PROPERTY,
+                        ConcurConstants.OAUTH_AUTHENTICATION_SCHEME + KFSConstants.BLANK_SPACE + getAccessToken())
+                .buildGet();
+    }
+
+    protected <T> T callConcurEndpoint(Function<Client, Invocation> requestBuilder, Class<T> responseEntityType) {
+        Client client = null;
+        Response response = null;
+        
+        try {
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            Invocation request = requestBuilder.apply(client);
+            response = request.invoke();
+            return response.readEntity(responseEntityType);
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+            CURestClientUtils.closeQuietly(client);
+        }
     }
 
     @Transactional
@@ -219,7 +223,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
         }
         
         return Boolean.valueOf(
-                StringUtils.isBlank(responseContent) && statusCode == ClientResponse.Status.OK.getStatusCode());
+                StringUtils.isBlank(responseContent) && statusCode == Response.Status.OK.getStatusCode());
     }
 
     protected String getEntityContentAsString(HttpEntity entity) throws IOException {
