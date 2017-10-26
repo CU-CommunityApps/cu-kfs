@@ -156,7 +156,7 @@ abstract class TaxTableRow {
         final TaxTableField endDisbursementNbr;
         final TaxTableField summaryCustomerId;
         final TaxTableField summaryProcessId;
-        final TaxTableField lastUpdate;
+        final TaxTableField summaryLastUpdatedTimestamp;
         // Fields from PDP_CUST_PRFL_T (CustomerProfile)
         final TaxTableField customerId;
         final TaxTableField customerChartCode;
@@ -200,7 +200,7 @@ abstract class TaxTableRow {
             this.endDisbursementNbr = getAliasedField(CommonPdpSourceFieldNames.END_DISBURSEMENT_NUMBER);
             this.summaryCustomerId = getAliasedField(CommonPdpSourceFieldNames.SUMMARY_CUSTOMER_ID);
             this.summaryProcessId = getAliasedField(CommonPdpSourceFieldNames.SUMMARY_PROCESS_ID);
-            this.lastUpdate = getAliasedField(CommonPdpSourceFieldNames.LAST_UPDATE);
+            this.summaryLastUpdatedTimestamp = getAliasedField(CommonPdpSourceFieldNames.SUMMARY_LAST_UPDATED_TIMESTAMP);
             this.customerId = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_ID);
             this.customerChartCode = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_CHART_CODE);
             this.unitCode = getAliasedField(CommonPdpSourceFieldNames.UNIT_CODE);
