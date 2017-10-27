@@ -70,7 +70,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
      * @param runDate                    the transaction date for the newly created origin entry
      * @param group                      the group to save the origin entry to
      */
-    protected final static String ICR_EDOC_PREFIX = "ICR";
+    protected static final String ICR_EDOC_PREFIX = "ICR";
     @Override
     protected void generateTransactions(ExpenditureTransaction et, IndirectCostRecoveryRateDetail icrRateDetail, KualiDecimal generatedTransactionAmount, Date runDate, PrintStream group, IndirectCostRecoveryGenerationMetadata icrGenerationMetadata) {
 
@@ -123,8 +123,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
         StringBuffer docNbr = new StringBuffer(ICR_EDOC_PREFIX);
         docNbr.append(sdf.format(runDate));
         e.setDocumentNumber(docNbr.toString());
-        LOG.debug("CuPosterServiceImpl.generateTransactions: setDocumentNumber=" + docNbr.toString() + "=");
-        //e.setDocumentNumber(sdf.format(runDate));
+        LOG.debug("CuPosterServiceImpl.generateTransactions: setDocumentNumber = '" + docNbr.toString() + "'");
         /*CUMod - stop*/
         if (KFSConstants.GL_DEBIT_CODE.equals(icrRateDetail.getTransactionDebitIndicator())) {
             e.setTransactionLedgerEntryDescription(getChargeDescription(pct, et.getObjectCode(), icrGenerationMetadata.getIndirectCostRecoveryTypeCode(), et.getAccountObjectDirectCostAmount().abs()));
