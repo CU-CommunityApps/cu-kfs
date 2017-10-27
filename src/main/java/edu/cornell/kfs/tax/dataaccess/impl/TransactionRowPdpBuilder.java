@@ -96,7 +96,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                 
                 // Build the ORDER BY clause.
                 SqlText.ORDER_BY,
-                        new Object[][] {{pdpRow.vendorTaxNumber}, {pdpRow.lastUpdate}, {pdpRow.summaryId}});
+                        new Object[][] {{pdpRow.vendorTaxNumber}, {pdpRow.summaryLastUpdatedTimestamp}, {pdpRow.summaryId}});
         
         
         

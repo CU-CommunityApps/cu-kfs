@@ -94,7 +94,7 @@ public final class CUTaxBatchConstants {
         public static final String END_DISBURSEMENT_NUMBER = "endDisbursementNbr";
         public static final String SUMMARY_CUSTOMER_ID = "summary.customerId";
         public static final String SUMMARY_PROCESS_ID = "summary.processId";
-        public static final String LAST_UPDATE = "lastUpdate";
+        public static final String SUMMARY_LAST_UPDATED_TIMESTAMP = "summary.lastUpdatedTimestamp";
         // Fields from PDP_CUST_PRFL_T (CustomerProfile)
         public static final String CUSTOMER_ID = "customer.id";
         public static final String CUSTOMER_CHART_CODE = "customer.chartCode";
