@@ -26,7 +26,7 @@
         <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::endDisbursementNbr" alias="endDisbursementNbr" />
         <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::customerId" alias="summary.customerId" />
         <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::processId" alias="summary.processId" />
-        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::lastUpdate" alias="lastUpdate" />
+        <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::lastUpdatedTimestamp" alias="summary.lastUpdatedTimestamp" />
         <!-- ==== Fields from PDP_CUST_PRFL_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::id" alias="customer.id" />
         <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::chartCode" alias="customer.chartCode" />
