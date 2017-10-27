@@ -3,8 +3,8 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CbcpErrorEmailServiceImpl extends ProcurementCardErrorEmailServiceImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CbcpErrorEmailServiceImpl.class);
+public class CorporateBilledCorporatePaidErrorEmailServiceImpl extends ProcurementCardErrorEmailServiceImpl {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidErrorEmailServiceImpl.class);
     
     @Override
     protected Set<String> getToAddresses() {
@@ -19,12 +19,12 @@ public class CbcpErrorEmailServiceImpl extends ProcurementCardErrorEmailServiceI
     
     @Override
     protected String buildErrorEmailSubject() {
-        return "Error occurred during CBCP batch upload process";
+        return "Error occurred during Corporate Billed Corporate Paid batch upload process";
     }
     
     @Override
     protected String buildErrorMessageBodyStarter() {
-        return "Errors occured during the CBCP upload process.";
+        return "Errors occured during the Corporate Billed Corporate Paid upload process.";
     }
 
 }

@@ -4,12 +4,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.mchange.v1.lang.GentleThread;
 
-public class CbcpFlatInputFileType extends ProcurementCardFlatInputFileType {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CbcpFlatInputFileType.class);
+public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCardFlatInputFileType {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidFlatInputFileType.class);
     
     @Override
     public String getFileTypeIdentifer() {
-        return "cbcpFlatInputFileType";
+        return "corpoateBilledCorporatePaidFlatInputFileType";
     }
     
     @Override

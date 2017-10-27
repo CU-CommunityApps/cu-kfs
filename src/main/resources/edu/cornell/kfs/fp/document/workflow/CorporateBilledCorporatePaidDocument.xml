@@ -5,7 +5,7 @@
     <documentType>
       <name>CBCP</name>
       <parent>PCDO</parent>
-      <label>CBCP Credit Card Transactions</label>
+      <label>Corporate Billed Corporate Paid Credit Card Transactions</label>
       <routingVersion>1</routingVersion>
     </documentType>
   </documentTypes>

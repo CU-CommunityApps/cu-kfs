@@ -13,17 +13,17 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.batch.service.WrappingBatchService;
 import org.kuali.kfs.sys.service.ReportWriterService;
 
-public class CbcpLoadFlatFileStep extends AbstractStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CbcpLoadFlatFileStep.class);
+public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidLoadFlatFileStep.class);
     private ProcurementCardLoadTransactionsService procurementCardLoadTransactionsService;
     private BatchInputFileService batchInputFileService;
-    private BatchInputFileType cbcpInputFileType;
+    private BatchInputFileType corporateBilledCorporatePaidInputFileType;
     private ReportWriterService reportWriterService;
     
     public boolean execute(String jobName, Date jobRunDate) {
         procurementCardLoadTransactionsService.cleanTransactionsTable();
 
-        List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(cbcpInputFileType);
+        List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(corporateBilledCorporatePaidInputFileType);
         
         ((WrappingBatchService) reportWriterService).initialize();
         
@@ -65,7 +65,7 @@ public class CbcpLoadFlatFileStep extends AbstractStep {
         this.reportWriterService = reportWriterService;
     }
 
-    public void setCbcpInputFileType(BatchInputFileType cbcpInputFileType) {
-        this.cbcpInputFileType = cbcpInputFileType;
+    public void setCorporateBilledCorporatePaidInputFileType(BatchInputFileType corporateBilledCorporatePaidInputFileType) {
+        this.corporateBilledCorporatePaidInputFileType = corporateBilledCorporatePaidInputFileType;
     }
 }

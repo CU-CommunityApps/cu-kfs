@@ -19,20 +19,20 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
-import edu.cornell.kfs.fp.document.CbcpDocument;
+import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 
-public class CbcpCreateDocumentServiceImpl extends ProcurementCardCreateDocumentServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CbcpCreateDocumentServiceImpl.class);
+public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends ProcurementCardCreateDocumentServiceImpl {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
     @Override
-    protected CbcpDocument createProcurementCardDocument(List transactions) {
-        CbcpDocument cbcpDocument = null;
+    protected CorporateBilledCorporatePaidDocument createProcurementCardDocument(List transactions) {
+        CorporateBilledCorporatePaidDocument cbcpDocument = null;
 
         dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
         
         try {
             // get new document from doc service
-            cbcpDocument = (CbcpDocument) SpringContext.getBean(DocumentService.class).getNewDocument(CuFPConstants.CBCP_DOCUMENT_TYPE_CODE);
+            cbcpDocument = (CorporateBilledCorporatePaidDocument) SpringContext.getBean(DocumentService.class).getNewDocument(CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE);
             
             List<CapitalAssetInformation> capitalAssets = cbcpDocument.getCapitalAssetInformation();
             for (CapitalAssetInformation capitalAsset : capitalAssets) {
