@@ -1152,12 +1152,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         String errorPath = PurapConstants.CAPITAL_ASSET_TAB_ERRORS;
         // validate entry is selected for each field
         if (StringUtils.isEmpty(document.getCapitalAssetSystemTypeCode())) {
-            GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_MISSING, "Capital Assets System Type Code");
-        }
-        else if (StringUtils.isEmpty(document.getCapitalAssetSystemStateCode())) {
-            GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_MISSING, "Capital Assets System State Code");
-        }
-        else {
+            GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "Capital Asset System Type and Capital Asset System State are both required to proceed");
+        } else if (StringUtils.isEmpty(document.getCapitalAssetSystemStateCode())) {
+            GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "Capital Asset System Type and Capital Asset System State are both required to proceed");
+        } else {
             SpringContext.getBean(PurchasingService.class).setupCapitalAssetSystem(document);
             SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
             if (!document.getPurchasingCapitalAssetItems().isEmpty()) {

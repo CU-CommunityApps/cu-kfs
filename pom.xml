@@ -142,9 +142,6 @@
                             <groupId>org.kuali.kfs</groupId>
                             <artifactId>kfs-web</artifactId>
                             <filtered>false</filtered>
-                            <excludes>
-                                <exclude>WEB-INF/lib/xapool-1.5.0-patch6.jar</exclude>
-                            </excludes>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -270,12 +267,6 @@
             <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>xapool</groupId>
-                    <artifactId>xapool</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>

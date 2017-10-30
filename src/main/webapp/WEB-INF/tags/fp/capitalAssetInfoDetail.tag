@@ -112,7 +112,7 @@
 			<c:if test="${!readOnly}">
                     <td class="infoline left">
                         <html:submit
-                                property="methodToCall.deleteCapitalAssetInfoDetailLine.line${capitalAssetInfoIndex}.Anchor"
+                                property="methodToCall.deleteCapitalAssetInfoDetailLine.line${lineNumber}.Anchor"
 							title="delete the capital Asset Information Detail line ${lineNumber}"
                                 alt="delete the capital Asset Information Detail line ${lineNumber}"
                                 styleClass="btn btn-red"
