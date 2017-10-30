@@ -29,20 +29,21 @@ import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.fp.batch.service.CuProcurementCardCreateDocumentService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataDetail;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 
 
-public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
+public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl implements CuProcurementCardCreateDocumentService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
-    protected static final int CARD_HOLDER_MAX_LENGTH = 15;
-    protected static int VENDOR_NAME_MAX_LENGTH = 19;
-    protected static final int CC_LAST_FOUR = 4;
-    protected static final int MAX_DOC_DESC_LENGTH = 40;
+    private static final int CARD_HOLDER_MAX_LENGTH = 15;
+    private static int VENDOR_NAME_MAX_LENGTH = 19;
+    private static final int CC_LAST_FOUR = 4;
+    private static final int MAX_DOC_DESC_LENGTH = 40;
     
-    protected DataDictionaryService dataDictionaryService;
+    private DataDictionaryService dataDictionaryService;
 
     /**
      * Creates a ProcurementCardDocument from the List of transactions given.
@@ -52,7 +53,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
      */
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Override
-    protected ProcurementCardDocument createProcurementCardDocument(List transactions) {
+    public ProcurementCardDocument createProcurementCardDocument(List transactions) {
         ProcurementCardDocument pcardDocument = null;
 
         dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
@@ -273,6 +274,10 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     }
     protected String getErrorObjectCode() {
         return parameterService.getParameterValueAsString(ProcurementCardCreateDocumentsStep.class, ERROR_TRANS_OBJECT_CODE_PARM_NM);
+    }
+    
+    public List retrieveTransactions() {
+        return super.retrieveTransactions();
     }
     
 }

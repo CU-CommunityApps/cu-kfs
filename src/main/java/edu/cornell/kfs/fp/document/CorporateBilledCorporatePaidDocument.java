@@ -4,6 +4,9 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONEN
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 
@@ -17,6 +20,26 @@ public class CorporateBilledCorporatePaidDocument extends ProcurementCardDocumen
     @Override
     public String getFinancialDocumentTypeCode() {
         return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE;
+    }
+    
+    @Override
+    public boolean generateGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySourceDetail glpeSourceDetail, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+        LOG.info("generateGeneralLedgerPendingEntries, glpeSourceDetail:" + glpeSourceDetail);
+        LOG.info("generateGeneralLedgerPendingEntries, sequenceHelper:" + sequenceHelper);
+        boolean results = super.generateGeneralLedgerPendingEntries(glpeSourceDetail, sequenceHelper);
+        LOG.info("generateGeneralLedgerPendingEntries, results: " + results);
+        return results;
+    }
+    
+    @Override
+    protected boolean processOffsetGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySequenceHelper sequenceHelper, GeneralLedgerPendingEntrySourceDetail postable, 
+            GeneralLedgerPendingEntry explicitEntry, GeneralLedgerPendingEntry offsetEntry) {
+        LOG.info("processOffsetGeneralLedgerPendingEntry, postable: " + postable);
+        LOG.info("processOffsetGeneralLedgerPendingEntry, explicitEntry: " + explicitEntry);
+        LOG.info("processOffsetGeneralLedgerPendingEntry, offsetEntry: " + offsetEntry);
+        boolean results = super.processOffsetGeneralLedgerPendingEntry(sequenceHelper, postable, explicitEntry, offsetEntry);
+        return results;
+        
     }
 
 }

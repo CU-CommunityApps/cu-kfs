@@ -671,7 +671,9 @@
             <list>
                 <ref bean="corporateBilledCorporatePaidLoadFlatFileStep" />
                 <ref bean="corporateBilledCorparatePaidCreateDocumentsStep" />
+                <!--  
                 <ref bean="corporateBilledCorporatePaidRouteDocumentsStep"/>
+                -->
             </list>
         </property>
     </bean>
@@ -736,19 +738,12 @@
         </property>
     </bean>
     
+    <bean id="cuProcurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean"/>
+    
     <bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean"/>
     <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true">
-        <property name="parameterService" ref="parameterService"/>
-        <property name="businessObjectService" ref="businessObjectService"/>
+        <property name="cuProcurementCardCreateDocumentService" ref="cuProcurementCardCreateDocumentService"/>
         <property name="documentService" ref="documentService"/>
-        <property name="workflowDocumentService" ref="workflowDocumentService"/>
-        <property name="dataDictionaryService" ref="dataDictionaryService"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="accountingLineRuleUtil" ref="accountingLineRuleHelperService"/>
-        <property name="capitalAssetManagementModuleService" ref="capitalAssetManagementModuleService"/>
-        <property name="emailService" ref="emailService"/>
-        <property name="financialSystemDocumentService" ref="financialSystemDocumentService"/>
-        <property name="emailTemplateUrl" value="org/kuali/kfs/fp/batch/template/pcard-create-doc-summary-email-plain-text.vm"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>
