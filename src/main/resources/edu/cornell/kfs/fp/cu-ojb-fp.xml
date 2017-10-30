@@ -1101,5 +1101,37 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="noteText" column="ACH_NTE_TXT" jdbc-type="VARCHAR"/>
   </class-descriptor>
+  
+  <class-descriptor class="edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument" table="FP_PRCRMNT_DOC_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="nextTargetLineNumber" column="FDOC_NXT_LINE_NBR" jdbc-type="INTEGER"/>
+        <field-descriptor name="autoApprovedIndicator" column="AUTO_APPROVED_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+
+        <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+
+        <reference-descriptor name="procurementCardHolder" class-ref="org.kuali.kfs.fp.businessobject.ProcurementCardHolder" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+
+        <collection-descriptor name="generalLedgerPendingEntries" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <orderby name="transactionLedgerEntrySequenceNumber" sort="ASC"/>
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+
+        <collection-descriptor name="transactionEntries" proxy="true" element-class-ref="org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <orderby name="transactionReferenceNumber" sort="ASC"/>
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+
+        <!-- capital asset specific collections -->
+        <collection-descriptor name="capitalAssetInformation" proxy="true" element-class-ref="org.kuali.kfs.fp.businessobject.CapitalAssetInformation" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <orderby name="capitalAssetLineNumber" sort="ASC"/>
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+    </class-descriptor>
 
 </descriptor-repository>

@@ -7,6 +7,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.rice.krad.util.GlobalVariables;
+import org.kuali.rice.krad.util.MessageMap;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 
@@ -23,22 +25,18 @@ public class CorporateBilledCorporatePaidDocument extends ProcurementCardDocumen
     }
     
     @Override
-    public boolean generateGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySourceDetail glpeSourceDetail, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
-        LOG.info("generateGeneralLedgerPendingEntries, glpeSourceDetail:" + glpeSourceDetail);
-        LOG.info("generateGeneralLedgerPendingEntries, sequenceHelper:" + sequenceHelper);
-        boolean results = super.generateGeneralLedgerPendingEntries(glpeSourceDetail, sequenceHelper);
-        LOG.info("generateGeneralLedgerPendingEntries, results: " + results);
-        return results;
-    }
-    
-    @Override
-    protected boolean processOffsetGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySequenceHelper sequenceHelper, GeneralLedgerPendingEntrySourceDetail postable, 
-            GeneralLedgerPendingEntry explicitEntry, GeneralLedgerPendingEntry offsetEntry) {
-        LOG.info("processOffsetGeneralLedgerPendingEntry, postable: " + postable);
-        LOG.info("processOffsetGeneralLedgerPendingEntry, explicitEntry: " + explicitEntry);
-        LOG.info("processOffsetGeneralLedgerPendingEntry, offsetEntry: " + offsetEntry);
-        boolean results = super.processOffsetGeneralLedgerPendingEntry(sequenceHelper, postable, explicitEntry, offsetEntry);
-        return results;
+    public void logErrors() {
+        LOG.error("logErrors, entering legErrors");
+        super.logErrors();
+        MessageMap messageMap = GlobalVariables.getMessageMap();
+        LOG.info("logErrors, error messages: " + messageMap.getErrorMessages().size());
+        for (String errorKey : messageMap.getErrorMessages().keySet()) {
+            LOG.info("logErrors, errorKey: " + errorKey + " message: " + messageMap.getErrorMessages().get(errorKey));
+        }
+        LOG.info("logErrors, info messages: " + messageMap.getInfoMessages().size());
+        for (String infoKey : messageMap.getInfoMessages().keySet()) {
+            LOG.info("logErrors, errorKey: " + infoKey + " message: " + messageMap.getInfoMessages().get(infoKey));
+        }    
         
     }
 
