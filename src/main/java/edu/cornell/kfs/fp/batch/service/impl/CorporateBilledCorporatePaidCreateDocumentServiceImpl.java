@@ -1,20 +1,22 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
+import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
+import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.document.validation.event.AccountingDocumentSaveWithNoLedgerEntryGenerationEvent;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.CuProcurementCardCreateDocumentService;
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 
 
@@ -36,7 +38,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
             try {
                 cbcpDocument = buildCorporateBilledCorporatePaidDocument(pCardDocument);
                 try {
-                    documentService.saveDocument(cbcpDocument);
+                    documentService.saveDocument(cbcpDocument, AccountingDocumentSaveWithNoLedgerEntryGenerationEvent.class);
                     LOG.info("createProcurementCardDocuments() Saved Procurement Card document: " + cbcpDocument.getDocumentNumber());
                 } catch (Exception e) {
                     LOG.error("createProcurementCardDocuments() Error persisting document # " + cbcpDocument.getDocumentHeader().getDocumentNumber() + " " + e.getMessage(), e);
@@ -63,7 +65,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         cbcpDoc.getDocumentHeader().setDocumentDescription(pCardDocument.getDocumentHeader().getDocumentDescription());
         cbcpDoc.getDocumentHeader().setExplanation(pCardDocument.getDocumentHeader().getExplanation());
         cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(pCardDocument.getDocumentHeader().getOrganizationDocumentNumber());
-        //cbcpDoc.setAccountingPeriod(pCardDocument.getAccountingPeriod());
+        cbcpDoc.setAccountingPeriod(pCardDocument.getAccountingPeriod());
         cbcpDoc.setAccountingPeriodCompositeString(pCardDocument.getAccountingPeriodCompositeString());
         //cbcpDoc.setAdHocRoutePersons(pCardDocument.getAdHocRoutePersons());
         //cbcpDoc.setAdHocRouteWorkgroups(pCardDocument.getAdHocRouteWorkgroups());
@@ -71,37 +73,114 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         cbcpDoc.setAutoApprovedIndicator(pCardDocument.isAutoApprovedIndicator());
         //cbcpDoc.setCapitalAccountingLines(pCardDocument.getCapitalAccountingLines());
         //cbcpDoc.setCapitalAccountingLinesExist(pCardDocument.isCapitalAccountingLinesExist());
-        //cbcpDoc.setCapitalAssetInformation(pCardDocument.getCapitalAssetInformation());
+        cbcpDoc.setCapitalAssetInformation(buildNewCapitalAssetInformation(pCardDocument.getCapitalAssetInformation(), cbcpDoc));
         //cbcpDoc.setGeneralLedgerPendingEntries(pCardDocument.getGeneralLedgerPendingEntries());
         cbcpDoc.setNewCollectionRecord(pCardDocument.isNewCollectionRecord());
-        //cbcpDoc.setNextCapitalAssetLineNumber(pCardDocument.getNextCapitalAssetLineNumber());
-        //cbcpDoc.setNextSourceLineNumber(pCardDocument.getNextSourceLineNumber());
-        //cbcpDoc.setNextTargetLineNumber(pCardDocument.getNextTargetLineNumber());
+        cbcpDoc.setNextCapitalAssetLineNumber(pCardDocument.getNextCapitalAssetLineNumber());
+        cbcpDoc.setNextSourceLineNumber(pCardDocument.getNextSourceLineNumber());
+        cbcpDoc.setNextTargetLineNumber(pCardDocument.getNextTargetLineNumber());
         //cbcpDoc.setNotes(pCardDocument.getNotes());
         //cbcpDoc.setPostingPeriodCode(pCardDocument.getPostingPeriodCode());
         //cbcpDoc.setPostingYear(pCardDocument.getPostingYear());
-        ProcurementCardHolder pCardHolder  = pCardDocument.getProcurementCardHolder();
-        pCardHolder.setDocumentNumber(cbcpDoc.getDocumentNumber());
-        LOG.info("pCardHolder: " + pCardHolder);
-        cbcpDoc.setProcurementCardHolder(pCardHolder);
+        
+        cbcpDoc.setProcurementCardHolder(buildNewProcurementCardHolder(pCardDocument.getProcurementCardHolder(), cbcpDoc));
+        
         //cbcpDoc.setSourceAccountingLines(pCardDocument.getSourceAccountingLines());
         //cbcpDoc.setTargetAccountingLines(pCardDocument.getTargetAccountingLines());
-        //cbcpDoc.setTransactionEntries(pCardDocument.getTransactionEntries());
+        cbcpDoc.setTransactionEntries(buildNewTransactionList(pCardDocument.getTransactionEntries(), cbcpDoc));
         
         return cbcpDoc;
     }
     
+    protected List buildNewCapitalAssetInformation(List orginalCapitalAssetInformation, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        List newInfoList = new ArrayList();
+        for (Object infoLine : orginalCapitalAssetInformation) {
+            CapitalAssetInformation oldInfoLine = (CapitalAssetInformation) infoLine;
+            CapitalAssetInformation newInfoLine = (CapitalAssetInformation) ObjectUtils.deepCopy(oldInfoLine);
+            newInfoLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
+            newInfoList.add(newInfoLine);
+        }
+        return newInfoList;
+    }
+    
+    protected ProcurementCardHolder buildNewProcurementCardHolder(ProcurementCardHolder originalProcurementCardHolder, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        ProcurementCardHolder newProcurementCardHolder = (ProcurementCardHolder) ObjectUtils.deepCopy(originalProcurementCardHolder);
+        newProcurementCardHolder.setDocumentNumber(cbcpDoc.getDocumentNumber());
+        return newProcurementCardHolder;
+    }
+    
+    protected List buildNewTransactionList(List originalTransactiolist, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        List newTransactionList = new ArrayList();
+        for (Object transaction : originalTransactiolist) {
+            ProcurementCardTransactionDetail originalTransaction = (ProcurementCardTransactionDetail) transaction;
+            ProcurementCardTransactionDetail newTransaction = (ProcurementCardTransactionDetail) ObjectUtils.deepCopy(originalTransaction);
+            
+            newTransaction.setDocumentNumber(cbcpDoc.getDocumentNumber());
+            ProcurementCardTransactionDetailExtendedAttribute extension = (ProcurementCardTransactionDetailExtendedAttribute) newTransaction.getExtension();
+            extension.setDocumentNumber(cbcpDoc.getDocumentNumber());
+
+            newTransaction.getProcurementCardVendor().setDocumentNumber(cbcpDoc.getDocumentNumber());
+            
+            resetAccountingLine(newTransaction.getSourceAccountingLines(), cbcpDoc);
+            resetAccountingLine(newTransaction.getTargetAccountingLines(), cbcpDoc);
+            
+            logProcurementCardTransactionDetail(newTransaction);
+            newTransactionList.add(newTransaction);
+        }
+        return newTransactionList;
+    }
+    
+    private void resetAccountingLine(List accountingLines, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        for (Object line : accountingLines) {
+            AccountingLineBase accountingLine = (AccountingLineBase) line;
+            accountingLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
+        }
+        /*
+        accountingLines.stream()
+            .map(line -> (AccountingLineBase) line)
+            .forEach(line -> line.setDocumentNumber(cbcpDoc.getDocumentNumber()));
+            */
+    }
+    
+    private void logProcurementCardTransactionDetail(ProcurementCardTransactionDetail transactionDetail) {
+        if (LOG.isInfoEnabled()) {
+            StringBuilder sb = new StringBuilder("logProcurementCardTransactionDetail, ");
+            if (ObjectUtils.isNotNull(transactionDetail)) {
+                sb.append("ProcurementCardTransactionDetail: ");
+                sb.append("document number = ").append(transactionDetail.getDocumentNumber());
+                sb.append(" tansaction reference number - ").append(transactionDetail.getTransactionReferenceNumber());
+                sb.append(" financial line number - ").append(transactionDetail.getFinancialDocumentTransactionLineNumber());
+                sb.append("  Source Lines - ");
+                logAccountingLineBaseList(transactionDetail.getSourceAccountingLines(), sb);
+                sb.append("  Target lines - ");
+                logAccountingLineBaseList(transactionDetail.getTargetAccountingLines(), sb);
+            }
+            LOG.info(sb.toString());
+        }
+    }
+    
+    private void logAccountingLineBaseList(List accountingLines, StringBuilder sb) {
+        for (Object line : accountingLines) {
+            AccountingLineBase accountingLine = (AccountingLineBase) line;
+            sb.append(accountingLine.toString());
+        }
+    }
+    
+    
+    
     @Override
     public boolean routeProcurementCardDocuments() {
         LOG.info("entering routeProcurementCardDocuments");
-        boolean results = cuProcurementCardCreateDocumentService.routeProcurementCardDocuments();
-        return results;
+        //boolean results = cuProcurementCardCreateDocumentService.routeProcurementCardDocuments();
+        //return results;
+        return true;
     }
     @Override
     public boolean autoApproveProcurementCardDocuments() {
         LOG.info("entering autoApproveProcurementCardDocuments");
-        boolean results = cuProcurementCardCreateDocumentService.autoApproveProcurementCardDocuments();
-        return results;
+        //boolean results = cuProcurementCardCreateDocumentService.autoApproveProcurementCardDocuments();
+        //return results;
+        return true;
     }
     
     public void setDocumentService(DocumentService documentService) {

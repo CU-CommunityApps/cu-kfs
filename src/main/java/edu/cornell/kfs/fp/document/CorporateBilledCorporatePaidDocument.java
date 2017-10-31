@@ -24,20 +24,14 @@ public class CorporateBilledCorporatePaidDocument extends ProcurementCardDocumen
         return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE;
     }
     
-    @Override
-    public void logErrors() {
-        LOG.error("logErrors, entering legErrors");
-        super.logErrors();
-        MessageMap messageMap = GlobalVariables.getMessageMap();
-        LOG.info("logErrors, error messages: " + messageMap.getErrorMessages().size());
-        for (String errorKey : messageMap.getErrorMessages().keySet()) {
-            LOG.info("logErrors, errorKey: " + errorKey + " message: " + messageMap.getErrorMessages().get(errorKey));
-        }
-        LOG.info("logErrors, info messages: " + messageMap.getInfoMessages().size());
-        for (String infoKey : messageMap.getInfoMessages().keySet()) {
-            LOG.info("logErrors, errorKey: " + infoKey + " message: " + messageMap.getInfoMessages().get(infoKey));
-        }    
+    public String getAccountNumberForSearching() {
+        LOG.error("called get accountNumberForSearching");
+        return "";
         
+    }
+    
+    public void setAccountNumberForSearching(String acctNumber) {
+        LOG.error("setting accountNumberForSearching: " + acctNumber);
     }
 
 }
