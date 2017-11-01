@@ -25,6 +25,7 @@ public class CorporateBilledCorporatePaidDocument extends ProcurementCardDocumen
     }
     
     public String getAccountNumberForSearching() {
+        this.getDocumentHeader().getWorkflowDocument().getDocumentHandlerUrl();
         LOG.error("called get accountNumberForSearching");
         return "";
         
