@@ -233,14 +233,14 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         // Add or update Entity ID account.
         if (ObjectUtils.isNull(entityAccount)) {
             processingError = addACHAccount(payee, achDetail, PayeeIdTypeCodes.ENTITY);
-            if (ObjectUtils.isNull(processingError)) {
+            if (StringUtils.isBlank(processingError)) {
                 LOG.info("processACHBatchDetail: Created new ACH Account of Entity type for payee " + payee.getPrincipalName());
             } else {
                 return processingError;
             }
         } else {
             processingError = updateACHAccountIfNecessary(payee, achDetail, entityAccount);
-            if (ObjectUtils.isNull(processingError)) {
+            if (StringUtils.isBlank(processingError)) {
                 LOG.info("processACHBatchDetail: Any necessary update processing performed to ACH Account of Entity type for payee " + payee.getPrincipalName());
             } else {
                 return processingError;
@@ -250,14 +250,14 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
         // Add or update Employee ID account.
         if (ObjectUtils.isNull(employeeAccount)) {
             processingError = addACHAccount(payee, achDetail, PayeeIdTypeCodes.EMPLOYEE);
-            if (ObjectUtils.isNull(processingError)) {
+            if (StringUtils.isBlank(processingError)) {
                 LOG.info("processACHBatchDetail: Created new ACH Account of Employee type for payee " + payee.getPrincipalName());
             } else {
                 return processingError;
             }
         } else {
             processingError = updateACHAccountIfNecessary(payee, achDetail, employeeAccount);
-            if (ObjectUtils.isNull(processingError)) {
+            if (StringUtils.isBlank(processingError)) {
                 LOG.info("processACHBatchDetail: Any necessary update processing performed to ACH Account of Employee type for payee " + payee.getPrincipalName());
             } else {
                 return processingError;
@@ -417,7 +417,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                     PayeeACHAccountExtractStep.class, CUPdpParameterConstants.GENERATED_PAYEE_ACH_ACCOUNT_DOC_NOTE_TEXT));
 
             // Route the document and send notifications.
-            paatDocument = (MaintenanceDocument) documentService.routeDocument(paatDocument, KFSConstants.EMPTY_STRING, null);
+            paatDocument = (MaintenanceDocument) documentService.routeDocument(
+                    paatDocument, CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_ROUTE_ANNOTATION, null);
             sendPayeeACHAccountAddOrUpdateEmail((PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject(), payee,
                     getPayeeACHAccountAddOrUpdateEmailSubject(true), getUnresolvedPayeeACHAccountAddOrUpdateEmailBody(true));
 
@@ -444,21 +445,57 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
         if (!StringUtils.equals(achDetail.getBankRoutingNumber(), achAccount.getBankRoutingNumber())
                 || !StringUtils.equals(achDetail.getBankAccountNumber(), achAccount.getBankAccountNumber())) {
-            /*
-             * For a future enhancement, we will modify this method to actually update the Payee ACH Account
-             * via a maintenance document, and possibly use more fields for change comparison.
-             */
-            processingResults.append(" Account information from input file for payee type '")
-                .append(achAccount.getPayeeIdentifierTypeCode())
-                .append("' does not match what is in KFS, but will be left as-is.");
+            String accountUpdateErrors = updateACHAccount(payee, achDetail, achAccount);
+            processingResults.append(accountUpdateErrors);
         } else {
             processingResults.append(" Input file's account information for payee of type '")
                 .append(achAccount.getPayeeIdentifierTypeCode())
                 .append("' matches what is already in KFS; no updates will be made for this entry.");
         }
-        processingResults.append(" Update was NOT performed.");
-        LOG.warn("updateACHAccountIfNecessary: " + processingResults.toString());
+        
+        if (processingResults.length() > 0) {
+            processingResults.append(" Update was NOT performed.");
+            LOG.warn("updateACHAccountIfNecessary: " + processingResults.toString());
+        }
+        
         return processingResults.toString();
+    }
+
+    protected String updateACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, PayeeACHAccount achAccount) {
+        PayeeACHAccount oldAccount = achAccount;
+        PayeeACHAccount newAccount = (PayeeACHAccount) ObjectUtils.deepCopy(oldAccount);
+        
+        newAccount.setBankRoutingNumber(achDetail.getBankRoutingNumber());
+        newAccount.setBankAccountNumber(achDetail.getBankAccountNumber());
+        newAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
+        
+        return createAndRouteDocumentForACHAccountUpdate(payee, achDetail, oldAccount, newAccount);
+    }
+
+    protected String createAndRouteDocumentForACHAccountUpdate(
+            Person payee, PayeeACHAccountExtractDetail achDetail, PayeeACHAccount oldAccount, PayeeACHAccount newAccount) {
+        try {
+            MaintenanceDocument paatDocument = (MaintenanceDocument) documentService.getNewDocument(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE);
+            paatDocument.getDocumentHeader().setDocumentDescription(getDocumentDescription(
+                    payee, PayeeIdTypeCodes.ENTITY.equals(newAccount.getPayeeIdentifierTypeCode()), false));
+            
+            paatDocument.getOldMaintainableObject().setDataObject(oldAccount);
+            paatDocument.getNewMaintainableObject().setDataObject(newAccount);
+            
+            addNote(paatDocument, parameterService.getParameterValueAsString(
+                    PayeeACHAccountExtractStep.class, CUPdpParameterConstants.GENERATED_PAYEE_ACH_ACCOUNT_DOC_NOTE_TEXT));
+
+            paatDocument = (MaintenanceDocument) documentService.routeDocument(
+                    paatDocument, CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_ROUTE_ANNOTATION, null);
+            sendPayeeACHAccountAddOrUpdateEmail((PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject(), payee,
+                    getPayeeACHAccountAddOrUpdateEmailSubject(false), getUnresolvedPayeeACHAccountAddOrUpdateEmailBody(false));
+        } catch (Exception e) {
+            LOG.error("addACHAccount STE " + e.getStackTrace() + e.toString());
+            LOG.error(getFailRequestMessage(e));
+            return "addACHAccount: " + achDetail.getLogData() + " STE was generated. " + getFailRequestMessage(e);
+        }
+        
+        return StringUtils.EMPTY;
     }
 
     private String getFailRequestMessage(Exception e) {
