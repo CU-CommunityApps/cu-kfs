@@ -671,9 +671,7 @@
             <list>
                 <ref bean="corporateBilledCorporatePaidLoadFlatFileStep" />
                 <ref bean="corporateBilledCorparatePaidCreateDocumentsStep" />
-                <!--  
                 <ref bean="corporateBilledCorporatePaidRouteDocumentsStep"/>
-                -->
             </list>
         </property>
     </bean>
@@ -743,6 +741,7 @@
     <bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean"/>
     <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true">
         <property name="cuProcurementCardCreateDocumentService" ref="cuProcurementCardCreateDocumentService"/>
+        <property name="dataDictionaryService" ref="dataDictionaryService"/>
         <property name="documentService" ref="documentService"/>
     </bean>
     

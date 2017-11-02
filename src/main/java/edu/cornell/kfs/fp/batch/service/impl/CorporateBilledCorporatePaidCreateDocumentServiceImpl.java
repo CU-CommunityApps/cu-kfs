@@ -1,17 +1,22 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
+import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
-import org.kuali.kfs.sys.document.validation.event.AccountingDocumentSaveWithNoLedgerEntryGenerationEvent;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -24,6 +29,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
     protected CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService;
+    protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
     
     @Override
@@ -38,7 +44,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
             try {
                 cbcpDocument = buildCorporateBilledCorporatePaidDocument(pCardDocument);
                 try {
-                    documentService.saveDocument(cbcpDocument, AccountingDocumentSaveWithNoLedgerEntryGenerationEvent.class);
+                    documentService.saveDocument(cbcpDocument);
                     LOG.info("createProcurementCardDocuments() Saved Procurement Card document: " + cbcpDocument.getDocumentNumber());
                 } catch (Exception e) {
                     LOG.error("createProcurementCardDocuments() Error persisting document # " + cbcpDocument.getDocumentHeader().getDocumentNumber() + " " + e.getMessage(), e);
@@ -63,33 +69,37 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         CorporateBilledCorporatePaidDocument cbcpDoc = (CorporateBilledCorporatePaidDocument) documentService.getNewDocument(
                 CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE);
         cbcpDoc.getDocumentHeader().setDocumentDescription(pCardDocument.getDocumentHeader().getDocumentDescription());
-        cbcpDoc.getDocumentHeader().setExplanation(pCardDocument.getDocumentHeader().getExplanation());
-        cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(pCardDocument.getDocumentHeader().getOrganizationDocumentNumber());
+        /**
+         * @todo use a parameter
+         */
+        String explanationText = "Corporate Billed Corporate Paid Daily Entries";
+        cbcpDoc.getDocumentHeader().setExplanation(explanationText);
+        
         cbcpDoc.setAccountingPeriod(pCardDocument.getAccountingPeriod());
         cbcpDoc.setAccountingPeriodCompositeString(pCardDocument.getAccountingPeriodCompositeString());
-        //cbcpDoc.setAdHocRoutePersons(pCardDocument.getAdHocRoutePersons());
-        //cbcpDoc.setAdHocRouteWorkgroups(pCardDocument.getAdHocRouteWorkgroups());
         cbcpDoc.setApplicationDocumentStatus(pCardDocument.getApplicationDocumentStatus());
         cbcpDoc.setAutoApprovedIndicator(pCardDocument.isAutoApprovedIndicator());
         //cbcpDoc.setCapitalAccountingLines(pCardDocument.getCapitalAccountingLines());
-        //cbcpDoc.setCapitalAccountingLinesExist(pCardDocument.isCapitalAccountingLinesExist());
+        cbcpDoc.setCapitalAccountingLinesExist(pCardDocument.isCapitalAccountingLinesExist());
         cbcpDoc.setCapitalAssetInformation(buildNewCapitalAssetInformation(pCardDocument.getCapitalAssetInformation(), cbcpDoc));
-        //cbcpDoc.setGeneralLedgerPendingEntries(pCardDocument.getGeneralLedgerPendingEntries());
         cbcpDoc.setNewCollectionRecord(pCardDocument.isNewCollectionRecord());
         cbcpDoc.setNextCapitalAssetLineNumber(pCardDocument.getNextCapitalAssetLineNumber());
         cbcpDoc.setNextSourceLineNumber(pCardDocument.getNextSourceLineNumber());
         cbcpDoc.setNextTargetLineNumber(pCardDocument.getNextTargetLineNumber());
         //cbcpDoc.setNotes(pCardDocument.getNotes());
-        //cbcpDoc.setPostingPeriodCode(pCardDocument.getPostingPeriodCode());
-        //cbcpDoc.setPostingYear(pCardDocument.getPostingYear());
-        
         cbcpDoc.setProcurementCardHolder(buildNewProcurementCardHolder(pCardDocument.getProcurementCardHolder(), cbcpDoc));
-        
-        //cbcpDoc.setSourceAccountingLines(pCardDocument.getSourceAccountingLines());
-        //cbcpDoc.setTargetAccountingLines(pCardDocument.getTargetAccountingLines());
         cbcpDoc.setTransactionEntries(buildNewTransactionList(pCardDocument.getTransactionEntries(), cbcpDoc));
-        
+        setDocumentOrgDocumentNumber(cbcpDoc, cbcpDoc.getProcurementCardTransactionPostingDetailDate());
         return cbcpDoc;
+    }
+    
+    protected void setDocumentOrgDocumentNumber(CorporateBilledCorporatePaidDocument cbcpDoc, Date transactionPostingDate) {
+        if (transactionPostingDate != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd"); 
+            cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(dateFormat.format(transactionPostingDate));
+        } else {
+            LOG.error("setDocumentOrgDocumentNumber, unable to set the org document number, the posting date is null.");
+        }
     }
     
     protected List buildNewCapitalAssetInformation(List orginalCapitalAssetInformation, CorporateBilledCorporatePaidDocument cbcpDoc) {
@@ -134,12 +144,28 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         for (Object line : accountingLines) {
             AccountingLineBase accountingLine = (AccountingLineBase) line;
             accountingLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
+            /**
+             * @todo replace these with parameters
+             */
+            accountingLine.setAccountNumber("G233700");
+            accountingLine.setSubAccountNumber(StringUtils.EMPTY);
+            if (accountingLine.isSourceAccountingLine()) {
+                accountingLine.setFinancialObjectCode("2000");
+            } else {
+                accountingLine.setFinancialObjectCode("1640");
+            }
+            accountingLine.setFinancialSubObjectCode(StringUtils.EMPTY);
+            setOrgRefId(accountingLine, cbcpDoc.getProcurementCardHolder().getCardHolderAlternateName());
         }
-        /*
-        accountingLines.stream()
-            .map(line -> (AccountingLineBase) line)
-            .forEach(line -> line.setDocumentNumber(cbcpDoc.getDocumentNumber()));
-            */
+    }
+    
+    protected void setOrgRefId(AccountingLineBase accountingLine, String orgRefId) {
+        String truncatedValue = StringUtils.substring(orgRefId, 0, dataDictionaryService.getAttributeMaxLength(SourceAccountingLine.class, 
+                KFSPropertyConstants.ORGANIZATION_REFERENCE_ID));
+        if (!StringUtils.equalsIgnoreCase(truncatedValue, orgRefId)) {
+            LOG.info("setOrgRefId, had to change '" + orgRefId + "' to '" + truncatedValue + "'");
+        }
+        accountingLine.setOrganizationReferenceId(truncatedValue);
     }
     
     private void logProcurementCardTransactionDetail(ProcurementCardTransactionDetail transactionDetail) {
@@ -171,9 +197,9 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     @Override
     public boolean routeProcurementCardDocuments() {
         LOG.info("entering routeProcurementCardDocuments");
-        //boolean results = cuProcurementCardCreateDocumentService.routeProcurementCardDocuments();
-        //return results;
-        return true;
+        boolean results = cuProcurementCardCreateDocumentService.routeProcurementCardDocuments();
+        return results;
+        //return true;
     }
     @Override
     public boolean autoApproveProcurementCardDocuments() {
@@ -190,6 +216,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     public void setCuProcurementCardCreateDocumentService(
             CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService) {
         this.cuProcurementCardCreateDocumentService = cuProcurementCardCreateDocumentService;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
     
 }

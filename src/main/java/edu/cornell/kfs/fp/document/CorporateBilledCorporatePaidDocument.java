@@ -1,7 +1,10 @@
 package edu.cornell.kfs.fp.document;
 
+import java.sql.Date;
+
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
@@ -15,7 +18,7 @@ import edu.cornell.kfs.fp.CuFPConstants;
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "CorporateBilledCorporatePaid")
-public class CorporateBilledCorporatePaidDocument extends ProcurementCardDocument {
+public class CorporateBilledCorporatePaidDocument extends CuProcurementCardDocument {
     private static final long serialVersionUID = 8032811224624474218L;
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidDocument.class);
     
@@ -34,5 +37,6 @@ public class CorporateBilledCorporatePaidDocument extends ProcurementCardDocumen
     public void setAccountNumberForSearching(String acctNumber) {
         LOG.error("setting accountNumberForSearching: " + acctNumber);
     }
+    
 
 }
