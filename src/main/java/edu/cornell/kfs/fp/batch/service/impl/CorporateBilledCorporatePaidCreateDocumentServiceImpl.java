@@ -3,6 +3,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +13,7 @@ import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
+import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -19,6 +21,9 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -34,6 +39,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     protected CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService;
     protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
+    protected FinancialSystemDocumentService financialSystemDocumentService;
     protected ParameterService parameterService;
     
     @Override
@@ -205,11 +211,33 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     
     @Override
     public boolean routeProcurementCardDocuments() {
-        LOG.info("entering routeProcurementCardDocuments");
-        boolean results = cuProcurementCardCreateDocumentService.routeProcurementCardDocuments();
-        return results;
-        //return true;
+        LOG.debug("routeProcurementCardDocuments() started");
+        Collection<CorporateBilledCorporatePaidDocument> procurementCardDocumentList = retrieveCorporateBilledCorporatePaidDocuments(
+                KewApiConstants.ROUTE_HEADER_SAVED_CD);
+        LOG.info("routeProcurementCardDocuments() Number of CBCP documents to Route: " + procurementCardDocumentList.size());
+
+        for (CorporateBilledCorporatePaidDocument cbcpDocument : procurementCardDocumentList) {
+            try {
+                LOG.info("routeProcurementCardDocuments() Routing CBCP document # " + cbcpDocument.getDocumentNumber() + ".");
+                documentService.prepareWorkflowDocument(cbcpDocument);
+                documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
+            } catch (WorkflowException e) {
+                LOG.error("Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage());
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+        return true;
     }
+    
+    protected Collection<CorporateBilledCorporatePaidDocument> retrieveCorporateBilledCorporatePaidDocuments(String statusCode) {
+        try {
+            return financialSystemDocumentService.findByWorkflowStatusCode(CorporateBilledCorporatePaidDocument.class, DocumentStatus.fromCode(statusCode));
+        } catch (WorkflowException e) {
+            LOG.error("Error searching for enroute procurement card documents " + e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+    
     @Override
     public boolean autoApproveProcurementCardDocuments() {
         //cbcp documents route to final on submission, intentionally left blank
@@ -228,6 +256,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
+        this.financialSystemDocumentService = financialSystemDocumentService;
     }
 
     public void setParameterService(ParameterService parameterService) {
