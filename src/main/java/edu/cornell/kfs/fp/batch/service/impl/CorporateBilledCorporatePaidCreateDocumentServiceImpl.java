@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -20,6 +22,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CuProcurementCardCreateDocumentService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
@@ -31,10 +34,11 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     protected CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService;
     protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
+    protected ParameterService parameterService;
     
     @Override
     public boolean createProcurementCardDocuments() {
-        LOG.info("entering createProcurementCardDocuments");
+        LOG.debug("createProcurementCardDocuments, entering");
         List cardTransactions = cuProcurementCardCreateDocumentService.retrieveTransactions();
         
         for (Object cardTransactionsItems : cardTransactions) {
@@ -69,31 +73,26 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         CorporateBilledCorporatePaidDocument cbcpDoc = (CorporateBilledCorporatePaidDocument) documentService.getNewDocument(
                 CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE);
         cbcpDoc.getDocumentHeader().setDocumentDescription(pCardDocument.getDocumentHeader().getDocumentDescription());
-        /**
-         * @todo use a parameter
-         */
-        String explanationText = "Corporate Billed Corporate Paid Daily Entries";
-        cbcpDoc.getDocumentHeader().setExplanation(explanationText);
+        cbcpDoc.getDocumentHeader().setExplanation(
+                getCorporateBilledCorporatePaidDocumentParameter(CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DOCUMENT_EXPLANATION));
         
         cbcpDoc.setAccountingPeriod(pCardDocument.getAccountingPeriod());
         cbcpDoc.setAccountingPeriodCompositeString(pCardDocument.getAccountingPeriodCompositeString());
         cbcpDoc.setApplicationDocumentStatus(pCardDocument.getApplicationDocumentStatus());
         cbcpDoc.setAutoApprovedIndicator(pCardDocument.isAutoApprovedIndicator());
-        //cbcpDoc.setCapitalAccountingLines(pCardDocument.getCapitalAccountingLines());
         cbcpDoc.setCapitalAccountingLinesExist(pCardDocument.isCapitalAccountingLinesExist());
         cbcpDoc.setCapitalAssetInformation(buildNewCapitalAssetInformation(pCardDocument.getCapitalAssetInformation(), cbcpDoc));
         cbcpDoc.setNewCollectionRecord(pCardDocument.isNewCollectionRecord());
         cbcpDoc.setNextCapitalAssetLineNumber(pCardDocument.getNextCapitalAssetLineNumber());
         cbcpDoc.setNextSourceLineNumber(pCardDocument.getNextSourceLineNumber());
         cbcpDoc.setNextTargetLineNumber(pCardDocument.getNextTargetLineNumber());
-        //cbcpDoc.setNotes(pCardDocument.getNotes());
         cbcpDoc.setProcurementCardHolder(buildNewProcurementCardHolder(pCardDocument.getProcurementCardHolder(), cbcpDoc));
         cbcpDoc.setTransactionEntries(buildNewTransactionList(pCardDocument.getTransactionEntries(), cbcpDoc));
-        setDocumentOrgDocumentNumber(cbcpDoc, cbcpDoc.getProcurementCardTransactionPostingDetailDate());
+        resetOrganizationDocumentNumberToPostingDate(cbcpDoc, cbcpDoc.getProcurementCardTransactionPostingDetailDate());
         return cbcpDoc;
     }
     
-    protected void setDocumentOrgDocumentNumber(CorporateBilledCorporatePaidDocument cbcpDoc, Date transactionPostingDate) {
+    protected void resetOrganizationDocumentNumberToPostingDate(CorporateBilledCorporatePaidDocument cbcpDoc, Date transactionPostingDate) {
         if (transactionPostingDate != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd"); 
             cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(dateFormat.format(transactionPostingDate));
@@ -144,15 +143,15 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         for (Object line : accountingLines) {
             AccountingLineBase accountingLine = (AccountingLineBase) line;
             accountingLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
-            /**
-             * @todo replace these with parameters
-             */
-            accountingLine.setAccountNumber("G233700");
+            accountingLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
+                    CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
             accountingLine.setSubAccountNumber(StringUtils.EMPTY);
             if (accountingLine.isSourceAccountingLine()) {
-                accountingLine.setFinancialObjectCode("2000");
+                accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
+                        CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
             } else {
-                accountingLine.setFinancialObjectCode("1640");
+                accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
+                        CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
             }
             accountingLine.setFinancialSubObjectCode(StringUtils.EMPTY);
             setOrgRefId(accountingLine, cbcpDoc.getProcurementCardHolder().getCardHolderAlternateName());
@@ -160,16 +159,17 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     }
     
     protected void setOrgRefId(AccountingLineBase accountingLine, String orgRefId) {
-        String truncatedValue = StringUtils.substring(orgRefId, 0, dataDictionaryService.getAttributeMaxLength(SourceAccountingLine.class, 
+        orgRefId = StringUtils.trim(orgRefId);
+        String orgRefIdShortenedIfTooLong = StringUtils.substring(orgRefId, 0, dataDictionaryService.getAttributeMaxLength(SourceAccountingLine.class, 
                 KFSPropertyConstants.ORGANIZATION_REFERENCE_ID));
-        if (!StringUtils.equalsIgnoreCase(truncatedValue, orgRefId)) {
-            LOG.info("setOrgRefId, had to change '" + orgRefId + "' to '" + truncatedValue + "'");
+        if (!StringUtils.equalsIgnoreCase(orgRefIdShortenedIfTooLong, orgRefId)) {
+            LOG.error("setOrgRefId, had to change '" + orgRefId + "' to '" + orgRefIdShortenedIfTooLong + "'");
         }
-        accountingLine.setOrganizationReferenceId(truncatedValue);
+        accountingLine.setOrganizationReferenceId(orgRefIdShortenedIfTooLong);
     }
     
     private void logProcurementCardTransactionDetail(ProcurementCardTransactionDetail transactionDetail) {
-        if (LOG.isInfoEnabled()) {
+        if (LOG.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("logProcurementCardTransactionDetail, ");
             if (ObjectUtils.isNotNull(transactionDetail)) {
                 sb.append("ProcurementCardTransactionDetail: ");
@@ -180,8 +180,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
                 logAccountingLineBaseList(transactionDetail.getSourceAccountingLines(), sb);
                 sb.append("  Target lines - ");
                 logAccountingLineBaseList(transactionDetail.getTargetAccountingLines(), sb);
+            } else {
+                sb.append("transaction detail is NULL");
             }
-            LOG.info(sb.toString());
+            LOG.debug(sb.toString());
         }
     }
     
@@ -192,7 +194,14 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         }
     }
     
-    
+    protected String getCorporateBilledCorporatePaidDocumentParameter(String parameterName){
+        String parameterValue = parameterService.getParameterValueAsString("KFS-FP", 
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME, parameterName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getCorporateBilledCorporatePaidDocumentParameter, param name: " + parameterName + " param value: " + parameterValue);
+        }
+        return parameterValue;
+    }
     
     @Override
     public boolean routeProcurementCardDocuments() {
@@ -203,9 +212,8 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     }
     @Override
     public boolean autoApproveProcurementCardDocuments() {
+        //cbcp documents route to final on submission, intentionally left blank
         LOG.info("entering autoApproveProcurementCardDocuments");
-        //boolean results = cuProcurementCardCreateDocumentService.autoApproveProcurementCardDocuments();
-        //return results;
         return true;
     }
     
@@ -220,6 +228,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
     
 }

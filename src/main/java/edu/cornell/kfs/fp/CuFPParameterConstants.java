@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp;
 
+import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
+
 /**
  Portions Modified 04/2016 and Copyright Cornell University
 
@@ -49,6 +51,14 @@ public class CuFPParameterConstants {
         public static final String CHART = "CHART";
         public static final String OBJECT_CODE = "OBJECT_CODE";
         public static final String ACCOUNT = "ACCOUNT";
+    }
+    
+    public static class CorporateBilledCorporatePaidDocument {
+        public static final String COMPONENT_NAME = "CorporateBilledCorporatePaidDocument";
+        public static final String DOCUMENT_EXPLANATION = "DOCUMENT_EXPLANATION";
+        public static final String DEFAULT_ACCOUNT = "DEFAULT_ACCOUNT";
+        public static final String DEFAULT_AMOUNT_OWED_OBJECT_CODE = "DEFAULT_AMOUNT_OWED_OBJECT_CODE";
+        public static final String DEFAULT_LIABILITY_OBJECT_CODE = "DEFAULT_LIABILITY_OBJECT_CODE";
     }
 
 }

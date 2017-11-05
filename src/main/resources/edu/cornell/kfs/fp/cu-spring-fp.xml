@@ -743,6 +743,7 @@
         <property name="cuProcurementCardCreateDocumentService" ref="cuProcurementCardCreateDocumentService"/>
         <property name="dataDictionaryService" ref="dataDictionaryService"/>
         <property name="documentService" ref="documentService"/>
+        <property name="parameterService" ref="parameterService"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>
