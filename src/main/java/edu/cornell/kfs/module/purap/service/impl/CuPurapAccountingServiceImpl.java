@@ -111,6 +111,7 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
     }
     private PurApAccountingLineBase getAccountFromDb(PurApAccountingLineBase accountingLine, Class clazz) {
         Map<String, Object> primaryKeys = new HashMap<String, Object>();
+        primaryKeys.put("documentNumber", accountingLine.getDocumentNumber());
         primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
         return (PurApAccountingLineBase)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(clazz, primaryKeys);
     }
