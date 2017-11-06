@@ -1,13 +1,17 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.batch.ProcurementCardReportType;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
@@ -18,10 +22,14 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
+import org.kuali.kfs.sys.mail.VelocityMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -37,22 +45,25 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
     protected CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService;
+    protected DateTimeService dateTimeService;
     protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
+    protected EmailService emailService;
     protected FinancialSystemDocumentService financialSystemDocumentService;
     protected ParameterService parameterService;
+    protected String emailTemplateUrl;
     
     @Override
     public boolean createProcurementCardDocuments() {
         LOG.debug("createProcurementCardDocuments, entering");
-        List cardTransactions = cuProcurementCardCreateDocumentService.retrieveTransactions();
-        
-        for (Object cardTransactionsItems : cardTransactions) {
-            List cardTtransactions = (List)cardTransactionsItems;
-            ProcurementCardDocument pCardDocument = cuProcurementCardCreateDocumentService.createProcurementCardDocument(cardTtransactions);
+        List<List> listOfCardTransactions = cuProcurementCardCreateDocumentService.retrieveTransactions();
+        List<CorporateBilledCorporatePaidDocument> documents = new ArrayList<CorporateBilledCorporatePaidDocument>();
+        for (List cardTransactions : listOfCardTransactions) {
+            ProcurementCardDocument pCardDocument = cuProcurementCardCreateDocumentService.createProcurementCardDocument(cardTransactions);
             CorporateBilledCorporatePaidDocument cbcpDocument;
             try {
                 cbcpDocument = buildCorporateBilledCorporatePaidDocument(pCardDocument);
+                documents.add(cbcpDocument);
                 try {
                     documentService.saveDocument(cbcpDocument);
                     LOG.info("createProcurementCardDocuments() Saved Procurement Card document: " + cbcpDocument.getDocumentNumber());
@@ -66,16 +77,12 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
             }
             
         }
-        
-        /**
-         * @todo deal with email
-         */
-        //sendEmailNotification(documents);
+        sendEmailNotification(documents);
 
         return true;
     }
     
-    public CorporateBilledCorporatePaidDocument buildCorporateBilledCorporatePaidDocument(ProcurementCardDocument pCardDocument) throws WorkflowException {
+    protected CorporateBilledCorporatePaidDocument buildCorporateBilledCorporatePaidDocument(ProcurementCardDocument pCardDocument) throws WorkflowException {
         CorporateBilledCorporatePaidDocument cbcpDoc = (CorporateBilledCorporatePaidDocument) documentService.getNewDocument(
                 CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE);
         cbcpDoc.getDocumentHeader().setDocumentDescription(pCardDocument.getDocumentHeader().getDocumentDescription());
@@ -145,25 +152,25 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         return newTransactionList;
     }
     
-    private void resetAccountingLine(List accountingLines, CorporateBilledCorporatePaidDocument cbcpDoc) {
+    protected void resetAccountingLine(List accountingLines, CorporateBilledCorporatePaidDocument cbcpDoc) {
         List<AccountingLineBase> accountingLineBases = accountingLines;
         accountingLineBases.stream().filter(line -> line.isSourceAccountingLine()).forEach(line -> processSourceLine(line, cbcpDoc));
         accountingLineBases.stream().filter(line -> line.isTargetAccountingLine()).forEach(line -> processTargetLine(line, cbcpDoc));
     }
     
-    private void processTargetLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
+    protected void processTargetLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
         accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
         processLine(accountingLine, cbcpDoc);
     }
     
-    private void processSourceLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
+    protected void processSourceLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
         accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
         processLine(accountingLine, cbcpDoc);
     }
     
-    private void processLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
+    protected void processLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
         accountingLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
         accountingLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
@@ -215,6 +222,43 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         return parameterValue;
     }
     
+    protected void sendEmailNotification(List<ProcurementCardDocument> documents) {
+        List<ProcurementCardReportType> summaryList = cuProcurementCardCreateDocumentService.getSortedReportSummaryList(documents);
+        int totalBatchTransactions = cuProcurementCardCreateDocumentService.getBatchTotalTransactionCnt(summaryList);
+        DateFormat dateFormat = cuProcurementCardCreateDocumentService.getDateFormat(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                KFSConstants.ProcurementCardParameters.PCARD_BATCH_CREATE_DOC_STEP, 
+                KFSConstants.ProcurementCardParameters.BATCH_SUMMARY_RUNNING_TIMESTAMP_FORMAT, 
+                KFSConstants.ProcurementCardEmailTimeFormat);
+
+        // Create formatter for payment amounts and batch run time
+        String batchRunTime = dateFormat.format(dateTimeService.getCurrentDate());
+
+        final Map<String, Object> templateVariables = new HashMap<>();
+
+        templateVariables.put(KFSConstants.ProcurementCardEmailVariableTemplate.DOC_CREATE_DATE, batchRunTime);
+        templateVariables.put(KFSConstants.ProcurementCardEmailVariableTemplate.TRANSACTION_COUNTER, totalBatchTransactions);
+        templateVariables.put(KFSConstants.ProcurementCardEmailVariableTemplate.TRANSACTION_SUMMARY_LIST, summaryList);
+
+        // Handle for email sending exception
+        VelocityMailMessage msg = new VelocityMailMessage();
+        msg.setFromAddress(emailService.getDefaultFromAddress());
+        getProdEmailReceivers().stream().forEach(r -> msg.addToAddress(r));
+        msg.setSubject("KFS CBCP Load Summary");
+        msg.setTemplateUrl(emailTemplateUrl);
+        msg.setTemplateVariables(templateVariables);
+        emailService.sendMessage(msg,false);
+    }
+    
+    public List<String> getProdEmailReceivers() {
+        List<String> returnAddressList = new ArrayList<String>();
+        String emailAddresses = getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.SUMMARY_EMAIL_REPORT_RECIPIENTS);
+        for (String address : StringUtils.split(emailAddresses, ";")) {
+            returnAddressList.add(address);
+        }
+        return returnAddressList;
+    }
+    
     @Override
     public boolean routeProcurementCardDocuments() {
         LOG.debug("routeProcurementCardDocuments() started");
@@ -247,7 +291,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     @Override
     public boolean autoApproveProcurementCardDocuments() {
         //cbcp documents route to final on submission, intentionally left blank
-        LOG.info("entering autoApproveProcurementCardDocuments");
+        LOG.debug("entering autoApproveProcurementCardDocuments");
         return true;
     }
     
@@ -270,6 +314,18 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    public void setEmailTemplateUrl(String emailTemplateUrl) {
+        this.emailTemplateUrl = emailTemplateUrl;
     }
     
 }

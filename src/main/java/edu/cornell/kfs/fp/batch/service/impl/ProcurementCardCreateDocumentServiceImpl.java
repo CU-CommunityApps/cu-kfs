@@ -3,6 +3,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import static edu.cornell.kfs.fp.document.validation.impl.CuProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM; 
 
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
+import org.kuali.kfs.fp.batch.ProcurementCardReportType;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
@@ -278,6 +280,18 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     
     public List retrieveTransactions() {
         return super.retrieveTransactions();
+    }
+    
+    public List<ProcurementCardReportType> getSortedReportSummaryList(List<ProcurementCardDocument> documents) {
+        return super.getSortedReportSummaryList(documents);
+    }
+    
+    public int getBatchTotalTransactionCnt(List<ProcurementCardReportType> summaryList) {
+        return super.getBatchTotalTransactionCnt(summaryList);
+    }
+    
+    public DateFormat getDateFormat(String namespaceCode, String componentCode, String parameterName, String defaultValue) {
+        return super.getDateFormat(namespaceCode, componentCode, parameterName, defaultValue);
     }
     
 }

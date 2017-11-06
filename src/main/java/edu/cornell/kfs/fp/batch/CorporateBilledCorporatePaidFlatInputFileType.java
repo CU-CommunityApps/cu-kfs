@@ -18,12 +18,8 @@ public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCa
         if (StringUtils.isNotBlank(userIdentifier)) {
             fileName += "_" + userIdentifier;
         }
-        
         fileName += "_" + getDateTimeService().toDateTimeStringForFilename(getDateTimeService().getCurrentDate());
-
-        // remove spaces in filename
         fileName = StringUtils.remove(fileName, " ");
-
         return fileName;
     }
     

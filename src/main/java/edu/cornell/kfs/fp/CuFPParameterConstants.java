@@ -55,10 +55,11 @@ public class CuFPParameterConstants {
     
     public static class CorporateBilledCorporatePaidDocument {
         public static final String COMPONENT_NAME = "CorporateBilledCorporatePaidDocument";
-        public static final String DOCUMENT_EXPLANATION = "DOCUMENT_EXPLANATION";
         public static final String DEFAULT_ACCOUNT = "DEFAULT_ACCOUNT";
         public static final String DEFAULT_AMOUNT_OWED_OBJECT_CODE = "DEFAULT_AMOUNT_OWED_OBJECT_CODE";
         public static final String DEFAULT_LIABILITY_OBJECT_CODE = "DEFAULT_LIABILITY_OBJECT_CODE";
+        public static final String DOCUMENT_EXPLANATION = "DOCUMENT_EXPLANATION";
+        public static final String SUMMARY_EMAIL_REPORT_RECIPIENTS = "SUMMARY_EMAIL_REPORT_RECIPIENTS";
     }
 
 }
