@@ -107,10 +107,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         }
     }
     
-    protected List buildNewCapitalAssetInformation(List orginalCapitalAssetInformation, CorporateBilledCorporatePaidDocument cbcpDoc) {
-        List newInfoList = new ArrayList();
-        for (Object infoLine : orginalCapitalAssetInformation) {
-            CapitalAssetInformation oldInfoLine = (CapitalAssetInformation) infoLine;
+    protected List<CapitalAssetInformation> buildNewCapitalAssetInformation(List orginalCapitalAssetInformation, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        List<CapitalAssetInformation> capitalAssetInformationList = orginalCapitalAssetInformation;
+        List<CapitalAssetInformation> newInfoList = new ArrayList<CapitalAssetInformation>();
+        for (CapitalAssetInformation oldInfoLine : capitalAssetInformationList) {
             CapitalAssetInformation newInfoLine = (CapitalAssetInformation) ObjectUtils.deepCopy(oldInfoLine);
             newInfoLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
             newInfoList.add(newInfoLine);
@@ -124,10 +124,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         return newProcurementCardHolder;
     }
     
-    protected List buildNewTransactionList(List originalTransactiolist, CorporateBilledCorporatePaidDocument cbcpDoc) {
-        List newTransactionList = new ArrayList();
-        for (Object transaction : originalTransactiolist) {
-            ProcurementCardTransactionDetail originalTransaction = (ProcurementCardTransactionDetail) transaction;
+    protected List<ProcurementCardTransactionDetail> buildNewTransactionList(List originalTransactiolist, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        List<ProcurementCardTransactionDetail> procurementCardTransactionDetailList = originalTransactiolist;
+        List<ProcurementCardTransactionDetail> newTransactionList = new ArrayList<ProcurementCardTransactionDetail>();
+        for (ProcurementCardTransactionDetail originalTransaction : procurementCardTransactionDetailList) {
             ProcurementCardTransactionDetail newTransaction = (ProcurementCardTransactionDetail) ObjectUtils.deepCopy(originalTransaction);
             
             newTransaction.setDocumentNumber(cbcpDoc.getDocumentNumber());
@@ -146,22 +146,30 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     }
     
     private void resetAccountingLine(List accountingLines, CorporateBilledCorporatePaidDocument cbcpDoc) {
-        for (Object line : accountingLines) {
-            AccountingLineBase accountingLine = (AccountingLineBase) line;
-            accountingLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
-            accountingLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
-                    CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
-            accountingLine.setSubAccountNumber(StringUtils.EMPTY);
-            if (accountingLine.isSourceAccountingLine()) {
-                accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
-                        CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
-            } else {
-                accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
-                        CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
-            }
-            accountingLine.setFinancialSubObjectCode(StringUtils.EMPTY);
-            setOrgRefId(accountingLine, cbcpDoc.getProcurementCardHolder().getCardHolderAlternateName());
-        }
+        List<AccountingLineBase> accountingLineBases = accountingLines;
+        accountingLineBases.stream().filter(line -> line.isSourceAccountingLine()).forEach(line -> processSourceLine(line, cbcpDoc));
+        accountingLineBases.stream().filter(line -> line.isTargetAccountingLine()).forEach(line -> processTargetLine(line, cbcpDoc));
+    }
+    
+    private void processTargetLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
+        processLine(accountingLine, cbcpDoc);
+    }
+    
+    private void processSourceLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        accountingLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
+        processLine(accountingLine, cbcpDoc);
+    }
+    
+    private void processLine(AccountingLineBase accountingLine, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        accountingLine.setDocumentNumber(cbcpDoc.getDocumentNumber());
+        accountingLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
+        accountingLine.setSubAccountNumber(StringUtils.EMPTY);
+        accountingLine.setFinancialSubObjectCode(StringUtils.EMPTY);
+        setOrgRefId(accountingLine, cbcpDoc.getProcurementCardHolder().getCardHolderAlternateName());
     }
     
     protected void setOrgRefId(AccountingLineBase accountingLine, String orgRefId) {
@@ -194,10 +202,8 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     }
     
     private void logAccountingLineBaseList(List accountingLines, StringBuilder sb) {
-        for (Object line : accountingLines) {
-            AccountingLineBase accountingLine = (AccountingLineBase) line;
-            sb.append(accountingLine.toString());
-        }
+        List<AccountingLineBase> accountinLineBases = accountingLines;
+        accountinLineBases.stream().forEach(line -> sb.append(line.toString()));
     }
     
     protected String getCorporateBilledCorporatePaidDocumentParameter(String parameterName){
