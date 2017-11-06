@@ -15,8 +15,4 @@ public interface CuProcurementCardCreateDocumentService extends ProcurementCardC
     
     List<ProcurementCardReportType> getSortedReportSummaryList(List<ProcurementCardDocument> documents);
     
-    int getBatchTotalTransactionCnt(List<ProcurementCardReportType> summaryList);
-    
-    DateFormat getDateFormat(String namespaceCode, String componentCode, String parameterName, String defaultValue);
-
 }

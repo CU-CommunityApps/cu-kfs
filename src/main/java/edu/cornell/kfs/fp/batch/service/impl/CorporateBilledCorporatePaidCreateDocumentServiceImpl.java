@@ -45,13 +45,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
     protected CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService;
-    protected DateTimeService dateTimeService;
     protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
-    protected EmailService emailService;
     protected FinancialSystemDocumentService financialSystemDocumentService;
     protected ParameterService parameterService;
-    protected String emailTemplateUrl;
     
     @Override
     public boolean createProcurementCardDocuments() {
@@ -63,7 +60,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
             CorporateBilledCorporatePaidDocument cbcpDocument;
             try {
                 cbcpDocument = buildCorporateBilledCorporatePaidDocument(pCardDocument);
-                documents.add(cbcpDocument);
                 try {
                     documentService.saveDocument(cbcpDocument);
                     LOG.info("createProcurementCardDocuments() Saved Procurement Card document: " + cbcpDocument.getDocumentNumber());
@@ -77,7 +73,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
             }
             
         }
-        sendEmailNotification(documents);
 
         return true;
     }
@@ -222,43 +217,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         return parameterValue;
     }
     
-    protected void sendEmailNotification(List<ProcurementCardDocument> documents) {
-        List<ProcurementCardReportType> summaryList = cuProcurementCardCreateDocumentService.getSortedReportSummaryList(documents);
-        int totalBatchTransactions = cuProcurementCardCreateDocumentService.getBatchTotalTransactionCnt(summaryList);
-        DateFormat dateFormat = cuProcurementCardCreateDocumentService.getDateFormat(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                KFSConstants.ProcurementCardParameters.PCARD_BATCH_CREATE_DOC_STEP, 
-                KFSConstants.ProcurementCardParameters.BATCH_SUMMARY_RUNNING_TIMESTAMP_FORMAT, 
-                KFSConstants.ProcurementCardEmailTimeFormat);
-
-        // Create formatter for payment amounts and batch run time
-        String batchRunTime = dateFormat.format(dateTimeService.getCurrentDate());
-
-        final Map<String, Object> templateVariables = new HashMap<>();
-
-        templateVariables.put(KFSConstants.ProcurementCardEmailVariableTemplate.DOC_CREATE_DATE, batchRunTime);
-        templateVariables.put(KFSConstants.ProcurementCardEmailVariableTemplate.TRANSACTION_COUNTER, totalBatchTransactions);
-        templateVariables.put(KFSConstants.ProcurementCardEmailVariableTemplate.TRANSACTION_SUMMARY_LIST, summaryList);
-
-        // Handle for email sending exception
-        VelocityMailMessage msg = new VelocityMailMessage();
-        msg.setFromAddress(emailService.getDefaultFromAddress());
-        getProdEmailReceivers().stream().forEach(r -> msg.addToAddress(r));
-        msg.setSubject("KFS CBCP Load Summary");
-        msg.setTemplateUrl(emailTemplateUrl);
-        msg.setTemplateVariables(templateVariables);
-        emailService.sendMessage(msg,false);
-    }
-    
-    public List<String> getProdEmailReceivers() {
-        List<String> returnAddressList = new ArrayList<String>();
-        String emailAddresses = getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.SUMMARY_EMAIL_REPORT_RECIPIENTS);
-        for (String address : StringUtils.split(emailAddresses, ";")) {
-            returnAddressList.add(address);
-        }
-        return returnAddressList;
-    }
-    
     @Override
     public boolean routeProcurementCardDocuments() {
         LOG.debug("routeProcurementCardDocuments() started");
@@ -294,10 +252,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         LOG.debug("entering autoApproveProcurementCardDocuments");
         return true;
     }
-    
-    public void setDocumentService(DocumentService documentService) {
-        this.documentService = documentService;
-    }
 
     public void setCuProcurementCardCreateDocumentService(
             CuProcurementCardCreateDocumentService cuProcurementCardCreateDocumentService) {
@@ -308,6 +262,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         this.dataDictionaryService = dataDictionaryService;
     }
 
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
     public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
         this.financialSystemDocumentService = financialSystemDocumentService;
     }
@@ -315,17 +273,4 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
-
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
-    }
-
-    public void setEmailService(EmailService emailService) {
-        this.emailService = emailService;
-    }
-
-    public void setEmailTemplateUrl(String emailTemplateUrl) {
-        this.emailTemplateUrl = emailTemplateUrl;
-    }
-    
 }

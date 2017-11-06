@@ -742,12 +742,9 @@
     <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true">
         <property name="cuProcurementCardCreateDocumentService" ref="cuProcurementCardCreateDocumentService"/>
         <property name="dataDictionaryService" ref="dataDictionaryService"/>
-        <property name="dateTimeService" ref="dateTimeService"/>
         <property name="documentService" ref="documentService"/>
-        <property name="emailService" ref="emailService"/>
         <property name="financialSystemDocumentService" ref="financialSystemDocumentService"/>
         <property name="parameterService" ref="parameterService"/>
-        <property name="emailTemplateUrl" value="edu/cornell/kfs/fp/batch/template/cbcp-create-doc-summary-email-plain-text.vm"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>

@@ -1,17 +1,8 @@
 package edu.cornell.kfs.fp.document;
 
-import java.sql.Date;
-
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
-import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
-import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
-import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.rice.krad.util.MessageMap;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 
@@ -20,23 +11,9 @@ import edu.cornell.kfs.fp.CuFPConstants;
 @COMPONENT(component = "CorporateBilledCorporatePaid")
 public class CorporateBilledCorporatePaidDocument extends CuProcurementCardDocument {
     private static final long serialVersionUID = 8032811224624474218L;
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidDocument.class);
     
     @Override
     public String getFinancialDocumentTypeCode() {
         return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE;
     }
-    
-    public String getAccountNumberForSearching() {
-        this.getDocumentHeader().getWorkflowDocument().getDocumentHandlerUrl();
-        LOG.error("called get accountNumberForSearching");
-        return "";
-        
-    }
-    
-    public void setAccountNumberForSearching(String acctNumber) {
-        LOG.error("setting accountNumberForSearching: " + acctNumber);
-    }
-    
-
 }
