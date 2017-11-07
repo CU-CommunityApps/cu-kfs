@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -37,7 +38,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        procurementCardLoadFlatTransactionsService = SpringContext.getBean(ProcurementCardLoadFlatTransactionsServiceImpl.class);
+        procurementCardLoadFlatTransactionsService = (ProcurementCardLoadFlatTransactionsServiceImpl) SpringContext.getBean(ProcurementCardLoadTransactionsService.class);
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         batchDirectory = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/fp/procurementCard";
         unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);

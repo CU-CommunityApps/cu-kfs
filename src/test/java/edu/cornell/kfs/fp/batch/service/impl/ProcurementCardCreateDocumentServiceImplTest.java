@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
+import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -43,7 +44,7 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        procurementCardLoadFlatTransactionsService = SpringContext.getBean(ProcurementCardLoadFlatTransactionsServiceImpl.class);
+        procurementCardLoadFlatTransactionsService = (ProcurementCardLoadFlatTransactionsServiceImpl) SpringContext.getBean(ProcurementCardLoadTransactionsService.class);
         procurementCardCreateDocumentService = SpringContext.getBean(ProcurementCardCreateDocumentService.class);
         
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
