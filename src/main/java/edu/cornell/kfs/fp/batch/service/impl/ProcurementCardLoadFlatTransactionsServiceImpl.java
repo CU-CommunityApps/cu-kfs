@@ -34,6 +34,7 @@ import org.kuali.kfs.sys.service.ReportWriterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
+import edu.cornell.kfs.fp.batch.service.CuProcurementCardLoadTransactionsService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 
 /**
@@ -42,7 +43,7 @@ import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttri
  * 
  * @see org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService
  */
-public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDirectoryBase implements ProcurementCardLoadTransactionsService {
+public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDirectoryBase implements CuProcurementCardLoadTransactionsService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardLoadFlatTransactionsServiceImpl.class);
 
     private static final String ERROR_PREFIX = "Error parsing flat file ";
