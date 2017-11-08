@@ -437,7 +437,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             String accountUpdateErrors = updateACHAccount(payee, achDetail, achAccount);
             processingResults.append(accountUpdateErrors);
         } else {
-            LOG.info(" Input file's account information for payee of type '" + achAccount.getPayeeIdentifierTypeCode()
+            LOG.info("Input file's account information for payee of type '" + achAccount.getPayeeIdentifierTypeCode()
                     + "' matches what is already in KFS; no updates will be made for this entry.");
         }
         

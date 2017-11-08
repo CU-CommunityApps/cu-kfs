@@ -43,7 +43,6 @@ import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.ACHBank;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.pdp.service.AchService;
 import org.kuali.kfs.pdp.service.impl.AchBankServiceImpl;
@@ -72,6 +71,7 @@ import edu.cornell.kfs.pdp.batch.fixture.ACHRowFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHUpdateFixture;
 import edu.cornell.kfs.pdp.batch.fixture.PayeeACHAccountFixture;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
+import edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl;
 import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 
 @SuppressWarnings("deprecation")
@@ -337,7 +337,7 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
 
     private FinancialSystemMaintainable createNewMaintainableForPAAT() {
-        FinancialSystemMaintainable maintainable = new PayeeACHAccountMaintainableImpl();
+        FinancialSystemMaintainable maintainable = new CuPayeeACHAccountMaintainableImpl();
         maintainable.setBoClass(PayeeACHAccount.class);
         maintainable.setDataObject(new PayeeACHAccount());
         return maintainable;
