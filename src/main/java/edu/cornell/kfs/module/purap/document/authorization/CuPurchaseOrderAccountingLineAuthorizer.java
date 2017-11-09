@@ -44,7 +44,7 @@ public class CuPurchaseOrderAccountingLineAuthorizer extends PurchaseOrderAccoun
  
         if (accountingDocument instanceof PurchaseOrderAmendmentDocument
                 && currentRouteNodeName.contains(RequisitionStatuses.NODE_ACCOUNT) 
-                && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficerForAcctLine((PurchaseOrderAmendmentDocument) accountingDocument)) {
+                && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument) accountingDocument)) {
             return true;
         }
         
@@ -65,19 +65,5 @@ public class CuPurchaseOrderAccountingLineAuthorizer extends PurchaseOrderAccoun
         }                                
         return super.hasEditPermissionOnAccountingLine(accountingDocument, accountingLine, accountingLineCollectionProperty, currentUser, pageIsEditable, currentNodes);
     }    
-
-//    @Override
-//    public boolean determineEditPermissionOnLine(AccountingDocument accountingDocument, AccountingLine accountingLine,
-//            String accountingLineCollectionProperty, boolean currentUserIsDocumentInitiator, boolean pageIsEditable) {
-//        WorkflowDocument workflowDocument = ((PurchasingAccountsPayableDocument) accountingDocument).getFinancialSystemDocumentHeader().getWorkflowDocument();
-//
-//        Set<String> currentRouteNodeName = workflowDocument.getCurrentNodeNames();
-//        if (accountingDocument instanceof PurchaseOrderAmendmentDocument
-//                && currentRouteNodeName.contains(RequisitionStatuses.NODE_ACCOUNT) 
-//                && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument) accountingDocument)) {
-//            return true;
-//        }
-//        return super.determineEditPermissionOnLine(accountingDocument, accountingLine,
-//                accountingLineCollectionProperty, currentUserIsDocumentInitiator, pageIsEditable);            
-//    }
+    
 }

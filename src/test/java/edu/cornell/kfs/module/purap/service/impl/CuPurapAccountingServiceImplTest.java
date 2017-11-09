@@ -49,7 +49,7 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 		requisitionDocument.getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(new KualiDecimal(200));
 		requisitionDocument.addItem(RequisitionItemFixture.REQ_ITEM3.createRequisitionItem(true));
 		changeCurrentUser(UserNameFixture.nja3);
-		assertTrue(cuPurapAccountingServiceImpl.isFiscalOfficerForAcctLine(requisitionDocument));
+		assertTrue(cuPurapAccountingServiceImpl.isFiscalOfficersForAllAcctLines(requisitionDocument));
 	}
 
 	public void testIsFiscalOfficersForAllAcctLines_False() throws Exception {
@@ -58,7 +58,7 @@ public class CuPurapAccountingServiceImplTest extends KualiTestBase {
 		requisitionDocument.addItem(RequisitionItemFixture.REQ_ITEM2.createRequisitionItem(true));
 		changeCurrentUser(UserNameFixture.nja3);
 
-		assertFalse(cuPurapAccountingServiceImpl.isFiscalOfficerForAcctLine(requisitionDocument));
+		assertFalse(cuPurapAccountingServiceImpl.isFiscalOfficersForAllAcctLines(requisitionDocument));
 	}
 
 	public void testUpdateAccountAmounts_AccountingLinePercentChanged() throws Exception {

@@ -440,7 +440,6 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             }
             if (!fiscalOfficers.contains(personId)) {
                 isFoForAcctLine = false;
-                break;
             }
 
         return isFoForAcctLine;
