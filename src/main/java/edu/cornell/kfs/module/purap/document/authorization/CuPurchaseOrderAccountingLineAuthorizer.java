@@ -44,7 +44,7 @@ public class CuPurchaseOrderAccountingLineAuthorizer extends PurchaseOrderAccoun
  
         if (accountingDocument instanceof PurchaseOrderAmendmentDocument
                 && currentRouteNodeName.contains(RequisitionStatuses.NODE_ACCOUNT) 
-                && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument) accountingDocument)) {
+                && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficerForAcctLine((PurchaseOrderAmendmentDocument) accountingDocument)) {
             return true;
         }
         
@@ -58,8 +58,8 @@ public class CuPurchaseOrderAccountingLineAuthorizer extends PurchaseOrderAccoun
         
         WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
         if (accountingDocument instanceof PurchaseOrderAmendmentDocument) {
-            if ((workflowDocument.isEnroute() || currentNodes.contains(RequisitionStatuses.NODE_ACCOUNT)) && SpringContext.getBean(CuPurapAccountingService.class)
-                    .isFiscalOfficersForAllAcctLines((PurchaseOrderAmendmentDocument) accountingDocument)) {
+            if (workflowDocument.isEnroute() && SpringContext.getBean(CuPurapAccountingService.class)
+                    .isFiscalOfficerForAccountingLine(currentUser, accountingLine)) {
                 return true;
             }
         }                                

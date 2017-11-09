@@ -26,6 +26,7 @@ import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.validation.event.PurchasingAccountsPayableItemPreCalculateEvent;
 import org.kuali.kfs.module.purap.service.impl.PurapAccountingServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.identity.KfsKimAttributes;
@@ -33,12 +34,14 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.action.ActionRequest;
 import org.kuali.rice.kim.api.KimConstants;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.role.RoleService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.service.CuPurapAccountingService;
 
 
@@ -396,6 +399,51 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
                 account.setAmount(KualiDecimal.ZERO);
             }
         }
+    }
+    @Override
+    public boolean isFiscalOfficerForAccountingLine(Person currentUser, AccountingLine accountingLine) {
+        boolean isFoForAcctLine = true;
+        String personId = currentUser.getPrincipalId();
+
+            List<String> fiscalOfficers = new ArrayList<String>();
+            Map<String,String> roleQualifier = new HashMap<String,String>();
+
+            boolean isExistingAcctline = false;
+            String updatedAccountNumber = KFSConstants.EMPTY_STRING;
+
+            if (accountingLine instanceof PurchaseOrderAccount && ((PurchaseOrderAccount) accountingLine).getAccountIdentifier() != null) {
+                PurchaseOrderAccount dbAcctLine = (PurchaseOrderAccount) getAccountFromDb((PurchaseOrderAccount) accountingLine, PurchaseOrderAccount.class);
+                if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
+                    updatedAccountNumber = accountingLine.getAccountNumber();
+                    accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
+                    isExistingAcctline = true;
+                }
+            }
+          
+            roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME, PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT);
+            roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, accountingLine.getChartOfAccountsCode());
+            roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER, accountingLine.getAccountNumber());
+            fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+                    KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME, roleQualifier));
+            
+            if (!fiscalOfficers.contains(personId)) {
+                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(
+                                        KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
+                                        roleQualifier));
+            }
+            if (!fiscalOfficers.contains(personId)) {
+                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
+                                        KFSConstants.SysKimApiConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
+            }
+            if (isExistingAcctline) {
+                accountingLine.setAccountNumber(updatedAccountNumber);
+            }
+            if (!fiscalOfficers.contains(personId)) {
+                isFoForAcctLine = false;
+                break;
+            }
+
+        return isFoForAcctLine;
     }
 
 }
