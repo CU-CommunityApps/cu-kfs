@@ -11,6 +11,7 @@ public class CorporateBilledCorporatePaidTransactionDetail extends ProcurementCa
     private static final long serialVersionUID = -2979017882058066280L;
     
     public CorporateBilledCorporatePaidTransactionDetail() {
+        super();
         setSourceAccountingLines(new ArrayList<CorporateBilledCorporatePaidSourceAccountingLine>());
         setTargetAccountingLines(new ArrayList<CorporateBilledCorporatePaidTargetAccountingLine>());
     }

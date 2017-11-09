@@ -21,6 +21,7 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -67,7 +68,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
                 cbcpDocument = buildCorporateBilledCorporatePaidDocument(pCardDocument);
                 try {
                     documentService.saveDocument(cbcpDocument);
-                    LOG.info("createProcurementCardDocuments() Saved Procurement Card document: " + cbcpDocument.getDocumentNumber());
+                    LOG.info("createProcurementCardDocuments() Saved CBCP document: " + cbcpDocument.getDocumentNumber());
                 } catch (Exception e) {
                     LOG.error("createProcurementCardDocuments() Error persisting document # " + cbcpDocument.getDocumentHeader().getDocumentNumber() + " " + e.getMessage(), e);
                     throw new RuntimeException("Error persisting document # " + cbcpDocument.getDocumentHeader().getDocumentNumber() + " " + e.getMessage(), e);
@@ -155,6 +156,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         List<AccountingLineBase> accountingLineBases = accountingLines;
         for (AccountingLineBase lineBase : accountingLineBases) {
             if (lineBase.isSourceAccountingLine()) {
+                LOG.info("addTransactions, found source line");
                 ProcurementCardSourceAccountingLine originalLine = (ProcurementCardSourceAccountingLine) lineBase;
                 CorporateBilledCorporatePaidSourceAccountingLine newLine = new CorporateBilledCorporatePaidSourceAccountingLine(originalLine, newTransaction.getDocumentNumber());
                 newLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
@@ -162,6 +164,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
                 processLine(newLine, cbcpDoc);
                 newTransaction.getSourceAccountingLines().add(newLine);
             } else {
+                LOG.info("addTransactions, found target line");
                 ProcurementCardTargetAccountingLine originalLine = (ProcurementCardTargetAccountingLine) lineBase;
                 CorporateBilledCorporatePaidTargetAccountingLine newLine = new CorporateBilledCorporatePaidTargetAccountingLine(originalLine, newTransaction.getDocumentNumber());
                 newLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
@@ -238,9 +241,9 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
                 LOG.info("routeProcurementCardDocuments() Routing CBCP document # " + cbcpDocument.getDocumentNumber() + ".");
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
-            } catch (WorkflowException e) {
-                LOG.error("Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage());
-                throw new RuntimeException(e.getMessage(), e);
+            } catch (WorkflowException | ValidationException e) {
+                LOG.error("Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
+                //throw new RuntimeException(e.getMessage(), e);
             }
         }
         return true;

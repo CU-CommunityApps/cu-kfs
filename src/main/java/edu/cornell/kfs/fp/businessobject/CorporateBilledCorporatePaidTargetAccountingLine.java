@@ -9,20 +9,38 @@ public class CorporateBilledCorporatePaidTargetAccountingLine extends Procuremen
         super();
     }
 
-    public CorporateBilledCorporatePaidTargetAccountingLine(ProcurementCardTargetAccountingLine pCardTargetLine, String documentNumber) {
+    public CorporateBilledCorporatePaidTargetAccountingLine(ProcurementCardTargetAccountingLine pCardLine, String documentNumber) {
         this();
+        setAccountExpiredOverride(pCardLine.getAccountExpiredOverride());
+        setAccountExpiredOverrideNeeded(pCardLine.getAccountExpiredOverrideNeeded());
+        setAccountNumber(pCardLine.getAccountNumber());
+        setAmount(pCardLine.getAmount());
+        setBalanceTypeCode(pCardLine.getBalanceTypeCode());
+        setChartOfAccountsCode(pCardLine.getChartOfAccountsCode());
+        setDebitCreditCode(pCardLine.getDebitCreditCode());
         setDocumentNumber(documentNumber);
-        setAccountNumber(pCardTargetLine.getAccountNumber());
-        setChartOfAccountsCode(pCardTargetLine.getChartOfAccountsCode());
-        setSubAccountNumber(pCardTargetLine.getSubAccountNumber());
-        setFinancialObjectCode(pCardTargetLine.getFinancialObjectCode());
-        setFinancialSubObjectCode(pCardTargetLine.getFinancialSubObjectCode());
-        setOrganizationReferenceId(organizationReferenceId);
-        setProjectCode(pCardTargetLine.getProjectCode());
-        setAmount(pCardTargetLine.getAmount());
-        setFinancialDocumentLineDescription(pCardTargetLine.getFinancialDocumentLineDescription());
-        setFinancialDocumentTransactionLineNumber(pCardTargetLine.getFinancialDocumentTransactionLineNumber());
-        setSequenceNumber(pCardTargetLine.getSequenceNumber());
+        setEncumbranceUpdateCode(pCardLine.getEncumbranceUpdateCode());
+        setFinancialDocumentLineDescription(pCardLine.getFinancialDocumentLineDescription());
+        setFinancialDocumentLineTypeCode(pCardLine.getFinancialDocumentLineTypeCode());
+        setFinancialDocumentTransactionLineNumber(pCardLine.getFinancialDocumentTransactionLineNumber());
+        setFinancialObjectCode(pCardLine.getFinancialObjectCode());
+        setFinancialSubObjectCode(pCardLine.getFinancialSubObjectCode());
+        setLastUpdatedTimestamp(pCardLine.getLastUpdatedTimestamp());
+        setNewCollectionRecord(pCardLine.isNewCollectionRecord());
+        setNonFringeAccountOverride(pCardLine.getNonFringeAccountOverride());
+        setNonFringeAccountOverrideNeeded(pCardLine.getNonFringeAccountOverrideNeeded());
+        setObjectBudgetOverride(pCardLine.isObjectBudgetOverride());
+        setOrganizationReferenceId(pCardLine.getOrganizationReferenceId());
+        setOverrideCode(pCardLine.getOverrideCode());
+        setPostingYear(pCardLine.getPostingYear());
+        setProjectCode(pCardLine.getProjectCode());
+        setReferenceNumber(pCardLine.getReferenceNumber());
+        setReferenceOriginCode(pCardLine.getReferenceOriginCode());
+        setReferenceTypeCode(pCardLine.getReferenceTypeCode());
+        setSalesTaxRequired(pCardLine.isSalesTaxRequired());
+        setSequenceNumber(pCardLine.getSequenceNumber());
+        setSubAccountNumber(pCardLine.getSubAccountNumber());
+        setVersionNumber(pCardLine.getVersionNumber());
     }
 
 }
