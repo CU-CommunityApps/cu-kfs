@@ -2,8 +2,6 @@ package edu.cornell.kfs.fp.batch;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.mchange.v1.lang.GentleThread;
-
 public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCardFlatInputFileType {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidFlatInputFileType.class);
     
@@ -25,7 +23,7 @@ public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCa
     
     @Override
     protected void handleRecordCountMisMatch() throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
         sb.append(" Transactions in header: ");
         sb.append(getHeaderTransactionCount());

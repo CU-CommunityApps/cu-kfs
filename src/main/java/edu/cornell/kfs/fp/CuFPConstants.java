@@ -67,6 +67,8 @@ public class CuFPConstants {
     public static final String RIGHT_PARENTHESIS = ")";
     
     public static final String CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE = "CBCP";
+    
+    public static final String DONE_FILE_EXTENSION = ".done";
 
     public static class AchIncomeFileGroup {
         public static final String GROUP_FUNCTIONAL_IDENTIFIER_CD_RA = "RA";

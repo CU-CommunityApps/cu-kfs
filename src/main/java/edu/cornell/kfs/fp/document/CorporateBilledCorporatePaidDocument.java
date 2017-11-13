@@ -6,10 +6,7 @@ import java.util.List;
 
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
-import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
@@ -56,5 +53,7 @@ public class CorporateBilledCorporatePaidDocument extends CuProcurementCardDocum
 
         return sourceAccountingLines;
     }
+    
+    
     
 }

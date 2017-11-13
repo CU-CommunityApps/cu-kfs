@@ -1,17 +1,13 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.fp.batch.ProcurementCardReportType;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
 import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
@@ -20,7 +16,6 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
-import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -30,12 +25,10 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
-import org.kuali.kfs.sys.mail.VelocityMailMessage;
-import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
@@ -43,8 +36,8 @@ import edu.cornell.kfs.fp.batch.service.CuProcurementCardCreateDocumentService;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTargetAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail;
-import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 
 public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements ProcurementCardCreateDocumentService {
@@ -56,6 +49,9 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     protected FinancialSystemDocumentService financialSystemDocumentService;
     protected ParameterService parameterService;
     
+    protected SimpleDateFormat dateFormat;
+    
+    @Transactional
     @Override
     public boolean createProcurementCardDocuments() {
         LOG.debug("createProcurementCardDocuments, entering");
@@ -110,8 +106,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     
     protected void resetOrganizationDocumentNumberToPostingDate(CorporateBilledCorporatePaidDocument cbcpDoc, Date transactionPostingDate) {
         if (transactionPostingDate != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd"); 
-            cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(dateFormat.format(transactionPostingDate));
+            cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(getDateFormat().format(transactionPostingDate));
         } else {
             LOG.error("setDocumentOrgDocumentNumber, unable to set the org document number, the posting date is null.");
         }
@@ -134,8 +129,8 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         return newProcurementCardHolder;
     }
     
-    protected List<CorporateBilledCorporatePaidTransactionDetail> buildNewTransactionList(List originalTransactiolist, CorporateBilledCorporatePaidDocument cbcpDoc) {
-        List<ProcurementCardTransactionDetail> procurementCardTransactionDetailList = originalTransactiolist;
+    protected List<CorporateBilledCorporatePaidTransactionDetail> buildNewTransactionList(List originalTransactionlist, CorporateBilledCorporatePaidDocument cbcpDoc) {
+        List<ProcurementCardTransactionDetail> procurementCardTransactionDetailList = originalTransactionlist;
         
         List<CorporateBilledCorporatePaidTransactionDetail> newTransactionList = new ArrayList<CorporateBilledCorporatePaidTransactionDetail>();
         
@@ -156,7 +151,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
         List<AccountingLineBase> accountingLineBases = accountingLines;
         for (AccountingLineBase lineBase : accountingLineBases) {
             if (lineBase.isSourceAccountingLine()) {
-                LOG.info("addTransactions, found source line");
                 ProcurementCardSourceAccountingLine originalLine = (ProcurementCardSourceAccountingLine) lineBase;
                 CorporateBilledCorporatePaidSourceAccountingLine newLine = new CorporateBilledCorporatePaidSourceAccountingLine(originalLine, newTransaction.getDocumentNumber());
                 newLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
@@ -164,7 +158,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
                 processLine(newLine, cbcpDoc);
                 newTransaction.getSourceAccountingLines().add(newLine);
             } else {
-                LOG.info("addTransactions, found target line");
                 ProcurementCardTargetAccountingLine originalLine = (ProcurementCardTargetAccountingLine) lineBase;
                 CorporateBilledCorporatePaidTargetAccountingLine newLine = new CorporateBilledCorporatePaidTargetAccountingLine(originalLine, newTransaction.getDocumentNumber());
                 newLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
@@ -202,7 +195,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
             if (ObjectUtils.isNotNull(transactionDetail)) {
                 sb.append("ProcurementCardTransactionDetail: ");
                 sb.append("document number = ").append(transactionDetail.getDocumentNumber());
-                sb.append(" tansaction reference number - ").append(transactionDetail.getTransactionReferenceNumber());
+                sb.append(" transaction reference number - ").append(transactionDetail.getTransactionReferenceNumber());
                 sb.append(" financial line number - ").append(transactionDetail.getFinancialDocumentTransactionLineNumber());
                 sb.append("  Source Lines - ");
                 logAccountingLineBaseList(transactionDetail.getSourceAccountingLines(), sb);
@@ -216,12 +209,12 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     }
     
     private void logAccountingLineBaseList(List accountingLines, StringBuilder sb) {
-        List<AccountingLineBase> accountinLineBases = accountingLines;
-        accountinLineBases.stream().forEach(line -> sb.append(line.toString()));
+        List<AccountingLineBase> accountingLineBases = accountingLines;
+        accountingLineBases.stream().map(line -> line.toString()).forEach(sb::append);
     }
     
-    protected String getCorporateBilledCorporatePaidDocumentParameter(String parameterName){
-        String parameterValue = parameterService.getParameterValueAsString("KFS-FP", 
+    protected String getCorporateBilledCorporatePaidDocumentParameter(String parameterName) {
+        String parameterValue = parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME, parameterName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getCorporateBilledCorporatePaidDocumentParameter, param name: " + parameterName + " param value: " + parameterValue);
@@ -242,8 +235,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
             } catch (WorkflowException | ValidationException e) {
-                LOG.error("Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
-                //throw new RuntimeException(e.getMessage(), e);
+                LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
             }
         }
         return true;
@@ -260,8 +252,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     
     @Override
     public boolean autoApproveProcurementCardDocuments() {
-        //cbcp documents route to final on submission, intentionally left blank
-        LOG.debug("entering autoApproveProcurementCardDocuments");
+        LOG.debug("entering autoApproveProcurementCardDocuments, CBCP docs automatically route to final, this function does nothing.");
         return true;
     }
 
@@ -285,4 +276,16 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl implements Pr
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
+
+    public SimpleDateFormat getDateFormat() {
+        if (dateFormat == null) {
+            dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd); 
+        }
+        return dateFormat;
+    }
+
+    public void setDateFormat(SimpleDateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+    
 }

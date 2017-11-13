@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp;
 
-import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 
 /**
  Portions Modified 04/2016 and Copyright Cornell University

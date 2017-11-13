@@ -1134,7 +1134,7 @@
         </collection-descriptor>
     </class-descriptor>
     
-    <class-descriptor class="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail" table="CU_CBCP_TRN_DTL_T">
+    <class-descriptor class="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail" table="CU_FP_CBCP_TRN_DTL_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="financialDocumentTransactionLineNumber" column="FDOC_TRN_LN_NBR" jdbc-type="INTEGER" primarykey="true" index="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
@@ -1188,7 +1188,7 @@
      
 </class-descriptor>
 
-<class-descriptor class="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute" table="CU_CBCP_TRN_DTL_TX">
+<class-descriptor class="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute" table="CU_FP_CBCP_TRN_DTL_TX">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
     <field-descriptor name="financialDocumentTransactionLineNumber" column="FDOC_TRN_LN_NBR" jdbc-type="INTEGER" primarykey="true" index="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />

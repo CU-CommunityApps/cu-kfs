@@ -13,6 +13,8 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.batch.service.WrappingBatchService;
 import org.kuali.kfs.sys.service.ReportWriterService;
 
+import edu.cornell.kfs.fp.CuFPConstants;
+
 public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidLoadFlatFileStep.class);
     private ProcurementCardLoadTransactionsService procurementCardLoadTransactionsService;
@@ -31,7 +33,7 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
         List<String> processedFiles = new ArrayList<String>();
         for (String inputFileName : fileNamesToLoad) {
             LOG.info("execute, file name: " + inputFileName);
-            processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName,reportWriterService);
+            processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName,reportWriterService) && processSuccess;
             if (processSuccess) {
                 processedFiles.add(inputFileName);
             }
@@ -46,7 +48,7 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
 
     private void removeDoneFiles(List<String> dataFileNames) {
         for (String dataFileName : dataFileNames) {
-            File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + ".done");
+            File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + CuFPConstants.DONE_FILE_EXTENSION);
             if (doneFile.exists()) {
                 doneFile.delete();
             }

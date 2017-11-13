@@ -19,6 +19,7 @@
     <property name="documentTypeName" value="CBCP"/>
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument"/>
     <property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument" />
+    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CorporateBilledCorporatePaidDocumentPresentationController"/>
   </bean>
 
 </beans>
