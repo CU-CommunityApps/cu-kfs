@@ -7,6 +7,11 @@ import org.kuali.kfs.fp.batch.ProcurementCardReportType;
 import org.kuali.kfs.fp.batch.service.ProcurementCardCreateDocumentService;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 
+/**
+ * @todo look into eliminationg this
+ * @author jdh34
+ *
+ */
 public interface CuProcurementCardCreateDocumentService extends ProcurementCardCreateDocumentService {
     
     List retrieveTransactions();

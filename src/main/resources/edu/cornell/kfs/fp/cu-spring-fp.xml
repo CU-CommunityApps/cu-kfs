@@ -746,12 +746,8 @@
     <bean id="cuProcurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean"/>
     
     <bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean"/>
-    <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true">
-        <property name="cuProcurementCardCreateDocumentService" ref="cuProcurementCardCreateDocumentService"/>
+    <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true" parent="cuProcurementCardCreateDocumentService">
         <property name="dataDictionaryService" ref="dataDictionaryService"/>
-        <property name="documentService" ref="documentService"/>
-        <property name="financialSystemDocumentService" ref="financialSystemDocumentService"/>
-        <property name="parameterService" ref="parameterService"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>
