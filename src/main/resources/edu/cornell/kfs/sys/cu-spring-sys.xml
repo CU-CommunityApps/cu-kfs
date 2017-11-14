@@ -264,4 +264,102 @@
 	<bean id="paymentSourceHelperService" parent="paymentSourceHelpService-parentBean"
 			class="edu.cornell.kfs.sys.document.service.impl.CuPaymentSourceHelperServiceImpl"/>
 
+	<bean id="modulesLockJob" parent="modulesLockJob-parentBean">
+		<property name="steps">
+			<list merge="true">
+				<ref bean="lockCoreServiceModuleStep"/>
+				<ref bean="lockSECModuleStep"/>
+				<ref bean="lockCRModuleStep"/>
+				<ref bean="lockTAXModuleStep"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="lockCoreServiceModuleStep" parent="lockModuleStep">
+		<property name="namespaceCode" value="KR-CR"/>
+	</bean>
+
+	<bean id="lockSECModuleStep" parent="lockModuleStep">
+		<property name="namespaceCode" value="KFS-SEC"/>
+	</bean>
+
+	<bean id="lockCRModuleStep" parent="lockModuleStep">
+		<property name="namespaceCode" value="KFS-CR"/>
+	</bean>
+
+	<bean id="lockTAXModuleStep" parent="lockModuleStep">
+		<property name="namespaceCode" value="KFS-TAX"/>
+	</bean>
+
+	<bean id="modulesUnlockJob" parent="modulesUnlockJob-parentBean">
+		<property name="steps">
+			<list merge="true">
+				<ref bean="unlockCoreServiceModuleStep"/>
+				<ref bean="unlockSECModuleStep"/>
+				<ref bean="unlockCRModuleStep"/>
+				<ref bean="unlockTAXModuleStep"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="unlockCoreServiceModuleStep" parent="unlockModuleStep">
+		<property name="namespaceCode" value="KR-CR"/>
+	</bean>
+
+	<bean id="unlockSECModuleStep" parent="unlockModuleStep">
+		<property name="namespaceCode" value="KFS-SEC"/>
+	</bean>
+
+	<bean id="unlockCRModuleStep" parent="unlockModuleStep">
+		<property name="namespaceCode" value="KFS-CR"/>
+	</bean>
+
+	<bean id="unlockTAXModuleStep" parent="unlockModuleStep">
+		<property name="namespaceCode" value="KFS-TAX"/>
+	</bean>
+
+	<!-- TODO: Remove helper beans related to CAB step removal once we upgrade to the 2017-09-07 KualiCo patch. -->
+
+	<bean id="FieldOverrideForLockModuleStepRemoval" abstract="true" class="org.kuali.kfs.krad.datadictionary.impl.FieldOverrideForListElementDeleteImpl">
+		<property name="propertyName" value="steps"/>
+		<property name="propertyNameForElementCompare" value="namespaceCode"/>
+	</bean>
+
+	<bean id="BeanOverrideInvokerForLockModuleStepRemoval" abstract="true" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetMethod" value="performOverride"/>
+		<property name="targetObject">
+			<bean class="org.kuali.kfs.krad.datadictionary.impl.BeanOverrideImpl">
+				<property name="fieldOverrides">
+					<list>
+						<bean parent="FieldOverrideForLockModuleStepRemoval"/>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="RemoveCABStepFromLockJob" parent="BeanOverrideInvokerForLockModuleStepRemoval">
+		<property name="targetObject.beanName" value="modulesLockJob"/>
+		<property name="targetObject.fieldOverrides[0].element">
+			<bean parent="lockCABModuleStep"/>
+		</property>
+		<property name="arguments">
+			<list>
+				<ref bean="modulesLockJob"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="RemoveCABStepFromUnlockJob" parent="BeanOverrideInvokerForLockModuleStepRemoval">
+		<property name="targetObject.beanName" value="modulesUnlockJob"/>
+		<property name="targetObject.fieldOverrides[0].element">
+			<bean parent="unlockCABModuleStep"/>
+		</property>
+		<property name="arguments">
+			<list>
+				<ref bean="modulesUnlockJob"/>
+			</list>
+		</property>
+	</bean>
+
 </beans>
