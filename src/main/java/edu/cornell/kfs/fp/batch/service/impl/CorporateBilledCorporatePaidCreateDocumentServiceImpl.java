@@ -71,6 +71,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     protected String createTransactionDetailRecord(ProcurementCardDocument cbcpDocument, ProcurementCardTransaction transaction, Integer transactionLineNumber) {
         CorporateBilledCorporatePaidTransactionDetail transactionDetail = new CorporateBilledCorporatePaidTransactionDetail();
+        transactionDetail.setCorporateBilledCorporatePaidDocument((CorporateBilledCorporatePaidDocument) cbcpDocument);
 
         // set the document transaction detail fields from the loaded transaction record
         transactionDetail.setDocumentNumber(cbcpDocument.getDocumentNumber());
@@ -149,15 +150,15 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
 
         sourceLine.setDocumentNumber(docTransactionDetail.getDocumentNumber());
         sourceLine.setFinancialDocumentTransactionLineNumber(docTransactionDetail.getFinancialDocumentTransactionLineNumber());
-        sourceLine.setChartOfAccountsCode(getDefaultChartCode());
+        sourceLine.setChartOfAccountsCode(getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_CHART));
         sourceLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
         sourceLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
-        /**
-         * @todo implement this
-         */
-        //setOrgRefId(sourceLine, cbcpDoc.getProcurementCardHolder().getCardHolderAlternateName());
+        
+        //CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
+        //setOrgRefId(sourceLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
 
         if (GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
             sourceLine.setAmount(transaction.getFinancialDocumentTotalAmount().negated());
@@ -170,19 +171,20 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     @Override
     protected ProcurementCardTargetAccountingLine createTargetAccountingLine(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail docTransactionDetail) {
+        
         CorporateBilledCorporatePaidTargetAccountingLine targetLine = new CorporateBilledCorporatePaidTargetAccountingLine();
         targetLine.setDocumentNumber(docTransactionDetail.getDocumentNumber());
         targetLine.setFinancialDocumentTransactionLineNumber(docTransactionDetail.getFinancialDocumentTransactionLineNumber());
-        targetLine.setChartOfAccountsCode(transaction.getChartOfAccountsCode());
+        targetLine.setChartOfAccountsCode(getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_CHART));
         targetLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
         targetLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
         targetLine.setProjectCode(transaction.getProjectCode());
-        /**
-         * implement this
-         */
-        //setOrgRefId(targetLine, cbcpDoc.getProcurementCardHolder().getCardHolderAlternateName());
+
+        //CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
+        //setOrgRefId(targetLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
 
         if (GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
             targetLine.setAmount(transaction.getFinancialDocumentTotalAmount().negated());
@@ -226,14 +228,14 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         try {
             return financialSystemDocumentService.findByWorkflowStatusCode(CorporateBilledCorporatePaidDocument.class, DocumentStatus.fromCode(statusCode));
         } catch (WorkflowException e) {
-            LOG.error("Error searching for enroute procurement card documents " + e.getMessage());
+            LOG.error("retrieveCorporateBilledCorporatePaidDocuments, Error searching for enroute procurement card documents " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
     }
     
     @Override
     public boolean autoApproveProcurementCardDocuments() {
-        LOG.debug("entering autoApproveProcurementCardDocuments, CBCP docs automatically route to final, this function does nothing.");
+        LOG.debug("autoApproveProcurementCardDocuments, CBCP docs automatically route to final, this function does nothing.");
         return true;
     }
     
@@ -255,6 +257,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
 
     public void setDateFormat(SimpleDateFormat dateFormat) {
         this.dateFormat = dateFormat;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
 }
