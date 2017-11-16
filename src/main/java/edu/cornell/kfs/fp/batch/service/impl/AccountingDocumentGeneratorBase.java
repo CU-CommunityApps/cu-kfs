@@ -33,7 +33,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         this.bareAdHocRoutePersonGenerator = bareAdHocRoutePersonGenerator;
     }
 
-    protected abstract Class<T> getDocumentClass();
+    protected abstract Class<? extends T> getDocumentClass();
 
     @Override
     public T createDocument(Function<Class<? extends Document>, Document> bareDocumentGenerator, AccountingXmlDocumentEntry documentEntry) {
