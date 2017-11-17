@@ -195,8 +195,24 @@
   
   <bean id="PayeeACHAccount-bankRoutingNumber" parent="PayeeACHAccount-bankRoutingNumber-parentBean"/>
 
-  <bean id="PayeeACHAccount-bankRoutingNumber-parentBean" abstract="true" parent="ACHBank-bankRoutingNumber">
-  </bean>
+    <bean id="PayeeACHAccount-bankRoutingNumber-parentBean" abstract="true" parent="Common-bankRoutingNumber">
+        <property name="forceUppercase" value="false"/>
+        <property name="shortLabel" value="Bank Routing Number"/>
+        <property name="validationPattern">
+            <ref bean="NumericValidation"/>
+        </property>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="9"/>
+        </property>
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity">
+                <property name="mask" value="true" /> 
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*****************" />
+                </property>
+            </bean>
+        </property>
+    </bean>
   
   <bean id="PayeeACHAccount-active" parent="PayeeACHAccount-active-parentBean"/>
 

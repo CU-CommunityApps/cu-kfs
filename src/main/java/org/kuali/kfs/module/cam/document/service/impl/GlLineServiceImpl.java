@@ -227,10 +227,11 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @NonTransactional
     public List<CapitalAssetInformation> findCapitalAssetInformationForGLLine(GeneralLedgerEntry entry) {
-        Map<String, String> primaryKeys = new HashMap<String, String>();
-        primaryKeys.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, entry.getDocumentNumber());
+        Map<String, String> fields = new HashMap<String, String>();
+        fields.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, entry.getDocumentNumber());
+        fields.put(CamsPropertyConstants.CapitalAssetInformation.ASSET_PROCESSED_IND, "N");
 
-        List<CapitalAssetInformation> assetInformation = (List<CapitalAssetInformation>) businessObjectService.findMatchingOrderBy(CapitalAssetInformation.class, primaryKeys, CamsPropertyConstants.CapitalAssetInformation.ACTION_INDICATOR, true);
+        List<CapitalAssetInformation> assetInformation = (List<CapitalAssetInformation>) businessObjectService.findMatchingOrderBy(CapitalAssetInformation.class, fields, CamsPropertyConstants.CapitalAssetInformation.ACTION_INDICATOR, true);
 
         List<CapitalAssetInformation> matchingAssets = new ArrayList<CapitalAssetInformation>();
 

@@ -984,7 +984,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         }
 
         int lineIndexForCapitalAssetInfo = this.getLineToDelete(request);
-        capitalAssetInformation.get(lineIndexForCapitalAssetInfo).getCapitalAssetInformationDetails().remove(0);
+        capitalAssetInformation.get(0).getCapitalAssetInformationDetails().remove(lineIndexForCapitalAssetInfo-1);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

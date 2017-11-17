@@ -125,7 +125,7 @@
   <bean id="ObjectCode-financialObjectLevelCode-parentBean" abstract="true" parent="ObjectLevel-financialObjectLevelCode" />
 
   <bean id="ObjectCode-reportsToChartOfAccountsCode" parent="ObjectCode-reportsToChartOfAccountsCode-parentBean"/>
-  <bean id="ObjectCode-reportsToChartOfAccountsCode-parentBean" abstract="true" parent="ObjectCode-chartOfAccountsCode">
+  <bean id="ObjectCode-reportsToChartOfAccountsCode-parentBean" abstract="true" parent="ChartAttribute-SelectControl">
     <property name="name" value="reportsToChartOfAccountsCode"/>
     <property name="label" value="Reports to Chart Code"/>
     <property name="shortLabel" value="RptsToChart"/>
