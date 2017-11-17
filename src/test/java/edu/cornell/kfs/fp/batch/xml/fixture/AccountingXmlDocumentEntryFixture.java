@@ -4,10 +4,16 @@ import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureU
 
 import java.util.List;
 
+import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
+import org.kuali.kfs.sys.document.AccountingDocument;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
+import edu.cornell.kfs.sys.util.MockDocumentUtils;
 
 @SuppressWarnings("deprecation")
 public enum AccountingXmlDocumentEntryFixture {
@@ -181,6 +187,56 @@ public enum AccountingXmlDocumentEntryFixture {
         documentEntry.setBackupLinks(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(backupLinks, AccountingXmlDocumentBackupLinkFixture::toBackupLinkPojo));
         return documentEntry;
+    }
+
+    public AccountingDocument toAccountingDocument(String documentNumber) {
+        Class<? extends AccountingDocument> accountingDocumentClass = AccountingDocumentClassMappingUtils
+                .getDocumentClassByDocumentType(documentTypeCode);
+        
+        AccountingDocument accountingDocument = MockDocumentUtils.buildMockDocument(accountingDocumentClass);
+        
+        populateNumberAndHeaderOnDocument(accountingDocument, documentNumber);
+        addAccountingLinesToDocument(accountingDocument);
+        addNotesToDocument(accountingDocument);
+        addAdHocRecipientsToDocument(accountingDocument);
+        
+        return accountingDocument;
+    }
+
+    private void populateNumberAndHeaderOnDocument(AccountingDocument accountingDocument, String documentNumber) {
+        FinancialSystemDocumentHeader documentHeader = (FinancialSystemDocumentHeader) accountingDocument.getDocumentHeader();
+        accountingDocument.setDocumentNumber(documentNumber);
+        documentHeader.setDocumentNumber(documentNumber);
+        documentHeader.setDocumentDescription(description);
+        documentHeader.setExplanation(explanation);
+        documentHeader.setOrganizationDocumentNumber(organizationDocumentNumber);
+    }
+
+    private void addAccountingLinesToDocument(AccountingDocument accountingDocument) {
+        Class<? extends SourceAccountingLine> sourceAccountingLineClass = AccountingDocumentClassMappingUtils
+                .getSourceAccountingLineClassByDocumentType(documentTypeCode);
+        Class<? extends TargetAccountingLine> targetAccountingLineClass = AccountingDocumentClassMappingUtils
+                .getTargetAccountingLineClassByDocumentType(documentTypeCode);
+        
+        sourceAccountingLines.stream()
+                .map((fixture) -> fixture.toAccountingLineBo(sourceAccountingLineClass, accountingDocument.getDocumentNumber()))
+                .forEach(accountingDocument::addSourceAccountingLine);
+        targetAccountingLines.stream()
+                .map((fixture) -> fixture.toAccountingLineBo(targetAccountingLineClass, accountingDocument.getDocumentNumber()))
+                .forEach(accountingDocument::addTargetAccountingLine);
+    }
+
+    private void addNotesToDocument(AccountingDocument accountingDocument) {
+        notes.stream()
+                .map(MockDocumentUtils::buildMockNote)
+                .forEach(accountingDocument::addNote);
+    }
+
+    private void addAdHocRecipientsToDocument(AccountingDocument accountingDocument) {
+        List<AdHocRoutePerson> adHocPersons = accountingDocument.getAdHocRoutePersons();
+        adHocRecipients.stream()
+                .map((fixture) -> fixture.toAdHocRoutePerson(accountingDocument.getDocumentNumber()))
+                .forEach(adHocPersons::add);
     }
 
     // The following methods are only meant to improve the setup and readability of this enum's constants.

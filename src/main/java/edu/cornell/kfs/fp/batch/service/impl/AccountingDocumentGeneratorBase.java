@@ -8,6 +8,7 @@ import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -40,11 +41,19 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         Document bareDocument = bareDocumentGenerator.apply(getDocumentClass());
         T document = getDocumentClass().cast(bareDocument);
         
+        populateDocumentHeader(document, documentEntry);
         populateAccountingLines(document, documentEntry);
         populateDocumentNotes(document, documentEntry);
         populateAdHocRecipients(document, documentEntry);
         populateCustomAccountingDocumentData(document, documentEntry);
         return document;
+    }
+
+    protected void populateDocumentHeader(T document, AccountingXmlDocumentEntry documentEntry) {
+        FinancialSystemDocumentHeader documentHeader = (FinancialSystemDocumentHeader) document.getDocumentHeader();
+        documentHeader.setDocumentDescription(documentEntry.getDescription());
+        documentHeader.setExplanation(documentEntry.getExplanation());
+        documentHeader.setOrganizationDocumentNumber(documentEntry.getOrganizationDocumentNumber());
     }
 
     @SuppressWarnings("unchecked")
@@ -64,23 +73,19 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
 
     protected <A extends AccountingLine> A buildAccountingLine(
             Class<A> accountingLineClass, String documentNumber, AccountingXmlDocumentAccountingLine xmlLine) {
-        A accountingLine = buildBareAccountingLineFromNoArgConstructor(accountingLineClass);
-        accountingLine.setDocumentNumber(documentNumber);
-        accountingLine.setChartOfAccountsCode(xmlLine.getChartCode());
-        accountingLine.setAccountNumber(xmlLine.getAccountNumber());
-        accountingLine.setSubAccountNumber(xmlLine.getSubAccountNumber());
-        accountingLine.setFinancialObjectCode(xmlLine.getObjectCode());
-        accountingLine.setFinancialSubObjectCode(xmlLine.getSubObjectCode());
-        accountingLine.setProjectCode(xmlLine.getProjectCode());
-        accountingLine.setOrganizationReferenceId(xmlLine.getOrgRefId());
-        accountingLine.setFinancialDocumentLineDescription(xmlLine.getLineDescription());
-        accountingLine.setAmount(xmlLine.getAmount());
-        return accountingLine;
-    }
-
-    protected <A extends AccountingLine> A buildBareAccountingLineFromNoArgConstructor(Class<A> accountingLineClass) {
         try {
-            return accountingLineClass.newInstance();
+            A accountingLine = accountingLineClass.newInstance();
+            accountingLine.setDocumentNumber(documentNumber);
+            accountingLine.setChartOfAccountsCode(xmlLine.getChartCode());
+            accountingLine.setAccountNumber(xmlLine.getAccountNumber());
+            accountingLine.setSubAccountNumber(xmlLine.getSubAccountNumber());
+            accountingLine.setFinancialObjectCode(xmlLine.getObjectCode());
+            accountingLine.setFinancialSubObjectCode(xmlLine.getSubObjectCode());
+            accountingLine.setProjectCode(xmlLine.getProjectCode());
+            accountingLine.setOrganizationReferenceId(xmlLine.getOrgRefId());
+            accountingLine.setFinancialDocumentLineDescription(xmlLine.getLineDescription());
+            accountingLine.setAmount(xmlLine.getAmount());
+            return accountingLine;
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +121,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected void populateCustomAccountingDocumentData(T document, AccountingXmlDocumentEntry documentEntry) {
-        
+        // Do nothing by default.
     }
 
 }

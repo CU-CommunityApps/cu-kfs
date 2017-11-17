@@ -1,6 +1,9 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
+import org.kuali.kfs.krad.bo.AdHocRoutePerson;
+
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAdHocRecipient;
+import edu.cornell.kfs.sys.util.MockDocumentUtils;
 
 public enum AccountingXmlDocumentAdHocRecipientFixture {
     JDH34_APPROVE("jdh34", "Approve"),
@@ -21,6 +24,14 @@ public enum AccountingXmlDocumentAdHocRecipientFixture {
         adHocRecipient.setNetId(netId);
         adHocRecipient.setActionRequested(actionRequested);
         return adHocRecipient;
+    }
+
+    public AdHocRoutePerson toAdHocRoutePerson(String documentNumber) {
+        AdHocRoutePerson adHocPerson = MockDocumentUtils.buildMockAdHocRoutePerson();
+        adHocPerson.setdocumentNumber(documentNumber);
+        adHocPerson.setId(netId);
+        adHocPerson.setActionRequested(actionRequested);
+        return adHocPerson;
     }
 
 }
