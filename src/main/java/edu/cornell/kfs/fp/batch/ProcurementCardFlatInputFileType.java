@@ -219,7 +219,15 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	if ( (headerTransactionCount!=footerTransactionCount) || 
         		 (headerTransactionCount!=transactionCount) ||
         		 (footerTransactionCount!=transactionCount) ){
-        		handleRecordCountMisMatch();
+        	    StringBuffer sb = new StringBuffer();
+                sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
+                sb.append(" Transactions in header: ");
+                sb.append(headerTransactionCount);
+                sb.append(" Transactions in footer: ");
+                sb.append(footerTransactionCount);
+                sb.append(" Transactions counted while parsing file: ");
+                sb.append(transactionCount);
+                throw new Exception(sb.toString());
         	}
         } catch (IOException e) {
             LOG.error("Error encountered reading from file content", e);
@@ -234,18 +242,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
         
         return transactions;
-    }
-
-    protected void handleRecordCountMisMatch() throws Exception {
-        StringBuffer sb = new StringBuffer();
-        sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
-        sb.append(" Transactions in header: ");
-        sb.append(headerTransactionCount);
-        sb.append(" Transactions in footer: ");
-        sb.append(footerTransactionCount);
-        sb.append(" Transactions counted while parsing file: ");
-        sb.append(transactionCount);
-        throw new Exception(sb.toString());
     }
 
     public void process(String fileName, Object parsedFileContents) {

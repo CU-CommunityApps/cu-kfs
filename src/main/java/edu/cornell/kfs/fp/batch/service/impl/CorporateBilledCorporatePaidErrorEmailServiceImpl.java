@@ -1,15 +1,17 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import edu.cornell.kfs.fp.CuFPConstants;
+
 public class CorporateBilledCorporatePaidErrorEmailServiceImpl extends ProcurementCardErrorEmailServiceImpl {
     
     @Override
     protected String buildErrorEmailSubject() {
-        return "Error occurred during Corporate Billed Corporate Paid batch upload process";
+        return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_ERROR_EMAIL_SUBJECT;
     }
     
     @Override
     protected String buildErrorMessageBodyStarter() {
-        return "Errors occured during the Corporate Billed Corporate Paid upload process.";
+        return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_ERROR_EMAIL_BODY_STARTER;
     }
 
 }
