@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
 import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
@@ -17,9 +18,12 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
+import org.kuali.kfs.krad.datadictionary.DataDictionary;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -39,11 +43,14 @@ import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtende
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
+/**
+ * @author jdh34
+ *
+ */
 public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends ProcurementCardCreateDocumentServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
-    protected DataDictionaryService dataDictionaryService;
-    
+    protected DataDictionaryService cbcpDatadictionaryServce;
     protected SimpleDateFormat dateFormat;
     
     @Override
@@ -197,7 +204,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     protected void setOrgRefId(AccountingLineBase accountingLine, String orgRefId) {
         orgRefId = StringUtils.trim(orgRefId);
-        String orgRefIdShortenedIfTooLong = StringUtils.substring(orgRefId, 0, dataDictionaryService.getAttributeMaxLength(SourceAccountingLine.class, 
+        String orgRefIdShortenedIfTooLong = StringUtils.substring(orgRefId, 0, cbcpDatadictionaryServce.getAttributeMaxLength(SourceAccountingLine.class, 
                 KFSPropertyConstants.ORGANIZATION_REFERENCE_ID));
         if (!StringUtils.equalsIgnoreCase(orgRefIdShortenedIfTooLong, orgRefId)) {
             LOG.error("setOrgRefId, had to change '" + orgRefId + "' to '" + orgRefIdShortenedIfTooLong + "'");
@@ -259,8 +266,9 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         this.dateFormat = dateFormat;
     }
 
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
-        this.dataDictionaryService = dataDictionaryService;
+    public void setCbcpDatadictionaryServce(DataDictionaryService cbcpDatadictionaryServce) {
+        this.cbcpDatadictionaryServce = cbcpDatadictionaryServce;
     }
+    
 
 }
