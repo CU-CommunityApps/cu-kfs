@@ -7,8 +7,6 @@ import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
 
 public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCardFlatInputFileType {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidFlatInputFileType.class);
-    
     protected CorporateBilledCorporatePaidCreateDocumentService corporateBilledCorporatePaidCreateDocumentService;
     
     @Override

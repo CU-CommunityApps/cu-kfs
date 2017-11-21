@@ -29,12 +29,12 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
         
         ((WrappingBatchService) reportWriterService).initialize();
         
-        boolean processSuccess = true;
+        boolean success = true;
         List<String> processedFiles = new ArrayList<String>();
         for (String inputFileName : fileNamesToLoad) {
             LOG.info("execute, file name: " + inputFileName);
-            processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName,reportWriterService) && processSuccess;
-            if (processSuccess) {
+            success = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName,reportWriterService) && success;
+            if (success) {
                 processedFiles.add(inputFileName);
             }
         }
@@ -43,7 +43,7 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
 
         removeDoneFiles(processedFiles);
 
-        return processSuccess;
+        return success;
     }
 
     private void removeDoneFiles(List<String> dataFileNames) {

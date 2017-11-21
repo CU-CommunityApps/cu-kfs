@@ -20,9 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
@@ -219,15 +217,15 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	if ( (headerTransactionCount!=footerTransactionCount) || 
         		 (headerTransactionCount!=transactionCount) ||
         		 (footerTransactionCount!=transactionCount) ){
-        	    StringBuffer sb = new StringBuffer();
-                sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
-                sb.append(" Transactions in header: ");
-                sb.append(headerTransactionCount);
-                sb.append(" Transactions in footer: ");
-                sb.append(footerTransactionCount);
-                sb.append(" Transactions counted while parsing file: ");
-                sb.append(transactionCount);
-                throw new Exception(sb.toString());
+        		StringBuffer sb = new StringBuffer();
+        		sb.append("There is a discrepancy between the number of transactions counted during the ingestion process.");
+        		sb.append(" Transactions in header: ");
+        		sb.append(headerTransactionCount);
+        		sb.append(" Transactions in footer: ");
+        		sb.append(footerTransactionCount);
+        		sb.append(" Transactions counted while parsing file: ");
+        		sb.append(transactionCount);
+        		throw new Exception(sb.toString());
         	}
         } catch (IOException e) {
             LOG.error("Error encountered reading from file content", e);
@@ -340,9 +338,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setCardHolderAlternateName(parent.getCardHolderAlternateName());
 //            child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
-            
             parseAccountingInformation(line, child);
-            child.setProjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 336, 346));
+            child.setProjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 336, 346));	        	
             child.setFinancialDocumentTotalAmount(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));  //req
             child.setTransactionDebitCreditCode(USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65))); //req
             child.setTransactionDate(USBankRecordFieldUtils.extractDate(line, 45, 53, lineCount)); // req	
@@ -439,25 +436,14 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         return null;
     }
 
-    protected void parseAccountingInformation(String line, ProcurementCardTransaction child) throws java.text.ParseException {
+    protected void parseAccountingInformation(String line, ProcurementCardTransaction child)
+            throws java.text.ParseException {
         child.setChartOfAccountsCode(defaultChart);
-        child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount));
+        child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount)); //req
         child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
-        child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount));
+        // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
+        child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount)); //req
         child.setFinancialSubObjectCode(USBankRecordFieldUtils.extractNormalizedString(line,333,336));
-        
-    }
-
-    public int getTransactionCount() {
-        return transactionCount;
-    }
-
-    public int getHeaderTransactionCount() {
-        return headerTransactionCount;
-    }
-
-    public int getFooterTransactionCount() {
-        return footerTransactionCount;
     }
 
 }

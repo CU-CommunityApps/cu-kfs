@@ -26,7 +26,6 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
-import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTargetAccountingLine;
@@ -34,7 +33,6 @@ import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
-import edu.cornell.kfs.fp.businessobject.PurchasingDataDetail;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -72,7 +70,6 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         CorporateBilledCorporatePaidTransactionDetail transactionDetail = new CorporateBilledCorporatePaidTransactionDetail();
         transactionDetail.setCorporateBilledCorporatePaidDocument((CorporateBilledCorporatePaidDocument) cbcpDocument);
 
-        // set the document transaction detail fields from the loaded transaction record
         transactionDetail.setDocumentNumber(cbcpDocument.getDocumentNumber());
         transactionDetail.setFinancialDocumentTransactionLineNumber(transactionLineNumber);
         transactionDetail.setTransactionDate(transaction.getTransactionDate());
