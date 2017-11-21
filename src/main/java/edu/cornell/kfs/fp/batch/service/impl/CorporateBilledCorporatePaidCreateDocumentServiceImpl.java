@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
-
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,45 +7,39 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
-import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
-import org.kuali.kfs.krad.datadictionary.DataDictionary;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
+import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
+import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTargetAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
+import edu.cornell.kfs.fp.businessobject.PurchasingDataDetail;
+import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-/**
- * @author jdh34
- *
- */
-public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends ProcurementCardCreateDocumentServiceImpl {
+public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends ProcurementCardCreateDocumentServiceImpl implements CorporateBilledCorporatePaidCreateDocumentService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
     protected DataDictionaryService cbcpDatadictionaryServce;
@@ -100,7 +92,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         transactionDetail.setTransactionTravelAuthorizationCode(transaction.getTransactionTravelAuthorizationCode());
         transactionDetail.setTransactionUnitContactName(transaction.getTransactionUnitContactName());
 
-        if (GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
+        if (KFSConstants.GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
             transactionDetail.setTransactionTotalAmount(transaction.getFinancialDocumentTotalAmount().negated());
         } else {
             transactionDetail.setTransactionTotalAmount(transaction.getFinancialDocumentTotalAmount());
@@ -164,10 +156,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         sourceLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
         
-        //CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
-        //setOrgRefId(sourceLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
+        CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
+        setOrgRefId(sourceLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
 
-        if (GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
+        if (KFSConstants.GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
             sourceLine.setAmount(transaction.getFinancialDocumentTotalAmount().negated());
         } else {
             sourceLine.setAmount(transaction.getFinancialDocumentTotalAmount());
@@ -190,10 +182,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
         targetLine.setProjectCode(transaction.getProjectCode());
 
-        //CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
-        //setOrgRefId(targetLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
+        CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
+        setOrgRefId(targetLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
 
-        if (GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
+        if (KFSConstants.GL_CREDIT_CODE.equals(transaction.getTransactionDebitCreditCode())) {
             targetLine.setAmount(transaction.getFinancialDocumentTotalAmount().negated());
         } else {
             targetLine.setAmount(transaction.getFinancialDocumentTotalAmount());
@@ -210,6 +202,23 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
             LOG.error("setOrgRefId, had to change '" + orgRefId + "' to '" + orgRefIdShortenedIfTooLong + "'");
         }
         accountingLine.setOrganizationReferenceId(orgRefIdShortenedIfTooLong);
+    }
+    
+    @Override
+    protected void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension,
+            ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
+        List<CorporateBilledCorporatePaidDataDetail> details = new ArrayList<CorporateBilledCorporatePaidDataDetail>();
+        CorporateBilledCorporatePaidTransactionDetailExtendedAttribute cbcpDetailExtension = 
+                (CorporateBilledCorporatePaidTransactionDetailExtendedAttribute) detailExtension;
+        
+        for (PurchasingDataRecord record : extension.getPurchasingDataRecords()) {
+            CorporateBilledCorporatePaidDataDetail detail = new CorporateBilledCorporatePaidDataDetail();
+            detail.setDocumentNumber(cbcpDetailExtension.getDocumentNumber());
+            detail.setFinancialDocumentTransactionLineNumber(cbcpDetailExtension.getFinancialDocumentTransactionLineNumber());
+            detail.populateFromRecord(record);
+            details.add(detail);
+        }
+        cbcpDetailExtension.setCorporateBilledCorporatePaidDataDetails(details);
     }
     
     @Override
@@ -246,7 +255,8 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         return true;
     }
     
-    protected String getCorporateBilledCorporatePaidDocumentParameter(String parameterName) {
+    @Override
+    public String getCorporateBilledCorporatePaidDocumentParameter(String parameterName) {
         String parameterValue = parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME, parameterName);
         if (LOG.isDebugEnabled()) {

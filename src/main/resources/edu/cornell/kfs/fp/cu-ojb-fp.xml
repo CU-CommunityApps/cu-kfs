@@ -1194,8 +1194,8 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     
-    <collection-descriptor name="purchasingDataDetails" 
-                           proxy="false" element-class-ref="edu.cornell.kfs.fp.businessobject.PurchasingDataDetail" 
+    <collection-descriptor name="corporateBilledCorporatePaidDataDetails" 
+                           proxy="false" element-class-ref="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail" 
                            collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" 
                            auto-retrieve="true" 
                            auto-update="object" 
@@ -1321,7 +1321,34 @@
             <foreignkey field-ref="balanceTypeCode"/>
         </reference-descriptor>
     </class-descriptor>
-
-
+    
+    <class-descriptor class="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail" table="CU_FP_CBCP_PUR_DATA_DTL_T">
+	    <field-descriptor name="purchasingDataId" column="PUR_DATA_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="FP_PUR_DATA_DTL_T_SEQ" />
+	    <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+	    <field-descriptor name="financialDocumentTransactionLineNumber" column="FDOC_TRN_LN_NBR" jdbc-type="INTEGER" primarykey="true" index="true" />
+	    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+	    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+	    <field-descriptor name="accountNumber" column="ACCT_NUM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="tsysTranCode" column="TSYS_TRAN_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="itemCommodityCode" column="ITM_CMTY_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="merchantOrderNumber" column="MERCH_ORD_NUM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="discountAmount" column="DISCOUNT_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="freightShippingAmount" column="FRGHT_SHIP_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="dutyAmount" column="DUTY_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="destinationPostalZipCode" column="DEST_POSTAL_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="shipFromPostalZipCode" column="SHIP_FRM_POSTAL_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="destinationCountryCode" column="DEST_CTRY_CD" jdbc-type="VARCHAR" />
+	    <field-descriptor name="uniqueVATInvoice" column="UNQ_VAT_INV" jdbc-type="VARCHAR" />
+	    <field-descriptor name="orderDate" column="ORDER_DATE" jdbc-type="DATE" />
+	    <field-descriptor name="itemDescriptor" column="ITM_DESC" jdbc-type="VARCHAR" />
+	    <field-descriptor name="quantity" column="QTY" jdbc-type="INTEGER" />
+	    <field-descriptor name="unitOfMeasure" column="UOM" jdbc-type="VARCHAR" />
+	    <field-descriptor name="unitCost" column="UNIT_COST" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion" />
+	    <field-descriptor name="typeOfSupply" column="TYPE_OF_SUPPLY" jdbc-type="VARCHAR" />
+	    <field-descriptor name="serviceIdentifier" column="SRVC_ID" jdbc-type="VARCHAR" />
+	    <field-descriptor name="messageIdentifier" column="MSG_ID" jdbc-type="VARCHAR" />
+	    <field-descriptor name="itemSequenceNumber" column="ITM_SEQ_NUM" jdbc-type="INTEGER" />
+	    <field-descriptor name="lineItemDetailIndicator" column="LN_ITM_DTL_IND" jdbc-type="INTEGER" />
+	  </class-descriptor>
 
 </descriptor-repository>

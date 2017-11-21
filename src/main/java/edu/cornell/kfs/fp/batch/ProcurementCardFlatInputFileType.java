@@ -329,7 +329,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         	
         	//Pull everything in from the preceding '05' record
             child.setTransactionCreditCardNumber(parent.getTransactionCreditCardNumber());
-            child.setChartOfAccountsCode(defaultChart);
             child.setTransactionCycleEndDate(parent.getTransactionCycleEndDate());
             child.setCardHolderName(parent.getCardHolderName());
             child.setCardHolderLine1Address(parent.getCardHolderLine1Address());
@@ -342,12 +341,8 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
 //            child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
             
-            child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount)); //req
-            child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
-            // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
-            child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount)); //req
-            child.setFinancialSubObjectCode(USBankRecordFieldUtils.extractNormalizedString(line,333,336));
-            child.setProjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 336, 346));	        	
+            parseAccountingInformation(line, child);
+            child.setProjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 336, 346));
             child.setFinancialDocumentTotalAmount(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));  //req
             child.setTransactionDebitCreditCode(USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65))); //req
             child.setTransactionDate(USBankRecordFieldUtils.extractDate(line, 45, 53, lineCount)); // req	
@@ -442,6 +437,15 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
 
         return null;
+    }
+
+    protected void parseAccountingInformation(String line, ProcurementCardTransaction child) throws java.text.ParseException {
+        child.setChartOfAccountsCode(defaultChart);
+        child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount));
+        child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
+        child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount));
+        child.setFinancialSubObjectCode(USBankRecordFieldUtils.extractNormalizedString(line,333,336));
+        
     }
 
     public int getTransactionCount() {

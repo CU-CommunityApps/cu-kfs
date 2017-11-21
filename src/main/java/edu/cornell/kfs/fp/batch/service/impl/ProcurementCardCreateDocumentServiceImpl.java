@@ -218,7 +218,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     }
     
 
-    private void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension, ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
+    protected void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension, ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
         List<PurchasingDataDetail> details = new ArrayList<PurchasingDataDetail>();
         for (PurchasingDataRecord record : extension.getPurchasingDataRecords()) {
           PurchasingDataDetail detail = new PurchasingDataDetail();

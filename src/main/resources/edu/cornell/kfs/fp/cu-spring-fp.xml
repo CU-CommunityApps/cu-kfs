@@ -725,6 +725,7 @@
         <property name="dateTimeService">
            <ref bean="dateTimeService"/>
         </property>
+        <property name="corporateBilledCorporatePaidCreateDocumentService" ref="corporateBilledCorporatePaidCreateDocumentService"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidErrorEmailServiceImpl">

@@ -7,5 +7,22 @@
   <bean id="CorporateBilledCorporatePaidTransactionDetailExtendedAttribute-parentBean" abstract="true" parent="ProcurementCardTransactionDetailExtension-parentBean">
     <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute" />
     <property name="objectLabel" value="Corporate Billed Corporate Paid Transaction Detail Extended Attribute"/>
+    <property name="collections">
+      <list merge="true">
+        <bean parent="CollectionDefinition" p:name="corporateBilledCorporatePaidDataDetails" p:label="CBCP Purchasing Data" p:shortLabel="CBCP Purchasing Data" />
+      </list>
+    </property>
+    <property name="relationships">
+      <list merge="true">
+	      <bean parent="RelationshipDefinition" p:objectAttributeName="corporateBilledCorporatePaidDataDetails" p:targetClass="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail">
+	        <property name="primitiveAttributes">
+	          <list>
+	            <bean parent="PrimitiveAttributeDefinition" p:sourceName="documentNumber" p:targetName="documentNumber" />
+	            <bean parent="PrimitiveAttributeDefinition" p:sourceName="financialDocumentTransactionLineNumber" p:targetName="financialDocumentTransactionLineNumber" />
+	          </list>
+	        </property>
+	      </bean>
+      </list>
+    </property>
   </bean>
 </beans>
