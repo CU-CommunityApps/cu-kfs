@@ -28,14 +28,13 @@ import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.fp.batch.service.CuProcurementCardCreateDocumentService;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataDetail;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 
 
-public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl implements CuProcurementCardCreateDocumentService {
+public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
     private static final int CARD_HOLDER_MAX_LENGTH = 15;
     private static int VENDOR_NAME_MAX_LENGTH = 19;
