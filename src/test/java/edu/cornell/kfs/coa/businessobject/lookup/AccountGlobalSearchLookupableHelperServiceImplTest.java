@@ -58,7 +58,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplTest extends KualiTes
 
     public void testGetSearchResultsAccountSupervisor() {
         setupSearchValues();
-        fieldValues.put("accountSupervisoryUser.principalName", "bal232");
+        fieldValues.put("accountSupervisoryUser.principalName", "tjs33");
 
         List<Account> accounts = (List<Account>) lookupableHelperServiceImpl.getSearchResults(fieldValues);
         assertTrue("should have results", accounts.size() > 0);
