@@ -65,22 +65,10 @@
     </bean>
     
     <bean id="AppropriationAccount-subFundGroupCode" parent="AppropriationAccount-subFundGroupCode-parentBean"/>
-    <bean id="AppropriationAccount-subFundGroupCode-parentBean" abstract="true" parent="AttributeDefinition">
-    	<property name="forceUppercase" value="true"/>
-    	<property name="name" value="subFundGroupCode"/>
-    	<property name="label" value="Sub-Fund Group Code"/>
-    	<property name="shortLabel" value="Sub-Fund Group Code"/>
-    	<property name="maxLength" value="6"/>
-    	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
-      			<property name="exactLength" value="6"/>
-      		</bean>
-    	</property>
-    	<property name="control">
-    	  	<bean parent="TextControlDefinition" p:size="7"/>
-    	</property>
+    <bean id="AppropriationAccount-subFundGroupCode-parentBean" abstract="true" parent="SubFundGroup-subFundGroupCode">
+        <property name="shortLabel" value="SubFundGrpCd"/>
     </bean>
-  
+      
   	<bean id="AppropriationAccount-projectNumber" parent="AppropriationAccount-projectNumber-parentBean"/>
   	
   	<bean id="AppropriationAccount-projectNumber-parentBean" abstract="true" parent="AttributeDefinition">
