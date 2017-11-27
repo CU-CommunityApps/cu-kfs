@@ -114,7 +114,6 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
     }
     private PurApAccountingLineBase getAccountFromDb(PurApAccountingLineBase accountingLine, Class clazz) {
         Map<String, Object> primaryKeys = new HashMap<String, Object>();
-        primaryKeys.put("documentNumber", accountingLine.getDocumentNumber());
         primaryKeys.put("accountIdentifier", accountingLine.getAccountIdentifier());
         return (PurApAccountingLineBase)SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(clazz, primaryKeys);
     }
@@ -400,49 +399,5 @@ public class CuPurapAccountingServiceImpl extends PurapAccountingServiceImpl imp
             }
         }
     }
-    @Override
-    public boolean isFiscalOfficerForAccountingLine(Person currentUser, AccountingLine accountingLine) {
-        boolean isFoForAcctLine = true;
-        String personId = currentUser.getPrincipalId();
-
-            List<String> fiscalOfficers = new ArrayList<String>();
-            Map<String,String> roleQualifier = new HashMap<String,String>();
-
-            boolean isExistingAcctline = false;
-            String updatedAccountNumber = KFSConstants.EMPTY_STRING;
-
-            if (accountingLine instanceof PurchaseOrderAccount && ((PurchaseOrderAccount) accountingLine).getAccountIdentifier() != null) {
-                PurchaseOrderAccount dbAcctLine = (PurchaseOrderAccount) getAccountFromDb((PurchaseOrderAccount) accountingLine, PurchaseOrderAccount.class);
-                if (dbAcctLine != null && !StringUtils.equals(accountingLine.getAccountNumber(), dbAcctLine.getAccountNumber())) {
-                    updatedAccountNumber = accountingLine.getAccountNumber();
-                    accountingLine.setAccountNumber(dbAcctLine.getAccountNumber());
-                    isExistingAcctline = true;
-                }
-            }
-          
-            roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME, PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_AMENDMENT_DOCUMENT);
-            roleQualifier.put(KfsKimAttributes.CHART_OF_ACCOUNTS_CODE, accountingLine.getChartOfAccountsCode());
-            roleQualifier.put(KfsKimAttributes.ACCOUNT_NUMBER, accountingLine.getAccountNumber());
-            fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-                    KFSConstants.SysKimApiConstants.FISCAL_OFFICER_KIM_ROLE_NAME, roleQualifier));
-            
-            if (!fiscalOfficers.contains(personId)) {
-                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(
-                                        KFSConstants.ParameterNamespaces.KFS,KFSConstants.SysKimApiConstants.FISCAL_OFFICER_PRIMARY_DELEGATE_KIM_ROLE_NAME,
-                                        roleQualifier));
-            }
-            if (!fiscalOfficers.contains(personId)) {
-                fiscalOfficers.addAll(SpringContext.getBean(RoleService.class).getRoleMemberPrincipalIds(KFSConstants.ParameterNamespaces.KFS,
-                                        KFSConstants.SysKimApiConstants.FISCAL_OFFICER_SECONDARY_DELEGATE_KIM_ROLE_NAME,roleQualifier));
-            }
-            if (isExistingAcctline) {
-                accountingLine.setAccountNumber(updatedAccountNumber);
-            }
-            if (!fiscalOfficers.contains(personId)) {
-                isFoForAcctLine = false;
-            }
-
-        return isFoForAcctLine;
-    }
-
+  
 }

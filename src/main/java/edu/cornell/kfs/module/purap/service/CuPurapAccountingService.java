@@ -13,6 +13,4 @@ public interface CuPurapAccountingService extends PurapAccountingService{
     */
    public boolean isFiscalOfficersForAllAcctLines(PurchasingAccountsPayableDocument document);
    
-   boolean isFiscalOfficerForAccountingLine(Person currentUser, AccountingLine accountingLine);
-
 }
