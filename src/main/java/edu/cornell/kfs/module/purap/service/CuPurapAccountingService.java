@@ -2,8 +2,6 @@ package edu.cornell.kfs.module.purap.service;
 
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.rice.kim.api.identity.Person;
 
 public interface CuPurapAccountingService extends PurapAccountingService{
     /**
@@ -12,5 +10,5 @@ public interface CuPurapAccountingService extends PurapAccountingService{
     * @return
     */
    public boolean isFiscalOfficersForAllAcctLines(PurchasingAccountsPayableDocument document);
-   
+
 }
