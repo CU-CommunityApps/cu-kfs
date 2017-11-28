@@ -9,13 +9,14 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPAC
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTargetAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
-@COMPONENT(component = "CorporateBilledCorporatePaid")
+@COMPONENT(component = CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME)
 public class CorporateBilledCorporatePaidDocument extends CuProcurementCardDocument {
     private static final long serialVersionUID = 8032811224624474218L;
     

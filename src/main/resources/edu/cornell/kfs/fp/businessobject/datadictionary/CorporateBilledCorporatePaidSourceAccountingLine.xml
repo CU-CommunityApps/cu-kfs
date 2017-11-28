@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	
 	<bean id="CorporateBilledCorporatePaidSourceAccountingLine" parent="CorporateBilledCorporatePaidSourceAccountingLine-parentBean" />
-	<bean id="CorporateBilledCorporatePaidSourceAccountingLine-parentBean" abstract="true" parent="ProcurementCardSourceAccountingLine-parentBean">
+	<bean id="CorporateBilledCorporatePaidSourceAccountingLine-parentBean" abstract="true" parent="ProcurementCardSourceAccountingLine">
 		<property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine" />
 		<property name="objectLabel" value="Corporate Billed Corporate Paid Transaction Source Accounting Lines" />
 	</bean>

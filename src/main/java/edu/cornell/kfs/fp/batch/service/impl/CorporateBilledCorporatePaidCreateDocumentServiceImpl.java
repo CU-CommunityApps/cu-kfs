@@ -56,7 +56,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         if (transactionPostingDate != null) {
             cbcpDoc.getDocumentHeader().setOrganizationDocumentNumber(getDateFormat().format(transactionPostingDate));
         } else {
-            LOG.error("setDocumentOrgDocumentNumber, unable to set the org document number, the posting date is null.");
+            LOG.error("setOrganizationDocumentNumberToPostingDate, unable to set the org document number, the posting date is null.");
         }
     }
     
@@ -98,11 +98,11 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         createProcurementCardTransactionDetailExtension(transaction, transactionDetail);
 
         createTransactionVendorRecord(cbcpDocument, transaction, transactionDetail);
-        logTransactionDetails(transactionDetail);
         cbcpDocument.getTransactionEntries().add(transactionDetail);
         
-        
-        return createAndValidateAccountingLines(cbcpDocument, transaction, transactionDetail);
+        String createAndValidateAccountingLineString =  createAndValidateAccountingLines(cbcpDocument, transaction, transactionDetail);
+        logTransactionDetails(transactionDetail);
+        return createAndValidateAccountingLineString;
     }
     
     private void logTransactionDetails(CorporateBilledCorporatePaidTransactionDetail transactionDetail) {
@@ -110,7 +110,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
             StringBuilder sb = new StringBuilder("logTransactionDetails, ");
             if (ObjectUtils.isNotNull(transactionDetail)) {
                 sb.append("ProcurementCardTransactionDetail: ");
-                sb.append("document number = ").append(transactionDetail.getDocumentNumber());
+                sb.append("document number - ").append(transactionDetail.getDocumentNumber());
                 sb.append(" transaction reference number - ").append(transactionDetail.getTransactionReferenceNumber());
                 sb.append(" financial line number - ").append(transactionDetail.getFinancialDocumentTransactionLineNumber());
                 sb.append("  Source Lines - ");
@@ -126,7 +126,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     private void logAccountingLineBaseList(List accountingLines, StringBuilder sb) {
         List<AccountingLineBase> accountingLineBases = accountingLines;
-        accountingLineBases.stream().map(line -> line.toString()).forEach(sb::append);
+        accountingLineBases.stream().map(AccountingLineBase::toString).forEach(sb::append);
     }
     
     @Override
