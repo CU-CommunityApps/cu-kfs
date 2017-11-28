@@ -285,6 +285,15 @@ public class CreateAccountingDocumentServiceImplTest {
             String documentNumber = String.valueOf(++nextDocumentNumber);
             document.setDocumentNumber(documentNumber);
             document.getDocumentHeader().setDocumentNumber(documentNumber);
+            
+            if (document instanceof AccountingDocument) {
+                AccountingDocument accountingDocument = (AccountingDocument) document;
+                accountingDocument.setSourceAccountingLines(new ArrayList<>());
+                accountingDocument.setTargetAccountingLines(new ArrayList<>());
+                accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
+                accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
+            }
+            
             return document;
         }
     }
