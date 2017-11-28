@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -193,7 +194,7 @@ public enum AccountingXmlDocumentEntryFixture {
         Class<? extends AccountingDocument> accountingDocumentClass = AccountingDocumentClassMappingUtils
                 .getDocumentClassByDocumentType(documentTypeCode);
         
-        AccountingDocument accountingDocument = MockDocumentUtils.buildMockDocument(accountingDocumentClass);
+        AccountingDocument accountingDocument = MockDocumentUtils.buildMockAccountingDocument(accountingDocumentClass);
         
         populateNumberAndHeaderOnDocument(accountingDocument, documentNumber);
         addAccountingLinesToDocument(accountingDocument);
@@ -212,11 +213,15 @@ public enum AccountingXmlDocumentEntryFixture {
         documentHeader.setOrganizationDocumentNumber(organizationDocumentNumber);
     }
 
+    @SuppressWarnings("unchecked")
     private void addAccountingLinesToDocument(AccountingDocument accountingDocument) {
-        Class<? extends SourceAccountingLine> sourceAccountingLineClass = AccountingDocumentClassMappingUtils
-                .getSourceAccountingLineClassByDocumentType(documentTypeCode);
-        Class<? extends TargetAccountingLine> targetAccountingLineClass = AccountingDocumentClassMappingUtils
-                .getTargetAccountingLineClassByDocumentType(documentTypeCode);
+        Class<? extends SourceAccountingLine> sourceAccountingLineClass = accountingDocument.getSourceAccountingLineClass();
+        Class<? extends TargetAccountingLine> targetAccountingLineClass = accountingDocument.getTargetAccountingLineClass();
+        
+        accountingDocument.setSourceAccountingLines(new ArrayList<>());
+        accountingDocument.setTargetAccountingLines(new ArrayList<>());
+        accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
+        accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
         
         sourceAccountingLines.stream()
                 .map((fixture) -> fixture.toAccountingLineBo(sourceAccountingLineClass, accountingDocument.getDocumentNumber()))

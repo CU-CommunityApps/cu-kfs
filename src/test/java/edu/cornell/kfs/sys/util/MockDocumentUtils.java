@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.util;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import org.easymock.EasyMock;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -8,13 +9,42 @@ import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
+import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
+
+import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 
 public class MockDocumentUtils {
 
     public static <T extends Document> T buildMockDocument(Class<T> documentClass) {
+        return buildMockDocument(documentClass, (document) -> {});
+    }
+
+    public static <T extends AccountingDocument> T buildMockAccountingDocument(Class<T> documentClass) {
+        return buildMockDocument(documentClass,
+                (accountingDocument) -> setupMockedAccountingDocumentMethods(accountingDocument, documentClass),
+                "getSourceAccountingLineClass", "getTargetAccountingLineClass");
+    }
+
+    private static void setupMockedAccountingDocumentMethods(AccountingDocument accountingDocument, Class<? extends AccountingDocument> documentClass) {
+        Class<? extends SourceAccountingLine> sourceAccountingLineClass = AccountingDocumentClassMappingUtils
+                .getSourceAccountingLineClassByDocumentClass(documentClass);
+        Class<? extends TargetAccountingLine> targetAccountingLineClass = AccountingDocumentClassMappingUtils
+                .getTargetAccountingLineClassByDocumentClass(documentClass);
+        
+        EasyMock.expect(accountingDocument.getSourceAccountingLineClass())
+                .andStubReturn(sourceAccountingLineClass);
+        EasyMock.expect(accountingDocument.getTargetAccountingLineClass())
+                .andStubReturn(targetAccountingLineClass);
+    }
+
+    public static <T extends Document> T buildMockDocument(Class<T> documentClass, Consumer<? super T> documentMockingConfigurer, String... mockedMethods) {
         T document = EasyMock.partialMockBuilder(documentClass)
+                .addMockedMethods(mockedMethods)
                 .createNiceMock();
+        documentMockingConfigurer.accept(document);
         EasyMock.replay(document);
         
         document.setDocumentHeader(new FinancialSystemDocumentHeader());

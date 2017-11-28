@@ -210,7 +210,7 @@ public class CreateAccountingDocumentServiceImplTest {
         inputFileType.setFileTypeIdentifier("accountingXmlDocumentFileType");
         inputFileType.setFileNamePrefix("accountingXmlDocument_");
         inputFileType.setTitleKey("accountingXmlDocument");
-        inputFileType.setFileExtension(CuFPConstants.XML_FILE_EXTENSION);
+        inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, "."));
         inputFileType.setDirectoryPath(TARGET_TEST_FILE_PATH);
         return inputFileType;
     }
@@ -278,7 +278,10 @@ public class CreateAccountingDocumentServiceImplTest {
             } else if (!CuDistributionOfIncomeAndExpenseDocument.class.equals(documentClass)) {
                 throw new IllegalStateException("Unexpected accounting document class: " + documentClass.getName());
             }
-            Document document = MockDocumentUtils.buildMockDocument(documentClass);
+            
+            @SuppressWarnings("unchecked")
+            Class<? extends AccountingDocument> accountingDocumentClass = (Class<? extends AccountingDocument>) documentClass;
+            Document document = MockDocumentUtils.buildMockAccountingDocument(accountingDocumentClass);
             String documentNumber = String.valueOf(++nextDocumentNumber);
             document.setDocumentNumber(documentNumber);
             document.getDocumentHeader().setDocumentNumber(documentNumber);
