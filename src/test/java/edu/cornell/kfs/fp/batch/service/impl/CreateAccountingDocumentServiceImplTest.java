@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
@@ -35,6 +38,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
@@ -56,8 +60,9 @@ public class CreateAccountingDocumentServiceImplTest {
     private static final String DI_GENERATOR_BEAN_NAME = CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX
             + KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE;
 
-    private CreateAccountingDocumentServiceImpl createAccountingDocumentService;
+    private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
+    private List<String> creationOrderedBaseFileNames;
 
     @Before
     public void setUp() throws Exception {
@@ -67,6 +72,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         
         routedAccountingDocuments = new ArrayList<>();
+        creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();
     }
 
@@ -81,21 +87,67 @@ public class CreateAccountingDocumentServiceImplTest {
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST);
     }
 
+    @Test
+    public void testLoadSingleFileWithMultipleDIDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-di-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithZeroDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-document-list-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_LIST_TEST);
+    }
+
+    @Test
+    public void testLoadMultipleFilesWithDIDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-document-test", "multi-di-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST,
+                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-di-plus-invalid-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_INVALID_SECOND_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentWithRulesFailure() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-rules-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_RULES_FIRST_DOCUMENT_TEST);
+    }
+
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertDocumentsWereCreatedAndRoutedCorrectly(fixtures);
     }
 
     private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentListWrapperFixture... fixtures) {
-        AccountingXmlDocumentEntryFixture[] documentFixtures = Stream.of(fixtures)
+        Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap = buildFileNameToFixtureMap(fixtures);
+        
+        AccountingXmlDocumentEntryFixture[] processingOrderedDocumentFixtures = createAccountingDocumentService.getProcessingOrderedBaseFileNames()
+                .stream()
+                .map(fileNameToFixtureMap::get)
                 .flatMap((fixture) -> fixture.documents.stream())
                 .toArray(AccountingXmlDocumentEntryFixture[]::new);
         
-        assertDocumentsWereCreatedAndRoutedCorrectly(documentFixtures);
+        assertDocumentsWereCreatedAndRoutedCorrectly(processingOrderedDocumentFixtures);
+    }
+
+    private Map<String, AccountingXmlDocumentListWrapperFixture> buildFileNameToFixtureMap(
+            AccountingXmlDocumentListWrapperFixture... fixtures) {
+        Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap = new HashMap<>();
+        for (int i = 0; i < fixtures.length; i++) {
+            String baseFileName = creationOrderedBaseFileNames.get(i);
+            fileNameToFixtureMap.put(baseFileName, fixtures[i]);
+        }
+        return fileNameToFixtureMap;
     }
 
     private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentEntryFixture... fixtures) {
-        // TODO: What to do if a particular document did not route? Just make sure the wrapper fixture is configured correctly?
         List<AccountingDocument> expectedAccountingDocuments = buildExpectedDocumentsList(fixtures);
         assertEquals("Wrong number of routed documents", expectedAccountingDocuments.size(), routedAccountingDocuments.size());
         for (int i = 0; i < expectedAccountingDocuments.size(); i++) {
@@ -115,6 +167,7 @@ public class CreateAccountingDocumentServiceImplTest {
         
         return Stream.of(fixtures)
                 .map((documentFixture) -> documentFixture.toAccountingDocument(docNumberSupplier.get()))
+                .filter(this::documentPassesBusinessRules)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -192,6 +245,7 @@ public class CreateAccountingDocumentServiceImplTest {
                             GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION));
             FileUtils.copyFile(sourceFile, targetFile);
             doneFile.createNewFile();
+            creationOrderedBaseFileNames.add(baseFileName);
         }
     }
 
@@ -243,18 +297,43 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private Document recordAndReturnDocument(Document document) {
+        if (!documentPassesBusinessRules(document)) {
+            throw new ValidationException("Simulated business rule validation failure");
+        }
         routedAccountingDocuments.add((AccountingDocument) document);
         return document;
+    }
+
+    private boolean documentPassesBusinessRules(Document document) {
+        return !StringUtils.equalsIgnoreCase(
+                CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, document.getDocumentHeader().getDocumentDescription());
     }
 
     private static class TestCreateAccountingDocumentServiceImpl extends CreateAccountingDocumentServiceImpl {
         private CuDistributionOfIncomeAndExpenseDocumentGenerator diGenerator;
         private int nextDocumentNumber;
+        private List<String> processingOrderedBaseFileNames;
 
         public TestCreateAccountingDocumentServiceImpl() {
             diGenerator = new CuDistributionOfIncomeAndExpenseDocumentGenerator(
                     MockDocumentUtils::buildMockNote, MockDocumentUtils::buildMockAdHocRoutePerson);
             nextDocumentNumber = DOCUMENT_NUMBER_START;
+            processingOrderedBaseFileNames = new ArrayList<>();
+        }
+
+        public List<String> getProcessingOrderedBaseFileNames() {
+            return processingOrderedBaseFileNames;
+        }
+
+        @Override
+        protected void processAccountingDocumentFromXml(String fileName) {
+            processingOrderedBaseFileNames.add(convertToBaseFileName(fileName));
+            super.processAccountingDocumentFromXml(fileName);
+        }
+
+        private String convertToBaseFileName(String fileName) {
+            String fileNameWithoutPath = new File(fileName).getName();
+            return StringUtils.substringBefore(fileNameWithoutPath, KFSConstants.DELIMITER);
         }
 
         @Override
@@ -267,7 +346,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 case DI_GENERATOR_BEAN_NAME :
                     return diGenerator;
                 default :
-                    throw new IllegalStateException("Unexpected document generator bean name: " + beanName);
+                    throw new IllegalStateException("Unrecognized document generator bean name: " + beanName);
             }
         }
 

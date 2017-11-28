@@ -12,6 +12,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 
+import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
@@ -67,6 +68,27 @@ public enum AccountingXmlDocumentEntryFixture {
             notes(),
             adHocRecipients(),
             backupLinks()),
+
+    MULTI_DI_DOCUMENT_TEST_DOC1_BAD(
+            1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, "This document should not route!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50),
+            notes(
+                    "A fun testing note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
 
     SINGLE_DI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
