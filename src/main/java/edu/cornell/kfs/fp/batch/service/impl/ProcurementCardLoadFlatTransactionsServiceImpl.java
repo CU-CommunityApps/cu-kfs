@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.InitiateDirectoryBase;

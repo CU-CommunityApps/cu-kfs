@@ -2,7 +2,6 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 
 public class CorporateBilledCorporatePaidErrorEmailServiceImpl extends ProcurementCardErrorEmailServiceImpl {

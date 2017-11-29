@@ -1,11 +1,9 @@
 package edu.cornell.kfs.fp.batch;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -13,8 +11,6 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.batch.service.WrappingBatchService;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.sys.service.ReportWriterService;
-
-import edu.cornell.kfs.fp.CuFPConstants;
 
 public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidLoadFlatFileStep.class);

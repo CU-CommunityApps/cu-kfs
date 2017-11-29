@@ -4,16 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
-
-
-
-
-import javax.mail.MessagingException;
-
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 

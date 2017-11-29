@@ -42,7 +42,6 @@ import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
-import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
 

@@ -2,7 +2,6 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import static edu.cornell.kfs.fp.document.validation.impl.CuProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM; 
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
