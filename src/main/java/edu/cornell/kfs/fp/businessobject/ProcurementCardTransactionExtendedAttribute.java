@@ -110,7 +110,7 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
       // do nothing if it's not a type 50 line
       while(recordId.equals(PurchasingDataRecord.RECORD_ID)) {
         // parse the line
-        PurchasingDataRecord purchasingDataRecord = new PurchasingDataRecord();
+        PurchasingDataRecord purchasingDataRecord = buildPurchasingDataRecord();
         purchasingDataRecord.parse(fileLine, lineCount);
         
         purchasingDataRecords.add(purchasingDataRecord);
@@ -131,6 +131,10 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
       bufferedFileReader.reset(); // reset because either way we've overshot the collection of type 50's by one      
       
       return purchasingDataRecords;
+    }
+
+    protected PurchasingDataRecord buildPurchasingDataRecord() {
+        return new PurchasingDataRecord();
     }
   
 }

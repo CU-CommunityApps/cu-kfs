@@ -33,11 +33,13 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataRecord;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTargetAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
@@ -254,11 +256,12 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     protected void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension,
             ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
+        CorporateBilledCorporatePaidTransactionExtendedAttribute cbcpTransactionExtension = (CorporateBilledCorporatePaidTransactionExtendedAttribute) extension;
         List<CorporateBilledCorporatePaidDataDetail> details = new ArrayList<CorporateBilledCorporatePaidDataDetail>();
         CorporateBilledCorporatePaidTransactionDetailExtendedAttribute cbcpDetailExtension = 
                 (CorporateBilledCorporatePaidTransactionDetailExtendedAttribute) detailExtension;
         
-        for (PurchasingDataRecord record : extension.getPurchasingDataRecords()) {
+        for (CorporateBilledCorporatePaidDataRecord record : cbcpTransactionExtension.getCorporateBilledCorporatePaidDataRecords()) {
             CorporateBilledCorporatePaidDataDetail detail = new CorporateBilledCorporatePaidDataDetail();
             detail.setDocumentNumber(cbcpDetailExtension.getDocumentNumber());
             detail.setFinancialDocumentTransactionLineNumber(cbcpDetailExtension.getFinancialDocumentTransactionLineNumber());
