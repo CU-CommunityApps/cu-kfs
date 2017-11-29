@@ -1,17 +1,26 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 
 public class CorporateBilledCorporatePaidErrorEmailServiceImpl extends ProcurementCardErrorEmailServiceImpl {
     
+    private ConfigurationService configurationService;
+    
     @Override
     protected String buildErrorEmailSubject() {
-        return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_ERROR_EMAIL_SUBJECT;
+        return configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CBCP_BATCH_UPLOAD_EMAIL_SUBJECT);
     }
     
     @Override
     protected String buildErrorMessageBodyStarter() {
-        return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_ERROR_EMAIL_BODY_STARTER;
+        return configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CBCP_BATCH_UPLOAD_EMAIL_BODY_STARTER);
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

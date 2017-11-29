@@ -16,7 +16,7 @@ import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
-@COMPONENT(component = CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME)
+@COMPONENT(component = CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME_PARAMETER_NAME)
 public class CorporateBilledCorporatePaidDocument extends CuProcurementCardDocument {
     private static final long serialVersionUID = 8032811224624474218L;
     

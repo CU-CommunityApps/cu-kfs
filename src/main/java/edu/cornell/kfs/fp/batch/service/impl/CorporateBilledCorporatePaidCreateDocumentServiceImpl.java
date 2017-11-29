@@ -96,7 +96,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     public ProcurementCardDocument createProcurementCardDocument(List transactions) {
         CorporateBilledCorporatePaidDocument cbcpDocument = (CorporateBilledCorporatePaidDocument) super.createProcurementCardDocument(transactions);
         cbcpDocument.getDocumentHeader().setExplanation(
-                getCorporateBilledCorporatePaidDocumentParameter(CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DOCUMENT_EXPLANATION));
+                getCorporateBilledCorporatePaidDocumentParameter(CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DOCUMENT_EXPLANATION_PARAMETER_NAME));
         setOrganizationDocumentNumberToPostingDate(cbcpDocument, cbcpDocument.getProcurementCardTransactionPostingDetailDate());
         return cbcpDocument;
     }
@@ -197,11 +197,11 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         sourceLine.setDocumentNumber(docTransactionDetail.getDocumentNumber());
         sourceLine.setFinancialDocumentTransactionLineNumber(docTransactionDetail.getFinancialDocumentTransactionLineNumber());
         sourceLine.setChartOfAccountsCode(getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_CHART));
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_CHART_PARAMETER_NAME));
         sourceLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT_PARAMETER_NAME));
         sourceLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE));
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_LIABILITY_OBJECT_CODE_PARAMETER_NAME));
         
         CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
         setOrgRefId(sourceLine, cbcpTransactionDetail.getCorporateBilledCorporatePaidDocument().getProcurementCardHolder().getCardHolderAlternateName());
@@ -222,11 +222,11 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         targetLine.setDocumentNumber(docTransactionDetail.getDocumentNumber());
         targetLine.setFinancialDocumentTransactionLineNumber(docTransactionDetail.getFinancialDocumentTransactionLineNumber());
         targetLine.setChartOfAccountsCode(getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_CHART));
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_CHART_PARAMETER_NAME));
         targetLine.setAccountNumber(getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT));
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_ACCOUNT_PARAMETER_NAME));
         targetLine.setFinancialObjectCode(getCorporateBilledCorporatePaidDocumentParameter(
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE));
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.DEFAULT_AMOUNT_OWED_OBJECT_CODE_PARAMETER_NAME));
         targetLine.setProjectCode(transaction.getProjectCode());
 
         CorporateBilledCorporatePaidTransactionDetail cbcpTransactionDetail = (CorporateBilledCorporatePaidTransactionDetail) docTransactionDetail;
@@ -305,7 +305,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     public String getCorporateBilledCorporatePaidDocumentParameter(String parameterName) {
         String parameterValue = parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME, parameterName);
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME_PARAMETER_NAME, parameterName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getCorporateBilledCorporatePaidDocumentParameter, param name: " + parameterName + " param value: " + parameterValue);
         }

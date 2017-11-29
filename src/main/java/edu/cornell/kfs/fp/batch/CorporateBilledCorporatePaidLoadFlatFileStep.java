@@ -11,6 +11,7 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.batch.service.WrappingBatchService;
+import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.sys.service.ReportWriterService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -21,6 +22,7 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType corporateBilledCorporatePaidInputFileType;
     private ReportWriterService reportWriterService;
+    private FileStorageService fileStorageService;
     
     public boolean execute(String jobName, Date jobRunDate) {
         procurementCardLoadTransactionsService.cleanTransactionsTable();
@@ -51,12 +53,7 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
     }
 
     private void removeDoneFiles(List<String> dataFileNames) {
-        for (String dataFileName : dataFileNames) {
-            File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + CuFPConstants.DONE_FILE_EXTENSION);
-            if (doneFile.exists()) {
-                doneFile.delete();
-            }
-        }
+        fileStorageService.removeDoneFiles(dataFileNames);
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
@@ -73,5 +70,9 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
 
     public void setCorporateBilledCorporatePaidInputFileType(BatchInputFileType corporateBilledCorporatePaidInputFileType) {
         this.corporateBilledCorporatePaidInputFileType = corporateBilledCorporatePaidInputFileType;
+    }
+
+    public void setFileStorageService(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
     }
 }
