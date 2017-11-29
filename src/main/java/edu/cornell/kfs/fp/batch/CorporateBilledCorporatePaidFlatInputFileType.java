@@ -5,9 +5,22 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionExtendedAttribute;
+import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionExtendedAttribute;
 
 public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCardFlatInputFileType {
     protected CorporateBilledCorporatePaidCreateDocumentService corporateBilledCorporatePaidCreateDocumentService;
+    
+    @Override
+    protected ProcurementCardTransaction buildProcurementCardTransaction() {
+        return new CorporateBilledCorporatePaidTransaction();
+    }
+    
+    @Override
+    protected ProcurementCardTransactionExtendedAttribute buildProcurementCardTransactionExtendedAttribute() {
+        return new CorporateBilledCorporatePaidTransactionExtendedAttribute();
+    }
     
     @Override
     public String getFileTypeIdentifer() {

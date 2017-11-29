@@ -1,12 +1,18 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.SINGLE_TRANSACTION_IND_PARM_NM;
+
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
@@ -29,6 +35,7 @@ import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocume
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTargetAccountingLine;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetailExtendedAttribute;
 import edu.cornell.kfs.fp.businessobject.ProcurementCardTransactionDetailExtendedAttribute;
@@ -42,6 +49,48 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     protected DataDictionaryService cbcpDatadictionaryServce;
     protected SimpleDateFormat dateFormat;
+    
+    @Override
+    protected void cleanTransactionsTable() {
+        LOG.info("cleanTransactionsTable, cleaning CorporateBilledCorporatePaidTransaction table");
+        businessObjectService.deleteMatching(CorporateBilledCorporatePaidTransaction.class, new HashMap());
+    }
+    
+    @Override
+    protected List retrieveTransactions() {
+        List groupedTransactions = new ArrayList();
+
+        // retrieve records from transaction table order by card number
+        List transactions = (List) businessObjectService.findMatchingOrderBy(CorporateBilledCorporatePaidTransaction.class, new HashMap(), KFSPropertyConstants.TRANSACTION_CREDIT_CARD_NUMBER, true);
+
+        // check apc for single transaction documents or multiple by card
+        boolean singleTransaction = parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, SINGLE_TRANSACTION_IND_PARM_NM);
+
+        List documentTransactions = new ArrayList();
+        if (singleTransaction) {
+            for (Iterator iter = transactions.iterator(); iter.hasNext(); ) {
+                documentTransactions.add(iter.next());
+                groupedTransactions.add(documentTransactions);
+                documentTransactions = new ArrayList();
+            }
+        } else {
+            Map cardTransactionsMap = new HashMap();
+            for (Iterator iter = transactions.iterator(); iter.hasNext(); ) {
+                CorporateBilledCorporatePaidTransaction transaction = (CorporateBilledCorporatePaidTransaction) iter.next();
+                if (!cardTransactionsMap.containsKey(transaction.getTransactionCreditCardNumber())) {
+                    cardTransactionsMap.put(transaction.getTransactionCreditCardNumber(), new ArrayList());
+                }
+                ((List) cardTransactionsMap.get(transaction.getTransactionCreditCardNumber())).add(transaction);
+            }
+
+            for (Iterator iter = cardTransactionsMap.values().iterator(); iter.hasNext(); ) {
+                groupedTransactions.add(iter.next());
+
+            }
+        }
+
+        return groupedTransactions;
+    }
     
     @Override
     public ProcurementCardDocument createProcurementCardDocument(List transactions) {
@@ -141,7 +190,8 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     }
     
     @Override
-    protected ProcurementCardSourceAccountingLine createSourceAccountingLine(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail docTransactionDetail) {
+    protected ProcurementCardSourceAccountingLine createSourceAccountingLine(ProcurementCardTransaction transaction, 
+            ProcurementCardTransactionDetail docTransactionDetail) {
         CorporateBilledCorporatePaidSourceAccountingLine sourceLine = new CorporateBilledCorporatePaidSourceAccountingLine();
 
         sourceLine.setDocumentNumber(docTransactionDetail.getDocumentNumber());

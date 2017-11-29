@@ -738,7 +738,7 @@
     </bean>
     
     <bean id="corporateBilledCorporatePaidLoadTransactionsService"  parent="corporateBilledCorporatePaidLoadTransactionsService-parentBean"/> 
-    <bean id="corporateBilledCorporatePaidLoadTransactionsService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" abstract="true" parent="procurementCardLoadTransactionsService" >
+    <bean id="corporateBilledCorporatePaidLoadTransactionsService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidLoadFlatFileServiceImpl" abstract="true" parent="procurementCardLoadTransactionsService" >
         <property name="procurementCardInputFileType">
             <ref bean="corporateBilledCorporatePaidFlatInputFileType" />
         </property>

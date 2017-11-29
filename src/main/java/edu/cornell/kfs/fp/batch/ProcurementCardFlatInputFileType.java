@@ -294,7 +294,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
         if (recordId.equals(CARDHOLDER_DATA_HEADER_RECORD_ID)) { //cardholder header
 
-        	parent = new ProcurementCardTransaction();
+        	parent = buildProcurementCardTransaction();
 
             parent.setTransactionCreditCardNumber(USBankRecordFieldUtils.extractNormalizedString(line, 2, 18, true, lineCount)); //req
             parent.setChartOfAccountsCode(defaultChart); //req
@@ -323,7 +323,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
         if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions){	        		        	
         	
-        	ProcurementCardTransaction child = new ProcurementCardTransaction();
+        	ProcurementCardTransaction child = buildProcurementCardTransaction();
         	
         	//Pull everything in from the preceding '05' record
             child.setTransactionCreditCardNumber(parent.getTransactionCreditCardNumber());
@@ -378,7 +378,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             	accumulatedCredits = accumulatedCredits.add(child.getTransactionSettlementAmount());	            	
             }
             
-            ProcurementCardTransactionExtendedAttribute extension = new ProcurementCardTransactionExtendedAttribute();
+            ProcurementCardTransactionExtendedAttribute extension = buildProcurementCardTransactionExtendedAttribute();
             extension.setTransactionType(USBankRecordFieldUtils.extractNormalizedString(line, 346, 348));
             if (child.getTransactionSequenceRowNumber() == null) {
                 Integer generatedTransactionSequenceRowNumber = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(FP_PRCRMNT_CARD_TRN_MT_SEQ).intValue();
@@ -434,6 +434,14 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
 
         return null;
+    }
+
+    protected ProcurementCardTransactionExtendedAttribute buildProcurementCardTransactionExtendedAttribute() {
+        return new ProcurementCardTransactionExtendedAttribute();
+    }
+
+    protected ProcurementCardTransaction buildProcurementCardTransaction() {
+        return new ProcurementCardTransaction();
     }
 
     protected void parseAccountingInformation(String line, ProcurementCardTransaction child)
