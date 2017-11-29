@@ -308,7 +308,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     public String getCorporateBilledCorporatePaidDocumentParameter(String parameterName) {
         String parameterValue = parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
-                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.COMPONENT_NAME_PARAMETER_NAME, parameterName);
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_COMPONENT_NAME, parameterName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getCorporateBilledCorporatePaidDocumentParameter, param name: " + parameterName + " param value: " + parameterValue);
         }

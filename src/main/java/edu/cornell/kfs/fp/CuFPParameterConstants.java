@@ -53,7 +53,7 @@ public class CuFPParameterConstants {
     }
     
     public static class CorporateBilledCorporatePaidDocument {
-        public static final String COMPONENT_NAME_PARAMETER_NAME = "CorporateBilledCorporatePaidDocument";
+        public static final String CBCP_COMPONENT_NAME = "CorporateBilledCorporatePaidDocument";
         public static final String DEFAULT_CHART_PARAMETER_NAME = "DEFAULT_CHART";
         public static final String DEFAULT_ACCOUNT_PARAMETER_NAME = "DEFAULT_ACCOUNT";
         public static final String DEFAULT_AMOUNT_OWED_OBJECT_CODE_PARAMETER_NAME = "DEFAULT_AMOUNT_OWED_OBJECT_CODE";
