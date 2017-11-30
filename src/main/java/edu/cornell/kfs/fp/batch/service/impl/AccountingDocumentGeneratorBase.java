@@ -4,14 +4,19 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.rice.kew.api.action.ActionRequestType;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -21,6 +26,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 
 public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocument> implements AccountingDocumentGenerator<T> {
 
+    protected PersonService personService;
     protected Supplier<Note> bareNoteGenerator;
     protected Supplier<AdHocRoutePerson> bareAdHocRoutePersonGenerator;
 
@@ -98,8 +104,11 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected Note buildDocumentNote(AccountingXmlDocumentNote xmlNote) {
+        Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
         Note note = bareNoteGenerator.get();
         note.setNoteText(xmlNote.getDescription());
+        note.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
+        note.setNotePostedTimestampToCurrent();
         return note;
     }
 
@@ -116,12 +125,21 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         AdHocRoutePerson adHocPerson = bareAdHocRoutePersonGenerator.get();
         adHocPerson.setdocumentNumber(documentNumber);
         adHocPerson.setId(xmlRecipient.getNetId());
-        adHocPerson.setActionRequested(xmlRecipient.getActionRequested());
+        adHocPerson.setActionRequested(getActionRequestCode(xmlRecipient.getActionRequested()));
         return adHocPerson;
+    }
+
+    protected String getActionRequestCode(String actionRequestedLabel) {
+        ActionRequestType actionRequestType = ActionRequestType.valueOf(StringUtils.upperCase(actionRequestedLabel));
+        return actionRequestType.getCode();
     }
 
     protected void populateCustomAccountingDocumentData(T document, AccountingXmlDocumentEntry documentEntry) {
         // Do nothing by default.
+    }
+
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 
 }

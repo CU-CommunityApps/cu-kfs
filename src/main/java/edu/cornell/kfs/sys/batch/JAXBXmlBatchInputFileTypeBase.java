@@ -26,7 +26,7 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
     private static final String FILE_NAME_PART_DELIMITER = "_";
 
     protected DateTimeService dateTimeService;
-    protected CUMarshalService marshalService;
+    protected CUMarshalService cuMarshalService;
     protected String fileTypeIdentifier;
     protected String titleKey;
     protected String fileNamePrefix;
@@ -60,7 +60,7 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
     public Object parse(byte[] fileByteContent) throws ParseException {
         try {
             String fileStringContent = new String(fileByteContent, StandardCharsets.UTF_8);
-            return marshalService.unmarshalString(fileStringContent, pojoClass);
+            return cuMarshalService.unmarshalString(fileStringContent, pojoClass);
         } catch (JAXBException e) {
             throw new ParseException("Error attempting to unmarshal POJO from XML", e);
         }
@@ -90,8 +90,8 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setMarshalService(CUMarshalService marshalService) {
-        this.marshalService = marshalService;
+    public void setCuMarshalService(CUMarshalService cuMarshalService) {
+        this.cuMarshalService = cuMarshalService;
     }
 
     public void setFileTypeIdentifier(String fileTypeIdentifier) {

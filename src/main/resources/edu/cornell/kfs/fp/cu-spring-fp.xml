@@ -70,6 +70,7 @@
                 <value>loadAWSBillsBatchJob</value>
                 <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
                 <value>corporateBilledCorporatePaidDocumentJob</value>
+                <value>createAccountingDocumentsJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -758,4 +759,38 @@
         <property name="title" value="Corporate Billed Corporate Paid Load File"/>
     </bean>
     
+    <bean id="createAccountingDocumentsJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="createAccountingDocumentsStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="createAccountingDocumentsStep" class="edu.cornell.kfs.fp.batch.CreateAccountingDocumentsStep" parent="step">
+        <property name="createAccountingDocumentService" ref="createAccountingDocumentService"/>
+    </bean>
+
+    <bean id="createAccountingDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImpl">
+        <property name="batchInputFileService" ref="batchInputFileService"/>
+        <property name="accountingDocumentBatchInputFileType" ref="accountingXmlDocumentInputFileType"/>
+        <property name="documentService" ref="documentService"/>
+        <property name="configurationService" ref="kualiConfigurationService"/>
+    </bean>
+
+    <bean id="accountingXmlDocumentInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="cuMarshalService" ref="cuMarshalService"/>
+        <property name="directoryPath" value="${staging.directory}/fp/accountingXmlDocument"/>
+        <property name="fileExtension" value="xml"/>
+        <property name="fileTypeIdentifier" value="accountingXmlDocumentInputFileType"/>
+        <property name="titleKey" value="message.batchUpload.title.accountingXmlDocument"/>
+        <property name="fileNamePrefix" value="accountingXmlDocument_"/>
+        <property name="pojoClass" value="edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper"/>
+    </bean>
+
+    <bean id="AccountingDocumentGenerator_DI" class="edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator">
+        <property name="personService" ref="personService"/>
+    </bean>
+
 </beans>

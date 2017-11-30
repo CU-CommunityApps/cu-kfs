@@ -3,8 +3,10 @@ package edu.cornell.kfs.fp.batch.service.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,12 +16,18 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
@@ -33,6 +41,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType accountingDocumentBatchInputFileType;
     private DocumentService documentService;
+    private ConfigurationService configurationService;
 
     @Override
     public void createAccountingDocumentsFromXml() {
@@ -79,6 +88,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
 
     protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument) {
+        GlobalVariables.getMessageMap().clearErrorMessages();
         try {
             LOG.info("processAccountingDocumentEntryFromXml: Started processing accounting document of type: "
                     + accountingXmlDocument.getDocumentTypeCode());
@@ -86,13 +96,20 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             String documentGeneratorBeanName = CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX + accountingXmlDocument.getDocumentTypeCode();
             AccountingDocumentGenerator<? extends AccountingDocument> documentGenerator = findDocumentGenerator(documentGeneratorBeanName);
             AccountingDocument document = documentGenerator.createDocument(this::getNewDocument, accountingXmlDocument);
-            documentService.routeDocument(
+            document = (AccountingDocument) documentService.routeDocument(
                     document, CuFPConstants.ACCOUNTING_DOCUMENT_XML_ROUTE_ANNOTATION, getAllAdHocRecipients(document));
             
-            LOG.info("processAccountingDocumentEntryFromXml: Finished processing accounting document of type: "
-                    + accountingXmlDocument.getDocumentTypeCode());
+            LOG.info("processAccountingDocumentEntryFromXml: Finished processing and routing accounting document " + document.getDocumentNumber()
+                    + " of type: " + accountingXmlDocument.getDocumentTypeCode());
         } catch (Exception e) {
-            LOG.error("processAccountingDocumentEntryFromXml: Error processing accounting XML document", e);
+            if (e instanceof ValidationException) {
+                LOG.error("processAccountingDocumentEntryFromXml: Could not route accounting document - "
+                        + buildValidationErrorMessage((ValidationException) e));
+            } else {
+                LOG.error("processAccountingDocumentEntryFromXml: Error processing accounting XML document", e);
+            }
+        } finally {
+            GlobalVariables.getMessageMap().clearErrorMessages();
         }
     }
 
@@ -114,10 +131,38 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    protected String buildValidationErrorMessage(ValidationException validationException) {
+        try {
+            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+            return errorMessages.values().stream()
+                    .flatMap(List::stream)
+                    .map(this::buildValidationErrorMessageForSingleError)
+                    .collect(Collectors.joining(
+                            KFSConstants.NEWLINE, validationException.getMessage() + KFSConstants.NEWLINE, KFSConstants.NEWLINE));
+        } catch (RuntimeException e) {
+            LOG.error("buildValidationErrorMessage: Could not build validation error message", e);
+            return CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE;
+        }
+    }
+
+    protected String buildValidationErrorMessageForSingleError(ErrorMessage errorMessage) {
+        String errorMessageString = configurationService.getPropertyValueAsString(errorMessage.getErrorKey());
+        if (StringUtils.isBlank(errorMessageString)) {
+            throw new RuntimeException("Cannot find error message for key: " + errorMessage.getErrorKey());
+        }
+        
+        Object[] messageParameters = (Object[]) errorMessage.getMessageParameters();
+        if (messageParameters != null && messageParameters.length > 0) {
+            return MessageFormat.format(errorMessageString, messageParameters);
+        } else {
+            return errorMessageString;
+        }
+    }
+
     protected void removeDoneFileQuietly(String dataFileName) {
         try {
-            String doneFileName = StringUtils.replace(
-                    dataFileName, CuFPConstants.XML_FILE_EXTENSION, GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+            String doneFileName = StringUtils.substringBeforeLast(dataFileName, CuFPConstants.XML_FILE_EXTENSION)
+                    + GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION;
             if (!FileUtils.deleteQuietly(new File(doneFileName))) {
                 LOG.error("removeDoneFileQuietly: Could not delete .done file: " + doneFileName);
             }
@@ -136,6 +181,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

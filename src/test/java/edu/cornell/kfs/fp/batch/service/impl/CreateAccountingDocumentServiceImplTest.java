@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -25,17 +26,24 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
@@ -48,6 +56,7 @@ import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 public class CreateAccountingDocumentServiceImplTest {
 
@@ -66,9 +75,10 @@ public class CreateAccountingDocumentServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl();
+        createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(buildMockPersonService());
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
+        createAccountingDocumentService.setConfigurationService(buildMockConfigurationService());
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         
         routedAccountingDocuments = new ArrayList<>();
@@ -123,6 +133,7 @@ public class CreateAccountingDocumentServiceImplTest {
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertDocumentsWereCreatedAndRoutedCorrectly(fixtures);
+        assertDoneFilesWereDeleted();
     }
 
     private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -249,6 +260,16 @@ public class CreateAccountingDocumentServiceImplTest {
         }
     }
 
+    private void assertDoneFilesWereDeleted() {
+        for (String baseFileName : creationOrderedBaseFileNames) {
+            File doneFile = new File(
+                    String.format(FULL_FILE_PATH_FORMAT, TARGET_TEST_FILE_PATH, baseFileName,
+                            GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION));
+            assertFalse("The file '" + baseFileName + GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION
+                    + "' should have been deleted", doneFile.exists());
+        }
+    }
+
     private void deleteTargetTestDirectory() throws IOException {
         File accountingXmlDocumentTestDirectory = new File(TARGET_TEST_FILE_PATH);
         if (accountingXmlDocumentTestDirectory.exists() && accountingXmlDocumentTestDirectory.isDirectory()) {
@@ -259,12 +280,12 @@ public class CreateAccountingDocumentServiceImplTest {
     private JAXBXmlBatchInputFileTypeBase buildAccountingXmlDocumentInputFileType() throws Exception {
         JAXBXmlBatchInputFileTypeBase inputFileType = new JAXBXmlBatchInputFileTypeBase();
         inputFileType.setDateTimeService(buildMockDateTimeService());
-        inputFileType.setMarshalService(new CUMarshalServiceImpl());
+        inputFileType.setCuMarshalService(new CUMarshalServiceImpl());
         inputFileType.setPojoClass(AccountingXmlDocumentListWrapper.class);
         inputFileType.setFileTypeIdentifier("accountingXmlDocumentFileType");
         inputFileType.setFileNamePrefix("accountingXmlDocument_");
         inputFileType.setTitleKey("accountingXmlDocument");
-        inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, "."));
+        inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, KFSConstants.DELIMITER));
         inputFileType.setDirectoryPath(TARGET_TEST_FILE_PATH);
         return inputFileType;
     }
@@ -283,6 +304,27 @@ public class CreateAccountingDocumentServiceImplTest {
         return dateTimeService;
     }
 
+    private ConfigurationService buildMockConfigurationService() throws Exception {
+        ConfigurationService configurationService = EasyMock.createMock(ConfigurationService.class);
+        
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
+        
+        EasyMock.replay(configurationService);
+        return configurationService;
+    }
+
+    private PersonService buildMockPersonService() throws Exception {
+        PersonService personService = EasyMock.createMock(PersonService.class);
+        
+        Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
+        EasyMock.expect(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER))
+                .andStubReturn(systemUser);
+        
+        EasyMock.replay(personService);
+        return personService;
+    }
+
     private DocumentService buildMockDocumentService() throws Exception {
         DocumentService documentService = EasyMock.createMock(DocumentService.class);
         
@@ -290,14 +332,15 @@ public class CreateAccountingDocumentServiceImplTest {
         EasyMock.expect(
                 documentService.routeDocument(
                         EasyMock.capture(documentArg), EasyMock.anyObject(), EasyMock.anyObject()))
-                .andStubAnswer(() -> recordAndReturnDocument(documentArg.getValue()));
+                .andStubAnswer(() -> recordAndReturnDocumentIfValid(documentArg.getValue()));
         
         EasyMock.replay(documentService);
         return documentService;
     }
 
-    private Document recordAndReturnDocument(Document document) {
+    private Document recordAndReturnDocumentIfValid(Document document) {
         if (!documentPassesBusinessRules(document)) {
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CuFPTestConstants.TEST_VALIDATION_ERROR_KEY);
             throw new ValidationException("Simulated business rule validation failure");
         }
         routedAccountingDocuments.add((AccountingDocument) document);
@@ -314,15 +357,31 @@ public class CreateAccountingDocumentServiceImplTest {
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
 
-        public TestCreateAccountingDocumentServiceImpl() {
+        public TestCreateAccountingDocumentServiceImpl(PersonService personService) {
             diGenerator = new CuDistributionOfIncomeAndExpenseDocumentGenerator(
                     MockDocumentUtils::buildMockNote, MockDocumentUtils::buildMockAdHocRoutePerson);
+            diGenerator.setPersonService(personService);
             nextDocumentNumber = DOCUMENT_NUMBER_START;
             processingOrderedBaseFileNames = new ArrayList<>();
         }
 
         public List<String> getProcessingOrderedBaseFileNames() {
             return processingOrderedBaseFileNames;
+        }
+
+        @Override
+        public void createAccountingDocumentsFromXml() {
+            Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
+            UserSession systemUserSession = MockPersonUtil.createMockUserSession(systemUser);
+            
+            try {
+                GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
+                    super.createAccountingDocumentsFromXml();
+                    return null;
+                });
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
@@ -374,6 +433,14 @@ public class CreateAccountingDocumentServiceImplTest {
             }
             
             return document;
+        }
+
+        @Override
+        protected String buildValidationErrorMessage(ValidationException validationException) {
+            String validationErrorMessage = super.buildValidationErrorMessage(validationException);
+            assertFalse("The error-message-building process should not have encountered an unexpected exception",
+                    StringUtils.equals(CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE, validationErrorMessage));
+            return validationErrorMessage;
         }
     }
 
