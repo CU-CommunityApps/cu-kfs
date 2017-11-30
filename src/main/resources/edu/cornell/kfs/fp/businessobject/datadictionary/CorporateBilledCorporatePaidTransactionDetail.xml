@@ -12,7 +12,7 @@
 		</property>
 	</bean>
 
-	<bean id="CorporateBilledCoporatePaidTransactionDetail-inquiryDefinition" parent="ProcurementCardTransactionDetail-inquiryDefinition-parentBean">
+	<bean id="CorporateBilledCoporatePaidTransactionDetail-inquiryDefinition" parent="ProcurementCardTransactionDetail-inquiryDefinition">
     <property name="inquirySections">
       <list merge="true">
         <ref bean="CorporateBilledCorporatePaidTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition"/>

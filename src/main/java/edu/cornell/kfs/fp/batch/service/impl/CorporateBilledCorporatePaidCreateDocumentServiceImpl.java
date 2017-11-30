@@ -54,39 +54,37 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     protected void cleanTransactionsTable() {
         LOG.info("cleanTransactionsTable, cleaning CorporateBilledCorporatePaidTransaction table");
-        businessObjectService.deleteMatching(CorporateBilledCorporatePaidTransaction.class, new HashMap());
+        businessObjectService.deleteMatching(CorporateBilledCorporatePaidTransaction.class, new HashMap<String, String>());
     }
     
     @Override
     protected List retrieveTransactions() {
-        List groupedTransactions = new ArrayList();
+        List<List<CorporateBilledCorporatePaidTransaction>> groupedTransactions = new ArrayList<List<CorporateBilledCorporatePaidTransaction>>();
 
-        // retrieve records from transaction table order by card number
-        List transactions = (List) businessObjectService.findMatchingOrderBy(CorporateBilledCorporatePaidTransaction.class, new HashMap(), KFSPropertyConstants.TRANSACTION_CREDIT_CARD_NUMBER, true);
+        List<CorporateBilledCorporatePaidTransaction> cbcpTransactions = (List<CorporateBilledCorporatePaidTransaction>) 
+                businessObjectService.findMatchingOrderBy(CorporateBilledCorporatePaidTransaction.class, new HashMap<String, String>(), 
+                        KFSPropertyConstants.TRANSACTION_CREDIT_CARD_NUMBER, true);
 
-        // check apc for single transaction documents or multiple by card
         boolean singleTransaction = parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, SINGLE_TRANSACTION_IND_PARM_NM);
-
-        List documentTransactions = new ArrayList();
+        
         if (singleTransaction) {
-            for (Iterator iter = transactions.iterator(); iter.hasNext(); ) {
-                documentTransactions.add(iter.next());
+            List<CorporateBilledCorporatePaidTransaction> documentTransactions = new ArrayList<CorporateBilledCorporatePaidTransaction>();
+            for (CorporateBilledCorporatePaidTransaction transaction : cbcpTransactions) {
+                documentTransactions.add(transaction);
                 groupedTransactions.add(documentTransactions);
-                documentTransactions = new ArrayList();
+                documentTransactions = new ArrayList<CorporateBilledCorporatePaidTransaction>();
             }
         } else {
-            Map cardTransactionsMap = new HashMap();
-            for (Iterator iter = transactions.iterator(); iter.hasNext(); ) {
-                CorporateBilledCorporatePaidTransaction transaction = (CorporateBilledCorporatePaidTransaction) iter.next();
+            Map<String, List<CorporateBilledCorporatePaidTransaction>> cardTransactionsMap = new HashMap<String, List<CorporateBilledCorporatePaidTransaction>>();
+            for (CorporateBilledCorporatePaidTransaction transaction : cbcpTransactions) {
                 if (!cardTransactionsMap.containsKey(transaction.getTransactionCreditCardNumber())) {
-                    cardTransactionsMap.put(transaction.getTransactionCreditCardNumber(), new ArrayList());
+                    cardTransactionsMap.put(transaction.getTransactionCreditCardNumber(), new ArrayList<CorporateBilledCorporatePaidTransaction>());
                 }
-                ((List) cardTransactionsMap.get(transaction.getTransactionCreditCardNumber())).add(transaction);
+                cardTransactionsMap.get(transaction.getTransactionCreditCardNumber()).add(transaction);
             }
-
-            for (Iterator iter = cardTransactionsMap.values().iterator(); iter.hasNext(); ) {
-                groupedTransactions.add(iter.next());
-
+            
+            for (List<CorporateBilledCorporatePaidTransaction> cbcpTransaction : cardTransactionsMap.values()) {
+                groupedTransactions.add(cbcpTransaction);
             }
         }
 

@@ -12,7 +12,7 @@
 
 <kul:tab tabTitle="Accounting Lines" defaultOpen="true" tabErrorKey="${KFSConstants.TARGET_ACCOUNTING_LINE_ERROR_PATTERN},document.transactionEntries*"
          helpUrl="${KualiForm.accountingLineImportInstructionsUrl}" helpLabel="Import Templates">
-  <c:set var="transactionAttributes" value="${DataDictionary.ProcurementCardTransactionDetail.attributes}" />
+  <c:set var="transactionAttributes" value="${DataDictionary.CorporateBilledCorporatePaidTransactionDetail.attributes}" />
   <c:set var="vendorAttributes" value="${DataDictionary.ProcurementCardVendor.attributes}" />
   <c:set var="cardAttributes" value="${DataDictionary.ProcurementCardHolder.attributes}" />
 
