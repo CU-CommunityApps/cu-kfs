@@ -12,13 +12,14 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
+import edu.cornell.kfs.fp.batch.service.CuProcurementCardLoadTransactionsService;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
 
 
 @ConfigureContext(session = ccs1)
 public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTestBase {
 
-    private ProcurementCardLoadFlatTransactionsServiceImpl procurementCardLoadFlatTransactionsService;
+    private CuProcurementCardLoadTransactionsService procurementCardLoadFlatTransactionsService;
     private ConfigurationService  kualiConfigurationService;
     
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardSummaryFeedService.class);
@@ -37,7 +38,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        procurementCardLoadFlatTransactionsService = SpringContext.getBean(ProcurementCardLoadFlatTransactionsServiceImpl.class);
+        procurementCardLoadFlatTransactionsService = SpringContext.getBean(CuProcurementCardLoadTransactionsService.class);
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
         batchDirectory = kualiConfigurationService.getPropertyValueAsString(com.rsmart.kuali.kfs.sys.KFSConstants.STAGING_DIRECTORY_KEY) + "/fp/procurementCard";
         unitTestSqlDao = SpringContext.getBean(UnitTestSqlDao.class);
