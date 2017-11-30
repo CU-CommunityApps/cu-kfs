@@ -14,7 +14,8 @@
 
 	<bean id="CorporateBilledCoporatePaidTransactionDetail-inquiryDefinition" parent="ProcurementCardTransactionDetail-inquiryDefinition">
     <property name="inquirySections">
-      <list merge="true">
+      <list>
+      	<ref bean="ProcurementCardTransactionDetail-inquirySectionDefinition"/>
         <ref bean="CorporateBilledCorporatePaidTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition"/>
       </list>
     </property>

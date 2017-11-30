@@ -13,8 +13,8 @@
 <kul:tab tabTitle="Accounting Lines" defaultOpen="true" tabErrorKey="${KFSConstants.TARGET_ACCOUNTING_LINE_ERROR_PATTERN},document.transactionEntries*"
          helpUrl="${KualiForm.accountingLineImportInstructionsUrl}" helpLabel="Import Templates">
   <c:set var="transactionAttributes" value="${DataDictionary.CorporateBilledCorporatePaidTransactionDetail.attributes}" />
-  <c:set var="vendorAttributes" value="${DataDictionary.ProcurementCardVendor.attributes}" />
-  <c:set var="cardAttributes" value="${DataDictionary.ProcurementCardHolder.attributes}" />
+  <c:set var="vendorAttributes" value="${DataDictionary.CorporateBilledCorporatePaidCardVendor.attributes}" />
+  <c:set var="cardAttributes" value="${DataDictionary.CorporateBilledCorporatePaidCardHolder.attributes}" />
 
   <div class="tab-container" align="center">
   <logic:iterate indexId="ctr" name="KualiForm" property="document.transactionEntries" id="currentTransaction">
@@ -24,7 +24,7 @@
 	      <tr>
 	        <th scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${cardAttributes.transactionCreditCardNumber}" readOnly="true"/></div></th>
 	        <td>
-	          <kul:inquiry boClassName="org.kuali.kfs.fp.businessobject.ProcurementCardHolder"
+	          <kul:inquiry boClassName="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardHolder"
                keyValues="documentNumber=${currentTransaction.documentNumber}" render="true">
 				<c:choose>
 					<c:when test="${KualiForm.transactionCreditCardNumbersViewStatus[ctr]}">
@@ -61,7 +61,7 @@
        <tr>
           <th> <div align="right"><kul:htmlAttributeLabel attributeEntry="${vendorAttributes.vendorName}"/></div></th>
           <td valign=top>
-            <kul:inquiry boClassName="org.kuali.kfs.fp.businessobject.ProcurementCardVendor"
+            <kul:inquiry boClassName="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardVendor"
                keyValues="documentNumber=${currentTransaction.documentNumber}&financialDocumentTransactionLineNumber=${currentTransaction.financialDocumentTransactionLineNumber}"
                render="true">
 				<bean:write name="KualiForm" property="document.transactionEntries[${ctr}].procurementCardVendor.vendorName" />

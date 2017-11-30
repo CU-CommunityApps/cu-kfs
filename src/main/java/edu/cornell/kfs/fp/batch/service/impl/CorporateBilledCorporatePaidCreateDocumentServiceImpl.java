@@ -7,12 +7,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
+import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
@@ -32,6 +32,8 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardHolder;
+import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardVendor;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataRecord;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidSourceAccountingLine;
@@ -153,6 +155,25 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         return createAndValidateAccountingLineString;
     }
     
+    @Override
+    protected void createTransactionVendorRecord(ProcurementCardDocument pcardDocument, ProcurementCardTransaction transaction, ProcurementCardTransactionDetail transactionDetail) {
+        CorporateBilledCorporatePaidCardVendor transactionVendor = new CorporateBilledCorporatePaidCardVendor();
+
+        transactionVendor.setDocumentNumber(pcardDocument.getDocumentNumber());
+        transactionVendor.setFinancialDocumentTransactionLineNumber(transactionDetail.getFinancialDocumentTransactionLineNumber());
+        transactionVendor.setTransactionMerchantCategoryCode(transaction.getTransactionMerchantCategoryCode());
+        transactionVendor.setVendorCityName(transaction.getVendorCityName());
+        transactionVendor.setVendorLine1Address(transaction.getVendorLine1Address());
+        transactionVendor.setVendorLine2Address(transaction.getVendorLine2Address());
+        transactionVendor.setVendorName(transaction.getVendorName());
+        transactionVendor.setVendorOrderNumber(transaction.getVendorOrderNumber());
+        transactionVendor.setVendorStateCode(transaction.getVendorStateCode());
+        transactionVendor.setVendorZipCode(transaction.getVendorZipCode());
+        transactionVendor.setVisaVendorIdentifier(transaction.getVisaVendorIdentifier());
+
+        transactionDetail.setProcurementCardVendor(transactionVendor);
+    }
+    
     private void logTransactionDetails(CorporateBilledCorporatePaidTransactionDetail transactionDetail) {
         if (LOG.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("logTransactionDetails, ");
@@ -266,6 +287,61 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
             details.add(detail);
         }
         cbcpDetailExtension.setCorporateBilledCorporatePaidDataDetails(details);
+    }
+    
+    @Override
+    protected void createCardHolderRecord(ProcurementCardDocument pcardDocument, ProcurementCardTransaction transaction) {
+        CorporateBilledCorporatePaidCardHolder cardHolder = new CorporateBilledCorporatePaidCardHolder();
+
+        cardHolder.setDocumentNumber(pcardDocument.getDocumentNumber());
+        cardHolder.setTransactionCreditCardNumber(transaction.getTransactionCreditCardNumber());
+
+        final ProcurementCardDefault procurementCardDefault = retrieveProcurementCardDefault(transaction.getTransactionCreditCardNumber());
+        if (procurementCardDefault != null) {
+            if (parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, ProcurementCardCreateDocumentsStep.USE_CARD_HOLDER_DEFAULT_PARAMETER_NAME)) {
+                cardHolder.setCardCycleAmountLimit(procurementCardDefault.getCardCycleAmountLimit());
+                cardHolder.setCardCycleVolumeLimit(procurementCardDefault.getCardCycleVolumeLimit());
+                cardHolder.setCardHolderAlternateName(procurementCardDefault.getCardHolderAlternateName());
+                cardHolder.setCardHolderCityName(procurementCardDefault.getCardHolderCityName());
+                cardHolder.setCardHolderLine1Address(procurementCardDefault.getCardHolderLine1Address());
+                cardHolder.setCardHolderLine2Address(procurementCardDefault.getCardHolderLine2Address());
+                cardHolder.setCardHolderName(procurementCardDefault.getCardHolderName());
+                cardHolder.setCardHolderStateCode(procurementCardDefault.getCardHolderStateCode());
+                cardHolder.setCardHolderWorkPhoneNumber(procurementCardDefault.getCardHolderWorkPhoneNumber());
+                cardHolder.setCardHolderZipCode(procurementCardDefault.getCardHolderZipCode());
+                cardHolder.setCardLimit(procurementCardDefault.getCardLimit());
+                cardHolder.setCardNoteText(procurementCardDefault.getCardNoteText());
+                cardHolder.setCardStatusCode(procurementCardDefault.getCardStatusCode());
+            }
+            if (parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, ProcurementCardCreateDocumentsStep.USE_ACCOUNTING_DEFAULT_PARAMETER_NAME)) {
+                cardHolder.setChartOfAccountsCode(procurementCardDefault.getChartOfAccountsCode());
+                cardHolder.setAccountNumber(procurementCardDefault.getAccountNumber());
+                cardHolder.setSubAccountNumber(procurementCardDefault.getSubAccountNumber());
+            }
+        }
+
+        if (StringUtils.isEmpty(cardHolder.getAccountNumber())) {
+            cardHolder.setChartOfAccountsCode(transaction.getChartOfAccountsCode());
+            cardHolder.setAccountNumber(transaction.getAccountNumber());
+            cardHolder.setSubAccountNumber(transaction.getSubAccountNumber());
+        }
+        if (StringUtils.isEmpty(cardHolder.getCardHolderName())) {
+            cardHolder.setCardCycleAmountLimit(transaction.getCardCycleAmountLimit());
+            cardHolder.setCardCycleVolumeLimit(transaction.getCardCycleVolumeLimit());
+            cardHolder.setCardHolderAlternateName(transaction.getCardHolderAlternateName());
+            cardHolder.setCardHolderCityName(transaction.getCardHolderCityName());
+            cardHolder.setCardHolderLine1Address(transaction.getCardHolderLine1Address());
+            cardHolder.setCardHolderLine2Address(transaction.getCardHolderLine2Address());
+            cardHolder.setCardHolderName(transaction.getCardHolderName());
+            cardHolder.setCardHolderStateCode(transaction.getCardHolderStateCode());
+            cardHolder.setCardHolderWorkPhoneNumber(transaction.getCardHolderWorkPhoneNumber());
+            cardHolder.setCardHolderZipCode(transaction.getCardHolderZipCode());
+            cardHolder.setCardLimit(transaction.getCardLimit());
+            cardHolder.setCardNoteText(transaction.getCardNoteText());
+            cardHolder.setCardStatusCode(transaction.getCardStatusCode());
+        }
+
+        pcardDocument.setProcurementCardHolder(cardHolder);
     }
     
     @Override
