@@ -1,5 +1,15 @@
 <descriptor-repository version="1.0">
     
+	<class-descriptor class="edu.cornell.kfs.sys.businessobject.KualiDeveloper" table="CU_KUALI_DEVELOPER_T">
+	    <field-descriptor name="employeeId" column="EMPLOYEE_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+	    <field-descriptor name="firstName" column="FIRST_NAME" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="lastName" column="LAST_NAME" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="positionName" column="POSITION_NAME" jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="socialSecurityNumber" column="SOCIAL_SECURITY_NUMBER" jdbc-type="VARCHAR" />
+	    <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="address" column="address" jdbc-type="VARCHAR" />
+	</class-descriptor>
+    	
 <class-descriptor class="org.kuali.kfs.sys.businessobject.SourceAccountingLine" table="FP_ACCT_LINES_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
     <field-descriptor name="sequenceNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER" primarykey="true" />
