@@ -27,25 +27,25 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocument> implements AccountingDocumentGenerator<T> {
 
     protected PersonService personService;
-    protected Supplier<Note> bareNoteGenerator;
-    protected Supplier<AdHocRoutePerson> bareAdHocRoutePersonGenerator;
+    protected Supplier<Note> emptyNoteGenerator;
+    protected Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator;
 
     protected AccountingDocumentGeneratorBase() {
         this(Note::new, AdHocRoutePerson::new);
     }
 
     protected AccountingDocumentGeneratorBase(
-            Supplier<Note> bareNoteGenerator, Supplier<AdHocRoutePerson> bareAdHocRoutePersonGenerator) {
-        this.bareNoteGenerator = bareNoteGenerator;
-        this.bareAdHocRoutePersonGenerator = bareAdHocRoutePersonGenerator;
+            Supplier<Note> emptyNoteGenerator, Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator) {
+        this.emptyNoteGenerator = emptyNoteGenerator;
+        this.emptyAdHocRoutePersonGenerator = emptyAdHocRoutePersonGenerator;
     }
 
     protected abstract Class<? extends T> getDocumentClass();
 
     @Override
-    public T createDocument(Function<Class<? extends Document>, Document> bareDocumentGenerator, AccountingXmlDocumentEntry documentEntry) {
-        Document bareDocument = bareDocumentGenerator.apply(getDocumentClass());
-        T document = getDocumentClass().cast(bareDocument);
+    public T createDocument(Function<Class<? extends Document>, Document> emptyDocumentGenerator, AccountingXmlDocumentEntry documentEntry) {
+        Document emptyDocument = emptyDocumentGenerator.apply(getDocumentClass());
+        T document = getDocumentClass().cast(emptyDocument);
         
         populateDocumentHeader(document, documentEntry);
         populateAccountingLines(document, documentEntry);
@@ -105,7 +105,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
 
     protected Note buildDocumentNote(AccountingXmlDocumentNote xmlNote) {
         Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
-        Note note = bareNoteGenerator.get();
+        Note note = emptyNoteGenerator.get();
         note.setNoteText(xmlNote.getDescription());
         note.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
         note.setNotePostedTimestampToCurrent();
@@ -122,7 +122,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected AdHocRoutePerson buildAdHocRoutePerson(AccountingXmlDocumentAdHocRecipient xmlRecipient, String documentNumber) {
-        AdHocRoutePerson adHocPerson = bareAdHocRoutePersonGenerator.get();
+        AdHocRoutePerson adHocPerson = emptyAdHocRoutePersonGenerator.get();
         adHocPerson.setdocumentNumber(documentNumber);
         adHocPerson.setId(xmlRecipient.getNetId());
         adHocPerson.setActionRequested(getActionRequestCode(xmlRecipient.getActionRequested()));

@@ -40,6 +40,8 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.kfs.sys.service.FileStorageService;
+import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
@@ -78,6 +80,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(buildMockPersonService());
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
+        createAccountingDocumentService.setFileStorageService(buildFileStorageService());
         createAccountingDocumentService.setConfigurationService(buildMockConfigurationService());
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         
@@ -302,6 +305,12 @@ public class CreateAccountingDocumentServiceImplTest {
         
         EasyMock.replay(dateTimeService);
         return dateTimeService;
+    }
+
+    private FileStorageService buildFileStorageService() throws Exception {
+        FileSystemFileStorageServiceImpl fileStorageService = new FileSystemFileStorageServiceImpl();
+        fileStorageService.setPathPrefix(KFSConstants.DELIMITER);
+        return fileStorageService;
     }
 
     private ConfigurationService buildMockConfigurationService() throws Exception {

@@ -1,19 +1,17 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -25,6 +23,7 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
@@ -41,6 +40,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType accountingDocumentBatchInputFileType;
     private DocumentService documentService;
+    private FileStorageService fileStorageService;
     private ConfigurationService configurationService;
 
     @Override
@@ -161,11 +161,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     protected void removeDoneFileQuietly(String dataFileName) {
         try {
-            String doneFileName = StringUtils.substringBeforeLast(dataFileName, CuFPConstants.XML_FILE_EXTENSION)
-                    + GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION;
-            if (!FileUtils.deleteQuietly(new File(doneFileName))) {
-                LOG.error("removeDoneFileQuietly: Could not delete .done file: " + doneFileName);
-            }
+            fileStorageService.removeDoneFiles(Collections.singletonList(dataFileName));
         } catch (RuntimeException e) {
             LOG.error("removeDoneFileQuietly: Could not delete .done file for accounting document XML", e);
         }
@@ -181,6 +177,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
+    }
+
+    public void setFileStorageService(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {
