@@ -1,7 +1,7 @@
 package edu.cornell.kfs.sys.businessobject;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;;
+import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 public class KualiDeveloper extends PersistableBusinessObjectBase implements MutableInactivatable {
 
