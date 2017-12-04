@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import static org.kuali.kfs.fp.document.validation.impl.ProcurementCardDocumentRuleConstants.SINGLE_TRANSACTION_IND_PARM_NM;
-
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
 import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
 import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
@@ -63,13 +60,11 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     protected List retrieveTransactions() {
         List<List<CorporateBilledCorporatePaidTransaction>> groupedTransactions = new ArrayList<List<CorporateBilledCorporatePaidTransaction>>();
 
-        List<CorporateBilledCorporatePaidTransaction> cbcpTransactions = (List<CorporateBilledCorporatePaidTransaction>) 
-                businessObjectService.findMatchingOrderBy(CorporateBilledCorporatePaidTransaction.class, new HashMap<String, String>(), 
-                        KFSPropertyConstants.TRANSACTION_CREDIT_CARD_NUMBER, true);
+        Collection<CorporateBilledCorporatePaidTransaction> cbcpTransactions = businessObjectService.findMatchingOrderBy(CorporateBilledCorporatePaidTransaction.class, 
+                new HashMap<String, String>(), KFSPropertyConstants.TRANSACTION_CREDIT_CARD_NUMBER, true);
 
-        boolean singleTransaction = parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, SINGLE_TRANSACTION_IND_PARM_NM);
-        
-        if (singleTransaction) {
+        if (getCorporateBilledCorporatePaidDocumentParameterValueAsBoolean(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.SINGLE_TRANSACTION_IND_PARAMETER_NAME)) {
             List<CorporateBilledCorporatePaidTransaction> documentTransactions = new ArrayList<CorporateBilledCorporatePaidTransaction>();
             for (CorporateBilledCorporatePaidTransaction transaction : cbcpTransactions) {
                 documentTransactions.add(transaction);
@@ -296,29 +291,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         cardHolder.setDocumentNumber(pcardDocument.getDocumentNumber());
         cardHolder.setTransactionCreditCardNumber(transaction.getTransactionCreditCardNumber());
 
-        final ProcurementCardDefault procurementCardDefault = retrieveProcurementCardDefault(transaction.getTransactionCreditCardNumber());
-        if (procurementCardDefault != null) {
-            if (parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, ProcurementCardCreateDocumentsStep.USE_CARD_HOLDER_DEFAULT_PARAMETER_NAME)) {
-                cardHolder.setCardCycleAmountLimit(procurementCardDefault.getCardCycleAmountLimit());
-                cardHolder.setCardCycleVolumeLimit(procurementCardDefault.getCardCycleVolumeLimit());
-                cardHolder.setCardHolderAlternateName(procurementCardDefault.getCardHolderAlternateName());
-                cardHolder.setCardHolderCityName(procurementCardDefault.getCardHolderCityName());
-                cardHolder.setCardHolderLine1Address(procurementCardDefault.getCardHolderLine1Address());
-                cardHolder.setCardHolderLine2Address(procurementCardDefault.getCardHolderLine2Address());
-                cardHolder.setCardHolderName(procurementCardDefault.getCardHolderName());
-                cardHolder.setCardHolderStateCode(procurementCardDefault.getCardHolderStateCode());
-                cardHolder.setCardHolderWorkPhoneNumber(procurementCardDefault.getCardHolderWorkPhoneNumber());
-                cardHolder.setCardHolderZipCode(procurementCardDefault.getCardHolderZipCode());
-                cardHolder.setCardLimit(procurementCardDefault.getCardLimit());
-                cardHolder.setCardNoteText(procurementCardDefault.getCardNoteText());
-                cardHolder.setCardStatusCode(procurementCardDefault.getCardStatusCode());
-            }
-            if (parameterService.getParameterValueAsBoolean(ProcurementCardCreateDocumentsStep.class, ProcurementCardCreateDocumentsStep.USE_ACCOUNTING_DEFAULT_PARAMETER_NAME)) {
-                cardHolder.setChartOfAccountsCode(procurementCardDefault.getChartOfAccountsCode());
-                cardHolder.setAccountNumber(procurementCardDefault.getAccountNumber());
-                cardHolder.setSubAccountNumber(procurementCardDefault.getSubAccountNumber());
-            }
-        }
+        processDefaultCardHolder(transaction, cardHolder);
 
         if (StringUtils.isEmpty(cardHolder.getAccountNumber())) {
             cardHolder.setChartOfAccountsCode(transaction.getChartOfAccountsCode());
@@ -342,6 +315,32 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         }
 
         pcardDocument.setProcurementCardHolder(cardHolder);
+    }
+
+    protected void processDefaultCardHolder(ProcurementCardTransaction transaction, CorporateBilledCorporatePaidCardHolder cardHolder) {
+        final ProcurementCardDefault procurementCardDefault = retrieveProcurementCardDefault(transaction.getTransactionCreditCardNumber());
+        if (procurementCardDefault != null) {
+            if (getCorporateBilledCorporatePaidDocumentParameterValueAsBoolean(CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_HOLDER_DEFAULT_IND_PARAMETER_NAME)) {
+                cardHolder.setCardCycleAmountLimit(procurementCardDefault.getCardCycleAmountLimit());
+                cardHolder.setCardCycleVolumeLimit(procurementCardDefault.getCardCycleVolumeLimit());
+                cardHolder.setCardHolderAlternateName(procurementCardDefault.getCardHolderAlternateName());
+                cardHolder.setCardHolderCityName(procurementCardDefault.getCardHolderCityName());
+                cardHolder.setCardHolderLine1Address(procurementCardDefault.getCardHolderLine1Address());
+                cardHolder.setCardHolderLine2Address(procurementCardDefault.getCardHolderLine2Address());
+                cardHolder.setCardHolderName(procurementCardDefault.getCardHolderName());
+                cardHolder.setCardHolderStateCode(procurementCardDefault.getCardHolderStateCode());
+                cardHolder.setCardHolderWorkPhoneNumber(procurementCardDefault.getCardHolderWorkPhoneNumber());
+                cardHolder.setCardHolderZipCode(procurementCardDefault.getCardHolderZipCode());
+                cardHolder.setCardLimit(procurementCardDefault.getCardLimit());
+                cardHolder.setCardNoteText(procurementCardDefault.getCardNoteText());
+                cardHolder.setCardStatusCode(procurementCardDefault.getCardStatusCode());
+            }
+            if (getCorporateBilledCorporatePaidDocumentParameterValueAsBoolean(CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_ACCOUNTING_DEFAULT_IND_PARAMETER_NAME)) {
+                cardHolder.setChartOfAccountsCode(procurementCardDefault.getChartOfAccountsCode());
+                cardHolder.setAccountNumber(procurementCardDefault.getAccountNumber());
+                cardHolder.setSubAccountNumber(procurementCardDefault.getSubAccountNumber());
+            }
+        }
     }
     
     @Override
@@ -384,6 +383,15 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_COMPONENT_NAME, parameterName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getCorporateBilledCorporatePaidDocumentParameter, param name: " + parameterName + " param value: " + parameterValue);
+        }
+        return parameterValue;
+    }
+    
+    public Boolean getCorporateBilledCorporatePaidDocumentParameterValueAsBoolean(String parameterName) {
+        Boolean parameterValue = parameterService.getParameterValueAsBoolean(KFSConstants.ParameterNamespaces.FINANCIAL, 
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_COMPONENT_NAME, parameterName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getCorporateBilledCorporatePaidDocumentParameterValueAsBoolean, param name: " + parameterName + " param value: " + parameterValue);
         }
         return parameterValue;
     }
