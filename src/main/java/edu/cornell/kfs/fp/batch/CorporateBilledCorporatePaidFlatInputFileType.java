@@ -14,12 +14,12 @@ public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCa
     protected CorporateBilledCorporatePaidCreateDocumentService corporateBilledCorporatePaidCreateDocumentService;
     
     @Override
-    protected ProcurementCardTransaction buildProcurementCardTransaction() {
+    protected ProcurementCardTransaction buildProcurementCardTransactionObject() {
         return new CorporateBilledCorporatePaidTransaction();
     }
     
     @Override
-    protected ProcurementCardTransactionExtendedAttribute buildProcurementCardTransactionExtendedAttribute() {
+    protected ProcurementCardTransactionExtendedAttribute buildProcurementCardTransactionExtendedAttributeObject() {
         return new CorporateBilledCorporatePaidTransactionExtendedAttribute();
     }
     

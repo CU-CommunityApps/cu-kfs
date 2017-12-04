@@ -110,7 +110,7 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
       // do nothing if it's not a type 50 line
       while(recordId.equals(PurchasingDataRecord.RECORD_ID)) {
         // parse the line
-        PurchasingDataRecord purchasingDataRecord = buildPurchasingDataRecord();
+        PurchasingDataRecord purchasingDataRecord = buildPurchasingDataRecordObject();
         purchasingDataRecord.parse(fileLine, lineCount);
         
         purchasingDataRecords.add(purchasingDataRecord);
@@ -133,7 +133,7 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
       return purchasingDataRecords;
     }
 
-    protected PurchasingDataRecord buildPurchasingDataRecord() {
+    protected PurchasingDataRecord buildPurchasingDataRecordObject() {
         return new PurchasingDataRecord();
     }
   

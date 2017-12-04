@@ -57,7 +57,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
         
         try {
             // get new document from doc service
-            pcardDocument = buildNewDocument();
+            pcardDocument = buildNewProcurementCardDocument();
             
             List<CapitalAssetInformation> capitalAssets = pcardDocument.getCapitalAssetInformation();
             for (CapitalAssetInformation capitalAsset : capitalAssets) {
@@ -164,7 +164,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
         return pcardDocument;
     }
 
-    protected ProcurementCardDocument buildNewDocument() throws WorkflowException {
+    protected ProcurementCardDocument buildNewProcurementCardDocument() throws WorkflowException {
         return (ProcurementCardDocument) SpringContext.getBean(DocumentService.class)
                 .getNewDocument(KFSConstants.FinancialDocumentTypeCodes.PROCUREMENT_CARD);
     }
@@ -187,7 +187,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
 
 
     protected void createProcurementCardTransactionDetailExtension(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail transactionDetail) {
-      ProcurementCardTransactionDetailExtendedAttribute detailExtension = buildTransactionDetailExtension(
+      ProcurementCardTransactionDetailExtendedAttribute detailExtension = buildTransactionDetailExtensionObject(
             transactionDetail);
 
       if (ObjectUtils.isNotNull(transaction.getExtension())) {
@@ -201,7 +201,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
       transactionDetail.setExtension(detailExtension);
     }
 
-    protected ProcurementCardTransactionDetailExtendedAttribute buildTransactionDetailExtension(
+    protected ProcurementCardTransactionDetailExtendedAttribute buildTransactionDetailExtensionObject(
             ProcurementCardTransactionDetail transactionDetail) {
         ProcurementCardTransactionDetailExtendedAttribute detailExtension;
           if (ObjectUtils.isNull(transactionDetail.getExtension())) {

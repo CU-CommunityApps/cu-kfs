@@ -25,7 +25,7 @@ public class CorporateBilledCorporatePaidTransactionExtendedAttribute extends Pr
     }
     
     @Override
-    protected PurchasingDataRecord buildPurchasingDataRecord() {
+    protected CorporateBilledCorporatePaidDataRecord buildPurchasingDataRecordObject() {
         return new CorporateBilledCorporatePaidDataRecord();
     }
     

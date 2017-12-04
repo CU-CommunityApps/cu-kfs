@@ -106,7 +106,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     }
     
     @Override
-    protected CorporateBilledCorporatePaidDocument buildNewDocument() throws WorkflowException {
+    protected CorporateBilledCorporatePaidDocument buildNewProcurementCardDocument() throws WorkflowException {
         return (CorporateBilledCorporatePaidDocument) documentService.getNewDocument(CorporateBilledCorporatePaidDocument.class);
     }
     
@@ -194,7 +194,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     }
     
     @Override
-    protected ProcurementCardTransactionDetailExtendedAttribute buildTransactionDetailExtension(ProcurementCardTransactionDetail transactionDetail) {
+    protected CorporateBilledCorporatePaidTransactionDetailExtendedAttribute buildTransactionDetailExtensionObject(ProcurementCardTransactionDetail transactionDetail) {
         CorporateBilledCorporatePaidTransactionDetailExtendedAttribute detailExtension;
           if (ObjectUtils.isNull(transactionDetail.getExtension())) {
               detailExtension = new CorporateBilledCorporatePaidTransactionDetailExtendedAttribute();
@@ -205,7 +205,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     }
     
     @Override
-    protected ProcurementCardSourceAccountingLine createSourceAccountingLine(ProcurementCardTransaction transaction, 
+    protected CorporateBilledCorporatePaidSourceAccountingLine createSourceAccountingLine(ProcurementCardTransaction transaction, 
             ProcurementCardTransactionDetail docTransactionDetail) {
         CorporateBilledCorporatePaidSourceAccountingLine sourceLine = new CorporateBilledCorporatePaidSourceAccountingLine();
 
@@ -231,7 +231,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     }
     
     @Override
-    protected ProcurementCardTargetAccountingLine createTargetAccountingLine(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail docTransactionDetail) {
+    protected CorporateBilledCorporatePaidTargetAccountingLine createTargetAccountingLine(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail docTransactionDetail) {
         
         CorporateBilledCorporatePaidTargetAccountingLine targetLine = new CorporateBilledCorporatePaidTargetAccountingLine();
         targetLine.setDocumentNumber(docTransactionDetail.getDocumentNumber());

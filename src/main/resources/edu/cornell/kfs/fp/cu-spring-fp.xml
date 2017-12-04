@@ -677,7 +677,7 @@
         <property name="steps">
             <list>
                 <ref bean="corporateBilledCorporatePaidLoadFlatFileStep" />
-                <ref bean="corporateBilledCorparatePaidCreateDocumentsStep" />
+                <ref bean="corporateBilledCorporatePaidCreateDocumentsStep" />
                 <ref bean="corporateBilledCorporatePaidRouteDocumentsStep"/>
             </list>
         </property>
@@ -698,7 +698,7 @@
         <property name="fileStorageService" ref="fileStorageService"/>
     </bean>
     
-    <bean id="corporateBilledCorparatePaidCreateDocumentsStep" class="org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep" parent="step">
+    <bean id="corporateBilledCorporatePaidCreateDocumentsStep" class="org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep" parent="step">
         <property name="procurementCardCreateDocumentService">
             <ref bean="corporateBilledCorporatePaidCreateDocumentService"/>
         </property>
