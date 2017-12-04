@@ -30,7 +30,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
 		</property>
 		<property name="relationships">
 			<list>
-<!-- 				<dd:relationship objectAttribute="address" targetClass="edu.cornell.kfs.sys.businessobject.Address"> -->
+<!-- 				<dd:relationship objectAttribute="address" targetClass="edu.cornell.kfs.sys.businessobject.KualiAddress"> -->
 <!-- 	    	        		<dd:primitiveAttribute source="addressId" target="addressId"/> -->
 <!-- 	        		</dd:relationship> -->
 	        </list>
@@ -44,7 +44,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
 	    	<property name="shortLabel" value="First Name"/>
 	    	<property name="maxLength" value="64"/>
 	    	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern" />
+      		<bean parent="AlphaValidationPattern" />
 	    	</property>
 	    	<property name="control">
 	    	  	<bean parent="TextControlDefinition" p:size="12"/>
