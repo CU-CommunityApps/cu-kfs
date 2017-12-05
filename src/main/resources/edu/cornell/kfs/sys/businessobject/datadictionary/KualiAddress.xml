@@ -30,6 +30,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
               <ref bean="KualiAddress-zipCode"/>
               <ref bean="KualiAddress-countryCode"/>
               <ref bean="KualiAddress-active"/>
+              <ref bean="KualiAddress-objectId"/>
 		  </list>
 		</property>
         
@@ -150,7 +151,18 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
     <bean id="KualiAddress-active" parent="KualiAddress-active-parentBean"/>
     <bean id="KualiAddress-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
-    </bean>           
+    </bean>       
+    
+    <bean id="KualiAddress-objectId" parent="KualiAddress-objectId-parentBean"/>
+    <bean id="KualiAddress-objectId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="objectId"/>
+        <property name="label" value="Object ID"/>
+        <property name="shortLabel" value="Obj ID"/>
+        <property name="maxLength" value="36"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>    
 	
   <!-- Business Object Inquiry Definition -->  
   <bean id="KualiAddress-inquiryDefinition" parent="KualiAddress-inquiryDefinition-parentBean"/>
