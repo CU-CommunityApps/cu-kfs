@@ -8,8 +8,9 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
     private static final long serialVersionUID = 1L;
 
     private String addressId;
-    private String addressType;
+    private String objectId;
     private String streetAddressLine1;
+    private String addressType;
     private String streetAddressLine2;
     private String streetAddressLine3;
     private String city;
@@ -21,6 +22,7 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
 	
     public KualiAddress() {
 		super();
+        this.active = true;
 		//addressType = AddressType.HOME;
 	}
 
@@ -124,5 +126,13 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 }

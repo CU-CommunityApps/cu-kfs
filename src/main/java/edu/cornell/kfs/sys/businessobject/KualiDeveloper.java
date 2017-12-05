@@ -20,7 +20,16 @@ public class KualiDeveloper extends PersistableBusinessObjectBase implements Mut
 		super();
 		active = false;
 	}
-	
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -73,13 +82,5 @@ public class KualiDeveloper extends PersistableBusinessObjectBase implements Mut
 		this.socialSecurityNumber = socialSecurityNumber;
 	}
 
-	public Boolean getActive() {
-		return active;
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		this.active = active;		
-	}
 	
 }

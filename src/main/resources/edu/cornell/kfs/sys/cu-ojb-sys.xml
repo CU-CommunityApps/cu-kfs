@@ -7,11 +7,12 @@
 	    <field-descriptor name="positionName" column="POSITION_NAME" jdbc-type="VARCHAR" index="true" />
 	    <field-descriptor name="socialSecurityNumber" column="SOCIAL_SECURITY_NUMBER" jdbc-type="VARCHAR" />
 	    <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-        <field-descriptor name="address" column="address" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="address" column="address" jdbc-type="VARCHAR" />
 	</class-descriptor>
     
     <class-descriptor class="edu.cornell.kfs.sys.businessobject.KualiAddress" table="CU_KUALI_ADDRESS_T">
         <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR" primarykey="true" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
         <field-descriptor name="addressType" column="ADDRESS_TYPE" jdbc-type="VARCHAR" />
         <field-descriptor name="streetAddressLine1" column="STREET_ADDRESS_LINE1" jdbc-type="VARCHAR" />
         <field-descriptor name="streetAddressLine2" column="STREET_ADDRESS_LINE2" jdbc-type="VARCHAR" />
@@ -20,7 +21,7 @@
         <field-descriptor name="stateCode" column="STATE_CODE" jdbc-type="VARCHAR" />
         <field-descriptor name="countryCode" column="COUNTRY_CODE" jdbc-type="VARCHAR" />
         <field-descriptor name="zipCode" column="ZIP_CODE" jdbc-type="VARCHAR" />
-        <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" />
+        <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     </class-descriptor>
     	
 <class-descriptor class="org.kuali.kfs.sys.businessobject.SourceAccountingLine" table="FP_ACCT_LINES_T">
