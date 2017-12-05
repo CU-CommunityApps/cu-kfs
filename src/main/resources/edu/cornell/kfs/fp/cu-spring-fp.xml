@@ -775,6 +775,7 @@
         <property name="batchInputFileService" ref="batchInputFileService"/>
         <property name="accountingDocumentBatchInputFileType" ref="accountingXmlDocumentInputFileType"/>
         <property name="documentService" ref="documentService"/>
+        <property name="fileStorageService" ref="fileStorageService"/>
         <property name="configurationService" ref="kualiConfigurationService"/>
     </bean>
 
