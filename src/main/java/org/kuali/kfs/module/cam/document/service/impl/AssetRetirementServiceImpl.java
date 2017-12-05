@@ -349,7 +349,6 @@ public class AssetRetirementServiceImpl implements AssetRetirementService {
      * @return
      */
     protected void createNewPostable(AmountCategory category, Asset asset, AssetPayment assetPayment, String documentNumber, Account plantAccount, List<GeneralLedgerPendingEntrySourceDetail> postables) {
-        boolean success = true;
         AssetGlpeSourceDetail postable = new AssetGlpeSourceDetail();
 
         AssetObjectCode assetObjectCode = getAssetObjectCode(asset, assetPayment);
@@ -363,10 +362,10 @@ public class AssetRetirementServiceImpl implements AssetRetirementService {
         postable.setChartOfAccountsCode(plantAccount.getChartOfAccountsCode());
 
         postable.setPostingYear(universityDateService.getCurrentFiscalYear());
+
         // Fields copied from payment
-        postable.setFinancialSubObjectCode(assetPayment.getFinancialSubObjectCode());
+        // Intentionally not copying the FinancialSubObjectCode or the SubAccountNumber
         postable.setProjectCode(assetPayment.getProjectCode());
-        postable.setSubAccountNumber(assetPayment.getSubAccountNumber());
         postable.setOrganizationReferenceId(assetPayment.getOrganizationReferenceId());
         getCuAssetSubAccountService().clearSubAccountIfNecessary(postable);
         postables.add(postable);
@@ -420,8 +419,8 @@ public class AssetRetirementServiceImpl implements AssetRetirementService {
 
             String financialObjectSubTypeCode = objectCode.getFinancialObjectSubTypeCode();
 
-            /*KFSCNTRB-1629 the plant fund account should be that from the payment's object code,
-            * not the asset's object code.*/
+		/*KFSCNTRB-1629 the plant fund account should be that from the payment's object code,
+        * not the asset's object code.*/
             String coaCode = payment.getChartOfAccountsCode();
             Account tempAcct = payment.getAccount();
             String orgCode = tempAcct.getOrganizationCode();
@@ -491,3 +490,4 @@ public class AssetRetirementServiceImpl implements AssetRetirementService {
     }
 
 }
+

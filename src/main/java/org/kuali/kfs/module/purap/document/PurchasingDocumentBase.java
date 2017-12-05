@@ -1516,7 +1516,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public CapitalAssetSystemType getCapitalAssetSystemType() {
         if(ObjectUtils.isNull(capitalAssetSystemType)){
-            this.refreshReferenceObject("capitalAssetSystemType");
+            this.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_TYPE);
         }
         return capitalAssetSystemType;
     }
@@ -1529,7 +1529,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public CapitalAssetSystemState getCapitalAssetSystemState() {
         if(ObjectUtils.isNull(capitalAssetSystemState)){
-            this.refreshReferenceObject("capitalAssetSystemState");
+            this.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE);
         }
         return capitalAssetSystemState;
     }

@@ -989,7 +989,11 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             CapitalAssetSystem system = purDocument.getPurchasingCapitalAssetSystems().get(getSelectedLine(request));
             asset = purDocument.getPurchasingCapitalAssetItems().get(0).getAndResetNewPurchasingItemCapitalAssetLine();
             asset.setCapitalAssetSystemIdentifier(system.getCapitalAssetSystemIdentifier());
-            system.getItemCapitalAssets().add(asset);
+            if (capitalAssetSystemHasAssetItem(system, asset)) {
+                GlobalVariables.getMessageMap().putError(PurapConstants.CAPITAL_ASSET_TAB_ERRORS, PurapKeyConstants.ERROR_CAPITAL_ASSET_DUPLICATE_ASSET);
+            } else {
+                system.getItemCapitalAssets().add(asset);
+            }
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -1156,19 +1160,44 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         } else if (StringUtils.isEmpty(document.getCapitalAssetSystemStateCode())) {
             GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "Capital Asset System Type and Capital Asset System State are both required to proceed");
         } else {
-            SpringContext.getBean(PurchasingService.class).setupCapitalAssetSystem(document);
-            SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
-            if (!document.getPurchasingCapitalAssetItems().isEmpty()) {
+            document.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_TYPE);
+            document.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE);
+
+            if (validateCapitalAssetSystemStateAllowed(document.getCapitalAssetSystemType(), document.getCapitalAssetSystemState())) {
+                SpringContext.getBean(PurchasingService.class).setupCapitalAssetSystem(document);
+                SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
+                if (!document.getPurchasingCapitalAssetItems().isEmpty()) {
+                    saveDocumentNoValidationUsingClearErrorMap(document);
+                } else {
+                    // TODO: extract this and above strings to app resources
+                    GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "No items were found that met the requirements for Capital Asset data collection");
+                }
                 saveDocumentNoValidationUsingClearErrorMap(document);
+            } else {
+                // Blank out type selection, otherwise UI marks it read only
+                document.setCapitalAssetSystemStateCode(null);
+                document.setCapitalAssetSystemState(null);
             }
-            else {
-                // TODO: extract this and above strings to app resources
-                GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "No items were found that met the requirements for Capital Asset data collection");
-            }
-            saveDocumentNoValidationUsingClearErrorMap(document);
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    /**
+     * Validate allowed capital asset system state codes
+     *
+     * @param capitalAssetSystemType that was selected
+     * @param capitalAssetSystemState that was selected
+     * @return whether the selected type allows the selected state
+     */
+    protected static boolean validateCapitalAssetSystemStateAllowed(CapitalAssetSystemType capitalAssetSystemType, CapitalAssetSystemState capitalAssetSystemState) {
+        List<String> allowedCodes = Arrays.asList(capitalAssetSystemType.getAllowedCapitalAssetSystemStateCodes().split(";"));
+        if (!allowedCodes.contains(capitalAssetSystemState.getCapitalAssetSystemStateCode())) {
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DOCUMENT + "." + PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE_CODE, PurapKeyConstants.ERROR_CAPITAL_ASSET_NOT_ALLOWED_SYSTEM_TYPE, capitalAssetSystemType.getCapitalAssetSystemTypeDescription(), capitalAssetSystemState.getCapitalAssetSystemStateDescription());
+            return false;
+        }
+
+        return true;
     }
 
     /**
