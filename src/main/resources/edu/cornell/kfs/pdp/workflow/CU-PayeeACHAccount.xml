@@ -11,31 +11,15 @@
       <routingVersion>2</routingVersion>
       <routePaths>
         <routePath>
-          <start name="AdHoc" nextNode="RequiresPdpApproval"/>
-          <split name="RequiresPdpApproval">
-            <branch name="True">
-              <role name="PdpProcessor" nextNode="JoinPdpApproval"/>
-            </branch>
-            <branch name="False">
-              <simple name="NoOpPdpApproval" nextNode="JoinPdpApproval"/>
-            </branch>
-            <join name="JoinPdpApproval"/>
-          </split>
+          <start name="AdHoc" nextNode="pdpProcessor"/>
+          <role name="pdpProcessor" />
         </routePath>
       </routePaths>
       <routeNodes>
         <start name="AdHoc"/>
-        <split name="RequiresPdpApproval">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="PdpProcessor">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <simple name="NoOpPdpApproval">
-          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
-        </simple>
-        <join name="JoinPdpApproval"/>
+        <role name="pdpProcessor">
+			<qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+		</role>
       </routeNodes>
     </documentType>
   </documentTypes>
