@@ -34,9 +34,6 @@ public class MockParameterServiceImpl implements ParameterService {
         parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, "New ACH Account in KFS.");
         parameters.put(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_BODY,
                 "Payment for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].");
-        parameters.put(CUPdpParameterConstants.UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, "Update ACH Account in KFS.");
-        parameters.put(CUPdpParameterConstants.UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_BODY,
-                "Update payment for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].");
 
     }
 

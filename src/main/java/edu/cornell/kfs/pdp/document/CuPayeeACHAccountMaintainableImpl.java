@@ -4,24 +4,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kew.actiontaken.ActionTakenValue;
-import org.kuali.rice.kew.actiontaken.service.ActionTakenService;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.entity.EntityDefault;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-
-import edu.cornell.kfs.pdp.CUPdpConstants;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainableImpl {
 
@@ -61,37 +54,6 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
               }
             }
         }
-    }
-
-    @Override
-    public boolean answerSplitNodeQuestion(String nodeName) {
-        if (StringUtils.equals(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_REQUIRES_PDP_APPROVAL_NODE, nodeName)) {
-            return payeeACHAccountMaintenanceRequiresPdpApproval();
-        }
-        
-        return super.answerSplitNodeQuestion(nodeName);
-    }
-
-    protected boolean payeeACHAccountMaintenanceRequiresPdpApproval() {
-        return StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, getMaintenanceAction())
-                && payeeACHAccountMaintenanceWasGeneratedByExtractBatchJob();
-    }
-
-    protected boolean payeeACHAccountMaintenanceWasGeneratedByExtractBatchJob() {
-        Person kfsSystemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
-        List<ActionTakenValue> actionsTaken = getActionTakenService().findByDocumentIdPrincipalId(
-                getDocumentNumber(), kfsSystemUser.getPrincipalId());
-        return actionsTaken.stream()
-                .anyMatch(this::isDocumentSubmitActionFromPayeeACHAccountExtractBatchJob);
-    }
-
-    protected boolean isDocumentSubmitActionFromPayeeACHAccountExtractBatchJob(ActionTakenValue actionTaken) {
-        return StringUtils.equals(KewApiConstants.ACTION_TAKEN_COMPLETED_CD, actionTaken.getActionTaken())
-                && StringUtils.equals(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_ROUTE_ANNOTATION, actionTaken.getAnnotation());
-    }
-
-    protected ActionTakenService getActionTakenService() {
-        return KEWServiceLocator.getActionTakenService();
     }
 
 }
