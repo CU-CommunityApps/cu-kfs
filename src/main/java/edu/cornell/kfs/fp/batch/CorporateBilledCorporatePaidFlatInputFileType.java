@@ -30,7 +30,7 @@ public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCa
     
     @Override
     public String getFileName(String principalName, Object parsedFileContents, String userIdentifier) {
-        String fileName = "cbcp_" + principalName;
+        String fileName = "fp_cbcp_" + principalName;
         if (StringUtils.isNotBlank(userIdentifier)) {
             fileName += "_" + userIdentifier;
         }
