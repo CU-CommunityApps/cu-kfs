@@ -93,7 +93,7 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
      * @throws ParseException Triggered when unable to parse a given line
      */
     @SuppressWarnings("unused")
-    private List<PurchasingDataRecord> parseUSBankType50Lines(BufferedReader bufferedFileReader, int lineCount) throws IOException, ParseException  {
+    protected List<PurchasingDataRecord> parseUSBankType50Lines(BufferedReader bufferedFileReader, int lineCount) throws IOException, ParseException  {
       List<PurchasingDataRecord> purchasingDataRecords = new ArrayList<PurchasingDataRecord>();
       String fileLine = null, recordId = null;
       int lineBufferLength = 401; // Lines can be 400 chars long, plus a newline
@@ -110,7 +110,7 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
       // do nothing if it's not a type 50 line
       while(recordId.equals(PurchasingDataRecord.RECORD_ID)) {
         // parse the line
-        PurchasingDataRecord purchasingDataRecord = new PurchasingDataRecord();
+        PurchasingDataRecord purchasingDataRecord = buildPurchasingDataRecordObject();
         purchasingDataRecord.parse(fileLine, lineCount);
         
         purchasingDataRecords.add(purchasingDataRecord);
@@ -131,6 +131,10 @@ public class ProcurementCardTransactionExtendedAttribute extends PersistableBusi
       bufferedFileReader.reset(); // reset because either way we've overshot the collection of type 50's by one      
       
       return purchasingDataRecords;
+    }
+
+    protected PurchasingDataRecord buildPurchasingDataRecordObject() {
+        return new PurchasingDataRecord();
     }
   
 }
