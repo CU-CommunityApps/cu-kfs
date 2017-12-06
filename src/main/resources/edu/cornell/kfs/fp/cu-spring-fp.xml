@@ -120,8 +120,8 @@
         </property>
     </bean>
     
-    <bean id="cuProcurementCardLoadTransactionsService"  parent="cuProcurementCardLoadTransactionsService-parentBean"/> 
-    <bean id="cuProcurementCardLoadTransactionsService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
+    <bean id="procurementCardLoadFlatTransactionsServiceImpl"  parent="procurementCardLoadFlatTransactionsServiceImpl-parentBean"/> 
+    <bean id="procurementCardLoadFlatTransactionsServiceImpl-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
         <property name="procurementCardInputFileType">
             <ref bean="procurementCardFlatInputFileType" />
         </property>
