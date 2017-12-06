@@ -20,33 +20,17 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<c:choose>
-	<c:when test="${KualiForm.document.financialDocumentTypeCode == 'CBCP'}">
-		<c:set var="docTypeName" value="CorporateBilledCorporatePaidDocument" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="docTypeName" value="ProcurementCardDocument" />
-	</c:otherwise>
-</c:choose>
-
 <kul:documentPage showDocumentInfo="true"
-	documentTypeName="${docTypeName}"
-	htmlFormAction="financialProcurementCard" renderMultipart="true"
+	documentTypeName="CorporateBilledCorporatePaidDocument"
+	htmlFormAction="corporateBilledCorporatePaid" renderMultipart="true"
 	showTabButtons="true">
 
 	<sys:hiddenDocumentFields />
 
 	<sys:documentOverview editingMode="${KualiForm.editingMode}" />
 	
-	<c:choose>
-		<c:when test="${KualiForm.document.financialDocumentTypeCode == 'CBCP'}">
-			<fp:corporateBilledCorporatePaidTransactions editingMode="${KualiForm.editingMode}" editableAccounts="${KualiForm.editableAccounts}" />
-		</c:when>
-		<c:otherwise>
-			<fp:procurementCardTransactions editingMode="${KualiForm.editingMode}" editableAccounts="${KualiForm.editableAccounts}" />
-		</c:otherwise>
-	</c:choose>
-
+	<fp:corporateBilledCorporatePaidTransactions editingMode="${KualiForm.editingMode}" editableAccounts="${KualiForm.editableAccounts}" />
+	
 	<c:set var="readOnly" value="${!KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT]}" />
 	<fp:capitalAccountingLines readOnly="${readOnly}" />
 

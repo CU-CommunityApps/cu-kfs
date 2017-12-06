@@ -15,7 +15,7 @@
  limitations under the License.
 -->
 
-  <bean id="corporateBilledCorporatePaidDocument" parent="ProcurementCardDocument-parentBean">
+  <bean id="CorporateBilledCorporatePaidDocument" parent="ProcurementCardDocument">
     <property name="documentTypeName" value="CBCP"/>
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument"/>
     <property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument" />

@@ -13,21 +13,20 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.dataaccess.UnitTestSqlDao;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.fp.batch.service.CuProcurementCardLoadTransactionsService;
 import edu.cornell.kfs.fp.batch.service.ProcurementCardSummaryFeedService;
 
 
 @ConfigureContext(session = kfs)
 public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase {
 
-    private CuProcurementCardLoadTransactionsService procurementCardLoadFlatTransactionsService;
+    private ProcurementCardLoadFlatTransactionsServiceImpl procurementCardLoadFlatTransactionsService;
     private ProcurementCardCreateDocumentService procurementCardCreateDocumentService;
     private ConfigurationService  kualiConfigurationService;
     
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardSummaryFeedService.class);
     
     private UnitTestSqlDao unitTestSqlDao;
-	
+    
     private static String delTable1 = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
     private static String alter1 = "alter table FP_PRCRMNT_TRN_DTL_T disable constraint FP_PRCRMNT_TRN_DTL_TR1";
     private static String alter2 = "alter table FP_PRCRMNT_TRN_DTL_T disable constraint FP_PRCRMNT_TRN_DTL_TR2";
@@ -44,7 +43,7 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        procurementCardLoadFlatTransactionsService = SpringContext.getBean(CuProcurementCardLoadTransactionsService.class);
+        procurementCardLoadFlatTransactionsService = SpringContext.getBean(ProcurementCardLoadFlatTransactionsServiceImpl.class);
         procurementCardCreateDocumentService = SpringContext.getBean(ProcurementCardCreateDocumentService.class);
         
         kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);
@@ -74,18 +73,18 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     
     public void testCreateDocs() {        
        
-    	unitTestSqlDao.sqlCommand(delTable1);
-    	unitTestSqlDao.sqlCommand(alter1);
-    	unitTestSqlDao.sqlCommand(alter2);
-    	unitTestSqlDao.sqlCommand(alter3);
-    	unitTestSqlDao.sqlCommand(delTable2);
-    	assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
-    	assertTrue(procurementCardCreateDocumentService.createProcurementCardDocuments());
-    	List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
-    	
-    	assertEquals(1, summaryResults.size());
+        unitTestSqlDao.sqlCommand(delTable1);
+        unitTestSqlDao.sqlCommand(alter1);
+        unitTestSqlDao.sqlCommand(alter2);
+        unitTestSqlDao.sqlCommand(alter3);
+        unitTestSqlDao.sqlCommand(delTable2);
+        assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
+        assertTrue(procurementCardCreateDocumentService.createProcurementCardDocuments());
+        List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
+        
+        assertEquals(1, summaryResults.size());
     }
 
-	
+    
     
 }

@@ -8,7 +8,7 @@
       <label>Corporate Billed Corporate Paid Card</label>
       <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
       <helpDefinitionURL>default.htm?turl=WordDocuments%2Fprocurementcard.htm</helpDefinitionURL>
-      <docHandler>${kfs.url}/financialProcurementCard.do?methodToCall=docHandler</docHandler>
+      <docHandler>${kfs.url}/corporateBilledCorporatePaid.do?methodToCall=docHandler</docHandler>
       <active>true</active>
       <routingVersion>2</routingVersion>
     </documentType>
