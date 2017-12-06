@@ -24,9 +24,9 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardSummaryFeedService.class);
     
     private UnitTestSqlDao unitTestSqlDao;
-    
-    private static String transAmt = "SELECT * FROM FP_PRCRMNT_CARD_TRN_MT";
-    private static String delTable1 = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
+	
+	private static String transAmt = "SELECT * FROM FP_PRCRMNT_CARD_TRN_MT";
+	private static String delTable1 = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
 
     
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/service/fixture/fp_pcdo_usbank_2014267.data";
@@ -65,13 +65,13 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     
     public void testCanLoadFiles() {        
        
-        unitTestSqlDao.sqlCommand(delTable1);
-        assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
-        List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
-        
-        assertEquals(1, summaryResults.size());
+    	unitTestSqlDao.sqlCommand(delTable1);
+    	assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
+    	List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
+    	
+    	assertEquals(1, summaryResults.size());
     }
 
-    
+	
     
 }

@@ -26,7 +26,7 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardSummaryFeedService.class);
     
     private UnitTestSqlDao unitTestSqlDao;
-    
+	
     private static String delTable1 = "DELETE FROM FP_PRCRMNT_CARD_TRN_MT";
     private static String alter1 = "alter table FP_PRCRMNT_TRN_DTL_T disable constraint FP_PRCRMNT_TRN_DTL_TR1";
     private static String alter2 = "alter table FP_PRCRMNT_TRN_DTL_T disable constraint FP_PRCRMNT_TRN_DTL_TR2";
@@ -73,18 +73,18 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     
     public void testCreateDocs() {        
        
-        unitTestSqlDao.sqlCommand(delTable1);
-        unitTestSqlDao.sqlCommand(alter1);
-        unitTestSqlDao.sqlCommand(alter2);
-        unitTestSqlDao.sqlCommand(alter3);
-        unitTestSqlDao.sqlCommand(delTable2);
-        assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
-        assertTrue(procurementCardCreateDocumentService.createProcurementCardDocuments());
-        List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
-        
-        assertEquals(1, summaryResults.size());
+    	unitTestSqlDao.sqlCommand(delTable1);
+    	unitTestSqlDao.sqlCommand(alter1);
+    	unitTestSqlDao.sqlCommand(alter2);
+    	unitTestSqlDao.sqlCommand(alter3);
+    	unitTestSqlDao.sqlCommand(delTable2);
+    	assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(batchDirectory + "/fp_pcdo_usbank_2014267.data"));                                                       
+    	assertTrue(procurementCardCreateDocumentService.createProcurementCardDocuments());
+    	List summaryResults =  unitTestSqlDao.sqlSelect(transAmt);
+    	
+    	assertEquals(1, summaryResults.size());
     }
 
-    
+	
     
 }
