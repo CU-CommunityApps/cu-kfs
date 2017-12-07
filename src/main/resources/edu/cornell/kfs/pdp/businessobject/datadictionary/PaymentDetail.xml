@@ -21,6 +21,10 @@
     	</property>
   </bean>
   
+  <bean id="PaymentDetail-inquiryDefinition" parent="PaymentDetail-inquiryDefinition-parentBean">
+      <property name="inquirableClass" value="edu.cornell.kfs.pdp.businessobject.inquiry.CuPaymentDetailInquirable"/>
+  </bean>
+  
   <bean parent="DataDictionaryBeanOverride">
        <property name="beanName" value="PaymentDetail-lookupDefinition" />
        <property name="fieldOverrides">
