@@ -20,7 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
@@ -294,7 +296,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
         if (recordId.equals(CARDHOLDER_DATA_HEADER_RECORD_ID)) { //cardholder header
 
-        	parent = buildProcurementCardTransactionObject();
+        	parent = new ProcurementCardTransaction();
 
             parent.setTransactionCreditCardNumber(USBankRecordFieldUtils.extractNormalizedString(line, 2, 18, true, lineCount)); //req
             parent.setChartOfAccountsCode(defaultChart); //req
@@ -323,10 +325,11 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
         if (recordId.equals(TRANSACTION_INFORMATION_RECORD_ID) && !duplicateTransactions){	        		        	
         	
-        	ProcurementCardTransaction child = buildProcurementCardTransactionObject();
+        	ProcurementCardTransaction child = new ProcurementCardTransaction();
         	
         	//Pull everything in from the preceding '05' record
             child.setTransactionCreditCardNumber(parent.getTransactionCreditCardNumber());
+            child.setChartOfAccountsCode(defaultChart);
             child.setTransactionCycleEndDate(parent.getTransactionCycleEndDate());
             child.setCardHolderName(parent.getCardHolderName());
             child.setCardHolderLine1Address(parent.getCardHolderLine1Address());
@@ -338,7 +341,12 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             child.setCardHolderAlternateName(parent.getCardHolderAlternateName());
 //            child.setCardLimit(parent.getCardLimit());
             child.setCardStatusCode(parent.getCardStatusCode());
-            parseAccountingInformation(line, child);
+            
+            child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount)); //req
+            child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
+            // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
+            child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount)); //req
+            child.setFinancialSubObjectCode(USBankRecordFieldUtils.extractNormalizedString(line,333,336));
             child.setProjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 336, 346));	        	
             child.setFinancialDocumentTotalAmount(USBankRecordFieldUtils.extractDecimal(line, 79, 91, lineCount));  //req
             child.setTransactionDebitCreditCode(USBankRecordFieldUtils.convertDebitCreditCode(line.substring(64,65))); //req
@@ -378,7 +386,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
             	accumulatedCredits = accumulatedCredits.add(child.getTransactionSettlementAmount());	            	
             }
             
-            ProcurementCardTransactionExtendedAttribute extension = buildProcurementCardTransactionExtendedAttributeObject();
+            ProcurementCardTransactionExtendedAttribute extension = new ProcurementCardTransactionExtendedAttribute();
             extension.setTransactionType(USBankRecordFieldUtils.extractNormalizedString(line, 346, 348));
             if (child.getTransactionSequenceRowNumber() == null) {
                 Integer generatedTransactionSequenceRowNumber = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(FP_PRCRMNT_CARD_TRN_MT_SEQ).intValue();
@@ -434,24 +442,6 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
         }
 
         return null;
-    }
-
-    protected ProcurementCardTransactionExtendedAttribute buildProcurementCardTransactionExtendedAttributeObject() {
-        return new ProcurementCardTransactionExtendedAttribute();
-    }
-
-    protected ProcurementCardTransaction buildProcurementCardTransactionObject() {
-        return new ProcurementCardTransaction();
-    }
-
-    protected void parseAccountingInformation(String line, ProcurementCardTransaction child)
-            throws java.text.ParseException {
-        child.setChartOfAccountsCode(defaultChart);
-        child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount)); //req
-        child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
-        // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
-        child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount)); //req
-        child.setFinancialSubObjectCode(USBankRecordFieldUtils.extractNormalizedString(line,333,336));
     }
 
 }

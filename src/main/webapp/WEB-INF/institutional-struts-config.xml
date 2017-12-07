@@ -207,13 +207,6 @@
             <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
         
-        <action path="/corporateBilledCorporatePaid" name="ProcurementCardForm" input="/jsp/fp/CorporateBilledCorporatePaid.jsp"
-                type="org.kuali.kfs.fp.document.web.struts.ProcurementCardAction" scope="request"
-                parameter="methodToCall" validate="true" attribute="KualiForm">
-            <set-property property="cancellable" value="true"/>
-            <forward name="basic" path="/jsp/fp/CorporateBilledCorporatePaid.jsp"/>
-        </action>
-        
     </action-mappings>
     
 </struts-config>

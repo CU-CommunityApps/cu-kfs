@@ -69,7 +69,6 @@
                 <value>procurementCardSummaryFeedJob</value>
                 <value>loadAWSBillsBatchJob</value>
                 <value>approveDisbursementVouchersSpawnedByRecurringDvJob</value>
-                <value>corporateBilledCorporatePaidDocumentJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -115,13 +114,6 @@
 
     <bean id="procurementCardLoadTransactionsService"  parent="procurementCardLoadTransactionsService-parentBean"/> 
     <bean id="procurementCardLoadFlatTransactionsService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
-        <property name="procurementCardInputFileType">
-            <ref bean="procurementCardFlatInputFileType" />
-        </property>
-    </bean>
-    
-    <bean id="procurementCardLoadFlatTransactionsServiceImpl"  parent="procurementCardLoadFlatTransactionsServiceImpl-parentBean"/> 
-    <bean id="procurementCardLoadFlatTransactionsServiceImpl-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardLoadFlatTransactionsServiceImpl" parent="procurementCardLoadTransactionsService-parentBean" >
         <property name="procurementCardInputFileType">
             <ref bean="procurementCardFlatInputFileType" />
         </property>
@@ -672,90 +664,4 @@
     </bean>
     
     <bean id="scheduledAccountingLineService" class="edu.cornell.kfs.fp.service.impl.ScheduledAccountingLineServiceImpl"/>
-    
-    <bean id="corporateBilledCorporatePaidDocumentJob" parent="scheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="corporateBilledCorporatePaidLoadFlatFileStep" />
-                <ref bean="corporateBilledCorporatePaidCreateDocumentsStep" />
-                <ref bean="corporateBilledCorporatePaidRouteDocumentsStep"/>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidLoadFlatFileStep" parent="corporateBilledCorporatePaidLoadFlatFileStep-parentBean"/>
-    <bean id="corporateBilledCorporatePaidLoadFlatFileStep-parentBean" abstract="true" class="edu.cornell.kfs.fp.batch.CorporateBilledCorporatePaidLoadFlatFileStep" parent="step">
-        <property name="procurementCardLoadTransactionsService">
-            <ref bean="corporateBilledCorporatePaidLoadTransactionsService"/>
-        </property>
-        <property name="batchInputFileService">
-            <ref bean="batchInputFileService"/>
-        </property>
-        <property name="corporateBilledCorporatePaidInputFileType">
-            <ref bean="corporateBilledCorporatePaidFlatInputFileType"/>
-        </property>
-        <property name="reportWriterService" ref="corporateBilledCorporatePaidLoadReportWriterService"/>
-        <property name="fileStorageService" ref="fileStorageService"/>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidCreateDocumentsStep" class="org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep" parent="step">
-        <property name="procurementCardCreateDocumentService">
-            <ref bean="corporateBilledCorporatePaidCreateDocumentService"/>
-        </property>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidRouteDocumentsStep" class="org.kuali.kfs.fp.batch.ProcurementCardRouteDocumentsStep" parent="step">
-        <property name="procurementCardCreateDocumentService">
-            <ref bean="corporateBilledCorporatePaidCreateDocumentService"/>
-        </property>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidFlatInputFileType" class="edu.cornell.kfs.fp.batch.CorporateBilledCorporatePaidFlatInputFileType"> 
-        <property name="directoryPath">
-           <value>${staging.directory}/fp/cbcp</value>
-        </property>
-        <property name="fileExtension">
-           <value>data</value>
-        </property>
-        <property name="parameterService">
-            <ref bean="parameterService"/>
-        </property>
-        <property name="procurementCardErrorEmailService">
-            <ref bean="corporateBilledCorporatePaidErrorEmailService"/>
-        </property>
-        <property name="dateTimeService">
-           <ref bean="dateTimeService"/>
-        </property>
-        <property name="corporateBilledCorporatePaidCreateDocumentService" ref="corporateBilledCorporatePaidCreateDocumentService"/>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidErrorEmailServiceImpl">
-        <property name="parameterService">
-            <ref bean="parameterService"/>
-        </property>
-        <property name="emailService">
-            <ref bean="emailService"/>
-        </property>
-        <property name="configurationService" ref="configurationService"/>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidLoadTransactionsService"  parent="corporateBilledCorporatePaidLoadTransactionsService-parentBean"/> 
-    <bean id="corporateBilledCorporatePaidLoadTransactionsService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidLoadFlatFileServiceImpl" abstract="true" parent="procurementCardLoadTransactionsService" >
-        <property name="procurementCardInputFileType">
-            <ref bean="corporateBilledCorporatePaidFlatInputFileType" />
-        </property>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean"/>
-    <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true" parent="procurementCardCreateDocumentService">
-        <property name="cbcpDatadictionaryServce" ref="dataDictionaryService"/>
-    </bean>
-    
-    <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>
-    <bean id="corporateBilledCorporatePaidLoadReportWriterService-parentBean" parent="reportWriterService" abstract="true">
-        <property name="filePath" value="${reports.directory}/fp"/>
-        <property name="fileNamePrefix" value="cbcp_load_"/>
-        <property name="title" value="Corporate Billed Corporate Paid Load File"/>
-    </bean>
-    
 </beans>

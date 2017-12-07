@@ -2,6 +2,8 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import static edu.cornell.kfs.fp.document.validation.impl.CuProcurementCardDocumentRuleConstants.ERROR_TRANS_OBJECT_CODE_PARM_NM; 
 
+import java.sql.Date;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,8 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
-import org.kuali.kfs.fp.batch.ProcurementCardReportType;
 import org.kuali.kfs.fp.businessobject.CapitalAssetInformation;
+import org.kuali.kfs.fp.businessobject.ProcurementCardHolder;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
@@ -50,14 +52,15 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
      */
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Override
-    public ProcurementCardDocument createProcurementCardDocument(List transactions) {
+    protected ProcurementCardDocument createProcurementCardDocument(List transactions) {
         ProcurementCardDocument pcardDocument = null;
 
         dataDictionaryService = SpringContext.getBean(DataDictionaryService.class);
         
         try {
             // get new document from doc service
-            pcardDocument = buildNewProcurementCardDocument();
+            pcardDocument = (ProcurementCardDocument) SpringContext.getBean(DocumentService.class)
+                    .getNewDocument(KFSConstants.FinancialDocumentTypeCodes.PROCUREMENT_CARD);
             
             List<CapitalAssetInformation> capitalAssets = pcardDocument.getCapitalAssetInformation();
             for (CapitalAssetInformation capitalAsset : capitalAssets) {
@@ -163,11 +166,6 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
 
         return pcardDocument;
     }
-
-    protected ProcurementCardDocument buildNewProcurementCardDocument() throws WorkflowException {
-        return (ProcurementCardDocument) SpringContext.getBean(DocumentService.class)
-                .getNewDocument(KFSConstants.FinancialDocumentTypeCodes.PROCUREMENT_CARD);
-    }
     
     /**
      * 
@@ -187,8 +185,12 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
 
 
     protected void createProcurementCardTransactionDetailExtension(ProcurementCardTransaction transaction, ProcurementCardTransactionDetail transactionDetail) {
-      ProcurementCardTransactionDetailExtendedAttribute detailExtension = buildTransactionDetailExtensionObject(
-            transactionDetail);
+      ProcurementCardTransactionDetailExtendedAttribute detailExtension;
+      if (ObjectUtils.isNull(transactionDetail.getExtension())) {
+          detailExtension = new ProcurementCardTransactionDetailExtendedAttribute();
+      } else {
+          detailExtension = (ProcurementCardTransactionDetailExtendedAttribute) transactionDetail.getExtension();
+      }
 
       if (ObjectUtils.isNotNull(transaction.getExtension())) {
           ProcurementCardTransactionExtendedAttribute extension = (ProcurementCardTransactionExtendedAttribute) transaction.getExtension();
@@ -200,20 +202,9 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
       }
       transactionDetail.setExtension(detailExtension);
     }
-
-    protected ProcurementCardTransactionDetailExtendedAttribute buildTransactionDetailExtensionObject(
-            ProcurementCardTransactionDetail transactionDetail) {
-        ProcurementCardTransactionDetailExtendedAttribute detailExtension;
-          if (ObjectUtils.isNull(transactionDetail.getExtension())) {
-              detailExtension = new ProcurementCardTransactionDetailExtendedAttribute();
-          } else {
-              detailExtension = (ProcurementCardTransactionDetailExtendedAttribute) transactionDetail.getExtension();
-          }
-        return detailExtension;
-    }
     
 
-    protected void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension, ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
+    private void createPurchasingDataDetails(ProcurementCardTransactionExtendedAttribute extension, ProcurementCardTransactionDetailExtendedAttribute detailExtension) {
         List<PurchasingDataDetail> details = new ArrayList<PurchasingDataDetail>();
         for (PurchasingDataRecord record : extension.getPurchasingDataRecords()) {
           PurchasingDataDetail detail = new PurchasingDataDetail();
@@ -284,8 +275,4 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
         return parameterService.getParameterValueAsString(ProcurementCardCreateDocumentsStep.class, ERROR_TRANS_OBJECT_CODE_PARM_NM);
     }
     
-    @Override
-    public List<ProcurementCardReportType> getSortedReportSummaryList(List<ProcurementCardDocument> documents) {
-        return super.getSortedReportSummaryList(documents);
-    }
 }

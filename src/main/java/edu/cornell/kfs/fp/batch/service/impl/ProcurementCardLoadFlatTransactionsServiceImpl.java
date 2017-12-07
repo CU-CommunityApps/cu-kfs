@@ -47,9 +47,9 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDire
 
     private static final String ERROR_PREFIX = "Error parsing flat file ";
     
-    protected BusinessObjectService businessObjectService;
-    protected BatchInputFileService batchInputFileService;
-    protected BatchInputFileType procurementCardInputFileType;
+    private BusinessObjectService businessObjectService;
+    private BatchInputFileService batchInputFileService;
+    private BatchInputFileType procurementCardInputFileType;
 
     /**
      * Validates and parses the given file, then stores transactions into a temp table.
