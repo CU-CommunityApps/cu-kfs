@@ -11,6 +11,7 @@ import org.kuali.kfs.module.cg.businessobject.AwardProjectDirector;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.validation.impl.AwardRule;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -91,6 +92,26 @@ public class AwardExtensionRule extends AwardRule {
         super.setNewBo(newAwardCopy);
     }
 	
+    /**
+     * checks if the required federal pass through agency number is filled in if the
+     * federal pass through indicator is yes
+     */
+    @Override
+    protected boolean checkFederalPassThrough() {
+        boolean success = true;
+
+        boolean federalPassThroughIndicator = newAwardCopy.getFederalPassThroughIndicator();
+        String federalPassThroughAgencyNumber = newAwardCopy.getFederalPassThroughAgencyNumber();
+
+        if (federalPassThroughIndicator && StringUtils.isBlank(federalPassThroughAgencyNumber)) {
+            putFieldError(KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY_NUMBER,
+                    KFSKeyConstants.ERROR_FPT_AGENCY_NUMBER_REQUIRED);
+            success = false;
+        }
+
+        return success;
+    }
+
 	protected boolean checkForDuplicateAccoutnts() {
         boolean success = true;
         String accountNumber;
