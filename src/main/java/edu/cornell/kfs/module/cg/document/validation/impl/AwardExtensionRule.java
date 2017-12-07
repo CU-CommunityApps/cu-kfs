@@ -95,8 +95,6 @@ public class AwardExtensionRule extends AwardRule {
     /**
      * checks if the required federal pass through agency number is filled in if the
      * federal pass through indicator is yes
-     *
-     * @return success
      */
     @Override
     protected boolean checkFederalPassThrough() {
@@ -106,7 +104,6 @@ public class AwardExtensionRule extends AwardRule {
         String federalPassThroughAgencyNumber = newAwardCopy.getFederalPassThroughAgencyNumber();
 
         if (federalPassThroughIndicator && StringUtils.isBlank(federalPassThroughAgencyNumber)) {
-            // fpt agency number is required if fpt indicator is checked
             putFieldError(KFSPropertyConstants.FEDERAL_PASS_THROUGH_AGENCY_NUMBER,
                     KFSKeyConstants.ERROR_FPT_AGENCY_NUMBER_REQUIRED);
             success = false;
