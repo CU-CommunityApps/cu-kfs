@@ -15,8 +15,8 @@ public class CuDistributionOfIncomeAndExpenseDocumentGenerator
     }
 
     public CuDistributionOfIncomeAndExpenseDocumentGenerator(
-            Supplier<Note> bareNoteGenerator, Supplier<AdHocRoutePerson> bareAdHocRoutePersonGenerator) {
-        super(bareNoteGenerator, bareAdHocRoutePersonGenerator);
+            Supplier<Note> emptyNoteGenerator, Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator) {
+        super(emptyNoteGenerator, emptyAdHocRoutePersonGenerator);
     }
 
     @Override
