@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="CorporateBilledCorporatePaidTransactionDetail" parent="CorporateBilledCorporatePaidTransactionDetail-parentBean" />
+	<bean id="CorporateBilledCorporatePaidTransactionDetail-parentBean" abstract="true" parent="ProcurementCardTransactionDetail">
+		<property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionDetail" />
+		<property name="objectLabel" value="Corporate Billed Corporate Paid Transaction Detail" />
+		<property name="inquiryDefinition">
+			<ref bean="CorporateBilledCoporatePaidTransactionDetail-inquiryDefinition" />
+		</property>
+	</bean>
+
+	<bean id="CorporateBilledCoporatePaidTransactionDetail-inquiryDefinition" parent="ProcurementCardTransactionDetail-inquiryDefinition">
+    <property name="inquirySections">
+      <list>
+      	<ref bean="ProcurementCardTransactionDetail-inquirySectionDefinition"/>
+        <ref bean="CorporateBilledCorporatePaidTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition"/>
+      </list>
+    </property>
+  </bean>
+	        
+  <bean id="CorporateBilledCorporatePaidTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition"
+    parent="CorporateBilledCorporatePaidTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition-parentBean" />
+  <bean id="CorporateBilledCorporatePaidTransactionDetail-extension-PurchasingDataDetails-inquirySectionDefinition-parentBean" 
+  	parent="InquirySectionDefinition" abstract="true">
+         <property name="title" value="CBCP Purchasing Data" />
+         <property name="inquiryFields">
+           <list>
+             <bean parent="InquiryCollectionDefinition">
+               <property name="attributeName" value="extension.corporateBilledCorporatePaidDataDetails" />
+               <property name="businessObjectClass" value="edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail" />
+               <property name="inquiryFields">
+                 <list>
+                   <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+                   <bean parent="FieldDefinition" p:attributeName="tsysTranCode"/>
+                   <bean parent="FieldDefinition" p:attributeName="itemCommodityCode"/>
+                   <bean parent="FieldDefinition" p:attributeName="merchantOrderNumber"/>
+                   <bean parent="FieldDefinition" p:attributeName="discountAmount"/>
+                   <bean parent="FieldDefinition" p:attributeName="freightShippingAmount"/>
+                   <bean parent="FieldDefinition" p:attributeName="dutyAmount"/>
+                   <bean parent="FieldDefinition" p:attributeName="destinationPostalZipCode"/>
+                   <bean parent="FieldDefinition" p:attributeName="shipFromPostalZipCode"/>
+                   <bean parent="FieldDefinition" p:attributeName="destinationCountryCode"/>
+                   <bean parent="FieldDefinition" p:attributeName="uniqueVATInvoice"/>
+                   <bean parent="FieldDefinition" p:attributeName="orderDate"/>
+                   <bean parent="FieldDefinition" p:attributeName="itemDescriptor"/>
+                   <bean parent="FieldDefinition" p:attributeName="quantity"/>
+                   <bean parent="FieldDefinition" p:attributeName="unitOfMeasure"/>
+                   <bean parent="FieldDefinition" p:attributeName="unitCost"/>
+                   <bean parent="FieldDefinition" p:attributeName="typeOfSupply"/>
+                 </list>
+               </property>
+             </bean>
+           </list>
+         </property>
+       </bean>
+</beans>    
