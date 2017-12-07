@@ -65,10 +65,7 @@ public class CuFPConstants {
     public static final String GENERAL_LEDGER_PENDING_ENTRIES_TITLE = "General Ledger Pending Entries";
     public static final String LEFT_PARENTHESIS = "(";
     public static final String RIGHT_PARENTHESIS = ")";
-    
-    public static final String CORPORATE_BILLED_CORPORATE_PAID_DOCUMENT_TYPE_CODE = "CBCP";
-    public static final String CORPORATE_BILLED_CORPORATE_PAID_FLAT_INPUT_FILE_TYPE = "corporateBilledCorporatePaidFlatInputFileType";
-    
+
     public static class AchIncomeFileGroup {
         public static final String GROUP_FUNCTIONAL_IDENTIFIER_CD_RA = "RA";
     }

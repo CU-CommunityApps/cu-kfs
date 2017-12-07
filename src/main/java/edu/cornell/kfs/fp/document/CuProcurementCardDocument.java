@@ -98,7 +98,7 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
      * 
      * @return Date
      */
-    public Date getProcurementCardTransactionPostingDetailDate() {
+    private Date getProcurementCardTransactionPostingDetailDate() {
         Date date = null;
         
         for (Object temp : getTransactionEntries()) {
