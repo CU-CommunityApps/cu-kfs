@@ -87,7 +87,7 @@ public class CuPaymentDetailInquirableTest {
         String expectedConvertedCountryValue = getExpectedPostConversionCountryValue(countryPropertyValue);
         Map<String, String> expectedPropertyValues = new HashMap<>();
         expectedPropertyValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID);
-        expectedPropertyValues.put(CUPdpPropertyConstants.PaymentDetail.PAYMENT_COUNTRY, expectedConvertedCountryValue);
+        expectedPropertyValues.put(CUPdpPropertyConstants.PAYMENT_COUNTRY, expectedConvertedCountryValue);
         expectedPropertyValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_NAME, TEST_PAYEE_NAME);
         
         Section section = buildSectionWithCountryPropertyValue(countryPropertyValue);
@@ -165,7 +165,7 @@ public class CuPaymentDetailInquirableTest {
         return buildSection("Payee",
                 buildRow(
                         buildField(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID),
-                        buildField(CUPdpPropertyConstants.PaymentDetail.PAYMENT_COUNTRY, countryValue)),
+                        buildField(CUPdpPropertyConstants.PAYMENT_COUNTRY, countryValue)),
                 buildRow(
                         buildField(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_NAME, TEST_PAYEE_NAME)));
     }

@@ -29,7 +29,7 @@ public class CuPaymentDetailInquirable extends PaymentDetailInquirable {
     }
 
     protected boolean isPaymentGroupCountryField(Field field) {
-        return StringUtils.equalsIgnoreCase(CUPdpPropertyConstants.PaymentDetail.PAYMENT_COUNTRY, field.getPropertyName());
+        return StringUtils.equalsIgnoreCase(CUPdpPropertyConstants.PAYMENT_COUNTRY, field.getPropertyName());
     }
 
     protected void convertCountryForDisplayIfNecessary(Field field) {
