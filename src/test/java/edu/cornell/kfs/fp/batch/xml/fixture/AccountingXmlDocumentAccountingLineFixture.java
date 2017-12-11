@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
+import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -61,6 +62,25 @@ public enum AccountingXmlDocumentAccountingLineFixture {
         accountingLine.setLineDescription(lineDescription);
         accountingLine.setAmount(amount);
         return accountingLine;
+    }
+
+    public <T extends AccountingLine> T toAccountingLineBo(Class<T> accountingLineClass, String documentNumber) {
+        try {
+            T accountingLine = accountingLineClass.newInstance();
+            accountingLine.setDocumentNumber(documentNumber);
+            accountingLine.setChartOfAccountsCode(chartCode);
+            accountingLine.setAccountNumber(accountNumber);
+            accountingLine.setSubAccountNumber(subAccountNumber);
+            accountingLine.setFinancialObjectCode(objectCode);
+            accountingLine.setFinancialSubObjectCode(subObjectCode);
+            accountingLine.setProjectCode(projectCode);
+            accountingLine.setOrganizationReferenceId(orgRefId);
+            accountingLine.setFinancialDocumentLineDescription(lineDescription);
+            accountingLine.setAmount(amount);
+            return accountingLine;
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
