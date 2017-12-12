@@ -365,8 +365,8 @@ public class EzraServiceImpl implements EzraService {
 		Agency agency = new Agency();
 		agency.setAgencyNumber(sponsorId.toString());
 		agency.setReportingName(sponsor.getSponsorLabel());
-		if (ObjectUtils.isNotNull(sponsor.getSponsorName()) && sponsor.getSponsorName().length() > 50)
-			agency.setFullName(sponsor.getSponsorName().substring(0,49));
+		if (ObjectUtils.isNotNull(sponsor.getSponsorName()) && sponsor.getSponsorName().length() > 150)
+			agency.setFullName(sponsor.getSponsorName().substring(0,149));
 		else {
 			agency.setFullName(sponsor.getSponsorName());
 		}
