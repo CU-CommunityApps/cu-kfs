@@ -56,7 +56,11 @@
         <property name="label" value="Pass Through Agency Name"/>
         <property name="shortLabel" value="PT Agency Name"/>
     </bean>
-
+    
+    <bean id="Award-awardProjectTitle" parent="Award-awardProjectTitle-parentBean">
+        <property name="maxLength" value="255"/>
+    </bean>
+    
     <bean id="Award-extension-costShareRequired" parent="Award-extension-costShareRequired-parentBean"/>
 
     <bean id="Award-extension-costShareRequired-parentBean" abstract="true"
