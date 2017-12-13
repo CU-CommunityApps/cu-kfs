@@ -23,4 +23,12 @@
     
   </bean>
   
+  <bean id="Agency-fullName" parent="Agency-fullName-parentBean">
+  	<property name="maxLength" value="150"/>
+  	<property name="control">
+  		<bean parent="TextControlDefinition" p:size="152"/>
+  	</property>
+    
+  </bean>
+  
 </beans>
