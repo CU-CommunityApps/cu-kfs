@@ -1220,6 +1220,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		 }
 		 else{
 			 if(ObjectUtils.isNotNull(newAccount.getAccountGlobalDetails()) && newAccount.getAccountGlobalDetails().size() >0){
+			     boolean hasAtLeastOneAccountWithCGSubFund = false;
 				 for(AccountGlobalDetail accountGlobalDetail : newAccount.getAccountGlobalDetails()){
 					 accountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
 					 if (ObjectUtils.isNotNull(accountGlobalDetail.getAccount().getSubFundGroup())) {
@@ -1232,13 +1233,22 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 						 }
 						 else{
 							 result &= checkICRCollectionExistsForExistingCGSubFund(newAccount, accountGlobalDetail,accountGlobalDetail.getAccount().getSubFundGroupCode());
+							 hasAtLeastOneAccountWithCGSubFund = true;
 						 }
 					 }
+				 }
+				 if (hasAtLeastOneAccountWithCGSubFund && icrTypeCodeOrSeriesIdentifierAreSet(newAccount)) {
+				     result &= checkIcrTypeCodeAndSeriesIdentifierExistWhenSubFundIsCG(newAccount);
 				 }
 			 }
 		 }
 		 return result;
 	 }
+
+    private boolean icrTypeCodeOrSeriesIdentifierAreSet(CuAccountGlobal newAccount) {
+        return checkEmptyValue(newAccount.getAcctIndirectCostRcvyTypeCd())
+                || checkEmptyValue(newAccount.getFinancialIcrSeriesIdentifier());
+    }
 
 	private boolean checkIcrTypeCodeAndSeriesIdentifierExistWhenSubFundIsCG(CuAccountGlobal newAccount){
 		boolean result = true;

@@ -19,21 +19,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
 import org.kuali.kfs.coa.document.validation.impl.AccountRule;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.UniversityDateService;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
 import edu.cornell.kfs.coa.businessobject.MajorReportingCategory;
 import edu.cornell.kfs.coa.businessobject.SubFundProgram;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
-
-import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 
 /**
  * This class...
@@ -179,5 +183,59 @@ public class AccountExtensionRule extends AccountRule {
 		}
 		return success;
 	}
-	
+
+    /**
+     * Overridden to reintroduce some of KualiCo's older ICR Detail validation
+     * until KualiCo fixes the ICR validation bug in a new patch.
+     * 
+     * @see org.kuali.kfs.coa.document.validation.impl.AccountRule#checkCgRequiredFields(org.kuali.kfs.coa.businessobject.Account)
+     */
+    @Override
+    protected boolean checkCgRequiredFields(Account newAccount) {
+        boolean result = super.checkCgRequiredFields(newAccount);
+        
+        if (shouldCheckIndirectCostRecoveryRateDetails(newAccount)) {
+            String fiscalYear = getUniversityDateService().getCurrentFiscalYear().toString();
+            String icrSeriesId = newAccount.getFinancialIcrSeriesIdentifier();
+            Collection<IndirectCostRecoveryRateDetail> icrRateDetails = findIndirectCostRecoveryRateDetails(fiscalYear, icrSeriesId);
+            
+            if (CollectionUtils.isEmpty(icrRateDetails)) {
+                String label = getDataDictionaryService().getAttributeLabel(
+                        Account.class, KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER);
+                putFieldError(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, KFSKeyConstants.ERROR_EXISTENCE,
+                        label + " (" + newAccount.getFinancialIcrSeriesIdentifier() + ")");
+                result &= false;
+            } else {
+                for (IndirectCostRecoveryRateDetail icrRateDetail : icrRateDetails) {
+                    if (ObjectUtils.isNull(icrRateDetail.getIndirectCostRecoveryRate())) {
+                        putFieldError(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER,
+                                KFSKeyConstants.IndirectCostRecovery.ERROR_DOCUMENT_ICR_RATE_NOT_FOUND,
+                                new String[] {fiscalYear, icrSeriesId});
+                        result &= false;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    protected boolean shouldCheckIndirectCostRecoveryRateDetails(Account newAccount) {
+        return ObjectUtils.isNotNull(newAccount.getSubFundGroup())
+                && getSubFundGroupService().isForContractsAndGrants(newAccount.getSubFundGroup())
+                && StringUtils.isNotBlank(newAccount.getFinancialIcrSeriesIdentifier());
+    }
+
+    protected Collection<IndirectCostRecoveryRateDetail> findIndirectCostRecoveryRateDetails(String fiscalYear, String icrSeriesId) {
+        Map<String, String> criteria = new HashMap<>();
+        criteria.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, fiscalYear.toString());
+        criteria.put(KFSPropertyConstants.FINANCIAL_ICR_SERIES_IDENTIFIER, icrSeriesId);
+        return getBoService().findMatching(IndirectCostRecoveryRateDetail.class, criteria);
+    }
+
+    protected UniversityDateService getUniversityDateService() {
+        return SpringContext.getBean(UniversityDateService.class);
+    }
+
 }
