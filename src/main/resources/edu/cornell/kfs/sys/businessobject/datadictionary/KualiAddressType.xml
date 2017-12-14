@@ -40,9 +40,9 @@
         <property name="forceUppercase" value="true"/>
         <property name="label" value="Address Type Code"/>
         <property name="shortLabel" value="Code"/>
-        <property name="maxLength" value="8"/>
+        <property name="maxLength" value="1"/>
         <property name="validationPattern">
-            <bean parent="AnyCharacterValidation" />
+            <bean parent="AlphaValidationPattern" />
         </property>
         <property name="required" value="true"/>
         <property name="control">
