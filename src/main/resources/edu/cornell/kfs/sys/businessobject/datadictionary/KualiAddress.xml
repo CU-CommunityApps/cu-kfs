@@ -62,9 +62,10 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
       		<bean parent="AlphaNumericValidationPattern" />
 	    	</property>
 	    	<property name="control">
-	    	  	<bean parent="TextControlDefinition" p:size="12"/>
+            <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.sys.businessobject.options.KualiAddressTypeValuesFinder"
+                  p:includeKeyInLabel="false"/>
 	    	</property>
-    </bean>           
+    </bean>        
             
     <bean id="KualiAddress-streetAddress" parent="KualiAddress-streetAddress-parentBean"/>
     <bean id="KualiAddress-streetAddress-parentBean" abstract="true" parent="AttributeDefinition">

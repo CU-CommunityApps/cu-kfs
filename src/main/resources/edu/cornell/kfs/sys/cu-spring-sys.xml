@@ -195,15 +195,6 @@
         </property>
     </bean>
     
-    
-    <bean id="addressTypeLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.KualiAddressTypeLookupableHelperServiceImpl" scope="prototype" />
-    
-    <bean id="addressTypeLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
-        <property name="lookupableHelperService">
-            <ref bean="addressTypeLookupableHelperService" />
-        </property>
-    </bean>
-
 	<!-- put back when we can make it work
 	-->
 	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean"/>
