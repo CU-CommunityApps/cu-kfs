@@ -20,10 +20,13 @@ package org.kuali.kfs.module.purap.document.web.struts;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +65,7 @@ import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
+import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemState;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemType;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -1014,11 +1018,23 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             CapitalAssetSystem system = assetItem.getPurchasingCapitalAssetSystem();
             asset = assetItem.getAndResetNewPurchasingItemCapitalAssetLine();
             asset.setCapitalAssetSystemIdentifier(system.getCapitalAssetSystemIdentifier());
-            system.getItemCapitalAssets().add(asset);
+            if (capitalAssetSystemHasAssetItem(system, asset)) {
+                GlobalVariables.getMessageMap().putError(PurapConstants.CAPITAL_ASSET_TAB_ERRORS, PurapKeyConstants.ERROR_CAPITAL_ASSET_DUPLICATE_ASSET);
+            } else {
+                system.getItemCapitalAssets().add(asset);
+            }
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
+    
+    private boolean capitalAssetSystemHasAssetItem(CapitalAssetSystem system, ItemCapitalAsset asset) {
+        return system.getItemCapitalAssets()
+                .stream()
+                .map(ItemCapitalAsset::getCapitalAssetNumber)
+                .collect(Collectors.toList())
+                .contains(asset.getCapitalAssetNumber());
+    }    
 
     public ActionForward deleteItemCapitalAssetByDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
