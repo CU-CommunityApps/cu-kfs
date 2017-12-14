@@ -3,27 +3,28 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
+import java.util.LinkedHashMap;
+import java.util.UUID;
+
 public class KualiAddress extends PersistableBusinessObjectBase implements MutableInactivatable {
 
     private static final long serialVersionUID = 1L;
 
     private String addressId;
     private String objectId;
-    private String streetAddressLine1;
-    private String addressType;
-    private String streetAddressLine2;
-    private String streetAddressLine3;
+    private String streetAddress;
+    private String addressTypeCode;
+    private String streetAddressExtra;
     private String city;
     private String stateCode;
     private String countryCode;
     private String zipCode;
     private Boolean active;
-    // private List<String> addressLines; TODO
 	
     public KualiAddress() {
 		super();
         this.active = true;
-		//addressType = AddressType.HOME;
+        this.objectId = UUID.randomUUID().toString();
 	}
 
      @Override
@@ -36,40 +37,20 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
         return this.active;
     }
 
-    // private List<String> getAddressLines() {
-    // List<String> ret = new LinkedList<String>();
-    // ret.add(streetAddressLine1);
-    // if (!Strings.isNullOrEmpty(streetAddressLine2)) {
-    // ret.add(streetAddressLine1);
-    // }
-    // if (!Strings.isNullOrEmpty(streetAddressLine3)) {
-    // ret.add(streetAddressLine3);
-    // }
-    // return ret;
-    // }
-
-    public String getStreetAddressLine1() {
-        return streetAddressLine1;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setStreetAddressLine1(String streetAddressLine1) {
-        this.streetAddressLine1 = streetAddressLine1;
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
     }
 
-    public String getStreetAddressLine2() {
-        return streetAddressLine2;
+    public String getStreetAddressExtra() {
+        return streetAddressExtra;
     }
 
-    public void setStreetAddressLine2(String streetAddressLine2) {
-        this.streetAddressLine2 = streetAddressLine2;
-    }
-
-    public String getStreetAddressLine3() {
-        return streetAddressLine3;
-    }
-
-    public void setStreetAddressLine3(String streetAddressLine3) {
-        this.streetAddressLine3 = streetAddressLine3;
+    public void setStreetAddressExtra(String streetAddressExtra) {
+        this.streetAddressExtra = streetAddressExtra;
     }
 
     public String getCity() {
@@ -112,12 +93,12 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
         this.addressId = addressId;
     }
 
-    public String getAddressType() {
-        return addressType;
+    public String getAddressTypeCode() {
+        return addressTypeCode;
     }
 
-    public void setAddressType(String addressType) {
-        this.addressType = addressType;
+    public void setAddressTypeCode(String addressTypeCode) {
+        this.addressTypeCode = addressTypeCode;
     }
 
     public Boolean getActive() {
@@ -134,5 +115,13 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
 
     public void setObjectId(String objectId) {
         this.objectId = objectId;
+    }
+
+    protected LinkedHashMap toStringMapper() {
+        LinkedHashMap m = new LinkedHashMap();
+
+        m.put("addressTypeCode", this.addressTypeCode);
+
+        return m;
     }
 }
