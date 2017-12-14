@@ -21,16 +21,14 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
 		<property name="attributes">
 	      <list>
               <ref bean="KualiAddress-addressId"/>
-		      <ref bean="KualiAddress-addressType"/>
-              <ref bean="KualiAddress-streetAddressLine1"/>
-              <ref bean="KualiAddress-streetAddressLine2"/>
-              <ref bean="KualiAddress-streetAddressLine3"/>
+		      <ref bean="KualiAddress-addressTypeCode"/>
+              <ref bean="KualiAddress-streetAddress"/>
+              <ref bean="KualiAddress-streetAddressExtra"/>
               <ref bean="KualiAddress-city"/>
               <ref bean="KualiAddress-stateCode"/>
               <ref bean="KualiAddress-zipCode"/>
               <ref bean="KualiAddress-countryCode"/>
               <ref bean="KualiAddress-active"/>
-              <ref bean="KualiAddress-objectId"/>
 		  </list>
 		</property>
         
@@ -54,9 +52,9 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
             </property>
     </bean>           
             
-    <bean id="KualiAddress-addressType" parent="KualiAddress-addressType-parentBean"/>
-    <bean id="KualiAddress-addressType-parentBean" abstract="true" parent="AttributeDefinition">
-	    	<property name="name" value="addressType"/>
+    <bean id="KualiAddress-addressTypeCode" parent="KualiAddress-addressTypeCode-parentBean"/>
+    <bean id="KualiAddress-addressTypeCode-parentBean" abstract="true" parent="AttributeDefinition">
+	    	<property name="name" value="addressTypeCode"/>
 	    	<property name="label" value="Address Type"/>
 	    	<property name="shortLabel" value="Type"/>
 	    	<property name="maxLength" value="64"/>
@@ -68,39 +66,28 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
 	    	</property>
     </bean>           
             
-    <bean id="KualiAddress-streetAddressLine1" parent="KualiAddress-streetAddressLine1-parentBean"/>
-    <bean id="KualiAddress-streetAddressLine1-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="streetAddressLine1"/>
-        <property name="label" value="Street Address Line 1"/>
+    <bean id="KualiAddress-streetAddress" parent="KualiAddress-streetAddress-parentBean"/>
+    <bean id="KualiAddress-streetAddress-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="streetAddress"/>
+        <property name="label" value="Street Address"/>
         <property name="shortLabel" value="Address"/>
         <property name="maxLength" value="128"/>
         <property name="control">
-            <bean parent="TextControlDefinition" p:size="32"/>
+            <bean parent="TextControlDefinition" p:size="64"/>
         </property>
 <!--             TODO: how to allow spaces <property name="validationPattern"> -->
 <!--                 <bean parent="AlphaNumericValidationPattern" /> -->
 <!--             </property> -->
     </bean>
     
-    <bean id="KualiAddress-streetAddressLine2" parent="KualiAddress-streetAddressLine2-parentBean"/>
-    <bean id="KualiAddress-streetAddressLine2-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="streetAddressLine2"/>
-        <property name="label" value="Street Address Line 2"/>
+    <bean id="KualiAddress-streetAddressExtra" parent="KualiAddress-streetAddressExtra-parentBean"/>
+    <bean id="KualiAddress-streetAddressExtra-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="streetAddressExtra"/>
+        <property name="label" value="Street Address 2"/>
         <property name="shortLabel" value="Address 2"/>
-        <property name="maxLength" value="128"/>
+        <property name="maxLength" value="256"/>
         <property name="control">
-            <bean parent="TextControlDefinition" p:size="32"/>
-        </property>
-    </bean>
-    
-    <bean id="KualiAddress-streetAddressLine3" parent="KualiAddress-streetAddressLine3-parentBean"/>
-    <bean id="KualiAddress-streetAddressLine3-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="streetAddressLine3"/>
-        <property name="label" value="Street Address Line 3"/>
-        <property name="shortLabel" value="Address 3"/>
-        <property name="maxLength" value="128"/>
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="32"/>
+            <bean parent="TextControlDefinition" p:size="64"/>
         </property>
     </bean>
     
@@ -151,18 +138,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
     <bean id="KualiAddress-active" parent="KualiAddress-active-parentBean"/>
     <bean id="KualiAddress-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
-    </bean>       
-    
-    <bean id="KualiAddress-objectId" parent="KualiAddress-objectId-parentBean"/>
-    <bean id="KualiAddress-objectId-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="objectId"/>
-        <property name="label" value="Object ID"/>
-        <property name="shortLabel" value="Obj ID"/>
-        <property name="maxLength" value="36"/>
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="32"/>
-        </property>
-    </bean>    
+    </bean>
 	
   <!-- Business Object Inquiry Definition -->  
   <bean id="KualiAddress-inquiryDefinition" parent="KualiAddress-inquiryDefinition-parentBean"/>
@@ -175,7 +151,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
           <property name="numberOfColumns" value="1"/>
           <property name="inquiryFields">
             <list>
-              <bean parent="FieldDefinition" p:attributeName="addressType"/>
+              <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
               <bean parent="FieldDefinition" p:attributeName="addressId"/>
             </list>
           </property>
@@ -193,7 +169,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
           <bean parent="SortDefinition">
             <property name="attributeNames">
               <list>  
-                <value>addressType</value>
+                <value>addressTypeCode</value>
                 <value>addressId</value>     
               </list>
             </property>
@@ -203,7 +179,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         
         <property name="lookupFields">
           <list>
-            <bean parent="FieldDefinition" p:attributeName="addressType"/>
+            <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
             <bean parent="FieldDefinition" p:attributeName="addressId"/>
             <bean parent="FieldDefinition" p:attributeName="city"/>
             <bean parent="FieldDefinition" p:attributeName="stateCode"/>
@@ -214,7 +190,7 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         
         <property name="resultFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="addressType"/>
+                <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
                 <bean parent="FieldDefinition" p:attributeName="addressId"/>
                 <bean parent="FieldDefinition" p:attributeName="city"/>
                 <bean parent="FieldDefinition" p:attributeName="stateCode"/>

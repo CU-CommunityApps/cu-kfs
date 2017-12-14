@@ -30,16 +30,14 @@
     <property name="maintainableItems">
       <list>
         <bean parent="MaintainableFieldDefinition" p:name="addressId" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="addressType" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="streetAddressLine1" p:required="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="streetAddressLine2" p:required="false"/>
-        <bean parent="MaintainableFieldDefinition" p:name="streetAddressLine3" p:required="false"/>
+        <bean parent="MaintainableFieldDefinition" p:name="addressTypeCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="streetAddress" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="streetAddressExtra" p:required="false"/>
         <bean parent="MaintainableFieldDefinition" p:name="city" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="stateCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="zipCode" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="countryCode" p:required="true" p:defaultValue="US" />
         <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="Y" />
-        <bean parent="MaintainableFieldDefinition" p:name="objectId" p:required="true" />
       </list>
     </property>
   </bean>

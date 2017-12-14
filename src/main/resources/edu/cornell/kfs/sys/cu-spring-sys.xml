@@ -194,6 +194,19 @@
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>
     </bean>
+    
+    
+    <bean id="addressTypeLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.KualiAddressTypeLookupableHelperServiceImpl" scope="prototype">
+        <property name="addressTypeValidationService">
+            <ref bean="addressTypeLookupableValidationService" />
+        </property>
+    </bean>
+    
+    <bean id="addressTypeLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
+        <property name="lookupableHelperService">
+            <ref bean="addressTypeLookupableHelperService" />
+        </property>
+    </bean>
 
 	<!-- put back when we can make it work
 	-->
