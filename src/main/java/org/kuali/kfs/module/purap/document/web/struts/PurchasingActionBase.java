@@ -20,10 +20,13 @@ package org.kuali.kfs.module.purap.document.web.struts;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +65,7 @@ import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
+import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemState;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemType;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -989,7 +993,11 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             CapitalAssetSystem system = purDocument.getPurchasingCapitalAssetSystems().get(getSelectedLine(request));
             asset = purDocument.getPurchasingCapitalAssetItems().get(0).getAndResetNewPurchasingItemCapitalAssetLine();
             asset.setCapitalAssetSystemIdentifier(system.getCapitalAssetSystemIdentifier());
-            system.getItemCapitalAssets().add(asset);
+            if (capitalAssetSystemHasAssetItem(system, asset)) {
+                GlobalVariables.getMessageMap().putError(PurapConstants.CAPITAL_ASSET_TAB_ERRORS, PurapKeyConstants.ERROR_CAPITAL_ASSET_DUPLICATE_ASSET);
+            } else {
+                system.getItemCapitalAssets().add(asset);
+            }
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -1010,11 +1018,23 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             CapitalAssetSystem system = assetItem.getPurchasingCapitalAssetSystem();
             asset = assetItem.getAndResetNewPurchasingItemCapitalAssetLine();
             asset.setCapitalAssetSystemIdentifier(system.getCapitalAssetSystemIdentifier());
-            system.getItemCapitalAssets().add(asset);
+            if (capitalAssetSystemHasAssetItem(system, asset)) {
+                GlobalVariables.getMessageMap().putError(PurapConstants.CAPITAL_ASSET_TAB_ERRORS, PurapKeyConstants.ERROR_CAPITAL_ASSET_DUPLICATE_ASSET);
+            } else {
+                system.getItemCapitalAssets().add(asset);
+            }
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
+    
+    private boolean capitalAssetSystemHasAssetItem(CapitalAssetSystem system, ItemCapitalAsset asset) {
+        return system.getItemCapitalAssets()
+                .stream()
+                .map(ItemCapitalAsset::getCapitalAssetNumber)
+                .collect(Collectors.toList())
+                .contains(asset.getCapitalAssetNumber());
+    }    
 
     public ActionForward deleteItemCapitalAssetByDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
@@ -1156,19 +1176,44 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         } else if (StringUtils.isEmpty(document.getCapitalAssetSystemStateCode())) {
             GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "Capital Asset System Type and Capital Asset System State are both required to proceed");
         } else {
-            SpringContext.getBean(PurchasingService.class).setupCapitalAssetSystem(document);
-            SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
-            if (!document.getPurchasingCapitalAssetItems().isEmpty()) {
+            document.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_TYPE);
+            document.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE);
+
+            if (validateCapitalAssetSystemStateAllowed(document.getCapitalAssetSystemType(), document.getCapitalAssetSystemState())) {
+                SpringContext.getBean(PurchasingService.class).setupCapitalAssetSystem(document);
+                SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
+                if (!document.getPurchasingCapitalAssetItems().isEmpty()) {
+                    saveDocumentNoValidationUsingClearErrorMap(document);
+                } else {
+                    // TODO: extract this and above strings to app resources
+                    GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "No items were found that met the requirements for Capital Asset data collection");
+                }
                 saveDocumentNoValidationUsingClearErrorMap(document);
+            } else {
+                // Blank out type selection, otherwise UI marks it read only
+                document.setCapitalAssetSystemStateCode(null);
+                document.setCapitalAssetSystemState(null);
             }
-            else {
-                // TODO: extract this and above strings to app resources
-                GlobalVariables.getMessageMap().putError(errorPath, KFSKeyConstants.ERROR_CUSTOM, "No items were found that met the requirements for Capital Asset data collection");
-            }
-            saveDocumentNoValidationUsingClearErrorMap(document);
         }
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    /**
+     * Validate allowed capital asset system state codes
+     *
+     * @param capitalAssetSystemType that was selected
+     * @param capitalAssetSystemState that was selected
+     * @return whether the selected type allows the selected state
+     */
+    protected static boolean validateCapitalAssetSystemStateAllowed(CapitalAssetSystemType capitalAssetSystemType, CapitalAssetSystemState capitalAssetSystemState) {
+        List<String> allowedCodes = Arrays.asList(capitalAssetSystemType.getAllowedCapitalAssetSystemStateCodes().split(";"));
+        if (!allowedCodes.contains(capitalAssetSystemState.getCapitalAssetSystemStateCode())) {
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DOCUMENT + "." + PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE_CODE, PurapKeyConstants.ERROR_CAPITAL_ASSET_NOT_ALLOWED_SYSTEM_TYPE, capitalAssetSystemType.getCapitalAssetSystemTypeDescription(), capitalAssetSystemState.getCapitalAssetSystemStateDescription());
+            return false;
+        }
+
+        return true;
     }
 
     /**
