@@ -47,18 +47,6 @@
  	<bean id="assetService"  parent="assetService-parentBean"
  	     class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetServiceImpl" />
 
-    <bean id="cuAssetSubAccountService" class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetSubAccountServiceImpl">
-        <property name="parameterService" ref="parameterService" />
-    </bean>
-
-    <bean id="assetRetirementService" parent="assetRetirementService-parentBean">
-        <property name="cuAssetSubAccountService" ref="cuAssetSubAccountService" />
-    </bean>
-
-    <bean id="assetTransferService"  parent="assetTransferService-parentBean" class="edu.cornell.kfs.module.cam.document.service.impl.CuAssetTransferServiceImpl">
-        <property name="cuAssetSubAccountService" ref="cuAssetSubAccountService" />
-    </bean>
-
 	<bean id="capitalAssetManagementModuleService" parent="capitalAssetManagementModuleService-parentBean" class="edu.cornell.kfs.module.cam.service.impl.CuCapitalAssetManagementModuleServiceImpl" />
 
 	<bean id="batchExtractService" parent="batchExtractService-parentBean" class="edu.cornell.kfs.module.cam.batch.service.impl.CuBatchExtractServiceImpl">
