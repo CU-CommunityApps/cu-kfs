@@ -6,17 +6,15 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
 	<bean id="KualiAddress" parent="KualiAddress-parentBean"/>
 	<bean id="KualiAddress-parentBean" abstract="true" parent="BusinessObjectEntry">
 	    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
-	    <property name="objectLabel" value="KualiAddress"/>
-	
-		<property name="titleAttribute" value="Kuali Address"/>
 	
 		 <property name="inquiryDefinition">
 	      <ref bean="KualiAddress-inquiryDefinition"/>
-	    </property>
-        
+	    </property>        
 	    <property name="lookupDefinition">
 	      <ref bean="KualiAddress-lookupDefinition"/>
 	    </property>
+        <property name="titleAttribute" value="addressId"/>
+        <property name="objectLabel" value="KualiAddressAAA"/>
 	
 		<property name="attributes">
 	      <list>

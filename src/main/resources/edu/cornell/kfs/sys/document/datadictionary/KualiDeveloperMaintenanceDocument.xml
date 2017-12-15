@@ -9,6 +9,7 @@
     <property name="maintainableSections">
       <list>
         <ref bean="KualiDeveloperMaintenanceDocument-EditKualiDeveloper"/>
+        <ref bean="KualiDeveloperMaintenanceDocument-Addresses"/>
       </list>
     </property>
     
@@ -41,10 +42,42 @@
         <bean parent="MaintainableFieldDefinition" p:name="positionName" p:required="false"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="socialSecurityNumber" p:required="false"/>
-        <bean parent="MaintainableFieldDefinition" p:name="address" p:required="false"/>
       </list>
     </property>
   </bean>
+  
+    <bean id="KualiDeveloperMaintenanceDocument-Addresses" parent="KualiDeveloperMaintenanceDocument-Addresses-parentBean"/>
+
+    <bean id="KualiDeveloperMaintenanceDocument-Addresses-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+        <property name="id" value="addressesSection"/>
+        <property name="title" value="Addresses"/>
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition">
+                    <property name="name" value="kualiAddresses"/>
+                    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="AddressTypeCode"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="addressId"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="addressTypeCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="streetAddress" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="streetAddressExtra"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="city" p:required="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="stateCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="zipCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="countryCode"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+  
   
   <!-- workflow attributes -->
   <bean id="KualiDeveloperMaintenanceDocument-workflowAttributes" parent="KualiDeveloperMaintenanceDocument-workflowAttributes-parentBean"/>
