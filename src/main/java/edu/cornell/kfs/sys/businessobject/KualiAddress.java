@@ -12,6 +12,7 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
 
     private String addressId;
     private String objectId;
+    private String employeeId;
     private String streetAddress;
     private String addressTypeCode;
     private String streetAddressExtra;
@@ -123,5 +124,13 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
         m.put("addressTypeCode", this.addressTypeCode);
 
         return m;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 }
