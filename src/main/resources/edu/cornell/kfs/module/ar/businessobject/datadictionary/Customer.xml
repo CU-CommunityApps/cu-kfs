@@ -1,15 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
-
-  <bean id="Customer" parent="Customer-parentBean">
-     <property name="attributes">
-      <list  merge="true">
-         <!-- <ref bean="Customer-customerContactName"/> --> 
-         <!-- <ref bean="Asset-extension-serviceRateIndicator"/> -->
-      </list>
-    </property>
-  </bean>
-
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<!--
+ Copyright 2007-2009 The Kuali Foundation
+ 
+ Licensed under the Educational Community License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.opensource.org/licenses/ecl2.php
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+  
 <!-- Attribute Definitions -->  
 
     <bean id="Customer-customerContactName" parent="Customer-customerContactName-parentBean">
@@ -18,60 +23,38 @@
 
     <bean id="Customer-customerContactPhoneNumber" parent="Customer-customerContactPhoneNumber-parentBean">
         <property name="label" value="Customer Phone Number"/>
+        <!-- Already exists in base code -->
+        <!-- <property name="validationPattern">
+            <bean parent="PhoneNumberValidationPattern"/>
+        </property> -->
     </bean>
-
-<!--     <bean id="Customer-customerName" parent="Customer-customerName-parentBean">        
-        <property name="validationPattern">
-            <ref bean="AnyCharacterWithWhitespaceValidation"/>
-        </property>
-    </bean> -->
-
-<!--   <bean id="Customer-customerContactName" parent="Customer-customerContactName-parentBean"/>
-  <bean id="Customer-customerContactName-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="customerContactName"/>
-    <property name="maxLength" value="50"/>
-  </bean> -->
-  
-<!-- Business Object Inquiry Definition -->
-
-<!-- <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="Asset-inquiryDefinition" />
-      <property name="fieldOverrides">
-          <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquirySections[0].inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="createDate" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.serviceRateIndicator" />
-                      </list>
-                  </property>
-              </bean>
-           </list>
-      </property>
-  </bean> -->
+    
+    <bean id="Customer-customerEmailAddress" parent="Customer-customerEmailAddress-parentBean">
+        <property name="label" value="Customer Email Address" />
+        <property name="forceUppercase" value="false"/>
+    </bean> 
 
 
 <!-- Business Object Lookup Definition -->
 
-<!--   <bean parent="DataDictionaryBeanOverride">
+    <bean parent="DataDictionaryBeanOverride">
       <property name="beanName" value="Customer-lookupDefinition" />
       <property name="fieldOverrides">
           <list>
               <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="lookupFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="assetLocations.assetLocationTypeCode" />
-                      </list>
-                  </property>
-              </bean>
+                   <property name="propertyName" value="resultFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                          <bean parent="FieldDefinition" p:attributeName="customerTaxNbr" />
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                      <bean parent="FieldDefinition" p:attributeName="customerEmailAddress" />
+                       </list>
+                   </property>
+               </bean>
            </list>
       </property>
-  </bean> -->
+    </bean>
 
 </beans>

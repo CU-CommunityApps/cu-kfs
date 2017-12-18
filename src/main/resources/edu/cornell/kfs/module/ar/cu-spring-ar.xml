@@ -9,6 +9,7 @@
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
     <bean id="arModuleConfiguration" parent="arModuleConfiguration-parentBean">
+    
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.module.ar</value>
@@ -16,7 +17,7 @@
         </property>
 		<property name="dataDictionaryPackages">
 			<list merge="true">
-                <!-- <value>classpath:edu/cornell/kfs/module/ar/document/datadictionary/*.xml</value> -->
+                <value>classpath:edu/cornell/kfs/module/ar/document/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/module/ar/businessobject/datadictionary/*.xml</value>
 			</list>
 		</property>
