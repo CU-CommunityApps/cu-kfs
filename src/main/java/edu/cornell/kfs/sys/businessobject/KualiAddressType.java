@@ -1,21 +1,17 @@
 package edu.cornell.kfs.sys.businessobject;
 
-import java.util.LinkedHashMap;
-
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 public class KualiAddressType extends PersistableBusinessObjectBase implements MutableInactivatable {
 
-    private static final long serialVersionUID = 1L;
-
     private String addressTypeCode;
     private String addressTypeName;
     private Boolean active;
-	
-    public KualiAddressType() {
 
-	}
+    public KualiAddressType() {
+        this.active = true;
+    }
 
      @Override
      public void setActive(boolean active) {
@@ -47,16 +43,4 @@ public class KualiAddressType extends PersistableBusinessObjectBase implements M
         this.addressTypeName = addressTypeName;
     }
 
-    /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-        m.put("addressTypeCode", this.addressTypeCode);
-        return m;
-    }
 }
-
-
-
-

@@ -8,7 +8,7 @@ import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
 public class KualiDeveloper extends PersistableBusinessObjectBase implements MutableInactivatable {
 
-	private String firstName;
+    private String firstName;
 	private String lastName;
 	private String positionName;
 	private String employeeId;
@@ -18,7 +18,7 @@ public class KualiDeveloper extends PersistableBusinessObjectBase implements Mut
 
 	public KualiDeveloper() {
 		super();
-		active = false;
+        active = true;
         kualiAddresses = new ArrayList<KualiAddress>();
 	}
 
@@ -82,6 +82,5 @@ public class KualiDeveloper extends PersistableBusinessObjectBase implements Mut
     public void setKualiAddresses(List<KualiAddress> kualiAddresses) {
         this.kualiAddresses = kualiAddresses;
     }
-
 	
 }

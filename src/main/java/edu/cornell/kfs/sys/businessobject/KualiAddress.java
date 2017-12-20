@@ -3,15 +3,9 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
-import java.util.LinkedHashMap;
-import java.util.UUID;
-
 public class KualiAddress extends PersistableBusinessObjectBase implements MutableInactivatable {
 
-    private static final long serialVersionUID = 1L;
-
     private String addressId;
-    private String objectId;
     private String employeeId;
     private String streetAddress;
     private String addressTypeCode;
@@ -23,14 +17,13 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
     private Boolean active;
 	
     public KualiAddress() {
-		super();
-        this.active = true;
-        this.objectId = UUID.randomUUID().toString();
+        super();
+        active = true;
 	}
 
      @Override
      public void setActive(boolean active) {
-         this.active = active;
+        this.active = active;
      }
 
     @Override
@@ -110,22 +103,6 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
         this.active = active;
     }
 
-    public String getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
-    }
-
-    protected LinkedHashMap toStringMapper() {
-        LinkedHashMap m = new LinkedHashMap();
-
-        m.put("addressTypeCode", this.addressTypeCode);
-
-        return m;
-    }
-
     public String getEmployeeId() {
         return employeeId;
     }
@@ -133,4 +110,5 @@ public class KualiAddress extends PersistableBusinessObjectBase implements Mutab
     public void setEmployeeId(String employeeId) {
         this.employeeId = employeeId;
     }
+
 }
