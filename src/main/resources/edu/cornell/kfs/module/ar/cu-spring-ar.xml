@@ -9,7 +9,6 @@
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
     <bean id="arModuleConfiguration" parent="arModuleConfiguration-parentBean">
-    
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.module.ar</value>
@@ -26,17 +25,6 @@
 				<value>edu/cornell/kfs/module/ar/cu-ojb-ar.xml</value>
 			</list>
 		</property>
-		<property name="externalizableBusinessObjectImplementations">
-            <map merge="true">
-              	<!-- <entry key="org.kuali.kfs.module.cg.businessobject.Award" value="edu.cornell.kfs.module.cg.businessobject.CuAward" /> -->
-			</map>
-        </property>
 	</bean>
 
-	<!-- <bean id="awardAccountDao" parent="platformAwareDao"  class="edu.cornell.kfs.module.cg.dataaccess.impl.AwardAccountDaoOjb" /> -->
-	
-	<!-- <bean id="cuAwardAccountService" class="edu.cornell.kfs.module.cg.service.impl.CuAwardAccountServiceImpl">
-		<property name="awardAccountDao" ref="awardAccountDao"/>
-	</bean>
- -->
 </beans>

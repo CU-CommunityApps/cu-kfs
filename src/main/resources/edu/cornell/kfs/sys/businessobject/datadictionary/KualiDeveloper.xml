@@ -39,13 +39,6 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
                       p:label="Developer Addresses" p:shortLabel="Addresses" p:elementLabel="Developer Address"/>
             </list>            
         </property>
-		<property name="relationships">
-			<list>
-<!-- 				<dd:relationship objectAttribute="address" targetClass="edu.cornell.kfs.sys.businessobject.KualiAddress"> -->
-<!-- 	    	        		<dd:primitiveAttribute source="addressId" target="addressId"/> -->
-<!-- 	        		</dd:relationship> -->
-	        </list>
-	    </property>
 	</bean>
             
     <bean id="KualiDeveloper-firstName" parent="KualiDeveloper-firstName-parentBean"/>
