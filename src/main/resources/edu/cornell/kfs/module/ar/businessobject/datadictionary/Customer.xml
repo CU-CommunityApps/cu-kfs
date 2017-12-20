@@ -14,27 +14,25 @@
         <property name="forceUppercase" value="false"/>
     </bean> 
 
-
-<!-- Business Object Lookup Definition -->
-
+    <!-- Business Object Lookup Definition -->
     <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="Customer-lookupDefinition" />
-      <property name="fieldOverrides">
-          <list>
-              <bean parent="FieldOverrideForListElementInsert">
+        <property name="beanName" value="Customer-lookupDefinition" />
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="resultFields" />
                    <property name="propertyNameForElementCompare" value="attributeName" />
                    <property name="element">
-                          <bean parent="FieldDefinition" p:attributeName="customerTaxNbr" />
+                       <bean parent="FieldDefinition" p:attributeName="customerTaxNbr" />
                    </property>
                    <property name="insertAfter">
                        <list>
-                      <bean parent="FieldDefinition" p:attributeName="customerEmailAddress" />
+                           <bean parent="FieldDefinition" p:attributeName="customerEmailAddress" />
                        </list>
                    </property>
-               </bean>
-           </list>
-      </property>
+                </bean>
+            </list>
+        </property>
     </bean>
 
 </beans>

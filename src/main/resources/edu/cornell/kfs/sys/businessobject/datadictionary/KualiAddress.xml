@@ -1,53 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
-xmlns:dd="http://rice.kuali.org/dd" 
-xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 	
 	<bean id="KualiAddress" parent="KualiAddress-parentBean"/>
 	<bean id="KualiAddress-parentBean" abstract="true" parent="BusinessObjectEntry">
-	    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
-	
-		 <property name="inquiryDefinition">
-	      <ref bean="KualiAddress-inquiryDefinition"/>
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
+        <property name="inquiryDefinition">
+            <ref bean="KualiAddress-inquiryDefinition"/>
 	    </property>        
 	    <property name="lookupDefinition">
-	      <ref bean="KualiAddress-lookupDefinition"/>
+            <ref bean="KualiAddress-lookupDefinition"/>
 	    </property>
         <property name="titleAttribute" value="addressId"/>
         <property name="objectLabel" value="KualiAddressAAA"/>
-	
-		<property name="attributes">
-	      <list>
-              <ref bean="KualiAddress-addressId"/>
-		      <ref bean="KualiAddress-addressTypeCode"/>
-              <ref bean="KualiAddress-streetAddress"/>
-              <ref bean="KualiAddress-streetAddressExtra"/>
-              <ref bean="KualiAddress-city"/>
-              <ref bean="KualiAddress-stateCode"/>
-              <ref bean="KualiAddress-zipCode"/>
-              <ref bean="KualiAddress-countryCode"/>
-              <ref bean="KualiAddress-active"/>
-		  </list>
-		</property>
-        
-		<property name="relationships">
-			<list>
-	        </list>
-	    </property>
-	</bean>
+        <property name="attributes">
+            <list>
+                <ref bean="KualiAddress-addressId"/>
+                <ref bean="KualiAddress-addressTypeCode"/>
+                <ref bean="KualiAddress-streetAddress"/>
+                <ref bean="KualiAddress-streetAddressExtra"/>
+                <ref bean="KualiAddress-city"/>
+                <ref bean="KualiAddress-stateCode"/>
+                <ref bean="KualiAddress-zipCode"/>
+                <ref bean="KualiAddress-countryCode"/>
+                <ref bean="KualiAddress-active"/>
+            </list>
+        </property>
+    </bean>
             
     <bean id="KualiAddress-addressId" parent="KualiAddress-addressId-parentBean"/>
     <bean id="KualiAddress-addressId-parentBean" abstract="true" parent="AttributeDefinition">
-            <property name="name" value="addressId"/>
-            <property name="label" value="Address ID"/>
-            <property name="shortLabel" value="ID"/>
-            <property name="maxLength" value="16"/>
-            <property name="validationPattern">
+        <property name="name" value="addressId"/>
+        <property name="label" value="Address ID"/>
+        <property name="shortLabel" value="ID"/>
+        <property name="maxLength" value="16"/>
+        <property name="validationPattern">
             <bean parent="AlphaNumericValidationPattern" />
-            </property>
-            <property name="control">
-                <bean parent="TextControlDefinition" p:size="12"/>
-            </property>
+        </property>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12"/>
+        </property>
     </bean>           
             
     <bean id="KualiAddress-addressTypeCode" parent="KualiAddress-addressTypeCode-parentBean"/>
@@ -74,9 +64,9 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         <property name="control">
             <bean parent="TextControlDefinition" p:size="64"/>
         </property>
-<!--             TODO: how to allow spaces <property name="validationPattern"> -->
-<!--                 <bean parent="AlphaNumericValidationPattern" /> -->
-<!--             </property> -->
+        <property name="validationPattern">
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
+        </property>
     </bean>
     
     <bean id="KualiAddress-streetAddressExtra" parent="KualiAddress-streetAddressExtra-parentBean"/>
@@ -139,24 +129,24 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         <property name="name" value="active"/>
     </bean>
 	
-  <!-- Business Object Inquiry Definition -->  
-  <bean id="KualiAddress-inquiryDefinition" parent="KualiAddress-inquiryDefinition-parentBean"/>
-  <bean id="KualiAddress-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-    <property name="title" value="Kuali Address Inquiry"/>
-    <property name="inquirySections">
-      <list>
-        <bean parent="InquirySectionDefinition">
-          <property name="title" value=""/>
-          <property name="numberOfColumns" value="1"/>
-          <property name="inquiryFields">
+    <!-- Business Object Inquiry Definition -->  
+    <bean id="KualiAddress-inquiryDefinition" parent="KualiAddress-inquiryDefinition-parentBean"/>
+    <bean id="KualiAddress-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="Kuali Address Inquiry"/>
+        <property name="inquirySections">
             <list>
-              <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
-              <bean parent="FieldDefinition" p:attributeName="addressId"/>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value=""/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="addressId"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
-          </property>
-        </bean>
-      </list>
-    </property>
+        </property>
   </bean>
 
     <!-- Business Object Lookup Definition -->
@@ -165,26 +155,26 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         <property name="title" value="Kuali Address Lookup"/>
         
         <property name="defaultSort">
-          <bean parent="SortDefinition">
-            <property name="attributeNames">
-              <list>  
-                <value>addressTypeCode</value>
-                <value>addressId</value>     
-              </list>
-            </property>
-            <property name="sortAscending" value="false"/>
-          </bean>
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>  
+                        <value>addressTypeCode</value>
+                        <value>addressId</value>     
+                    </list>
+                </property>
+                <property name="sortAscending" value="false"/>
+            </bean>
         </property>
         
         <property name="lookupFields">
-          <list>
-            <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
-            <bean parent="FieldDefinition" p:attributeName="addressId"/>
-            <bean parent="FieldDefinition" p:attributeName="city"/>
-            <bean parent="FieldDefinition" p:attributeName="stateCode"/>
-            <bean parent="FieldDefinition" p:attributeName="zipCode"/>
-            <bean parent="FieldDefinition" p:attributeName="countryCode"/>
-          </list>
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
+                <bean parent="FieldDefinition" p:attributeName="addressId"/>
+                <bean parent="FieldDefinition" p:attributeName="city"/>
+                <bean parent="FieldDefinition" p:attributeName="stateCode"/>
+                <bean parent="FieldDefinition" p:attributeName="zipCode"/>
+                <bean parent="FieldDefinition" p:attributeName="countryCode"/>
+            </list>
         </property>
         
         <property name="resultFields">
@@ -198,4 +188,5 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
             </list>
         </property>
     </bean>
+
 </beans>

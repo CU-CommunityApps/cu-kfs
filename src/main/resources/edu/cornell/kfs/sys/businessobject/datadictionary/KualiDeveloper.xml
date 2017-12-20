@@ -1,37 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
-xmlns:dd="http://rice.kuali.org/dd" 
-xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
-<!-- need license? -->	
-	<bean id="KualiDeveloper" parent="KualiDeveloper-parentBean"/>
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="KualiDeveloper" parent="KualiDeveloper-parentBean"/>
 	<bean id="KualiDeveloper-parentBean" abstract="true" parent="BusinessObjectEntry">
 	    <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiDeveloper"/>
 	    <property name="objectLabel" value="KualiDeveloper"/>
-	
         <property name="inquiryDefinition">
-          <ref bean="KualiDeveloper-inquiryDefinition"/>
+            <ref bean="KualiDeveloper-inquiryDefinition"/>
         </property>
         <property name="lookupDefinition">
-          <ref bean="KualiDeveloper-lookupDefinition"/>
+            <ref bean="KualiDeveloper-lookupDefinition"/>
         </property>
         <property name="titleAttribute" value="employeeId"/>
-	
 		<property name="attributes">
-	      <list>
-		    	<ref bean="KualiDeveloper-firstName"/>
-	   		<ref bean="KualiDeveloper-lastName"/>
-		   	<ref bean="KualiDeveloper-positionName"/>
-		    	<ref bean="KualiDeveloper-socialSecurityNumber"/>
-		    	<ref bean="KualiDeveloper-employeeId"/>
-		    	<ref bean="KualiDeveloper-active"/>
-            <ref bean="KualiDeveloper-kualiAddresses.addressTypeCode"/>
-            <ref bean="KualiDeveloper-kualiAddresses.streetAddress"/>
-            <ref bean="KualiDeveloper-kualiAddresses.streetAddressExtra"/>
-            <ref bean="KualiDeveloper-kualiAddresses.city"/>
-            <ref bean="KualiDeveloper-kualiAddresses.stateCode"/>
-            <ref bean="KualiDeveloper-kualiAddresses.zipCode"/>
-            <ref bean="KualiDeveloper-kualiAddresses.countryCode"/>
-		  </list>
+            <list>
+                <ref bean="KualiDeveloper-firstName"/>
+                <ref bean="KualiDeveloper-lastName"/>
+                <ref bean="KualiDeveloper-positionName"/>
+                <ref bean="KualiDeveloper-socialSecurityNumber"/>
+                <ref bean="KualiDeveloper-employeeId"/>
+                <ref bean="KualiDeveloper-active"/>
+                <ref bean="KualiDeveloper-kualiAddresses.addressTypeCode"/>
+                <ref bean="KualiDeveloper-kualiAddresses.streetAddress"/>
+                <ref bean="KualiDeveloper-kualiAddresses.streetAddressExtra"/>
+                <ref bean="KualiDeveloper-kualiAddresses.city"/>
+                <ref bean="KualiDeveloper-kualiAddresses.stateCode"/>
+                <ref bean="KualiDeveloper-kualiAddresses.zipCode"/>
+                <ref bean="KualiDeveloper-kualiAddresses.countryCode"/>
+            </list>
 		</property>
         <property name="collections">
             <list>
@@ -101,9 +96,9 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         		<bean parent="TextControlDefinition" p:size="12"/>
         	</property>
         	<property name="validationPattern">
-          		<bean parent="AlphaNumericValidationPattern">
-          			<property name="maxLength" value="12"/>
-          		</bean>
+      		<bean parent="AlphaNumericValidationPattern">
+      			<property name="maxLength" value="12"/>
+      		</bean>
         	</property>
         <property name="attributeSecurity">
             <bean parent="AttributeSecurity">
@@ -173,17 +168,17 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         <property name="name" value="active"/>
     </bean>  
 	
-  <!-- Business Object Inquiry Definition -->  
-  <bean id="KualiDeveloper-inquiryDefinition" parent="KualiDeveloper-inquiryDefinition-parentBean"/>
-  <bean id="KualiDeveloper-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-    <property name="title" value="Kuali Developer Inquiry"/>
-    <property name="inquirySections">
-        <list>
-            <ref bean="KualiDeveloper-inquirySectionDefinition-generalInformation" /> 
-            <ref bean="KualiDeveloper-inquirySectionDefinition-address"/>
-        </list>  
-    </property>
-  </bean>
+    <!-- Business Object Inquiry Definition -->  
+    <bean id="KualiDeveloper-inquiryDefinition" parent="KualiDeveloper-inquiryDefinition-parentBean"/>
+    <bean id="KualiDeveloper-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="Kuali Developer Inquiry"/>
+        <property name="inquirySections">
+            <list>
+                <ref bean="KualiDeveloper-inquirySectionDefinition-generalInformation" /> 
+                <ref bean="KualiDeveloper-inquirySectionDefinition-address"/>
+            </list>  
+        </property>
+    </bean>
   
     <bean id="KualiDeveloper-inquirySectionDefinition-generalInformation" parent="KualiDeveloper-inquirySectionDefinition-generalInformation-parentBean"/>
     <bean id="KualiDeveloper-inquirySectionDefinition-generalInformation-parentBean" parent="InquirySectionDefinition" abstract="true">
@@ -191,14 +186,13 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         <property name="title" value="General Information"/>
         <property name="inquiryFields">
             <list>
-              <bean parent="FieldDefinition" p:attributeName="employeeId"/>
-              <bean parent="FieldDefinition" p:attributeName="firstName"/>
-              <bean parent="FieldDefinition" p:attributeName="lastName"/>
-              <bean parent="FieldDefinition" p:attributeName="positionName"/>
-              <bean parent="FieldDefinition" p:attributeName="active"/>
+                <bean parent="FieldDefinition" p:attributeName="employeeId"/>
+                <bean parent="FieldDefinition" p:attributeName="firstName"/>
+                <bean parent="FieldDefinition" p:attributeName="lastName"/>
+                <bean parent="FieldDefinition" p:attributeName="positionName"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
-<!--         <property name="inquirableClass" value="org.kuali.kfs.module.ar.businessobject.inquiry.CustomerInquirableImpl"/> -->
     </bean>
     
     <bean id="KualiDeveloper-inquirySectionDefinition-address" parent="KualiDeveloper-inquirySectionDefinition-address-parentBean"/>
@@ -238,43 +232,41 @@ xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.spri
         </property>
     </bean>
 
-  <!-- Business Object Lookup Definition -->
-  <bean id="KualiDeveloper-lookupDefinition" parent="KualiDeveloper-lookupDefinition-parentBean"/>
-  <bean id="KualiDeveloper-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="KualiDeveloper Lookup"/>
-    
-    <property name="defaultSort">
-      <bean parent="SortDefinition">
-        <property name="attributeNames">
-          <list>
-            <value>firstName</value> 
-            <value>lastName</value>
-            <value>employeeId</value>  
-            <value>positionName</value>     
-            <value>active</value>       
-          </list>
+    <!-- Business Object Lookup Definition -->
+    <bean id="KualiDeveloper-lookupDefinition" parent="KualiDeveloper-lookupDefinition-parentBean"/>
+    <bean id="KualiDeveloper-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="KualiDeveloper Lookup"/>
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>firstName</value> 
+                        <value>lastName</value>
+                        <value>employeeId</value>  
+                        <value>positionName</value>     
+                        <value>active</value>       
+                    </list>
+                </property>
+            </bean>
         </property>
-      </bean>
-    </property>
-    
-    <property name="lookupFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="firstName"/>
-        <bean parent="FieldDefinition" p:attributeName="lastName"/>
-        <bean parent="FieldDefinition" p:attributeName="employeeId"/>
-        <bean parent="FieldDefinition" p:attributeName="positionName"/>
-        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
-      </list>
-    </property>
-    
-    <property name="resultFields">
-        <list>
-            <bean parent="FieldDefinition" p:attributeName="firstName"/>
-            <bean parent="FieldDefinition" p:attributeName="lastName"/>
-            <bean parent="FieldDefinition" p:attributeName="employeeId"/>
-            <bean parent="FieldDefinition" p:attributeName="positionName"/>
-            <bean parent="FieldDefinition" p:attributeName="active"/>
-        </list>
-    </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="firstName"/>
+                <bean parent="FieldDefinition" p:attributeName="lastName"/>
+                <bean parent="FieldDefinition" p:attributeName="employeeId"/>
+                <bean parent="FieldDefinition" p:attributeName="positionName"/>
+                <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="firstName"/>
+                <bean parent="FieldDefinition" p:attributeName="lastName"/>
+                <bean parent="FieldDefinition" p:attributeName="employeeId"/>
+                <bean parent="FieldDefinition" p:attributeName="positionName"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
     </bean>
+    
 </beans>
