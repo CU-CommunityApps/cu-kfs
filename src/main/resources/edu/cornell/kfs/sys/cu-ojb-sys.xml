@@ -38,14 +38,6 @@
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP"/>
-            
-    <reference-descriptor name="kualiDeveloperAddress" class-ref="edu.cornell.kfs.sys.businessobject.KualiDeveloper" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-        <foreignkey field-ref="employeeId"/>
-    </reference-descriptor>
-    <reference-descriptor name="addressType" class-ref="edu.cornell.kfs.sys.businessobject.KualiAddressType" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
-        <foreignkey field-ref="addressTypeCode"/>
-    </reference-descriptor>   
-
 </class-descriptor>
     	
 <class-descriptor class="org.kuali.kfs.sys.businessobject.SourceAccountingLine" table="FP_ACCT_LINES_T">

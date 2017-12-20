@@ -45,7 +45,7 @@
                     <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
                     <property name="summaryFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="AddressTypeCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="addressTypeCode"/>
                         </list>
                     </property>
                     <property name="maintainableFields">
