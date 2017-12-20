@@ -6,7 +6,7 @@ import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.document.validation.impl.CustomerRule;
 import org.kuali.kfs.sys.KFSConstants;
 
-public class CUCustomerRule extends CustomerRule {
+public class CuCustomerRule extends CustomerRule {
 
     @Override
     public boolean checkNameIsValidLength(String customerName) {
