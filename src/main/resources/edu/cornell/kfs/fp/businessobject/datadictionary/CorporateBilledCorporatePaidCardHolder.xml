@@ -10,6 +10,21 @@
 		<property name="inquiryDefinition">
 			<ref bean="CorporateBilledCorporatePaidCardHolder-inquiryDefinition" />
 		</property>
+		<property name="attributes">
+            <list>
+                <ref bean="ProcurementCardHolder-accountNumber"/>
+                <ref bean="ProcurementCardHolder-cardCycleAmountLimit"/>
+                <ref bean="ProcurementCardHolder-cardCycleVolumeLimit"/>
+                <ref bean="ProcurementCardHolder-cardHolderAlternateName"/>
+                <ref bean="ProcurementCardHolder-cardHolderName"/>
+                <ref bean="ProcurementCardHolder-cardLimit"/>
+                <ref bean="ProcurementCardHolder-cardNoteText"/>
+                <ref bean="ProcurementCardHolder-cardStatusCode"/>
+                <ref bean="ProcurementCardHolder-chartOfAccountsCode"/>
+                <ref bean="ProcurementCardHolder-documentNumber"/>
+                <ref bean="ProcurementCardHolder-subAccountNumber"/>
+            </list>
+        </property>
 	</bean>
 
 	<bean id="CorporateBilledCorporatePaidCardHolder-inquiryDefinition" parent="CorporateBilledCorporatePaidCardHolder-inquiryDefinition-parentBean" />
