@@ -302,13 +302,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
             cardHolder.setCardCycleAmountLimit(transaction.getCardCycleAmountLimit());
             cardHolder.setCardCycleVolumeLimit(transaction.getCardCycleVolumeLimit());
             cardHolder.setCardHolderAlternateName(transaction.getCardHolderAlternateName());
-            cardHolder.setCardHolderCityName(transaction.getCardHolderCityName());
-            cardHolder.setCardHolderLine1Address(transaction.getCardHolderLine1Address());
-            cardHolder.setCardHolderLine2Address(transaction.getCardHolderLine2Address());
             cardHolder.setCardHolderName(transaction.getCardHolderName());
-            cardHolder.setCardHolderStateCode(transaction.getCardHolderStateCode());
-            cardHolder.setCardHolderWorkPhoneNumber(transaction.getCardHolderWorkPhoneNumber());
-            cardHolder.setCardHolderZipCode(transaction.getCardHolderZipCode());
             cardHolder.setCardLimit(transaction.getCardLimit());
             cardHolder.setCardNoteText(transaction.getCardNoteText());
             cardHolder.setCardStatusCode(transaction.getCardStatusCode());
@@ -324,13 +318,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 cardHolder.setCardCycleAmountLimit(procurementCardDefault.getCardCycleAmountLimit());
                 cardHolder.setCardCycleVolumeLimit(procurementCardDefault.getCardCycleVolumeLimit());
                 cardHolder.setCardHolderAlternateName(procurementCardDefault.getCardHolderAlternateName());
-                cardHolder.setCardHolderCityName(procurementCardDefault.getCardHolderCityName());
-                cardHolder.setCardHolderLine1Address(procurementCardDefault.getCardHolderLine1Address());
-                cardHolder.setCardHolderLine2Address(procurementCardDefault.getCardHolderLine2Address());
                 cardHolder.setCardHolderName(procurementCardDefault.getCardHolderName());
-                cardHolder.setCardHolderStateCode(procurementCardDefault.getCardHolderStateCode());
-                cardHolder.setCardHolderWorkPhoneNumber(procurementCardDefault.getCardHolderWorkPhoneNumber());
-                cardHolder.setCardHolderZipCode(procurementCardDefault.getCardHolderZipCode());
                 cardHolder.setCardLimit(procurementCardDefault.getCardLimit());
                 cardHolder.setCardNoteText(procurementCardDefault.getCardNoteText());
                 cardHolder.setCardStatusCode(procurementCardDefault.getCardStatusCode());
