@@ -27,10 +27,6 @@ public class CUKFSConstants {
     public static final class TaxRegionConstants {
         public static final String CREATE_TAX_REGION_FROM_LOOKUP_PARM = "createTaxRegionFromLookup";
     }
-    public static final class ReportGeneration {
-        public final static String SIP_EXPORT_FILE_NAME = "sip_export.txt";
-        public final static String SIP_EXPORT_FILE_NAME_EXECUTIVES = "sip_export_executives.txt";
-    }        
     public static final class FinancialDocumentTypeCodes {
         public static final String PAYMENT_APPLICATION = "APP";
         
