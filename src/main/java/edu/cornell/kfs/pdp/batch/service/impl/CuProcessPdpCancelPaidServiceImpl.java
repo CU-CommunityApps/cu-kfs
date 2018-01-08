@@ -4,77 +4,60 @@ import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ProcessPdpCancelPaidServiceImpl;
 import org.kuali.kfs.pdp.businessobject.ExtractionUnit;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.kfs.sys.batch.service.PaymentSourceToExtractService;
-import org.kuali.kfs.sys.document.PaymentSource;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
-import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
+import edu.cornell.kfs.pdp.batch.service.ProcessPdpCancelPaidHelperService;
 
+@Transactional
 public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServiceImpl {
-    
+
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuProcessPdpCancelPaidServiceImpl.class);
-    
-    
+
+    protected ProcessPdpCancelPaidHelperService processPdpCancelPaidHelperService;
+
     /**
-     * @see org.kuali.kfs.module.purap.service.ProcessPdpCancelPaidService#processPdpCancels()
+     * Overridden to use a helper service to process each payment detail in its own transaction.
+     * 
+     * @see org.kuali.kfs.pdp.batch.service.impl.ProcessPdpCancelPaidServiceImpl#processPdpCancels()
      */
+    @Override
     public void processPdpCancels() {
         LOG.debug("processPdpCancels() started");
 
         Date processDate = dateTimeService.getCurrentSqlDate();
-
-        final List<ExtractionUnit> extractionUnits = getExtractionUnits();
+        List<ExtractionUnit> extractionUnits = getExtractionUnits();
         Iterator<PaymentDetail> details = paymentDetailService.getUnprocessedCancelledDetails(extractionUnits);
+        
         while (details.hasNext()) {
             PaymentDetail paymentDetail = details.next();
-
-            String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
-            String documentNumber = paymentDetail.getCustPaymentDocNbr();
-
-            boolean primaryCancel = paymentDetail.getPrimaryCancelledPayment();
-            boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(paymentDetail.getPaymentGroup().getPaymentStatusCode());
-            
-            //KFSPTS-2719
-            boolean crCancel = false;
-            PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
-            if (ObjectUtils.isNotNull(paymentDetailExtendedAttribute)) {
-                crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
-            }
-
-            if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
-                ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
-            }
-            else {
-                PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
-                if (extractService != null) {
-                    try {
-                        PaymentSource dv = (PaymentSource)getDocumentService().getByDocumentHeaderId(documentNumber);
-                        if (dv != null) {
-                            if (disbursedPayment || primaryCancel || crCancel) {
-                                if (!crCancel) {
-                                    extractService.cancelPayment(dv, processDate);
-                                }
-                            } else {
-                                extractService.resetFromExtraction(dv);
-                            }
-                        }
-                    } catch (WorkflowException we) {
-                        throw new RuntimeException("Could not retrieve document #"+documentNumber, we);
-                    }
-                } else {
-                    LOG.warn("processPdpCancels() Unknown document type (" + documentTypeCode + ") for document ID: " + documentNumber);
-                    continue;
-                }
-            }
-
-            paymentGroupService.processCancelledGroup(paymentDetail.getPaymentGroup(), processDate);
+            processPdpCancelPaidHelperService.processPdpCancel(paymentDetail, processDate);
         }
-   }
+    }
+
+    /**
+     * Overridden to use a helper service to process each payment detail in its own transaction.
+     * 
+     * @see org.kuali.kfs.pdp.batch.service.impl.ProcessPdpCancelPaidServiceImpl#processPdpPaids()
+     */
+    @Override
+    public void processPdpPaids() {
+        LOG.debug("processPdpPaids() started");
+
+        Date processDate = dateTimeService.getCurrentSqlDate();
+        List<ExtractionUnit> extractionUnits = getExtractionUnits();
+        Iterator<PaymentDetail> details = paymentDetailService.getUnprocessedPaidDetails(extractionUnits);
+        
+        while (details.hasNext()) {
+            PaymentDetail paymentDetail = details.next();
+            processPdpCancelPaidHelperService.processPdpPaid(paymentDetail, processDate);
+        }
+    }
+
+    public void setProcessPdpCancelPaidHelperService(ProcessPdpCancelPaidHelperService processPdpCancelPaidHelperService) {
+        this.processPdpCancelPaidHelperService = processPdpCancelPaidHelperService;
+    }
 
 }
