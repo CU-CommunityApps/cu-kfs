@@ -1,0 +1,7 @@
+package edu.cornell.kfs.fp.document.authorization;
+
+import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
+
+public class AccountFundsUpdateDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
+
+}

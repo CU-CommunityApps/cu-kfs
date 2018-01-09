@@ -55,6 +55,8 @@
 		
 		<form-bean name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm" />
 
+		<form-bean name="AccountFundsUpdateForm" type="edu.cornell.kfs.fp.document.web.struts.AccountFundsUpdateForm"/>
+
     </form-beans>
     
     <action-mappings>
@@ -213,6 +215,14 @@
             <set-property property="cancellable" value="true"/>
             <forward name="basic" path="/jsp/fp/CorporateBilledCorporatePaid.jsp"/>
         </action>
+
+
+		<action path="/financialAccountFundsUpdate" name="AccountFundsUpdateForm" input="/jsp/fp/AccountFundsUpdate.jsp"
+				type="edu.cornell.kfs.fp.document.web.struts.AccountFundsUpdateAction" scope="request"
+				parameter="methodToCall" validate="true" attribute="KualiForm">
+			<set-property property="cancellable" value="true" />
+			<forward name="basic" path="/jsp/fp/AccountFundsUpdate.jsp" />
+		</action>
         
     </action-mappings>
     

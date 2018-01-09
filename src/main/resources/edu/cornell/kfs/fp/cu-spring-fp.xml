@@ -84,6 +84,13 @@
         <property name="moduleConfiguration" ref="cu-fp"/>
     </bean>
 
+    <bean id="accountFundsUpdateService" parent="accountFundsUpdateService-parentBean"/>
+    <bean id="accountFundsUpdateService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.AccountFundsUpdateServiceImpl" abstract="true">
+        <property name="parameterService">
+            <ref bean="parameterService"/>
+        </property>
+    </bean>
+
     <bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean"/>
     
     <bean id="procurementCardDocumentJob" parent="scheduledJobDescriptor">
@@ -304,6 +311,7 @@
     <import resource="document/validation/configuration/CuAdvanceDepositValidation.xml" />
     <import resource="document/validation/configuration/YearEndJournalVoucherValidation.xml" />
     <import resource="document/validation/configuration/ProcurementCardValidation.xml" />
+    <import resource="document/validation/configuration/AccountFundsUpdateValidation.xml"/>
     
     <bean id="procurementCardDocumentDao" parent="platformAwareDao" class="edu.cornell.kfs.fp.dataaccess.impl.ProcurementCardDocumentDaoOjb" />
 
