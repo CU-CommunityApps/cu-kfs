@@ -14,7 +14,6 @@
         <property name="sessionDocument" value="true" />
         <property name="allowsCopy" value="true" />
 
-        <!--<property name="validationMap" ref="AccountFundsUpdateDocument-validations"/>-->
         <property name="accountingLineGroups">
             <map>
                 <entry>
@@ -36,12 +35,6 @@
             <ref bean="AccountFundsUpdateDocument-workflowAttributes"/>
         </property>
     </bean>
-
-    <!-- Validations -->
-    <!--<bean id="AccountFundsUpdateDocument-validations" parent="AccountFundsUpdateDocument-validations-parentBean"/>-->
-    <!--<bean id="AccountFundsUpdateDocument-validations-parentBean" abstract="true" parent="org.springframework.beans.factory.config.MapFactoryBean">-->
-
-    <!--</bean>-->
 
     <!-- accounting line groups -->
     <bean id="AccountFundsUpdateDocument-sourceAccountingLineGroup" parent="AccountFundsUpdateDocument-sourceAccountingLineGroup-parentBean"/>
@@ -74,8 +67,6 @@
             <map>
                 <entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
                 <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
-                <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
-                <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
             </map>
         </property>
     </bean>
