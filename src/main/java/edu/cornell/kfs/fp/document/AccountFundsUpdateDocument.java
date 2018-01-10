@@ -18,6 +18,8 @@ import static org.kuali.kfs.sys.KFSConstants.BALANCE_TYPE_ACTUAL;
 
 public class AccountFundsUpdateDocument extends AccountingDocumentBase implements Copyable, Correctable, AmountTotaling {
 
+    private String reason;
+
     public AccountFundsUpdateDocument() {
         super();
     }
@@ -30,47 +32,6 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
         return KFSConstants.TO;
     }
 
-/*    @Override
-    public boolean customizeOffsetGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail accountingLine, GeneralLedgerPendingEntry explicitEntry, GeneralLedgerPendingEntry offsetEntry) {
-        offsetEntry.setFinancialBalanceTypeCode(BALANCE_TYPE_ACTUAL);
-        return true;
-    }
-*/
-
-/*
-    @Override
-    public void customizeExplicitGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail generalLedgerPendingEntrySourceDetail, GeneralLedgerPendingEntry explicitEntry) {
-        AccountingLine accountingLine = (AccountingLine) generalLedgerPendingEntrySourceDetail;
-        SystemOptions options = SpringContext.getBean(OptionsService.class).getCurrentYearOptions();
-
-        explicitEntry.setFinancialBalanceTypeCode(BALANCE_TYPE_ACTUAL);
-        DebitDeterminerService isDebitUtils = SpringContext.getBean(DebitDeterminerService.class);
-        if (isDebitUtils.isExpense(accountingLine)) {
-            explicitEntry.setFinancialObjectTypeCode(options.getFinancialObjectTypeTransferExpenseCd());
-        } else {
-            if (isDebitUtils.isIncome(accountingLine)) {
-                explicitEntry.setFinancialObjectTypeCode(options.getFinancialObjectTypeTransferIncomeCd());
-            } else {
-                AccountingDocumentRuleHelperService accountingDocumentRuleUtil = SpringContext.getBean(AccountingDocumentRuleHelperService.class);
-                explicitEntry.setFinancialObjectTypeCode(accountingDocumentRuleUtil.getObjectCodeTypeCodeWithoutSideEffects(accountingLine));
-            }
-        }
-    }
-*/
-    /**
-     * Adds the following restrictions in addition to those provided by <code>IsDebitUtils.isDebitConsideringNothingPositiveOnly</code>
-     * <ol>
-     * <li> Only allow income or expense object type codes
-     * <li> Target lines have the opposite debit/credit codes as the source lines
-     * </ol>
-     *
-     * @param financialDocument The document used to determine if the accounting line is a debit line.
-     * @param accountingLine    The accounting line to be analyzed.
-     * @return True if the accounting line provided is a debit line, false otherwise.
-     * @see IsDebitUtils#isDebitConsideringNothingPositiveOnly(FinancialDocumentRuleBase, FinancialDocument, AccountingLine)
-     * @see org.kuali.rice.krad.rule.AccountingLineRule#isDebit(org.kuali.rice.krad.document.FinancialDocument,
-     * org.kuali.rice.krad.bo.AccountingLine)
-     */
     public boolean isDebit(GeneralLedgerPendingEntrySourceDetail postable) {
         AccountingLine accountingLine = (AccountingLine) postable;
         // only allow income or expense
@@ -88,5 +49,13 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
         }
 
         return isDebit;
+    }
+
+    public String getReason(){
+        return reason;
+    }
+
+    public void setReason(String reason){
+        this.reason = reason;
     }
 }

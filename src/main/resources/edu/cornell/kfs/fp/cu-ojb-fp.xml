@@ -1563,6 +1563,7 @@
 
         <!--  document specific attributes -->
         <field-descriptor name="postingPeriodCode" column="FDOC_POST_PRD_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="reason" column="REASON" jdbc-type="VARCHAR"/>
 
         <!--  object references -->
         <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
