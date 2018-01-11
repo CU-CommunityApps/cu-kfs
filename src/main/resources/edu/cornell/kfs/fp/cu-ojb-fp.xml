@@ -1552,7 +1552,7 @@
 	</class-descriptor>
 
     <!--  ACCOUNT FUNDS UPDATE DOCUMENT MAPPINGS -->
-    <class-descriptor class="edu.cornell.kfs.fp.document.AccountFundsUpdateDocument" table="CU_FP_ACCOUNT_FUNDS_UPDATE_DOC_T">
+    <class-descriptor class="edu.cornell.kfs.fp.document.AccountFundsUpdateDocument" table="CU_FP_ACCT_FND_UPDATE_DOC_T">
         <!--  common transactional document base attributes -->
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
