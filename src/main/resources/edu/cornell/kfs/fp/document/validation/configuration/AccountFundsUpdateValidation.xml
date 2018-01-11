@@ -98,6 +98,9 @@
         </property>-->
     </bean>
 
+    <bean id="AccountFundsUpdate-accountingLineAmountNonZeroValidation" class="org.kuali.kfs.fp.document.validation.impl.AccountingLineAmountNonZeroValidation" abstract="true"/>
+
+
     <bean id="AccountFundsUpdate-addAccountingLine-accountingLineGroupedValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
         <property name="validations">
             <list>
@@ -124,7 +127,19 @@
                     </property>
                     <property name="quitOnFail" value="true"/>
                 </bean>
-<!--                <bean parent="AccountFundsUpdate-accountingLineValuesAllowedValidation" scope="prototype">
+                <bean parent="AccountFundsUpdate-accountingLineAmountNonZeroValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+                <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document"/>
+                    <property name="accountingLineParameterPropertyName" value="accountingLine"/>
+                </bean>
+                <!--<bean parent="AccountFundsUpdate-accountingLineValuesAllowedValidation" scope="prototype">
                     <property name="accountingDocumentParameterPropertyName" value="document"/>
                     <property name="accountingLineParameterPropertyName" value="accountingLine"/>
                 </bean>

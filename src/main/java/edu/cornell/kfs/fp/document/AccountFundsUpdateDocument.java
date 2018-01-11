@@ -33,11 +33,12 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
     }
 
     public boolean isDebit(GeneralLedgerPendingEntrySourceDetail postable) {
-        AccountingLine accountingLine = (AccountingLine) postable;
+        return true; //todo temp
+/*        AccountingLine accountingLine = (AccountingLine) postable;
         // only allow income or expense
         DebitDeterminerService isDebitUtils = SpringContext.getBean(DebitDeterminerService.class);
         if (!isDebitUtils.isIncome(accountingLine) && !isDebitUtils.isExpense(accountingLine)) {
-            throw new IllegalStateException(isDebitUtils.getDebitCalculationIllegalStateExceptionMessage());
+            //throw new IllegalStateException(isDebitUtils.getDebitCalculationIllegalStateExceptionMessage());
         }
         boolean isDebit = false;
         if (accountingLine.isSourceAccountingLine()) {
@@ -48,7 +49,7 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
             throw new IllegalStateException(isDebitUtils.getInvalidLineTypeIllegalArgumentExceptionMessage());
         }
 
-        return isDebit;
+        return isDebit;*/
     }
 
     public String getReason(){
