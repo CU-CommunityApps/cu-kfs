@@ -4,6 +4,53 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+    <bean id="AccountFundsUpdate-routeDocumentValidation" parent="AccountFundsUpdate-routeDocumentValidation-parentBean" scope="prototype"/>
+
+    <bean id="AccountFundsUpdate-routeDocumentValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-requiredAccountingLinesCountValidation" scope="prototype">
+                    <property name="accountingLineGroupName" value="source"/>
+                    <property name="minimumNumber" value="1"/>
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-requiredAccountingLinesCountValidation" scope="prototype">
+                    <property name="accountingLineGroupName" value="target"/>
+                    <property name="minimumNumber" value="1"/>
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-debitsAndCreditsBalanceValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountFundsUpdate-transferTotalsBalanceValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountFundsUpdate-fundGroupsBalancedValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 
     <bean id="AccountFundsUpdate-saveDocumentValidation" parent="AccountFundsUpdate-saveDocumentValidation-parentBean" scope="prototype"/>
 
@@ -35,6 +82,83 @@
         </property>
     </bean>
 
+    <bean id="AccountFundsUpdate-accountingLineValuesAllowedValidation" parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation">
+        <property name="objectCodeAllowedValidation">
+            <bean parent="CompositeValidation" scope="prototype">
+                <property name="validations">
+                    <list>
+                        <bean parent="AccountingDocument-IsObjectCodeAllowed-DefaultValidation" scope="prototype"/>
+                        <!--<bean parent="AccountFundsUpdate-objectCodeValueAllowedValidation" scope="prototype"/>-->
+                    </list>
+                </property>
+            </bean>
+        </property>
+<!--        <property name="objectSubTypeAllowedValidation">
+            <bean parent="AccountFundsUpdate-objectSubTypeValueAllowedValidation" scope="prototype"/>
+        </property>-->
+    </bean>
+
+    <bean id="AccountFundsUpdate-addAccountingLine-accountingLineGroupedValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="accountingLineToBusinessObjectFieldConversion"/>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineAmountPositiveValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+<!--                <bean parent="AccountFundsUpdate-accountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document"/>
+                    <property name="accountingLineParameterPropertyName" value="accountingLine"/>
+                </bean>
+                <bean parent="AccountFundsUpdate-transferAccountingLinesCountValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>-->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AccountFundsUpdate-addAccountingLineValidation" parent="AccountFundsUpdate-addAccountingLineValidation-parentBean" scope="prototype"/>
+
+    <bean id="AccountFundsUpdate-addAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+                <bean parent="AccountFundsUpdate-addAccountingLine-accountingLineGroupedValidation" scope="prototype"/>
+                <bean parent="AccountingDocument-accountingLineAccessibleValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
     <bean id="AccountFundsUpdate-deleteAccountingLineValidation" parent="AccountFundsUpdate-deleteAccountingLineValidation-parentBean" scope="prototype"/>
 
     <bean id="AccountFundsUpdate-deleteAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
@@ -45,5 +169,88 @@
         </property>
     </bean>
 
+    <bean id="AccountFundsUpdate-reviewAccountingLineValidation" parent="AccountFundsUpdate-reviewAccountingLineValidation-parentBean" scope="prototype"/>
+
+    <bean id="AccountFundsUpdate-reviewAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="accountingLineToBusinessObjectFieldConversion"/>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineAmountPositiveValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="AccountFundsUpdate-accountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document"/>
+                    <property name="accountingLineParameterPropertyName" value="accountingLine"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AccountFundsUpdate-updateAccountingLine-accountingLineGroupValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="updatedAccountingLineToBusinessObjectFieldConversion"/>
+                    </property>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineAmountPositiveValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="updatedAccountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+                <bean parent="AccountingDocument-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="updatedAccountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+                <bean parent="AccountFundsUpdate-accountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document"/>
+                    <property name="accountingLineParameterPropertyName" value="updatedAccountingLine"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AccountFundsUpdate-updateAccountingLineValidation" parent="AccountFundsUpdate-updateAccountingLineValidation-parentBean" scope="prototype"/>
+
+    <bean id="AccountFundsUpdate-updateAccountingLineValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true">
+        <property name="validations">
+            <list>
+                <bean parent="AccountFundsUpdate-updateAccountingLine-accountingLineGroupValidation" scope="prototype"/>
+                <bean parent="AccountingDocument-accountingLineAccessibleValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                            <bean parent="updatedAccountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 
 </beans>

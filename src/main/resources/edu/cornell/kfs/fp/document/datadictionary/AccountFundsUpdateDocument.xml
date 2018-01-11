@@ -36,8 +36,66 @@
         </property>
         <property name="attributes">
             <list>
-                <ref bean="AssetTransferDocument-reason"/>
+                <ref bean="AccountFundsUpdateDocument-reason"/>
             </list>
+        </property>
+    </bean>
+
+    <!-- Validations -->
+    <bean id="AccountFundsUpdateDocument-validations" parent="AccountFundsUpdateDocument-validations-parentBean"/>
+
+    <bean id="AccountFundsUpdateDocument-validations-parentBean" abstract="true" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map key-type="java.lang.Class">
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-routeDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-saveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-approveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedBlanketApproveDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-blanketApproveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-addAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-deleteAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-updateAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-reviewAccountingLineValidation</value>
+                </entry>
+            </map>
         </property>
     </bean>
 
@@ -77,9 +135,9 @@
     </bean>
 
     <!-- Attribute Definitions -->
-    <bean id="AssetTransferDocument-reason" parent="AssetTransferDocument-reason-parentBean"/>
+    <bean id="AccountFundsUpdateDocument-reason" parent="AccountFundsUpdateDocument-reason-parentBean"/>
 
-    <bean id="AssetTransferDocument-reason-parentBean" abstract="true" parent="AttributeDefinition">
+    <bean id="AccountFundsUpdateDocument-reason-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="reason"/>
         <property name="shortLabel" value="Reason"/>
         <property name="label" value="Reason"/>
@@ -89,4 +147,7 @@
             <bean parent="TextControlDefinition" p:size="50"/>
         </property>
     </bean>
+
+
+
 </beans>
