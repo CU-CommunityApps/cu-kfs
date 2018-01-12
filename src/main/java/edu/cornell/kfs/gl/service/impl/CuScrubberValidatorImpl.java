@@ -11,7 +11,9 @@ import org.kuali.kfs.sys.MessageBuilder;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.springframework.util.StringUtils;
 
-public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
+import edu.cornell.kfs.gl.service.CuSharedScrubberValidatorFixes;
+
+public class CuScrubberValidatorImpl extends ScrubberValidatorImpl implements CuSharedScrubberValidatorFixes {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuScrubberValidatorImpl.class);
 
     @Override
@@ -57,6 +59,21 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
                     + universityRunDate.getUniversityFiscalAccountingPeriod(), Message.TYPE_FATAL);
         }
         return null;
+    }
+
+    /**
+     * Overridden to include a sub-object validation fix from KualiCo's 01/11/2018 patch.
+     * 
+     * @see org.kuali.kfs.gl.service.impl.ScrubberValidatorImpl#validateSubObjectCode(
+     * org.kuali.kfs.gl.businessobject.OriginEntryInformation, org.kuali.kfs.gl.businessobject.OriginEntryInformation,
+     * org.kuali.kfs.gl.batch.service.AccountingCycleCachingService)
+     */
+    @Override
+    protected Message validateSubObjectCode(
+            OriginEntryInformation originEntry, OriginEntryInformation workingEntry, AccountingCycleCachingService accountingCycleCachingService) {
+        LOG.debug("validateFinancialSubObjectCode() started");
+
+        return validateSubObjectCodeInternal(originEntry, workingEntry, accountingCycleCachingService);
     }
 
 }
