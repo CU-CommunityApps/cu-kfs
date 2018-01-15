@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="KualiAddressTypeMaintenanceDocument" parent="KualiAddressTypeMaintenanceDocument-parentBean"/>
+    <bean id="KualiAddressTypeMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddressType"/>
+        <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
+        <property name="maintainableSections">
+            <list>
+                <ref bean="KualiAddressTypeMaintenanceDocument-EditKualiAddressType"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>addressTypeCode</value>
+            </list>
+        </property>
+        <property name="documentTypeName" value="ADRT"/>
+        <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+        <property name="workflowAttributes">
+            <ref bean="KualiAddressTypeMaintenanceDocument-workflowAttributes"/>
+        </property>
+    </bean>
+
+    <!-- Maintenance Section Definitions -->
+    <bean id="KualiAddressTypeMaintenanceDocument-EditKualiAddressType" parent="KualiAddressTypeMaintenanceDocument-EditKualiAddressType-parentBean"/>
+    <bean id="KualiAddressTypeMaintenanceDocument-EditKualiAddressType-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+        <property name="id" value="Edit Kuali Address Type"/>
+        <property name="title" value="Edit Kuali Address"/>
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="addressTypeCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="addressTypeName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="Y" />
+            </list>
+        </property>
+    </bean>
+  
+    <!-- workflow attributes -->
+    <bean id="KualiAddressTypeMaintenanceDocument-workflowAttributes" parent="KualiAddressTypeMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="KualiAddressTypeMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+
+</beans>

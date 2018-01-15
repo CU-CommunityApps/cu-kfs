@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+	
+	<bean id="KualiAddress" parent="KualiAddress-parentBean"/>
+	<bean id="KualiAddress-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
+        <property name="inquiryDefinition">
+            <ref bean="KualiAddress-inquiryDefinition"/>
+	    </property>        
+	    <property name="lookupDefinition">
+            <ref bean="KualiAddress-lookupDefinition"/>
+	    </property>
+        <property name="titleAttribute" value="addressId"/>
+        <property name="objectLabel" value="KualiAddressAAA"/>
+        <property name="attributes">
+            <list>
+                <ref bean="KualiAddress-addressId"/>
+                <ref bean="KualiAddress-addressTypeCode"/>
+                <ref bean="KualiAddress-streetAddress"/>
+                <ref bean="KualiAddress-streetAddressExtra"/>
+                <ref bean="KualiAddress-city"/>
+                <ref bean="KualiAddress-stateCode"/>
+                <ref bean="KualiAddress-zipCode"/>
+                <ref bean="KualiAddress-countryCode"/>
+                <ref bean="KualiAddress-active"/>
+            </list>
+        </property>
+    </bean>
+            
+    <bean id="KualiAddress-addressId" parent="KualiAddress-addressId-parentBean"/>
+    <bean id="KualiAddress-addressId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="addressId"/>
+        <property name="label" value="Address ID"/>
+        <property name="shortLabel" value="ID"/>
+        <property name="maxLength" value="16"/>
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern" />
+        </property>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12"/>
+        </property>
+    </bean>           
+            
+    <bean id="KualiAddress-addressTypeCode" parent="KualiAddress-addressTypeCode-parentBean"/>
+    <bean id="KualiAddress-addressTypeCode-parentBean" abstract="true" parent="AttributeDefinition">
+	    	<property name="name" value="addressTypeCode"/>
+	    	<property name="label" value="Address Type"/>
+	    	<property name="shortLabel" value="Type"/>
+	    	<property name="maxLength" value="64"/>
+	    	<property name="validationPattern">
+      		<bean parent="AlphaNumericValidationPattern" />
+	    	</property>
+	    	<property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.sys.businessobject.options.KualiAddressTypeValuesFinder"
+                  p:includeKeyInLabel="false"/>
+	    	</property>
+    </bean>        
+            
+    <bean id="KualiAddress-streetAddress" parent="KualiAddress-streetAddress-parentBean"/>
+    <bean id="KualiAddress-streetAddress-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="streetAddress"/>
+        <property name="label" value="Street Address"/>
+        <property name="shortLabel" value="Address"/>
+        <property name="maxLength" value="128"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="64"/>
+        </property>
+        <property name="validationPattern">
+            <bean parent="AnyCharacterWithWhitespaceValidation" />
+        </property>
+    </bean>
+    
+    <bean id="KualiAddress-streetAddressExtra" parent="KualiAddress-streetAddressExtra-parentBean"/>
+    <bean id="KualiAddress-streetAddressExtra-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="streetAddressExtra"/>
+        <property name="label" value="Street Address 2"/>
+        <property name="shortLabel" value="Address 2"/>
+        <property name="maxLength" value="256"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="64"/>
+        </property>
+    </bean>
+    
+    <bean id="KualiAddress-city" parent="KualiAddress-city-parentBean"/>
+    <bean id="KualiAddress-city-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="city"/>
+        <property name="label" value="City"/>
+        <property name="shortLabel" value="City"/>
+        <property name="maxLength" value="64"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="16"/>
+        </property>
+    </bean>
+    
+    <bean id="KualiAddress-stateCode" parent="KualiAddress-stateCode-parentBean"/>
+    <bean id="KualiAddress-stateCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="stateCode"/>
+        <property name="label" value="State Code"/>
+        <property name="shortLabel" value="State"/>
+        <property name="maxLength" value="4"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="2"/>
+        </property>
+    </bean>
+    
+    <bean id="KualiAddress-zipCode" parent="KualiAddress-zipCode-parentBean"/>
+    <bean id="KualiAddress-zipCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="zipCode"/>
+        <property name="label" value="Zip-code"/>
+        <property name="shortLabel" value="Zip"/>
+        <property name="maxLength" value="16"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="8"/>
+        </property>
+    </bean>
+    
+    <bean id="KualiAddress-countryCode" parent="KualiAddress-countryCode-parentBean"/>
+    <bean id="KualiAddress-countryCode-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="countryCode"/>
+        <property name="label" value="Country Code"/>
+        <property name="shortLabel" value="Country"/>
+        <property name="maxLength" value="8"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="4"/>
+        </property>
+    </bean>
+ 
+    <bean id="KualiAddress-active" parent="KualiAddress-active-parentBean"/>
+    <bean id="KualiAddress-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
+        <property name="name" value="active"/>
+    </bean>
+	
+    <!-- Business Object Inquiry Definition -->  
+    <bean id="KualiAddress-inquiryDefinition" parent="KualiAddress-inquiryDefinition-parentBean"/>
+    <bean id="KualiAddress-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
+        <property name="title" value="Kuali Address Inquiry"/>
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value=""/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="addressId"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+  </bean>
+
+    <!-- Business Object Lookup Definition -->
+    <bean id="KualiAddress-lookupDefinition" parent="KualiAddress-lookupDefinition-parentBean"/>
+    <bean id="KualiAddress-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="Kuali Address Lookup"/>
+        
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>  
+                        <value>addressTypeCode</value>
+                        <value>addressId</value>     
+                    </list>
+                </property>
+                <property name="sortAscending" value="false"/>
+            </bean>
+        </property>
+        
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
+                <bean parent="FieldDefinition" p:attributeName="addressId"/>
+                <bean parent="FieldDefinition" p:attributeName="city"/>
+                <bean parent="FieldDefinition" p:attributeName="stateCode"/>
+                <bean parent="FieldDefinition" p:attributeName="zipCode"/>
+                <bean parent="FieldDefinition" p:attributeName="countryCode"/>
+            </list>
+        </property>
+        
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
+                <bean parent="FieldDefinition" p:attributeName="addressId"/>
+                <bean parent="FieldDefinition" p:attributeName="city"/>
+                <bean parent="FieldDefinition" p:attributeName="stateCode"/>
+                <bean parent="FieldDefinition" p:attributeName="zipCode"/>
+                <bean parent="FieldDefinition" p:attributeName="countryCode"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

@@ -193,8 +193,7 @@
         <property name="lookupableHelperService">
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>
-    </bean>
-
+    </bean>        
 	<!-- put back when we can make it work
 	-->
 	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean"/>

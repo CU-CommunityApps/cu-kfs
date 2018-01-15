@@ -1,5 +1,45 @@
 <descriptor-repository version="1.0">
     
+<class-descriptor class="edu.cornell.kfs.sys.businessobject.KualiDeveloper" table="CU_KUALI_DEVELOPER_T">
+    <field-descriptor name="employeeId" column="EMPLOYEE_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+    <field-descriptor name="firstName" column="FIRST_NAME" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="lastName" column="LAST_NAME" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="positionName" column="POSITION_NAME" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="socialSecurityNumber" column="SOCIAL_SECURITY_NUMBER" jdbc-type="VARCHAR" />
+    <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP"/>
+    <collection-descriptor name="kualiAddresses" element-class-ref="edu.cornell.kfs.sys.businessobject.KualiAddress"
+                           collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+        <orderby name="addressId" sort="ASC"/>
+        <inverse-foreignkey field-ref="employeeId"/>
+    </collection-descriptor>
+
+</class-descriptor>
+
+<class-descriptor class="edu.cornell.kfs.sys.businessobject.KualiAddressType" table="CU_KUALI_ADDRESS_TYPE_T">
+    <field-descriptor name="addressTypeCode" column="ADDRESS_TYPE_CODE" jdbc-type="VARCHAR" primarykey="true" />
+    <field-descriptor name="addressTypeName" column="ADDRESS_TYPE_NAME" jdbc-type="VARCHAR" />
+    <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+</class-descriptor>
+
+<class-descriptor class="edu.cornell.kfs.sys.businessobject.KualiAddress" table="CU_KUALI_ADDRESS_T">
+    <field-descriptor name="addressId" column="ADDRESS_ID" jdbc-type="VARCHAR" primarykey="true" />
+    <field-descriptor name="employeeId" column="EMPLOYEE_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="addressTypeCode" column="ADDRESS_TYPE_CODE" jdbc-type="VARCHAR" />
+    <field-descriptor name="streetAddress" column="STREET_ADDRESS" jdbc-type="VARCHAR" />
+    <field-descriptor name="streetAddressExtra" column="STREET_ADDRESS_EXTRA" jdbc-type="VARCHAR" />
+    <field-descriptor name="city" column="CITY" jdbc-type="VARCHAR" />
+    <field-descriptor name="stateCode" column="STATE_CODE" jdbc-type="VARCHAR" />
+    <field-descriptor name="countryCode" column="COUNTRY_CODE" jdbc-type="VARCHAR" />
+    <field-descriptor name="zipCode" column="ZIP_CODE" jdbc-type="VARCHAR" />
+    <field-descriptor name="active" column="ROW_ACTIVE_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP"/>
+</class-descriptor>
+    	
 <class-descriptor class="org.kuali.kfs.sys.businessobject.SourceAccountingLine" table="FP_ACCT_LINES_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" />
     <field-descriptor name="sequenceNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER" primarykey="true" />
