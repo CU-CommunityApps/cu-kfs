@@ -1,21 +1,17 @@
 package edu.cornell.kfs.fp.document;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.document.Copyable;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
-import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.Correctable;
-import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
 import org.kuali.kfs.sys.document.service.DebitDeterminerService;
-import org.kuali.kfs.sys.service.OptionsService;
-
-import static org.kuali.kfs.sys.KFSConstants.BALANCE_TYPE_ACTUAL;
+import org.kuali.rice.kew.framework.postprocessor.DocumentRouteStatusChange;
 
 public class AccountFundsUpdateDocument extends AccountingDocumentBase implements Copyable, Correctable, AmountTotaling {
 
@@ -64,5 +60,17 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
 
     public void setReason(String reason){
         this.reason = reason;
+    }
+
+    @Override
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
+        super.doRouteStatusChange(statusChangeEvent);
+
+        DocumentHeader documentHeader = getDocumentHeader();
+        if(documentHeader.getWorkflowDocument().isFinal()){
+            StringBuilder newDocumentDescription = new StringBuilder("Reason: ");
+            newDocumentDescription.append(reason.substring(0, 10)).append("; ").append(documentHeader.getDocumentDescription());
+            documentHeader.setDocumentDescription(newDocumentDescription.substring(0, KFSConstants.getMaxLengthOfDocumentDescription()));
+        }
     }
 }
