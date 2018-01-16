@@ -5,6 +5,7 @@
                   htmlFormAction="financialAccountFundsUpdate" renderMultipart="true"
                   showTabButtons="true">
     <c:set var="accountFundsUpdateAttributes" value="${DataDictionary.AccountFundsUpdateDocument.attributes}"/>
+    <c:set var="reasonReadOnly" value="${!KualiForm.editingMode['editableReason']}" />
 
     <sys:documentOverview editingMode="${KualiForm.editingMode}"/>
 
@@ -13,15 +14,14 @@
             <table class="standard old-new">
                 <tr>
                     <th class="grid right" width="25%">
-                        <kul:htmlAttributeLabel attributeEntry="${accountFundsUpdateAttributes.reason}"/>
+                        <kul:htmlAttributeLabel attributeEntry="${accountFundsUpdateAttributes.reason}" />
                     </th>
                     <td class="grid" width="25%">
-                        <kul:htmlControlAttribute property="document.reason" attributeEntry="${accountFundsUpdateAttributes.reason}"/>
+                        <kul:htmlControlAttribute property="document.reason" attributeEntry="${accountFundsUpdateAttributes.reason}" readOnly="${reasonReadOnly}"/>
                     </td>
                     <th class="grid right" width="25%">
                     </th>
-                    <td class="grid" width="25%">
-                    </td>
+                    <td class="grid" width="25%"></td>
                 </tr>
             </table>
         </div>

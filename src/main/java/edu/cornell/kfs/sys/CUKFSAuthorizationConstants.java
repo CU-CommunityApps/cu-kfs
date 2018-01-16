@@ -13,4 +13,9 @@ public class CUKFSAuthorizationConstants  {
         public static final String EDITABLE_ADVANCE_DEPOSITS = "editableAdvanceDeposits";
 
     }
+
+    public static class AccountFundsUpdateEditMode extends TransactionalEditMode {
+        public static final String EDITABLE_REASON = "editableReason";
+
+    }
 }
