@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.document;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.document.Copyable;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -33,12 +34,11 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
     }
 
     public boolean isDebit(GeneralLedgerPendingEntrySourceDetail postable) {
-        return true; //todo temp
-/*        AccountingLine accountingLine = (AccountingLine) postable;
+        AccountingLine accountingLine = (AccountingLine) postable;
         // only allow income or expense
         DebitDeterminerService isDebitUtils = SpringContext.getBean(DebitDeterminerService.class);
         if (!isDebitUtils.isIncome(accountingLine) && !isDebitUtils.isExpense(accountingLine)) {
-            //throw new IllegalStateException(isDebitUtils.getDebitCalculationIllegalStateExceptionMessage());
+            throw new IllegalStateException(isDebitUtils.getDebitCalculationIllegalStateExceptionMessage());
         }
         boolean isDebit = false;
         if (accountingLine.isSourceAccountingLine()) {
@@ -49,7 +49,13 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
             throw new IllegalStateException(isDebitUtils.getInvalidLineTypeIllegalArgumentExceptionMessage());
         }
 
-        return isDebit;*/
+        return isDebit;
+    }
+
+    @Override
+    public boolean documentPerformsSufficientFundsCheck() {
+        boolean oldValue = StringUtils.isBlank(this.getFinancialSystemDocumentHeader().getFinancialDocumentInErrorNumber());
+        return true; //force sufficient funds check
     }
 
     public String getReason(){

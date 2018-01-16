@@ -34,23 +34,26 @@
                         </list>
                     </property>
                 </bean>
-                <bean parent="AccountFundsUpdate-transferTotalsBalanceValidation" scope="prototype">
+                <!--<bean parent="AccountFundsUpdate-transferTotalsBalanceValidation" scope="prototype">
                     <property name="parameterProperties">
                         <list>
                             <bean parent="accountingDocumentFieldConversion"/>
                         </list>
                     </property>
-                </bean>
-                <bean parent="AccountFundsUpdate-fundGroupsBalancedValidation" scope="prototype">
+                </bean>-->
+                <!--<bean parent="AccountFundsUpdate-fundGroupsBalancedValidation" scope="prototype">
                     <property name="parameterProperties">
                         <list>
                             <bean parent="accountingDocumentFieldConversion"/>
                         </list>
                     </property>
-                </bean>
+                </bean>-->
             </list>
         </property>
     </bean>
+
+    <bean id="AccountFundsUpdate-totalAmountBelowThresholdValidation" class="edu.cornell.kfs.fp.document.validation.impl.TotalAmountBelowThresholdValidation" abstract="true"/>
+    <bean id="AccountFundsUpdate-totalAmountNonZeroValidation" class="edu.cornell.kfs.fp.document.validation.impl.TotalAmountNonZeroValidation" abstract="true"/>
 
     <bean id="AccountFundsUpdate-saveDocumentValidation" parent="AccountFundsUpdate-saveDocumentValidation-parentBean" scope="prototype"/>
 
@@ -58,6 +61,22 @@
         <property name="validations">
             <list>
                 <bean parent="AccountingDocument-SaveDocument-DefaultValidation" scope="prototype"/>
+                <bean parent="AccountFundsUpdate-totalAmountBelowThresholdValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="false"/>
+                </bean>
+                <bean parent="AccountFundsUpdate-totalAmountNonZeroValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="false"/>
+                </bean>
             </list>
         </property>
     </bean>
@@ -100,7 +119,6 @@
 
     <bean id="AccountFundsUpdate-accountingLineAmountNonZeroValidation" class="org.kuali.kfs.fp.document.validation.impl.AccountingLineAmountNonZeroValidation" abstract="true"/>
 
-
     <bean id="AccountFundsUpdate-addAccountingLine-accountingLineGroupedValidation" abstract="true" parent="CompositeValidation" scope="prototype"> <!-- here to get the quit on fail issues correct -->
         <property name="validations">
             <list>
@@ -133,7 +151,7 @@
                             <bean parent="accountingLineFieldConversion"/>
                         </list>
                     </property>
-                    <property name="quitOnFail" value="true"/>
+                    <property name="quitOnFail" value="false"/>
                 </bean>
                 <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
                     <property name="accountingDocumentParameterPropertyName" value="document"/>

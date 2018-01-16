@@ -116,7 +116,7 @@
     <bean id="AccountFundsUpdateDocument-targetAccountingLineGroup-parentBean" abstract="true" parent="AccountingLineGroup">
         <property name="accountingLineView" ref="FinancialProcessing-SalesTax-accountingLineView"/>
         <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.TargetAccountingLine"/>
-        <property name="groupLabel" value="From"/>
+        <property name="groupLabel" value="To"/>
         <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
         <property name="importedLinePropertyPrefix" value="target"/>
         <property name="totals" ref="AccountingDocument-targetGroupTotals"/>
@@ -148,7 +148,5 @@
             <bean parent="TextControlDefinition" p:size="50"/>
         </property>
     </bean>
-
-
 
 </beans>
