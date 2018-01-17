@@ -55,9 +55,9 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     }
     
     protected void setWebserivceCredentialValues(String accessToken, String expirationDate, String refreshToken) {
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN, accessToken);
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, expirationDate);
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN, accessToken);
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, expirationDate);
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_REFRESH_TOKEN, refreshToken);
     }
 
     protected Invocation buildRequestAccessTokenClientRequest(Client client) {
@@ -93,7 +93,7 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     public void refreshAccessToken() {
         AccessTokenDTO refreshedToken = callConcurEndpoint(
                 this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, refreshedToken.getExpirationDate()); 
+        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, refreshedToken.getExpirationDate());
     }
 
     protected Invocation buildRefreshAccessTokenClientRequest(Client client) {
@@ -243,32 +243,32 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     @Override
     public String getAccessToken() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN);
     }
 
     @Override
     public String getRefreshToken() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_REFRESH_TOKEN);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_REFRESH_TOKEN);
     }
 
     @Override
     public String getConsumerKey() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_CONSUMER_KEY);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_CONSUMER_KEY);
     }
 
     @Override
     public String getSecretKey() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_SECRET_KEY);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_SECRET_KEY);
     }
 
     @Override
     public String getLoginUsername() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_LOGIN_USERNAME);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_LOGIN_USERNAME);
     }
 
     @Override
     public String getLoginPassword() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_LOGIN_PASSWORD);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_LOGIN_PASSWORD);
     }
 
     public String getConcurRequestAccessTokenURL() {
