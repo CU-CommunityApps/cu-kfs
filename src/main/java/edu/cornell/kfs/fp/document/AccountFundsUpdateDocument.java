@@ -50,8 +50,7 @@ public class AccountFundsUpdateDocument extends AccountingDocumentBase implement
 
     @Override
     public boolean documentPerformsSufficientFundsCheck() {
-        boolean oldValue = StringUtils.isBlank(this.getFinancialSystemDocumentHeader().getFinancialDocumentInErrorNumber());
-        return true; //force sufficient funds check
+       return true; //force sufficient funds check
     }
 
     public String getReason(){

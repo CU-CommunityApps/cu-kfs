@@ -11,8 +11,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 public class TotalAmountNonZeroValidation extends GenericValidation {
     private AccountingDocument accountingDocumentForValidation;
 
-    private final static Integer ACCOUNT_FUNDS_UPDATE_MAX_TOTAL_ALLOWED = 10000; //todo: move to properties file
-
     public boolean validate(AttributedDocumentEvent event) {
         KualiDecimal sourceTotalAmount = accountingDocumentForValidation.getSourceTotal();
         KualiDecimal targetTotalAmount = accountingDocumentForValidation.getTargetTotal();

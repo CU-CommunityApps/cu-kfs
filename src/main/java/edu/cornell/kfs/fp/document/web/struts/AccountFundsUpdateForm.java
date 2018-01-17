@@ -17,5 +17,3 @@ public class AccountFundsUpdateForm extends KualiAccountingDocumentFormBase {
         return (AccountFundsUpdateDocument) getDocument();
     }
 }
-
-
