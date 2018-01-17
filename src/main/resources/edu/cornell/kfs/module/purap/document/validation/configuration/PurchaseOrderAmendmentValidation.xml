@@ -109,4 +109,53 @@
   			</list>
   		</property>
     </bean>
+
+    <bean id="PurchaseOrderAmendment-addAccountingLineDefault-failFastValidation" abstract="true" parent="CompositeValidation" scope="prototype">
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <bean parent="accountingLineToBusinessObjectFieldConversion"/>
+                    </property>
+                </bean>
+                <bean parent="PurchaseOrderAmendment-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="true"/>
+                </bean>
+                <bean parent="AccountingDocument-defaultAccountingLineValuesAllowedValidation" scope="prototype">
+                    <property name="accountingDocumentParameterPropertyName" value="document"/>
+                    <property name="accountingLineParameterPropertyName" value="accountingLine"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PurchaseOrderAmendment-updateAccountingLine-failFastValidation" abstract="true" parent="CompositeValidation" scope="prototype">
+        <property name="validations">
+            <list>
+                <bean parent="AccountingDocument-businessObjectDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="updatedAccountingLineToBusinessObjectFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="false"/>
+                </bean>
+                <bean parent="PurchaseOrderAmendment-accountingLineDataDictionaryValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="updatedAccountingLineFieldConversion"/>
+                        </list>
+                    </property>
+                    <property name="quitOnFail" value="false"/>
+                </bean>
+                <bean parent="PurchasingAccountsPayable-updatedAccountingLineValuesAllowedValidation-parentBean" scope="prototype"/>
+            </list>
+        </property>
+    </bean>
+
  </beans>
