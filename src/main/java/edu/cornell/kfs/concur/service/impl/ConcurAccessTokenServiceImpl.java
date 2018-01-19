@@ -93,7 +93,11 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
     public void refreshAccessToken() {
         AccessTokenDTO refreshedToken = callConcurEndpoint(
                 this::buildRefreshAccessTokenClientRequest, AccessTokenDTO.class);
-        webServiceCredentialService.updateWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE, refreshedToken.getExpirationDate());
+        webServiceCredentialService.updateWebServiceCredentialValue(
+                ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,
+                ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE,
+                refreshedToken.getExpirationDate()
+        );
     }
 
     protected Invocation buildRefreshAccessTokenClientRequest(Client client) {
