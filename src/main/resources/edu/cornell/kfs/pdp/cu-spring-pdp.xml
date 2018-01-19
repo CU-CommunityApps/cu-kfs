@@ -80,15 +80,7 @@
     </bean>
     
     
-    <bean id="processPdpCancelPaidService" parent="processPdpCancelPaidService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessPdpCancelPaidServiceImpl">
-        <property name="processPdpCancelPaidHelperService" ref="processPdpCancelPaidHelperService"/>
-    </bean>
-    
-    <bean id="processPdpCancelPaidHelperService" class="edu.cornell.kfs.pdp.batch.service.impl.ProcessPdpCancelPaidHelperServiceImpl">
-        <property name="paymentGroupService" ref="pdpPaymentGroupService"/>
-        <property name="purchasingAccountsPayableModuleService" ref="purchasingAccountsPayableModuleService"/>
-        <property name="documentService" ref="documentService"/>
-    </bean>
+    <bean id="processPdpCancelPaidService" parent="processPdpCancelPaidService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessPdpCancelPaidServiceImpl"/>
     
     <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl">
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
