@@ -252,27 +252,27 @@ public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
 
     @Override
     public String getRefreshToken() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_REFRESH_TOKEN);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_REFRESH_TOKEN);
     }
 
     @Override
     public String getConsumerKey() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_CONSUMER_KEY);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_CONSUMER_KEY);
     }
 
     @Override
     public String getSecretKey() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_SECRET_KEY);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_SECRET_KEY);
     }
 
     @Override
     public String getLoginUsername() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_LOGIN_USERNAME);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_LOGIN_USERNAME);
     }
 
     @Override
     public String getLoginPassword() {
-        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,ConcurConstants.CONCUR_LOGIN_PASSWORD);
+        return webServiceCredentialService.getWebServiceCredentialValue(ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE, ConcurConstants.CONCUR_LOGIN_PASSWORD);
     }
 
     public String getConcurRequestAccessTokenURL() {

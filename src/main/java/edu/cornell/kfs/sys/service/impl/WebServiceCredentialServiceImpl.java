@@ -25,7 +25,7 @@ public class WebServiceCredentialServiceImpl implements WebServiceCredentialServ
         keyMap.put(KFSPropertyConstants.ACTIVE_INDICATOR, KFSConstants.ACTIVE_INDICATOR);
         Collection<WebServiceCredential> webServiceCredentials = businessObjectService.findMatching(WebServiceCredential.class, keyMap);
 
-        if(webServiceCredentials.size() > 0){
+        if (webServiceCredentials.size() > 0) {
             credentialValue = webServiceCredentials.iterator().next().getCredentialValue();
         }
 
@@ -40,7 +40,7 @@ public class WebServiceCredentialServiceImpl implements WebServiceCredentialServ
         keyMap.put(KFSPropertyConstants.ACTIVE_INDICATOR, KFSConstants.ACTIVE_INDICATOR);
         Collection<WebServiceCredential> webServiceCredentials = businessObjectService.findMatching(WebServiceCredential.class, keyMap);
 
-        if(webServiceCredentials.size() > 0){
+        if (webServiceCredentials.size() > 0) {
             WebServiceCredential webServiceCredential = webServiceCredentials.iterator().next();
             webServiceCredential.setCredentialValue(credentialValue);
             businessObjectService.save(webServiceCredential);
@@ -48,7 +48,7 @@ public class WebServiceCredentialServiceImpl implements WebServiceCredentialServ
     }
 
     @Override
-    public Collection<WebServiceCredential> getWebServiceCredentialsByGroupCode(String credentialGroupCode){
+    public Collection<WebServiceCredential> getWebServiceCredentialsByGroupCode(String credentialGroupCode) {
         Map<String, String> keyMap = new HashMap<String, String>();
         keyMap.put(CUKFSPropertyConstants.WEB_SERVICE_CREDENTIAL_GROUP_CODE, credentialGroupCode);
         keyMap.put(KFSPropertyConstants.ACTIVE_INDICATOR, KFSConstants.ACTIVE_INDICATOR);

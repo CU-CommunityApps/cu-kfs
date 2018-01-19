@@ -101,13 +101,13 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     }
     
     @Test
-    public void validateDateGood() {
+    public void valdiateDateGood() {
         Date testDate = new Date(Calendar.getInstance().getTimeInMillis());
         assertTrue("The date should be valid.", concurStandardAccountingValidationService.validateDate(testDate));
     }
     
     @Test
-    public void validateDateBad() {
+    public void valdiateDateBad() {
         Date testDate = null;
         assertFalse("The date should NOT be valid.", concurStandardAccountingValidationService.validateDate(testDate));
     }
@@ -172,7 +172,7 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     }
     
     @Test
-    public void validateGeneralValidationBadEmployeeGroup() {
+    public void validateGeneralValidationBadEmoployeeGroup() {
         cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0).setEmployeeGroupId("testMe");
         assertFalse("General validation should be false, bad employee group id.", 
                 concurStandardAccountingValidationService.validateConcurStandardAccountExtractFile(cornellUppercasefile, reportData));

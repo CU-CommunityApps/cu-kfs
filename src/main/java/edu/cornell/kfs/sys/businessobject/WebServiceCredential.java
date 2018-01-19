@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.businessobject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
-public class WebServiceCredential extends PersistableBusinessObjectBase implements MutableInactivatable{
+public class WebServiceCredential extends PersistableBusinessObjectBase implements MutableInactivatable {
     protected String credentialGroupCode;
     protected String credentialKey;
     protected String credentialValue;
@@ -33,11 +33,11 @@ public class WebServiceCredential extends PersistableBusinessObjectBase implemen
         this.credentialValue = credentialValue;
     }
 
-    public boolean isActive(){
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active){
+    public void setActive(boolean active) {
         this.active = active;
     }
 }

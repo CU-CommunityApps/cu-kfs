@@ -67,12 +67,12 @@ public class ConcurUtilsTest {
     }
     
     @Test
-    public void extractCodeFromEmptyString(){
+    public void extracCodeFromEmptyString(){
         Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractCodeFromCodeAndDescriptionValue(StringUtils.EMPTY));
     }
     
     @Test
-    public void extractCodeFromNull(){
+    public void extracCodeFromNull(){
         Assert.assertEquals(StringUtils.EMPTY, ConcurUtils.extractCodeFromCodeAndDescriptionValue(null));
     }
     
