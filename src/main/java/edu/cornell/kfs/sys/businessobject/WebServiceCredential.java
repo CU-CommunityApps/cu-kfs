@@ -7,11 +7,7 @@ public class WebServiceCredential extends PersistableBusinessObjectBase implemen
     protected String credentialGroupCode;
     protected String credentialKey;
     protected String credentialValue;
-    protected boolean active;
-    
-    public WebServiceCredential(){
-        active = true;
-    }
+    protected boolean active = true;
 
     public String getCredentialGroupCode() {
         return credentialGroupCode;
