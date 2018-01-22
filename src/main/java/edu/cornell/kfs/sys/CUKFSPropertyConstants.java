@@ -50,7 +50,8 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     public static final String REMOVE_INCOME_STREAM_CHART_AND_ACCOUNT = "removeIncomeStreamChartAndAccount";
     public static final String REMOVE_CONTINUATION_CHART_AND_ACCOUNT = "removeContinuationChartAndAccount";
     public static final String RECURRING_DV_PAYMENT_CANCEL_REASON_FIELD_NAME = "paymentCancelReason";
-    
+
+    public static final String WEB_SERVICE_CREDENTIAL_GROUP_CODE = "credentialGroupCode";
     public static final String WEB_SERVICE_CREDENTIAL_KEY = "credentialKey";
 
     public static final String PATH = "path";
