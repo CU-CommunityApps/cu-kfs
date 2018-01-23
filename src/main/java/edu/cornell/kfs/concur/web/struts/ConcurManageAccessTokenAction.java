@@ -76,7 +76,10 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     }
     
     protected void updateFormValues(ConcurManageAccessTokenForm concurTokenForm) {
-        String accessTokenExpirationDate = getWebServiceCredentialService().getWebServiceCredentialValue(ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE);
+        String accessTokenExpirationDate = getWebServiceCredentialService().getWebServiceCredentialValue(
+                ConcurConstants.CONCUR_WEB_SERVICE_GROUP_CODE,
+                ConcurConstants.CONCUR_ACCESS_TOKEN_EXPIRATION_DATE
+        );
         concurTokenForm.setAccessTokenExpirationDate(accessTokenExpirationDate);
         concurTokenForm.setShowResetTokenToEmptyStringButton(!isProduction());
         if (LOG.isDebugEnabled()) {
