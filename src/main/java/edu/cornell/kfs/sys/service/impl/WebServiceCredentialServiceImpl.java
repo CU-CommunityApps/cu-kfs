@@ -7,7 +7,6 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
