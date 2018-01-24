@@ -4,6 +4,7 @@
 <bean id="AppropriationAccount-parentBean" abstract="true" parent="BusinessObjectEntry">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AppropriationAccount"/>
     <property name="objectLabel" value="AppropriationAccount"/>
+
 	<property name="titleAttribute" value="AppropriationAccount"/>
 
 	 <property name="inquiryDefinition">
