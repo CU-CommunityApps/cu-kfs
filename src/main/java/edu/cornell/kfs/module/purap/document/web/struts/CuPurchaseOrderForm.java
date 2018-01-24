@@ -7,24 +7,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
+import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapConstants.PurchaseOrderStatuses;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	private static final String MOVE_CXML_ERROR_PO_PERM = "Move CXML Error PO"; // ==== CU Customization (KFSPTS-1457) ====
@@ -193,6 +193,32 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         return can;
     }
     // end KFSUPGRADE-411
+
+    /**
+     * Overridden to allow expired-account overrides to be repopulated on POA documents,
+     * using logic derived from the KualiAccountingDocumentFormBase ancestor class.
+     * 
+     * @see org.kuali.kfs.module.purap.document.web.struts.PurchasingFormBase#repopulateOverrides(
+     * org.kuali.kfs.sys.businessobject.AccountingLine, java.lang.String, java.util.Map)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected void repopulateOverrides(AccountingLine line, String accountingLinePropertyName, Map parameterMap) {
+        super.repopulateOverrides(line, accountingLinePropertyName, parameterMap);
+        
+        if (!(getPurchaseOrderDocument() instanceof PurchaseOrderAmendmentDocument)) {
+            return;
+        }
+        
+        if (line.getAccountExpiredOverrideNeeded()) {
+            if (parameterMap.containsKey(accountingLinePropertyName + CUKFSConstants.ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX)) {
+                line.setAccountExpiredOverride(
+                        parameterMap.containsKey(accountingLinePropertyName + CUKFSConstants.ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX));
+            }
+        } else {
+            line.setAccountExpiredOverride(false);
+        }
+    }
 
 	public List<Note> getCopiedNotes() {
 		return copiedNotes;
