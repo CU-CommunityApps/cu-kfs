@@ -24,12 +24,10 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	private static final String MOVE_CXML_ERROR_PO_PERM = "Move CXML Error PO"; // ==== CU Customization (KFSPTS-1457) ====
-
-	private static final String ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX = ".accountExpiredOverride.present";
-	private static final String ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX = ".accountExpiredOverride";
-
 	// ==== CU Customization (KFSPTS-1457) ====
 	
 	// KFSPTS-794
@@ -213,8 +211,9 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         }
         
         if (line.getAccountExpiredOverrideNeeded()) {
-            if (parameterMap.containsKey(accountingLinePropertyName + ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX)) {
-                line.setAccountExpiredOverride(parameterMap.containsKey(accountingLinePropertyName + ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX));
+            if (parameterMap.containsKey(accountingLinePropertyName + CUKFSConstants.ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX)) {
+                line.setAccountExpiredOverride(
+                        parameterMap.containsKey(accountingLinePropertyName + CUKFSConstants.ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX));
             }
         } else {
             line.setAccountExpiredOverride(false);
