@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PaymentWorksFieldMapping" parent="PaymentWorksFieldMapping-parentBean" />
+    <bean id="PaymentWorksFieldMapping-parentBean" abstract="true" parent="BusinessObjectEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksFieldMapping" />
+        <property name="objectLabel" value="PaymentWorks Field Mapping" />
+        <property name="titleAttribute" value="kfsPaymentWorksStagingTableColumn" />
+        <property name="lookupDefinition" ref="PaymentWorksFieldMapping-lookupDefinition" />
+        <property name="attributes">
+            <list>
+                <ref bean="PaymentWorksFieldMapping-paymentWorksFieldMappingId" />
+                <ref bean="PaymentWorksFieldMapping-paymentWorksFieldId" />
+                <ref bean="PaymentWorksFieldMapping-paymentWorksFieldLabel" />
+                <ref bean="PaymentWorksFieldMapping-kfsPaymentWorksStagingTableColumn" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksFieldMapping-paymentWorksFieldMappingId" parent="PaymentWorksFieldMapping-paymentWorksFieldMappingId-parentBean" />
+    <bean id="PaymentWorksFieldMapping-paymentWorksFieldMappingId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="paymentWorksFieldMappingId" />
+        <property name="label" value="Id" />
+        <property name="shortLabel" value="Id" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="10" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12" />
+        </property>
+    </bean>
+    
+    <bean id="PaymentWorksFieldMapping-paymentWorksFieldId" parent="PaymentWorksFieldMapping-paymentWorksFieldId-parentBean" />
+    <bean id="PaymentWorksFieldMapping-paymentWorksFieldId-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="paymentWorksFieldId" />
+        <property name="label" value="PaymentWorks Field Id" />
+        <property name="shortLabel" value="PMW Field Id" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="36" />
+        <property name="control">
+            <bean parent="TextareaControlDefinition" p:rows="4" p:cols="38" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksFieldMapping-paymentWorksFieldLabel" parent="PaymentWorksFieldMapping-paymentWorksFieldLabel-parentBean" />
+    <bean id="PaymentWorksFieldMapping-paymentWorksFieldLabel-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="paymentWorksFieldLabel" />
+        <property name="label" value="PaymentWorks Field Label" />
+        <property name="shortLabel" value="PMW Field Label" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="200" />
+        <property name="control">
+            <bean parent="TextareaControlDefinition" p:rows="4" p:cols="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksFieldMapping-kfsPaymentWorksStagingTableColumn" parent="PaymentWorksFieldMapping-kfsPaymentWorksStagingTableColumn-parentBean" />
+    <bean id="PaymentWorksFieldMapping-kfsPaymentWorksStagingTableColumn-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="kfsPaymentWorksStagingTableColumn" />
+        <property name="label" value="KFS Staging Table Column Name" />
+        <property name="shortLabel" value="KFS Stg Table Col" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="200" />
+        <property name="control">
+            <bean parent="TextareaControlDefinition" p:rows="4" p:cols="50" />
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksFieldMapping-lookupDefinition" parent="PaymentWorksFieldMapping-lookupDefinition-parentBean" />
+    <bean id="PaymentWorksFieldMapping-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
+        <property name="title" value="PaymentWorks Field Mapping Lookup" />
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>kfsPaymentWorksStagingTableColumn</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldMappingId" />
+                <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldId" />
+                <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldLabel" />
+                <bean parent="FieldDefinition" p:attributeName="kfsPaymentWorksStagingTableColumn" />
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldMappingId" />
+                <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldId" />
+                <bean parent="FieldDefinition" p:attributeName="paymentWorksFieldLabel" />
+                <bean parent="FieldDefinition" p:attributeName="kfsPaymentWorksStagingTableColumn" />
+            </list>
+        </property>
+    </bean>
+</beans>

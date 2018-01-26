@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="paymentWorksModuleConfiguration" parent="paymentWorksModuleConfiguration-parentBean" />
+    <bean id="paymentWorksModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+        <property name="namespaceCode" value="KFS-PMW" />
+        <property name="initializeDataDictionary" value="false" />
+        <property name="packagePrefixes">
+            <list>
+                <value>edu.cornell.kfs.pmw</value>
+            </list>
+        </property>
+        <property name="dataDictionaryPackages">
+            <list>
+                <value>classpath:edu/cornell/kfs/pmw/batch/businessobject/datadictionary/*.xml</value>
+                <value>classpath:edu/cornell/kfs/pmw/batch/document/datadictionary/*.xml</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list merge= "true">
+                <value>edu/cornell/kfs/pmw/cu-ojb-pmw.xml</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list>
+                <value>paymentWorksNewVendorCreateKfsVendorBatchJob</value>
+            </list>
+        </property>
+        <property name="batchFileDirectories">
+            <list>
+                <value>${reports.directory}/pmw</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="paymentWorksModuleService" parent="paymentWorksModuleService-parent" />
+    <bean id="paymentWorksModuleService-parent" abstract="true" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl">
+        <property name="moduleConfiguration" ref="paymentWorksModuleConfiguration" />
+    </bean>
+    
+    <bean id="paymentWorksNewVendorCreateKfsVendorBatchJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="paymentWorksNewVendorCreateKfsVendorStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="paymentWorksNewVendorCreateKfsVendorStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsVendorStep">
+        <property name="paymentWorksNewVendorRequestsService" ref="paymentWorksNewVendorRequestsService" />
+    </bean>
+
+    <bean id="paymentWorksDtoToPaymentWorksVendorConversionService" parent="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" />
+    <bean id="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl" abstract="true">
+        <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
+
+    <bean id="paymentWorksVendorToKfsVendorDetailConversionService" parent="paymentWorksVendorToKfsVendorDetailConversionService-parentBean" />
+    <bean id="paymentWorksVendorToKfsVendorDetailConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorToKfsVendorDetailConversionServiceImpl" abstract="true">
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+    </bean>
+
+    <bean id="paymentWorksWebServiceCallsService" parent="paymentWorksWebServiceCallsService-parentBean" />
+    <bean id="paymentWorksWebServiceCallsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksWebServiceCallsServiceImpl" abstract="true">
+        <property name="paymentWorksDtoToPaymentWorksVendorConversionService" ref="paymentWorksDtoToPaymentWorksVendorConversionService" />
+        <property name="paymentWorksAuthorizationToken">
+            <value>${paymentworks.authorization.token}</value>
+        </property>
+        <property name="paymentWorksUrl">
+            <value>${paymentworks.api.url}</value>
+        </property>
+    </bean>
+    
+    <bean id="paymentWorksVendorDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksVendorDaoJdbc">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+    </bean>
+    
+    <bean id="paymentWorksIsoFipsCountryDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksIsoFipsCountryDaoJdbc">
+    </bean>
+    
+    <bean id="kfsSupplierDiversityDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.KfsSupplierDiversityDaoJdbc">
+    </bean>
+    
+    <bean id="paymentWorksReportEmailService" parent="paymentWorksReportEmailService-parentBean" />
+    <bean id="paymentWorksReportEmailService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksReportEmailServiceImpl" abstract="true">
+        <property name="emailService" ref="emailService" />
+    </bean>
+    
+    <bean id="paymentWorksDataTransformationService" parent="paymentWorksDataTransformationService-parentBean" />
+    <bean id="paymentWorksDataTransformationService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDataTransformationServiceImpl" abstract="true">
+    </bean>
+    
+    <bean id="paymentWorksBatchUtilityService" parent="paymentWorksBatchUtilityService-parentBean" />
+    <bean id="paymentWorksBatchUtilityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksBatchUtilityServiceImpl" abstract="true">
+        <property name="parameterService" ref="parameterService" />
+        <property name="personService" ref="personService" />
+    </bean>
+    
+    <bean id="paymentWorksDataProcessingIntoKfsService" parent="paymentWorksDataProcessingIntoKfsService-parentBean" />
+    <bean id="paymentWorksDataProcessingIntoKfsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDataProcessingIntoKfsServiceImpl" abstract="true">
+        <property name="configurationService" ref="configurationService" />
+        <property name="documentService" ref="documentService" />
+        <property name="paymentWorksNewVendorRequestsReportService" ref="paymentWorksNewVendorRequestsReportService" />
+        <property name="paymentWorksVendorToKfsVendorDetailConversionService" ref="paymentWorksVendorToKfsVendorDetailConversionService" />
+    </bean>
+    
+    <bean id="paymentWorksReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+        <property name="filePath" value="${reports.directory}/pmw"/>
+    </bean>
+    
+    <bean id="paymentWorksNewVendorRequestsReportService" parent="paymentWorksNewVendorRequestsReportService-parentBean" />
+    <bean id="paymentWorksNewVendorRequestsReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsReportServiceImpl" abstract="true">
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
+        <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
+        <property name="reportWriterService" ref="paymentWorksReportWriterService" />
+    </bean>
+
+    <bean id="paymentWorksNewVendorRequestsService" parent="paymentWorksNewVendorRequestsService-parentBean" />
+    <bean id="paymentWorksNewVendorRequestsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsServiceImpl" abstract="true">
+        <property name="dataDictionaryService" ref="dataDictionaryService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />
+        <property name="paymentWorksDataProcessingIntoKfsService" ref="paymentWorksDataProcessingIntoKfsService" />
+        <property name="paymentWorksIsoFipsCountryDao" ref="paymentWorksIsoFipsCountryDao" />
+        <property name="paymentWorksNewVendorRequestsReportService" ref="paymentWorksNewVendorRequestsReportService" />
+        <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
+        <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
+    </bean>
+    
+</beans>

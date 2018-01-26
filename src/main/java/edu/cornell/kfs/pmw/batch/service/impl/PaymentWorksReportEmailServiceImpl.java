@@ -1,0 +1,51 @@
+package edu.cornell.kfs.pmw.batch.service.impl;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
+
+import edu.cornell.kfs.pmw.batch.report.PaymentWorksEmailableReportData;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
+
+public class PaymentWorksReportEmailServiceImpl implements PaymentWorksReportEmailService {
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksReportEmailServiceImpl.class);
+
+    protected EmailService emailService;
+
+    @Override
+    public void sendEmail(String toAddress, String fromAddress, String subject, String body) {
+        List<String> toAddressList = new ArrayList<>();
+        toAddressList.add(toAddress);
+        
+        BodyMailMessage message = new BodyMailMessage();
+        message.setFromAddress(fromAddress);
+        message.setSubject(subject);
+        message.getToAddresses().addAll(toAddressList);
+        message.setMessage(body);
+        boolean htmlMessage = false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
+            LOG.debug("sendEmail, the email subject: " + subject);
+            LOG.debug("sendEmail, the email body: " + body);
+        }
+
+        try {
+            getEmailService().sendMessage(message, htmlMessage);
+        } catch (Exception e) {
+            LOG.error("sendEmail, the email could not be sent", e);
+        }
+    }
+    
+    public EmailService getEmailService() {
+        return emailService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+    
+}
