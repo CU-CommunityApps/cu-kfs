@@ -98,27 +98,23 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
             AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
 
             if (StringUtils.isBlank(assetLocationCityName) && StringUtils.isBlank(assetLocationStateCode) && StringUtils.isBlank(assetLocationCountryCode) && StringUtils.isBlank(assetLocationStreetAddress) && StringUtils.isBlank(assetLocationZipCode)) {
-            	if (StringUtils.isBlank(buildingCd)) {
-	                String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
-	                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
-	                valid = false;
-	            }
+                // Building code required for moveable assets or assets that require building
+                if (ObjectUtils.isNull(assetType) || assetType.isMovingIndicator() || assetType.isRequiredBuildingIndicator()) {
+                    if (StringUtils.isBlank(dtl.getBuildingCode())) {
+                        String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
+                        GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
+                        valid = false;
+                    }
+                }
                 // Room is not required for non-moveable
                if (ObjectUtils.isNull(assetType) || assetType.isMovingIndicator()) {
+                // Room is required for moveable
             	    if (StringUtils.isBlank(roomCd)) {
                         String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
                         GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, KFSKeyConstants.ERROR_REQUIRED, label);
                         valid = false;
                     }
                 }
-               // Room number not allowed for non-moveable assets
-               if (ObjectUtils.isNotNull(assetType) && !assetType.isMovingIndicator()) {
-                   if (StringUtils.isNotBlank(dtl.getBuildingRoomNumber())) {
-                       String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
-                       GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, CamsKeyConstants.AssetLocation.ERROR_ASSET_LOCATION_ROOM_NUMBER_NONMOVEABLE, label);
-                       valid = false;
-                   }
-               }
 
             }
             
@@ -191,27 +187,46 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
                 }
             }
             Map<String, String> params;
-            params = new HashMap<String, String>();
-            params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
-            params.put(KFSPropertyConstants.BUILDING_CODE, dtl.getBuildingCode());
-            Building building = businessObjectService.findByPrimaryKey(Building.class, params);
-            if (StringUtils.isBlank(assetLocationCityName) && StringUtils.isBlank(assetLocationStateCode) && StringUtils.isBlank(assetLocationCountryCode) && StringUtils.isBlank(assetLocationStreetAddress) && StringUtils.isBlank(assetLocationZipCode)) {
+
+            if (StringUtils.isNotBlank(dtl.getCampusCode()) && StringUtils.isNotBlank(dtl.getBuildingCode()) && StringUtils.isBlank(assetLocationCityName) && StringUtils.isBlank(assetLocationStateCode) && StringUtils.isBlank(assetLocationCountryCode) && StringUtils.isBlank(assetLocationStreetAddress) && StringUtils.isBlank(assetLocationZipCode)) {              
+                params = new HashMap<String, String>();
+                params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
+                params.put(KFSPropertyConstants.BUILDING_CODE, dtl.getBuildingCode());
+                Building building = businessObjectService.findByPrimaryKey(Building.class, params);
+                // Check if building is valid
                 if (ObjectUtils.isNull(building)) {
                     valid = false;
                     GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, CamsKeyConstants.AssetLocationGlobal.ERROR_INVALID_BUILDING_CODE, dtl.getBuildingCode(), dtl.getCampusCode());
                 }
             }
 
-            params = new HashMap<String, String>();
-            params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
-            params.put(KFSPropertyConstants.BUILDING_CODE, dtl.getBuildingCode());
-            params.put(KFSPropertyConstants.BUILDING_ROOM_NUMBER, dtl.getBuildingRoomNumber());
-            Room room = businessObjectService.findByPrimaryKey(Room.class, params);
             AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
             if (StringUtils.isBlank(assetLocationCityName) && StringUtils.isBlank(assetLocationStateCode) && StringUtils.isBlank(assetLocationCountryCode) && StringUtils.isBlank(assetLocationStreetAddress) && StringUtils.isBlank(assetLocationZipCode)) {
-                if (ObjectUtils.isNull(room) && (ObjectUtils.isNull(assetType) || assetType.isMovingIndicator())) {
+                // If building was specified but was not required for this asset type display an error
+                if (StringUtils.isNotBlank(dtl.getBuildingCode()) && ObjectUtils.isNotNull(assetType) && !assetType.isMovingIndicator() && !assetType.isRequiredBuildingIndicator()) {
                     valid = false;
-                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, CamsKeyConstants.AssetLocationGlobal.ERROR_INVALID_ROOM_NUMBER, dtl.getBuildingRoomNumber(), dtl.getBuildingCode(), dtl.getCampusCode());
+                    String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
+                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, CamsKeyConstants.AssetLocation.ERROR_ASSET_LOCATION_BUILDING_NONMOVEABLE, label);
+                }
+
+                if (StringUtils.isNotBlank(dtl.getCampusCode()) && StringUtils.isNotBlank(dtl.getBuildingCode()) && StringUtils.isNotBlank(dtl.getBuildingRoomNumber())) {
+                    params = new HashMap<>();
+                    params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
+                    params.put(KFSPropertyConstants.BUILDING_CODE, dtl.getBuildingCode());
+                    params.put(KFSPropertyConstants.BUILDING_ROOM_NUMBER, dtl.getBuildingRoomNumber());
+                    Room room = businessObjectService.findByPrimaryKey(Room.class, params);
+                    // Check if room is valid
+                    if (ObjectUtils.isNull(room)) {
+                        valid = false;
+                        GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, CamsKeyConstants.AssetLocationGlobal.ERROR_INVALID_ROOM_NUMBER, dtl.getBuildingRoomNumber(), dtl.getBuildingCode(), dtl.getCampusCode());
+                    }
+                }
+
+                // If room was specified but was not required for this asset type display an error
+                if (StringUtils.isNotBlank(dtl.getBuildingRoomNumber()) && ObjectUtils.isNotNull(assetType) && !assetType.isMovingIndicator()) {
+                    valid = false;
+                    String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
+                    GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, CamsKeyConstants.AssetLocation.ERROR_ASSET_LOCATION_ROOM_NUMBER_NONMOVEABLE, label);
                 }
             }
             index++;
