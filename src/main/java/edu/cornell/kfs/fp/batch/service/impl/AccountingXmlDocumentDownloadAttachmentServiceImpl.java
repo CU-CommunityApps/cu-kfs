@@ -22,17 +22,25 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.AttachmentService;
+import org.springframework.beans.factory.DisposableBean;
 
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.util.CURestClientUtils;
 
-public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements AccountingXmlDocumentDownloadAttachmentService {
+public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;
+    private volatile Client client;
+    
+    @Override
+    public void destroy() throws Exception {
+        closeClientQuietly();
+    }
 
     @Override
     public Attachment createAttachmentFromBackupLink(Document document,
@@ -48,8 +56,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements Accou
             String attachmentType = null;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("createAttachmentFromBackupLink, uploadedFileName: " + uploadedFileName + " mimeType: " + mimeType
-                    + " fileSize: " + fileSize + " attachmentType: " + attachmentType + " formFile.toPath(): "
-                    + formFile.toPath());
+                    + " fileSize: " + fileSize + " attachmentType: " + attachmentType);
             }
             try {
                 InputStream fileContents = new FileInputStream(formFile);
@@ -80,7 +87,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements Accou
         Collection<WebServiceCredential> creds = webServiceCredentialService
                 .getWebServiceCredentialsByGroupCode(accountingXmlDocumentBackupLink.getCredentialGroupCode());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("getWebServiceCredtials, the group code is " + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " for the file " + accountingXmlDocumentBackupLink.getLinkUrl());
+            LOG.debug("getWebServiceCredtials, the group code is " + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " for the file " + 
+                    accountingXmlDocumentBackupLink.getFileName());
             if (CollectionUtils.isNotEmpty(creds)) {
                 creds.stream().forEach(cred -> LOG.debug("getWebServiceCredtials, found a credential key: " + cred.getCredentialKey()));
             } else {
@@ -92,10 +100,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements Accou
 
     protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds)
             throws URISyntaxException {
-        ClientConfig clientConfig = new ClientConfig();
-        Client client = ClientBuilder.newClient(clientConfig);
         URI uri = new URI(url);
-        Builder builder = client.target(uri).request();
+        Builder builder = getClient().target(uri).request();
         if (CollectionUtils.isNotEmpty(creds)) {
             for (WebServiceCredential cred : creds) {
                 builder.header(cred.getCredentialKey(), cred.getCredentialValue());
@@ -120,6 +126,36 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements Accou
             throw new IOException("Invalid response code: " + response.getStatus());
         }
         return downloadfile;
+    }
+    
+    protected Client getClient() {
+        // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
+        // See effective java 2nd ed. pg. 71
+        Client jerseyClient = client;
+        if (jerseyClient == null) {
+            synchronized (this) {
+                jerseyClient = client;
+                if (jerseyClient == null) {
+                    ClientConfig clientConfig = new ClientConfig();
+                    jerseyClient = ClientBuilder.newClient(clientConfig);
+                    client = jerseyClient;
+                }
+            }
+        }
+        return jerseyClient;
+    }
+    
+    protected void closeClientQuietly() {
+        // Use double-checked locking to retrieve the Client object, similar to related locking in Rice.
+        // See effective java 2nd ed. pg. 71
+        Client jerseyClient = client;
+        if (jerseyClient == null) {
+            synchronized (this) {
+                jerseyClient = client;
+            }
+        }
+        
+        CURestClientUtils.closeQuietly(jerseyClient);
     }
 
     public void setAttachmentService(AttachmentService attachmentService) {
