@@ -6,15 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.HttpMethod;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.util.KRADConstants;
@@ -36,23 +33,18 @@ import edu.cornell.kfs.concur.service.ConcurAccessTokenService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
-public class ConcurReportsServiceImpl implements ConcurReportsService, DisposableBean {
+public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase implements ConcurReportsService, DisposableBean {
     
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportsServiceImpl.class);
     protected ConcurAccessTokenService concurAccessTokenService;
     protected ParameterService parameterService;
-    private volatile Client client;
     private String concurExpenseWorkflowUpdateNamespace;
     private String concurRequestWorkflowUpdateNamespace;
     private String concurFailedRequestQueueEndpoint;
     private String concurFailedRequestDeleteNotificationEndpoint;
-
-    @Override
-    public void destroy() throws Exception {
-        closeClientQuietly();
-    }
 
     @Override
     public ConcurReport extractConcurReport(String reportURI) {
@@ -295,36 +287,6 @@ public class ConcurReportsServiceImpl implements ConcurReportsService, Disposabl
         } finally {
             CURestClientUtils.closeQuietly(response);
         }
-    }
-
-    protected Client getClient() {
-        // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
-        // See effective java 2nd ed. pg. 71
-        Client jerseyClient = client;
-        if (jerseyClient == null) {
-            synchronized (this) {
-                jerseyClient = client;
-                if (jerseyClient == null) {
-                    ClientConfig clientConfig = new ClientConfig();
-                    jerseyClient = ClientBuilder.newClient(clientConfig);
-                    client = jerseyClient;
-                }
-            }
-        }
-        return jerseyClient;
-    }
-
-    protected void closeClientQuietly() {
-        // Use double-checked locking to retrieve the Client object, similar to related locking in Rice.
-        // See effective java 2nd ed. pg. 71
-        Client jerseyClient = client;
-        if (jerseyClient == null) {
-            synchronized (this) {
-                jerseyClient = client;
-            }
-        }
-        
-        CURestClientUtils.closeQuietly(jerseyClient);
     }
 
     private String addConcurMessageHeaderAndTruncate(String message, int maxLength) {

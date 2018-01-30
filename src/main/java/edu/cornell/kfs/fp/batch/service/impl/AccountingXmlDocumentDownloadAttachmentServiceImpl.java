@@ -10,15 +10,12 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collection;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.glassfish.jersey.client.ClientConfig;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.AttachmentService;
@@ -28,19 +25,13 @@ import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentS
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
-import edu.cornell.kfs.sys.util.CURestClientUtils;
+import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 
-public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
+public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends DisposableClientServiceImplBase implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;
-    private volatile Client client;
-    
-    @Override
-    public void destroy() throws Exception {
-        closeClientQuietly();
-    }
 
     @Override
     public Attachment createAttachmentFromBackupLink(Document document,
@@ -126,36 +117,6 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl implements Accou
             throw new IOException("Invalid response code: " + response.getStatus());
         }
         return downloadfile;
-    }
-    
-    protected Client getClient() {
-        // Use double-checked locking to lazy-load the Client object, similar to related locking in Rice.
-        // See effective java 2nd ed. pg. 71
-        Client jerseyClient = client;
-        if (jerseyClient == null) {
-            synchronized (this) {
-                jerseyClient = client;
-                if (jerseyClient == null) {
-                    ClientConfig clientConfig = new ClientConfig();
-                    jerseyClient = ClientBuilder.newClient(clientConfig);
-                    client = jerseyClient;
-                }
-            }
-        }
-        return jerseyClient;
-    }
-    
-    protected void closeClientQuietly() {
-        // Use double-checked locking to retrieve the Client object, similar to related locking in Rice.
-        // See effective java 2nd ed. pg. 71
-        Client jerseyClient = client;
-        if (jerseyClient == null) {
-            synchronized (this) {
-                jerseyClient = client;
-            }
-        }
-        
-        CURestClientUtils.closeQuietly(jerseyClient);
     }
 
     public void setAttachmentService(AttachmentService attachmentService) {
