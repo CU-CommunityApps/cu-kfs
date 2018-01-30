@@ -1,39 +1,29 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
+import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderAction;
+import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
+import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
-import org.kuali.kfs.module.purap.businessobject.PurApItem;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderAction;
-import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
-import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
 
 public class CuPurchaseOrderAction extends PurchaseOrderAction {
@@ -170,35 +160,6 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
             }
         }
         return forward;
-    }
-
-    /**
-     * Overridden to perform the proper account-line-override setup
-     * on POA items' account addLines.
-     * 
-     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#processAccountingLineOverrides(
-     * org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase)
-     */
-    @Override
-    protected void processAccountingLineOverrides(KualiAccountingDocumentFormBase transForm) {
-        super.processAccountingLineOverrides(transForm);
-        if (transForm.getDocument() instanceof PurchaseOrderAmendmentDocument) {
-            processOverridesForDocumentItemAccountingAddLines((PurchaseOrderAmendmentDocument) transForm.getDocument());
-        }
-    }
-
-    protected void processOverridesForDocumentItemAccountingAddLines(PurchaseOrderAmendmentDocument document) {
-        List<PurApItem> items = document.getItems();
-        if (CollectionUtils.isNotEmpty(items)) {
-            List<AccountingLine> accountAddLines = items.stream()
-                    .map(PurApItem::getNewSourceLine)
-                    .collect(Collectors.toCollection(ArrayList::new));
-            /*
-             * Using null document as first arg, for consistency with regular source/target addLine handling
-             * in KualiAccountingDocumentActionBase.
-             */
-            processAccountingLineOverrides(null, accountAddLines);
-        }
     }
 
 }
