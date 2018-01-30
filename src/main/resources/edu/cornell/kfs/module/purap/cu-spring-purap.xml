@@ -249,6 +249,9 @@
     <bean id="potentiallySensitiveDocumentRoleTypeService" parent="potentiallySensitiveDocumentRoleTypeService-parentBean"
             class="edu.cornell.kfs.module.purap.identity.CuPotentiallySensitiveDocumentRoleTypeServiceImpl"/>
 
+    <bean id="purchaseOrderAmendmentAccountingLineRuleHelperService" parent="purchasingAccountingLineRuleHelperService"
+            class="edu.cornell.kfs.module.purap.service.impl.CuPurchaseOrderAmendmentAccountingLineRuleHelperServiceImpl"/>
+
 	<import resource="document/validation/configuration/CuPaymentRequestValidation.xml" />
 	<import resource="document/validation/configuration/VendorCreditMemoValidation.xml" />
 	<import resource="document/validation/configuration/RequisitionValidation.xml" />
