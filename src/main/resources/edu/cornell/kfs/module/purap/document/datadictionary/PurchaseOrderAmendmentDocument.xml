@@ -19,7 +19,6 @@
       <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument"/>
       <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPurchaseOrderAmendmentDocumentPresentationController"/>
-    <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.ExpiredAccountOverridePreRules"/>
   </bean>
 
     <bean id="RoutingType-PurchaseOrderAmendmentDocument-newUnorderedItemAccount" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
