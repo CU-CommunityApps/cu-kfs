@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="InternalBillingDocument-validations-parentBean" abstract="true" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map key-type="java.lang.Class">
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value>
+                    </key>
+                    <value>InternalBilling-routeDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value>
+                    </key>
+                    <value>InternalBilling-saveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value>
+                    </key>
+                    <value>InternalBilling-approveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedBlanketApproveDocumentEvent</value>
+                    </key>
+                    <value>InternalBilling-blanketApproveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value>
+                    </key>
+                    <value>InternalBilling-addAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent</value>
+                    </key>
+                    <value>InternalBilling-deleteAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent</value>
+                    </key>
+                    <value>InternalBilling-updateAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value>
+                    </key>
+                    <value>InternalBilling-reviewAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.fp.document.validation.event.CapitalAccountingLinesSameObjectCodeSubTypeEvent</value>
+                    </key>
+                    <value>InternalBilling-capitalAccountingLinesObjectSubtypeValidations</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

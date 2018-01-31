@@ -12,7 +12,6 @@ import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
-import edu.cornell.kfs.fp.document.AccountFundsUpdateDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class TotalAmountBelowThresholdValidation extends GenericValidation {
@@ -70,8 +69,8 @@ public class TotalAmountBelowThresholdValidation extends GenericValidation {
     public KualiDecimal getMaximumTotalAmountThresholdAllowed() {
         if(ObjectUtils.isNull(maximumTotalAmountThresholdAllowed)){
             ParameterEvaluator parameterEvaluator = getParameterEvaluatorService().getParameterEvaluator(
-                AccountFundsUpdateDocument.class,
-                CuFPParameterConstants.AccountFundsUpdateDocument.ACCOUNT_FUNDS_UPDATE_MAX_TOTAL_THRESHOLD_AMOUNT
+                accountingDocumentForValidation.getDocumentClassForAccountingLineValueAllowedValidation(),
+                CuFPParameterConstants.MAX_TOTAL_THRESHOLD_AMOUNT
             );
             setMaximumTotalAmountThresholdAllowed(new KualiDecimal(parameterEvaluator.getValue()));
         }
