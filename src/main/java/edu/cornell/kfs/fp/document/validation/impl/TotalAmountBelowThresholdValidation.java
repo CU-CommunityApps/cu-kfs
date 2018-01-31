@@ -1,28 +1,51 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.validation.GenericValidation;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import edu.cornell.kfs.fp.CuFPParameterConstants;
+import edu.cornell.kfs.fp.document.AccountFundsUpdateDocument;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class TotalAmountBelowThresholdValidation extends GenericValidation {
 
     private AccountingDocument accountingDocumentForValidation;
+    private ParameterEvaluatorService parameterEvaluatorService;
+    private KualiDecimal maximumTotalAmountThresholdAllowed;
 
     public boolean validate(AttributedDocumentEvent event) {
         KualiDecimal sourceTotalAmount = accountingDocumentForValidation.getSourceTotal();
+        KualiDecimal targetTotalAmount = accountingDocumentForValidation.getTargetTotal();
+        boolean validationPassed = true;
 
-        if(sourceTotalAmount.compareTo(new KualiDecimal(CuFPConstants.AccountFundsUpdateConstants.MAX_TOTAL_ALLOWED)) > 0){
-            GlobalVariables.getMessageMap().putError(KFSConstants.AMOUNT_PROPERTY_NAME, CUKFSKeyConstants.ERROR_MAX_TOTAL_THRESHOLD_AMOUNT_EXCEEDED,
-                    sourceTotalAmount.toString(), CuFPConstants.AccountFundsUpdateConstants.MAX_TOTAL_ALLOWED.toString());
-            return false;
+        if(sourceTotalAmount.compareTo(getMaximumTotalAmountThresholdAllowed()) > 0){
+            setGlobalThresholdError(sourceTotalAmount);
+            validationPassed = false;
         }
 
-        return true;
+        if(targetTotalAmount.compareTo(getMaximumTotalAmountThresholdAllowed()) > 0){
+            setGlobalThresholdError(targetTotalAmount);
+            validationPassed = false;
+        }
+
+        return validationPassed;
+    }
+
+    private void setGlobalThresholdError(KualiDecimal totalAmount){
+        GlobalVariables.getMessageMap().putError(
+                KFSConstants.AMOUNT_PROPERTY_NAME,
+                CUKFSKeyConstants.ERROR_MAX_TOTAL_THRESHOLD_AMOUNT_EXCEEDED,
+                totalAmount.toString(),
+                getMaximumTotalAmountThresholdAllowed().toString()
+        );
     }
 
     public AccountingDocument getAccountingDocumentForValidation() {
@@ -31,5 +54,31 @@ public class TotalAmountBelowThresholdValidation extends GenericValidation {
 
     public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
+    }
+
+    public ParameterEvaluatorService getParameterEvaluatorService(){
+        if(ObjectUtils.isNull(parameterEvaluatorService)){
+            setParameterEvaluatorService(SpringContext.getBean(ParameterEvaluatorService.class));
+        }
+        return parameterEvaluatorService;
+    }
+
+    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService){
+        this.parameterEvaluatorService = parameterEvaluatorService;
+    }
+
+    public KualiDecimal getMaximumTotalAmountThresholdAllowed() {
+        if(ObjectUtils.isNull(maximumTotalAmountThresholdAllowed)){
+            ParameterEvaluator parameterEvaluator = getParameterEvaluatorService().getParameterEvaluator(
+                AccountFundsUpdateDocument.class,
+                CuFPParameterConstants.AccountFundsUpdateDocument.ACCOUNT_FUNDS_UPDATE_MAX_TOTAL_THRESHOLD_AMOUNT
+            );
+            setMaximumTotalAmountThresholdAllowed(new KualiDecimal(parameterEvaluator.getValue()));
+        }
+        return maximumTotalAmountThresholdAllowed;
+    }
+
+    public void setMaximumTotalAmountThresholdAllowed(KualiDecimal maximumTotalAmountThresholdAllowed) {
+        this.maximumTotalAmountThresholdAllowed = maximumTotalAmountThresholdAllowed;
     }
 }

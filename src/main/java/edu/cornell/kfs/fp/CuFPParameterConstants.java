@@ -64,4 +64,7 @@ public class CuFPParameterConstants {
         public static final String SINGLE_TRANSACTION_IND_PARAMETER_NAME = "SINGLE_TRANSACTION_IND";
     }
 
+    public static class AccountFundsUpdateDocument {
+        public static final String ACCOUNT_FUNDS_UPDATE_MAX_TOTAL_THRESHOLD_AMOUNT = "ACCOUNT_FUNDS_UPDATE_MAX_TOTAL_THRESHOLD_AMOUNT";
+    }
 }

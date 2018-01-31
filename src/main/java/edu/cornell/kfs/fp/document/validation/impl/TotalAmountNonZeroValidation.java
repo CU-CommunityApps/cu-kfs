@@ -33,7 +33,12 @@ public class TotalAmountNonZeroValidation extends GenericValidation {
     }
 
     private void addGlobalThresholdValidationError(String FromOrTo, KualiDecimal totalAmount){
-        GlobalVariables.getMessageMap().putError(KFSConstants.AMOUNT_PROPERTY_NAME, CUKFSKeyConstants.ERROR_ZERO_AMOUNT_TOTAL, FromOrTo, totalAmount.toString());
+        GlobalVariables.getMessageMap().putError(
+            KFSConstants.AMOUNT_PROPERTY_NAME,
+            CUKFSKeyConstants.ERROR_ZERO_AMOUNT_TOTAL,
+            FromOrTo,
+            totalAmount.toString()
+        );
     }
 
     public AccountingDocument getAccountingDocumentForValidation() {
