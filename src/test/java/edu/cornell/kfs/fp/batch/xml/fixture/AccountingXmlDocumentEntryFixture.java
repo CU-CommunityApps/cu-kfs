@@ -69,7 +69,7 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks()),
     MULTI_DI_DOCUMENT_TEST_DOC4(
-            3, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            4, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             "auth backup Document", "Document Explanation", "OrgDoc4",
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_1000,

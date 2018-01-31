@@ -5,7 +5,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 public enum AccountingXmlDocumentBackupLinkFixture {
     CORNELL_INDEX_PAGE("http://www.cornell.edu/index.html", "Cornell index page", "index.html"),
     DFA_INDEX_PAGE("https://www.dfa.cornell.edu/index.cfm", "DFA index page", "index.cfm"),
-    AWS_BILLING_INVOICE("https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&amp;month=01&amp;account=999999999999", "AWS Billing Invoice", 
+    AWS_BILLING_INVOICE("https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&month=01&account=999999999999", "AWS Billing Invoice", 
             "invoice.pdf", "AWS-Bill");
 
     public String linkUrl;
