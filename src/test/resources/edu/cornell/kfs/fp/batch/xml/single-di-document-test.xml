@@ -88,10 +88,12 @@
                 <BackupLink>
                     <Link>http://www.cornell.edu/index.html</Link>
                     <Description>Cornell index page</Description>
+                    <FileName>index.htm</FileName>
                 </BackupLink>
                 <BackupLink>
                     <Link>https://www.dfa.cornell.edu/index.cfm</Link>
                     <Description>DFA index page</Description>
+                    <FileName>index.cfm</FileName>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>

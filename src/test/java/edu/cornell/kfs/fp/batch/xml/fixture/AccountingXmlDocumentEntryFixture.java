@@ -68,6 +68,20 @@ public enum AccountingXmlDocumentEntryFixture {
             notes(),
             adHocRecipients(),
             backupLinks()),
+    MULTI_DI_DOCUMENT_TEST_DOC4(
+            3, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            "auth backup Document", "Document Explanation", "OrgDoc4",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_1000,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_500),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_1000,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_500),
+            notes(),
+            adHocRecipients(),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.AWS_BILLING_INVOICE,
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
 
     MULTI_DI_DOCUMENT_TEST_DOC1_BAD(
             1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -257,6 +271,10 @@ public enum AccountingXmlDocumentEntryFixture {
         notes.stream()
                 .map(MockDocumentUtils::buildMockNote)
                 .forEach(accountingDocument::addNote);
+        backupLinks.stream()
+            .map(s -> s.description)
+            .map(MockDocumentUtils::buildMockNote)
+            .forEach(accountingDocument::addNote);
     }
 
     private void addAdHocRecipientsToDocument(AccountingDocument accountingDocument) {

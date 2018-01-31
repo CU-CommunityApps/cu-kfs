@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -50,6 +51,8 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
@@ -83,6 +86,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
         createAccountingDocumentService.setConfigurationService(buildMockConfigurationService());
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
+        
         
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
@@ -370,8 +374,10 @@ public class CreateAccountingDocumentServiceImplTest {
             diGenerator = new CuDistributionOfIncomeAndExpenseDocumentGenerator(
                     MockDocumentUtils::buildMockNote, MockDocumentUtils::buildMockAdHocRoutePerson);
             diGenerator.setPersonService(personService);
+            diGenerator.setAccountingXmlDocumentDownloadAttachmentService(new TestAccountingXmlDocumentDownloadAttachmentService());
             nextDocumentNumber = DOCUMENT_NUMBER_START;
             processingOrderedBaseFileNames = new ArrayList<>();
+            
         }
 
         public List<String> getProcessingOrderedBaseFileNames() {
@@ -451,6 +457,18 @@ public class CreateAccountingDocumentServiceImplTest {
                     StringUtils.equals(CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE, validationErrorMessage));
             return validationErrorMessage;
         }
+    }
+    
+    private static class TestAccountingXmlDocumentDownloadAttachmentService implements AccountingXmlDocumentDownloadAttachmentService {
+
+        @Override
+        public Attachment createAttachmentFromBackupLink(Document document,
+                AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
+            Attachment att = new Attachment();
+            att.setAttachmentFileName(accountingXmlDocumentBackupLink.getFileName());
+            return att;
+        }
+        
     }
 
 }
