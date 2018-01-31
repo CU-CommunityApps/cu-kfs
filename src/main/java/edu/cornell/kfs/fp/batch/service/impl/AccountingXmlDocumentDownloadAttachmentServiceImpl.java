@@ -39,24 +39,20 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
         File formFile = downloadFile(accountingXmlDocumentBackupLink);
         
         if (formFile != null) {
-            String uploadedFileName = accountingXmlDocumentBackupLink.getFileName();
+            String uploadFileName = accountingXmlDocumentBackupLink.getFileName();
             String mimeType = URLConnection.guessContentTypeFromName(formFile.getName());
-            
             int fileSize = (int) formFile.length();
             String attachmentType = null;
+            
             if (LOG.isDebugEnabled()) {
-                LOG.debug("createAttachmentFromBackupLink, uploadedFileName: " + uploadedFileName + " mimeType: " + mimeType
-                    + " fileSize: " + fileSize + " attachmentType: " + attachmentType);
+                LOG.debug("createAttachmentFromBackupLink, uploadFileName: " + uploadFileName + " mimeType: " + mimeType
+                    + " fileSize: " + fileSize);
             }
-            try {
-                InputStream fileContents = new FileInputStream(formFile);
-                Attachment attachment = attachmentService.createAttachment(document, uploadedFileName, mimeType, fileSize,
-                        fileContents, attachmentType);
-                return attachment;
-            } catch (IOException e) {
-                LOG.error("createAttachmentFromBackupLink could not create attachment", e);
-            }
+            InputStream fileContents = new FileInputStream(formFile);
+            Attachment attachment = attachmentService.createAttachment(document, uploadFileName, mimeType, fileSize,
+                    fileContents, attachmentType);
             formFile.delete();
+            return attachment;
         } else {
             LOG.error("createAttachmentFromBackupLink, the form file is NULL");
         }
@@ -77,18 +73,18 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     }
 
     protected Collection<WebServiceCredential> getWebServiceCredtials(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
-        Collection<WebServiceCredential> creds = webServiceCredentialService
+        Collection<WebServiceCredential> webServiceCredentials = webServiceCredentialService
                 .getWebServiceCredentialsByGroupCode(accountingXmlDocumentBackupLink.getCredentialGroupCode());
         if (LOG.isDebugEnabled()) {
             LOG.debug("getWebServiceCredtials, the group code is " + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " for the file " + 
                     accountingXmlDocumentBackupLink.getFileName());
-            if (CollectionUtils.isNotEmpty(creds)) {
-                creds.stream().forEach(cred -> LOG.debug("getWebServiceCredtials, found a credential key: " + cred.getCredentialKey()));
+            if (CollectionUtils.isNotEmpty(webServiceCredentials)) {
+                webServiceCredentials.stream().forEach(cred -> LOG.debug("getWebServiceCredtials, found a credential key: " + cred.getCredentialKey()));
             } else {
                 LOG.debug("getWebServiceCredtials, no credentials found");
             }
         }
-        return creds;
+        return webServiceCredentials;
     }
 
     protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds)

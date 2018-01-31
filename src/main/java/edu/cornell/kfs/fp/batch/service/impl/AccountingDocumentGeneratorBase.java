@@ -138,27 +138,23 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         }
         Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
         Note note = emptyNoteGenerator.get();
-        
         note.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
         note.setNotePostedTimestampToCurrent();
+        addAttachmentToNote(document, backupLink, note);
+        note.setNoteText(backupLink.getDescription());
+        return note;
+    }
+
+    protected void addAttachmentToNote(T document, AccountingXmlDocumentBackupLink backupLink, Note note) {
         try {
             Attachment attachment = accountingXmlDocumentDownloadAttachmentService.createAttachmentFromBackupLink(document, backupLink);
             note.setAttachment(attachment);
         } catch (IOException e) {
-            LOG.error("buildDocumentNoteAttachment, unable to create attachment: " + e.getMessage());
+            LOG.error("addAttachmentToNote, unable to create attachment: " + e.getMessage());
             String message = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD) 
                     + KFSConstants.BLANK_SPACE + backupLink.getLinkUrl();
             throw new ValidationException(message);
         }
-        
-        note.setNoteText(backupLink.getDescription());
-        
-        return note;
-    }
-    
-    protected Attachment buildAttachment() {
-        Attachment attach = new Attachment();
-        return attach;
     }
 
     protected void populateAdHocRecipients(T document, AccountingXmlDocumentEntry documentEntry) {
