@@ -171,8 +171,8 @@ public class CuFPConstants {
         public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
     }
 
-    public static class AccountFundsUpdateConstants {
-        public final static Integer MAX_TOTAL_ALLOWED = 10000;
+    public static class AccountFundsUpdateDocumentConstants {
+        public static final String ACCOUNT_FUNDS_UPDATE_DOCUMENT_TYPE_NAME = "AFU";
     }
 
 }
