@@ -34,20 +34,6 @@
                         </list>
                     </property>
                 </bean>
-                <!--<bean parent="AccountFundsUpdate-transferTotalsBalanceValidation" scope="prototype">
-                    <property name="parameterProperties">
-                        <list>
-                            <bean parent="accountingDocumentFieldConversion"/>
-                        </list>
-                    </property>
-                </bean>-->
-                <!--<bean parent="AccountFundsUpdate-fundGroupsBalancedValidation" scope="prototype">
-                    <property name="parameterProperties">
-                        <list>
-                            <bean parent="accountingDocumentFieldConversion"/>
-                        </list>
-                    </property>
-                </bean>-->
             </list>
         </property>
     </bean>
@@ -107,14 +93,10 @@
                 <property name="validations">
                     <list>
                         <bean parent="AccountingDocument-IsObjectCodeAllowed-DefaultValidation" scope="prototype"/>
-                        <!--<bean parent="AccountFundsUpdate-objectCodeValueAllowedValidation" scope="prototype"/>-->
                     </list>
                 </property>
             </bean>
         </property>
-<!--        <property name="objectSubTypeAllowedValidation">
-            <bean parent="AccountFundsUpdate-objectSubTypeValueAllowedValidation" scope="prototype"/>
-        </property>-->
     </bean>
 
     <bean id="AccountFundsUpdate-accountingLineAmountNonZeroValidation" class="org.kuali.kfs.fp.document.validation.impl.AccountingLineAmountNonZeroValidation" abstract="true"/>
@@ -157,19 +139,6 @@
                     <property name="accountingDocumentParameterPropertyName" value="document"/>
                     <property name="accountingLineParameterPropertyName" value="accountingLine"/>
                 </bean>
-                <!--<bean parent="AccountFundsUpdate-accountingLineValuesAllowedValidation" scope="prototype">
-                    <property name="accountingDocumentParameterPropertyName" value="document"/>
-                    <property name="accountingLineParameterPropertyName" value="accountingLine"/>
-                </bean>
-                <bean parent="AccountFundsUpdate-transferAccountingLinesCountValidation" scope="prototype">
-                    <property name="parameterProperties">
-                        <list>
-                            <bean parent="accountingDocumentFieldConversion"/>
-                            <bean parent="accountingLineFieldConversion"/>
-                        </list>
-                    </property>
-                    <property name="quitOnFail" value="true"/>
-                </bean>-->
             </list>
         </property>
     </bean>
