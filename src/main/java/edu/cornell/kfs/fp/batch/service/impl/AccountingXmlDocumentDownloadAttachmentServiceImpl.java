@@ -35,9 +35,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
 
     @Override
     public Attachment createAttachmentFromBackupLink(Document document,
-            AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
+            AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
         File formFile = downloadFile(accountingXmlDocumentBackupLink);
-        Attachment attachment = null;
         
         if (formFile != null) {
             String uploadedFileName = accountingXmlDocumentBackupLink.getFileName();
@@ -51,15 +50,18 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
             }
             try {
                 InputStream fileContents = new FileInputStream(formFile);
-                attachment = attachmentService.createAttachment(document, uploadedFileName, mimeType, fileSize,
+                Attachment attachment = attachmentService.createAttachment(document, uploadedFileName, mimeType, fileSize,
                         fileContents, attachmentType);
+                return attachment;
             } catch (IOException e) {
-                LOG.error("createAttachmentFromBackupLink, ");
+                LOG.error("createAttachmentFromBackupLink could not create attachment", e);
             }
             formFile.delete();
+        } else {
+            LOG.error("createAttachmentFromBackupLink, the form file is NULL");
         }
         
-        return attachment;
+        throw new IOException ("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
     }
 
     protected File downloadFile(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
