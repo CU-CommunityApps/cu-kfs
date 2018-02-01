@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
+import org.apache.commons.lang.StringUtils;
+
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 
 public enum AccountingXmlDocumentBackupLinkFixture {
@@ -8,19 +10,19 @@ public enum AccountingXmlDocumentBackupLinkFixture {
     AWS_BILLING_INVOICE("https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&month=01&account=999999999999", "AWS Billing Invoice", 
             "invoice.pdf", "AWS-Bill");
 
-    public String linkUrl;
-    public String description;
-    public String fileName;
-    public String groupCode;
+    public final String linkUrl;
+    public final String description;
+    public final String fileName;
+    public final String groupCode;
 
     private AccountingXmlDocumentBackupLinkFixture(String linkUrl, String description, String fileName) {
-        this.linkUrl = linkUrl;
-        this.description = description;
-        this.fileName = fileName;
+        this(linkUrl, description, fileName, StringUtils.EMPTY);
     }
     
     private AccountingXmlDocumentBackupLinkFixture(String linkUrl, String description, String fileName, String groupCode) {
-        this(linkUrl, description, fileName);
+        this.linkUrl = linkUrl;
+        this.description = description;
+        this.fileName = fileName;
         this.groupCode = groupCode;
     }
 

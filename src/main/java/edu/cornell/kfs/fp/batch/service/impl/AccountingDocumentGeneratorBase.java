@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,8 +22,6 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.action.ActionRequestType;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.util.ErrorMessage;
-import org.kuali.rice.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
@@ -129,7 +128,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         documentEntry.getBackupLinks().stream()
             .filter(link -> StringUtils.isNotBlank(link.getLinkUrl()))
             .map(link -> buildDocumentNoteAttachment(document, link))
-            .forEach(document :: addNote);
+            .forEach(document::addNote);
     }
     
     protected Note buildDocumentNoteAttachment(T document, AccountingXmlDocumentBackupLink backupLink) {
@@ -151,8 +150,9 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
             note.setAttachment(attachment);
         } catch (IOException e) {
             LOG.error("addAttachmentToNote, unable to create attachment: " + e.getMessage());
-            String message = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD) 
-                    + KFSConstants.BLANK_SPACE + backupLink.getLinkUrl();
+            String message = MessageFormat.format(
+                    configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD), 
+                    KFSConstants.BLANK_SPACE + backupLink.getLinkUrl());
             throw new ValidationException(message);
         }
     }

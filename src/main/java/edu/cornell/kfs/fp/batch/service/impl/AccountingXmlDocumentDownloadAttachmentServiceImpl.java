@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,11 +17,13 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.springframework.beans.factory.DisposableBean;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
@@ -36,59 +39,83 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     @Override
     public Attachment createAttachmentFromBackupLink(Document document,
             AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
-        File formFile = downloadFile(accountingXmlDocumentBackupLink);
+        byte[] formFile = downloadByteArray(accountingXmlDocumentBackupLink);
         
-        if (formFile != null) {
+        if (formFile.length > 0) {
             String uploadFileName = accountingXmlDocumentBackupLink.getFileName();
-            String mimeType = URLConnection.guessContentTypeFromName(formFile.getName());
-            int fileSize = (int) formFile.length();
+            String mimeType = URLConnection.guessContentTypeFromName(uploadFileName);
+            int fileSize = (int) formFile.length;
             String attachmentType = null;
             
             if (LOG.isDebugEnabled()) {
                 LOG.debug("createAttachmentFromBackupLink, uploadFileName: " + uploadFileName + " mimeType: " + mimeType
                     + " fileSize: " + fileSize);
             }
-            InputStream fileContents = new FileInputStream(formFile);
+            InputStream inputStream = new ByteArrayInputStream(formFile);
             Attachment attachment = attachmentService.createAttachment(document, uploadFileName, mimeType, fileSize,
-                    fileContents, attachmentType);
-            formFile.delete();
+                    inputStream, attachmentType);
             return attachment;
         } else {
             LOG.error("createAttachmentFromBackupLink, the form file is NULL");
         }
         
-        throw new IOException ("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
+        throw new IOException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
     }
 
-    protected File downloadFile(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
-        Collection<WebServiceCredential> creds = getWebServiceCredtials(accountingXmlDocumentBackupLink);
-        File formFile = null;
-        try { 
-            Invocation request = buildClientRequest(accountingXmlDocumentBackupLink.getLinkUrl(), creds);
-            formFile = downloadFileFromWebResource(accountingXmlDocumentBackupLink.getFileName(), request);
-        } catch (URISyntaxException | IOException e) {
-            LOG.error("downloadFile, unable to download file.", e);
+    protected byte[] downloadByteArray(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
+        Collection<WebServiceCredential> credentials = getWebServiceCredentials(accountingXmlDocumentBackupLink);
+        try {
+            if (isLinkUrlValidForGroupCode(accountingXmlDocumentBackupLink, credentials)) {
+                Invocation request = buildClientRequest(accountingXmlDocumentBackupLink.getLinkUrl(), credentials);
+                return downloadByteArrayFromWebResource(accountingXmlDocumentBackupLink.getFileName(), request);
+            } else {
+                LOG.error("downloadByteArray, the group code isn't valid for the link URL");
+                throw new IOException("The group code isn't valid for the link URL");
+            }
+        } catch (URISyntaxException e) {
+            throw new IOException(e.getMessage());
         }
-        return formFile;
+    }
+    
+    protected boolean isLinkUrlValidForGroupCode(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink, Collection<WebServiceCredential> credentials) {
+        if (CollectionUtils.isEmpty(credentials)) {
+            LOG.debug("isLinkUrlValidForGroupCode, no credential values for group code, so is valid");
+            return true;
+        } else {
+            for (WebServiceCredential cred : credentials) {
+                if (doesCredentialKeyReferenceAValidURLForGroupCode(cred) && isCredentialBaseURLInBackupLinkURL(accountingXmlDocumentBackupLink, cred)) {
+                    LOG.debug("isLinkUrlValidForGroupCode, found a CREDENTIAL_BASE_URL in the credentials table that is in the back up link URL");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    protected Collection<WebServiceCredential> getWebServiceCredtials(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
+    protected boolean isCredentialBaseURLInBackupLinkURL(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink, WebServiceCredential cred) {
+        return StringUtils.containsIgnoreCase(accountingXmlDocumentBackupLink.getLinkUrl(), cred.getCredentialValue());
+    }
+
+    protected boolean doesCredentialKeyReferenceAValidURLForGroupCode(WebServiceCredential cred) {
+        return StringUtils.containsIgnoreCase(cred.getCredentialKey(), CuFPConstants.CREDENTIAL_BASE_URL);
+    }
+
+    protected Collection<WebServiceCredential> getWebServiceCredentials(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
         Collection<WebServiceCredential> webServiceCredentials = webServiceCredentialService
                 .getWebServiceCredentialsByGroupCode(accountingXmlDocumentBackupLink.getCredentialGroupCode());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("getWebServiceCredtials, the group code is " + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " for the file " + 
+            LOG.debug("getWebServiceCredentials, the group code is " + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " for the file " + 
                     accountingXmlDocumentBackupLink.getFileName());
             if (CollectionUtils.isNotEmpty(webServiceCredentials)) {
-                webServiceCredentials.stream().forEach(cred -> LOG.debug("getWebServiceCredtials, found a credential key: " + cred.getCredentialKey()));
+                webServiceCredentials.stream().forEach(cred -> LOG.debug("getWebServiceCredentials, found a credential key: " + cred.getCredentialKey()));
             } else {
-                LOG.debug("getWebServiceCredtials, no credentials found");
+                LOG.debug("getWebServiceCredentials, no credentials found");
             }
         }
         return webServiceCredentials;
     }
 
-    protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds)
-            throws URISyntaxException {
+    protected Invocation buildClientRequest(String url, Collection<WebServiceCredential> creds) throws URISyntaxException {
         URI uri = new URI(url);
         Builder builder = getClient().target(uri).request();
         if (CollectionUtils.isNotEmpty(creds)) {
@@ -99,22 +126,22 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
         return builder.buildGet();
     }
 
-    protected File downloadFileFromWebResource(String fileName, Invocation request) throws IOException {
-        File downloadfile = new File(fileName);
+    protected byte[] downloadByteArrayFromWebResource(String fileName, Invocation request) throws IOException {
+        byte[] byteArray;
         Response response = request.invoke();
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            InputStream is = response.readEntity(InputStream.class);
-            byte[] byteArray = IOUtils.toByteArray(is);
-            FileOutputStream fos = new FileOutputStream(downloadfile);
-            fos.write(byteArray);
-            fos.flush();
-            fos.close();
-            IOUtils.closeQuietly(is);
+            InputStream is = null;
+            try {
+                is = response.readEntity(InputStream.class);
+                byteArray = IOUtils.toByteArray(is);
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
         } else {
-            LOG.error("downloadFileFromWebResource, unable to download file " + fileName + ".  The HTTP response was " + response.getStatus());
+            LOG.error("downloadByteArrayFromWebResource, unable to download file " + fileName + ".  The HTTP response was " + response.getStatus());
             throw new IOException("Invalid response code: " + response.getStatus());
         }
-        return downloadfile;
+        return byteArray;
     }
 
     public void setAttachmentService(AttachmentService attachmentService) {
