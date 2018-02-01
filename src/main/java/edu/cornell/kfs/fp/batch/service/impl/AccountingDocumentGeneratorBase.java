@@ -152,7 +152,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
             LOG.error("addAttachmentToNote, unable to create attachment: " + e.getMessage());
             String message = MessageFormat.format(
                     configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD), 
-                    KFSConstants.BLANK_SPACE + backupLink.getLinkUrl());
+                    backupLink.getLinkUrl());
             throw new ValidationException(message);
         }
     }

@@ -80,7 +80,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
             return true;
         } else {
             for (WebServiceCredential cred : credentials) {
-                if (doesCredentialKeyReferenceAValidURLForGroupCode(cred) && isCredentialBaseURLInBackupLinkURL(accountingXmlDocumentBackupLink, cred)) {
+                if (isCredentialUsedForValidatingBackupLinkURL(cred) && isCredentialBaseURLInBackupLinkURL(accountingXmlDocumentBackupLink, cred)) {
                     LOG.debug("isLinkUrlValidForGroupCode, found a CREDENTIAL_BASE_URL in the credentials table that is in the back up link URL");
                     return true;
                 }
@@ -93,8 +93,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
         return StringUtils.containsIgnoreCase(accountingXmlDocumentBackupLink.getLinkUrl(), cred.getCredentialValue());
     }
 
-    protected boolean doesCredentialKeyReferenceAValidURLForGroupCode(WebServiceCredential cred) {
-        return StringUtils.containsIgnoreCase(cred.getCredentialKey(), CuFPConstants.CREDENTIAL_BASE_URL);
+    protected boolean isCredentialUsedForValidatingBackupLinkURL(WebServiceCredential cred) {
+        return StringUtils.startsWithIgnoreCase(cred.getCredentialKey(), CuFPConstants.CREDENTIAL_BASE_URL);
     }
 
     protected Collection<WebServiceCredential> getWebServiceCredentials(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
@@ -117,7 +117,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
         Builder builder = getClient().target(uri).request();
         if (CollectionUtils.isNotEmpty(creds)) {
             for (WebServiceCredential cred : creds) {
-                if (!doesCredentialKeyReferenceAValidURLForGroupCode(cred)) {
+                if (!isCredentialUsedForValidatingBackupLinkURL(cred)) {
                     builder.header(cred.getCredentialKey(), cred.getCredentialValue());
                 }
             }
