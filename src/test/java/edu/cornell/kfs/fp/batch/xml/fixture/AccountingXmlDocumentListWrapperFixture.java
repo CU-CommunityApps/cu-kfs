@@ -15,7 +15,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC2,
-                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3,
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC4)),
     MULTI_DI_DOCUMENT_WITH_INVALID_SECOND_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
