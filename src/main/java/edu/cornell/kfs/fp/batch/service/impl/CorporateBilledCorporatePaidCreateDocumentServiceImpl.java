@@ -10,14 +10,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
-import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
-import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -344,6 +343,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
             } catch (WorkflowException | ValidationException e) {
+                GlobalVariables.getMessageMap().clearErrorMessages();
                 LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
             }
         }
