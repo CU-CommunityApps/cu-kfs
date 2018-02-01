@@ -750,6 +750,7 @@
     <bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean"/>
     <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true" parent="procurementCardCreateDocumentService">
         <property name="cbcpDatadictionaryServce" ref="dataDictionaryService"/>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
     
     <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>
