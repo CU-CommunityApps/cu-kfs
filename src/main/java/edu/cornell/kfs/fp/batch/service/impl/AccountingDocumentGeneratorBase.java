@@ -1,34 +1,45 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
+import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.action.ActionRequestType;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAdHocRecipient;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 
 public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocument> implements AccountingDocumentGenerator<T> {
-
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountingDocumentGeneratorBase.class);
+    
     protected PersonService personService;
     protected Supplier<Note> emptyNoteGenerator;
     protected Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator;
+    protected AccountingXmlDocumentDownloadAttachmentService accountingXmlDocumentDownloadAttachmentService;
+    protected ConfigurationService configurationService;
 
     protected AccountingDocumentGeneratorBase() {
         this(Note::new, AdHocRoutePerson::new);
@@ -50,6 +61,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         populateDocumentHeader(document, documentEntry);
         populateAccountingLines(document, documentEntry);
         populateDocumentNotes(document, documentEntry);
+        populateDocumentAttachments(document, documentEntry);
         populateAdHocRecipients(document, documentEntry);
         populateCustomAccountingDocumentData(document, documentEntry);
         return document;
@@ -102,7 +114,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
                 .map(this::buildDocumentNote)
                 .forEach(document::addNote);
     }
-
+    
     protected Note buildDocumentNote(AccountingXmlDocumentNote xmlNote) {
         Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
         Note note = emptyNoteGenerator.get();
@@ -110,6 +122,39 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         note.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
         note.setNotePostedTimestampToCurrent();
         return note;
+    }
+    
+    protected void populateDocumentAttachments(T document, AccountingXmlDocumentEntry documentEntry) {
+        documentEntry.getBackupLinks().stream()
+            .filter(link -> StringUtils.isNotBlank(link.getLinkUrl()))
+            .map(link -> buildDocumentNoteAttachment(document, link))
+            .forEach(document::addNote);
+    }
+    
+    protected Note buildDocumentNoteAttachment(T document, AccountingXmlDocumentBackupLink backupLink) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("buildDocumentNoteAttachment: " + backupLink);
+        }
+        Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+        Note note = emptyNoteGenerator.get();
+        note.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
+        note.setNotePostedTimestampToCurrent();
+        addAttachmentToNote(document, backupLink, note);
+        note.setNoteText(backupLink.getDescription());
+        return note;
+    }
+
+    protected void addAttachmentToNote(T document, AccountingXmlDocumentBackupLink backupLink, Note note) {
+        try {
+            Attachment attachment = accountingXmlDocumentDownloadAttachmentService.createAttachmentFromBackupLink(document, backupLink);
+            note.setAttachment(attachment);
+        } catch (IOException e) {
+            LOG.error("addAttachmentToNote, unable to create attachment: " + e.getMessage());
+            String message = MessageFormat.format(
+                    configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD), 
+                    backupLink.getLinkUrl());
+            throw new ValidationException(message);
+        }
     }
 
     protected void populateAdHocRecipients(T document, AccountingXmlDocumentEntry documentEntry) {
@@ -140,6 +185,15 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public void setAccountingXmlDocumentDownloadAttachmentService(
+            AccountingXmlDocumentDownloadAttachmentService accountingXmlDocumentDownloadAttachmentService) {
+        this.accountingXmlDocumentDownloadAttachmentService = accountingXmlDocumentDownloadAttachmentService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }
