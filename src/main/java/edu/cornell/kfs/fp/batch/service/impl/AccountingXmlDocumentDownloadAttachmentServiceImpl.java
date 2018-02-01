@@ -1,9 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -120,7 +117,9 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
         Builder builder = getClient().target(uri).request();
         if (CollectionUtils.isNotEmpty(creds)) {
             for (WebServiceCredential cred : creds) {
-                builder.header(cred.getCredentialKey(), cred.getCredentialValue());
+                if (!doesCredentialKeyReferenceAValidURLForGroupCode(cred)) {
+                    builder.header(cred.getCredentialKey(), cred.getCredentialValue());
+                }
             }
         }
         return builder.buildGet();
