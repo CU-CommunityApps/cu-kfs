@@ -1639,7 +1639,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      * Overrides the method in PurchasingAccountsPayableDocumentBase to remove the
      * purchasingCapitalAssetSystem when the system type is either ONE or MULT.
      *
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#prepareForSave(org.kuali.kfs.krad.rule.event.KualiDocumentEvent)
      */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
