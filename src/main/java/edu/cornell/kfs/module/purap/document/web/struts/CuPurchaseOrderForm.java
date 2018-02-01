@@ -15,11 +15,15 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
@@ -193,6 +197,35 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         return can;
     }
     // end KFSUPGRADE-411
+
+    /**
+     * Overridden to properly increment the local "itemCount" loop counter when processing POA documents,
+     * but otherwise has the same code as in the superclass.
+     * 
+     * @see org.kuali.kfs.module.purap.document.web.struts.PurchasingAccountsPayableFormBase#populateItemAccountingLines(java.util.Map)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected void populateItemAccountingLines(Map parameterMap) {
+        if (!(getDocument() instanceof PurchaseOrderAmendmentDocument)) {
+            super.populateItemAccountingLines(parameterMap);
+            return;
+        }
+        
+        int itemCount = 0;
+        for (PurApItem item : ((PurchasingAccountsPayableDocument) getDocument()).getItems()) {
+            populateAccountingLine(item.getNewSourceLine(), KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.ITEM + "[" + itemCount + "]."
+                    + KFSPropertyConstants.NEW_SOURCE_LINE, parameterMap);
+
+            int sourceLineCount = 0;
+            for (PurApAccountingLine purApLine : item.getSourceAccountingLines()) {
+                populateAccountingLine(purApLine, KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.ITEM + "[" + itemCount + "]."
+                        + KFSPropertyConstants.SOURCE_ACCOUNTING_LINE + "[" + sourceLineCount + "]", parameterMap);
+                sourceLineCount += 1;
+            }
+            itemCount++;
+        }
+    }
 
     /**
      * Overridden to allow expired-account overrides to be repopulated on POA documents,

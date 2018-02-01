@@ -42,6 +42,11 @@
 		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
 	</bean>
 
+	<bean id="PurchaseOrderAmendment-accountingLineRequiredOverridesValidation"
+			class="edu.cornell.kfs.sys.document.validation.impl.AccountingLineRequiredOverridesValidation" abstract="true">
+		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
+	</bean>
+
 	<bean id="Requisition-newIndividualItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">  
 	<property name="parameterService" ref="parameterService" />
 		<property name="dataDictionaryService" ref="dataDictionaryService" />

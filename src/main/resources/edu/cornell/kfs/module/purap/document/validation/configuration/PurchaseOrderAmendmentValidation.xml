@@ -86,6 +86,14 @@
 					</property>
 					<property name="quitOnFail" value="true" />					
 				</bean>
+				<bean parent="PurchaseOrderAmendment-accountingLineRequiredOverridesValidation" scope="prototype">
+					<property name="parameterProperties">
+						<list>
+							<bean parent="accountingLineFieldConversion"/>
+						</list>
+					</property>
+					<property name="quitOnFail" value="true"/>
+				</bean>
             </list>
         </property>
     </bean>

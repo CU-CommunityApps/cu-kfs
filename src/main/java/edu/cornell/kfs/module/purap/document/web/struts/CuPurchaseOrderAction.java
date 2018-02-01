@@ -1,9 +1,11 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -28,7 +31,6 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderAction;
 import org.kuali.kfs.module.purap.document.web.struts.PurchaseOrderForm;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
@@ -174,30 +176,54 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 
     /**
      * Overridden to perform the proper account-line-override setup
-     * on POA items' account addLines.
+     * on POA items' account addLines, as well as on all of the items'
+     * existing accounting lines instead of just the filtered list
+     * from the document's getSourceAccountingLines() method override.
      * 
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#processAccountingLineOverrides(
      * org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase)
      */
     @Override
     protected void processAccountingLineOverrides(KualiAccountingDocumentFormBase transForm) {
-        super.processAccountingLineOverrides(transForm);
-        if (transForm.getDocument() instanceof PurchaseOrderAmendmentDocument) {
-            processOverridesForDocumentItemAccountingAddLines((PurchaseOrderAmendmentDocument) transForm.getDocument());
-        }
-    }
-
-    protected void processOverridesForDocumentItemAccountingAddLines(PurchaseOrderAmendmentDocument document) {
-        List<PurApItem> items = document.getItems();
-        if (CollectionUtils.isNotEmpty(items)) {
-            List<AccountingLine> accountAddLines = items.stream()
-                    .map(PurApItem::getNewSourceLine)
-                    .collect(Collectors.toCollection(ArrayList::new));
+        if (transForm.hasDocumentId() && transForm.getDocument() instanceof PurchaseOrderAmendmentDocument) {
+            PurchaseOrderAmendmentDocument poaDocument = (PurchaseOrderAmendmentDocument) transForm.getDocument();
+            processAccountingLineOverrides(transForm.getNewSourceLine());
+            processAccountingLineOverrides(transForm.getNewTargetLine());
+            processAccountingLineOverrides(poaDocument, getItemSourceAccountingLines(poaDocument));
+            processAccountingLineOverrides(poaDocument, poaDocument.getTargetAccountingLines());
             /*
              * Using null document as first arg, for consistency with regular source/target addLine handling
              * in KualiAccountingDocumentActionBase.
              */
-            processAccountingLineOverrides(null, accountAddLines);
+            processAccountingLineOverrides(null, getItemAccountingAddLines(poaDocument));
+        } else {
+            super.processAccountingLineOverrides(transForm);
+        }
+    }
+
+    protected List<PurApAccountingLine> getItemSourceAccountingLines(PurchaseOrderAmendmentDocument document) {
+        return getAccountingLinesFromItems(document,
+                (itemStream) -> itemStream.flatMap(this::getItemSourceAccountingLinesAsStream));
+    }
+
+    protected List<PurApAccountingLine> getItemAccountingAddLines(PurchaseOrderAmendmentDocument document) {
+        return getAccountingLinesFromItems(document,
+                (itemStream) -> itemStream.map(PurApItem::getNewSourceLine));
+    }
+
+    protected Stream<PurApAccountingLine> getItemSourceAccountingLinesAsStream(PurApItem item) {
+        return item.getSourceAccountingLines().stream();
+    }
+
+    protected List<PurApAccountingLine> getAccountingLinesFromItems(
+            PurchaseOrderAmendmentDocument document,
+            Function<Stream<PurApItem>, Stream<PurApAccountingLine>> itemStreamToAccountStreamMapper) {
+        List<PurApItem> items = document.getItems();
+        if (CollectionUtils.isNotEmpty(items)) {
+            return itemStreamToAccountStreamMapper.apply(items.stream())
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else {
+            return Collections.emptyList();
         }
     }
 
