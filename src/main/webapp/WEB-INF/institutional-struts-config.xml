@@ -226,13 +226,6 @@
 			<forward name="basic" path="/jsp/fp/AccountFundsUpdate.jsp" />
 		</action>
 
-        <action path="/financialInternalBilling" name="CuInternalBillingForm" input="/jsp/fp/InternalBilling.jsp"
-                type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingAction" scope="request"
-                parameter="methodToCall" validate="true" attribute="KualiForm">
-            <set-property property="cancellable" value="true" />
-            <forward name="basic" path="/jsp/fp/InternalBilling.jsp" />
-        </action>
-
         <action path="/financialCuInternalBilling" name="CuInternalBillingForm" input="/jsp/fp/InternalBilling.jsp"
                 type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingAction" scope="request"
                 parameter="methodToCall" validate="true" attribute="KualiForm">
