@@ -3,11 +3,6 @@ package edu.cornell.kfs.sys.document.validation.impl;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.sys.document.validation.impl.AccountingLineDataDictionaryValidation;
 
-/**
- * Custom extension of AccountingLineDataDictionaryValidation
- * that only performs the hasRequiredOverrides() check
- * of the rule helper service.
- */
 public class AccountingLineRequiredOverridesValidation extends AccountingLineDataDictionaryValidation {
 
     /**

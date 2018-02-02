@@ -223,7 +223,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
                         + KFSPropertyConstants.SOURCE_ACCOUNTING_LINE + "[" + sourceLineCount + "]", parameterMap);
                 sourceLineCount += 1;
             }
-            itemCount++;
+            itemCount += 1;
         }
     }
 

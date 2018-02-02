@@ -202,29 +202,17 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
     }
 
     protected List<PurApAccountingLine> getItemSourceAccountingLines(PurchaseOrderAmendmentDocument document) {
-        return getAccountingLinesFromItems(document,
-                (itemStream) -> itemStream.flatMap(this::getItemSourceAccountingLinesAsStream));
+        List<PurApItem> items = (List<PurApItem>) document.getItems();
+        return items.stream()
+                .flatMap((item) -> item.getSourceAccountingLines().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     protected List<PurApAccountingLine> getItemAccountingAddLines(PurchaseOrderAmendmentDocument document) {
-        return getAccountingLinesFromItems(document,
-                (itemStream) -> itemStream.map(PurApItem::getNewSourceLine));
-    }
-
-    protected Stream<PurApAccountingLine> getItemSourceAccountingLinesAsStream(PurApItem item) {
-        return item.getSourceAccountingLines().stream();
-    }
-
-    protected List<PurApAccountingLine> getAccountingLinesFromItems(
-            PurchaseOrderAmendmentDocument document,
-            Function<Stream<PurApItem>, Stream<PurApAccountingLine>> itemStreamToAccountStreamMapper) {
-        List<PurApItem> items = document.getItems();
-        if (CollectionUtils.isNotEmpty(items)) {
-            return itemStreamToAccountStreamMapper.apply(items.stream())
-                    .collect(Collectors.toCollection(ArrayList::new));
-        } else {
-            return Collections.emptyList();
-        }
+        List<PurApItem> items = (List<PurApItem>) document.getItems();
+        return items.stream()
+                .map(PurApItem::getNewSourceLine)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
 }

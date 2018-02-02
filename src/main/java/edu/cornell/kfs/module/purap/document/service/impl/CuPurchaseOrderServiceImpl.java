@@ -18,6 +18,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
 import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
@@ -189,24 +190,28 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
         return notes;
     }
 
-    /**
-     * Overridden to also reset the override codes on the items' accounting lines
-     * when creating a new document.
-     * 
-     * @see org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl#createPurchaseOrderDocumentFromSourceDocument(
-     * org.kuali.kfs.module.purap.document.PurchaseOrderDocument, java.lang.String)
-     */
     @Override
     protected PurchaseOrderDocument createPurchaseOrderDocumentFromSourceDocument(
             PurchaseOrderDocument sourceDocument, String docType) throws WorkflowException {
         PurchaseOrderDocument newDocument = super.createPurchaseOrderDocumentFromSourceDocument(sourceDocument, docType);
-        
-        List<PurApItem> items = (List<PurApItem>) newDocument.getItems();
+        resetOverrideCodesOnItemAccountingLines(newDocument);
+        return newDocument;
+    }
+
+    protected void resetOverrideCodesOnItemAccountingLines(PurchaseOrderDocument document) {
+        List<PurApItem> items = (List<PurApItem>) document.getItems();
         items.stream()
                 .flatMap((item) -> item.getSourceAccountingLines().stream())
-                .forEach((accountingLine) -> accountingLine.setOverrideCode(AccountingLineOverride.CODE.NONE));
-        
-        return newDocument;
+                .filter(this::accountingLineHasNonDefaultOverrideCode)
+                .forEach(this::resetOverrideCodeOnAccountingLine);
+    }
+
+    protected boolean accountingLineHasNonDefaultOverrideCode(PurApAccountingLine accountingLine) {
+        return !StringUtils.equals(AccountingLineOverride.CODE.NONE, accountingLine.getOverrideCode());
+    }
+
+    protected void resetOverrideCodeOnAccountingLine(PurApAccountingLine accountingLine) {
+        accountingLine.setOverrideCode(AccountingLineOverride.CODE.NONE);
     }
 
 }
