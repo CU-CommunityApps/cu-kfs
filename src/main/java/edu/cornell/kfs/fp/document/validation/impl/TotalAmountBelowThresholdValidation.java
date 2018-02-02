@@ -69,8 +69,9 @@ public class TotalAmountBelowThresholdValidation extends GenericValidation {
     public KualiDecimal getMaximumTotalAmountThresholdAllowed() {
         if(ObjectUtils.isNull(maximumTotalAmountThresholdAllowed)){
             ParameterEvaluator parameterEvaluator = getParameterEvaluatorService().getParameterEvaluator(
-                accountingDocumentForValidation.getDocumentClassForAccountingLineValueAllowedValidation(),
-                CuFPParameterConstants.MAX_TOTAL_THRESHOLD_AMOUNT
+                    KFSConstants.CoreModuleNamespaces.FINANCIAL,
+                    CuFPParameterConstants.INTERNAL_BILLING_COMPONENT,
+                    CuFPParameterConstants.MAX_TOTAL_THRESHOLD_AMOUNT
             );
             setMaximumTotalAmountThresholdAllowed(new KualiDecimal(parameterEvaluator.getValue()));
         }

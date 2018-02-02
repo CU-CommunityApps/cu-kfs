@@ -15,6 +15,7 @@ public class CUKFSParameterKeyConstants {
     
     public static final String KFS_PDP = "KFS-PDP";
     public static final String ALL_COMPONENTS = "All";
+    public static final String INTERNAL_BILLING_COMPONENT = "InternalBilling";
     public static final String ACH_PAYMENT_COMBINING_IND = "ACH_PAYMENT_COMBINING_IND";
     public static final String BANK_PAYMENT_FILE_EMAIL_NOTIFICATION = "BANK_PAYMENT_FILE_EMAIL_NOTIFICATION";  
     public static final String PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL = "PDP_CUSTOMER_MISSING_ADVICE_RETURN_EMAIL";

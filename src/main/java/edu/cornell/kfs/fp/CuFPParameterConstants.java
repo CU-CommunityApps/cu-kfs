@@ -64,5 +64,6 @@ public class CuFPParameterConstants {
         public static final String SINGLE_TRANSACTION_IND_PARAMETER_NAME = "SINGLE_TRANSACTION_IND";
     }
 
+    public static final String INTERNAL_BILLING_COMPONENT = "InternalBilling";
     public static final String MAX_TOTAL_THRESHOLD_AMOUNT = "MAX_TOTAL_THRESHOLD_AMOUNT";
 }
