@@ -1,7 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,14 +23,13 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineBase;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.document.DocumentStatus;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
+import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidRouteStepReportService;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardHolder;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardVendor;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
@@ -52,7 +50,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     protected DataDictionaryService cbcpDatadictionaryServce;
     protected SimpleDateFormat dateFormat;
-    protected ConfigurationService configurationService;
+    protected CorporateBilledCorporatePaidRouteStepReportService corporateBilledCorporatePaidRouteStepReportService;
     
     @Override
     protected void cleanTransactionsTable() {
@@ -338,51 +336,32 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     public boolean routeProcurementCardDocuments() {
         LOG.debug("routeProcurementCardDocuments() started");
-        Collection<CorporateBilledCorporatePaidDocument> procurementCardDocumentList = retrieveCorporateBilledCorporatePaidDocuments(
+        Collection<CorporateBilledCorporatePaidDocument> cbcpDocumentList = retrieveCorporateBilledCorporatePaidDocuments(
                 KewApiConstants.ROUTE_HEADER_SAVED_CD);
-        LOG.info("routeProcurementCardDocuments() Number of CBCP documents to Route: " + procurementCardDocumentList.size());
+        LOG.info("routeProcurementCardDocuments() Number of CBCP documents to Route: " + cbcpDocumentList.size());
         
-        Map<String, Map<String, AutoPopulatingList<ErrorMessage>>> documentErrors = new HashMap<String, Map<String, AutoPopulatingList<ErrorMessage>>>();
-        for (CorporateBilledCorporatePaidDocument cbcpDocument : procurementCardDocumentList) {
+        Map<String, ValidationException> documentErrors = new HashMap<String, ValidationException>();
+        List<String> successfulDocuments = new ArrayList<String>();
+        for (CorporateBilledCorporatePaidDocument cbcpDocument : cbcpDocumentList) {
             try {
                 LOG.info("routeProcurementCardDocuments() Routing CBCP document # " + cbcpDocument.getDocumentNumber() + ".");
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
+                successfulDocuments.add(cbcpDocument.getDocumentNumber());
             } catch (WorkflowException | ValidationException e) {
-                documentErrors.put(cbcpDocument.getDocumentNumber(), GlobalVariables.getMessageMap().getErrorMessages());
+                ValidationException ve;
+                if (e instanceof ValidationException) {
+                    ve = (ValidationException) e;
+                } else {
+                    ve = new ValidationException(e.getMessage());
+                }
+                documentErrors.put(cbcpDocument.getDocumentNumber(), ve);
                 GlobalVariables.getMessageMap().clearErrorMessages();
                 LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
             }
         }
-        reportDocumentErrors(documentErrors);
+        corporateBilledCorporatePaidRouteStepReportService.createReport(cbcpDocumentList.size(), successfulDocuments, documentErrors);
         return true;
-    }
-    
-    public void reportDocumentErrors(Map<String, Map<String, AutoPopulatingList<ErrorMessage>>> documentErrors) {
-        LOG.info("reportDocumentErrors, entering, number of errors: " + documentErrors.size());
-        for (String docNumber : documentErrors.keySet()) {
-            Map<String, AutoPopulatingList<ErrorMessage>> errorsForDoc = documentErrors.get(docNumber);
-            for (String key : errorsForDoc.keySet()) {
-                AutoPopulatingList<ErrorMessage> errors = errorsForDoc.get(key);
-                for (ErrorMessage errorMessage : errors) {
-                    LOG.info("reportDocumentErrors, docNumber: " + docNumber + " key: " + key + " error: " + buildValidationErrorMessageForSingleError(errorMessage));
-                }
-            }
-        }
-    }
-    
-    protected String buildValidationErrorMessageForSingleError(ErrorMessage errorMessage) {
-        String errorMessageString = configurationService.getPropertyValueAsString(errorMessage.getErrorKey());
-        if (StringUtils.isBlank(errorMessageString)) {
-            throw new RuntimeException("Cannot find error message for key: " + errorMessage.getErrorKey());
-        }
-        
-        Object[] messageParameters = (Object[]) errorMessage.getMessageParameters();
-        if (messageParameters != null && messageParameters.length > 0) {
-            return MessageFormat.format(errorMessageString, messageParameters);
-        } else {
-            return errorMessageString;
-        }
     }
     
     protected Collection<CorporateBilledCorporatePaidDocument> retrieveCorporateBilledCorporatePaidDocuments(String statusCode) {
@@ -434,8 +413,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
         this.cbcpDatadictionaryServce = cbcpDatadictionaryServce;
     }
 
-    public void setConfigurationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
+    public void setCorporateBilledCorporatePaidRouteStepReportService(
+            CorporateBilledCorporatePaidRouteStepReportService corporateBilledCorporatePaidRouteStepReportService) {
+        this.corporateBilledCorporatePaidRouteStepReportService = corporateBilledCorporatePaidRouteStepReportService;
     }
+
 }
 

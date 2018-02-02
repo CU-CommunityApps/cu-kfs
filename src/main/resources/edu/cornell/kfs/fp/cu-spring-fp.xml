@@ -746,12 +746,28 @@
             <ref bean="corporateBilledCorporatePaidFlatInputFileType" />
         </property>
     </bean>
-    
-    <bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean"/>
-    <bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true" parent="procurementCardCreateDocumentService">
-        <property name="cbcpDatadictionaryServce" ref="dataDictionaryService"/>
-        <property name="configurationService" ref="configurationService"/>
-    </bean>
+
+	<bean id="corporateBilledCorporatePaidCreateDocumentService" parent="corporateBilledCorporatePaidCreateDocumentService-parentBean" />
+	<bean id="corporateBilledCorporatePaidCreateDocumentService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidCreateDocumentServiceImpl" abstract="true" parent="procurementCardCreateDocumentService">
+		<property name="cbcpDatadictionaryServce" ref="dataDictionaryService" />
+		<property name="corporateBilledCorporatePaidRouteStepReportService" ref="corporateBilledCorporatePaidRouteStepReportService" />
+	</bean>
+
+	<bean id="corporateBilledCorporatePaidRouteStepReportService" parent="corporateBilledCorporatePaidRouteStepReportService-parentBean" />
+	<bean id="corporateBilledCorporatePaidRouteStepReportService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidRouteStepReportServiceImpl" abstract="true">
+		<property name="configurationService" ref="configurationService" />
+		<property name="reportWriterService" ref="corporateBilledCorporatePaidRouteReportWriterService" />
+	</bean>
+
+	<bean id="corporateBilledCorporatePaidRouteReportWriterService" parent="corporateBilledCorporatePaidRouteReportWriterService-parentBean" />
+	<bean id="corporateBilledCorporatePaidRouteReportWriterService-parentBean" parent="cbcpReportWriterService" abstract="true">
+		<property name="fileNamePrefix" value="cbcp_route_step_" />
+		<property name="title" value="Corporate Billed Corporate Paid Route Report File" />
+	</bean>
+
+	<bean id="cbcpReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+		<property name="filePath" value="${reports.directory}/fp" />
+	</bean>
     
     <bean id="corporateBilledCorporatePaidLoadReportWriterService" parent="corporateBilledCorporatePaidLoadReportWriterService-parentBean"/>
     <bean id="corporateBilledCorporatePaidLoadReportWriterService-parentBean" parent="reportWriterService" abstract="true">
