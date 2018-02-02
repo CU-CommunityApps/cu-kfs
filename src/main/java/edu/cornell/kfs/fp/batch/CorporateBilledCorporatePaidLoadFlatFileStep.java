@@ -31,13 +31,13 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
         for (String inputFileName : fileNamesToLoad) {
             LOG.info("execute, file name: " + inputFileName);
             try {
-                boolean currentFileProccessed = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName, reportWriterService);
-                if (currentFileProccessed) {
-                    processedFiles.add(inputFileName);
-                }
+                procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName, reportWriterService);
                 
             } catch (RuntimeException e) {
                 LOG.error("execute, There was an error proccessing " + inputFileName, e);
+            }
+            finally{
+                processedFiles.add(inputFileName);
             }
         }
 
