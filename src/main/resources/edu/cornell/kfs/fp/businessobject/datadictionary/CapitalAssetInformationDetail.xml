@@ -27,10 +27,6 @@
     </property>
   </bean>
   
-  <bean id="CapitalAssetInformationDetail-buildingCode" parent="CapitalAssetInformationDetail-buildingCode-parentBean"> 
-  	<property name="required" value="false"/>
-  </bean>
-  
   <bean id="CapitalAssetInformationDetail-extension-assetLocationStreetAddress" parent="CapitalAssetInformationDetail-extension-assetLocationStreetAddress-parentBean"/>
   <bean id="CapitalAssetInformationDetail-extension-assetLocationStreetAddress-parentBean" abstract="true" parent="CapitalAssetInformationDetailExtendedAttribute-assetLocationStreetAddress">
     <property name="name" value="extension.assetLocationStreetAddress"/>

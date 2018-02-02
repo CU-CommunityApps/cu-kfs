@@ -215,5 +215,41 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
             throw new RuntimeException("generateTransactions Stopped: " + ioe.getMessage(), ioe);
         }
     }
-    
+
+    /**
+     * Overridden so that the errors list will not be updated when a continuation account gets used,
+     * thus allowing the ICR continuation to be processed properly by the Poster.
+     * 
+     * @see org.kuali.kfs.gl.batch.service.impl.PosterServiceImpl#getAccountWithPotentialContinuation(
+     * org.kuali.kfs.gl.businessobject.Transaction, java.util.List)
+     */
+    @Override
+    protected Account getAccountWithPotentialContinuation(Transaction tran, List<Message> errors) {
+        Account account = accountingCycleCachingService.getAccount(tran.getChartOfAccountsCode(), tran.getAccountNumber());
+
+        if (ObjectUtils.isNotNull(account) && account.isClosed()) {
+            Account contAccount = account;
+            for (int i = 0; i < CONTINUATION_ACCOUNT_DEPTH_LIMIT && ObjectUtils.isNotNull(contAccount) && contAccount.isClosed(); i++) {
+                contAccount = accountingCycleCachingService.getAccount(
+                    contAccount.getContinuationFinChrtOfAcctCd(), contAccount.getContinuationAccountNumber());
+            }
+            if (ObjectUtils.isNull(contAccount) || contAccount == account || contAccount.isClosed()) {
+                errors.add(new Message(MessageFormat.format(
+                    configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_ICRACCOUNT_CONTINUATION_ACCOUNT_CLOSED),
+                    tran.getChartOfAccountsCode(), tran.getAccountNumber(), CONTINUATION_ACCOUNT_DEPTH_LIMIT), Message.TYPE_WARNING));
+            } else {
+                final String formattedErrorMessage = MessageFormat.format(
+                    configurationService.getPropertyValueAsString(KFSKeyConstants.WARNING_ICRACCOUNT_CONTINUATION_ACCOUNT_USED),
+                    tran.getChartOfAccountsCode(), tran.getAccountNumber(),
+                    contAccount.getChartOfAccountsCode(), contAccount.getAccountNumber());
+                LOG.warn(formattedErrorMessage);
+                account = contAccount;
+                ((OriginEntryInformation) tran).setChartOfAccountsCode(contAccount.getChartOfAccountsCode());
+                ((OriginEntryInformation) tran).setAccountNumber(contAccount.getAccountNumber());
+            }
+        }
+
+        return account;
+    }
+
 }

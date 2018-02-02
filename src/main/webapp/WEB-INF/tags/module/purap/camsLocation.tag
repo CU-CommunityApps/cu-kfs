@@ -80,6 +80,7 @@
             <kul:htmlAttributeLabel attributeEntry="${camsLocationAttributes.campusCode}"/>
         </th>
         <td class="datacell" width="25%">
+        	<html:hidden property="${camsAssetLocationProperty}.campusCode" />
             <kul:htmlControlAttribute attributeEntry="${camsLocationAttributes.campusCode}"
                                       property="${camsAssetLocationProperty}.campusCode" readOnly="true"/>&nbsp;
             <c:if test="${(fullEntryMode or amendmentEntry or enableCa) && !poItemInactive}">
@@ -101,8 +102,10 @@
             <kul:htmlAttributeLabel attributeEntry="${camsLocationAttributes.buildingCode}"/>
         </th>
         <td class="datacell" width="25%">
+        	<html:submit value="Find Building" style="display:none;" property="methodToCall.populateBuilding" styleId="populate-building-item${ctr}-location${ctr2}-button"/>
             <kul:htmlControlAttribute attributeEntry="${camsLocationAttributes.buildingCode}"
-                                      property="${camsAssetLocationProperty}.buildingCode" readOnly="true"/>&nbsp;
+                                      property="${camsAssetLocationProperty}.buildingCode"
+                                      onblur="updateAssetLocation('${ctr}', '${ctr2}')" readOnly="${offCampus}"/>&nbsp;
             <c:if test="${(fullEntryMode or amendmentEntry or enableCa) and !poItemInactive}">
                 <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.Building"
                             lookupParameters="${camsAssetLocationProperty}.campusCode:campusCode"
@@ -111,7 +114,7 @@
                 <html:submit property="${refreshAssetLocationBuildingUrl}"
                              alt="building not found"
                              styleClass="btn btn-default small"
-                             value="On Campus"/>
+                             value="Off Campus"/>
             </c:if>
         </td>
         <th width="25%" class="right">

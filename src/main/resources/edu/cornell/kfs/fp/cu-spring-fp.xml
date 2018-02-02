@@ -791,9 +791,16 @@
         <property name="fileNamePrefix" value="accountingXmlDocument_"/>
         <property name="pojoClass" value="edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper"/>
     </bean>
+    
+    <bean id="accountingXmlDocumentDownloadAttachmentService" class="edu.cornell.kfs.fp.batch.service.impl.AccountingXmlDocumentDownloadAttachmentServiceImpl">
+        <property name="attachmentService" ref="attachmentService"/>
+        <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
+    </bean>
 
     <bean id="AccountingDocumentGenerator_DI" class="edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator">
         <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
 
 </beans>
