@@ -38,7 +38,6 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
         buildHeaderSection(totalCBCPSavedDocumentCount, successfullyRoutedDocuments.size(), documentErrors.size());
         buildErrorSection(documentErrors);
         reportWriterService.destroy();
-
     }
     
     protected void buildHeaderSection(int totalCbcpCount, int totalRoutedCount, int totalErrorCount) {
@@ -98,17 +97,12 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
     
     @Override
     public void sendReportEmail(String toAddress, String fromAddress) {
-        File reportFile = reportWriterService.getReportFile();
-        
-        List<String> toAddressList = new ArrayList<>();
-        toAddressList.add(toAddress);
-        
         BodyMailMessage message = new BodyMailMessage();
         message.setFromAddress(fromAddress);
         String subject = reportWriterService.getTitle();
         message.setSubject(subject);
-        message.getToAddresses().addAll(toAddressList);
-        String body = concurBatchUtilityService.getFileContents(reportFile.getAbsolutePath());
+        message.getToAddresses().add(toAddress);
+        String body = concurBatchUtilityService.getFileContents(reportWriterService.getReportFile().getAbsolutePath());
         message.setMessage(body);
         
         boolean htmlMessage = false;
@@ -139,5 +133,4 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
-
 }

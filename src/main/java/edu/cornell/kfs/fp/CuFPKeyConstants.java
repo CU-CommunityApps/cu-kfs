@@ -9,5 +9,5 @@ public class CuFPKeyConstants {
     public static final String MESSAGE_CBCP_ROUTE_STEP_REPORT_SUPMMARY_DETAIL_LINE = "message.cbcp.route.step.report.summary.detail.line";
     public static final String MESSAGE_CBCP_ROUTE_STEP_REPORT_ERROR_SUBHEADER = "message.cbcp.route.step.report.error.subheader";
     public static final String MESSAGE_CBCP_ROUTE_STEP_REPORT_ERROR_DETAIL_LINE = "message.cbcp.route.step.report.error.detail.line";
-    public static final String MESSAGE_CBCP_ROUTE_STEP_REPORT_NO_ERRORS = "message.cbcp.route;step.report.no.errors";
+    public static final String MESSAGE_CBCP_ROUTE_STEP_REPORT_NO_ERRORS = "message.cbcp.route,step.report.no.errors";
 }
