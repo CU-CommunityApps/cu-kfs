@@ -289,74 +289,73 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 document.loadReceivingAddress();
             }
             else {
+                // returning from a building lookup in a capital asset tab location (update location address)
                 String buildingCodeParam = findBuildingCodeFromCapitalAssetBuildingLookup(request);
                 if (!StringUtils.isEmpty(buildingCodeParam)) {
-                    // returning from a building lookup in a capital asset tab location (update location address)
-                    PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
-                    CapitalAssetLocation location = null;
-
-                    // get building code
-                    String buildingCode = request.getParameterValues(buildingCodeParam)[0];
-                    // get campus code
-                    String campusCodeParam = buildingCodeParam.replace("buildingCode", "campusCode");
-                    String campusCode = request.getParameterValues(campusCodeParam)[0];
-                    // lookup building
-                    Building locationBuilding = new Building();
-                    locationBuilding.setCampusCode(campusCode);
-                    locationBuilding.setBuildingCode(buildingCode);
-                    Map<String, String> keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(locationBuilding);
-                    locationBuilding = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Building.class, keys);
-
-                    Map<String, String[]> parameters = request.getParameterMap();
-                    Set<String> parameterKeys = parameters.keySet();
-                    String locationCapitalAssetLocationNumber = "";
-                    String locationCapitalAssetItemNumber = "";
-                    for (String parameterKey : parameterKeys) {
-                        if (StringUtils.containsIgnoreCase(parameterKey, "newPurchasingCapitalAssetLocationLine")) {
-                            // its the new line
-                            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                                // get the item number
-                                locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(parameterKey);
-                                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
-                                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getNewPurchasingCapitalAssetLocationLine();
-                            }
-                            else {
-                                // no item number
-                                location = purchasingForm.getNewPurchasingCapitalAssetLocationLine();
-                            }
-                            break;
-                        }
-                        else if (StringUtils.containsIgnoreCase(parameterKey, "purchasingCapitalAssetLocationLine")) {
-                            // its one of the numbered lines, lets
-                            locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(parameterKey);
-
-                            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                                // get the item number
-                                locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(parameterKey);
-                                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
-                                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
-                            }
-                            break;
-                        }
-                        else if (StringUtils.containsIgnoreCase(parameterKey, "purchasingCapitalAssetSystems")) {
-                            // its one of the numbered lines, lets
-                            locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(parameterKey);
-
-                            if (!document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                                CapitalAssetSystem capitalAssetSystem = document.getPurchasingCapitalAssetSystems().get(0);
-                                location = capitalAssetSystem.getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
-                            }
-                            break;
-                        }
-                    }
-
-                    if ((location != null) && (locationBuilding != null)) {
-                        location.templateBuilding(locationBuilding);
-                    }
+                    PurchasingFormBase purchasingForm = (PurchasingFormBase)form;
+                    updateCapitalAssetLocation(request, purchasingForm, document, buildingCodeParam);
                 }
             }
         }
         return super.refresh(mapping, form, request, response);
+    }
+    
+    protected void updateAssetBuildingLocations(PurchasingFormBase purchasingForm, HttpServletRequest request, PurchasingDocument document) {
+        List<String> buildingCodeParams = findAllBuildingCodesFromCapitalAssetBuildingLookup(request);
+        for (String buildingCodeParam : buildingCodeParams) {
+            updateCapitalAssetLocation(request, purchasingForm, document, buildingCodeParam);
+        }
+    }
+
+    protected void updateCapitalAssetLocation(HttpServletRequest request, PurchasingFormBase purchasingForm, PurchasingDocument document, String buildingCodeParam) {
+        String buildingCode = request.getParameterValues(buildingCodeParam)[0];
+        String campusCodeParam = buildingCodeParam.replace("buildingCode", "campusCode");
+        String campusCode = request.getParameterValues(campusCodeParam)[0];
+
+        Building locationBuilding = new Building();
+        locationBuilding.setCampusCode(campusCode);
+        locationBuilding.setBuildingCode(buildingCode.toUpperCase());
+        Map<String, String> keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(locationBuilding);
+        locationBuilding = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Building.class, keys);
+
+        CapitalAssetLocation location = null;
+        boolean isNewLine = StringUtils.containsIgnoreCase(buildingCodeParam, "newPurchasingCapitalAssetLocationLine");
+        if (isNewLine) {
+            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+                String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
+                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
+                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getNewPurchasingCapitalAssetLocationLine();
+            } else {
+                location = purchasingForm.getNewPurchasingCapitalAssetLocationLine();
+            }
+        } else if (StringUtils.containsIgnoreCase(buildingCodeParam, "purchasingCapitalAssetLocationLine")) {
+            String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
+            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+                String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
+                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
+                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
+            }
+        } else if (StringUtils.containsIgnoreCase(buildingCodeParam, "purchasingCapitalAssetSystem")) {
+            String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
+            if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+                String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
+                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems().get(Integer.parseInt(locationCapitalAssetItemNumber));
+                location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
+            } else {
+                CapitalAssetSystem capitalAssetSystem = document.getPurchasingCapitalAssetSystems().get(0);
+                location = capitalAssetSystem.getCapitalAssetLocations().get(Integer.parseInt(locationCapitalAssetLocationNumber));
+            }
+        }
+
+        if (location != null) {
+            location.templateBuilding(locationBuilding);
+        }
+        if (locationBuilding == null && !(isNewLine && buildingCode.isEmpty())) {
+            // ignore scenario where isNewLine and it's empty as this is the default case; only validate new lines if
+            // data exists
+            GlobalVariables.getMessageMap().putError(buildingCodeParam,
+                    PurapKeyConstants.ERROR_CAPITAL_ASSET_LOCATION_BUILDING_CODE_INVALID);
+        }
     }
 
     protected String getCaptialAssetLocationNumberFromParameter(String parameterKey) {
@@ -885,7 +884,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     }
 
     /**
-     * @see org.kuali.kfs.module.purap.document.web.struts.PurchasingAccountsPayableActionBase#processCustomInsertAccountingLine(org.kuali.kfs.module.purap.document.web.struts.PurchasingAccountsPayableFormBase)
+     * @see org.kuali.kfs.module.purap.document.web.struts.PurchasingAccountsPayableActionBase#processCustomInsertAccountingLine(PurchasingAccountsPayableFormBase, HttpServletRequest)
      */
     @Override
     public boolean processCustomInsertAccountingLine(PurchasingAccountsPayableFormBase purapForm, HttpServletRequest request) {
@@ -1298,11 +1297,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
         PurchasingDocument document = (PurchasingDocument) purchasingForm.getDocument();
 
-        boolean rulePassed = SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedUpdateCamsViewPurapEvent(document));
-
-        if (rulePassed) {
-            SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
-        }
+        SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(document);
+        
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -1454,11 +1450,23 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         Enumeration anEnum = request.getParameterNames();
         while (anEnum.hasMoreElements()) {
             String paramName = (String) anEnum.nextElement();
-            if (paramName.contains("urchasingCapitalAsset") && paramName.contains("buildingCode")) {
+            if (StringUtils.containsIgnoreCase(paramName, "purchasingcapitalasset") && paramName.contains("buildingCode")) {
                 return paramName;
             }
         }
         return "";
+    }
+    
+    protected List<String> findAllBuildingCodesFromCapitalAssetBuildingLookup(HttpServletRequest request) {
+        List<String> buildingCodes = new ArrayList<>();
+        Enumeration anEnum = request.getParameterNames();
+        while (anEnum.hasMoreElements()) {
+            String paramName = (String) anEnum.nextElement();
+            if (StringUtils.containsIgnoreCase(paramName, "purchasingcapitalasset") && paramName.contains("buildingCode")) {
+                buildingCodes.add(paramName);
+            }
+        }
+        return buildingCodes;
     }
 
     /**
@@ -1800,6 +1808,13 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         requiresCalculate = !purForm.isCalculated() && purForm.canUserCalculate();
 
         return requiresCalculate;
+    }
+
+    public ActionForward populateBuilding(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        PurchasingFormBase purForm = (PurchasingFormBase) form;
+        PurchasingDocumentBase document = (PurchasingDocumentBase) purForm.getDocument();
+        updateAssetBuildingLocations(purForm, request, document);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
     // KFSPTS_985, KFSUPGRADE-75

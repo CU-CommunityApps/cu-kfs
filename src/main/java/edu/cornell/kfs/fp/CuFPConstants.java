@@ -170,5 +170,7 @@ public class CuFPConstants {
         public static final String DI_ROUTE_ANNOTATION = "DI automatically created by AWS Billing Batch Job";
         public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
     }
+    
+    public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
 
 }
