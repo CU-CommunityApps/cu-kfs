@@ -27,10 +27,9 @@
                             <!-- I Want document Form -->
         <form-bean name="IWantDocumentForm"
             type="edu.cornell.kfs.module.purap.document.web.struts.IWantDocumentForm" />
-
-		<form-bean name="CuDisbursementVoucherForm"
-				   type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
-
+            
+        <form-bean name="CuDisbursementVoucherForm"
+            type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
 		<form-bean name="CuInternalBillingForm"
 				   type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingForm" />
         
@@ -219,13 +218,13 @@
             <forward name="basic" path="/jsp/fp/CorporateBilledCorporatePaid.jsp"/>
         </action>
 
-		<action path="/financialAccountFundsUpdate" name="AccountFundsUpdateForm" input="/jsp/fp/AccountFundsUpdate.jsp"
-				type="edu.cornell.kfs.fp.document.web.struts.AccountFundsUpdateAction" scope="request"
-				parameter="methodToCall" validate="true" attribute="KualiForm">
-			<set-property property="cancellable" value="true" />
-			<forward name="basic" path="/jsp/fp/AccountFundsUpdate.jsp" />
-		</action>
-
+        <action path="/financialAccountFundsUpdate" name="AccountFundsUpdateForm" input="/jsp/fp/AccountFundsUpdate.jsp"
+                type="edu.cornell.kfs.fp.document.web.struts.AccountFundsUpdateAction" scope="request"
+                parameter="methodToCall" validate="true" attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/fp/AccountFundsUpdate.jsp" />
+        </action>
+        
         <action path="/financialCuInternalBilling" name="CuInternalBillingForm" input="/jsp/fp/InternalBilling.jsp"
                 type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingAction" scope="request"
                 parameter="methodToCall" validate="true" attribute="KualiForm">
