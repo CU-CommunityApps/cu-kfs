@@ -757,6 +757,8 @@
 	<bean id="corporateBilledCorporatePaidRouteStepReportService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CorporateBilledCorporatePaidRouteStepReportServiceImpl" abstract="true">
 		<property name="configurationService" ref="configurationService" />
 		<property name="reportWriterService" ref="corporateBilledCorporatePaidRouteReportWriterService" />
+		<property name="emailService" ref="emailService" />
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService" />
 	</bean>
 
 	<bean id="corporateBilledCorporatePaidRouteReportWriterService" parent="corporateBilledCorporatePaidRouteReportWriterService-parentBean" />

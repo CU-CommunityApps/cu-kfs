@@ -1,6 +1,8 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,9 +12,12 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.springframework.util.AutoPopulatingList;
 
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidRouteStepReportService;
@@ -23,6 +28,8 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
     
     protected ConfigurationService configurationService;
     protected ReportWriterService reportWriterService;
+    protected EmailService emailService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
     public void createReport(int totalCBCPSavedDocumentCount, List<String> successfullyRoutedDocuments, Map<String, String> documentErrors) {
@@ -63,14 +70,12 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
     
     @Override
     public String buildValidationErrorMessage(ValidationException validationException) {
-        //String messageFormatSafeNewLine = "%n";
         try {
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
-            return errorMessages.values().stream()
-                    .flatMap(List::stream)
+            return errorMessages.values().stream().flatMap(List::stream)
                     .map(this::buildValidationErrorMessageForSingleError)
-                    .collect(Collectors.joining(
-                            KFSConstants.NEWLINE, validationException.getMessage() + KFSConstants.NEWLINE, KFSConstants.NEWLINE));
+                    .collect(Collectors.joining(KFSConstants.NEWLINE,
+                            validationException.getMessage() + KFSConstants.NEWLINE, KFSConstants.NEWLINE));
         } catch (RuntimeException e) {
             LOG.error("buildValidationErrorMessage: Could not build validation error message", e);
             return CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE;
@@ -90,6 +95,34 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
             return errorMessageString;
         }
     }
+    
+    @Override
+    public void sendReportEmail(String toAddress, String fromAddress) {
+        File reportFile = reportWriterService.getReportFile();
+        
+        List<String> toAddressList = new ArrayList<>();
+        toAddressList.add(toAddress);
+        
+        BodyMailMessage message = new BodyMailMessage();
+        message.setFromAddress(fromAddress);
+        String subject = reportWriterService.getTitle();
+        message.setSubject(subject);
+        message.getToAddresses().addAll(toAddressList);
+        String body = concurBatchUtilityService.getFileContents(reportFile.getAbsolutePath());
+        message.setMessage(body);
+        
+        boolean htmlMessage = false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
+            LOG.debug("sendEmail, the email subject: " + subject);
+            LOG.debug("sendEmail, the email budy: " + body);
+        }
+        try {
+            emailService.sendMessage(message, htmlMessage);
+        } catch (Exception e) {
+            LOG.error("sendEmail, the email could not be sent", e);
+        }
+    }
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
@@ -97,6 +130,14 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
 
     public void setReportWriterService(ReportWriterService reportWriterService) {
         this.reportWriterService = reportWriterService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
 }

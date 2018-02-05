@@ -358,10 +358,10 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + ve.getMessage(), ve);
             }
         }
-        corporateBilledCorporatePaidRouteStepReportService.createReport(cbcpDocumentList.size(), successfulDocuments, documentErrors);
+        createAndEmailReport(cbcpDocumentList, documentErrors, successfulDocuments);
         return true;
     }
-    
+
     protected Collection<CorporateBilledCorporatePaidDocument> retrieveCorporateBilledCorporatePaidDocuments(String statusCode) {
         try {
             return financialSystemDocumentService.findByWorkflowStatusCode(CorporateBilledCorporatePaidDocument.class, DocumentStatus.fromCode(statusCode));
@@ -369,6 +369,14 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
             LOG.error("retrieveCorporateBilledCorporatePaidDocuments, Error searching for enroute procurement card documents " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+    
+    protected void createAndEmailReport(Collection<CorporateBilledCorporatePaidDocument> cbcpDocumentList,
+            Map<String, String> documentErrors, List<String> successfulDocuments) {
+        corporateBilledCorporatePaidRouteStepReportService.createReport(cbcpDocumentList.size(), successfulDocuments, documentErrors);
+        String reportEmailAddres = getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_REPORT_EMAIL_ADDRESS_PARAMETER_NAME);
+        corporateBilledCorporatePaidRouteStepReportService.sendReportEmail(reportEmailAddres, reportEmailAddres);
     }
     
     @Override

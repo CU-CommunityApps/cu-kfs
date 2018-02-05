@@ -10,4 +10,6 @@ public interface CorporateBilledCorporatePaidRouteStepReportService {
     void createReport(int totalCBCPSavedDocumentCount, List<String> successfullyRoutedDocuments, Map<String, String> documentErrors);
     
     String buildValidationErrorMessage(ValidationException validationException);
+    
+    void sendReportEmail(String toAddress, String fromAddress);
 }
