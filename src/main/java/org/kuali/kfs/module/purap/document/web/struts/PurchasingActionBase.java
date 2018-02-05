@@ -128,7 +128,6 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 /**
  * Struts Action for Purchasing documents.
  */
-
 public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchasingActionBase.class);
     
@@ -182,7 +181,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
 
         // Refreshing the fields after returning from a vendor lookup in the vendor tab
-        if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_LOOKUPABLE_IMPL) && document.getVendorDetailAssignedIdentifier() != null && document.getVendorHeaderGeneratedIdentifier() != null) {
+        if (StringUtils.equals(refreshCaller, VendorConstants.VENDOR_LOOKUPABLE_IMPL) && document
+                .getVendorDetailAssignedIdentifier() != null && document.getVendorHeaderGeneratedIdentifier() != null) {
             document.setVendorContractGeneratedIdentifier(null);
             document.refreshReferenceObject("vendorContract");
 
@@ -200,7 +200,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                                              }
                                      }
             // populate default address based on selected vendor
-            VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(document.getVendorDetail().getVendorAddresses(), document.getVendorDetail().getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), document.getDeliveryCampusCode());
+            VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+                    document.getVendorDetail().getVendorAddresses(),
+                    document.getVendorDetail().getVendorHeader().getVendorType().getAddressType()
+                            .getVendorAddressTypeCode(), document.getDeliveryCampusCode());
             
             if(defaultAddress==null){
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
@@ -208,7 +211,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             document.templateVendorAddress(defaultAddress);
             // CU enhancement KFSUPGRDE-348
 			document.setPurchaseOrderTransmissionMethodCode(((CuVendorAddressExtension)defaultAddress.getExtension()).getPurchaseOrderTransmissionMethodCode());
-
         }
 
         // Refreshing the fields after returning from a contract lookup in the vendor tab
@@ -229,7 +231,10 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 document.templateVendorContract(refreshVendorContract);
 
                 // populate default address from selected vendor
-                VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(document.getVendorDetail().getVendorAddresses(), document.getVendorDetail().getVendorHeader().getVendorType().getAddressType().getVendorAddressTypeCode(), "");
+                VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+                        document.getVendorDetail().getVendorAddresses(),
+                        document.getVendorDetail().getVendorHeader().getVendorType().getAddressType()
+                                .getVendorAddressTypeCode(), "");
                 if(defaultAddress==null){
                     GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DOC_ADDRESS, PurapKeyConstants.ERROR_INACTIVE_VENDORADDRESS);   
                 }
@@ -603,8 +608,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             purDocument.setPurchasingCapitalAssetItems(new PurApArrayList(purDocument.getPurchasingCapitalAssetItemClass()));
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(purDocument);
         }
-        // End
-
 
         purDocument.deleteItem(getSelectedLine(request));
 
@@ -614,7 +617,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 SpringContext.getBean(PurchasingService.class).setupCapitalAssetItems(purDocument);
             }
         }
-        // End
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -1071,9 +1073,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         PurchasingCapitalAssetItem assetItem = purDocument.getPurchasingCapitalAssetItems().get(getSelectedLine(request));
         ItemCapitalAsset asset = assetItem.getNewPurchasingItemCapitalAssetLine();
 
-        boolean rulePassed = true; // SpringContext.getBean(KualiRuleService.class).applyRules(new
-        // AddPurchasingAccountsPayableItemEvent("", purDocument, item));
-
+        boolean rulePassed = true;
         if (rulePassed) {
             String fullParameter = (String) request.getAttribute(KFSConstants.METHOD_TO_CALL_ATTRIBUTE);
             String systemIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM1_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM1_RIGHT_DEL);
@@ -1094,9 +1094,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         ItemCapitalAsset asset = assetItem.getNewPurchasingItemCapitalAssetLine();
 
-        boolean rulePassed = true; // SpringContext.getBean(KualiRuleService.class).applyRules(new
-        // AddPurchasingAccountsPayableItemEvent("", purDocument, item));
-
+        boolean rulePassed = true;
         if (rulePassed) {
             String fullParameter = (String) request.getAttribute(KFSConstants.METHOD_TO_CALL_ATTRIBUTE);
             String assetIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM2_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM2_RIGHT_DEL);
@@ -1250,7 +1248,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
     }
 
-
     public ActionForward changeSystem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
         PurchasingDocument document = (PurchasingDocument) purchasingForm.getDocument();
@@ -1301,8 +1298,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 }
             }
             document.clearCapitalAssetFields();
-            // saveDocumentNoValidationUsingClearErrorMap(document);
-
 
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(document);
             KNSGlobalVariables.getMessageList().add(PurapKeyConstants.PURCHASING_MESSAGE_SYSTEM_CHANGED);
@@ -1310,7 +1305,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-
 
     public ActionForward updateCamsView(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;
@@ -1320,7 +1314,6 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-
 
     public ActionForward setManufacturerFromVendorByDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase purchasingForm = (PurchasingAccountsPayableFormBase) form;

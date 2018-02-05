@@ -62,9 +62,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 
-/**
- * This is the action class for the CapitalAssetInformationActionBase.
- */
 public abstract class CapitalAssetInformationActionBase extends KualiAccountingDocumentActionBase {
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CapitalAssetInformationActionBase.class);
 
@@ -164,7 +161,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         DistributeCapitalAssetAmountToGroupAccountingLines((KualiAccountingDocumentFormBase) form);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
-
     }
 
     /**
@@ -197,7 +193,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         //check the capital assets records totals
         KualiDecimal capitalAssetsAmount = KualiDecimal.ZERO;
 
-
         for (CapitalAssetInformation capitalAsset : currentCapitalAssetInformation) {
             List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
             for (CapitalAssetAccountsGroupDetails groupAccountLine : groupAccountLines) {
@@ -225,7 +220,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      */
     protected boolean modifyAssetAlreadyExists(List<CapitalAssetInformation> capitalAssetInformation, Long capitalAssetNumber) {
         boolean addIt = true;
-        KualiDecimal capitalAssetCreatedAmount = KualiDecimal.ZERO;
 
         for (CapitalAssetInformation capitalAsset : capitalAssetInformation) {
             if (KFSConstants.CapitalAssets.CAPITAL_ASSET_MODIFY_ACTION_INDICATOR.equals(capitalAsset.getCapitalAssetActionIndicator()) &&
@@ -343,9 +337,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @param capitalAssetInformation
      */
     protected void redistributeAmountsForAccountingsLineForModifyAssetsByAmounts(List<CapitalAccountingLines> selectedCapitalAccountingLines, List<CapitalAssetInformation> capitalAssetInformation, KualiDecimal remainingAmountToDistribute) {
-        KualiDecimal appliedAccountingLinesTotal = KualiDecimal.ZERO;
-        CapitalAssetAccountsGroupDetails lastAccountingLine = new CapitalAssetAccountsGroupDetails();
-
         for (CapitalAccountingLines capitalAccountLine : selectedCapitalAccountingLines) {
             for (CapitalAssetInformation capitalAsset : capitalAssetInformation) {
                 if (KFSConstants.CapitalAssets.DISTRIBUTE_COST_BY_INDIVIDUAL_ASSET_AMOUNT_CODE.equalsIgnoreCase(capitalAsset.getDistributionAmountCode())) {
@@ -491,7 +482,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @param capitalAssetInformation
      */
     protected void adjustAccountingLinesAmounts(CapitalAccountingLines capitalAcctLine, List<CapitalAssetInformation> capitalAssetInformation) {
-
         CapitalAssetAccountsGroupDetails lastAcctLine = null;
 
         KualiDecimal totalAccountsAmount = KualiDecimal.ZERO;
@@ -533,7 +523,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAssetInformation lastCapitalAsset = null;
 
         for (CapitalAssetInformation capitalAsset : capitalAssetInformation) {
-            //look at only cost equall assets...
+            //look at only cost equal assets...
             if (KFSConstants.CapitalAssets.DISTRIBUTE_COST_EQUALLY_CODE.equalsIgnoreCase(capitalAsset.getDistributionAmountCode())) {
                 if (capitalAsset.getCapitalAssetLineAmount().mod(new KualiDecimal(2)) != KualiDecimal.ZERO) {
                     capitalAsset.setCapitalAssetLineAmount(capitalAsset.getCapitalAssetLineAmount().subtract(new KualiDecimal(0.01)));
