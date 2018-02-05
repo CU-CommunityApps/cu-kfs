@@ -7,5 +7,7 @@ import org.kuali.kfs.krad.exception.ValidationException;
 
 public interface CorporateBilledCorporatePaidRouteStepReportService {
     
-    void createReport(int totalCBCPSavedDocumentCount, List<String> successfullyRoutedDocuments, Map<String, ValidationException> documentErrors);
+    void createReport(int totalCBCPSavedDocumentCount, List<String> successfullyRoutedDocuments, Map<String, String> documentErrors);
+    
+    String buildValidationErrorMessage(ValidationException validationException);
 }

@@ -14,6 +14,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidRouteStepReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
@@ -24,7 +25,7 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
     protected ReportWriterService reportWriterService;
 
     @Override
-    public void createReport(int totalCBCPSavedDocumentCount, List<String> successfullyRoutedDocuments, Map<String, ValidationException> documentErrors) {
+    public void createReport(int totalCBCPSavedDocumentCount, List<String> successfullyRoutedDocuments, Map<String, String> documentErrors) {
         LOG.info("reportDocumentErrors, number of errors: " + documentErrors.size());
         reportWriterService.initialize();
         buildHeaderSection(totalCBCPSavedDocumentCount, successfullyRoutedDocuments.size(), documentErrors.size());
@@ -34,29 +35,35 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
     }
     
     protected void buildHeaderSection(int totalCbcpCount, int totalRoutedCount, int totalErrorCount) {
-        reportWriterService.writeSubTitle("******* CBCP Job Summary *******");
-        reportWriterService.writeFormattedMessageLine("Total number of CBCP documents in saved status: " + totalCbcpCount);
-        reportWriterService.writeFormattedMessageLine("Total number of CBCP documents routed: " + totalRoutedCount);
-        reportWriterService.writeFormattedMessageLine("Total number of CBCP documents that failed to route: " + totalErrorCount);
-        reportWriterService.writeNewLines(1);
+        reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.MESSAGE_CBCP_ROUTE_STEP_REPORT_SUPMMARY_SUBHEADER));
+        String suummaryDetailFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.MESSAGE_CBCP_ROUTE_STEP_REPORT_SUPMMARY_DETAIL_LINE);
+        reportWriterService.writeFormattedMessageLine(MessageFormat.format(suummaryDetailFormat, "in saved status", totalCbcpCount));
+        reportWriterService.writeFormattedMessageLine(MessageFormat.format(suummaryDetailFormat, "routed", totalRoutedCount));
+        reportWriterService.writeFormattedMessageLine(MessageFormat.format(suummaryDetailFormat, "failed to route", totalErrorCount));
+        reportWriterService.writeNewLines(3);
     }
 
-    protected void buildErrorSection(Map<String, ValidationException> documentErrors) {
-        reportWriterService.writeSubTitle("******* Documents that failed to route *******");
+    protected void buildErrorSection(Map<String, String> documentErrors) {
+        reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.MESSAGE_CBCP_ROUTE_STEP_REPORT_ERROR_SUBHEADER));
         if (documentErrors.size() > 0) {
+            String errorDetailFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.MESSAGE_CBCP_ROUTE_STEP_REPORT_ERROR_DETAIL_LINE);
             for (String documentNumber : documentErrors.keySet()) {
-                ValidationException error = documentErrors.get(documentNumber);
-                LOG.info("reportDocumentErrors: document number: " + documentNumber + " error: " + error);
-                reportWriterService.writeNewLines(1);
-                reportWriterService.writeFormattedMessageLine("Document number " + documentNumber + " had the following wrror: " + buildValidationErrorMessage(error));
+                String errorMessage = documentErrors.get(documentNumber);
+                LOG.info("buildErrorSection, document " + documentNumber + " failed to route due to: " + errorMessage);
+                reportWriterService.writeFormattedMessageLine(MessageFormat.format(errorDetailFormat, documentNumber, errorMessage));
             } 
         } else {
             reportWriterService.writeNewLines(1);
-            reportWriterService.writeFormattedMessageLine("No documents in erorr");
+            reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.MESSAGE_CBCP_ROUTE_STEP_REPORT_NO_ERRORS));
         }
     }
     
-    protected String buildValidationErrorMessage(ValidationException validationException) {
+    @Override
+    public String buildValidationErrorMessage(ValidationException validationException) {
+        //String messageFormatSafeNewLine = "%n";
         try {
             Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
             return errorMessages.values().stream()

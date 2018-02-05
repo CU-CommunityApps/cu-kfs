@@ -340,7 +340,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 KewApiConstants.ROUTE_HEADER_SAVED_CD);
         LOG.info("routeProcurementCardDocuments() Number of CBCP documents to Route: " + cbcpDocumentList.size());
         
-        Map<String, ValidationException> documentErrors = new HashMap<String, ValidationException>();
+        Map<String, String> documentErrors = new HashMap<String, String>();
         List<String> successfulDocuments = new ArrayList<String>();
         for (CorporateBilledCorporatePaidDocument cbcpDocument : cbcpDocumentList) {
             try {
@@ -348,16 +348,14 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
                 successfulDocuments.add(cbcpDocument.getDocumentNumber());
-            } catch (WorkflowException | ValidationException e) {
-                ValidationException ve;
-                if (e instanceof ValidationException) {
-                    ve = (ValidationException) e;
-                } else {
-                    ve = new ValidationException(e.getMessage());
-                }
-                documentErrors.put(cbcpDocument.getDocumentNumber(), ve);
+            } catch (WorkflowException we) {
+                documentErrors.put(cbcpDocument.getDocumentNumber(), "Workflow error: " + we.getMessage());
                 GlobalVariables.getMessageMap().clearErrorMessages();
-                LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
+                LOG.error("routeProcurementCardDocuments, workflow error routing document # " + cbcpDocument.getDocumentNumber() + " " + we.getMessage(), we);
+            } catch (ValidationException ve) {
+                documentErrors.put(cbcpDocument.getDocumentNumber(), corporateBilledCorporatePaidRouteStepReportService.buildValidationErrorMessage(ve));
+                GlobalVariables.getMessageMap().clearErrorMessages();
+                LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + ve.getMessage(), ve);
             }
         }
         corporateBilledCorporatePaidRouteStepReportService.createReport(cbcpDocumentList.size(), successfulDocuments, documentErrors);
