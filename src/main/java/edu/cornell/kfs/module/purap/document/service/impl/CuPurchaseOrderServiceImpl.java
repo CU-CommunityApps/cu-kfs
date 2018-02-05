@@ -1,36 +1,36 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
-import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
-import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapConstants.POTransmissionMethods;
+import org.kuali.kfs.module.purap.PurapConstants.PurchaseOrderStatuses;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
 
-import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchaseOrderServiceImpl.class);
@@ -188,6 +188,30 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             notes = noteService.getByRemoteObjectId(po.getNoteTarget().getObjectId());
         }
         return notes;
+    }
+
+    @Override
+    protected PurchaseOrderDocument createPurchaseOrderDocumentFromSourceDocument(
+            PurchaseOrderDocument sourceDocument, String docType) throws WorkflowException {
+        PurchaseOrderDocument newDocument = super.createPurchaseOrderDocumentFromSourceDocument(sourceDocument, docType);
+        resetOverrideCodesOnItemAccountingLines(newDocument);
+        return newDocument;
+    }
+
+    protected void resetOverrideCodesOnItemAccountingLines(PurchaseOrderDocument document) {
+        List<PurApItem> items = (List<PurApItem>) document.getItems();
+        items.stream()
+                .flatMap((item) -> item.getSourceAccountingLines().stream())
+                .filter(this::accountingLineHasNonDefaultOverrideCode)
+                .forEach(this::resetOverrideCodeOnAccountingLine);
+    }
+
+    protected boolean accountingLineHasNonDefaultOverrideCode(PurApAccountingLine accountingLine) {
+        return !StringUtils.equals(AccountingLineOverride.CODE.NONE, accountingLine.getOverrideCode());
+    }
+
+    protected void resetOverrideCodeOnAccountingLine(PurApAccountingLine accountingLine) {
+        accountingLine.setOverrideCode(AccountingLineOverride.CODE.NONE);
     }
 
 }

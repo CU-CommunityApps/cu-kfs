@@ -34,8 +34,19 @@
 		<property name="belowTheLineItemNoUnitCostValidation" ref="Purchasing-belowTheLineItemNoUnitCostValidation" />
 		<property name="belowTheLineValuesValidation" ref="PurchasingAccountsPayable-belowTheLineValuesValidation" />		
 	</bean>
-	
-	  
+
+	<bean id="PurchaseOrderAmendment-accountValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentAccountValidation" abstract="true"/>
+
+	<bean id="PurchaseOrderAmendment-accountingLineDataDictionaryValidation"
+			class="org.kuali.kfs.module.purap.document.validation.impl.PurapAccountingLineDataDictionaryValidation" abstract="true">
+		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
+	</bean>
+
+	<bean id="PurchaseOrderAmendment-accountingLineRequiredOverridesValidation"
+			class="edu.cornell.kfs.sys.document.validation.impl.AccountingLineRequiredOverridesValidation" abstract="true">
+		<property name="accountingLineRuleHelperService" ref="purchaseOrderAmendmentAccountingLineRuleHelperService"/>
+	</bean>
+
 	<bean id="Requisition-newIndividualItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.RequisitionNewIndividualItemValidation" abstract="true">  
 	<property name="parameterService" ref="parameterService" />
 		<property name="dataDictionaryService" ref="dataDictionaryService" />

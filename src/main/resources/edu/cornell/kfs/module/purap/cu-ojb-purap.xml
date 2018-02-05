@@ -2725,7 +2725,58 @@
             <inverse-foreignkey field-ref="documentNumber" />
         </collection-descriptor>           
     </class-descriptor>        
- 
+
+    <!-- Overridden to allow for persisting the "overrideCode" field  -->
+    <class-descriptor class="org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount" table="PUR_PO_ACCT_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="accountIdentifier" column="PO_ACCT_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="PO_ACCT_ID"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="itemIdentifier" column="PO_ITM_ID" jdbc-type="INTEGER" index="true"/>
+        <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="financialSubObjectCode" column="FIN_SUB_OBJ_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="projectCode" column="PROJECT_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="organizationReferenceId" column="ORG_REFERENCE_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="accountLinePercent" column="ACLN_PCT" jdbc-type="DECIMAL"/>
+        <field-descriptor name="itemAccountOutstandingEncumbranceAmount" column="ITM_ACCT_OSTND_ENCUM_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="amount" column="ACLN_AMT" jdbc-type="DECIMAL" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="sequenceNumber" column="FDOC_LINE_NBR" jdbc-type="INTEGER"/>
+        <field-descriptor name="overrideCode" column="FDOC_OVERRIDE_CD" jdbc-type="VARCHAR"/>
+
+        <reference-descriptor name="purapItem" class-ref="org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+            <foreignkey field-ref="itemIdentifier"/>
+        </reference-descriptor>
+        <reference-descriptor name="chart" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="chartOfAccountsCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="objectCode" class-ref="org.kuali.kfs.coa.businessobject.ObjectCodeCurrent" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="financialObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="subObjectCode" class-ref="org.kuali.kfs.coa.businessobject.SubObjectCodeCurrent" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="accountNumber"/>
+            <foreignkey field-ref="financialObjectCode"/>
+            <foreignkey field-ref="financialSubObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="account" class-ref="org.kuali.kfs.coa.businessobject.Account" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="accountNumber"/>
+        </reference-descriptor>
+        <reference-descriptor name="subAccount" class-ref="org.kuali.kfs.coa.businessobject.SubAccount" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="chartOfAccountsCode"/>
+            <foreignkey field-ref="accountNumber"/>
+            <foreignkey field-ref="subAccountNumber"/>
+        </reference-descriptor>
+        <reference-descriptor name="project" class-ref="org.kuali.kfs.coa.businessobject.ProjectCode" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="projectCode"/>
+        </reference-descriptor>
+    </class-descriptor>
+
  <!--  KFSPTS-1719 -->
  <class-descriptor class="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument" table="AP_PMT_RQST_T">
     <field-descriptor name="purapDocumentIdentifier" column="PMT_RQST_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="PMT_RQST_ID"/>
