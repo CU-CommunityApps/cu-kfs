@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.document;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.document.Copyable;
 import org.kuali.kfs.sys.KFSConstants;

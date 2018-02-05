@@ -1,11 +1,12 @@
 package edu.cornell.kfs.fp.document.authorization;
 
-import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
+import java.util.Set;
+
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.rice.kew.api.WorkflowDocument;
 
-import java.util.Set;
+import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
 
 public class AccountFundsUpdateDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 

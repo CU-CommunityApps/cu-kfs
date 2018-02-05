@@ -30,8 +30,9 @@
             
         <form-bean name="CuDisbursementVoucherForm"
             type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
-		<form-bean name="CuInternalBillingForm"
-				   type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingForm" />
+
+        <form-bean name="CuInternalBillingForm"
+                   type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingForm" />
         
         <form-bean name="RecurringDisbursementVoucherForm" type="edu.cornell.kfs.fp.document.web.struts.RecurringDisbursementVoucherForm"/>    
         
