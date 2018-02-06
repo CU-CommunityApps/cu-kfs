@@ -9,9 +9,8 @@ public class CreateAccounntingDocumentReportItem {
     private boolean xmlSuccessfullyLoaded;
     private String reportEmailAddress;
     private int numberOfDocumentInFile;
-    private int numberOfDocumentInError;
-    private int numberOfDocumentsSuccessfullyRouted;
     private String reportItemMessage;
+    private String fileOverview;
     private List<CreateAccounntingDocumentReportItemDetail> documentsInError;
     private List<CreateAccounntingDocumentReportItemDetail> documentsSuccessfullyRouted;
     
@@ -53,22 +52,6 @@ public class CreateAccounntingDocumentReportItem {
         this.numberOfDocumentInFile = numberOfDocumentInFile;
     }
 
-    public int getNumberOfDocumentInError() {
-        return numberOfDocumentInError;
-    }
-
-    public void setNumberOfDocumentInError(int numberOfDocumentInError) {
-        this.numberOfDocumentInError = numberOfDocumentInError;
-    }
-
-    public int getNumberOfDocumentsSuccessfullyRouted() {
-        return numberOfDocumentsSuccessfullyRouted;
-    }
-
-    public void setNumberOfDocumentsSuccessfullyRouted(int numberOfDocumentsSuccessfullyRouted) {
-        this.numberOfDocumentsSuccessfullyRouted = numberOfDocumentsSuccessfullyRouted;
-    }
-
     public List<CreateAccounntingDocumentReportItemDetail> getDocumentsInError() {
         return documentsInError;
     }
@@ -92,5 +75,13 @@ public class CreateAccounntingDocumentReportItem {
     public void setDocumentsSuccessfullyRouted(
             List<CreateAccounntingDocumentReportItemDetail> documentsSuccessfullyRouted) {
         this.documentsSuccessfullyRouted = documentsSuccessfullyRouted;
+    }
+
+    public String getFileOverview() {
+        return fileOverview;
+    }
+
+    public void setFileOverview(String fileOverview) {
+        this.fileOverview = fileOverview;
     }
 }

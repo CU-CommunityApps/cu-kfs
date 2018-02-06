@@ -30,6 +30,7 @@ import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItem;
+import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
@@ -69,8 +70,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.info("processAccountingDocumentFromXml: Found " + documentCount + " documents to process from file: " + fileName);
             reportItem.setXmlSuccessfullyLoaded(true);
             reportItem.setNumberOfDocumentInFile(documentCount);
+            reportItem.setReportEmailAddress(accountingXmlDocuments.getReportEmail());
+            reportItem.setFileOverview(accountingXmlDocuments.getOverview());
             accountingXmlDocuments.getDocuments().stream()
-                    .forEach(this::processAccountingDocumentEntryFromXml);
+                    .forEach(xmlDocument -> processAccountingDocumentEntryFromXml(xmlDocument, reportItem));
             
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
         } catch (Exception e) {
@@ -96,8 +99,12 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         }
     }
 
-    protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument) {
+    protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccounntingDocumentReportItem reportItem) {
         GlobalVariables.getMessageMap().clearErrorMessages();
+        CreateAccounntingDocumentReportItemDetail detail = new CreateAccounntingDocumentReportItemDetail();
+        detail.setIndexNumber(accountingXmlDocument.getIndex().intValue());
+        detail.setDocumentType(accountingXmlDocument.getDocumentTypeCode());
+        detail.setDocumentDescription(accountingXmlDocument.getDescription());
         try {
             LOG.info("processAccountingDocumentEntryFromXml: Started processing accounting document of type: "
                     + accountingXmlDocument.getDocumentTypeCode());
@@ -110,13 +117,21 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             
             LOG.info("processAccountingDocumentEntryFromXml: Finished processing and routing accounting document " + document.getDocumentNumber()
                     + " of type: " + accountingXmlDocument.getDocumentTypeCode());
+            detail.setSuccessfullyRouted(true);
+            detail.setDocumentNumber(document.getDocumentNumber());
+            reportItem.getDocumentsSuccessfullyRouted().add(detail);
         } catch (Exception e) {
+            detail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
+                String errorMessage = buildValidationErrorMessage((ValidationException) e);
                 LOG.error("processAccountingDocumentEntryFromXml: Could not route accounting document - "
-                        + buildValidationErrorMessage((ValidationException) e));
+                        + errorMessage);
+                detail.setErrorMessage(errorMessage);
             } else {
                 LOG.error("processAccountingDocumentEntryFromXml: Error processing accounting XML document", e);
+                detail.setErrorMessage("Non validation error: " + e.getMessage());
             }
+            reportItem.getDocumentsInError().add(detail);
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }

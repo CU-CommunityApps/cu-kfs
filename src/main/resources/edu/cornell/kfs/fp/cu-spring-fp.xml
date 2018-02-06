@@ -816,16 +816,16 @@
     </bean>
     
     <bean id="createAccountingDocumentReportSerivce" parent="createAccountingDocumentReportSerivce-parentBean" />
-+	<bean id="createAccountingDocumentReportSerivce-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentReportSerivceImpl" abstract="true">
-+		<property name="configurationService" ref="configurationService" />
-+		<property name="reportWriterService" ref="createAccountingDocumentReportWriterService" />
-+		<property name="emailService" ref="emailService" />
-+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService" />
-+	</bean>
+	<bean id="createAccountingDocumentReportSerivce-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentReportSerivceImpl" abstract="true">
+		<property name="configurationService" ref="configurationService" />
+		<property name="reportWriterService" ref="createAccountingDocumentReportWriterService" />
+		<property name="emailService" ref="emailService" />
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService" />
+	</bean>
     
     <bean id="createAccountingDocumentReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
     	<property name="filePath" value="${reports.directory}/fp" />
-    	<property name="fileNamePrefix" value="create_accounting_document_report" />
+    	<property name="fileNamePrefix" value="create_accounting_document_report_" />
     	<property name="title" value="Create Accounting Document Job Report File" />
     </bean>
 
