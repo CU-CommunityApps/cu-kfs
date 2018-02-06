@@ -1,13 +1,12 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -87,8 +86,8 @@ public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements C
             throw new RuntimeException("Cannot find error message for key: " + errorMessage.getErrorKey());
         }
         
-        Object[] messageParameters = (Object[]) errorMessage.getMessageParameters();
-        if (messageParameters != null && messageParameters.length > 0) {
+        String[] messageParameters = errorMessage.getMessageParameters();
+        if (ArrayUtils.isNotEmpty(messageParameters)) {
             return MessageFormat.format(errorMessageString, messageParameters);
         } else {
             return errorMessageString;
