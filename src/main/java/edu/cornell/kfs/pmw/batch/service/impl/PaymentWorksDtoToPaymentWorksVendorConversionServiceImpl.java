@@ -26,6 +26,8 @@ import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReport
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksAddressBaseDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAccountDTO;
+import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAddressDTO;
+import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksCorpAddressDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksCustomFieldDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksCustomFieldsDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDetailDTO;
@@ -43,35 +45,35 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     public PaymentWorksVendor createPaymentWorksVendorFromPaymentWorksNewVendorRequestDetailDTO(PaymentWorksNewVendorRequestDetailDTO pmwNewVendorRequestDetailDTO, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         PaymentWorksVendor stgVendor = new PaymentWorksVendor();
         if (newVendorDetailExists(pmwNewVendorRequestDetailDTO)) {
-            stgVendor.setPmwVendorRequestId(pmwNewVendorRequestDetailDTO.getPaymentWorksVendorId());
+            stgVendor.setPmwVendorRequestId(pmwNewVendorRequestDetailDTO.getId());
             populateNewVendorRequestingCompanyAttributes(stgVendor, pmwNewVendorRequestDetailDTO);
             extractCustomFields(stgVendor, pmwNewVendorRequestDetailDTO, reportData);
         }
         else {
             reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
             reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestDetailDTO.toString(),
-                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_DETAIL_WAS_NOT_FOUND_ERROR_MESSAGE), pmwNewVendorRequestDetailDTO.getPaymentWorksVendorId())));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_DETAIL_WAS_NOT_FOUND_ERROR_MESSAGE), pmwNewVendorRequestDetailDTO.getId())));
         }
         return stgVendor;
     }
     
     private void populateNewVendorRequestingCompanyAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksNewVendorRequestDetailDTO pmwNewVendorRequestDetailDTO) {
         if (requestingCompanyExists(pmwNewVendorRequestDetailDTO)) {
-            PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO = pmwNewVendorRequestDetailDTO.getRequestingCompany();
+            PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO = pmwNewVendorRequestDetailDTO.getRequesting_company();
             stgNewVendor.setRequestingCompanyId(pmwRequestingCompanyDTO.getId());
-            stgNewVendor.setRequestingCompanyLegalName(pmwRequestingCompanyDTO.getCompanyLegalName());
-            stgNewVendor.setRequestingCompanyDesc(pmwRequestingCompanyDTO.getDescription());
-            stgNewVendor.setRequestingCompanyName(pmwRequestingCompanyDTO.getCompanyName());
-            stgNewVendor.setRequestingCompanyLegalLastName(pmwRequestingCompanyDTO.getLegalLastName());
-            stgNewVendor.setRequestingCompanyLegalFirstName(pmwRequestingCompanyDTO.getLegalFirstName());
+            stgNewVendor.setRequestingCompanyLegalName(pmwRequestingCompanyDTO.getLegal_name());
+            stgNewVendor.setRequestingCompanyDesc(pmwRequestingCompanyDTO.getDesc());
+            stgNewVendor.setRequestingCompanyName(pmwRequestingCompanyDTO.getName());
+            stgNewVendor.setRequestingCompanyLegalLastName(pmwRequestingCompanyDTO.getLegal_last_name());
+            stgNewVendor.setRequestingCompanyLegalFirstName(pmwRequestingCompanyDTO.getLegal_first_name());
             stgNewVendor.setRequestingCompanyUrl(pmwRequestingCompanyDTO.getUrl());
             stgNewVendor.setRequestingCompanyTin(pmwRequestingCompanyDTO.getTin());
-            stgNewVendor.setRequestingCompanyTinType(pmwRequestingCompanyDTO.getTinType());
-            stgNewVendor.setRequestingCompanyTaxCountry(pmwRequestingCompanyDTO.getTaxCountry());
-            stgNewVendor.setRequestingCompanyW8W9(pmwRequestingCompanyDTO.getW8w9Url());
+            stgNewVendor.setRequestingCompanyTinType(pmwRequestingCompanyDTO.getTin_type());
+            stgNewVendor.setRequestingCompanyTaxCountry(pmwRequestingCompanyDTO.getTax_country());
+            stgNewVendor.setRequestingCompanyW8W9(pmwRequestingCompanyDTO.getW8_w9());
             stgNewVendor.setRequestingCompanyTelephone(pmwRequestingCompanyDTO.getTelephone());
             stgNewVendor.setRequestingCompanyDuns(pmwRequestingCompanyDTO.getDuns());
-            stgNewVendor.setRequestingCompanyCorporateEmail(pmwRequestingCompanyDTO.getCorporateEmail());
+            stgNewVendor.setRequestingCompanyCorporateEmail(pmwRequestingCompanyDTO.getCorporate_email());
             populateNewVendorCorporateAddressAttributes(stgNewVendor, pmwRequestingCompanyDTO);
             populateNewVendorRemittanceAddressAttributes(stgNewVendor, pmwRequestingCompanyDTO);
             populateNewVendorTaxClassificationAttributes(stgNewVendor, pmwRequestingCompanyDTO);
@@ -80,7 +82,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     
     private void populateNewVendorCorporateAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
         if (corporateAddressExists(pmwRequestingCompanyDTO)) {
-            PaymentWorksAddressBaseDTO pmwCorpAddressDTO = pmwRequestingCompanyDTO.getCorporateAddress();
+            PaymentWorksCorpAddressDTO pmwCorpAddressDTO = pmwRequestingCompanyDTO.getCorp_address();
             stgNewVendor.setCorpAddressStreet1(pmwCorpAddressDTO.getStreet1());
             stgNewVendor.setCorpAddressStreet2(pmwCorpAddressDTO.getStreet2());
             stgNewVendor.setCorpAddressCity(pmwCorpAddressDTO.getCity());
@@ -93,7 +95,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
 
     private void populateNewVendorRemittanceAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
         if (singleRemittanceAddressExists(pmwRequestingCompanyDTO)) {
-            PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO = pmwRequestingCompanyDTO.getRemittanceAddresses().getRemittanceAddresses().get(0);
+            PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO = pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().get(0);
             stgNewVendor.setRemittanceAddressStreet1(pmwRemittanceAddressDTO.getStreet1());
             stgNewVendor.setRemittanceAddressStreet2(pmwRemittanceAddressDTO.getStreet2());
             stgNewVendor.setRemittanceAddressCity(pmwRemittanceAddressDTO.getCity());
@@ -107,7 +109,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     
     private void populateNewVendorTaxClassificationAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
         if (taxClassificationExists(pmwRequestingCompanyDTO)) {
-            PaymentWorksTaxClassificationDTO pmwTaxClassificationDTO = pmwRequestingCompanyDTO.getTaxClassification();
+            PaymentWorksTaxClassificationDTO pmwTaxClassificationDTO = pmwRequestingCompanyDTO.getTax_classification();
             stgNewVendor.setRequestingCompanyTaxClassificationName(pmwTaxClassificationDTO.getName());
             stgNewVendor.setRequestingCompanyTaxClassificationCode(pmwTaxClassificationDTO.getCode());
         }
@@ -115,23 +117,23 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
 
     private void populateNewVendorBankAccountAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO) {
         if (bankAccountDataExists(pmwRemittanceAddressDTO)) {
-            PaymentWorksBankAccountDTO pmwBankAccountDTO = pmwRemittanceAddressDTO.getBankAccount();
-            stgNewVendor.setBankAcctBankName(pmwBankAccountDTO.getBankName());
-            stgNewVendor.setBankAcctBankAccountNumber(pmwBankAccountDTO.getBankAccountNumber());
-            stgNewVendor.setBankAcctBankValidationFile(pmwBankAccountDTO.getValidationFile());
-            stgNewVendor.setBankAcctAchEmail(pmwBankAccountDTO.getAchEmail());
-            stgNewVendor.setBankAcctRoutingNumber(pmwBankAccountDTO.getRoutingNumber());
-            stgNewVendor.setBankAcctType(pmwBankAccountDTO.getBankAccountType());
+            PaymentWorksBankAccountDTO pmwBankAccountDTO = pmwRemittanceAddressDTO.getBank_acct();
+            stgNewVendor.setBankAcctBankName(pmwBankAccountDTO.getBank_name());
+            stgNewVendor.setBankAcctBankAccountNumber(pmwBankAccountDTO.getBank_acct_num());
+            stgNewVendor.setBankAcctBankValidationFile(pmwBankAccountDTO.getValidation_file());
+            stgNewVendor.setBankAcctAchEmail(pmwBankAccountDTO.getAch_email());
+            stgNewVendor.setBankAcctRoutingNumber(pmwBankAccountDTO.getRouting_num());
+            stgNewVendor.setBankAcctType(pmwBankAccountDTO.getBank_acct_type());
             stgNewVendor.setBankAcctAuthorized(pmwBankAccountDTO.getAuthorized());
-            stgNewVendor.setBankAcctSwiftCode(pmwBankAccountDTO.getSwiftCode());
-            stgNewVendor.setBankAcctNameOnAccount(pmwBankAccountDTO.getNameOnAccount());
+            stgNewVendor.setBankAcctSwiftCode(pmwBankAccountDTO.getSwift_code());
+            stgNewVendor.setBankAcctNameOnAccount(pmwBankAccountDTO.getName_on_acct());
             populateNewVendorBankAddressAttributes(stgNewVendor, pmwBankAccountDTO);
         }
     }
 
     private void populateNewVendorBankAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksBankAccountDTO pmwBankAccountDTO) {
         if (bankAddressExists(pmwBankAccountDTO)) {
-            PaymentWorksAddressBaseDTO pmwBankAddressDTO = pmwBankAccountDTO.getBankAddress();
+            PaymentWorksBankAddressDTO pmwBankAddressDTO = pmwBankAccountDTO.getBank_address();
             stgNewVendor.setBankAddressStreet1(pmwBankAddressDTO.getStreet1());
             stgNewVendor.setBankAddressStreet2(pmwBankAddressDTO.getStreet2());
             stgNewVendor.setBankAddressCity(pmwBankAddressDTO.getCity());
@@ -147,29 +149,29 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
     
     private boolean requestingCompanyExists(PaymentWorksNewVendorRequestDetailDTO paymentWorksNewVendorDetailDTO) {
-        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequestingCompany()));
+        return (ObjectUtils.isNotNull(paymentWorksNewVendorDetailDTO.getRequesting_company()));
     }
     
     private boolean singleRemittanceAddressExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
-        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittanceAddresses()) &&
-                ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittanceAddresses().getRemittanceAddresses()) &&
-                pmwRequestingCompanyDTO.getRemittanceAddresses().getRemittanceAddresses().size() == 1);
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses()) &&
+                ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address()) &&
+                pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() == 1);
     }
 
     private boolean corporateAddressExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
-        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getCorporateAddress()));
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getCorp_address()));
     }
 
     private boolean bankAccountDataExists(PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO) {
-        return (ObjectUtils.isNotNull(pmwRemittanceAddressDTO.getBankAccount()));
+        return (ObjectUtils.isNotNull(pmwRemittanceAddressDTO.getBank_acct()));
     }
 
     private boolean bankAddressExists(PaymentWorksBankAccountDTO pmwBankAccountDTO) {
-        return (ObjectUtils.isNotNull(pmwBankAccountDTO.getBankAddress()));
+        return (ObjectUtils.isNotNull(pmwBankAccountDTO.getBank_address()));
     }
     
     private boolean taxClassificationExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
-        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getTaxClassification()));
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getTax_classification()));
     }
 
     private void extractCustomFields(PaymentWorksVendor stgNewVendor, PaymentWorksNewVendorRequestDetailDTO pmwNewVendorDetailDTO, PaymentWorksNewVendorRequestsBatchReportData reportData) {
@@ -183,17 +185,17 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
 
     private Map<String, String> createCustomFieldIdCustomFieldValueMapForReceivedPmwVendorData(PaymentWorksCustomFieldsDTO pmwCustomFieldsDTO) {
         Map<String, String> customFieldMap = new HashMap<String, String>();
-        if (ObjectUtils.isNotNull(pmwCustomFieldsDTO) && ObjectUtils.isNotNull(pmwCustomFieldsDTO.getCustomFields())) {
-            pmwCustomFieldsDTO.getCustomFields().stream()
-                                                .forEach(paymentWorksCustomFieldDTO -> {
-                                                     customFieldMap.put(paymentWorksCustomFieldDTO.getFieldId(), paymentWorksCustomFieldDTO.getFieldValue());
+        if (ObjectUtils.isNotNull(pmwCustomFieldsDTO) && ObjectUtils.isNotNull(pmwCustomFieldsDTO.getCustom_fields())) {
+            pmwCustomFieldsDTO.getCustom_fields().stream()
+                                                 .forEach(paymentWorksCustomFieldDTO -> {
+                                                     customFieldMap.put(paymentWorksCustomFieldDTO.getField_id(), paymentWorksCustomFieldDTO.getField_value());
                                                  });
         }
         return customFieldMap;
     }
 
     private void processEachPaymentWorksCustomFieldReceived(PaymentWorksVendor stgNewVendor, PaymentWorksNewVendorRequestDetailDTO pmwNewVendorDetailDTO, List<String> customFieldErrors) {
-        Map<String, String> customFieldsDTOMap = createCustomFieldIdCustomFieldValueMapForReceivedPmwVendorData(pmwNewVendorDetailDTO.getCustomFields());
+        Map<String, String> customFieldsDTOMap = createCustomFieldIdCustomFieldValueMapForReceivedPmwVendorData(pmwNewVendorDetailDTO.getCustom_fields());
         for (String paymentWorksCustomFieldId : customFieldsDTOMap.keySet()) {
             String customFieldValueFromPaymentWorks = customFieldsDTOMap.get(paymentWorksCustomFieldId);
             PaymentWorksFieldMapping fieldMapping = findPaymentWorksFieldMapping(paymentWorksCustomFieldId);

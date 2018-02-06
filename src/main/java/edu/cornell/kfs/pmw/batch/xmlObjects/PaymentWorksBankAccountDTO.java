@@ -2,124 +2,99 @@ package edu.cornell.kfs.pmw.batch.xmlObjects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlAccessorType(XmlAccessType.NONE)
+import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksBankAddressDTO;
+
+@XmlRootElement(name = "bank_acct")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksBankAccountDTO {
 
-    @XmlElement(name = "id")
-    private String paymentWorksBankAccountId;
-    
-    @XmlElement(name = "bank_name")
-    private String bankName;
-    
-    @XmlElement(name = "bank_acct_num")
-    private String bankAccountNumber;
-    
-    @XmlElement(name = "validation_file")
-    private String validationFile;
-    
-    @XmlElement(name = "ach_email")
-    private String achEmail;
-    
-    @XmlElement(name = "routing_num")
-    private String routingNumber;
-    
-    @XmlElement(name = "acct")
-    private String account;
-    
-    @XmlElement(name = "bank_acct_alias")
-    private String bankAccountAlias;
-    
-    @XmlElement(name = "bank_acct_type")
-    private String bankAccountType;
-    
-    @XmlElement(name = "authorized")
+    private String id;
+    private String bank_name;
+    private String bank_acct_num;
+    private String validation_file;
+    private String ach_email;
+    private String routing_num;
+    private String acct;
+    private String bank_acct_alias;
+    private String bank_acct_type;
     private String authorized;
-    
-    @XmlElement(name = "acct_company")
-    private String accountCompany;
-    
-    @XmlElement(name = "swift_code")
-    private String swiftCode;
-    
-    @XmlElement(name = "name_on_acct")
-    private String nameOnAccount;
-    
-    @XmlElement(name = "bank_address")
-    private PaymentWorksAddressBaseDTO bankAddress;
-    
+    private String acct_company;
+    private String swift_code;
+    private String name_on_acct;
+    private PaymentWorksBankAddressDTO bank_address;
 
-    public String getPaymentWorksBankAccountId() {
-        return paymentWorksBankAccountId;
+    public String getId() {
+        return id;
     }
 
-    public void setPaymentWorksBankAccountId(String paymentWorksBankAccountId) {
-        this.paymentWorksBankAccountId = paymentWorksBankAccountId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getBankName() {
-        return bankName;
+    public String getBank_name() {
+        return bank_name;
     }
 
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
+    public void setBank_name(String bank_name) {
+        this.bank_name = bank_name;
     }
 
-    public String getBankAccountNumber() {
-        return bankAccountNumber;
+    public String getBank_acct_num() {
+        return bank_acct_num;
     }
 
-    public void setBankAccountNumber(String bankAccountNumber) {
-        this.bankAccountNumber = bankAccountNumber;
+    public void setBank_acct_num(String bank_acct_num) {
+        this.bank_acct_num = bank_acct_num;
     }
 
-    public String getValidationFile() {
-        return validationFile;
+    public String getValidation_file() {
+        return validation_file;
     }
 
-    public void setValidationFile(String validationFile) {
-        this.validationFile = validationFile;
+    public void setValidation_file(String validation_file) {
+        this.validation_file = validation_file;
     }
 
-    public String getAchEmail() {
-        return achEmail;
+    public String getAch_email() {
+        return ach_email;
     }
 
-    public void setAchEmail(String achEmail) {
-        this.achEmail = achEmail;
+    public void setAch_email(String ach_email) {
+        this.ach_email = ach_email;
     }
 
-    public String getRoutingNumber() {
-        return routingNumber;
+    public String getRouting_num() {
+        return routing_num;
     }
 
-    public void setRoutingNumber(String routingNumber) {
-        this.routingNumber = routingNumber;
+    public void setRouting_num(String routing_num) {
+        this.routing_num = routing_num;
     }
 
-    public String getAccount() {
-        return account;
+    public String getAcct() {
+        return acct;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setAcct(String acct) {
+        this.acct = acct;
     }
 
-    public String getBankAccountAlias() {
-        return bankAccountAlias;
+    public String getBank_acct_alias() {
+        return bank_acct_alias;
     }
 
-    public void setBankAccountAlias(String bankAccountAlias) {
-        this.bankAccountAlias = bankAccountAlias;
+    public void setBank_acct_alias(String bank_acct_alias) {
+        this.bank_acct_alias = bank_acct_alias;
     }
 
-    public String getBankAccountType() {
-        return bankAccountType;
+    public String getBank_acct_type() {
+        return bank_acct_type;
     }
 
-    public void setBankAccountType(String bankAccountType) {
-        this.bankAccountType = bankAccountType;
+    public void setBank_acct_type(String bank_acct_type) {
+        this.bank_acct_type = bank_acct_type;
     }
 
     public String getAuthorized() {
@@ -130,36 +105,36 @@ public class PaymentWorksBankAccountDTO {
         this.authorized = authorized;
     }
 
-    public String getAccountCompany() {
-        return accountCompany;
+    public String getAcct_company() {
+        return acct_company;
     }
 
-    public void setAccountCompany(String accountCompany) {
-        this.accountCompany = accountCompany;
+    public void setAcct_company(String acct_company) {
+        this.acct_company = acct_company;
     }
 
-    public String getSwiftCode() {
-        return swiftCode;
+    public String getSwift_code() {
+        return swift_code;
     }
 
-    public void setSwiftCode(String swiftCode) {
-        this.swiftCode = swiftCode;
+    public void setSwift_code(String swift_code) {
+        this.swift_code = swift_code;
     }
 
-    public String getNameOnAccount() {
-        return nameOnAccount;
+    public String getName_on_acct() {
+        return name_on_acct;
     }
 
-    public void setNameOnAccount(String nameOnAccount) {
-        this.nameOnAccount = nameOnAccount;
+    public void setName_on_acct(String name_on_acct) {
+        this.name_on_acct = name_on_acct;
     }
 
-    public PaymentWorksAddressBaseDTO getBankAddress() {
-        return bankAddress;
+    public PaymentWorksBankAddressDTO getBank_address() {
+        return bank_address;
     }
 
-    public void setBankAddress(PaymentWorksAddressBaseDTO bankAddress) {
-        this.bankAddress = bankAddress;
+    public void setBank_address(PaymentWorksBankAddressDTO bank_address) {
+        this.bank_address = bank_address;
     }
 
 }

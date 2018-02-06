@@ -58,7 +58,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                 pmwNewVendorIdentifiers.addAll(newVendorsRoot.getPmwNewVendorRequestsDTO().getPmwNewVendorRequests()); 
             }
             for (int i=0; i < pmwNewVendorIdentifiers.size(); i++) {
-                LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: PMW-Vendor-id=" + pmwNewVendorIdentifiers.get(i).getPaymentWorksVendorId());
+                LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: PMW-Vendor-id=" + pmwNewVendorIdentifiers.get(i).getId());
             }
             return pmwNewVendorIdentifiers;
         } finally {
@@ -90,7 +90,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         try{
             responseForNewVendorRequestSpecificDetail = buildXmlOutput(newVendorRequestDetailURI);
             pmwRequestedNewVendorDetail = responseForNewVendorRequestSpecificDetail.readEntity(PaymentWorksNewVendorRequestDetailDTO.class);
-            LOG.info("retrieveAllPaymentWorksDetailsForRequestedVendor: legalName=" + pmwRequestedNewVendorDetail.getRequestingCompany().getCompanyLegalName());
+            LOG.info("retrieveAllPaymentWorksDetailsForRequestedVendor: legalName=" + pmwRequestedNewVendorDetail.getRequesting_company().getLegal_name());
             return pmwRequestedNewVendorDetail;
         } finally {
             CURestClientUtils.closeQuietly(responseForNewVendorRequestSpecificDetail);
@@ -209,7 +209,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         if (!paymentWorksNewVendorRequestDTOs.isEmpty()) {
             paymentWorksNewVendorRequestDTOs.stream()
                                             .forEach(paymentWorksNewVendorRequestDTO -> {
-                                                allPmwVendorIdentifiers.add(paymentWorksNewVendorRequestDTO.getPaymentWorksVendorId());
+                                                allPmwVendorIdentifiers.add(paymentWorksNewVendorRequestDTO.getId());
                                             });
         }
         return allPmwVendorIdentifiers;
