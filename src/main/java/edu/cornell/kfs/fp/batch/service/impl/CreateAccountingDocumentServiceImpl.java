@@ -29,7 +29,9 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
@@ -42,6 +44,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     private DocumentService documentService;
     private FileStorageService fileStorageService;
     private ConfigurationService configurationService;
+    private CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce;
 
     @Override
     public void createAccountingDocumentsFromXml() {
@@ -55,6 +58,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
 
     protected void processAccountingDocumentFromXml(String fileName) {
+        CreateAccounntingDocumentReportItem reportItem = new CreateAccounntingDocumentReportItem(fileName);
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
             
@@ -63,14 +67,19 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                     accountingDocumentBatchInputFileType, fileData);
             int documentCount = accountingXmlDocuments.getDocuments().size();
             LOG.info("processAccountingDocumentFromXml: Found " + documentCount + " documents to process from file: " + fileName);
+            reportItem.setXmlSuccessfullyLoaded(true);
+            reportItem.setNumberOfDocumentInFile(documentCount);
             accountingXmlDocuments.getDocuments().stream()
                     .forEach(this::processAccountingDocumentEntryFromXml);
             
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
         } catch (Exception e) {
+            reportItem.setXmlSuccessfullyLoaded(false);
+            reportItem.setReportItemMessage(e.getMessage());
             LOG.error("processAccountingDocumentFromXml: Error processing accounting document XML file", e);
         } finally {
             removeDoneFileQuietly(fileName);
+            createAccountingDocumentReportSerivce.generateReport(reportItem);
         }
     }
 
@@ -185,6 +194,11 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setCreateAccountingDocumentReportSerivce(
+            CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce) {
+        this.createAccountingDocumentReportSerivce = createAccountingDocumentReportSerivce;
     }
 
 }
