@@ -22,6 +22,8 @@ public class PaymentWorksIsoFipsCountryDaoJdbc extends PlatformAwareDaoBaseJdbc 
     private static final String ISO_CNTRY_NM_COL = "iso_cntry_nm";
     private static final String FIPS_CNTRY_CD_COL = "fips_cntry_cd";
     private static final String FIPS_CNTRY_NM_COL = "fips_cntry_nm";
+    private static final String ISO_COUNTRY_TO_FIPS_COUNTRIES_SQL = "SELECT ISO.ISO_CNTRY_CD, ISO.ISO_CNTRY_NM, FIPS.POSTAL_CNTRY_CD AS FIPS_CNTRY_CD, FIPS.POSTAL_CNTRY_NM AS FIPS_CNTRY_NM FROM KFS.CU_PMW_ISO_CNTRY_T ISO, KFS.CU_PMW_ISO_FIPS_CNTRY_MAP_T MAP_TABLE, CYNERGY.KRLC_CNTRY_T FIPS WHERE ISO.ACTV_IND = 'Y' AND ISO.ISO_CNTRY_CD = MAP_TABLE.ISO_CNTRY_CD AND FIPS.POSTAL_CNTRY_CD = MAP_TABLE.FIPS_CNTRY_CD AND FIPS.ACTV_IND = 'Y' ORDER BY ISO.ISO_CNTRY_CD";
+
 
     @Override
     public Map<String, List<PaymentWorksIsoFipsCountryItem>> buildIsoToFipsMapFromDatabase() {
@@ -67,20 +69,11 @@ public class PaymentWorksIsoFipsCountryDaoJdbc extends PlatformAwareDaoBaseJdbc 
                     return isoToFipsCountryItem;
                 }
             };
-            return this.getJdbcTemplate().query(buildIsoToFipsCountryTranslationsSql(), mapRow);
+            return this.getJdbcTemplate().query(ISO_COUNTRY_TO_FIPS_COUNTRIES_SQL, mapRow);
         } catch (Exception e) {
             LOG.info("PaymentWorksIsoFipsCountryDaoJdbc Exception: " + e.getMessage());
             return null;
         }
     }
-    
-    private String buildIsoToFipsCountryTranslationsSql() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select iso.iso_cntry_cd, iso.iso_cntry_nm, fips.postal_cntry_cd as fips_cntry_cd, fips.postal_cntry_nm as fips_cntry_nm ");
-        sql.append("from kfs.cu_pmw_iso_cntry_t iso, kfs.cu_pmw_iso_fips_cntry_map_t map_table, cynergy.krlc_cntry_t fips ");
-        sql.append("where iso.actv_ind = 'Y' and iso.iso_cntry_cd = map_table.iso_cntry_cd and fips.postal_cntry_cd = map_table.fips_cntry_cd and fips.actv_ind = 'Y' ");
-        sql.append("order by iso.iso_cntry_cd");
-        return sql.toString();
-    }
-    
+
 }

@@ -2,56 +2,66 @@ package edu.cornell.kfs.pmw.batch.xmlObjects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "list-item")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksCustomFieldDTO {
 
-    private String field_id;
-    private String field_label;
-    private String field_value;
-    private String field_file;
-    private String display_order;
+    @XmlElement(name = "field_id")
+    private String fieldId;
+    
+    @XmlElement(name = "field_label")
+    private String fieldLabel;
+    
+    @XmlElement(name = "field_value")
+    private String fieldValue;
+    
+    @XmlElement(name = "field_file")
+    private String fieldFile;
+    
+    @XmlElement(name = "display_order")
+    private String displayOrder;
 
-    public String getField_id() {
-        return field_id;
+    public String getFieldId() {
+        return fieldId;
     }
 
-    public void setField_id(String field_id) {
-        this.field_id = field_id;
+    public void setFieldId(String fieldId) {
+        this.fieldId = fieldId;
     }
 
-    public String getField_label() {
-        return field_label;
+    public String getFieldLabel() {
+        return fieldLabel;
     }
 
-    public void setField_label(String field_label) {
-        this.field_label = field_label;
+    public void setFieldLabel(String fieldLabel) {
+        this.fieldLabel = fieldLabel;
     }
 
-    public String getField_value() {
-        return field_value;
+    public String getFieldValue() {
+        return fieldValue;
     }
 
-    public void setField_value(String field_value) {
-        this.field_value = field_value;
+    public void setFieldValue(String fieldValue) {
+        this.fieldValue = fieldValue;
     }
 
-    public String getField_file() {
-        return field_file;
+    public String getFieldFile() {
+        return fieldFile;
     }
 
-    public void setField_file(String field_file) {
-        this.field_file = field_file;
+    public void setFieldFile(String fieldFile) {
+        this.fieldFile = fieldFile;
     }
 
-    public String getDisplay_order() {
-        return display_order;
+    public String getDisplayOrder() {
+        return displayOrder;
     }
 
-    public void setDisplay_order(String display_order) {
-        this.display_order = display_order;
+    public void setDisplayOrder(String displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
 }

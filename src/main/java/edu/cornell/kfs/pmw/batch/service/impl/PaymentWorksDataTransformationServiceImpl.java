@@ -18,7 +18,7 @@ public class PaymentWorksDataTransformationServiceImpl implements PaymentWorksDa
         String returnValue = KFSConstants.EMPTY_STRING;
         List<PaymentWorksTinType> matchingValues = Arrays.asList(PaymentWorksConstants.PaymentWorksTinType.values())
                                                          .stream()
-                                                         .filter(tinType ->  tinType.getPmwCodeAsString().equalsIgnoreCase(pmwTinTypeCodeToConvert))
+                                                         .filter(tinType -> tinType.getPmwCodeAsString().equalsIgnoreCase(pmwTinTypeCodeToConvert))
                                                          .collect(Collectors.toList());
         returnValue = matchingValues.size() == 1 ? matchingValues.get(0).getPmwText() : pmwTinTypeCodeToConvert;
         return returnValue;

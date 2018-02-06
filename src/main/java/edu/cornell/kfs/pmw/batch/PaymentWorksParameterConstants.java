@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pmw.batch;
 
 public class PaymentWorksParameterConstants {
-    public static final String PAYMENTWORKS_PARAMETER_NAMESPACE = "KFS-PMW";
     
     public static final String PAYMENTWORKS_NEW_VENDOR_REPORT_EMAIL_FROM_ADDRESS = "PAYMENTWORKS_NEW_VENDOR_REPORT_EMAIL_FROM_ADDRESS";
     public static final String PAYMENTWORKS_NEW_VENDOR_REPORT_EMAIL_TO_ADDRESS = "PAYMENTWORKS_NEW_VENDOR_REPORT_EMAIL_TO_ADDRESS";

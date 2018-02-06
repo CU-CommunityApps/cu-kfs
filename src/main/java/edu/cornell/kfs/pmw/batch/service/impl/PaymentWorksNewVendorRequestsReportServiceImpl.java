@@ -7,8 +7,11 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
@@ -28,6 +31,7 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl implements PaymentWo
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;
     protected ReportWriterService reportWriterService;
     protected PaymentWorksDataTransformationService paymentWorksDataTransformationService;
+    protected ConfigurationService configurationService;
     
     private String toAddress = null;
     private String fromAddress = null;
@@ -86,46 +90,28 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl implements PaymentWo
         reportData.populateOutstandingSummaryItemsForReport();
         initializeReportTitleAndFileName(reportData);
         writeSummarySubReport(reportData);
-        writeProcessingSubReport(reportData.retrievePaymentWorksVendorsProcessed(), getProcessedSubTitle(), PaymentWorksConstants.PaymentWorksBatchReportMessages.NO_RECORDS_PROCESSED_MESSAGE);
-        writeProcessingSubReport(reportData.retrievePaymentWorksVendorsWithProcessingErrors(), getProcessingErrorsSubTitle(), PaymentWorksConstants.PaymentWorksBatchReportMessages.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE);
-        writeUnprocessedSubReport(reportData.retrieveUnprocessablePaymentWorksVendors(), getUnprocessedSubTitle(), PaymentWorksConstants.PaymentWorksBatchReportMessages.MANUAL_DATA_ENTRY_NOT_REQUIRED);
+        writeProcessingSubReport(reportData.retrievePaymentWorksVendorsProcessed(), getProcessedSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_PROCESSED_MESSAGE));
+        writeProcessingSubReport(reportData.retrievePaymentWorksVendorsWithProcessingErrors(), getProcessingErrorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE));
+        writeUnprocessedSubReport(reportData.retrieveUnprocessablePaymentWorksVendors(), getUnprocessedSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.MANUAL_DATA_ENTRY_NOT_REQUIRED_MESSAGE));
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
 
     private void sendResultsEmail(PaymentWorksEmailableReportData reportData, File reportFile) {
-        LOG.info("sendResultsEmail: entered");
+        LOG.info("sendResultsEmail: Preparing to send email for batch job results report " + reportData.retrieveReportName());
         String body = readReportFileToString(reportData, reportFile);
         String subject = buildEmailSubject(reportData);
-        if (StringUtils.isNotBlank(getToAddress()) && StringUtils.isNotBlank(getFromAddress()) && StringUtils.isNotBlank(body) && StringUtils.isNotBlank(subject)) {
-            getPaymentWorksReportEmailService().sendEmail(getToAddress(), getFromAddress(), subject, body);
-            LOG.info("sendResultsEmail: Email was sent for batch job results report. toAddress = " + getToAddress() + "  fromAddress = " + getFromAddress() + "  subject = '" + subject + "'");
-        }
-        else {
-            LOG.error("sendResultsEmail: Could not email batch job results report " + reportData.retrieveReportName() + " because " + 
-                     ((StringUtils.isBlank(getToAddress())) ? "toAddress is blank. " : "") +
-                     ((StringUtils.isBlank(getFromAddress())) ? "fromAddress is blank. " : "") +
-                     ((StringUtils.isBlank(subject)) ? "subject is blank. " : "") +
-                     ((StringUtils.isBlank(body)) ? "body is blank. " : ""));
-        }
+        getPaymentWorksReportEmailService().sendEmail(getToAddress(), getFromAddress(), subject, body);
+        LOG.info("sendResultsEmail: Email was sent for batch job results report. toAddress = " + getToAddress() + "  fromAddress = " + getFromAddress() + "  subject = '" + subject + "'.");
     }
 
     @Override
     public void sendEmailThatNoDataWasFoundToProcess() {
-        LOG.info("sendEmailThatNoDataWasFoundToProcess: entered");
+        LOG.info("sendEmailThatNoDataWasFoundToProcess: Preparing to send email that no data was found to process.");
         String body = getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_PENDING_VENDORS_FOUND_EMAIL_BODY);
         String subject = getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_PENDING_VENDORS_FOUND_EMAIL_SUBJECT);
-        if (StringUtils.isNotBlank(toAddress) && StringUtils.isNotBlank(fromAddress) && StringUtils.isNotBlank(body) && StringUtils.isNotBlank(subject)) {
-            getPaymentWorksReportEmailService().sendEmail(getToAddress(), getFromAddress(), subject, body);
-            LOG.info("sendEmailThatNoDataWasFoundToProcess: Email was sent that no data was found to process");
-        }
-        else {
-            LOG.error("sendEmailThatNoDataWasFoundToProcess: Could not email notification stating no data found to process for batch job report because " + 
-                     ((StringUtils.isBlank(toAddress)) ? "toAddress is blank. " : "") +
-                     ((StringUtils.isBlank(fromAddress)) ? "fromAddress is blank. " : "") +
-                     ((StringUtils.isBlank(subject)) ? "subject is blank. " : "") +
-                     ((StringUtils.isBlank(body)) ? "body is blank. " : ""));
-        }
+        getPaymentWorksReportEmailService().sendEmail(getToAddress(), getFromAddress(), subject, body);
+        LOG.info("sendEmailThatNoDataWasFoundToProcess: Email was sent that no data was found to process.");
     }
 
     protected String readReportFileToString(PaymentWorksEmailableReportData reportData, File reportFile) {
@@ -239,7 +225,7 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl implements PaymentWo
         LOG.debug("writeErrorItemMessages, entered");
         getReportWriterService().writeFormattedMessageLine(this.getErrorsLabel());
         if (CollectionUtils.isEmpty(errorMessages)) {
-            getReportWriterService().writeFormattedMessageLine(PaymentWorksConstants.PaymentWorksBatchReportMessages.NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT);
+            getReportWriterService().writeFormattedMessageLine(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_VALIDATION_ERRORS_TO_OUTPUT_MESSAGE));
         }
         else {
             for (String errorMessage : errorMessages) {
@@ -251,7 +237,7 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl implements PaymentWo
     protected void finalizeReport() {
         LOG.debug("finalizeReport, entered");
         getReportWriterService().writeNewLines(3);
-        getReportWriterService().writeFormattedMessageLine(PaymentWorksConstants.PaymentWorksBatchReportMessages.END_OF_REPORT_MESSAGE);
+        getReportWriterService().writeFormattedMessageLine(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.END_OF_REPORT_MESSAGE));
         getReportWriterService().destroy();
     }
 
@@ -481,6 +467,14 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl implements PaymentWo
 
     public void setPaymentWorksDataTransformationService(PaymentWorksDataTransformationService paymentWorksDataTransformationService) {
         this.paymentWorksDataTransformationService = paymentWorksDataTransformationService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
     
 }

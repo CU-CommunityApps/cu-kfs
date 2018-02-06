@@ -45,8 +45,8 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
     protected ConfigurationService configurationService;
     
     @Override
-    public boolean ableToCreateValidateRouteKfsVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
-                                                      Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, PaymentWorksNewVendorRequestsBatchReportData reportData) {
+    public boolean createValidateAndRouteKFSVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
+                                                   Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         boolean processingSuccessful = false;
         MaintenanceDocument vendorMaintenceDoc = createKfsVendorMaintenaceDocument(pmwVendor, paymentWorksIsoToFipsCountryMap, paymentWorksToKfsDiversityMap, reportData);
         if (ObjectUtils.isNotNull(vendorMaintenceDoc) && 
@@ -169,7 +169,7 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
             sb.append(vendorDetail.getVendorLastName()).append(", ").append(vendorDetail.getVendorFirstName());
         }
         if (isNewVendor) {
-            sb.append(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.DESCRIPTION_SUFFIX);
+            sb.append(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.DESCRIPTION_SUFFIX_FOR_NEW_VENDOR);
         }
         if (sb.toString().length() > PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.DESCRIPTION_MAX_LENGTH) {
             return sb.toString().substring(0, PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.DESCRIPTION_MAX_LENGTH);

@@ -12,42 +12,48 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksRequestingCompanyDTO;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentWorksNewVendorRequestDetailDTO {
 
-    private String id;
-    private String request_status;
+    @XmlElement(name = "id")
+    private String paymentWorksVendorId;
+    
+    @XmlElement(name = "request_status")
+    private String requestStatus;
+    
     @XmlElement(name = "custom_fields")
-    private PaymentWorksCustomFieldsDTO custom_fields;
-    private PaymentWorksRequestingCompanyDTO requesting_company;
+    private PaymentWorksCustomFieldsDTO customFields;
+    
+    @XmlElement(name = "requesting_company")
+    private PaymentWorksRequestingCompanyDTO requestingCompany;
 
-    public String getId() {
-        return id;
+    public String getPaymentWorksVendorId() {
+        return paymentWorksVendorId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setPaymentWorksVendorId(String paymentWorksVendorId) {
+        this.paymentWorksVendorId = paymentWorksVendorId;
     }
 
-    public String getRequest_status() {
-        return request_status;
+    public String getRequestStatus() {
+        return requestStatus;
     }
 
-    public void setRequest_status(String request_status) {
-        this.request_status = request_status;
+    public void setRequestStatus(String requestStatus) {
+        this.requestStatus = requestStatus;
     }
 
-    public PaymentWorksRequestingCompanyDTO getRequesting_company() {
-        return requesting_company;
+    public PaymentWorksCustomFieldsDTO getCustomFields() {
+        return customFields;
     }
 
-    public void setRequesting_company(PaymentWorksRequestingCompanyDTO requesting_company) {
-        this.requesting_company = requesting_company;
+    public void setCustomFields(PaymentWorksCustomFieldsDTO customFields) {
+        this.customFields = customFields;
     }
 
-    public PaymentWorksCustomFieldsDTO getCustom_fields() {
-        return custom_fields;
+    public PaymentWorksRequestingCompanyDTO getRequestingCompany() {
+        return requestingCompany;
     }
 
-    public void setCustom_fields(PaymentWorksCustomFieldsDTO custom_fields) {
-        this.custom_fields = custom_fields;
+    public void setRequestingCompany(PaymentWorksRequestingCompanyDTO requestingCompany) {
+        this.requestingCompany = requestingCompany;
     }
 
 }

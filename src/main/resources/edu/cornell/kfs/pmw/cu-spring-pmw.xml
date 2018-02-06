@@ -56,10 +56,12 @@
     <bean id="paymentWorksDtoToPaymentWorksVendorConversionService" parent="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" />
     <bean id="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService"/>
     </bean>
 
     <bean id="paymentWorksVendorToKfsVendorDetailConversionService" parent="paymentWorksVendorToKfsVendorDetailConversionService-parentBean" />
     <bean id="paymentWorksVendorToKfsVendorDetailConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorToKfsVendorDetailConversionServiceImpl" abstract="true">
+        <property name="configurationService" ref="configurationService"/>
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
     </bean>
@@ -76,8 +78,6 @@
     </bean>
     
     <bean id="paymentWorksVendorDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksVendorDaoJdbc">
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="dateTimeService" ref="dateTimeService" />
     </bean>
     
     <bean id="paymentWorksIsoFipsCountryDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksIsoFipsCountryDaoJdbc">
@@ -115,6 +115,7 @@
     
     <bean id="paymentWorksNewVendorRequestsReportService" parent="paymentWorksNewVendorRequestsReportService-parentBean" />
     <bean id="paymentWorksNewVendorRequestsReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsReportServiceImpl" abstract="true">
+        <property name="configurationService" ref="configurationService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
@@ -123,6 +124,8 @@
 
     <bean id="paymentWorksNewVendorRequestsService" parent="paymentWorksNewVendorRequestsService-parentBean" />
     <bean id="paymentWorksNewVendorRequestsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsServiceImpl" abstract="true">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
         <property name="dataDictionaryService" ref="dataDictionaryService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />

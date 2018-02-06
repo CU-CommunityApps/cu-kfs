@@ -2,9 +2,10 @@ package edu.cornell.kfs.pmw.batch.xmlObjects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksCorpAddressDTO;
+import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksAddressBaseDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksRemittanceAddressesDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksTaxClassificationDTO;
 
@@ -13,23 +14,51 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksTaxClassificationDTO;
 public class PaymentWorksRequestingCompanyDTO {
 
     private String id;
-    private String legal_name;
-    private String desc;
-    private String name;
-    private String legal_last_name;
-    private String legal_first_name;
+    
+    @XmlElement(name = "legal_name")
+    private String companyLegalName;
+    
+    @XmlElement(name = "desc")
+    private String description;
+    
+    @XmlElement(name = "name")
+    private String companyName;
+    
+    @XmlElement(name = "legal_last_name")
+    private String legalLastName;
+    
+    @XmlElement(name = "legal_first_name")
+    private String legalFirstName;
+    
     private String url;
+    
     private String tin;
-    private String tin_type;
-    private String tin_name_validation_status;
-    private String tax_country;
-    private String w8_w9;
+    
+    @XmlElement(name = "tin_type")
+    private String tinType;
+    
+    @XmlElement(name = "tin_name_validation_status")
+    private String tinNameValidationStatus;
+    
+    @XmlElement(name = "tax_country")
+    private String taxCountry;
+    
+    @XmlElement(name = "w8_w9")
+    private String w8w9Url;
+    
     private String telephone;
+    
     private String duns;
-    private String corporate_email;
-    private PaymentWorksCorpAddressDTO corp_address;
-    private PaymentWorksRemittanceAddressesDTO remittance_addresses;
-    private PaymentWorksTaxClassificationDTO tax_classification;
+    
+    @XmlElement(name = "corporate_email")
+    private String corporateEmail;
+    
+    @XmlElement(name = "corp_address")
+    private PaymentWorksAddressBaseDTO corporateAddress;
+    
+    private PaymentWorksRemittanceAddressesDTO remittanceAddresses;
+    
+    private PaymentWorksTaxClassificationDTO taxClassification;
 
     public String getId() {
         return id;
@@ -39,28 +68,44 @@ public class PaymentWorksRequestingCompanyDTO {
         this.id = id;
     }
 
-    public String getLegal_name() {
-        return legal_name;
+    public String getCompanyLegalName() {
+        return companyLegalName;
     }
 
-    public void setLegal_name(String legal_name) {
-        this.legal_name = legal_name;
+    public void setCompanyLegalName(String companyLegalName) {
+        this.companyLegalName = companyLegalName;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getName() {
-        return name;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getLegalLastName() {
+        return legalLastName;
+    }
+
+    public void setLegalLastName(String legalLastName) {
+        this.legalLastName = legalLastName;
+    }
+
+    public String getLegalFirstName() {
+        return legalFirstName;
+    }
+
+    public void setLegalFirstName(String legalFirstName) {
+        this.legalFirstName = legalFirstName;
     }
 
     public String getUrl() {
@@ -79,12 +124,36 @@ public class PaymentWorksRequestingCompanyDTO {
         this.tin = tin;
     }
 
-    public String getW8_w9() {
-        return w8_w9;
+    public String getTinType() {
+        return tinType;
     }
 
-    public void setW8_w9(String w8_w9) {
-        this.w8_w9 = w8_w9;
+    public void setTinType(String tinType) {
+        this.tinType = tinType;
+    }
+
+    public String getTinNameValidationStatus() {
+        return tinNameValidationStatus;
+    }
+
+    public void setTinNameValidationStatus(String tinNameValidationStatus) {
+        this.tinNameValidationStatus = tinNameValidationStatus;
+    }
+
+    public String getTaxCountry() {
+        return taxCountry;
+    }
+
+    public void setTaxCountry(String taxCountry) {
+        this.taxCountry = taxCountry;
+    }
+
+    public String getW8w9Url() {
+        return w8w9Url;
+    }
+
+    public void setW8w9Url(String w8w9Url) {
+        this.w8w9Url = w8w9Url;
     }
 
     public String getTelephone() {
@@ -103,76 +172,36 @@ public class PaymentWorksRequestingCompanyDTO {
         this.duns = duns;
     }
 
-    public PaymentWorksCorpAddressDTO getCorp_address() {
-        return corp_address;
+    public String getCorporateEmail() {
+        return corporateEmail;
     }
 
-    public void setCorp_address(PaymentWorksCorpAddressDTO corp_address) {
-        this.corp_address = corp_address;
+    public void setCorporateEmail(String corporateEmail) {
+        this.corporateEmail = corporateEmail;
     }
 
-    public PaymentWorksRemittanceAddressesDTO getRemittance_addresses() {
-        return remittance_addresses;
+    public PaymentWorksAddressBaseDTO getCorporateAddress() {
+        return corporateAddress;
     }
 
-    public void setRemittance_addresses(PaymentWorksRemittanceAddressesDTO remittance_addresses) {
-        this.remittance_addresses = remittance_addresses;
+    public void setCorporateAddress(PaymentWorksAddressBaseDTO corporateAddress) {
+        this.corporateAddress = corporateAddress;
     }
 
-    public PaymentWorksTaxClassificationDTO getTax_classification() {
-        return tax_classification;
+    public PaymentWorksRemittanceAddressesDTO getRemittanceAddresses() {
+        return remittanceAddresses;
     }
 
-    public void setTax_classification(PaymentWorksTaxClassificationDTO tax_classification) {
-        this.tax_classification = tax_classification;
+    public void setRemittanceAddresses(PaymentWorksRemittanceAddressesDTO remittanceAddresses) {
+        this.remittanceAddresses = remittanceAddresses;
     }
 
-    public String getTin_type() {
-        return tin_type;
+    public PaymentWorksTaxClassificationDTO getTaxClassification() {
+        return taxClassification;
     }
 
-    public void setTin_type(String tin_type) {
-        this.tin_type = tin_type;
-    }
-
-    public String getTax_country() {
-        return tax_country;
-    }
-
-    public void setTax_country(String tax_country) {
-        this.tax_country = tax_country;
-    }
-
-    public String getLegal_last_name() {
-        return legal_last_name;
-    }
-
-    public void setLegal_last_name(String legal_last_name) {
-        this.legal_last_name = legal_last_name;
-    }
-
-    public String getLegal_first_name() {
-        return legal_first_name;
-    }
-
-    public void setLegal_first_name(String legal_first_name) {
-        this.legal_first_name = legal_first_name;
-    }
-
-    public String getTin_name_validation_status() {
-        return tin_name_validation_status;
-    }
-
-    public void setTin_name_validation_status(String tin_name_validation_status) {
-        this.tin_name_validation_status = tin_name_validation_status;
-    }
-
-    public String getCorporate_email() {
-        return corporate_email;
-    }
-
-    public void setCorporate_email(String corporate_email) {
-        this.corporate_email = corporate_email;
+    public void setTaxClassification(PaymentWorksTaxClassificationDTO taxClassification) {
+        this.taxClassification = taxClassification;
     }
 
 }

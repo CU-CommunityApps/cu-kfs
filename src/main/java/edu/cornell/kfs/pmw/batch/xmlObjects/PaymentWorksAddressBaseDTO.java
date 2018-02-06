@@ -1,15 +1,35 @@
 package edu.cornell.kfs.pmw.batch.xmlObjects;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+@XmlAccessorType(XmlAccessType.NONE)
 public class PaymentWorksAddressBaseDTO {
 
+    @XmlElement(name = "street1")
     protected String street1;
+    
+    @XmlElement(name = "street2")
     protected String street2;
+    
+    @XmlElement(name = "city")
     protected String city;
+    
+    @XmlElement(name = "state")
     protected String state;
+    
+    @XmlElement(name = "country")
     protected String country;
+    
+    @XmlElement(name = "zipcode")
     protected String zipcode;
+    
+    @XmlElement(name = "validated")
     protected boolean validated;
-    protected String address_type;
+    
+    @XmlElement(name = "address_type")
+    protected String addressType;
 
     public String getStreet1() {
         return street1;
@@ -67,12 +87,12 @@ public class PaymentWorksAddressBaseDTO {
         this.validated = validated;
     }
 
-    public String getAddress_type() {
-        return address_type;
+    public String getAddressType() {
+        return addressType;
     }
 
-    public void setAddress_type(String address_type) {
-        this.address_type = address_type;
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
     }
 
 }

@@ -3,90 +3,161 @@ package edu.cornell.kfs.pmw.batch.dataaccess.impl;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
-
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataTransformationService;
-import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDTO;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksVendorDao{
-    
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorDaoJdbc.class);
     
-    protected BusinessObjectService businessObjectService;
-    protected DateTimeService dateTimeService;
-    
-    @Override
-    public boolean isExistingPaymentWorksVendor(String pmwVendorId) {
-        Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put(PaymentWorksConstants.PaymentWorksStagingTableColumnConstants.PMW_VENDOR_REQUEST_ID, pmwVendorId);
-        return(getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0);
-    }
-    
-    @Override
-    public PaymentWorksVendor savePaymentWorksVendorToStagingTable(PaymentWorksVendor pmwVendorToSave) {
-        pmwVendorToSave.setProcessTimestamp(getDateTimeService().getCurrentTimestamp());
-        pmwVendorToSave = getBusinessObjectService().save(pmwVendorToSave);
-        return pmwVendorToSave;
-    }
+    protected static final SimpleDateFormat PROCESSING_TIMESTAMP_SQL_FORMATTER = new SimpleDateFormat("dd-MMM-yy", Locale.US);
+    protected static final String UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_SQL = "UPDATE KFS.CU_PMW_VENDOR_T SET PMW_REQ_STAT = ?, KFS_VND_PROC_STAT = ?, PROC_TS = ? WHERE PMW_VND_REQ_ID = ?";
+    protected static final String UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_ACH_STATUS_SQL = "UPDATE KFS.CU_PMW_VENDOR_T SET PMW_REQ_STAT = ?, KFS_VND_PROC_STAT = ?, PROC_TS = ?, KFS_ACH_PROC_STAT = ? WHERE PMW_VND_REQ_ID = ?";
+    protected static final String UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_KFS_EDOC_SQL = "UPDATE KFS.CU_PMW_VENDOR_T SET PMW_REQ_STAT = ?, KFS_VND_PROC_STAT = ?, PROC_TS = ?, PVEN_FDOC_NBR = ? WHERE PMW_VND_REQ_ID = ?";
+    protected static final String UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_ACH_STATUS_KFS_EDOC_SQL = "UPDATE KFS.CU_PMW_VENDOR_T SET PMW_REQ_STAT = ?, KFS_VND_PROC_STAT = ?, PROC_TS = ?, KFS_ACH_PROC_STAT = ?, PVEN_FDOC_NBR = ? WHERE PMW_VND_REQ_ID = ?";
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, Timestamp processingTimeStamp) {
-        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp);
-        LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
-        getJdbcTemplate().batchUpdate(updateSql);
+        int rowsUpdated = updatePaymentWorksVendorStatusInStagingTable(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp);
+        LOG.info("updateExistingPaymentWorksVendorInStagingTable: ");
+        return;
     }
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, Timestamp  processingTimeStamp) {
-        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, processingTimeStamp);
-        LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
-        getJdbcTemplate().batchUpdate(updateSql);
+        int rowsUpdated = updatePaymentWorksVendorStatusInStagingTable(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, processingTimeStamp);
+        return;
+    }
+
+    protected int updatePaymentWorksVendorStatusInStagingTable(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, Timestamp  processingTimeStamp) {
+        String timestampInSqlFormat = PROCESSING_TIMESTAMP_SQL_FORMATTER.format(processingTimeStamp);
+        ArrayList<String> sqlParameters = new ArrayList<String>();
+        int rowsUpdated = 0;
+
+        if (isUpdateAllParameters(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, timestampInSqlFormat)) {
+            sqlParameters.add(pmwRequestStatus);
+            sqlParameters.add(kfsVendorProcessingStatus);
+            sqlParameters.add(timestampInSqlFormat);
+            sqlParameters.add(kfsAchProcessingStatus);
+            sqlParameters.add(kfsVendorDocumentNumber);
+            sqlParameters.add(pmwVendorRequestId);
+            rowsUpdated = performUpdate(UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_ACH_STATUS_KFS_EDOC_SQL, sqlParameters);
+        }
+        else if (isUpdatePmwStatusKfsStatusKfsEdocParameters(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, timestampInSqlFormat)) {
+            sqlParameters.add(pmwRequestStatus);
+            sqlParameters.add(kfsVendorProcessingStatus);
+            sqlParameters.add(timestampInSqlFormat);
+            sqlParameters.add(kfsVendorDocumentNumber);
+            sqlParameters.add(pmwVendorRequestId);
+            rowsUpdated = performUpdate(UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_KFS_EDOC_SQL, sqlParameters);
+        }
+        else if (isUpdatePmwStatusKfsStatusKfsAchStatusParameters(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, timestampInSqlFormat)) {
+            sqlParameters.add(pmwRequestStatus);
+            sqlParameters.add(kfsVendorProcessingStatus);
+            sqlParameters.add(timestampInSqlFormat);
+            sqlParameters.add(kfsAchProcessingStatus);
+            sqlParameters.add(pmwVendorRequestId);
+            rowsUpdated = performUpdate(UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_ACH_STATUS_SQL, sqlParameters);
+        }
+        else if (isUpdatePmwStatusKfsStatusParameters(pmwVendorRequestId, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, timestampInSqlFormat)) {
+            sqlParameters.add(pmwRequestStatus);
+            sqlParameters.add(kfsVendorProcessingStatus);
+            sqlParameters.add(timestampInSqlFormat);
+            sqlParameters.add(kfsAchProcessingStatus);
+            sqlParameters.add(pmwVendorRequestId);
+            rowsUpdated = performUpdate(UPDATE_PMW_KFS_VENDOR_STATUS_TIMESTAMP_SQL, sqlParameters);
+        }
+        return rowsUpdated;
     }
     
-    private String buildUpdateExistingPaymentWorksVendorInStagingTableSql(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, Timestamp  processingTimeStamp) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("update kfs.cu_pmw_vendor_t ");
-        sql.append("set pmw_req_stat = '" + pmwRequestStatus); 
-        sql.append("', kfs_vnd_proc_stat = '" + kfsVendorProcessingStatus);
-        sql.append("', proc_ts = '" + PaymentWorksDataTransformationService.PROCESSING_TIMESTAMP_SQL_FORMATTER.format(processingTimeStamp));
-        if (StringUtils.isNotBlank(kfsAchProcessingStatus)) {
-            sql.append("', kfs_ach_proc_stat = '" + kfsAchProcessingStatus);
+    private boolean isUpdateAllParameters(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String timestampInSqlFormat) {
+        if (StringUtils.isNotBlank(pmwVendorRequestId) && StringUtils.isNotBlank(pmwRequestStatus) && StringUtils.isNotBlank(kfsVendorProcessingStatus) &&
+            StringUtils.isNotBlank(kfsAchProcessingStatus) && StringUtils.isNotBlank(kfsVendorDocumentNumber) && StringUtils.isNotBlank(timestampInSqlFormat)) {
+            return true;
         }
-        if (StringUtils.isNotBlank(kfsAchProcessingStatus)) {
-            sql.append("', pven_fdoc_nbr = '" + kfsVendorDocumentNumber);
+        else {
+            return false;
         }
-        sql.append("' where pmw_vnd_req_id = '" + pmwVendorRequestId + "'");
-        
-        return sql.toString();
     }
     
-    public BusinessObjectService getBusinessObjectService() {
-        return businessObjectService;
+    private boolean isUpdatePmwStatusKfsStatusKfsEdocParameters(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String timestampInSqlFormat) {
+        if (StringUtils.isNotBlank(pmwVendorRequestId) && StringUtils.isNotBlank(pmwRequestStatus) && StringUtils.isNotBlank(kfsVendorProcessingStatus) &&
+            StringUtils.isBlank(kfsAchProcessingStatus) && StringUtils.isNotBlank(kfsVendorDocumentNumber) && StringUtils.isNotBlank(timestampInSqlFormat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private boolean isUpdatePmwStatusKfsStatusKfsAchStatusParameters(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String timestampInSqlFormat) {
+        if (StringUtils.isNotBlank(pmwVendorRequestId) && StringUtils.isNotBlank(pmwRequestStatus) && StringUtils.isNotBlank(kfsVendorProcessingStatus) &&
+            StringUtils.isNotBlank(kfsAchProcessingStatus) && StringUtils.isBlank(kfsVendorDocumentNumber) && StringUtils.isNotBlank(timestampInSqlFormat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    private boolean isUpdatePmwStatusKfsStatusParameters(String pmwVendorRequestId, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String timestampInSqlFormat) {
+        if (StringUtils.isNotBlank(pmwVendorRequestId) && StringUtils.isNotBlank(pmwRequestStatus) && StringUtils.isNotBlank(kfsVendorProcessingStatus) &&
+            StringUtils.isBlank(kfsAchProcessingStatus) && StringUtils.isBlank(kfsVendorDocumentNumber) && StringUtils.isNotBlank(timestampInSqlFormat)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
+    private int performUpdate (String updateSql, List<String> sqlParameters) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        int result = 0;
+        int parameterIndex = 0;
+        try {
+            connection = getJdbcTemplate().getDataSource().getConnection();
+            preparedStatement = connection.prepareStatement(updateSql);
+            preparedStatement.clearParameters();
+            while (parameterIndex < sqlParameters.size()) {
+                preparedStatement.setString(parameterIndex, sqlParameters.get(parameterIndex));
+                parameterIndex++;
+            }
+            result = preparedStatement.executeUpdate();
+        } catch (SQLException se) {
+            LOG.error("performUpdate: Could not update new vendor processing status due to SQLException: " + se.toString());
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException ps) {
+                    LOG.error("performUpdate: Could not close the prepared statement for updateSql due to SQLException: " + ps.toString());
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ce) {
+                    LOG.error("performUpdate: Could not close the connection for updateSql due to SQLException: " + ce.toString());
+                }
+            }
+        }
+
+        return result;
     }
 
-    public DateTimeService getDateTimeService() {
-        return dateTimeService;
+    private String convertTimestampToSqlDateString(Timestamp timestampToConvert) {
+        return PROCESSING_TIMESTAMP_SQL_FORMATTER.format(timestampToConvert);
     }
 
-    public void setDateTimeService(DateTimeService dateTimeService) {
-        this.dateTimeService = dateTimeService;
-    }
 }

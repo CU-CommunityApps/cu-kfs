@@ -11,6 +11,7 @@ import java.io.InputStream;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
@@ -32,7 +33,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     @Override
     public String retrievePaymentWorksParameterValue(String parameterName) {
-        String parameterValue = getParameterService().getParameterValueAsString(PaymentWorksParameterConstants.PAYMENTWORKS_PARAMETER_NAMESPACE, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
+        String parameterValue = getParameterService().getParameterValueAsString(PaymentWorksConstants.PAYMENTWORKS_NAMESPACE_CODE, CUKFSParameterKeyConstants.ALL_COMPONENTS, parameterName);
         return parameterValue;
     }
     

@@ -23,6 +23,7 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
     private static final String KFS_SUPP_DVRST_CD_COL = "kfs_supp_dvrst_cd";
     private static final String KFS_SUPP_DVRST_DESC_COL = "kfs_supp_dvrst_desc";
     private static final String PMW_SUPP_DVRST_DESC_COL = "pmw_supp_dvrst_desc";
+    private static final String KFS_SUPPLIER_DIVERSITY_SQL = "SELECT DVRST.VNDR_SUPP_DVRST_CD AS KFS_SUPP_DVRST_CD, DVRST.VNDR_SUPP_DVRST_DESC KFS_SUPP_DVRST_DESC, PMW_MAP.PMW_SUPP_DVRST_DESC PMW_SUPP_DVRST_DESC FROM KFS.PUR_SUPP_DVRST_T DVRST, KFS.CU_PMW_SUPP_DVRST_MAP_T PMW_MAP WHERE DVRST.VNDR_SUPP_DVRST_DESC = PMW_MAP.VNDR_SUPP_DVRST_DESC AND DVRST.DOBJ_MAINT_CD_ACTV_IND = 'Y' ORDER BY DVRST.VNDR_SUPP_DVRST_DESC";
 
     @Override
     public Map<String, SupplierDiversity> buildPmwToKfsSupplierDiversityMap() {
@@ -61,21 +62,11 @@ public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implem
                     return pmwToKfsSupplierDiversity;
                 }
             };
-            return this.getJdbcTemplate().query(buildRetriveKfsSupplierDiversitiesSql(), mapRow);
+            return this.getJdbcTemplate().query(KFS_SUPPLIER_DIVERSITY_SQL, mapRow);
         } catch (Exception e) {
             LOG.info("findActiveSupplierDiversitiesForMap Exception: " + e.getMessage());
             return null;
         }
-    }
-    
-    private String buildRetriveKfsSupplierDiversitiesSql() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select dvrst.vndr_supp_dvrst_cd as kfs_supp_dvrst_cd, dvrst.vndr_supp_dvrst_desc kfs_supp_dvrst_desc, pmw_map.pmw_supp_dvrst_desc pmw_supp_dvrst_desc ");
-        sql.append("from kfs.pur_supp_dvrst_t dvrst, kfs.cu_pmw_supp_dvrst_map_t pmw_map ");
-        sql.append("where dvrst.vndr_supp_dvrst_desc = pmw_map.vndr_supp_dvrst_desc ");
-        sql.append("and dvrst.dobj_maint_cd_actv_ind = 'Y' ");
-        sql.append("order by dvrst.vndr_supp_dvrst_desc");
-        return sql.toString();
     }
 
 }
