@@ -134,7 +134,7 @@
     <bean id="kualiDeveloperFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.sys.businessobject.KualiDeveloper">
         <property name="objectSpecifications">
             <list>
-                <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.fp.businessobject.ProcurementCardSummary">
+                <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.sys.businessobject.KualiDeveloper">
                     <property name="parseProperties">
                         <list>
                             <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeId" p:start="0" p:end="16" p:rightTrim="true" />

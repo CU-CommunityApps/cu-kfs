@@ -1,28 +1,20 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
-import edu.cornell.kfs.fp.batch.ProcurementCardSummaryFlatInputFileType;
-import edu.cornell.kfs.fp.businessobject.ProcurementCardSummary;
 import edu.cornell.kfs.sys.batch.KualiDeveloperFlatInputFileType;
 import edu.cornell.kfs.sys.batch.service.KualiDeveloperFeedService;
 
 import edu.cornell.kfs.sys.businessobject.KualiDeveloper;
-import edu.cornell.kfs.sys.businessobject.KualiDeveloperEntry;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.Message;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Date;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -37,10 +29,7 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 	protected DateTimeService dateTimeService;
 	
 	public boolean loadKualiDeveloperDataFromBatchFile(String fileName) {
-		
-		LOG.info("\n Processing .done file: " + fileName + "\n");
 
-	
 		LOG.info("\n Reading Kuali Developer file entries. \n");
 		List<KualiDeveloper> kualiDeveloperList = readKualiDeveloperFileContents(fileName);
 
@@ -49,51 +38,16 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 			return true;
 		}
 
-		LOG.info("\n Generating entries from the valid ProcurementCardSummary list. \n");
-		List<KualiDeveloperEntry> entriesToLoad = new ArrayList<KualiDeveloperEntry>();
-		generateKualiDeveloperEntryToLoadToDB(kualiDeveloperList, entriesToLoad);
-
-		
-		LOG.info("\n Loading data into the database: CU_FP_PCARD_SUMMARY_T table. \n");
-		loadDataInDB(entriesToLoad);
+		LOG.info("\n Loading data into the database: CU_KUALI_DEVELOPER_T table. \n");
+		loadDataInDB(kualiDeveloperList);
 		return true;
 	}	
-	
-	private void generateKualiDeveloperEntryToLoadToDB(List<KualiDeveloper> kualiDeveloperList, List<KualiDeveloperEntry> entriesToLoad) {
-		for (KualiDeveloper kualiDeveloper : kualiDeveloperList) {
-			entriesToLoad.add(generateKualiDeveloperEntry(kualiDeveloper));
-	    }
-	}
 
 	/**
-	 * Generate a collection of KualiDeveloperEntry from the given KualiDeveloper entry.
-	 * 
-	 * @param kualiDeveloper (KualiDeveloper)
-	 * @return entry (PKualiDeveloperEntry)
-	 */
-	protected KualiDeveloperEntry generateKualiDeveloperEntry(KualiDeveloper kualiDeveloper) {
-		String employeeId = kualiDeveloper.getEmployeeId();
-		String firstName = kualiDeveloper.getFirstName();
-		String lastName = kualiDeveloper.getLastName();
-		String positionName = kualiDeveloper.getPositionName();
-		String socialSecurityNumber = kualiDeveloper.getSocialSecurityNumber();
-
-        KualiDeveloperEntry entry = new KualiDeveloperEntry();
-		
-		entry.setEmployeeId(employeeId);
-		entry.setFirstName(firstName);
-		entry.setLastName(lastName);
-		entry.setPositionName(positionName);
-		entry.setSocialSecurityNumber(socialSecurityNumber);
-		
-		return entry;
-	}
-
-	/**
-	 * Reads the incoming Kuali Developer extract with the given file name and builds a list of KualiDeveloperEntry object.
+	 * Reads the incoming Kuali Developer extract with the given file name and builds a list of KualiDeveloper object.
 	 * 
 	 * @param fileName the name of the Kuali Developer extract to be read in
-	 * @return a list of KualiDeveloperEntry objects created from the entries in the Kuali Developer extract
+	 * @return a list of KualiDeveloper objects created from the entries in the Kuali Developer extract
 	 */
 	protected List<KualiDeveloper> readKualiDeveloperFileContents(String fileName) {
 
@@ -102,18 +56,17 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 			FileInputStream fileContents = null;
 			fileContents = new FileInputStream(fileName);
 
-			List<KualiDeveloper> kualiDeveloperEntries = null;
+			List<KualiDeveloper> kualiDevelopers = null;
 
 			byte[] fileByteContent = IOUtils.toByteArray(fileContents);
-			kualiDeveloperEntries = (List<KualiDeveloper>) batchInputFileService.parse(kualiDeveloperFlatInputFileType, fileByteContent);
+			kualiDevelopers = (List<KualiDeveloper>) batchInputFileService.parse(kualiDeveloperFlatInputFileType, fileByteContent);
 
-			if (kualiDeveloperEntries == null || kualiDeveloperEntries.isEmpty()) {
+			if (kualiDevelopers == null || kualiDevelopers.isEmpty()) {
 				LOG.warn("No entries in the input file " + fileName);
 				return null;
 			}
 
-			return kualiDeveloperEntries;
-
+			return kualiDevelopers;
 		}
 		catch (FileNotFoundException e) {
 			LOG.error("File to parse not found " + fileName, e);
@@ -128,26 +81,15 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 	/**
 	 * Load entries in the CU_KUALI_DEVELOPER table.
 	 * 
-	 * @param entriesToLoad
+	 * @param kualiDevelopersToLoad
 	 */
-	protected void loadDataInDB(List<KualiDeveloperEntry> entriesToLoad) {
-	
-		// wipe out everything first
-		businessObjectService.deleteMatching(KualiDeveloperEntry.class, new HashMap<String, String>());
-
-		// do the add records now; 
-		for (KualiDeveloperEntry entry : entriesToLoad) {
-			KualiDeveloperEntry retrievedEntry = (KualiDeveloperEntry) businessObjectService
-						.retrieve(entry);
-		//	entriesToLoad
-		//	.addAll(generateCalculatedSalaryFoundationTrackerCollection(psPositionJobExtractEntry));
-
-			
-        if (ObjectUtils.isNotNull(retrievedEntry)) {
-                entry.setVersionNumber(retrievedEntry
-                        .getVersionNumber());
+	protected void loadDataInDB(List<KualiDeveloper> kualiDevelopersToLoad) {
+	    for (KualiDeveloper kualiDeveloper : kualiDevelopersToLoad) {
+			KualiDeveloper retrievedEntry = (KualiDeveloper) businessObjectService.retrieve(kualiDeveloper);
+            if (ObjectUtils.isNotNull(retrievedEntry)) {
+                kualiDeveloper.setVersionNumber(retrievedEntry.getVersionNumber());
             }
-            businessObjectService.save(entry);
+            businessObjectService.save(kualiDeveloper);
         }
     }
 
