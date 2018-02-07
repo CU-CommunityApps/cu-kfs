@@ -34,6 +34,7 @@
 		<property name="jobNames">
             <list merge="true">
 				<value>kualiDeveloperCreationJob</value>
+                <value>kualiDeveloperXmlCreationJob</value>
 				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
@@ -80,22 +81,54 @@
  	    <property name="namespaceRequiredOnStoredAttributeSet" value="false" />
  	</bean>
 
-    <bean id="kualiDeveloperCreationJob" parent="scheduledJobDescriptor">
+    <bean id="kualiDeveloperXmlCreationJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
-                <ref bean="kualiDeveloperFlatFileStep" />
+                <ref bean="kualiDeveloperXmlFileStep" />
             </list>
         </property>
+    </bean>
+    <bean id="kualiDeveloperXmlFileStep" class="edu.cornell.kfs.sys.batch.KualiDeveloperXmlFileStep" parent="step">
+        <property name="createKualiDeveloperXmlService" ref="createKualiDeveloperXmlService"/>
     </bean>
 
     <bean id="kualiDeveloperFlatFileStep" class="edu.cornell.kfs.sys.batch.KualiDeveloperFlatFileStep" parent="step">
         <property name="kualiDeveloperFeedService" ref="kualiDeveloperFeedService" />
         <property name="batchInputFileService" ref="batchInputFileService" />
-
-        <!-- todo: needed? -->
-        <property name="dateTimeService" ref="dateTimeService" />
         <property name="kualiDeveloperFlatInputFileType"  ref="kualiDeveloperFlatInputFileType" />
         <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
+
+    <bean id="createKualiDeveloperXmlService" class="edu.cornell.kfs.sys.batch.service.impl.CreateKualiDeveloperXmlService">
+        <property name="batchInputFileService" ref="batchInputFileService"/>
+        <property name="kualiDeveloperXmlBatchInputFileType" ref="kualiDeveloperXmlDocumentInputFileType"/>
+        <property name="documentService" ref="documentService"/>
+        <property name="fileStorageService" ref="fileStorageService"/>
+        <property name="configurationService" ref="kualiConfigurationService"/>
+    </bean>
+
+    <bean id="kualiDeveloperXmlDocumentInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="cuMarshalService" ref="cuMarshalService"/>
+        <property name="directoryPath" value="${staging.directory}/fp/accountingXmlDocument"/>
+        <property name="fileExtension" value="xml"/>
+        <property name="fileTypeIdentifier" value="accountingXmlDocumentInputFileType"/>
+        <property name="titleKey" value="message.batchUpload.title.kualiDeveloperXmlDocument"/>
+        <property name="fileNamePrefix" value="kualiDeveloperXmlDocument_"/>
+        <property name="pojoClass" value="edu.cornell.kfs.fp.batch.xml.KualiDeveloperXmlDocumentListWrapper"/>
+    </bean>
+
+    <bean id="kualiDeveloperXmlDocumentDownloadAttachmentService" class="edu.cornell.kfs.sys.batch.service.impl.KualiDeveloperXmlDocumentDownloadAttachmentServiceImpl">
+        <property name="attachmentService" ref="attachmentService"/>
+        <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
+    </bean>
+
+    <bean id="kualiDeveloperCreationJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="kualiDeveloperFlatFileStep"/>
+            </list>
+        </property>
     </bean>
 
     <bean id="kualiDeveloperFeedService" parent="kualiDeveloperFeedService-parentBean"/>

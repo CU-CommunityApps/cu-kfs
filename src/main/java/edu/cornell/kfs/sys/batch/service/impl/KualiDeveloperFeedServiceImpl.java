@@ -26,7 +26,6 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 	protected BatchInputFileService batchInputFileService;
 	protected KualiDeveloperFlatInputFileType kualiDeveloperFlatInputFileType;
 	protected BusinessObjectService businessObjectService;
-	protected DateTimeService dateTimeService;
 	
 	public boolean loadKualiDeveloperDataFromBatchFile(String fileName) {
 
@@ -115,14 +114,6 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 
 	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
-	}
-
-	public DateTimeService getDateTimeService() {
-		return dateTimeService;
-	}
-
-	public void setDateTimeService(DateTimeService dateTimeService) {
-		this.dateTimeService = dateTimeService;
 	}
 
 }
