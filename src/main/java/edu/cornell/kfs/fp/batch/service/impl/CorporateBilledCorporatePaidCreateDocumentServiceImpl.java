@@ -10,14 +10,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
-import org.kuali.kfs.fp.businessobject.ProcurementCardSourceAccountingLine;
-import org.kuali.kfs.fp.businessobject.ProcurementCardTargetAccountingLine;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -29,6 +28,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidCreateDocumentService;
+import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidRouteStepReportService;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardHolder;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidCardVendor;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidDataDetail;
@@ -49,6 +49,7 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     
     protected DataDictionaryService cbcpDatadictionaryServce;
     protected SimpleDateFormat dateFormat;
+    protected CorporateBilledCorporatePaidRouteStepReportService corporateBilledCorporatePaidRouteStepReportService;
     
     @Override
     protected void cleanTransactionsTable() {
@@ -334,22 +335,32 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     @Override
     public boolean routeProcurementCardDocuments() {
         LOG.debug("routeProcurementCardDocuments() started");
-        Collection<CorporateBilledCorporatePaidDocument> procurementCardDocumentList = retrieveCorporateBilledCorporatePaidDocuments(
+        Collection<CorporateBilledCorporatePaidDocument> cbcpDocumentList = retrieveCorporateBilledCorporatePaidDocuments(
                 KewApiConstants.ROUTE_HEADER_SAVED_CD);
-        LOG.info("routeProcurementCardDocuments() Number of CBCP documents to Route: " + procurementCardDocumentList.size());
-
-        for (CorporateBilledCorporatePaidDocument cbcpDocument : procurementCardDocumentList) {
+        LOG.info("routeProcurementCardDocuments() Number of CBCP documents to Route: " + cbcpDocumentList.size());
+        
+        Map<String, String> documentErrors = new HashMap<String, String>();
+        List<String> successfulDocuments = new ArrayList<String>();
+        for (CorporateBilledCorporatePaidDocument cbcpDocument : cbcpDocumentList) {
             try {
                 LOG.info("routeProcurementCardDocuments() Routing CBCP document # " + cbcpDocument.getDocumentNumber() + ".");
                 documentService.prepareWorkflowDocument(cbcpDocument);
                 documentService.routeDocument(cbcpDocument, "CBCP document automatically routed", new ArrayList<AdHocRouteRecipient>());
-            } catch (WorkflowException | ValidationException e) {
-                LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + e.getMessage(), e);
+                successfulDocuments.add(cbcpDocument.getDocumentNumber());
+            } catch (WorkflowException we) {
+                documentErrors.put(cbcpDocument.getDocumentNumber(), "Workflow error: " + we.getMessage());
+                GlobalVariables.getMessageMap().clearErrorMessages();
+                LOG.error("routeProcurementCardDocuments, workflow error routing document # " + cbcpDocument.getDocumentNumber() + " " + we.getMessage(), we);
+            } catch (ValidationException ve) {
+                documentErrors.put(cbcpDocument.getDocumentNumber(), corporateBilledCorporatePaidRouteStepReportService.buildValidationErrorMessage(ve));
+                GlobalVariables.getMessageMap().clearErrorMessages();
+                LOG.error("routeProcurementCardDocuments, Error routing document # " + cbcpDocument.getDocumentNumber() + " " + ve.getMessage(), ve);
             }
         }
+        createAndEmailReport(cbcpDocumentList, documentErrors, successfulDocuments);
         return true;
     }
-    
+
     protected Collection<CorporateBilledCorporatePaidDocument> retrieveCorporateBilledCorporatePaidDocuments(String statusCode) {
         try {
             return financialSystemDocumentService.findByWorkflowStatusCode(CorporateBilledCorporatePaidDocument.class, DocumentStatus.fromCode(statusCode));
@@ -357,6 +368,14 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
             LOG.error("retrieveCorporateBilledCorporatePaidDocuments, Error searching for enroute procurement card documents " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+    
+    protected void createAndEmailReport(Collection<CorporateBilledCorporatePaidDocument> cbcpDocumentList,
+            Map<String, String> documentErrors, List<String> successfulDocuments) {
+        corporateBilledCorporatePaidRouteStepReportService.createReport(cbcpDocumentList.size(), successfulDocuments, documentErrors);
+        String reportEmailAddres = getCorporateBilledCorporatePaidDocumentParameter(
+                CuFPParameterConstants.CorporateBilledCorporatePaidDocument.CBCP_REPORT_EMAIL_ADDRESS_PARAMETER_NAME);
+        corporateBilledCorporatePaidRouteStepReportService.sendReportEmail(reportEmailAddres, reportEmailAddres);
     }
     
     @Override
@@ -398,6 +417,11 @@ public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends Procu
     public void setCbcpDatadictionaryServce(DataDictionaryService cbcpDatadictionaryServce) {
         this.cbcpDatadictionaryServce = cbcpDatadictionaryServce;
     }
-    
+
+    public void setCorporateBilledCorporatePaidRouteStepReportService(
+            CorporateBilledCorporatePaidRouteStepReportService corporateBilledCorporatePaidRouteStepReportService) {
+        this.corporateBilledCorporatePaidRouteStepReportService = corporateBilledCorporatePaidRouteStepReportService;
+    }
 
 }
+
