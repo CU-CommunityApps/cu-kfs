@@ -11,6 +11,10 @@ public class CuVendorSupplierDiversityExtension  extends PersistableBusinessObje
 
     // CU enhancement
     private Date vendorSupplierDiversityExpirationDate;
+    
+    public CuVendorSupplierDiversityExtension() {
+    }
+    
     public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
     }
