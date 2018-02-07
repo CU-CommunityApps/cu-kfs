@@ -29,8 +29,7 @@ public class KualiDeveloperFlatFileStep extends AbstractStep {
     public boolean execute(String arg0, Date arg1) throws InterruptedException {
 
         //get all done files
-        List<String> fileNamesToLoad = batchInputFileService
-                .listInputFileNamesWithDoneFile(kualiDeveloperFlatInputFileType);
+        List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(kualiDeveloperFlatInputFileType);
 
         boolean processSuccess = false;
         List<String> doneFiles = new ArrayList<String>();
@@ -38,8 +37,7 @@ public class KualiDeveloperFlatFileStep extends AbstractStep {
         // if multiple .done files present only process the most current one
         String fileToProcess = getMostCurrentFileName(fileNamesToLoad);
 
-        // add all the .done files in the list of files to be removed in
-        // case of success
+        // add all the .done files in the list of files to be removed in case of success
         doneFiles.addAll(fileNamesToLoad);
 
         // process the latest file
@@ -53,9 +51,7 @@ public class KualiDeveloperFlatFileStep extends AbstractStep {
         }
 
         return processSuccess;
-
     }
-
 
     /**
      * Extract the file date from the file name. The file name format is expected to be
