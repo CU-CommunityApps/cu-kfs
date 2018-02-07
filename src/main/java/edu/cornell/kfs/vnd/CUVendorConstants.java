@@ -37,6 +37,11 @@ public class CUVendorConstants extends VendorConstants {
 	    public static final String HEALTH_DEPARTMENT_LICENSE ="Health Department License";
 	    public static final String SUPPLIER_DIVERSITY_CERTIFICATION = "Supplier Diversity Certification";
     }
+    
+        
+    public static class CUAddressTypes extends AddressTypes{
+        public static final String TAX = "TX";
+    }
 
     public static final String LOCALE_LOCAL = "LOCAL";
     public static final String LOCALE_REGIONAL = "REGIONAL";

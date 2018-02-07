@@ -26,4 +26,5 @@
 	
 	<import resource="tax/cu-spring-tax.xml" />
 	<import resource="concur/cu-spring-concur.xml" />
+    <import resource="pmw/cu-spring-pmw.xml" />
 </beans>
