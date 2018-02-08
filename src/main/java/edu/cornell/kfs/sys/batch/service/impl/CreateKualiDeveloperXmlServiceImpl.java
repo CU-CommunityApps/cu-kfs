@@ -71,19 +71,18 @@ public class CreateKualiDeveloperXmlServiceImpl implements CreateKualiDeveloperX
         GlobalVariables.getMessageMap().clearErrorMessages();
         try {
             LOG.info("processKualiDeveloperFromXml: Started processing kuali developer : " + kualiDeveloperXmlEntry.getEmployeeId());
-            HashMap<String, String> kualiDeveloperPK = new HashMap<>();
-            kualiDeveloperPK.put("employeeId", kualiDeveloperXmlEntry.getEmployeeId());
-            if (businessObjectService.countMatching(KualiDeveloper.class, kualiDeveloperPK) == 0){
-                KualiDeveloper kualiDeveloper = new KualiDeveloper();
-                kualiDeveloper.setEmployeeId(kualiDeveloperXmlEntry.getEmployeeId());
-                kualiDeveloper.setFirstName(kualiDeveloperXmlEntry.getFirstName());
-                kualiDeveloper.setLastName(kualiDeveloperXmlEntry.getLastName());
-                kualiDeveloper.setPositionName(kualiDeveloperXmlEntry.getPositionName());
-                businessObjectService.save(kualiDeveloper);
+            KualiDeveloper kualiDeveloper = new KualiDeveloper();
+            kualiDeveloper.setEmployeeId(kualiDeveloperXmlEntry.getEmployeeId());
+            kualiDeveloper.setFirstName(kualiDeveloperXmlEntry.getFirstName());
+            kualiDeveloper.setLastName(kualiDeveloperXmlEntry.getLastName());
+            kualiDeveloper.setPositionName(kualiDeveloperXmlEntry.getPositionName());
+
+            KualiDeveloper retrievedEntry = (KualiDeveloper) businessObjectService.retrieve(kualiDeveloper);
+            if (ObjectUtils.isNotNull(retrievedEntry)) {
+                kualiDeveloper.setVersionNumber(retrievedEntry.getVersionNumber());
             }
-            else{
-                LOG.warn("processKualiDeveloperFromXml: record for kuali developer " + kualiDeveloperXmlEntry.getEmployeeId() + " already exists");
-            }
+            businessObjectService.save(kualiDeveloper);
+
             LOG.info("processKualiDeveloperFromXml: Finished processing kuali developer " + kualiDeveloperXmlEntry.getEmployeeId());
         }
         catch (ValidationException ve){
