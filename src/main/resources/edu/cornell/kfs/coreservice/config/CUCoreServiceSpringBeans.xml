@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="coreServiceCacheAdminService.exporter" parent="coreServiceServiceExporter">
+        <property name="serviceDefinition">
+            <bean parent="coreService"
+                    p:serviceNameSpaceURI="${kfs.service.namespace.uri}"
+                    p:service-ref="coreServiceCacheAdminService"
+                    p:localServiceName="coreServiceCacheAdminService"
+                    p:servicePath=""
+                    p:queue="false"
+                    p:endpointUrl="${secureServiceServletUrl}coreServiceCacheAdminService" />
+        </property>
+    </bean>
+
+    <bean id="cf.coreServiceDistributedCacheManager" class="org.kuali.rice.core.impl.cache.DistributedCacheManagerDecorator">
+        <property name="cacheManager" ref="cf.coreServiceLocalCacheManager"/>
+        <property name="serviceName" value="{${kfs.service.namespace.uri}}coreServiceCacheAdminService"/>
+    </bean>
+
+</beans>
