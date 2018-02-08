@@ -20,16 +20,13 @@ public class KualiDeveloperFlatFileStep extends AbstractStep {
     protected DateTimeService dateTimeService;
     protected KualiDeveloperFeedService kualiDeveloperFeedService;
 
-    /**
-     * @see org.kuali.kfs.kns.bo.Step#execute(java.lang.String, java.util.Date)
-     */
     public boolean execute(String arg0, Date arg1) throws InterruptedException {
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(kualiDeveloperFlatInputFileType);
 
         boolean processSuccess = false;
         List<String> doneFiles = new ArrayList<>();
 
-        for (String fileNameToProcess : fileNamesToLoad){
+        for (String fileNameToProcess : fileNamesToLoad) {
             if (fileNameToProcess != null) {
                 kualiDeveloperFeedService.loadKualiDeveloperDataFromBatchFile(fileNameToProcess);
                 doneFiles.add(fileNameToProcess);

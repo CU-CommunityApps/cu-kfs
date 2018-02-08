@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.batch.service;
 
-public interface CreateKualiDeveloperXmlService {
+public interface KualiDeveloperXmlService {
 
     void createKualiDevelopersFromXml();
 

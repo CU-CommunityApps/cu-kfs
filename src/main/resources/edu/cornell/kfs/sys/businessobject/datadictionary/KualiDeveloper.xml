@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 
     <bean id="KualiDeveloper" parent="KualiDeveloper-parentBean"/>
 	<bean id="KualiDeveloper-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -19,21 +20,8 @@
                 <ref bean="KualiDeveloper-socialSecurityNumber"/>
                 <ref bean="KualiDeveloper-employeeId"/>
                 <ref bean="KualiDeveloper-active"/>
-                <ref bean="KualiDeveloper-kualiAddresses.addressTypeCode"/>
-                <ref bean="KualiDeveloper-kualiAddresses.streetAddress"/>
-                <ref bean="KualiDeveloper-kualiAddresses.streetAddressExtra"/>
-                <ref bean="KualiDeveloper-kualiAddresses.city"/>
-                <ref bean="KualiDeveloper-kualiAddresses.stateCode"/>
-                <ref bean="KualiDeveloper-kualiAddresses.zipCode"/>
-                <ref bean="KualiDeveloper-kualiAddresses.countryCode"/>
             </list>
 		</property>
-        <property name="collections">
-            <list>
-                <bean parent="CollectionDefinition" p:name="kualiAddresses"
-                      p:label="Developer Addresses" p:shortLabel="Addresses" p:elementLabel="Developer Address"/>
-            </list>            
-        </property>
 	</bean>
             
     <bean id="KualiDeveloper-firstName" parent="KualiDeveloper-firstName-parentBean"/>
@@ -113,69 +101,18 @@
             </bean>
         </property>    
     </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.addressTypeCode"
-          parent="KualiDeveloper-kualiAddresses.addressTypeCode-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.addressTypeCode-parentBean" abstract="true"
-          parent="KualiAddress-addressTypeCode">
-        <property name="name" value="kualiAddresses.addressTypeCode"/>
-    </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.streetAddress"
-          parent="KualiDeveloper-kualiAddresses.streetAddress-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.streetAddress-parentBean" abstract="true"
-          parent="KualiAddress-streetAddress">
-        <property name="name" value="kualiAddresses.streetAddress"/>
-    </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.streetAddressExtra"
-          parent="KualiDeveloper-kualiAddresses.streetAddressExtra-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.streetAddressExtra-parentBean" abstract="true"
-          parent="KualiAddress-streetAddressExtra">
-        <property name="name" value="kualiAddresses.streetAddressExtra"/>
-    </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.city"
-          parent="KualiDeveloper-kualiAddresses.city-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.city-parentBean" abstract="true"
-          parent="KualiAddress-city">
-        <property name="name" value="kualiAddresses.city"/>
-    </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.stateCode"
-          parent="KualiDeveloper-kualiAddresses.stateCode-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.stateCode-parentBean" abstract="true"
-          parent="KualiAddress-stateCode">
-        <property name="name" value="kualiAddresses.stateCode"/>
-    </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.zipCode"
-          parent="KualiDeveloper-kualiAddresses.zipCode-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.zipCode-parentBean" abstract="true"
-          parent="KualiAddress-zipCode">
-        <property name="name" value="kualiAddresses.zipCode"/>
-    </bean>
-    
-    <bean id="KualiDeveloper-kualiAddresses.countryCode"
-          parent="KualiDeveloper-kualiAddresses.countryCode-parentBean"/>
-    <bean id="KualiDeveloper-kualiAddresses.countryCode-parentBean" abstract="true"
-          parent="KualiAddress-countryCode">
-        <property name="name" value="kualiAddresses.countryCode"/>
-    </bean>
-   
+
     <bean id="KualiDeveloper-active" parent="KualiDeveloper-active-parentBean"/>
     <bean id="KualiDeveloper-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
         <property name="name" value="active"/>
     </bean>  
-	
-    <!-- Business Object Inquiry Definition -->  
+
     <bean id="KualiDeveloper-inquiryDefinition" parent="KualiDeveloper-inquiryDefinition-parentBean"/>
     <bean id="KualiDeveloper-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
         <property name="title" value="Kuali Developer Inquiry"/>
         <property name="inquirySections">
             <list>
-                <ref bean="KualiDeveloper-inquirySectionDefinition-generalInformation" /> 
-                <ref bean="KualiDeveloper-inquirySectionDefinition-address"/>
+                <ref bean="KualiDeveloper-inquirySectionDefinition-generalInformation" />
             </list>  
         </property>
     </bean>
@@ -194,45 +131,7 @@
             </list>
         </property>
     </bean>
-    
-    <bean id="KualiDeveloper-inquirySectionDefinition-address" parent="KualiDeveloper-inquirySectionDefinition-address-parentBean"/>
-    <bean id="KualiDeveloper-inquirySectionDefinition-address-parentBean" abstract="true" parent="InquirySectionDefinition">
-        <property name="id" value="addressSection"/>
-        <property name="title" value="Address"/>
-        <property name="inquiryFields">
-            <list>
-                <ref bean="KualiDeveloper-inquiryCollectionDefinition-kualiAddresses"/>
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="KualiDeveloper-inquiryCollectionDefinition-kualiAddresses"
-          parent="KualiDeveloper-inquiryCollectionDefinition-kualiAddresses-parentBean"/>
-    <bean id="KualiDeveloper-inquiryCollectionDefinition-kualiAddresses-parentBean" abstract="true"
-          parent="InquiryCollectionDefinition">
-        <property name="attributeName" value="kualiAddresses"/>
-        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiAddress"/>
-        <property name="inquiryFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="addressId"/>
-                <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
-                <bean parent="FieldDefinition" p:attributeName="streetAddress"/>
-                <bean parent="FieldDefinition" p:attributeName="streetAddressExtra"/>
-                <bean parent="FieldDefinition" p:attributeName="city"/>
-                <bean parent="FieldDefinition" p:attributeName="stateCode"/>
-                <bean parent="FieldDefinition" p:attributeName="zipCode"/>
-                <bean parent="FieldDefinition" p:attributeName="countryCode"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-        <property name="summaryFields">
-            <list>
-                <bean parent="FieldDefinition" p:attributeName="addressTypeCode"/>
-            </list>
-        </property>
-    </bean>
 
-    <!-- Business Object Lookup Definition -->
     <bean id="KualiDeveloper-lookupDefinition" parent="KualiDeveloper-lookupDefinition-parentBean"/>
     <bean id="KualiDeveloper-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="KualiDeveloper Lookup"/>

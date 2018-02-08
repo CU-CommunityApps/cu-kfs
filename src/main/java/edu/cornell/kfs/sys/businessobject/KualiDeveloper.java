@@ -1,8 +1,5 @@
 package edu.cornell.kfs.sys.businessobject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 
@@ -14,12 +11,10 @@ public class KualiDeveloper extends PersistableBusinessObjectBase implements Mut
 	private String employeeId;
     private String socialSecurityNumber;
 	private Boolean active;
-    private List<KualiAddress> kualiAddresses;
 
 	public KualiDeveloper() {
 		super();
         active = true;
-        kualiAddresses = new ArrayList<KualiAddress>();
 	}
 
     public Boolean getActive() {
@@ -74,13 +69,5 @@ public class KualiDeveloper extends PersistableBusinessObjectBase implements Mut
 	public void setSocialSecurityNumber(String socialSecurityNumber) {
 		this.socialSecurityNumber = socialSecurityNumber;
 	}
-
-    public List<KualiAddress> getKualiAddresses() {
-        return kualiAddresses;
-    }
-
-    public void setKualiAddresses(List<KualiAddress> kualiAddresses) {
-        this.kualiAddresses = kualiAddresses;
-    }
 	
 }

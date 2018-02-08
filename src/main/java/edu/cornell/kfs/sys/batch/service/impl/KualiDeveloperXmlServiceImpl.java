@@ -1,11 +1,10 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
-import edu.cornell.kfs.sys.batch.service.CreateKualiDeveloperXmlService;
-import edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlEntry;
-import edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlListWrapper;
-import edu.cornell.kfs.sys.businessobject.KualiDeveloper;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -20,15 +19,15 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.springframework.util.AutoPopulatingList;
 
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
+import edu.cornell.kfs.sys.batch.service.KualiDeveloperXmlService;
+import edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlEntry;
+import edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlListWrapper;
+import edu.cornell.kfs.sys.businessobject.KualiDeveloper;
 
-public class CreateKualiDeveloperXmlServiceImpl implements CreateKualiDeveloperXmlService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateKualiDeveloperXmlServiceImpl.class);
+public class KualiDeveloperXmlServiceImpl implements KualiDeveloperXmlService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KualiDeveloperXmlServiceImpl.class);
 
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType kualiDeveloperBatchInputFileType;

@@ -1,27 +1,26 @@
 package edu.cornell.kfs.sys.batch;
 
-import edu.cornell.kfs.sys.batch.service.CreateKualiDeveloperXmlService;
-
-import org.kuali.kfs.sys.batch.AbstractStep;
-
 import java.util.Date;
+
+import edu.cornell.kfs.sys.batch.service.KualiDeveloperXmlService;
+import org.kuali.kfs.sys.batch.AbstractStep;
 
 public class KualiDeveloperXmlFileStep extends AbstractStep {
 
-    private CreateKualiDeveloperXmlService createKualiDeveloperXmlService;
+    private KualiDeveloperXmlService kualiDeveloperXmlService;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        createKualiDeveloperXmlService.createKualiDevelopersFromXml();
+        kualiDeveloperXmlService.createKualiDevelopersFromXml();
         return true;
     }
 
-    public CreateKualiDeveloperXmlService getCreateKualiDeveloperXmlService(){
-        return createKualiDeveloperXmlService;
+    public KualiDeveloperXmlService getKualiDeveloperXmlService(){
+        return kualiDeveloperXmlService;
     }
 
-    public void setCreateKualiDeveloperXmlService(CreateKualiDeveloperXmlService createKualiDeveloperXmlService) {
-        this.createKualiDeveloperXmlService = createKualiDeveloperXmlService;
+    public void setKualiDeveloperXmlService(KualiDeveloperXmlService kualiDeveloperXmlService) {
+        this.kualiDeveloperXmlService = kualiDeveloperXmlService;
     }
 
 }

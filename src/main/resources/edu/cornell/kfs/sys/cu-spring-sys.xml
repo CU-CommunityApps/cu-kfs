@@ -89,10 +89,10 @@
         </property>
     </bean>
     <bean id="kualiDeveloperXmlFileStep" class="edu.cornell.kfs.sys.batch.KualiDeveloperXmlFileStep" parent="step">
-        <property name="createKualiDeveloperXmlService" ref="createKualiDeveloperXmlService"/>
+        <property name="kualiDeveloperXmlService" ref="kualiDeveloperXmlService"/>
     </bean>
 
-    <bean id="createKualiDeveloperXmlService" class="edu.cornell.kfs.sys.batch.service.impl.CreateKualiDeveloperXmlServiceImpl">
+    <bean id="kualiDeveloperXmlService" class="edu.cornell.kfs.sys.batch.service.impl.KualiDeveloperXmlServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService"/>
         <property name="kualiDeveloperBatchInputFileType" ref="kualiDeveloperXmlInputFileType"/>
         <property name="fileStorageService" ref="fileStorageService"/>

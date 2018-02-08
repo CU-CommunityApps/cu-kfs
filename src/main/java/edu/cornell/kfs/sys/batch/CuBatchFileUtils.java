@@ -13,9 +13,9 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import com.rsmart.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 
 public class CuBatchFileUtils extends BatchFileUtils {
 
@@ -61,9 +61,6 @@ public class CuBatchFileUtils extends BatchFileUtils {
         }
     }
 
-    /**
-     * Gets the most current file name from a list of dated file names.
-     */
     public static String getMostCurrentFileName(List<String> fileNames, DateTimeService dateTimeService) {
         String mostCurrentFileName = null;
         Date latestDate = null;
@@ -95,9 +92,6 @@ public class CuBatchFileUtils extends BatchFileUtils {
         return mostCurrentFileName;
     }
 
-    /**
-     * Extract the file date from the file name. The file name suffix format is expected to be _yyyymmdd.data
-     */
     private static Date extractDateFromFileName(String inputFileName, DateTimeService dateTimeService) throws ParseException {
         Date date = null;
 
@@ -113,9 +107,6 @@ public class CuBatchFileUtils extends BatchFileUtils {
         return date;
     }
 
-    /**
-     * Clears out associated .done files for the processed data files.
-     */
     public static void removeDoneFiles(List<String> dataFileNames) {
 
         for (String dataFileName : dataFileNames) {
