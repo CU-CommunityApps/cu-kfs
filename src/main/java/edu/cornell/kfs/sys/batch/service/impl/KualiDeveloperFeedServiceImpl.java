@@ -75,12 +75,7 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 			throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
 		}
 	}
-	
-	/**
-	 * Load entries in the CU_KUALI_DEVELOPER table.
-	 * 
-	 * @param kualiDevelopersToLoad
-	 */
+
 	protected void loadDataInDB(List<KualiDeveloper> kualiDevelopersToLoad) {
 	    for (KualiDeveloper kualiDeveloper : kualiDevelopersToLoad) {
 			KualiDeveloper retrievedEntry = (KualiDeveloper) businessObjectService.retrieve(kualiDeveloper);

@@ -1,16 +1,15 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.batch.service.CreateKualiDeveloperXmlService;
 import edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlEntry;
 import edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlListWrapper;
-
 import edu.cornell.kfs.sys.businessobject.KualiDeveloper;
-import org.apache.commons.io.IOUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -21,10 +20,9 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.springframework.util.AutoPopulatingList;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,11 +50,11 @@ public class CreateKualiDeveloperXmlServiceImpl implements CreateKualiDeveloperX
         try {
             LOG.info("processKualiDevelopersFromXml: Started processing kuali developer XML file: " + fileName);
             
-            byte[] fileData = safelyLoadFileBytes(fileName);
+            byte[] fileData = CuBatchFileUtils.safelyLoadFileBytes(fileName);
             KualiDeveloperXmlListWrapper kualiDeveloperXmlList = (KualiDeveloperXmlListWrapper) batchInputFileService.parse(
                     kualiDeveloperBatchInputFileType, fileData);
-            //int documentCount = kualiDeveloperBatchInputFileType.getDocuments().size();
-            //LOG.info("processKualiDevelopersFromXml: Found " + documentCount + " documents to process from file: " + fileName);
+            int developerCount = kualiDeveloperXmlList.getKualiDevelopers().size();
+            LOG.info("processKualiDevelopersFromXml: Found " + developerCount + " documents to process from file: " + fileName);
 
             kualiDeveloperXmlList.getKualiDevelopers().stream().forEach(this::processKualiDeveloperFromXml);
             LOG.info("processKualiDevelopersFromXml: Finished processing kuali developer XML file: " + fileName);
@@ -69,29 +67,23 @@ public class CreateKualiDeveloperXmlServiceImpl implements CreateKualiDeveloperX
         }
     }
 
-    protected byte[] safelyLoadFileBytes(String fileName) {
-        FileInputStream inputStream = null;
-        
-        try {
-            inputStream = new FileInputStream(fileName);
-            return IOUtils.toByteArray(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-        }
-    }
-
     protected void processKualiDeveloperFromXml(KualiDeveloperXmlEntry kualiDeveloperXmlEntry) {
         GlobalVariables.getMessageMap().clearErrorMessages();
         try {
             LOG.info("processKualiDeveloperFromXml: Started processing kuali developer : " + kualiDeveloperXmlEntry.getEmployeeId());
-            KualiDeveloper kualiDeveloper = new KualiDeveloper();
-            kualiDeveloper.setEmployeeId(kualiDeveloperXmlEntry.getEmployeeId());
-            kualiDeveloper.setFirstName(kualiDeveloperXmlEntry.getFirstName());
-            kualiDeveloper.setLastName(kualiDeveloperXmlEntry.getLastName());
-            kualiDeveloper.setPositionName(kualiDeveloperXmlEntry.getPositionName());
-            businessObjectService.save(kualiDeveloper);
+            HashMap<String, String> kualiDeveloperPK = new HashMap<>();
+            kualiDeveloperPK.put("employeeId", kualiDeveloperXmlEntry.getEmployeeId());
+            if (businessObjectService.countMatching(KualiDeveloper.class, kualiDeveloperPK) == 0){
+                KualiDeveloper kualiDeveloper = new KualiDeveloper();
+                kualiDeveloper.setEmployeeId(kualiDeveloperXmlEntry.getEmployeeId());
+                kualiDeveloper.setFirstName(kualiDeveloperXmlEntry.getFirstName());
+                kualiDeveloper.setLastName(kualiDeveloperXmlEntry.getLastName());
+                kualiDeveloper.setPositionName(kualiDeveloperXmlEntry.getPositionName());
+                businessObjectService.save(kualiDeveloper);
+            }
+            else{
+                LOG.warn("processKualiDeveloperFromXml: record for kuali developer " + kualiDeveloperXmlEntry.getEmployeeId() + " already exists");
+            }
             LOG.info("processKualiDeveloperFromXml: Finished processing kuali developer " + kualiDeveloperXmlEntry.getEmployeeId());
         }
         catch (ValidationException ve){
@@ -158,6 +150,10 @@ public class CreateKualiDeveloperXmlServiceImpl implements CreateKualiDeveloperX
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
 }
