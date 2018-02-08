@@ -62,7 +62,6 @@ public class CuFPParameterConstants {
         public static final String DEFAULT_LIABILITY_OBJECT_CODE_PARAMETER_NAME = "DEFAULT_LIABILITY_OBJECT_CODE";
         public static final String DOCUMENT_EXPLANATION_PARAMETER_NAME = "DOCUMENT_EXPLANATION";
         public static final String SINGLE_TRANSACTION_IND_PARAMETER_NAME = "SINGLE_TRANSACTION_IND";
-        public static final String CBCP_REPORT_EMAIL_ADDRESS_PARAMETER_NAME = "CBCP_REPORT_EMAIL_ADDRESS";
     }
 
 }
