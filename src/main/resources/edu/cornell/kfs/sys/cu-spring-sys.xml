@@ -33,7 +33,7 @@
         </property>
 		<property name="jobNames">
             <list merge="true">
-				<value>kualiDeveloperCreationJob</value>
+                <value>kualiDeveloperCreationJob</value>
                 <value>kualiDeveloperXmlCreationJob</value>
 				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>

@@ -37,7 +37,7 @@ public class KualiDeveloperFeedServiceImpl implements KualiDeveloperFeedService 
 		LOG.info("\n Loading data into the database: CU_KUALI_DEVELOPER_T table. \n");
 		loadDataInDB(kualiDeveloperList);
 		return true;
-	}	
+	}
 
 	protected List<KualiDeveloper> readKualiDeveloperFileContents(String fileName) {
 

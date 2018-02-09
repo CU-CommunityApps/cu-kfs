@@ -16,7 +16,6 @@
         </property>
     </bean>
 
-    <!-- Maintenance Section Definitions -->
     <bean id="KualiDeveloperMaintenanceDocument-EditKualiDeveloper" parent="KualiDeveloperMaintenanceDocument-EditKualiDeveloper-parentBean"/>
     <bean id="KualiDeveloperMaintenanceDocument-EditKualiDeveloper-parentBean" abstract="true" parent="MaintainableSectionDefinition">
         <property name="id" value="Edit Kuali Developer"/>
@@ -33,7 +32,6 @@
         </property>
     </bean>
 
-    <!-- workflow attributes -->
     <bean id="KualiDeveloperMaintenanceDocument-workflowAttributes" parent="KualiDeveloperMaintenanceDocument-workflowAttributes-parentBean"/>
     <bean id="KualiDeveloperMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
 

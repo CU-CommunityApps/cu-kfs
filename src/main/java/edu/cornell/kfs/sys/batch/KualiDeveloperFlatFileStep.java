@@ -73,8 +73,7 @@ public class KualiDeveloperFlatFileStep extends AbstractStep {
         return kualiDeveloperFeedService;
     }
 
-    public void setKualiDeveloperFeedService(
-            KualiDeveloperFeedService kualiDeveloperFeedService) {
+    public void setKualiDeveloperFeedService(KualiDeveloperFeedService kualiDeveloperFeedService) {
         this.kualiDeveloperFeedService = kualiDeveloperFeedService;
     }
 

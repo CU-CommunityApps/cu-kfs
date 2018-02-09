@@ -3,9 +3,7 @@ package edu.cornell.kfs.sys.batch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -13,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import com.rsmart.kuali.kfs.sys.KFSConstants;
 
@@ -59,52 +56,6 @@ public class CuBatchFileUtils extends BatchFileUtils {
         } finally {
             IOUtils.closeQuietly(inputStream);
         }
-    }
-
-    public static String getMostCurrentFileName(List<String> fileNames, DateTimeService dateTimeService) {
-        String mostCurrentFileName = null;
-        Date latestDate = null;
-
-        if (fileNames != null) {
-
-            for (String inputFileName : fileNames) {
-                // select only the latest file to be processed;
-                Date date;
-                try {
-                    date = CuBatchFileUtils.extractDateFromFileName(inputFileName, dateTimeService);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-
-                if (latestDate == null) {
-                    latestDate = date;
-                    mostCurrentFileName = inputFileName;
-                }
-                if (latestDate != null) {
-                    if (latestDate.compareTo(date) < 0) {
-                        latestDate = date;
-                        mostCurrentFileName = inputFileName;
-                    }
-                }
-            }
-        }
-
-        return mostCurrentFileName;
-    }
-
-    private static Date extractDateFromFileName(String inputFileName, DateTimeService dateTimeService) throws ParseException {
-        Date date = null;
-
-        if (inputFileName != null) {
-            String dateString = inputFileName.substring(inputFileName.lastIndexOf("_") + 1,
-                    inputFileName.lastIndexOf("."));
-
-            // the date comes in YYYYMMDD format so we change it to MM/DD/YYYY
-            String outputDateString = dateString.substring(4, 6) + "/" + dateString.substring(6) + "/" + dateString.substring(0, 4);
-            date = dateTimeService.convertToDate(outputDateString);
-        }
-
-        return date;
     }
 
     public static void removeDoneFiles(List<String> dataFileNames) {
