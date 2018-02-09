@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp;
 
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
 
 /**
  Portions Modified 04/2016 and Copyright Cornell University
@@ -63,6 +65,11 @@ public class CuFPParameterConstants {
         public static final String DOCUMENT_EXPLANATION_PARAMETER_NAME = "DOCUMENT_EXPLANATION";
         public static final String SINGLE_TRANSACTION_IND_PARAMETER_NAME = "SINGLE_TRANSACTION_IND";
         public static final String CBCP_REPORT_EMAIL_ADDRESS_PARAMETER_NAME = "CBCP_REPORT_EMAIL_ADDRESS";
+    }
+    
+    public static class CreateAccountingDocumentService{
+        public static final String CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME = "CreateAccountingDocumentService";
+        public static final String CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS = "CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS";
     }
 
 }

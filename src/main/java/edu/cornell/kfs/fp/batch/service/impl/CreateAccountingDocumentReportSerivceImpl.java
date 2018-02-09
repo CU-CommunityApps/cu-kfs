@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
@@ -15,6 +16,7 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class CreateAccountingDocumentReportSerivceImpl implements CreateAccountingDocumentReportSerivce {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentReportSerivceImpl.class);
     
     protected ConfigurationService configurationService;
     protected ReportWriterService reportWriterService;
@@ -116,6 +118,28 @@ public class CreateAccountingDocumentReportSerivceImpl implements CreateAccounti
         return MessageFormat.format(pattern, args);
     }
     
+    @Override
+    public void sendReportEmail(String toAddress, String fromAddress) {
+        BodyMailMessage message = new BodyMailMessage();
+        message.setFromAddress(fromAddress);
+        String subject = reportWriterService.getTitle();
+        message.setSubject(subject);
+        message.getToAddresses().add(toAddress);
+        String body = concurBatchUtilityService.getFileContents(reportWriterService.getReportFile().getAbsolutePath());
+        message.setMessage(body);
+
+        boolean htmlMessage = false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
+            LOG.debug("sendEmail, the email subject: " + subject);
+            LOG.debug("sendEmail, the email budy: " + body);
+        }
+        try {
+            emailService.sendMessage(message, htmlMessage);
+        } catch (Exception e) {
+            LOG.error("sendEmail, the email could not be sent", e);
+        }
+    }
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;

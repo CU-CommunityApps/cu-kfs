@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -29,6 +31,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
@@ -40,12 +43,13 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocumentService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentServiceImpl.class);
 
-    private BatchInputFileService batchInputFileService;
-    private BatchInputFileType accountingDocumentBatchInputFileType;
-    private DocumentService documentService;
-    private FileStorageService fileStorageService;
-    private ConfigurationService configurationService;
-    private CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce;
+    protected BatchInputFileService batchInputFileService;
+    protected BatchInputFileType accountingDocumentBatchInputFileType;
+    protected DocumentService documentService;
+    protected FileStorageService fileStorageService;
+    protected ConfigurationService configurationService;
+    protected CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce;
+    protected ParameterService parameterService;
 
     @Override
     public void createAccountingDocumentsFromXml() {
@@ -82,7 +86,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.error("processAccountingDocumentFromXml: Error processing accounting document XML file", e);
         } finally {
             removeDoneFileQuietly(fileName);
-            createAccountingDocumentReportSerivce.generateReport(reportItem);
+            createAndEmailReport(reportItem);
         }
     }
 
@@ -190,6 +194,24 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.error("removeDoneFileQuietly: Could not delete .done file for accounting document XML", e);
         }
     }
+    
+    protected void createAndEmailReport(CreateAccounntingDocumentReportItem reportItem) {
+        createAccountingDocumentReportSerivce.generateReport(reportItem);
+        String toAddress;
+        String fromAddress = getCreateAccountingDocumentReportEmailAddress();
+        if (reportItem.isXmlSuccessfullyLoaded()) {
+            toAddress = reportItem.getReportEmailAddress();
+        } else {
+            toAddress = fromAddress;
+        }
+        createAccountingDocumentReportSerivce.sendReportEmail(toAddress, fromAddress);
+    }
+    
+    protected String getCreateAccountingDocumentReportEmailAddress() {
+        return parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS);
+    }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
@@ -214,6 +236,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     public void setCreateAccountingDocumentReportSerivce(
             CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce) {
         this.createAccountingDocumentReportSerivce = createAccountingDocumentReportSerivce;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }

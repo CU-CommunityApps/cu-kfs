@@ -797,6 +797,7 @@
         <property name="fileStorageService" ref="fileStorageService"/>
         <property name="configurationService" ref="kualiConfigurationService"/>
         <property name="createAccountingDocumentReportSerivce" ref="createAccountingDocumentReportSerivce"/>
+        <property name="parameterService" ref="parameterService"/>
     </bean>
 
     <bean id="accountingXmlDocumentInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
