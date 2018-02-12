@@ -112,6 +112,8 @@ public class CreateAccountingDocumentReportSerivceImpl implements CreateAccounti
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_TYPE), detail.getDocumentType()));
         reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_DESCRIPTION), detail.getDocumentDescription()));
+        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_EXPLANATION), detail.getDocumentExplanation()));
     }
     
     public String fomratString(String pattern, Object... args) {

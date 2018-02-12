@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.document.Document;
@@ -109,6 +108,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         detail.setIndexNumber(accountingXmlDocument.getIndex().intValue());
         detail.setDocumentType(accountingXmlDocument.getDocumentTypeCode());
         detail.setDocumentDescription(accountingXmlDocument.getDescription());
+        detail.setDocumentExplanation(accountingXmlDocument.getExplanation());
         try {
             LOG.info("processAccountingDocumentEntryFromXml: Started processing accounting document of type: "
                     + accountingXmlDocument.getDocumentTypeCode());

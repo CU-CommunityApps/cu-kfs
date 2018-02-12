@@ -4,6 +4,7 @@ public class CreateAccounntingDocumentReportItemDetail {
     private int indexNumber;
     private String documentType;
     private String documentDescription;
+    private String documentExplanation;
     private String documentNumber;
     private String errorMessage;
     private boolean successfullyRouted;
@@ -24,6 +25,12 @@ public class CreateAccounntingDocumentReportItemDetail {
     }
     public void setDocumentDescription(String documentDescription) {
         this.documentDescription = documentDescription;
+    }
+    public String getDocumentExplanation() {
+        return documentExplanation;
+    }
+    public void setDocumentExplanation(String documentExplanation) {
+        this.documentExplanation = documentExplanation;
     }
     public String getDocumentNumber() {
         return documentNumber;

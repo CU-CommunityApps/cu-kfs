@@ -28,4 +28,5 @@ public class CuFPKeyConstants {
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_INDEX_NUMBER = "report.create.accounting.document.shared.index.number";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_TYPE = "report.create.accounting.document.shared.document.type";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_DESCRIPTION = "report.create.accounting.document.shared.document.description";
+    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_EXPLANATION = "report.create.accounting.document.shared.document.explanation";
 }

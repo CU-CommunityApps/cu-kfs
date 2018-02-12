@@ -1,8 +1,5 @@
 package edu.cornell.kfs.fp;
 
-import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
-import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
-
 /**
  Portions Modified 04/2016 and Copyright Cornell University
 
