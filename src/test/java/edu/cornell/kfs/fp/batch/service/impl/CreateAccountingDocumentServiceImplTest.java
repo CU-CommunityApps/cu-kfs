@@ -90,7 +90,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
         createAccountingDocumentService.setConfigurationService(buildMockConfigurationService());
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
-        createAccountingDocumentService.setCreateAccountingDocumentReportServce(new TestCreateAccountingDocumentReportService());
+        createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
         createAccountingDocumentService.setParameterService(buildParameterService());
         
         routedAccountingDocuments = new ArrayList<>();
