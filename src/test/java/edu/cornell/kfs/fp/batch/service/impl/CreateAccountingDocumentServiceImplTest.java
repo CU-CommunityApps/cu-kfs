@@ -52,10 +52,10 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
-import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItem;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
-import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
@@ -90,9 +90,8 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
         createAccountingDocumentService.setConfigurationService(buildMockConfigurationService());
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
-        createAccountingDocumentService.setCreateAccountingDocumentReportSerivce(new TestCreateAccountingDocumentReportSerivce());
-        createAccountingDocumentService.setParameterService(buildParameterervice());
-        
+        createAccountingDocumentService.setCreateAccountingDocumentReportServce(new TestCreateAccountingDocumentReportService());
+        createAccountingDocumentService.setParameterService(buildParameterService());
         
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
@@ -357,14 +356,14 @@ public class CreateAccountingDocumentServiceImplTest {
         return documentService;
     }
     
-    private ParameterService buildParameterervice() {
+    private ParameterService buildParameterService() {
         ParameterService parameterService = EasyMock.createMock(ParameterService.class);
         
         EasyMock.expect(
                 parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS))
-        .andStubAnswer(() -> "kfs-gl@cornell.edu");
+        .andStubAnswer(() -> "kfs-gl_fp@cornell.edu");
         
         EasyMock.replay(parameterService);
         
@@ -491,18 +490,14 @@ public class CreateAccountingDocumentServiceImplTest {
         
     }
     
-    private class TestCreateAccountingDocumentReportSerivce implements CreateAccountingDocumentReportSerivce {
+    private class TestCreateAccountingDocumentReportService implements CreateAccountingDocumentReportService {
 
         @Override
-        public void generateReport(CreateAccounntingDocumentReportItem reportItem) {
-            // TODO Auto-generated method stub
-            
+        public void generateReport(CreateAccountingDocumentReportItem reportItem) {
         }
 
         @Override
         public void sendReportEmail(String toAddress, String fromAddress) {
-            // TODO Auto-generated method stub
-            
         }
         
     }

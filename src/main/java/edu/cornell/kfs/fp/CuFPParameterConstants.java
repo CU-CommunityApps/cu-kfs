@@ -64,7 +64,7 @@ public class CuFPParameterConstants {
         public static final String CBCP_REPORT_EMAIL_ADDRESS_PARAMETER_NAME = "CBCP_REPORT_EMAIL_ADDRESS";
     }
     
-    public static class CreateAccountingDocumentService{
+    public static class CreateAccountingDocumentService {
         public static final String CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME = "CreateAccountingDocumentService";
         public static final String CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS = "CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS";
     }

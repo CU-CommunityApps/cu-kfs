@@ -31,10 +31,10 @@ import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
-import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItem;
-import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItemDetail;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
-import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
@@ -47,7 +47,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     protected DocumentService documentService;
     protected FileStorageService fileStorageService;
     protected ConfigurationService configurationService;
-    protected CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce;
+    protected CreateAccountingDocumentReportService createAccountingDocumentReportService;
     protected ParameterService parameterService;
 
     @Override
@@ -62,7 +62,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
 
     protected void processAccountingDocumentFromXml(String fileName) {
-        CreateAccounntingDocumentReportItem reportItem = new CreateAccounntingDocumentReportItem(fileName);
+        CreateAccountingDocumentReportItem reportItem = new CreateAccountingDocumentReportItem(fileName);
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
             
@@ -102,9 +102,9 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         }
     }
 
-    protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccounntingDocumentReportItem reportItem) {
+    protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItem reportItem) {
         GlobalVariables.getMessageMap().clearErrorMessages();
-        CreateAccounntingDocumentReportItemDetail detail = new CreateAccounntingDocumentReportItemDetail();
+        CreateAccountingDocumentReportItemDetail detail = new CreateAccountingDocumentReportItemDetail();
         detail.setIndexNumber(accountingXmlDocument.getIndex().intValue());
         detail.setDocumentType(accountingXmlDocument.getDocumentTypeCode());
         detail.setDocumentDescription(accountingXmlDocument.getDescription());
@@ -195,8 +195,8 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         }
     }
     
-    protected void createAndEmailReport(CreateAccounntingDocumentReportItem reportItem) {
-        createAccountingDocumentReportSerivce.generateReport(reportItem);
+    protected void createAndEmailReport(CreateAccountingDocumentReportItem reportItem) {
+        createAccountingDocumentReportService.generateReport(reportItem);
         String toAddress;
         String fromAddress = getCreateAccountingDocumentReportEmailAddress();
         if (reportItem.isXmlSuccessfullyLoaded()) {
@@ -204,7 +204,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         } else {
             toAddress = fromAddress;
         }
-        createAccountingDocumentReportSerivce.sendReportEmail(toAddress, fromAddress);
+        createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
     }
     
     protected String getCreateAccountingDocumentReportEmailAddress() {
@@ -233,9 +233,9 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         this.configurationService = configurationService;
     }
 
-    public void setCreateAccountingDocumentReportSerivce(
-            CreateAccountingDocumentReportSerivce createAccountingDocumentReportSerivce) {
-        this.createAccountingDocumentReportSerivce = createAccountingDocumentReportSerivce;
+    public void setCreateAccountingDocumentReportService(
+            CreateAccountingDocumentReportService createAccountingDocumentReportService) {
+        this.createAccountingDocumentReportService = createAccountingDocumentReportService;
     }
 
     public void setParameterService(ParameterService parameterService) {

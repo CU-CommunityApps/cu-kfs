@@ -10,13 +10,13 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
-import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItem;
-import edu.cornell.kfs.fp.batch.CreateAccounntingDocumentReportItemDetail;
-import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportSerivce;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
-public class CreateAccountingDocumentReportSerivceImpl implements CreateAccountingDocumentReportSerivce {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentReportSerivceImpl.class);
+public class CreateAccountingDocumentReportServiceImpl implements CreateAccountingDocumentReportService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentReportServiceImpl.class);
     
     protected ConfigurationService configurationService;
     protected ReportWriterService reportWriterService;
@@ -24,7 +24,7 @@ public class CreateAccountingDocumentReportSerivceImpl implements CreateAccounti
     protected ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
-    public void generateReport(CreateAccounntingDocumentReportItem reportItem) {
+    public void generateReport(CreateAccountingDocumentReportItem reportItem) {
         reportWriterService.initialize();
         if (reportItem.isXmlSuccessfullyLoaded()) {
             generateSummary(reportItem);
@@ -34,42 +34,42 @@ public class CreateAccountingDocumentReportSerivceImpl implements CreateAccounti
             generateSuccessDocumentSection(reportItem.getDocumentsSuccessfullyRouted());
         } else {
             writeFileName(reportItem);
-            reportWriterService.writeMultipleFormattedMessageLines(fomratString(
+            reportWriterService.writeMultipleFormattedMessageLines(formatString(
                     configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_ERROR), 
                     reportItem.getReportItemMessage()));
         }
         reportWriterService.destroy();
     }
     
-    private void generateSummary(CreateAccounntingDocumentReportItem reportItem) {
+    private void generateSummary(CreateAccountingDocumentReportItem reportItem) {
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_SUB_HEADER));
         
         writeFileName(reportItem);
         
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_REPORT_EMAIL), reportItem.getReportEmailAddress()));
         
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_OVERVIEW_FILE), reportItem.getFileOverview()));
         
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENT_PROCESSED), reportItem.getNumberOfDocumentInFile()));
         
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_SUCCESSFULLY_ROUTED), 
                 reportItem.getDocumentsSuccessfullyRouted().size()));
         
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_DOCUMENTS_NOT_SAVED), reportItem.getDocumentsInError().size()));
     }
 
-    protected void writeFileName(CreateAccounntingDocumentReportItem reportItem) {
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+    protected void writeFileName(CreateAccountingDocumentReportItem reportItem) {
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_FILE_NAME), reportItem.getXmlFileName()));
     }
     
-    private void generateErredDocumentSection(List<CreateAccounntingDocumentReportItemDetail> documentsInError) {
+    private void generateErredDocumentSection(List<CreateAccountingDocumentReportItemDetail> documentsInError) {
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_DOCUMENTS_SUB_HEADER));
         if (CollectionUtils.isNotEmpty(documentsInError)) {
@@ -80,7 +80,7 @@ public class CreateAccountingDocumentReportSerivceImpl implements CreateAccounti
         }
     }
     
-    private void generateSuccessDocumentSection(List<CreateAccounntingDocumentReportItemDetail> successDocuments) {
+    private void generateSuccessDocumentSection(List<CreateAccountingDocumentReportItemDetail> successDocuments) {
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ROUTED_DOCUMENTS_SUB_HEADER));
         if (CollectionUtils.isNotEmpty(successDocuments)) {
@@ -91,32 +91,32 @@ public class CreateAccountingDocumentReportSerivceImpl implements CreateAccounti
         }
     }
     
-    private void generateErrorDetail(CreateAccounntingDocumentReportItemDetail detail) {
+    private void generateErrorDetail(CreateAccountingDocumentReportItemDetail detail) {
         generateSharedDetails(detail);
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_DOCUMENTS_MESSAGE), detail.getErrorMessage()));
         reportWriterService.writeNewLines(1);
     }
     
-    private void generateSuccessDetail(CreateAccounntingDocumentReportItemDetail detail) {
+    private void generateSuccessDetail(CreateAccountingDocumentReportItemDetail detail) {
         generateSharedDetails(detail);
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ROUTED_DOCUMENTS_DOCUMENT_NUMBER), detail.getDocumentNumber()));
         reportWriterService.writeNewLines(1);
     }
     
-    private void generateSharedDetails(CreateAccounntingDocumentReportItemDetail detail) {
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+    private void generateSharedDetails(CreateAccountingDocumentReportItemDetail detail) {
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_INDEX_NUMBER), detail.getIndexNumber()));
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_TYPE), detail.getDocumentType()));
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_DESCRIPTION), detail.getDocumentDescription()));
-        reportWriterService.writeFormattedMessageLine(fomratString(configurationService.getPropertyValueAsString(
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_EXPLANATION), detail.getDocumentExplanation()));
     }
     
-    public String fomratString(String pattern, Object... args) {
+    public String formatString(String pattern, Object... args) {
         return MessageFormat.format(pattern, args);
     }
     

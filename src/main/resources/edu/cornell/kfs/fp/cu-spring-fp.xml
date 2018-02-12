@@ -796,7 +796,7 @@
         <property name="documentService" ref="documentService"/>
         <property name="fileStorageService" ref="fileStorageService"/>
         <property name="configurationService" ref="kualiConfigurationService"/>
-        <property name="createAccountingDocumentReportSerivce" ref="createAccountingDocumentReportSerivce"/>
+        <property name="createAccountingDocumentReportService" ref="createAccountingDocumentReportService"/>
         <property name="parameterService" ref="parameterService"/>
     </bean>
 
@@ -816,8 +816,8 @@
         <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
     </bean>
     
-    <bean id="createAccountingDocumentReportSerivce" parent="createAccountingDocumentReportSerivce-parentBean" />
-	<bean id="createAccountingDocumentReportSerivce-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentReportSerivceImpl" abstract="true">
+    <bean id="createAccountingDocumentReportService" parent="createAccountingDocumentReportService-parentBean" />
+	<bean id="createAccountingDocumentReportService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentReportServiceImpl" abstract="true">
 		<property name="configurationService" ref="configurationService" />
 		<property name="reportWriterService" ref="createAccountingDocumentReportWriterService" />
 		<property name="emailService" ref="emailService" />

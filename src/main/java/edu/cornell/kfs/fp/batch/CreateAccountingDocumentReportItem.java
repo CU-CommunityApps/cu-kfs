@@ -3,21 +3,21 @@ package edu.cornell.kfs.fp.batch;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateAccounntingDocumentReportItem {
-    
+public class CreateAccountingDocumentReportItem {
+
     private String xmlFileName;
     private boolean xmlSuccessfullyLoaded;
     private String reportEmailAddress;
     private int numberOfDocumentInFile;
     private String reportItemMessage;
     private String fileOverview;
-    private List<CreateAccounntingDocumentReportItemDetail> documentsInError;
-    private List<CreateAccounntingDocumentReportItemDetail> documentsSuccessfullyRouted;
-    
-    public CreateAccounntingDocumentReportItem(String xmlFileName) {
+    private List<CreateAccountingDocumentReportItemDetail> documentsInError;
+    private List<CreateAccountingDocumentReportItemDetail> documentsSuccessfullyRouted;
+
+    public CreateAccountingDocumentReportItem(String xmlFileName) {
         this.xmlFileName = xmlFileName;
-        documentsInError = new ArrayList<CreateAccounntingDocumentReportItemDetail>();
-        documentsSuccessfullyRouted = new ArrayList<CreateAccounntingDocumentReportItemDetail>();
+        documentsInError = new ArrayList<CreateAccountingDocumentReportItemDetail>();
+        documentsSuccessfullyRouted = new ArrayList<CreateAccountingDocumentReportItemDetail>();
     }
 
     public String getXmlFileName() {
@@ -52,11 +52,11 @@ public class CreateAccounntingDocumentReportItem {
         this.numberOfDocumentInFile = numberOfDocumentInFile;
     }
 
-    public List<CreateAccounntingDocumentReportItemDetail> getDocumentsInError() {
+    public List<CreateAccountingDocumentReportItemDetail> getDocumentsInError() {
         return documentsInError;
     }
 
-    public void setDocumentsInError(List<CreateAccounntingDocumentReportItemDetail> documentsInError) {
+    public void setDocumentsInError(List<CreateAccountingDocumentReportItemDetail> documentsInError) {
         this.documentsInError = documentsInError;
     }
 
@@ -68,12 +68,11 @@ public class CreateAccounntingDocumentReportItem {
         this.reportItemMessage = reportItemMessage;
     }
 
-    public List<CreateAccounntingDocumentReportItemDetail> getDocumentsSuccessfullyRouted() {
+    public List<CreateAccountingDocumentReportItemDetail> getDocumentsSuccessfullyRouted() {
         return documentsSuccessfullyRouted;
     }
 
-    public void setDocumentsSuccessfullyRouted(
-            List<CreateAccounntingDocumentReportItemDetail> documentsSuccessfullyRouted) {
+    public void setDocumentsSuccessfullyRouted(List<CreateAccountingDocumentReportItemDetail> documentsSuccessfullyRouted) {
         this.documentsSuccessfullyRouted = documentsSuccessfullyRouted;
     }
 
