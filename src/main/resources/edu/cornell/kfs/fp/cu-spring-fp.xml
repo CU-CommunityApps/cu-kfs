@@ -796,6 +796,8 @@
         <property name="documentService" ref="documentService"/>
         <property name="fileStorageService" ref="fileStorageService"/>
         <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="createAccountingDocumentReportService" ref="createAccountingDocumentReportService"/>
+        <property name="parameterService" ref="parameterService"/>
     </bean>
 
     <bean id="accountingXmlDocumentInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
@@ -812,6 +814,20 @@
     <bean id="accountingXmlDocumentDownloadAttachmentService" class="edu.cornell.kfs.fp.batch.service.impl.AccountingXmlDocumentDownloadAttachmentServiceImpl">
         <property name="attachmentService" ref="attachmentService"/>
         <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
+    </bean>
+    
+    <bean id="createAccountingDocumentReportService" parent="createAccountingDocumentReportService-parentBean" />
+	<bean id="createAccountingDocumentReportService-parentBean" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentReportServiceImpl" abstract="true">
+		<property name="configurationService" ref="configurationService" />
+		<property name="reportWriterService" ref="createAccountingDocumentReportWriterService" />
+		<property name="emailService" ref="emailService" />
+		<property name="concurBatchUtilityService" ref="concurBatchUtilityService" />
+	</bean>
+    
+    <bean id="createAccountingDocumentReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
+    	<property name="filePath" value="${reports.directory}/fp" />
+    	<property name="fileNamePrefix" value="create_accounting_document_report_" />
+    	<property name="title" value="Create Accounting Document Job Report File" />
     </bean>
 
     <bean id="AccountingDocumentGenerator_DI" class="edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator">
