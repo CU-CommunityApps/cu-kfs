@@ -1,12 +1,12 @@
-/*
+/**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
  * Copyright 2005-2017 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,268 +28,241 @@ import org.kuali.rice.location.framework.country.CountryEbo;
 import java.sql.Date;
 import java.util.List;
 
-
 /**
  * Interface for Purchasing-Accounts Payable Documents.
  */
 public interface PurchasingAccountsPayableDocument extends AccountingDocument, PurapItemOperations {
 
     /**
-     * Returns true if posting year on document is set to use NEXT fiscal year. If set to anything besides NEXT, then return false.
-     *
-     * @return boolean
+     * @return true if posting year on document is set to use NEXT fiscal year. If set to anything besides NEXT, then
+     *         return false.
      */
-    public boolean isPostingYearNext();
+    boolean isPostingYearNext();
 
     /**
-     * Returns true if posting year on document is set to use PRIOR fiscal year. If set to anything besides PRIOR, then return false.
-     *
-     * @return boolean
+     * @return true if posting year on document is set to use PRIOR fiscal year. If set to anything besides PRIOR, then
+     *         return false.
      */
-    public boolean isPostingYearPrior();
+    boolean isPostingYearPrior();
 
     /**
-     * If posting year on document is set to use NEXT fiscal year, then return NEXT. If set to anything besides NEXT, then return
-     * CURRENT fiscal year.  This is assuming that the system does not allow the user to set a posting year beyond NEXT.
-     *
-     * @return Integer
+     * @return If posting year on document is set to use NEXT fiscal year, then return NEXT. If set to anything besides
+     *         NEXT, then return CURRENT fiscal year.  This is assuming that the system does not allow the user to set
+     *         a posting year beyond NEXT.
      */
-    public Integer getPostingYearNextOrCurrent();
+    Integer getPostingYearNextOrCurrent();
 
     /**
-     * Returns the Item Class.
-     *
      * @return the Item Class.
      */
     @Override
-    public Class getItemClass();
+    Class getItemClass();
 
     /**
-     * Returns the source of this Purchasing Accounts Payable Document if exists.
-     *
      * @return the source of this document if exists, else null.
      */
-    public PurchasingAccountsPayableDocument getPurApSourceDocumentIfPossible();
+    PurchasingAccountsPayableDocument getPurApSourceDocumentIfPossible();
 
     /**
-     * Returns the label of the source of this Purchasing Accounts Payable Document if exists.
-     *
      * @return the label of the document source if exists, else null.
      */
-    public String getPurApSourceDocumentLabelIfPossible();
+    String getPurApSourceDocumentLabelIfPossible();
 
     /**
-     * Returns true if this document is stopped in the specified route node.
-     *
-     * @param nodeDetails the node details of the specified node.
+     * @param nodeName the name of the specified node.
      * @return true if this document is stopped in the specified route node.
      */
-    public boolean isDocumentStoppedInRouteNode(String nodeName);
+    boolean isDocumentStoppedInRouteNode(String nodeName);
 
     /**
      * Adds the specified item to this document.
      *
      * @param item the specified item to add.
      */
-    public void addItem(PurApItem item);
+    void addItem(PurApItem item);
 
     /**
      * Deletes the specified item from this document.
      *
-     * @param item the specified item to delete.
+     * @param lineNum the specified item to delete.
      */
-    public void deleteItem(int lineNum);
+    void deleteItem(int lineNum);
 
     /**
      * Renumbers the item starting from the specified index.
      *
      * @param start the index of the starting item to be renumbered.
      */
-    public void renumberItems(int start);
+    void renumberItems(int start);
 
     /**
-     * Swaps the specified two items based on their item line numbers (which are one higher than the item positions in the list).
+     * Swaps the specified two items based on their item line numbers (which are one higher than the item positions in
+     * the list).
      *
      * @param position1 the position of the first item
      * @param position2 the position of the second item
      */
-    public void itemSwap(int position1, int position2);
+    void itemSwap(int position1, int position2);
 
     /**
-     * Determines the item line position if the user did not specify the line number on an above the line items before clicking on
-     * the add button. It subtracts the number of the below the line items on the list with the total item list size.
+     * Determines the item line position if the user did not specify the line number on an above the line items before
+     * clicking on the add button. It subtracts the number of the below the line items on the list with the total item
+     * list size.
      *
      * @return the item line position of the last (highest) line number of above the line items.
      */
-    public int getItemLinePosition();
+    int getItemLinePosition();
 
     /**
-     * Gets the item at the specified index.
-     *
      * @param pos the specified index.
      * @return the item at the specified index.
      */
     @Override
-    public PurApItem getItem(int pos);
+    PurApItem getItem(int pos);
 
     /**
-     * Gets all below the line item types.
-     *
-     * @return Returns a list of below the line item types.
+     * @return a list of below the line item types.
      */
-    public String[] getBelowTheLineTypes();
+    String[] getBelowTheLineTypes();
 
     /**
-     * Computes the total dollar amount of all items.
-     *
      * @return the total dollar amount of all items.
      */
-    public KualiDecimal getTotalDollarAmount();
+    KualiDecimal getTotalDollarAmount();
 
     /**
-     * Sets the total dollar amount to the specified amount.
-     *
-     * @param the specified total amount.
+     * @param totalDollarAmount the specified total dollar amount to set.
      */
-    public void setTotalDollarAmount(KualiDecimal totalDollarAmount);
+    void setTotalDollarAmount(KualiDecimal totalDollarAmount);
 
     /**
-     * Computes the total dollar amount with the specified item types excluded.
-     *
      * @param excludedTypes the types of items to be excluded.
      * @return the total dollar amount with the specified item types excluded.
      */
-    public KualiDecimal getTotalDollarAmountAllItems(String[] excludedTypes);
+    KualiDecimal getTotalDollarAmountAllItems(String[] excludedTypes);
 
-    public KualiDecimal getTotalDollarAmountAboveLineItems();
+    KualiDecimal getTotalDollarAmountAboveLineItems();
+
     /**
-     * Computes the pre tax total dollar amount of all items.
-     *
      * @return the pre tax total dollar amount of all items.
      */
-    public KualiDecimal getTotalPreTaxDollarAmount();
+    KualiDecimal getTotalPreTaxDollarAmount();
 
     /**
-     * Sets the pre tax total dollar amount to the specified amount.
-     *
-     * @param the specified total amount.
+     * @param totalDollarAmount the specified total dollar amount to set.
      */
-    public void setTotalPreTaxDollarAmount(KualiDecimal totalDollarAmount);
+    void setTotalPreTaxDollarAmount(KualiDecimal totalDollarAmount);
 
     /**
-     * Computes the pre tax total dollar amount with the specified item types excluded.
-     *
      * @param excludedTypes the types of items to be excluded.
      * @return the pre tax total dollar amount with the specified item types excluded.
      */
-    public KualiDecimal getTotalPreTaxDollarAmountAllItems(String[] excludedTypes);
+    KualiDecimal getTotalPreTaxDollarAmountAllItems(String[] excludedTypes);
 
-    public KualiDecimal getTotalTaxAmount();
+    KualiDecimal getTotalTaxAmount();
 
-    public void setTotalTaxAmount(KualiDecimal amount);
+    void setTotalTaxAmount(KualiDecimal amount);
 
-    public KualiDecimal getTotalTaxAmountAllItems(String[] excludedTypes);
+    KualiDecimal getTotalTaxAmountAllItems(String[] excludedTypes);
 
-    public KualiDecimal getTotalTaxAmountAboveLineItems();
+    KualiDecimal getTotalTaxAmountAboveLineItems();
 
-    public KualiDecimal getTotalTaxAmountAboveLineItems(String[] excludedTypes);
+    KualiDecimal getTotalTaxAmountAboveLineItems(String[] excludedTypes);
 
-    public KualiDecimal getTotalTaxAmountWithExclusions(String[] excludedTypes, boolean includeBelowTheLine);
+    KualiDecimal getTotalTaxAmountWithExclusions(String[] excludedTypes, boolean includeBelowTheLine);
 
     /**
-     * Sets vendor address fields based on a given VendorAddress.
-     *
-     * @param vendorAddress
+     * @param vendorAddress vendor address fields to set based on a given VendorAddress.
      */
-    public void templateVendorAddress(VendorAddress vendorAddress);
+    void templateVendorAddress(VendorAddress vendorAddress);
 
-    public CountryEbo getVendorCountry();
+    CountryEbo getVendorCountry();
 
-    public VendorDetail getVendorDetail();
-
-    @Override
-    public List<PurApItem> getItems();
+    VendorDetail getVendorDetail();
 
     @Override
-    public void setItems(List<PurApItem> items);
+    List<PurApItem> getItems();
 
-    public String getVendorNumber();
+    @Override
+    void setItems(List<PurApItem> items);
 
-    public void setVendorNumber(String vendorNumber);
+    String getVendorNumber();
 
-    public Integer getVendorHeaderGeneratedIdentifier();
+    void setVendorNumber(String vendorNumber);
 
-    public void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier);
+    Integer getVendorHeaderGeneratedIdentifier();
 
-    public Integer getVendorDetailAssignedIdentifier();
+    void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier);
 
-    public void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier);
+    Integer getVendorDetailAssignedIdentifier();
 
-    public String getVendorCustomerNumber();
+    void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier);
 
-    public void setVendorCustomerNumber(String vendorCustomerNumber);
+    String getVendorCustomerNumber();
 
-    public Integer getPurapDocumentIdentifier();
+    void setVendorCustomerNumber(String vendorCustomerNumber);
 
-    public void setPurapDocumentIdentifier(Integer identifier);
+    Integer getPurapDocumentIdentifier();
 
-    public String getApplicationDocumentStatus();
+    void setPurapDocumentIdentifier(Integer identifier);
 
-    public void setApplicationDocumentStatus(String appDocStatus);
+    String getApplicationDocumentStatus();
 
-    public String getVendorCityName();
+    void setApplicationDocumentStatus(String appDocStatus);
 
-    public void setVendorCityName(String vendorCityName);
+    String getVendorCityName();
 
-    public String getVendorCountryCode();
+    void setVendorCityName(String vendorCityName);
 
-    public void setVendorCountryCode(String vendorCountryCode);
+    String getVendorCountryCode();
 
-    public String getVendorLine1Address();
+    void setVendorCountryCode(String vendorCountryCode);
 
-    public void setVendorLine1Address(String vendorLine1Address);
+    String getVendorLine1Address();
 
-    public String getVendorLine2Address();
+    void setVendorLine1Address(String vendorLine1Address);
 
-    public void setVendorLine2Address(String vendorLine2Address);
+    String getVendorLine2Address();
 
-    public String getVendorName();
+    void setVendorLine2Address(String vendorLine2Address);
 
-    public void setVendorName(String vendorName);
+    String getVendorName();
 
-    public String getVendorPostalCode();
+    void setVendorName(String vendorName);
 
-    public void setVendorPostalCode(String vendorPostalCode);
+    String getVendorPostalCode();
 
-    public String getVendorStateCode();
+    void setVendorPostalCode(String vendorPostalCode);
 
-    public void setVendorStateCode(String vendorStateCode);
+    String getVendorStateCode();
 
-    public String getVendorAddressInternationalProvinceName();
+    void setVendorStateCode(String vendorStateCode);
 
-    public void setVendorAddressInternationalProvinceName(String vendorAddressInternationalProvinceName);
+    String getVendorAddressInternationalProvinceName();
 
-    public Integer getAccountsPayablePurchasingDocumentLinkIdentifier();
+    void setVendorAddressInternationalProvinceName(String vendorAddressInternationalProvinceName);
 
-    public void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier);
+    Integer getAccountsPayablePurchasingDocumentLinkIdentifier();
 
-    public Integer getVendorAddressGeneratedIdentifier();
+    void setAccountsPayablePurchasingDocumentLinkIdentifier(Integer accountsPayablePurchasingDocumentLinkIdentifier);
 
-    public void setVendorAddressGeneratedIdentifier(Integer vendorAddressGeneratedIdentifier);
+    Integer getVendorAddressGeneratedIdentifier();
 
-    public boolean isUseTaxIndicator();
+    void setVendorAddressGeneratedIdentifier(Integer vendorAddressGeneratedIdentifier);
 
-    public void setUseTaxIndicator(boolean useTaxIndicator);
+    boolean isUseTaxIndicator();
 
-    public void fixItemReferences();
+    void setUseTaxIndicator(boolean useTaxIndicator);
 
-    public Date getTransactionTaxDate();
+    void fixItemReferences();
 
-    public PurApItem getTradeInItem();
+    Date getTransactionTaxDate();
 
-    public KualiDecimal getTotalDollarAmountForTradeIn();
+    PurApItem getTradeInItem();
 
-    public List<PurApItem> getTradeInItems();
+    KualiDecimal getTotalDollarAmountForTradeIn();
+
+    List<PurApItem> getTradeInItems();
 
     /**
      * Always returns true.
@@ -297,50 +270,39 @@ public interface PurchasingAccountsPayableDocument extends AccountingDocument, P
      *
      * @return true.
      */
-    public boolean getIsATypeOfPurAPRecDoc();
+    boolean getIsATypeOfPurAPRecDoc();
 
     /**
-     * Determines whether the document is a type of PurchasingDocument.
-     *
      * @return true if the document is a type of PurchasingDocument.
      */
-    public boolean getIsATypeOfPurDoc();
+    boolean getIsATypeOfPurDoc();
 
     /**
-     * Determines whether the document is a type of PurchseOrderDocument (including its subclass documents).
-     *
-     * @return true if the document is a type of PurchseOrderDocument.
+     * @return true if the document is a type of PurchaseOrderDocument (including its subclass documents).
      */
-    public boolean getIsATypeOfPODoc();
+    boolean getIsATypeOfPODoc();
 
     /**
-     * Determines whether the document is a PurchaseOrderDocument (excluding its subclass documents).
-     *
-     * @return true if the document is a PurchaseOrderDocument.
+     * @return true if the document is a PurchaseOrderDocument (excluding its subclass documents).
      */
-    public boolean getIsPODoc();
+    boolean getIsPODoc();
 
     /**
-     * Determines whether the document is a RequisitionDocument.
-     *
      * @return true if the document is a RequisitionDocument.
      */
-    public boolean getIsReqsDoc();
+    boolean getIsReqsDoc();
 
     /**
-     * Determines whether the inquiry links should be rendered
-     * for Object Code and Sub Object Code.
-     *
-     * @return
+     * @return whether the inquiry links should be rendered for Object Code and Sub Object Code.
      */
-    public boolean isInquiryRendered();
+    boolean isInquiryRendered();
 
-    public boolean shouldGiveErrorForEmptyAccountsProration();
-    
-    public boolean isCalculated();
-    public void setCalculated(boolean calculated);
-    
+    boolean shouldGiveErrorForEmptyAccountsProration();
+
+    boolean isCalculated();
+
+    void setCalculated(boolean calculated);
+
     // KFSUPGRADE-346
-    public boolean isSensitive();
-
+    boolean isSensitive();
 }
