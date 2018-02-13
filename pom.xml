@@ -22,7 +22,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2017-09-21</kfs.version>
+        <kfs.version>2017-10-19</kfs.version>
         <rice.version>2.6.1</rice.version>
         <cynergy.version>2.6.1</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
@@ -351,6 +351,10 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.json</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -573,6 +577,10 @@
                     <groupId>xapool</groupId>
                     <artifactId>xapool</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.json</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -631,8 +639,20 @@
                     <artifactId>commons-logging-api</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.ow2.spec.ee</groupId>
+                    <artifactId>ow2-jta-1.1-spec</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>avalon-framework</groupId>
+                    <artifactId>avalon-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.objectweb.howl</groupId>
+                    <artifactId>howl</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
