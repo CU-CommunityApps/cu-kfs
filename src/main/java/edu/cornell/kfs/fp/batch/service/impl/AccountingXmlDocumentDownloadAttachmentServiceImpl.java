@@ -36,6 +36,11 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     @Override
     public Attachment createAttachmentFromBackupLink(Document document,
             AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
+        if (StringUtils.isBlank(accountingXmlDocumentBackupLink.getCredentialGroupCode())) {
+            LOG.error("createAttachmentFromBackupLink, the Credential Group Code is blank");
+            throw new IOException("Unable to download attachment with blank Credential Group Code: " + accountingXmlDocumentBackupLink.getLinkUrl());
+        }
+        
         byte[] formFile = downloadByteArray(accountingXmlDocumentBackupLink);
         
         if (formFile.length > 0) {

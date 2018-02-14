@@ -50,7 +50,9 @@
             <BackupDocumentLinks>
                 <BackupLink>
                     <Link>http://www.cornell.edu/index.html</Link>
+                    <FileName>index.html</FileName>
                     <Description>Cornell index page</Description>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
