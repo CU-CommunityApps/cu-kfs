@@ -94,17 +94,50 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
 
     private void populateNewVendorRemittanceAddressAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
+        PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO = null;
         if (singleRemittanceAddressExists(pmwRequestingCompanyDTO)) {
-            PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO = pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().get(0);
-            stgNewVendor.setRemittanceAddressStreet1(pmwRemittanceAddressDTO.getStreet1());
-            stgNewVendor.setRemittanceAddressStreet2(pmwRemittanceAddressDTO.getStreet2());
-            stgNewVendor.setRemittanceAddressCity(pmwRemittanceAddressDTO.getCity());
-            stgNewVendor.setRemittanceAddressState(pmwRemittanceAddressDTO.getState());
-            stgNewVendor.setRemittanceAddressCountry(pmwRemittanceAddressDTO.getCountry());
-            stgNewVendor.setRemittanceAddressZipCode(pmwRemittanceAddressDTO.getZipcode());
-            stgNewVendor.setRemittanceAddressValidated(pmwRemittanceAddressDTO.getValidated());
+            LOG.info("populateNewVendorRemittanceAddressAttributes: Single remit address found.");
+            pmwRemittanceAddressDTO = pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().get(0);
+            populateEachNewVendorRemitAddressAttribute(stgNewVendor, pmwRemittanceAddressDTO);
             populateNewVendorBankAccountAttributes(stgNewVendor, pmwRemittanceAddressDTO);
+        } else {
+            pmwRemittanceAddressDTO = determineRemitAddressToUse(pmwRequestingCompanyDTO);
+            if (ObjectUtils.isNotNull(pmwRemittanceAddressDTO)) {
+                LOG.info("populateNewVendorRemittanceAddressAttributes: Remit addresses found to use from MULTIPLE remit addresses.");
+                populateEachNewVendorRemitAddressAttribute(stgNewVendor, pmwRemittanceAddressDTO);
+                populateNewVendorBankAccountAttributes(stgNewVendor, pmwRemittanceAddressDTO);
+            } else {
+                LOG.info("populateNewVendorRemittanceAddressAttributes: No remit addresses found.");
+            }
         }
+    }
+    
+    private PaymentWorksRemittanceAddressDTO determineRemitAddressToUse(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
+        PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO = null;
+        if (multipleRemittanceAddressesExist(pmwRequestingCompanyDTO)) {
+            List<PaymentWorksRemittanceAddressDTO> pmwRemittanceAddressesDTO = pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address();
+            int index = 0;
+            boolean haveNotFoundAddressToUse = true;
+            
+            while (haveNotFoundAddressToUse && (index < pmwRemittanceAddressesDTO.size())) {
+                pmwRemittanceAddressDTO = pmwRemittanceAddressesDTO.get(index);
+                if (bankAccountDataExists(pmwRemittanceAddressDTO)) {
+                    haveNotFoundAddressToUse = false;
+                }
+                index++;
+            }
+        }
+        return pmwRemittanceAddressDTO;
+    }
+    
+    private void populateEachNewVendorRemitAddressAttribute(PaymentWorksVendor stgNewVendor, PaymentWorksRemittanceAddressDTO pmwRemittanceAddressDTO) {
+        stgNewVendor.setRemittanceAddressStreet1(pmwRemittanceAddressDTO.getStreet1());
+        stgNewVendor.setRemittanceAddressStreet2(pmwRemittanceAddressDTO.getStreet2());
+        stgNewVendor.setRemittanceAddressCity(pmwRemittanceAddressDTO.getCity());
+        stgNewVendor.setRemittanceAddressState(pmwRemittanceAddressDTO.getState());
+        stgNewVendor.setRemittanceAddressCountry(pmwRemittanceAddressDTO.getCountry());
+        stgNewVendor.setRemittanceAddressZipCode(pmwRemittanceAddressDTO.getZipcode());
+        stgNewVendor.setRemittanceAddressValidated(pmwRemittanceAddressDTO.getValidated());
     }
     
     private void populateNewVendorTaxClassificationAttributes(PaymentWorksVendor stgNewVendor, PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
@@ -153,9 +186,15 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
     
     private boolean singleRemittanceAddressExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
-        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses()) &&
-                ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address()) &&
-                pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() == 1);
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses())
+                && ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address())
+                && pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() == 1);
+    }
+    
+    private boolean multipleRemittanceAddressesExist(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses())
+                && ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address())
+                && pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() > 1);
     }
 
     private boolean corporateAddressExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {

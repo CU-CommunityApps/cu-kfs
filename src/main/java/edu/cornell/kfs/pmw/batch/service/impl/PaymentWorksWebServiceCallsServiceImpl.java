@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 
+import org.apache.commons.lang.StringUtils;
+
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
@@ -28,6 +30,8 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestsRootDTO
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
+import org.kuali.kfs.krad.util.ObjectUtils;
+
 public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
@@ -40,30 +44,57 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     public List<String> obtainPmwIdentifiersForPendingNewVendorRequests() {
         LOG.info("obtainPmwIdentifiersForPendingNewVendorRequests: Processing started.");
         List<String> pmwNewVendorIdentifiers = new ArrayList<String>();
-        List<PaymentWorksNewVendorRequestDTO> paymentWorksNewVendorRequestDTOs = retrieveAllPaymentWorksPendingNewVendorRequests(buildPaymentWorksPendingNewVendorRequestsURI());
+        List<PaymentWorksNewVendorRequestDTO> paymentWorksNewVendorRequestDTOs = retrieveAllPaymentWorksPendingNewVendorRequests();
         pmwNewVendorIdentifiers = getAllPaymentWorksIdentifiersFromDTO(paymentWorksNewVendorRequestDTOs);
         LOG.info("obtainPmwIdentifiersForPendingNewVendorRequests: Processing completed.");
         return pmwNewVendorIdentifiers;
     }
     
-    private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksPendingNewVendorRequests(URI pendingNewVendorsURI) {
-        LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: pendingNewVendorsURI=" + pendingNewVendorsURI);
+    private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksPendingNewVendorRequests() {
+        Client clientForNewVendorRequestsRootResults = null;
         Response responseForNewVendorRequestsRootResults = null;
         List<PaymentWorksNewVendorRequestDTO> pmwNewVendorIdentifiers = new ArrayList<PaymentWorksNewVendorRequestDTO>();
+        
         try{
-            responseForNewVendorRequestsRootResults = buildXmlOutput(pendingNewVendorsURI);
+            clientForNewVendorRequestsRootResults = constructClientToUseForPagedResponses();
+            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildPaymentWorksPendingNewVendorRequestsURI());
             PaymentWorksNewVendorRequestsRootDTO newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
             LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
-            if (newVendorsRoot.getCount() > 0) {
+            
+            while (thereAreMorePmwVendorIdsToRetrieve(newVendorsRoot)) {
                 pmwNewVendorIdentifiers.addAll(newVendorsRoot.getPmwNewVendorRequestsDTO().getPmwNewVendorRequests()); 
+                closeResponseJustObtained(responseForNewVendorRequestsRootResults);
+                
+                if (additionalPagesOfPmwVendorIdsExist(newVendorsRoot)) {
+                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildURI(newVendorsRoot.getNext()));
+                    newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
+                } else {
+                    newVendorsRoot = null;
+                }
             }
+            
             for (int i=0; i < pmwNewVendorIdentifiers.size(); i++) {
                 LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: PMW-Vendor-id=" + pmwNewVendorIdentifiers.get(i).getId());
             }
+            
             return pmwNewVendorIdentifiers;
+            
         } finally {
+            CURestClientUtils.closeQuietly(clientForNewVendorRequestsRootResults);
             CURestClientUtils.closeQuietly(responseForNewVendorRequestsRootResults);
         }
+    }
+    
+    private boolean thereAreMorePmwVendorIdsToRetrieve(PaymentWorksNewVendorRequestsRootDTO newVendorsRoot) {
+        return ((ObjectUtils.isNotNull(newVendorsRoot)) && (newVendorsRoot.getCount() > 0));
+    }
+    
+    private boolean additionalPagesOfPmwVendorIdsExist(PaymentWorksNewVendorRequestsRootDTO newVendorsRoot) {
+        return (StringUtils.isNotEmpty(newVendorsRoot.getNext()));
+    }
+    
+    private void closeResponseJustObtained(Response responseForNewVendorRequestsRootResults) {
+        CURestClientUtils.closeQuietly(responseForNewVendorRequestsRootResults);
     }
     
     private URI buildPaymentWorksPendingNewVendorRequestsURI() {
@@ -73,6 +104,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                 .append(PaymentWorksWebServiceConstants.STATUS)
                 .append(CUKFSConstants.EQUALS_SIGN)
                 .append(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PENDING.code)).toString();
+        LOG.info("buildPaymentWorksPendingNewVendorRequestsURI: URL =" + URL);
         return buildURI(URL);
     }
     
@@ -184,6 +216,21 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         } finally {
             CURestClientUtils.closeQuietly(client);
         }
+    }
+    
+    private Client constructClientToUseForPagedResponses() {
+        Client client = null;
+        ClientConfig clientConfig = new ClientConfig();
+        client = ClientBuilder.newClient(clientConfig);
+        return client;
+    }
+    
+    private  Response constructXmlResponseToUseForPagedData(Client client, URI uri) {
+        Response response = null;
+        Invocation request = buildXmlClientRequest(client, uri);
+        response = request.invoke();
+        response.bufferEntity();
+        return response;
     }
     
     private URI buildURI(String URL) {
