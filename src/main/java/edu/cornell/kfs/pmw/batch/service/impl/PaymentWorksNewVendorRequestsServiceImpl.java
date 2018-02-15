@@ -230,7 +230,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getRequestingCompanyTaxCountry(), errorMessages) &&
             isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getCorpAddressCountry(), errorMessages) &&
             isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getRemittanceAddressCountry(), errorMessages) &&
-            bankIsoCountryCodeTranslatesToSingleFipsCountryCodeWhenBankDataIsEntered(stgNewVendorRequestDetailToProcess.getBankAddressCountry(), errorMessages)) {
+            bankIsoCountryCodeIsNotProvidedOrTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getBankAddressCountry(), errorMessages)) {
             allCountryChecksPassed = true;
         }
         return allCountryChecksPassed;
@@ -278,11 +278,10 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean bankIsoCountryCodeTranslatesToSingleFipsCountryCodeWhenBankDataIsEntered(String isoCountryCode, List<String> errorMessages) {
+    private boolean bankIsoCountryCodeIsNotProvidedOrTranslatesToSingleFipsCountryCode(String isoCountryCode, List<String> errorMessages) {
         if (ObjectUtils.isNotNull(isoCountryCode)) {
             return isoCountryCodeTranslatesToSingleFipsCountryCode(isoCountryCode, errorMessages);
-        }
-        else {
+        } else {
             LOG.info("bankIsoCountryCodeTranslatesToSingleFipsCountryCodeWhenBankDataIsEntered: Bank Country could not be validated. No bank data provided.");
             return true;
         }

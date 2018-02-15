@@ -68,8 +68,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                 if (additionalPagesOfPmwVendorIdsExist(newVendorsRoot)) {
                     responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildURI(newVendorsRoot.getNext()));
                     newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
-                }
-                else {
+                } else {
                     newVendorsRoot = null;
                 }
             }

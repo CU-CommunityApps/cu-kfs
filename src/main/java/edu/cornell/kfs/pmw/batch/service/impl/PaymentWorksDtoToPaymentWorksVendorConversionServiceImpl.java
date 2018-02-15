@@ -100,15 +100,13 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
             pmwRemittanceAddressDTO = pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().get(0);
             populateEachNewVendorRemitAddressAttribute(stgNewVendor, pmwRemittanceAddressDTO);
             populateNewVendorBankAccountAttributes(stgNewVendor, pmwRemittanceAddressDTO);
-        }
-        else {
+        } else {
             pmwRemittanceAddressDTO = determineRemitAddressToUse(pmwRequestingCompanyDTO);
             if (ObjectUtils.isNotNull(pmwRemittanceAddressDTO)) {
                 LOG.info("populateNewVendorRemittanceAddressAttributes: Remit addresses found to use from MULTIPLE remit addresses.");
                 populateEachNewVendorRemitAddressAttribute(stgNewVendor, pmwRemittanceAddressDTO);
                 populateNewVendorBankAccountAttributes(stgNewVendor, pmwRemittanceAddressDTO);
-            }
-            else {
+            } else {
                 LOG.info("populateNewVendorRemittanceAddressAttributes: No remit addresses found.");
             }
         }
@@ -188,15 +186,15 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
     }
     
     private boolean singleRemittanceAddressExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
-        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses()) &&
-                ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address()) &&
-                pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() == 1);
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses())
+                && ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address())
+                && pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() == 1);
     }
     
     private boolean multipleRemittanceAddressesExist(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
-        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses()) &&
-                ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address()) &&
-                pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() > 1);
+        return (ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses())
+                && ObjectUtils.isNotNull(pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address())
+                && pmwRequestingCompanyDTO.getRemittance_addresses().getRemittance_address().size() > 1);
     }
 
     private boolean corporateAddressExists(PaymentWorksRequestingCompanyDTO pmwRequestingCompanyDTO) {
