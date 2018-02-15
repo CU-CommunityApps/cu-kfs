@@ -9,7 +9,7 @@ import edu.cornell.kfs.sys.util.MockDocumentUtils;
 
 public enum AccountingXmlDocumentBackupLinkFixture {
     CORNELL_INDEX_PAGE("http://www.cornell.edu/index.html", "Cornell index page", "index.html", CuFPTestConstants.TEST_CREDENTIAL_GROUP_CODE),
-    DFA_INDEX_PAGE("https://www.dfa.cornell.edu/index.cfm", "DFA index page", "index.cfm", CuFPTestConstants.OTHER_CREDENTIAL_GROUP_CODE),
+    DFA_INDEX_PAGE("https://www.dfa.cornell.edu/index.cfm", "DFA index page", "index.cfm", CuFPTestConstants.TEST_CREDENTIAL_GROUP_CODE),
     AWS_BILLING_INVOICE("https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&month=01&account=999999999999", "AWS Billing Invoice", 
             "invoice.pdf", CuFPTestConstants.AWS_CREDENTIAL_GROUP_CODE);
 

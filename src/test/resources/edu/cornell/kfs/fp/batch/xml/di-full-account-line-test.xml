@@ -73,7 +73,7 @@
                     <Link>https://www.dfa.cornell.edu/index.cfm</Link>
                     <Description>DFA index page</Description>
                     <FileName>index.cfm</FileName>
-                    <CredentialGroupCode>OTHERGRP</CredentialGroupCode>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>

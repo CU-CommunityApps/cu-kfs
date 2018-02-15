@@ -35,6 +35,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC4,
+                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER)),
     SINGLE_DI_DOCUMENT_TEST(
             BASE_WRAPPER,

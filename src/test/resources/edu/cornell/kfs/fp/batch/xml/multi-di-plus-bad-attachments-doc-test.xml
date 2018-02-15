@@ -95,7 +95,7 @@
                     <Link>https://www.dfa.cornell.edu/index.cfm</Link>
                     <Description>DFA index page</Description>
                     <FileName>index.cfm</FileName>
-                    <CredentialGroupCode>OTHERGRP</CredentialGroupCode>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
@@ -231,7 +231,7 @@
             </TargetAccountingLineList>
             <BackupDocumentLinks>
                 <BackupLink>
-                    <Link>https://www.dfa.cornell.edu/index.cfm</Link>
+                    <Link>https://www.dfa.otheruniversity.edu/index.cfm</Link>
                     <Description>Invalid URL for Cred Group Code</Description>
                     <FileName>index.cfm</FileName>
                     <CredentialGroupCode>TESTGRP</CredentialGroupCode>
@@ -373,6 +373,75 @@
                     <Description>Cornell index page</Description>
                     <FileName>index.html</FileName>
                     <CredentialGroupCode>TESTGRP</CredentialGroupCode>
+                </BackupLink>
+            </BackupDocumentLinks>
+        </Document>
+        <Document>
+            <Index>6</Index>
+            <DocumentType>DI</DocumentType>
+            <Description>auth backup Document</Description>
+            <Explanation>Document Explanation</Explanation>
+            <OrganizationDocumentNumber>OrgDoc6</OrganizationDocumentNumber>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504700</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000718</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504706</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000710</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <BackupDocumentLinks>
+                <BackupLink>
+                    <Link>https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&amp;month=01&amp;account=999999999999</Link>
+                    <Description>AWS Billing Invoice</Description>
+                    <FileName>invoice.pdf</FileName>
+    				<CredentialGroupCode>AWS-Bill</CredentialGroupCode>
+                </BackupLink>
+                <BackupLink>
+                    <Link>http://www.cornell.edu/index.html</Link>
+                    <Description>Invalid group code due to lack of web credentials</Description>
+                    <FileName>index.html</FileName>
+                    <CredentialGroupCode>OTHERGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>

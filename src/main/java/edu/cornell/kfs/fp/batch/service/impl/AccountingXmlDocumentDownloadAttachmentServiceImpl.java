@@ -81,8 +81,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     
     protected boolean isLinkUrlValidForGroupCode(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink, Collection<WebServiceCredential> credentials) {
         if (CollectionUtils.isEmpty(credentials)) {
-            LOG.debug("isLinkUrlValidForGroupCode, no credential values for group code, so is valid");
-            return true;
+            LOG.debug("isLinkUrlValidForGroupCode, no credential values for group code, so is invalid");
+            return false;
         } else {
             for (WebServiceCredential cred : credentials) {
                 if (isCredentialUsedForValidatingBackupLinkURL(cred) && isCredentialBaseURLInBackupLinkURL(accountingXmlDocumentBackupLink, cred)) {

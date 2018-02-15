@@ -12,7 +12,7 @@ import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 
 public enum WebServiceCredentialFixture {
-    TESTGRP_BASE_URL(CuFPTestConstants.TEST_CREDENTIAL_GROUP_CODE, CuFPConstants.CREDENTIAL_BASE_URL + "1", "www.cornell.edu", true),
+    TESTGRP_BASE_URL(CuFPTestConstants.TEST_CREDENTIAL_GROUP_CODE, CuFPConstants.CREDENTIAL_BASE_URL + "1", ".cornell.edu", true),
     TESTGRP_TEST_KEY(CuFPTestConstants.TEST_CREDENTIAL_GROUP_CODE, "testkey", "abc123", true),
     AWS_BILL_BASE_URL(CuFPTestConstants.AWS_CREDENTIAL_GROUP_CODE, CuFPConstants.CREDENTIAL_BASE_URL + "1", "kfsaws-support.cd.cucloud.net", true);
 
