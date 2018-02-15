@@ -66,10 +66,14 @@
                 <BackupLink>
                     <Link>http://www.cornell.edu/index.html</Link>
                     <Description>Cornell index page</Description>
+                    <FileName>index.html</FileName>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
                 <BackupLink>
                     <Link>https://www.dfa.cornell.edu/index.cfm</Link>
                     <Description>DFA index page</Description>
+                    <FileName>index.cfm</FileName>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>

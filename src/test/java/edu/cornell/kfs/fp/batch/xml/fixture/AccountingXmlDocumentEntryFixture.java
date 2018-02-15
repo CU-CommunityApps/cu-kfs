@@ -21,6 +21,10 @@ import edu.cornell.kfs.sys.util.MockDocumentUtils;
 public enum AccountingXmlDocumentEntryFixture {
     BASE_DOCUMENT(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Test Document", "This is only a test document!", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
+    INVALID_DOCUMENT_PLACEHOLDER(1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR,
+            "Placeholder for documents that are expected to fail business rule validation", "ABCD1234",
+            sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
 
     MULTI_DI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -272,8 +276,7 @@ public enum AccountingXmlDocumentEntryFixture {
                 .map(MockDocumentUtils::buildMockNote)
                 .forEach(accountingDocument::addNote);
         backupLinks.stream()
-            .map(s -> s.description)
-            .map(MockDocumentUtils::buildMockNote)
+            .map(AccountingXmlDocumentBackupLinkFixture::toNoteWithAttachment)
             .forEach(accountingDocument::addNote);
     }
 

@@ -28,6 +28,15 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1_BAD,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3)),
+    MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC4,
+                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER)),
     SINGLE_DI_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(

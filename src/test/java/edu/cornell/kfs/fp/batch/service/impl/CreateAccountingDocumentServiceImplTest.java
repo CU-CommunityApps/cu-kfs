@@ -2,10 +2,15 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +21,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +43,7 @@ import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -50,21 +61,24 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
+import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
+import edu.cornell.kfs.sys.util.MockObjectUtils;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 public class CreateAccountingDocumentServiceImplTest {
@@ -84,11 +98,13 @@ public class CreateAccountingDocumentServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(buildMockPersonService());
+        ConfigurationService configurationService = buildMockConfigurationService();
+        createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
+                buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(), configurationService);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
-        createAccountingDocumentService.setConfigurationService(buildMockConfigurationService());
+        createAccountingDocumentService.setConfigurationService(configurationService);
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
         createAccountingDocumentService.setParameterService(buildParameterService());
@@ -140,6 +156,13 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-rules-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_RULES_FIRST_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentsWithBadAttachments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-attachments-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -244,6 +267,14 @@ public class CreateAccountingDocumentServiceImplTest {
     private void assertNoteIsCorrect(Note expectedNote, Note actualNote) {
         assertEquals("Wrong note type", expectedNote.getNoteTypeCode(), actualNote.getNoteTypeCode());
         assertEquals("Wrong note text", expectedNote.getNoteText(), actualNote.getNoteText());
+        if (expectedNote.getAttachment() == null) {
+            assertNull("Note should not have had an attachment", actualNote.getAttachment());
+        } else {
+            Attachment expectedAttachment = expectedNote.getAttachment();
+            Attachment actualAttachment = actualNote.getAttachment();
+            assertNotNull("Note should have had an attachment", actualAttachment);
+            assertEquals("Wrong attachment file name", expectedAttachment.getAttachmentFileName(), actualAttachment.getAttachmentFileName());
+        }
     }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {
@@ -327,6 +358,8 @@ public class CreateAccountingDocumentServiceImplTest {
         
         EasyMock.expect(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
                 .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
+                .andStubReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
         
         EasyMock.replay(configurationService);
         return configurationService;
@@ -384,16 +417,96 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, document.getDocumentHeader().getDocumentDescription());
     }
 
+    private TestAccountingXmlDocumentDownloadAttachmentService buildAccountingXmlDocumentDownloadAttachmentService() throws Exception {
+        TestAccountingXmlDocumentDownloadAttachmentService downloadAttachmentService = new TestAccountingXmlDocumentDownloadAttachmentService();
+        downloadAttachmentService.setAttachmentService(buildMockAttachmentService());
+        downloadAttachmentService.setWebServiceCredentialService(buildMockWebServiceCredentialService());
+        downloadAttachmentService.setClient(buildMockClient());
+        return downloadAttachmentService;
+    }
+
+    private AttachmentService buildMockAttachmentService() throws Exception {
+        return MockObjectUtils.buildMockObjectWithExceptionProneSetup(AttachmentService.class, (attachmentService) -> {
+            Capture<String> fileNameArg = EasyMock.newCapture();
+            EasyMock.expect(
+                    attachmentService.createAttachment(
+                            EasyMock.anyObject(), EasyMock.capture(fileNameArg), EasyMock.anyObject(),
+                            EasyMock.anyInt(), EasyMock.anyObject(), EasyMock.anyObject()))
+                    .andStubAnswer(() -> buildSimpleAttachment(fileNameArg.getValue()));
+        });
+    }
+
+    private Attachment buildSimpleAttachment(String fileName) {
+        Attachment attachment = new Attachment();
+        attachment.setAttachmentFileName(fileName);
+        return attachment;
+    }
+
+    private WebServiceCredentialService buildMockWebServiceCredentialService() {
+        return MockObjectUtils.buildMockObject(WebServiceCredentialService.class, (webServiceCredentialService) -> {
+            Capture<String> groupCodeArg = EasyMock.newCapture();
+            EasyMock.expect(
+                    webServiceCredentialService.getWebServiceCredentialsByGroupCode(EasyMock.capture(groupCodeArg)))
+                    .andStubAnswer(() -> WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCodeArg.getValue()));
+        });
+    }
+
+    private Client buildMockClient() {
+        return MockObjectUtils.buildMockObject(Client.class, (client) -> {
+            EasyMock.expect(client.target(EasyMock.isA(URI.class)))
+                    .andStubAnswer(this::buildMockWebTarget);
+        });
+    }
+
+    private WebTarget buildMockWebTarget() {
+        return MockObjectUtils.buildMockObject(WebTarget.class, (webTarget) -> {
+            EasyMock.expect(webTarget.request())
+                    .andStubAnswer(this::buildMockInvocationBuilder);
+        });
+    }
+
+    private Invocation.Builder buildMockInvocationBuilder() {
+        return MockObjectUtils.buildMockObject(Invocation.Builder.class, (invocationBuilder) -> {
+            EasyMock.expect(invocationBuilder.header(EasyMock.anyObject(), EasyMock.anyObject()))
+                    .andStubReturn(invocationBuilder);
+            EasyMock.expect(invocationBuilder.buildGet())
+                    .andStubAnswer(this::buildMockInvocation);
+        });
+    }
+
+    private Invocation buildMockInvocation() {
+        return MockObjectUtils.buildMockObject(Invocation.class, (invocation) -> {
+            EasyMock.expect(invocation.invoke())
+                    .andStubAnswer(this::buildMockResponse);
+        });
+    }
+
+    private Response buildMockResponse() {
+        return MockObjectUtils.buildMockObject(Response.class, (response) -> {
+            EasyMock.expect(response.getStatus())
+                    .andStubReturn(Response.Status.OK.getStatusCode());
+            EasyMock.expect(response.readEntity(InputStream.class))
+                    .andStubAnswer(this::buildSingleByteInputStream);
+        });
+    }
+
+    private InputStream buildSingleByteInputStream() {
+        return new ByteArrayInputStream(new byte[] {1});
+    }
+
     private static class TestCreateAccountingDocumentServiceImpl extends CreateAccountingDocumentServiceImpl {
         private CuDistributionOfIncomeAndExpenseDocumentGenerator diGenerator;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
 
-        public TestCreateAccountingDocumentServiceImpl(PersonService personService) {
+        public TestCreateAccountingDocumentServiceImpl(
+                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
+                ConfigurationService configurationService) {
             diGenerator = new CuDistributionOfIncomeAndExpenseDocumentGenerator(
                     MockDocumentUtils::buildMockNote, MockDocumentUtils::buildMockAdHocRoutePerson);
             diGenerator.setPersonService(personService);
-            diGenerator.setAccountingXmlDocumentDownloadAttachmentService(new TestAccountingXmlDocumentDownloadAttachmentService());
+            diGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
+            diGenerator.setConfigurationService(configurationService);
             nextDocumentNumber = DOCUMENT_NUMBER_START;
             processingOrderedBaseFileNames = new ArrayList<>();
             
@@ -478,14 +591,17 @@ public class CreateAccountingDocumentServiceImplTest {
         }
     }
     
-    private static class TestAccountingXmlDocumentDownloadAttachmentService implements AccountingXmlDocumentDownloadAttachmentService {
+    private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {
+
+        private Client mockClient;
 
         @Override
-        public Attachment createAttachmentFromBackupLink(Document document,
-                AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
-            Attachment att = new Attachment();
-            att.setAttachmentFileName(accountingXmlDocumentBackupLink.getFileName());
-            return att;
+        protected Client getClient() {
+            return mockClient;
+        }
+
+        public void setClient(Client client) {
+            this.mockClient = client;
         }
         
     }

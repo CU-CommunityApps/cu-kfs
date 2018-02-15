@@ -36,6 +36,11 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     @Override
     public Attachment createAttachmentFromBackupLink(Document document,
             AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
+        if (StringUtils.isBlank(accountingXmlDocumentBackupLink.getCredentialGroupCode())) {
+            LOG.error("createAttachmentFromBackupLink, the Credential Group Code is blank");
+            throw new IOException("Unable to download attachment with blank Credential Group Code: " + accountingXmlDocumentBackupLink.getLinkUrl());
+        }
+        
         byte[] formFile = downloadByteArray(accountingXmlDocumentBackupLink);
         
         if (formFile.length > 0) {
@@ -76,8 +81,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     
     protected boolean isLinkUrlValidForGroupCode(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink, Collection<WebServiceCredential> credentials) {
         if (CollectionUtils.isEmpty(credentials)) {
-            LOG.debug("isLinkUrlValidForGroupCode, no credential values for group code, so is valid");
-            return true;
+            LOG.error("isLinkUrlValidForGroupCode, no credential values for group code, so link is invalid");
+            return false;
         } else {
             for (WebServiceCredential cred : credentials) {
                 if (isCredentialUsedForValidatingBackupLinkURL(cred) && isCredentialBaseURLInBackupLinkURL(accountingXmlDocumentBackupLink, cred)) {
