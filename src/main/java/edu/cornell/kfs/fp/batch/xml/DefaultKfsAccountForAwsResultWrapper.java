@@ -11,12 +11,12 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "result", namespace = StringUtils.EMPTY)
-public class DefaultKfsAccountForAwsResultsWrapper {
+public class DefaultKfsAccountForAwsResultWrapper {
 
     @XmlElement(name = "row", namespace = StringUtils.EMPTY, required = true)
     protected List<DefaultKfsAccountForAws> defaultKfsAccountForAws;
 
-    public DefaultKfsAccountForAwsResultsWrapper() {
+    public DefaultKfsAccountForAwsResultWrapper() {
         defaultKfsAccountForAws = new ArrayList<>();
     }
 

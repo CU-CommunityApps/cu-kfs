@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.DefaultKfsAccountForAwsWrapperFixture;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
-import static org.junit.Assert.assertTrue;
 
 public class DefaultKfsAccountForAwsMarshalTest {
 
@@ -25,7 +25,7 @@ public class DefaultKfsAccountForAwsMarshalTest {
     @Test
     public void verifyDefaultKfsAccountForAwsXmlCanBeMarshalled() throws JAXBException, IOException {
         String marshalledXml = cUMarshalService.marshalObjectToXmlString(
-                DefaultKfsAccountForAwsWrapperFixture.getExampleObject());
+                DefaultKfsAccountForAwsWrapperFixture.generateExpectedDefaultKfsAccountForAwsResultWrapperObject());
         marshalledXml = removeWhitespace(marshalledXml.substring(marshalledXml.indexOf('\n') + 1));
 
         String expectedXmlExample = DefaultKfsAccountForAwsWrapperFixture.getXmlFromExampleFile();
@@ -35,13 +35,14 @@ public class DefaultKfsAccountForAwsMarshalTest {
 
     @Test
     public void verifyDefaultKfsAccountForAwsXmlCanBeUnmarshalled() throws JAXBException, IOException {
-        DefaultKfsAccountForAwsResultsWrapper marshalledObject =
-                cUMarshalService.unmarshalString(DefaultKfsAccountForAwsWrapperFixture.getXmlFromExampleFile(), DefaultKfsAccountForAwsResultsWrapper.class);
+        DefaultKfsAccountForAwsResultWrapper unmarshalledObject =
+                cUMarshalService.unmarshalString(DefaultKfsAccountForAwsWrapperFixture.getXmlFromExampleFile(), DefaultKfsAccountForAwsResultWrapper.class);
 
-        assertTrue(isDefaultKfsAccountForAwsResultsWrapperEqual(marshalledObject, DefaultKfsAccountForAwsWrapperFixture.getExampleObject()));
+        assertTrue(isDefaultKfsAccountForAwsResultsWrapperEqual(unmarshalledObject,
+                DefaultKfsAccountForAwsWrapperFixture.generateExpectedDefaultKfsAccountForAwsResultWrapperObject()));
     }
 
-    private boolean isDefaultKfsAccountForAwsResultsWrapperEqual(DefaultKfsAccountForAwsResultsWrapper a, DefaultKfsAccountForAwsResultsWrapper b) {
+    private boolean isDefaultKfsAccountForAwsResultsWrapperEqual(DefaultKfsAccountForAwsResultWrapper a, DefaultKfsAccountForAwsResultWrapper b) {
         List<DefaultKfsAccountForAws> aList = a.getDefaultKfsAccountForAws();
         List<DefaultKfsAccountForAws> bList = b.getDefaultKfsAccountForAws();
         if (aList.size() != bList.size()) {
@@ -55,12 +56,13 @@ public class DefaultKfsAccountForAwsMarshalTest {
         return true;
     }
 
-    private static boolean listContainsDefaultKfsAccountForAws(List<DefaultKfsAccountForAws> accountList, DefaultKfsAccountForAws accountForAws){
+    private static boolean listContainsDefaultKfsAccountForAws(List<DefaultKfsAccountForAws> accountList, DefaultKfsAccountForAws accountForAws) {
         return accountList.stream().filter(a -> isKfsAccountsEqual(a, accountForAws)).count() > 0;
     }
 
     private static boolean isKfsAccountsEqual(DefaultKfsAccountForAws a, DefaultKfsAccountForAws b) {
-        return a.getUpdatedAt().equals(b.getUpdatedAt()) && a.getAwsAccount().equals(b.getAwsAccount()) &&
+        return a.getUpdatedAt().equals(b.getUpdatedAt()) &&
+                a.getAwsAccount().equals(b.getAwsAccount()) &&
                 a.getKfsDefaultCostCenter().equals(b.getKfsDefaultCostCenter());
     }
 
