@@ -34,7 +34,7 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     }
 
     @Override
-    public String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException, IOException {
+    public String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException {
         LOG.debug("marshalObjectToXMLString, entering");
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

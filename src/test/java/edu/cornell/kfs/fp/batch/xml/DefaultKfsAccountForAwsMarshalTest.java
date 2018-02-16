@@ -57,7 +57,9 @@ public class DefaultKfsAccountForAwsMarshalTest {
     }
 
     private static boolean listContainsDefaultKfsAccountForAws(List<DefaultKfsAccountForAws> accountList, DefaultKfsAccountForAws accountForAws) {
-        return accountList.stream().filter(a -> isKfsAccountsEqual(a, accountForAws)).count() > 0;
+        return accountList.stream()
+                          .filter(a -> isKfsAccountsEqual(a, accountForAws))
+                          .count() > 0;
     }
 
     private static boolean isKfsAccountsEqual(DefaultKfsAccountForAws a, DefaultKfsAccountForAws b) {
