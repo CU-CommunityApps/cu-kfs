@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -29,6 +30,18 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         FileUtils.touch(marshalledXml);
         jaxbMarshaller.marshal(objectToMarshal, marshalledXml);
         LOG.debug("marshalObjectToXML, returning an XML file with the size of " + FileUtils.sizeOf(marshalledXml));
+        return marshalledXml;
+    }
+
+    @Override
+    public String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException {
+        LOG.debug("marshalObjectToXMLString, entering");
+        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        StringWriter stringWriter = new StringWriter();
+        jaxbMarshaller.marshal(objectToMarshal, stringWriter);
+        String marshalledXml = stringWriter.toString();
         return marshalledXml;
     }
     
