@@ -18,4 +18,5 @@ package com.rsmart.kuali.kfs.sys;
 public class KFSConstants {
     public static final String AUDIT_REPORT_ERROR_PREFIX = "E - ";
     public static final String STAGING_DIRECTORY_KEY = "staging.directory";
+    
 }
