@@ -11,9 +11,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import edu.cornell.kfs.sys.xmladapters.AwsStringToJavaDateTimeAdapter;
 
@@ -67,8 +64,8 @@ public class DefaultKfsAccountForAws {
         }
         final DefaultKfsAccountForAws defaultKfsAccountForAws = (DefaultKfsAccountForAws) comparingDefaultKfsAccountForAws;
 
-        return ObjectUtils.equals(defaultKfsAccountForAws.getKfsDefaultAccount(), kfsDefaultAccount) &&
-                ObjectUtils.equals(defaultKfsAccountForAws.getAwsAccount(), awsAccount) &&
+        return StringUtils.equals(defaultKfsAccountForAws.getKfsDefaultAccount(), kfsDefaultAccount) &&
+                StringUtils.equals(defaultKfsAccountForAws.getAwsAccount(), awsAccount) &&
                 ObjectUtils.equals(defaultKfsAccountForAws.getUpdatedAt(), updatedAt);
     }
 
