@@ -8,6 +8,8 @@ import javax.xml.bind.JAXBException;
 public interface CUMarshalService {
     
     File marshalObjectToXML(Object objectToMarshal, String outputFilePath) throws JAXBException, IOException;
+
+    String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException, IOException;
     
     <T> T unmarshalFile(File xmlFile, Class<T> clazz) throws JAXBException;
     
