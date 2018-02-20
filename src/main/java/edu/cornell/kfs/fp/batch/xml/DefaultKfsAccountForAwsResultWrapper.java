@@ -6,7 +6,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -14,18 +16,36 @@ import org.apache.commons.lang.StringUtils;
 public class DefaultKfsAccountForAwsResultWrapper {
 
     @XmlElement(name = "row", namespace = StringUtils.EMPTY, required = true)
-    protected List<DefaultKfsAccountForAws> defaultKfsAccountForAws;
+    protected List<DefaultKfsAccountForAws> defaultKfsAccountsForAws;
 
     public DefaultKfsAccountForAwsResultWrapper() {
-        defaultKfsAccountForAws = new ArrayList<>();
+        defaultKfsAccountsForAws = new ArrayList<>();
     }
 
-    public List<DefaultKfsAccountForAws> getDefaultKfsAccountForAws() {
-        return defaultKfsAccountForAws;
+    public List<DefaultKfsAccountForAws> getDefaultKfsAccountsForAws() {
+        return defaultKfsAccountsForAws;
     }
 
-    public void setDefaultKfsAccountForAws(List<DefaultKfsAccountForAws> defaultKfsAccountForAws) {
-        this.defaultKfsAccountForAws = defaultKfsAccountForAws;
+    public void setDefaultKfsAccountsForAws(List<DefaultKfsAccountForAws> defaultKfsAccountsForAws) {
+        this.defaultKfsAccountsForAws = defaultKfsAccountsForAws;
+    }
+
+    @Override
+    public boolean equals(Object comparingDefaultKfsAccountForAwsWrapper) {
+        if (comparingDefaultKfsAccountForAwsWrapper == null) {
+            return false;
+        }
+        if (!(comparingDefaultKfsAccountForAwsWrapper instanceof DefaultKfsAccountForAwsResultWrapper)) {
+            return false;
+        }
+        final DefaultKfsAccountForAwsResultWrapper defaultKfsAccountForAwsWrapper = (DefaultKfsAccountForAwsResultWrapper) comparingDefaultKfsAccountForAwsWrapper;
+
+        return CollectionUtils.isEqualCollection(defaultKfsAccountForAwsWrapper.getDefaultKfsAccountsForAws(), defaultKfsAccountsForAws);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(defaultKfsAccountsForAws);
     }
 
 }
