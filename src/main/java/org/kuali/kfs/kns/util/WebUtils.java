@@ -67,6 +67,7 @@ import org.kuali.rice.kew.api.action.ActionRequest;
 import org.kuali.rice.kew.api.action.RecipientType;
 import org.kuali.rice.kim.api.role.Role;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -943,7 +944,7 @@ public class WebUtils {
             backLocation = urlCodec.decode(backLocation);
             Pattern pattern = Pattern.compile(ConfigContext.getCurrentContextConfig().getProperty(KRADConstants.BACK_LOCATION_ALLOWED_REGEX));
             if (StringUtils.isNotEmpty(backLocation) && pattern.matcher(backLocation).matches()) {
-                return backLocation;
+                return HtmlUtils.htmlEscape(backLocation);
             }
         } catch (DecoderException de) {
             LOG.debug("Failed to decode backLocation: " + backLocation, de);
