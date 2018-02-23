@@ -16,9 +16,6 @@ public class CuMaintainableXMLConversionServiceImpl extends CynergyMaintainableX
      * This implementation just returns the same XML that was passed in.
      *
      * @see org.kuali.kfs.krad.service.MaintainableXMLConversionService#transformMaintainableNoteXML(java.lang.String)
-     *
-     * @param xml
-     * @return
      */
     @Override
     public String transformMaintainableNoteXML(String xml) {
