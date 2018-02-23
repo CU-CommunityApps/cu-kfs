@@ -229,7 +229,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getRequestingCompanyTaxCountry(), errorMessages) &&
             isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getCorpAddressCountry(), errorMessages) &&
             isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getRemittanceAddressCountry(), errorMessages) &&
-            isoCountryCodeTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getBankAddressCountry(), errorMessages)) {
+            bankIsoCountryCodeIsNotProvidedOrTranslatesToSingleFipsCountryCode(stgNewVendorRequestDetailToProcess.getBankAddressCountry(), errorMessages)) {
             allCountryChecksPassed = true;
         }
         return allCountryChecksPassed;
@@ -247,10 +247,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
         if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getRemittanceAddressCountry())) {
             errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_REMITTANCE_ADDRESS_COUNTRY_BLANK));
-            allRequiredAreNotBlank = false;
-        }
-        if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getBankAddressCountry())) {
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_BANK_ADDRESS_COUNTRY_BLANK));
             allRequiredAreNotBlank = false;
         }
         return allRequiredAreNotBlank;
@@ -278,6 +274,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         else {
             errorMessages.add(MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_ISO_COUNTRY_NOT_FOUND), isoCountryCode));
             return false;
+        }
+    }
+    
+    private boolean bankIsoCountryCodeIsNotProvidedOrTranslatesToSingleFipsCountryCode(String isoCountryCode, List<String> errorMessages) {
+        if (ObjectUtils.isNotNull(isoCountryCode)) {
+            return isoCountryCodeTranslatesToSingleFipsCountryCode(isoCountryCode, errorMessages);
+        } else {
+            LOG.info("bankIsoCountryCodeTranslatesToSingleFipsCountryCodeWhenBankDataIsEntered: Bank Country could not be validated. No bank data provided.");
+            return true;
         }
     }
     
