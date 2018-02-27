@@ -30,6 +30,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
@@ -81,7 +82,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
         } catch (Exception e) {
             reportItem.setXmlSuccessfullyLoaded(false);
-            reportItem.setReportItemMessage(e.getMessage());
+            reportItem.setReportItemMessage(configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESING_ERROR));
             LOG.error("processAccountingDocumentFromXml: Error processing accounting document XML file", e);
         } finally {
             removeDoneFileQuietly(fileName);
