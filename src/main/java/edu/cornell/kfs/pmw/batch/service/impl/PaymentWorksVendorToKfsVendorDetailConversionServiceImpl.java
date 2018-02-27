@@ -616,17 +616,21 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private boolean servicesAreBeingProvided(PaymentWorksVendor pmwVendor) {
         return (StringUtils.isNotBlank(pmwVendor.getServicesProvided())
                 && (StringUtils.equalsIgnoreCase(pmwVendor.getServicesProvided(), PaymentWorksConstants.PaymentWorksGoodsVsServicesOptions.SERVICES.getOptionValueAsString())
-                    | StringUtils.equalsIgnoreCase(pmwVendor.getServicesProvided(), PaymentWorksConstants.PaymentWorksGoodsVsServicesOptions.GOODS_WITH_SERVICES.getOptionValueAsString())));
+                    || StringUtils.equalsIgnoreCase(pmwVendor.getServicesProvided(), PaymentWorksConstants.PaymentWorksGoodsVsServicesOptions.GOODS_WITH_SERVICES.getOptionValueAsString())));
     }
     
     private StringBuilder populateAnswersToServiceQuestions(StringBuilder sbText, PaymentWorksVendor pmwVendor) {
-        sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_CURRENT_PAYROLL_PAID_LABEL)).append(KFSConstants.BLANK_SPACE).append((pmwVendor.isCurrentlyPaidThroughPayroll() ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator());
-        sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_EVER_PAYROLL_PAID_LABEL)).append(KFSConstants.BLANK_SPACE).append((pmwVendor.isEverPaidThroughPayroll() ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator());
-        sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NOT_SOLE_PROPRIETOR_LABEL)).append(KFSConstants.BLANK_SPACE).append((pmwVendor.isSeperateLegalEntityProvidingServices() ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator());
-        sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_RECEIVING_EQUIPMENT_TRAINING_LABEL)).append(KFSConstants.BLANK_SPACE).append((pmwVendor.isCornellProvidedTrainingOrEquipmentRequired() ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator());
-        sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_MARKETING_LABEL)).append(KFSConstants.BLANK_SPACE).append((pmwVendor.isInformalMarketing() ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator());
-        sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_INSURANCE_LABEL)).append(KFSConstants.BLANK_SPACE).append((pmwVendor.isServicesProvidedWithoutInsurance() ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_CURRENT_PAYROLL_PAID_LABEL, pmwVendor.isCurrentlyPaidThroughPayroll());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_EVER_PAYROLL_PAID_LABEL, pmwVendor.isEverPaidThroughPayroll());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NOT_SOLE_PROPRIETOR_LABEL, pmwVendor.isSeperateLegalEntityProvidingServices());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_RECEIVING_EQUIPMENT_TRAINING_LABEL, pmwVendor.isCornellProvidedTrainingOrEquipmentRequired());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_MARKETING_LABEL, pmwVendor.isInformalMarketing());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_INSURANCE_LABEL, pmwVendor.isServicesProvidedWithoutInsurance());
         return sbText;
+    }
+    
+    private StringBuilder appendServicesAnswerToText(StringBuilder sbText, String serviceQuestionLabel, boolean isAnswerAffimative) {
+        return(sbText.append(getConfigurationService().getPropertyValueAsString(serviceQuestionLabel)).append(KFSConstants.BLANK_SPACE).append((isAnswerAffimative ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator()));
     }
     
     private KfsVendorDataWrapper createInitiatorNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
