@@ -5,6 +5,7 @@ import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureU
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -20,7 +21,7 @@ import edu.cornell.kfs.sys.util.MockDocumentUtils;
 @SuppressWarnings("deprecation")
 public enum AccountingXmlDocumentEntryFixture {
     BASE_DOCUMENT(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Test Document", "This is only a test document!", "ABCD1234",
-            sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
+            sourceAccountingLines(), targetAccountingLines(), items(), notes(), adHocRecipients(), backupLinks()),
     INVALID_DOCUMENT_PLACEHOLDER(1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR,
             "Placeholder for documents that are expected to fail business rule validation", "ABCD1234",
@@ -182,6 +183,7 @@ public enum AccountingXmlDocumentEntryFixture {
     public final String organizationDocumentNumber;
     public final List<AccountingXmlDocumentAccountingLineFixture> sourceAccountingLines;
     public final List<AccountingXmlDocumentAccountingLineFixture> targetAccountingLines;
+    public final List<AccountingXmlDocumentItemFixture> items;
     public final List<String> notes;
     public final List<AccountingXmlDocumentAdHocRecipientFixture> adHocRecipients;
     public final List<AccountingXmlDocumentBackupLinkFixture> backupLinks;
@@ -194,9 +196,25 @@ public enum AccountingXmlDocumentEntryFixture {
                 sourceAccountingLines, targetAccountingLines, notes, adHocRecipients, backupLinks);
     }
 
+    private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index,
+            String documentTypeCode, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
+                sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks);
+    }
+
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber,
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks);
+    }
+
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this.index = Long.valueOf(index);
         this.documentTypeCode = documentTypeCode;
@@ -205,6 +223,7 @@ public enum AccountingXmlDocumentEntryFixture {
         this.organizationDocumentNumber = defaultToEmptyStringIfBlank(organizationDocumentNumber);
         this.sourceAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
         this.targetAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
+        this.items = AccountingXmlDocumentFixtureUtils.toImmutableList(items);
         this.notes = AccountingXmlDocumentFixtureUtils.toImmutableList(notes);
         this.adHocRecipients = AccountingXmlDocumentFixtureUtils.toImmutableList(adHocRecipients);
         this.backupLinks = AccountingXmlDocumentFixtureUtils.toImmutableList(backupLinks);
@@ -238,6 +257,7 @@ public enum AccountingXmlDocumentEntryFixture {
         
         populateNumberAndHeaderOnDocument(accountingDocument, documentNumber);
         addAccountingLinesToDocument(accountingDocument);
+        addItemsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
         
@@ -287,6 +307,19 @@ public enum AccountingXmlDocumentEntryFixture {
                 .forEach(adHocPersons::add);
     }
 
+    private void addItemsToDocumentIfNecessary(AccountingDocument accountingDocument) {
+        if (accountingDocument instanceof InternalBillingDocument) {
+            addItemsToInternalBillingDocument((InternalBillingDocument) accountingDocument);
+        }
+    }
+
+    private void addItemsToInternalBillingDocument(InternalBillingDocument internalBillingDocument) {
+        String documentNumber = internalBillingDocument.getDocumentNumber();
+        items.stream()
+                .map((fixture) -> fixture.toInternalBillingItem(documentNumber))
+                .forEach(internalBillingDocument::addItem);
+    }
+
     // The following methods are only meant to improve the setup and readability of this enum's constants.
 
     private static AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines(AccountingXmlDocumentAccountingLineFixture... fixtures) {
@@ -295,6 +328,10 @@ public enum AccountingXmlDocumentEntryFixture {
 
     private static AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines(AccountingXmlDocumentAccountingLineFixture... fixtures) {
         return fixtures;
+    }
+
+    private static AccountingXmlDocumentItemFixture[] items(AccountingXmlDocumentItemFixture... items) {
+        return items;
     }
 
     private static String[] notes(String... values) {

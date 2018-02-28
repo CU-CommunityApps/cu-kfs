@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -91,6 +93,9 @@ public class CreateAccountingDocumentServiceImplTest {
     @SuppressWarnings("deprecation")
     private static final String DI_GENERATOR_BEAN_NAME = CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX
             + KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE;
+    @SuppressWarnings("deprecation")
+    private static final String IB_GENERATOR_BEAN_NAME = CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX
+            + KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING;
 
     private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
@@ -496,20 +501,31 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private static class TestCreateAccountingDocumentServiceImpl extends CreateAccountingDocumentServiceImpl {
         private CuDistributionOfIncomeAndExpenseDocumentGenerator diGenerator;
+        private InternalBillingDocumentGenerator ibGenerator;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService) {
-            diGenerator = new CuDistributionOfIncomeAndExpenseDocumentGenerator(
+            this.diGenerator = buildAccountingDocumentGenerator(
+                    CuDistributionOfIncomeAndExpenseDocumentGenerator::new, personService, downloadAttachmentService, configurationService);
+            this.ibGenerator = buildAccountingDocumentGenerator(
+                    InternalBillingDocumentGenerator::new, personService, downloadAttachmentService, configurationService);
+            this.nextDocumentNumber = DOCUMENT_NUMBER_START;
+            this.processingOrderedBaseFileNames = new ArrayList<>();
+        }
+
+        protected <T extends AccountingDocument, G extends AccountingDocumentGeneratorBase<T>> G buildAccountingDocumentGenerator(
+                BiFunction<Supplier<Note>, Supplier<AdHocRoutePerson>, G> accountingDocumentGeneratorBuilder,
+                PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
+                ConfigurationService configurationService) {
+            G accountingDocumentGenerator = accountingDocumentGeneratorBuilder.apply(
                     MockDocumentUtils::buildMockNote, MockDocumentUtils::buildMockAdHocRoutePerson);
-            diGenerator.setPersonService(personService);
-            diGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
-            diGenerator.setConfigurationService(configurationService);
-            nextDocumentNumber = DOCUMENT_NUMBER_START;
-            processingOrderedBaseFileNames = new ArrayList<>();
-            
+            accountingDocumentGenerator.setPersonService(personService);
+            accountingDocumentGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
+            accountingDocumentGenerator.setConfigurationService(configurationService);
+            return accountingDocumentGenerator;
         }
 
         public List<String> getProcessingOrderedBaseFileNames() {
@@ -551,6 +567,8 @@ public class CreateAccountingDocumentServiceImplTest {
             switch (beanName) {
                 case DI_GENERATOR_BEAN_NAME :
                     return diGenerator;
+                case IB_GENERATOR_BEAN_NAME :
+                    return ibGenerator;
                 default :
                     throw new IllegalStateException("Unrecognized document generator bean name: " + beanName);
             }
@@ -577,6 +595,12 @@ public class CreateAccountingDocumentServiceImplTest {
                 accountingDocument.setTargetAccountingLines(new ArrayList<>());
                 accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
                 accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
+            }
+            
+            if (document instanceof InternalBillingDocument) {
+                InternalBillingDocument internalBillingDocument = (InternalBillingDocument) document;
+                internalBillingDocument.setItems(new ArrayList<>());
+                internalBillingDocument.setNextItemLineNumber(Integer.valueOf(1));
             }
             
             return document;

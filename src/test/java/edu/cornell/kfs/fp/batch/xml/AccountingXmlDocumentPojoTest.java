@@ -103,6 +103,9 @@ public class AccountingXmlDocumentPojoTest {
                 expectedDocument.getTargetAccountingLines(), actualDocument.getTargetAccountingLines(),
                 "targetAccountingLines", this::assertAccountingLineWasUnmarshalledCorrectly);
         assertListOfXmlPojosWasUnmarshalledCorrectly(
+                expectedDocument.getItems(), actualDocument.getItems(),
+                "items", this::assertItemWasUnmarshalledCorrectly);
+        assertListOfXmlPojosWasUnmarshalledCorrectly(
                 expectedDocument.getNotes(), actualDocument.getNotes(),
                 "notes", this::assertNoteWasUnmarshalledCorrectly);
         assertListOfXmlPojosWasUnmarshalledCorrectly(
@@ -132,6 +135,16 @@ public class AccountingXmlDocumentPojoTest {
         assertEquals("Wrong org ref id", expectedLine.getOrgRefId(), actualLine.getOrgRefId());
         assertEquals("Wrong line description", expectedLine.getLineDescription(), actualLine.getLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+    }
+
+    private void assertItemWasUnmarshalledCorrectly(
+            AccountingXmlDocumentItem expectedItem, AccountingXmlDocumentItem actualItem) {
+        assertEquals("Wrong service date", expectedItem.getServiceDate(), actualItem.getServiceDate());
+        assertEquals("Wrong stock number", expectedItem.getStockNumber(), actualItem.getStockNumber());
+        assertEquals("Wrong item description", expectedItem.getDescription(), actualItem.getDescription());
+        assertEquals("Wrong item quantity", expectedItem.getQuantity(), actualItem.getQuantity());
+        assertEquals("Wrong UOM code", expectedItem.getUnitOfMeasureCode(), actualItem.getUnitOfMeasureCode());
+        assertEquals("Wrong item cost", expectedItem.getItemCost(), actualItem.getItemCost());
     }
 
     private void assertNoteWasUnmarshalledCorrectly(
