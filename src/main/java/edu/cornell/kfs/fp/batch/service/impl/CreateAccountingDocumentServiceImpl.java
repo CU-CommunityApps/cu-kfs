@@ -30,6 +30,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
@@ -38,6 +39,7 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocumentService {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentServiceImpl.class);
@@ -81,7 +83,9 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
         } catch (Exception e) {
             reportItem.setXmlSuccessfullyLoaded(false);
-            reportItem.setReportItemMessage(e.getMessage());
+            String reportErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR)
+                    + KFSConstants.BLANK_SPACE + e.getMessage();
+            reportItem.setReportItemMessage(reportErrorMessage);
             LOG.error("processAccountingDocumentFromXml: Error processing accounting document XML file", e);
         } finally {
             removeDoneFileQuietly(fileName);
