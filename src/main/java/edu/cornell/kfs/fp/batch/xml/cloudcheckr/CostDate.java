@@ -16,15 +16,44 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 @XmlRootElement(name = "GroupCostDate", namespace = StringUtils.EMPTY)
 public class CostDate {
     
-    @XmlElement(name = "Date", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Date", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String date;
     
-    @XmlElement(name = "Cost", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Cost", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
     private KualiDecimal cost;
     
-    @XmlElement(name = "UsageQuantity", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "UsageQuantity", namespace = StringUtils.EMPTY)
     private Long usageQuantity;
+    
+    public CostDate() {
+        cost = KualiDecimal.ZERO;
+        usageQuantity = new Long(0);
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public KualiDecimal getCost() {
+        return cost;
+    }
+
+    public void setCost(KualiDecimal cost) {
+        this.cost = cost;
+    }
+
+    public Long getUsageQuantity() {
+        return usageQuantity;
+    }
+
+    public void setUsageQuantity(Long usageQuantity) {
+        this.usageQuantity = usageQuantity;
+    }
 
 }

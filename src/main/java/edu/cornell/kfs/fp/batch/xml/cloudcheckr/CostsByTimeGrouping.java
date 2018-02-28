@@ -13,16 +13,40 @@ import org.apache.commons.lang.StringUtils;
 @XmlRootElement(name = "Grouping", namespace = StringUtils.EMPTY)
 public class CostsByTimeGrouping {
     
-    @XmlElement(name = "GroupName", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "GroupName", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String name;
+    private String groupName;
     
-    @XmlElement(name = "GroupValue", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "GroupValue", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String value;
+    private String groupValue;
     
-    @XmlElement(name = "FriendlyName", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "FriendlyName", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String friendlyName;
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getGroupValue() {
+        return groupValue;
+    }
+
+    public void setGroupValue(String groupValue) {
+        this.groupValue = groupValue;
+    }
+
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
 
 }
