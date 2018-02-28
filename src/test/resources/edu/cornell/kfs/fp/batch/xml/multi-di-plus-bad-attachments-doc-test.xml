@@ -504,7 +504,7 @@
                     <Link>https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&amp;month=01&amp;account=999999999999</Link>
                     <Description>AWS Billing Invoice</Description>
                     <FileName>invoice.pdf</FileName>
-    				<CredentialGroupCode></CredentialGroupCode>
+                    <CredentialGroupCode></CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
