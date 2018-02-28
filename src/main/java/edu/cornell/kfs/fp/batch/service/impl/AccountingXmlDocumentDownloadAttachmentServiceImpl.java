@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -34,34 +35,37 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     protected WebServiceCredentialService webServiceCredentialService;
 
     @Override
-    public Attachment createAttachmentFromBackupLink(Document document,
-            AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
+    public Attachment createAttachmentFromBackupLink(Document document, AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
         if (StringUtils.isBlank(accountingXmlDocumentBackupLink.getCredentialGroupCode())) {
             LOG.error("createAttachmentFromBackupLink, the Credential Group Code is blank");
-            throw new IOException("Unable to download attachment with blank Credential Group Code: " + accountingXmlDocumentBackupLink.getLinkUrl());
+            throw new ValidationException("Unable to download attachment with blank Credential Group Code: " + accountingXmlDocumentBackupLink.getLinkUrl());
         }
-        
-        byte[] formFile = downloadByteArray(accountingXmlDocumentBackupLink);
-        
-        if (formFile.length > 0) {
-            String uploadFileName = accountingXmlDocumentBackupLink.getFileName();
-            String mimeType = URLConnection.guessContentTypeFromName(uploadFileName);
-            int fileSize = (int) formFile.length;
-            String attachmentType = null;
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("createAttachmentFromBackupLink, uploadFileName: " + uploadFileName + " mimeType: " + mimeType
-                    + " fileSize: " + fileSize);
+        try {
+            byte[] formFile = downloadByteArray(accountingXmlDocumentBackupLink);
+
+            if (formFile.length > 0) {
+                String uploadFileName = accountingXmlDocumentBackupLink.getFileName();
+                String mimeType = URLConnection.guessContentTypeFromName(uploadFileName);
+                int fileSize = (int) formFile.length;
+                String attachmentType = null;
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("createAttachmentFromBackupLink, uploadFileName: " + uploadFileName + " mimeType: " + mimeType
+                            + " fileSize: " + fileSize);
+                }
+                InputStream inputStream = new ByteArrayInputStream(formFile);
+
+                Attachment attachment = attachmentService.createAttachment(document, uploadFileName, mimeType, fileSize, inputStream, attachmentType);
+                return attachment;
+
+            } else {
+                LOG.error("createAttachmentFromBackupLink, the form file is NULL");
+                throw new ValidationException("The form file is NULL: " + accountingXmlDocumentBackupLink.getLinkUrl());
             }
-            InputStream inputStream = new ByteArrayInputStream(formFile);
-            Attachment attachment = attachmentService.createAttachment(document, uploadFileName, mimeType, fileSize,
-                    inputStream, attachmentType);
-            return attachment;
-        } else {
-            LOG.error("createAttachmentFromBackupLink, the form file is NULL");
-        }
-        
-        throw new IOException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
+        } catch (IOException e) {
+            LOG.error("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
+            throw new ValidationException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
+        }      
     }
 
     protected byte[] downloadByteArray(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {

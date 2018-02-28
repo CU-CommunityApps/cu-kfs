@@ -145,16 +145,8 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected void addAttachmentToNote(T document, AccountingXmlDocumentBackupLink backupLink, Note note) {
-        try {
-            Attachment attachment = accountingXmlDocumentDownloadAttachmentService.createAttachmentFromBackupLink(document, backupLink);
-            note.setAttachment(attachment);
-        } catch (IOException e) {
-            LOG.error("addAttachmentToNote, unable to create attachment: " + e.getMessage());
-            String message = MessageFormat.format(
-                    configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD), 
-                    backupLink.getLinkUrl());
-            throw new ValidationException(message);
-        }
+        Attachment attachment = accountingXmlDocumentDownloadAttachmentService.createAttachmentFromBackupLink(document, backupLink);
+        note.setAttachment(attachment);      
     }
 
     protected void populateAdHocRecipients(T document, AccountingXmlDocumentEntry documentEntry) {
