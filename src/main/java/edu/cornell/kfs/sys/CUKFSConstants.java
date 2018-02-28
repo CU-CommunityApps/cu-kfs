@@ -17,7 +17,8 @@ public class CUKFSConstants {
     public static final String DELIMITER = ".";
     public static final String DATE_FORMAT_YYYY = "YYYY";
     public static final String DATE_FORMAT_yyyyMMdd = "yyyyMMdd";
-    public static final String DATE_FORMAT_yyyy_MM_dd_hh_mm_ss = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FORMAT_yyyy_MM_dd_HH_mm_ss = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FORMAT_yyyy_MM_dd_hh_mm_ss_am_pm = "yyyy-MM-dd hh:mm:ss";
 
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";

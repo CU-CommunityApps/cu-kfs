@@ -1,15 +1,17 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.sys.xmladapters.CloudcheckrStringToJavaDateTimeAdapter;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -17,8 +19,8 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 public class CostDate {
     
     @XmlElement(name = "Date", namespace = StringUtils.EMPTY)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String date;
+    @XmlJavaTypeAdapter(CloudcheckrStringToJavaDateTimeAdapter.class)
+    private Date date;
     
     @XmlElement(name = "Cost", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
@@ -32,11 +34,11 @@ public class CostDate {
         usageQuantity = new Long(0);
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

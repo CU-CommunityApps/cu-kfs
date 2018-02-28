@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,7 +12,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -42,10 +45,10 @@ public class GroupLevel {
     
     @XmlElementWrapper(name = "NextLevel", namespace = StringUtils.EMPTY)
     @XmlElement(name = "GroupingLevel", namespace = StringUtils.EMPTY)
-    private List<GroupLevel> groupLevel;
+    private List<GroupLevel> nextLevel;
     
     public GroupLevel() {
-        groupLevel = new ArrayList<GroupLevel>();
+        nextLevel = new ArrayList<GroupLevel>();
         cost = KualiDecimal.ZERO;
         usageQuantity = new Long(0);
     }
@@ -98,12 +101,31 @@ public class GroupLevel {
         this.usageQuantity = usageQuantity;
     }
 
-    public List<GroupLevel> getGroupLevel() {
-        return groupLevel;
+    public List<GroupLevel> getNextLevel() {
+        return nextLevel;
     }
 
-    public void setGroupLevel(List<GroupLevel> groupLevel) {
-        this.groupLevel = groupLevel;
+    public void setNextLevel(List<GroupLevel> nextLevel) {
+        this.nextLevel = nextLevel;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        boolean equals = false;
+        if (ObjectUtils.isNotNull(o) && o instanceof GroupLevel) {
+            GroupLevel otherGl = (GroupLevel) o;
+            equals = StringUtils.equals(groupName, otherGl.getGroupName())
+                    && StringUtils.equals(groupValue, otherGl.getGroupValue())
+                    && StringUtils.equals(friendlyName, otherGl.getFriendlyName())
+                    && cost.equals(otherGl.getCost()) && usageQuantity.equals(otherGl.getUsageQuantity())
+                    && CollectionUtils.isEqualCollection(nextLevel, otherGl.getNextLevel());
+        }
+        return equals;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName, groupValue, friendlyName, cost, nextLevel);
     }
 
 }

@@ -24,7 +24,7 @@ public class DefaultKfsAccountForAwsWrapperFixture {
     private static final String[] EXPECTED_KFS_DEFAULT_ACCOUNT_VALUES = { "1719999", "R999999", "L999999" };
     private static final String[] EXPECTED_UPDATED_AT_VALUES = { "2016-04-26 18:43:03", "2017-05-26 19:42:23", "2016-08-05 04:12:56", "2016-04-26 18:43:03" };
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_hh_mm_ss);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
 
     public static DefaultKfsAccountForAwsResultWrapper generateExpectedDefaultKfsAccountForAwsResultWrapper() {
         DefaultKfsAccountForAwsResultWrapper defaultKfsAccountForAwsResultWrapper = new DefaultKfsAccountForAwsResultWrapper();
