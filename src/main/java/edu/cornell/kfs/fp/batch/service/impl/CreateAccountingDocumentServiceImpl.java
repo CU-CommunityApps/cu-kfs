@@ -83,7 +83,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
         } catch (Exception e) {
             reportItem.setXmlSuccessfullyLoaded(false);
-            String reportErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESING_ERROR)
+            String reportErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR)
                     + KFSConstants.BLANK_SPACE + e.getMessage();
             reportItem.setReportItemMessage(reportErrorMessage);
             LOG.error("processAccountingDocumentFromXml: Error processing accounting document XML file", e);
