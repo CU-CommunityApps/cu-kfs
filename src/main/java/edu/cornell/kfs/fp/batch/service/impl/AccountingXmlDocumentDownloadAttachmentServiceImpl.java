@@ -60,7 +60,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
 
             } else {
                 LOG.error("createAttachmentFromBackupLink, the form file is NULL");
-                throw new ValidationException("The form file is NULL: " + accountingXmlDocumentBackupLink.getLinkUrl());
+                throw new ValidationException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (IOException e) {
             LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), e);
