@@ -24,7 +24,7 @@ public class InternalBillingDocumentGenerator
     }
 
     @Override
-    protected Class<? extends InternalBillingDocument> getDocumentClass() {
+    public Class<? extends InternalBillingDocument> getDocumentClass() {
         return InternalBillingDocument.class;
     }
 

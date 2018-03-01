@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -11,7 +9,6 @@ import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -23,7 +20,6 @@ import org.kuali.rice.kew.api.action.ActionRequestType;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 
-import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -50,8 +46,6 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         this.emptyNoteGenerator = emptyNoteGenerator;
         this.emptyAdHocRoutePersonGenerator = emptyAdHocRoutePersonGenerator;
     }
-
-    protected abstract Class<? extends T> getDocumentClass();
 
     @Override
     public T createDocument(Function<Class<? extends Document>, Document> emptyDocumentGenerator, AccountingXmlDocumentEntry documentEntry) {

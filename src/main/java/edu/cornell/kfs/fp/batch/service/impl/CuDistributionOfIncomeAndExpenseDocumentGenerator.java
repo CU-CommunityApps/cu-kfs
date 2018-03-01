@@ -23,7 +23,7 @@ public class CuDistributionOfIncomeAndExpenseDocumentGenerator
     }
 
     @Override
-    protected Class<? extends CuDistributionOfIncomeAndExpenseDocument> getDocumentClass() {
+    public Class<? extends CuDistributionOfIncomeAndExpenseDocument> getDocumentClass() {
         return CuDistributionOfIncomeAndExpenseDocument.class;
     }
 

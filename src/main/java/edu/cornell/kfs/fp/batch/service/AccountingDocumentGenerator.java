@@ -8,5 +8,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 
 public interface AccountingDocumentGenerator<T extends AccountingDocument> {
+    Class<? extends T> getDocumentClass();
+
     T createDocument(Function<Class<? extends Document>, Document> emptyDocumentGenerator, AccountingXmlDocumentEntry documentEntry);
 }
