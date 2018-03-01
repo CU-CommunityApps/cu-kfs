@@ -63,7 +63,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 throw new ValidationException("The form file is NULL: " + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (IOException e) {
-            LOG.error("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
+            LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), e);
             throw new ValidationException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
         }      
     }
@@ -76,7 +76,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 return downloadByteArrayFromWebResource(accountingXmlDocumentBackupLink.getFileName(), request);
             } else {
                 LOG.error("downloadByteArray, the group code isn't valid for the link URL");
-                throw new IOException("The group code isn't valid for the link URL");
+                throw new ValidationException("The group code:" + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " isn't valid for the link URL:" + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (URISyntaxException e) {
             throw new IOException(e.getMessage());
