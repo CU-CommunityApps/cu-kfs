@@ -2,6 +2,8 @@ package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CostDate;
@@ -22,7 +24,11 @@ public enum CostDateFixture {
     CostDateFixture(String dateString, double cost, long usageQuantity) {
         this.cost = new KualiDecimal(cost);
         this.usageQuantity = new Long(usageQuantity);
-        this.date = null;
+        if (StringUtils.isNotBlank(dateString)) {
+            this.date = DateTime.parse(dateString, CloudCheckrFixtureConstants.DATE_FORMATTER).toDate();
+        } else {
+            this.date = null;
+        }
     }
     
     CostDateFixture(String dateString, double cost) {

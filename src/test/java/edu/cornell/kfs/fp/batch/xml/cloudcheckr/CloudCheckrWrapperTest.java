@@ -6,6 +6,7 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,13 +18,17 @@ public class CloudCheckrWrapperTest {
     private static final String BASE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml/";
     
     private File clojudCheckrBillingExmaple;
-
     private CUMarshalService marshalService;
 
     @Before
     public void setUp() throws Exception {
         this.marshalService = new CUMarshalServiceImpl();
         clojudCheckrBillingExmaple = new File (BASE_TEST_FILE_PATH + "cloudcheckr-billing-result.xml");
+    }
+    
+    @After
+    public void tearDown() {
+        this.marshalService = null;
     }
     
     @Test
