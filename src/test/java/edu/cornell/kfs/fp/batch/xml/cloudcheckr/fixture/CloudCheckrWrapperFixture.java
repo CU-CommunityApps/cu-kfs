@@ -1,16 +1,15 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CloudCheckrWrapper;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
 
 public enum CloudCheckrWrapperFixture {
-    BILL_RESULT_1(5101.98026, 980.9246516995, 266.0180803809, 326.9748839, 
+    BILL_RESULT_1(CloudCheckrFixtureConstants.CORNELL_TEST_FILE_TOTAL, CloudCheckrFixtureConstants.CORNELL_TEST_FILE_MAX, 
+            CloudCheckrFixtureConstants.CORNELL_TEST_FILE_MIN, CloudCheckrFixtureConstants.CORNELL_TEST_FILE_AVG, 
             awsAccountFixtureBuilder(AwsAccountFixture.DEPT1, AwsAccountFixture.DEPT2, AwsAccountFixture.DEPT3),
             costsByTimeFixtureBuilder(CostsByTimeFixture.DEPT1_GROUP1, CostsByTimeFixture.DEPT1_GROUP2, CostsByTimeFixture.DEPT1_GROUP3,
                     CostsByTimeFixture.DEPT1_GROUP4, CostsByTimeFixture.DEPT1_GROUP5, CostsByTimeFixture.DEPT2_GROUP1,

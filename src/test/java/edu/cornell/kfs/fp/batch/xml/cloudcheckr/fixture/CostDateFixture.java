@@ -9,13 +9,13 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CostDate;
 
 public enum CostDateFixture {
-    DEPT1_COSTDATE1("2/1/2018 12:00:00 AM", 951.4736250193),
-    DEPT1_COSTDATE2("2/1/2018 12:00:00 AM", 18.7591161721),
-    DEPT1_COSTDATE3("2/1/2018 12:00:00 AM", 4.1275978282),
-    DEPT1_COSTDATE4("2/1/2018 12:00:00 AM", 4.1193331424),
-    DEPT1_COSTDATE5("2/1/2018 12:00:00 AM", 2.4449795375),
-    DEPT2_COSTDATE1("2/1/2018 12:00:00 AM", 266.0180803809),
-    DEPT3_COSTDATE1("2/1/2018 12:00:00 AM", 3855.0375293243);
+    DEPT1_COSTDATE1(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER1_COST),
+    DEPT1_COSTDATE2(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER2_COST),
+    DEPT1_COSTDATE3(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER3_COST),
+    DEPT1_COSTDATE4(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER4_COST),
+    DEPT1_COSTDATE5(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER5_COST),
+    DEPT2_COSTDATE1(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT2_COSTCENTER1_COST),
+    DEPT3_COSTDATE1(CloudCheckrFixtureConstants.DATE_FEB_ONE_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT3_COSTCENTER1_COST);
     
     public final Date date;
     public final KualiDecimal cost;

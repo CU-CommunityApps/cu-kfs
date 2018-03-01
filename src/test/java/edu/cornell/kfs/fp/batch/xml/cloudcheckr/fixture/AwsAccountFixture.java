@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -10,11 +9,14 @@ import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
 
 public enum AwsAccountFixture {
-    DEPT1("AWS-abc (Cornell Dept1)", "Cornell Dept1", 980.9246516995, 
+    DEPT1(CloudCheckrFixtureConstants.DEPARTMENT_1_GROUP_VALUE, CloudCheckrFixtureConstants.DEPARTMENT_1_FRIENDLY_NAME, 
+            CloudCheckrFixtureConstants.DEPARTMENT_1_COST, 
             costCentersBuilder(CostCenterFixture.DEPT_1_COST_CENTER_1, CostCenterFixture.DEPT_1_COST_CENTER_2, 
                     CostCenterFixture.DEPT_1_COST_CENTER_3, CostCenterFixture.DEPT_1_COST_CENTER_4 ,CostCenterFixture.DEPT_1_COST_CENTER_5)),
-    DEPT2("AWS-def (Cornell dept2)", "Cornell dept2", 266.0180803809, costCentersBuilder(CostCenterFixture.DEPT_2_COST_CENTER_1)),
-    DEPT3("AWS-ghi (Cornell dept3)", "Cornell dept3", 3855.0375293243, costCentersBuilder(CostCenterFixture.DEPT_3_COST_CENTER_1));
+    DEPT2(CloudCheckrFixtureConstants.DEPARTMENT_2_GROUP_VALUE, CloudCheckrFixtureConstants.DEPARTMENT_2_FRIENDLY_NAME, 
+            CloudCheckrFixtureConstants.DEPARTMENT_2_COST,  costCentersBuilder(CostCenterFixture.DEPT_2_COST_CENTER_1)),
+    DEPT3(CloudCheckrFixtureConstants.DEPARTMENT_3_GROUP_VALUE, CloudCheckrFixtureConstants.DEPARTMENT_3_FRIENDLY_NAME, 
+            CloudCheckrFixtureConstants.DEPARTMENT_3_COST, costCentersBuilder(CostCenterFixture.DEPT_3_COST_CENTER_1));
     
     public final String groupName;
     public final String groupValue;
@@ -43,11 +45,7 @@ public enum AwsAccountFixture {
         group.setGroupName(groupName);
         group.setGroupValue(groupValue);
         group.setUsageQuantity(usageQuantity);
-        List<GroupLevel> groups = new ArrayList<GroupLevel>();
-        for (CostCenterFixture costCenter : costCenters) {
-            groups.add(costCenter.toGroupLevel());
-        }
-        group.setNextLevel(groups);
+        costCenters.stream().forEach(costCenter -> group.getNextLevel().add(costCenter.toGroupLevel()));
         return group;
     }
     

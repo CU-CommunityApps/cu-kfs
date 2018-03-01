@@ -1,10 +1,8 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CostsByTime;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CostsByTimeGrouping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
 
 public enum CostsByTimeFixture {
@@ -41,12 +39,8 @@ public enum CostsByTimeFixture {
     
     public CostsByTime toCostsByTime() {
         CostsByTime costsByTime = new CostsByTime();
-        for (CostsByTimeGroupingFixture groupFixture : timeGroupings) {
-            costsByTime.getGroupByTimeGroupings().add(groupFixture.toCostsByTimeGrouping());
-        }
-        for (CostDateFixture dateFixture : costDates) {
-            costsByTime.getCostDates().add(dateFixture.toCostDate());
-        }
+        timeGroupings.stream().forEach(group -> costsByTime.getGroupByTimeGroupings().add(group.toCostsByTimeGrouping()));
+        costDates.stream().forEach(costDate -> costsByTime.getCostDates().add(costDate.toCostDate()));
         return costsByTime;
     }
     
