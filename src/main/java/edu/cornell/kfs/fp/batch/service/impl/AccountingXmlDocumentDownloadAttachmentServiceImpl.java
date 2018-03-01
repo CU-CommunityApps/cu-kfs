@@ -80,7 +80,8 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                                 + " isn't valid for the link URL: " + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (URISyntaxException e) {
-            throw new IOException(e.getMessage());
+            LOG.error("downloadByteArray, the URL has an incorrect syntax", e);
+            throw new ValidationException("The URL has an incorrect syntax: " + accountingXmlDocumentBackupLink.getLinkUrl());
         }
     }
     
