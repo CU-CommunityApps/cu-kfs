@@ -11,20 +11,26 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
 
 public enum CloudCheckrWrapperFixture {
     BILL_RESULT_1(5101.98026, 980.9246516995, 266.0180803809, 326.9748839, 
-            awsAccountFixtureBuilder(AwsAccountFixture.DEPT1, AwsAccountFixture.DEPT2, AwsAccountFixture.DEPT3));
+            awsAccountFixtureBuilder(AwsAccountFixture.DEPT1, AwsAccountFixture.DEPT2, AwsAccountFixture.DEPT3),
+            costsByTimeFixtureBuilder(CostsByTimeFixture.DEPT1_GROUP1, CostsByTimeFixture.DEPT1_GROUP2, CostsByTimeFixture.DEPT1_GROUP3,
+                    CostsByTimeFixture.DEPT1_GROUP4, CostsByTimeFixture.DEPT1_GROUP5, CostsByTimeFixture.DEPT2_GROUP1,
+                    CostsByTimeFixture.DEPT3_GROUP1));
     
     public final KualiDecimal total;
     public final KualiDecimal max;
     public final KualiDecimal min;
     public final KualiDecimal average;
     public final List<AwsAccountFixture> awsAccountFixtures;
+    public final List<CostsByTimeFixture> costsByTimeFixtures;
     
-    private CloudCheckrWrapperFixture(double total, double max, double min, double average, AwsAccountFixture[] accountFixtures) {
+    private CloudCheckrWrapperFixture(double total, double max, double min, double average, AwsAccountFixture[] accountFixtureArray, 
+            CostsByTimeFixture[] costsByTimeFixtureArray) {
         this.total = new KualiDecimal(total);
         this.max = new KualiDecimal(max);
         this.min = new KualiDecimal(min);
         this.average = new KualiDecimal(average);
-        awsAccountFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(accountFixtures);
+        awsAccountFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(accountFixtureArray);
+        costsByTimeFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(costsByTimeFixtureArray);
     }
     
     public CloudCheckrWrapper toCloudCheckrWrapper() {
@@ -33,16 +39,17 @@ public enum CloudCheckrWrapperFixture {
         wrapper.setMaximum(max);
         wrapper.setMinimum(min);
         wrapper.setTotal(total);
-        List<GroupLevel> accounts = new ArrayList<GroupLevel>();
-        for (AwsAccountFixture awsAccount : awsAccountFixtures) {
-            accounts.add(awsAccount.toGroupLevel());
-        }
-        wrapper.setCostsByAccounts(accounts);
+        awsAccountFixtures.stream().forEach(awsAccount -> wrapper.getCostsByAccounts().add(awsAccount.toGroupLevel()));;
+        costsByTimeFixtures.stream().forEach(fixture -> wrapper.getCostsByTimes().add(fixture.toCostsByTime()));
         return wrapper;
     }
     
     
     private static AwsAccountFixture[] awsAccountFixtureBuilder(AwsAccountFixture...accountFixtures) {
+        return accountFixtures;
+    }
+    
+    private static CostsByTimeFixture[] costsByTimeFixtureBuilder(CostsByTimeFixture...accountFixtures) {
         return accountFixtures;
     }
 

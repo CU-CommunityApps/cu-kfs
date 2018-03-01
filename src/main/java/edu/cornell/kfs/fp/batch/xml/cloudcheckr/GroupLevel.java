@@ -53,6 +53,18 @@ public class GroupLevel {
         usageQuantity = new Long(0);
     }
     
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("groupName: ").append(groupName);
+        sb.append(" groupValue: ").append(groupValue);
+        sb.append(" friendlyName: ").append(friendlyName);
+        sb.append(" cost: ").append(cost);
+        sb.append(" usageQuantity: ").append(usageQuantity);
+        nextLevel.stream().forEach(level -> sb.append(" nextlevel: ").append(level.toString()).append(", "));
+        return sb.toString();
+    }
+    
     public boolean isAwsAccountGroupLevel() {
         return StringUtils.equals(groupName, CuFPConstants.CLOUDCHECKR.GROUP_LEVEL_AWS_ACCOUNT);
     }
@@ -117,7 +129,8 @@ public class GroupLevel {
             equals = StringUtils.equals(groupName, otherGl.getGroupName())
                     && StringUtils.equals(groupValue, otherGl.getGroupValue())
                     && StringUtils.equals(friendlyName, otherGl.getFriendlyName())
-                    && cost.equals(otherGl.getCost()) && usageQuantity.equals(otherGl.getUsageQuantity())
+                    && Objects.equals(cost, otherGl.getCost())
+                    && Objects.equals(usageQuantity, otherGl.getUsageQuantity())
                     && CollectionUtils.isEqualCollection(nextLevel, otherGl.getNextLevel());
         }
         return equals;

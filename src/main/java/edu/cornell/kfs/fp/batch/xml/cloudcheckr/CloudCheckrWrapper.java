@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
@@ -108,6 +109,9 @@ public class CloudCheckrWrapper {
         sb.append(" maximum: ").append(maximum);
         sb.append(" minimum: ").append(minimum);
         sb.append(" average: ").append(average);
+        sb.append(" costsByAccounts: ").append("[");
+        costsByAccounts.stream().forEach(account -> sb.append("account: (").append(account.toString()).append("), "));
+        costsByTimes.stream().forEach(costtime -> sb.append("costByTime: (").append(costtime.toString()).append("), "));
         return sb.toString();
     }
     
@@ -118,7 +122,8 @@ public class CloudCheckrWrapper {
             CloudCheckrWrapper otherWrapper = (CloudCheckrWrapper) o;
             equals = total.equals(otherWrapper.total) && maximum.equals(otherWrapper.getMaximum())
                     && minimum.equals(otherWrapper.getMinimum()) && average.equals(otherWrapper.getAverage())
-                    && CollectionUtils.isEqualCollection(costsByAccounts, otherWrapper.getCostsByAccounts());
+                    && CollectionUtils.isEqualCollection(costsByAccounts, otherWrapper.getCostsByAccounts())
+                    && CollectionUtils.isEqualCollection(costsByTimes, otherWrapper.getCostsByTimes());
         }
         return equals;
     }

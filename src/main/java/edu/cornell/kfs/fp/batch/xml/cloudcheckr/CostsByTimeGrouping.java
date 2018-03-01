@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -8,6 +10,7 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Grouping", namespace = StringUtils.EMPTY)
@@ -47,6 +50,32 @@ public class CostsByTimeGrouping {
 
     public void setFriendlyName(String friendlyName) {
         this.friendlyName = friendlyName;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("groupName: ").append(groupName);
+        sb.append(" groupValue: ").append(groupValue);
+        sb.append(" friendlyName: ").append(friendlyName);
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        boolean equals = false;
+        if (ObjectUtils.isNotNull(o) && o instanceof CostsByTimeGrouping) {
+            CostsByTimeGrouping otherCostsByTimeGrouping = (CostsByTimeGrouping) o;
+            equals = StringUtils.equals(groupName, otherCostsByTimeGrouping.getGroupName())
+                    && StringUtils.equals(groupValue, otherCostsByTimeGrouping.getGroupValue())
+                    && StringUtils.equals(friendlyName, otherCostsByTimeGrouping.getFriendlyName());
+        }
+        return equals;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupName, groupValue, friendlyName);
     }
 
 }

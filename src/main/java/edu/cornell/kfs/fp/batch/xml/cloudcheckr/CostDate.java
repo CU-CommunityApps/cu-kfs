@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.CloudcheckrStringToJavaDateTimeAdapter;
@@ -56,6 +58,31 @@ public class CostDate {
 
     public void setUsageQuantity(Long usageQuantity) {
         this.usageQuantity = usageQuantity;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("cost: ").append(cost);
+        sb.append(" date: ").append(date);
+        sb.append(" usageQuantity: ").append(usageQuantity);
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        boolean equals = false;
+        if (ObjectUtils.isNotNull(o) && o instanceof CostDate) {
+            CostDate otherCostDate = (CostDate) o;
+            equals = Objects.equals(cost, otherCostDate.getCost())
+                    && Objects.equals(usageQuantity, otherCostDate.getUsageQuantity());
+        }
+        return equals;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, cost, usageQuantity);
     }
 
 }
