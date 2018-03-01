@@ -9,4 +9,5 @@ public class CuFPTestConstants {
     public static final String AWS_CREDENTIAL_GROUP_CODE = "AWS-Bill";
 
     public static final String UOM_EACH = "EA";
+    public static final String UOM_DOZEN = "DZ";
 }

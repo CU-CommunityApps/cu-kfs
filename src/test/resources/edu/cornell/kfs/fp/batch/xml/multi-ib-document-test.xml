@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DocumentWrapper>
+    <CreateDate>02/26/2018</CreateDate>
+    <ReportEmail>cah292@cornell.edu</ReportEmail>
+    <Overview>Example IB XML file</Overview>
+    <DocumentList>
+        <Document>
+            <Index>1</Index>
+            <DocumentType>IB</DocumentType>
+            <Description>Test Document</Description>
+            <Explanation>This is only a test document!</Explanation>
+            <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504700</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Income Line 1</line_description>
+                    <amount>100.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000718</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Income Line 2</line_description>
+                    <amount>50</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504706</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Expense Line 1</line_description>
+                    <amount>100.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000710</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Expense Line 2</line_description>
+                    <amount>50</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <ItemList>
+                <Item>
+                    <service_date>02/10/2018</service_date>
+                    <stock_nbr>1234567</stock_nbr>
+                    <description>Staplers</description>
+                    <quantity>5</quantity>
+                    <uom>EA</uom>
+                    <item_cost>20.00</item_cost>
+                </Item>
+                <Item>
+                    <service_date>02/10/2018</service_date>
+                    <stock_nbr>5555555</stock_nbr>
+                    <description>Headphones</description>
+                    <quantity>1</quantity>
+                    <uom>DZ</uom>
+                    <item_cost>50.00</item_cost>
+                </Item>
+            </ItemList>
+            <NoteList>
+                <Note>
+                    <Description>This is a sample note</Description>
+                </Note>
+                <Note>
+                    <Description>Another note</Description>
+                </Note>
+            </NoteList>
+            <AdhocRecipientList>
+                <Recipient>
+                    <Netid>jdh34</Netid>
+                    <ActionRequested>Approve</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>se12</Netid>
+                    <ActionRequested>FYI</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>ccs1</Netid>
+                    <ActionRequested>Complete</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>nkk4</Netid>
+                    <ActionRequested>Acknowledge</ActionRequested>
+                </Recipient>
+            </AdhocRecipientList>
+            <BackupDocumentLinks>
+                <BackupLink>
+                    <Link>http://www.cornell.edu/index.html</Link>
+                    <Description>Cornell index page</Description>
+                    <FileName>index.html</FileName>
+                    <CredentialGroupCode>GRP01</CredentialGroupCode>
+                </BackupLink>
+            </BackupDocumentLinks>
+        </Document>
+        <Document>
+            <Index>2</Index>
+            <DocumentType>IB</DocumentType>
+            <Description>Second IB Test Document</Description>
+            <Explanation>This is a sample IB document without any item lines.</Explanation>
+            <OrganizationDocumentNumber>Org Doc Num 2</OrganizationDocumentNumber>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504700</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000718</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504706</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000710</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <ItemList>
+            </ItemList>
+        </Document>
+    </DocumentList>
+</DocumentWrapper>

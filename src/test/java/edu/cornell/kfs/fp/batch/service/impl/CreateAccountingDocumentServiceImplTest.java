@@ -578,7 +578,8 @@ public class CreateAccountingDocumentServiceImplTest {
         protected Document getNewDocument(Class<? extends Document> documentClass) {
             if (documentClass == null) {
                 throw new IllegalStateException("Document class should not have been null");
-            } else if (!CuDistributionOfIncomeAndExpenseDocument.class.equals(documentClass)) {
+            } else if (!CuDistributionOfIncomeAndExpenseDocument.class.equals(documentClass)
+                    && !InternalBillingDocument.class.equals(documentClass)) {
                 throw new IllegalStateException("Unexpected accounting document class: " + documentClass.getName());
             }
             

@@ -15,7 +15,8 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentItem;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum AccountingXmlDocumentItemFixture {
-    STAPLERS_QTY_5_COST_10_00("02/05/2018", "1234567", "Staplers", 5, CuFPTestConstants.UOM_EACH, 10.00);
+    STAPLERS_QTY_5_COST_20_00("02/10/2018", "1234567", "Staplers", 5, CuFPTestConstants.UOM_EACH, 20.00),
+    HEADPHONES_QTY_1_COST_50_00("02/10/2018", "5555555", "Headphones", 1, CuFPTestConstants.UOM_DOZEN, 50.00);
 
     public final String serviceDate;
     public final String stockNumber;

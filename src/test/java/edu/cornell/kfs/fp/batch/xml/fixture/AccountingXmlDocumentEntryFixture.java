@@ -174,7 +174,30 @@ public enum AccountingXmlDocumentEntryFixture {
             targetAccountingLines(),
             notes(),
             adHocRecipients(),
-            backupLinks());
+            backupLinks()),
+
+    SINGLE_IB_DOCUMENT_TEST_DOC1(
+            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50),
+            items(
+                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
+                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE))
+    ;
 
     public final Long index;
     public final String documentTypeCode;
@@ -227,6 +250,20 @@ public enum AccountingXmlDocumentEntryFixture {
         this.notes = AccountingXmlDocumentFixtureUtils.toImmutableList(notes);
         this.adHocRecipients = AccountingXmlDocumentFixtureUtils.toImmutableList(adHocRecipients);
         this.backupLinks = AccountingXmlDocumentFixtureUtils.toImmutableList(backupLinks);
+    }
+
+    private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index) {
+        this.index = Long.valueOf(index);
+        this.documentTypeCode = baseFixture.documentTypeCode;
+        this.description = baseFixture.description;
+        this.explanation = baseFixture.explanation;
+        this.organizationDocumentNumber = baseFixture.organizationDocumentNumber;
+        this.sourceAccountingLines = baseFixture.sourceAccountingLines;
+        this.targetAccountingLines = baseFixture.targetAccountingLines;
+        this.items = baseFixture.items;
+        this.notes = baseFixture.notes;
+        this.adHocRecipients = baseFixture.adHocRecipients;
+        this.backupLinks = baseFixture.backupLinks;
     }
 
     public AccountingXmlDocumentEntry toDocumentEntryPojo() {
