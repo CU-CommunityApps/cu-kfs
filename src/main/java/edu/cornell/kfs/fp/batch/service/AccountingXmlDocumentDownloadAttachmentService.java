@@ -10,6 +10,6 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 public interface AccountingXmlDocumentDownloadAttachmentService {
 
     public Attachment createAttachmentFromBackupLink(Document document,
-            AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException;
+            AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink);
 
 }

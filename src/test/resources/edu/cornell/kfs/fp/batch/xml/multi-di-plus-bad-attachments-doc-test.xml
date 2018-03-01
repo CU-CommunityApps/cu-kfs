@@ -445,5 +445,68 @@
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
+        <Document>
+            <Index>7</Index>
+            <DocumentType>DI</DocumentType>
+            <Description>Empty Cred Group Code</Description>
+            <Explanation>Document Explanation</Explanation>
+            <OrganizationDocumentNumber>OrgDoc7</OrganizationDocumentNumber>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504700</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000718</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>R504706</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>2640</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1000710</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4000</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <BackupDocumentLinks>
+                <BackupLink>
+                    <Link>https://kfsaws-support.cd.cucloud.net/v1_0/aws/billing/invoice?year=2017&amp;month=01&amp;account=999999999999</Link>
+                    <Description>AWS Billing Invoice</Description>
+                    <FileName>invoice.pdf</FileName>
+                    <CredentialGroupCode></CredentialGroupCode>
+                </BackupLink>
+            </BackupDocumentLinks>
+        </Document>
     </DocumentList>
 </DocumentWrapper>
