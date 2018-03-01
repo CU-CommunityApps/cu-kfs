@@ -55,12 +55,10 @@ public class CloudCheckrFixtureConstants {
     public static final double CLOUDCHECKR_EXAMPLE_S3_COST = 0.1099985400;
     public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_IAM_MIKEB = "IAMUser:AIDAI5X7LBFKDHYABCDE:mikeb";
     public static final double CLOUDCHECKR_EXAMPLE_GROUP_MIKEB_COST = 0.1083478400;
-    //public static final double CLOUDCHECK_EXAMPLE_GROUP_MIKEB_USAGE = 418.5352970600;
     
     public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_EC2 = "AmazonEC2";
     public static final String CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_EC2 = "EC2";
     public static final double CLOUDCHECKR_EXAMPLE_EC2_COST = 22.6078574000;
     public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_IAM_VANW = "IAMUser:AIDAI4NZVQK6IW45ABCDE:paul.vanw";
     public static final double CLOUDCHECKR_EXAMPLE_GROUP_VANW_COST = 0.0750056100;
-    //public static final double CLOUDCHECK_EXAMPLE_GROUP_VANW_USAGE = 24.0000619600;
 }
