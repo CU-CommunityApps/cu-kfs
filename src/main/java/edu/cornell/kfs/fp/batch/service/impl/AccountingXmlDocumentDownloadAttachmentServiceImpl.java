@@ -76,7 +76,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 return downloadByteArrayFromWebResource(accountingXmlDocumentBackupLink.getFileName(), request);
             } else {
                 LOG.error("downloadByteArray, the group code isn't valid for the link URL");
-                throw new ValidationException("The group code:" + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " isn't valid for the link URL:" + accountingXmlDocumentBackupLink.getLinkUrl());
+                throw new ValidationException("The group code: " + accountingXmlDocumentBackupLink.getCredentialGroupCode() + " isn't valid for the link URL: " + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (URISyntaxException e) {
             throw new IOException(e.getMessage());
