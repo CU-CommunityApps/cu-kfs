@@ -8,7 +8,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class CloudCheckrFixtureConstants {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am);
     
-    public static final String DATE_FEB_ONE_2018_MIDNIGHT = "2/1/2018 12:00:00 AM";
+    public static final String DATE_FEB_1_2018_MIDNIGHT = "2/1/2018 12:00:00 AM";
+    public static final String DATE_JAN_20_2017_MIDNIGHT= "1/20/2017 12:00:00 AM";
     
     public static final double DEPT1_COSTCENTER1_COST = 951.4736250193;
     public static final double DEPT1_COSTCENTER2_COST = 18.7591161721;
@@ -40,4 +41,26 @@ public class CloudCheckrFixtureConstants {
     public static final double CORNELL_TEST_FILE_MAX = DEPARTMENT_3_COST;
     public static final double CORNELL_TEST_FILE_MIN = DEPARTMENT_2_COST;
     public static final double CORNELL_TEST_FILE_AVG = CORNELL_TEST_FILE_TOTAL/3;
+    
+    public static final double CLOUDCHECKR_EXAMPLE_TOTAL = 30.7983416200;
+    public static final double CLOUDCHECKR_EXAMPLE_MAX = 30.7983416200;
+    public static final double CLOUDCHECKR_EXAMPLE_MIN = 30.7983416200;
+    public static final double CLOUDCHECKR_EXAMPLE_AVG = 30.798698086413034906518967198;
+    
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_NAME_SERVICE = "Service";
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_NAME_CREATE_BY = "aws:createdBy";
+    
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_S3 = "AmazonS3";
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_S3 = "S3";
+    public static final double CLOUDCHECKR_EXAMPLE_S3_COST = 0.1099985400;
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_IAM_MIKEB = "IAMUser:AIDAI5X7LBFKDHYABCDE:mikeb";
+    public static final double CLOUDCHECKR_EXAMPLE_GROUP_MIKEB_COST = 0.1083478400;
+    //public static final double CLOUDCHECK_EXAMPLE_GROUP_MIKEB_USAGE = 418.5352970600;
+    
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_EC2 = "AmazonEC2";
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_EC2 = "EC2";
+    public static final double CLOUDCHECKR_EXAMPLE_EC2_COST = 22.6078574000;
+    public static final String CLOUDCHECKR_EXAMPLE_GROUP_VALUE_IAM_VANW = "IAMUser:AIDAI4NZVQK6IW45ABCDE:paul.vanw";
+    public static final double CLOUDCHECKR_EXAMPLE_GROUP_VANW_COST = 0.0750056100;
+    //public static final double CLOUDCHECK_EXAMPLE_GROUP_VANW_USAGE = 24.0000619600;
 }

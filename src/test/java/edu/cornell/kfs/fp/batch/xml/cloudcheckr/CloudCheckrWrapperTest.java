@@ -15,15 +15,15 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class CloudCheckrWrapperTest {
-    private static final String BASE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml/";
+    private static final String BASE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml/cloudcheckr/";
+    private static final String BASIC_CORNELL_TEST = "cloudcheckr_basic_cornell_test.xml";
+    private static final String CLOUDCHECK_EXAMPLE = "cloudcheckerr_example.xml";
     
-    private File clojudCheckrBillingExmaple;
     private CUMarshalService marshalService;
 
     @Before
     public void setUp() throws Exception {
         this.marshalService = new CUMarshalServiceImpl();
-        clojudCheckrBillingExmaple = new File (BASE_TEST_FILE_PATH + "cloudcheckr-billing-result.xml");
     }
     
     @After
@@ -32,10 +32,19 @@ public class CloudCheckrWrapperTest {
     }
     
     @Test
-    public void testBasicMzrshal() throws JAXBException {
-        CloudCheckrWrapper actualCloudCheckerWrapper = marshalService.unmarshalFile(clojudCheckrBillingExmaple, CloudCheckrWrapper.class); 
-        CloudCheckrWrapper expectedResults = CloudCheckrWrapperFixture.BILL_RESULT_1.toCloudCheckrWrapper();
+    public void verifyCornellExampleWorks() throws JAXBException {
+        File cornellBasicTestFile = new File(BASE_TEST_FILE_PATH + BASIC_CORNELL_TEST);
+        CloudCheckrWrapper actualCloudCheckerWrapper = marshalService.unmarshalFile(cornellBasicTestFile, CloudCheckrWrapper.class); 
+        CloudCheckrWrapper expectedResults = CloudCheckrWrapperFixture.BASIC_CORNELL_TEST.toCloudCheckrWrapper();
         
         assertEquals(expectedResults, actualCloudCheckerWrapper);
+    }
+    
+    @Test
+    public void verifyCloudcheckrExampleWorks() throws JAXBException {
+        File cloudcheckrFile = new File(BASE_TEST_FILE_PATH + CLOUDCHECK_EXAMPLE);
+        CloudCheckrWrapper actualCloudCheckerWrapper = marshalService.unmarshalFile(cloudcheckrFile, CloudCheckrWrapper.class);
+        CloudCheckrWrapper expectedResults = CloudCheckrWrapperFixture.CLOUDCHECKR_TEST.toCloudCheckrWrapper();
+        assertEquals(expectedResults.getCostsByAccounts(), actualCloudCheckerWrapper.getCostsByAccounts());
     }
 }

@@ -33,11 +33,11 @@ public class CostDate {
     private KualiDecimal cost;
     
     @XmlElement(name = "UsageQuantity", namespace = StringUtils.EMPTY)
-    private Long usageQuantity;
+    private Double usageQuantity;
     
     public CostDate() {
         cost = KualiDecimal.ZERO;
-        usageQuantity = new Long(0);
+        usageQuantity = new Double(0);
     }
 
     public Date getDate() {
@@ -56,11 +56,11 @@ public class CostDate {
         this.cost = cost;
     }
 
-    public Long getUsageQuantity() {
+    public Double getUsageQuantity() {
         return usageQuantity;
     }
 
-    public void setUsageQuantity(Long usageQuantity) {
+    public void setUsageQuantity(Double usageQuantity) {
         this.usageQuantity = usageQuantity;
     }
     

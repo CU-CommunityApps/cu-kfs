@@ -16,21 +16,29 @@ public enum AwsAccountFixture {
     DEPT2(CloudCheckrFixtureConstants.DEPARTMENT_2_GROUP_VALUE, CloudCheckrFixtureConstants.DEPARTMENT_2_FRIENDLY_NAME, 
             CloudCheckrFixtureConstants.DEPARTMENT_2_COST,  costCentersBuilder(CostCenterFixture.DEPT_2_COST_CENTER_1)),
     DEPT3(CloudCheckrFixtureConstants.DEPARTMENT_3_GROUP_VALUE, CloudCheckrFixtureConstants.DEPARTMENT_3_FRIENDLY_NAME, 
-            CloudCheckrFixtureConstants.DEPARTMENT_3_COST, costCentersBuilder(CostCenterFixture.DEPT_3_COST_CENTER_1));
+            CloudCheckrFixtureConstants.DEPARTMENT_3_COST, costCentersBuilder(CostCenterFixture.DEPT_3_COST_CENTER_1)),
+    CLOUDCHECKR_GROUP_1(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_NAME_SERVICE, 
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VALUE_S3, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_S3,
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_S3_COST, 0,
+            costCentersBuilder(CostCenterFixture.CLOUDCHECKR_EXAMPLE_COST_CENTER_MIKEB)),
+    CLOUDCHECKR_GROUP_2(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_NAME_SERVICE, 
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VALUE_EC2, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_EC2,
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_EC2_COST, 0,
+            costCentersBuilder(CostCenterFixture.CLOUDCHECKR_EXAMPLE_COST_CENTER_VANW));
     
     public final String groupName;
     public final String groupValue;
     public final String friendlyName;
     public final KualiDecimal cost;
-    public final Long usageQuantity;
+    public final Double usageQuantity;
     public final List<CostCenterFixture> costCenters;
     
-    private AwsAccountFixture (String groupName, String groupValue, String friendlyName, double cost, long usageQuantity, CostCenterFixture[] costCenterFixtures) {
+    private AwsAccountFixture (String groupName, String groupValue, String friendlyName, double cost, double usageQuantity, CostCenterFixture[] costCenterFixtures) {
         this.groupName = groupName;
         this.groupValue = groupValue;
         this.friendlyName = friendlyName;
         this.cost = new KualiDecimal(cost);
-        this.usageQuantity = new Long(usageQuantity);
+        this.usageQuantity = new Double(usageQuantity);
         costCenters = AccountingXmlDocumentFixtureUtils.toImmutableList(costCenterFixtures);
     }
     

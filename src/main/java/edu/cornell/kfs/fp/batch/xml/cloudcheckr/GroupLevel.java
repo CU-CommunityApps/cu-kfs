@@ -41,7 +41,7 @@ public class GroupLevel {
     private KualiDecimal cost;
     
     @XmlElement(name = "UsageQuantity", namespace = StringUtils.EMPTY)
-    protected Long usageQuantity;
+    protected Double usageQuantity;
     
     @XmlElementWrapper(name = "NextLevel", namespace = StringUtils.EMPTY)
     @XmlElement(name = "GroupingLevel", namespace = StringUtils.EMPTY)
@@ -50,7 +50,7 @@ public class GroupLevel {
     public GroupLevel() {
         nextLevel = new ArrayList<GroupLevel>();
         cost = KualiDecimal.ZERO;
-        usageQuantity = new Long(0);
+        usageQuantity = new Double(0);
     }
     
     @Override
@@ -105,11 +105,11 @@ public class GroupLevel {
         this.cost = cost;
     }
 
-    public Long getUsageQuantity() {
+    public Double getUsageQuantity() {
         return usageQuantity;
     }
 
-    public void setUsageQuantity(Long usageQuantity) {
+    public void setUsageQuantity(Double usageQuantity) {
         this.usageQuantity = usageQuantity;
     }
 

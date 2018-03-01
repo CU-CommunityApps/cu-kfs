@@ -13,20 +13,26 @@ public enum CostCenterFixture {
     DEPT_1_COST_CENTER_4(CloudCheckrFixtureConstants.DEPT1_COSTCENTER3_COST, CloudCheckrFixtureConstants.ACCOUNT_U353805),
     DEPT_1_COST_CENTER_5(CloudCheckrFixtureConstants.DEPT1_COSTCENTER4_COST, CloudCheckrFixtureConstants.ACCOUNT_1503307),
     DEPT_2_COST_CENTER_1(CloudCheckrFixtureConstants.DEPT2_COSTCENTER1_COST, CloudCheckrFixtureConstants.ACCOUNT_NONE),
-    DEPT_3_COST_CENTER_1(CloudCheckrFixtureConstants.DEPT3_COSTCENTER1_COST, CloudCheckrFixtureConstants.ACCOUNT_NONE);
+    DEPT_3_COST_CENTER_1(CloudCheckrFixtureConstants.DEPT3_COSTCENTER1_COST, CloudCheckrFixtureConstants.ACCOUNT_NONE),
+    CLOUDCHECKR_EXAMPLE_COST_CENTER_MIKEB(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_NAME_CREATE_BY, 
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VALUE_IAM_MIKEB, StringUtils.EMPTY, 
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_MIKEB_COST, 0),
+    CLOUDCHECKR_EXAMPLE_COST_CENTER_VANW(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_NAME_CREATE_BY, 
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VALUE_IAM_VANW, StringUtils.EMPTY, 
+            CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VANW_COST, 0);
     
     public final String groupName;
     public final String groupValue;
     public final String friendlyName;
     public final KualiDecimal cost;
-    public final Long usageQuantity;
+    public final Double usageQuantity;
     
-    private CostCenterFixture (String groupName, String groupValue, String friendlyName, double cost, long usageQuantity) {
+    private CostCenterFixture (String groupName, String groupValue, String friendlyName, double cost, double usageQuantity) {
         this.groupName = groupName;
         this.groupValue = groupValue;
         this.friendlyName = friendlyName;
         this.cost = new KualiDecimal(cost);
-        this.usageQuantity = new Long(usageQuantity);
+        this.usageQuantity = new Double(usageQuantity);
     }
     
     private CostCenterFixture (double cost, String groupValue) {
