@@ -36,7 +36,6 @@ public class CloudCheckrWrapperTest {
         File cornellBasicTestFile = new File(BASE_TEST_FILE_PATH + BASIC_CORNELL_TEST);
         CloudCheckrWrapper actualCloudCheckerWrapper = marshalService.unmarshalFile(cornellBasicTestFile, CloudCheckrWrapper.class); 
         CloudCheckrWrapper expectedResults = CloudCheckrWrapperFixture.BASIC_CORNELL_TEST.toCloudCheckrWrapper();
-        
         assertEquals(expectedResults, actualCloudCheckerWrapper);
     }
     
@@ -45,6 +44,6 @@ public class CloudCheckrWrapperTest {
         File cloudcheckrFile = new File(BASE_TEST_FILE_PATH + CLOUDCHECK_EXAMPLE);
         CloudCheckrWrapper actualCloudCheckerWrapper = marshalService.unmarshalFile(cloudcheckrFile, CloudCheckrWrapper.class);
         CloudCheckrWrapper expectedResults = CloudCheckrWrapperFixture.CLOUDCHECKR_TEST.toCloudCheckrWrapper();
-        assertEquals(expectedResults.getCostsByAccounts(), actualCloudCheckerWrapper.getCostsByAccounts());
+        assertEquals(expectedResults, actualCloudCheckerWrapper);
     }
 }

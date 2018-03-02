@@ -68,7 +68,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                 </Grouping>
                 <Grouping>
                     <GroupName>aws:createdBy</GroupName>
-                    <GroupValue>IAMUser:AIDAI5X7LBFKDHYFABCDE:mikeb</GroupValue>
+                    <GroupValue>IAMUser:AIDAI5X7LBFKDHYABCDE:mikeb</GroupValue>
                     <FriendlyName />
                 </Grouping>
             </Groups>

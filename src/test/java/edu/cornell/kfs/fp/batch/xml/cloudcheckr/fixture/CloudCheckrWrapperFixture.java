@@ -16,7 +16,8 @@ public enum CloudCheckrWrapperFixture {
                     GroupingByTimeFixture.DEPT3_GROUP1)),
     CLOUDCHECKR_TEST(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_TOTAL, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_MAX,
             CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_MIN, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_AVG,
-            groupLevelFixtureArrayBuilder(GroupLevelFixture.CLOUDCHECKR_GROUP_1, GroupLevelFixture.CLOUDCHECKR_GROUP_2));
+            groupLevelFixtureArrayBuilder(GroupLevelFixture.CLOUDCHECKR_GROUP_1, GroupLevelFixture.CLOUDCHECKR_GROUP_2),
+            groupingByTimeFixtureArrayBuilder(GroupingByTimeFixture.CLOUDCHECKR_GROUP1, GroupingByTimeFixture.CLOUDCHECKR_GROUP2));
     
     public final KualiDecimal total;
     public final KualiDecimal max;
