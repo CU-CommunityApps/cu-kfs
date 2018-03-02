@@ -34,13 +34,6 @@
 
 <!-- Attribute Definitions -->
 
-  <bean id="VendorHeader-vendorOwnershipCategoryCode" parent="VendorHeader-vendorOwnershipCategoryCode-parentBean">
-    <property name="maxLength" value="4" />
-    <property name="validationPattern" >
-      <bean parent="AnyCharacterValidationPattern" />
-    </property>
-  </bean>
-
   <bean id="VendorHeader-extension-vendorLocale" parent="VendorHeader-extension-vendorLocale-parentBean"/>
   <bean id="VendorHeader-extension-vendorLocale-parentBean" abstract="true" parent="VendorHeaderExtension-vendorLocale" >
     <property name="name" value="extension.vendorLocale"/>
