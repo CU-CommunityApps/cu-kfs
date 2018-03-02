@@ -6,9 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CostDate;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupCostDate;
 
-public enum CostDateFixture {
+public enum GroupCostDateFixture {
     DEPT1_COSTDATE1(CloudCheckrFixtureConstants.DATE_FEB_1_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER1_COST),
     DEPT1_COSTDATE2(CloudCheckrFixtureConstants.DATE_FEB_1_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER2_COST),
     DEPT1_COSTDATE3(CloudCheckrFixtureConstants.DATE_FEB_1_2018_MIDNIGHT, CloudCheckrFixtureConstants.DEPT1_COSTCENTER3_COST),
@@ -21,7 +21,7 @@ public enum CostDateFixture {
     public final KualiDecimal cost;
     public final Double usageQuantity;
     
-    CostDateFixture(String dateString, double cost, long usageQuantity) {
+    GroupCostDateFixture(String dateString, double cost, long usageQuantity) {
         this.cost = new KualiDecimal(cost);
         this.usageQuantity = new Double(usageQuantity);
         if (StringUtils.isNotBlank(dateString)) {
@@ -31,12 +31,12 @@ public enum CostDateFixture {
         }
     }
     
-    CostDateFixture(String dateString, double cost) {
+    GroupCostDateFixture(String dateString, double cost) {
         this(dateString, cost, 0);
     }
     
-    public CostDate toCostDate() {
-        CostDate costDate = new CostDate();
+    public GroupCostDate toGroupCostDate() {
+        GroupCostDate costDate = new GroupCostDate();
         costDate.setCost(cost);
         costDate.setDate(date);
         costDate.setUsageQuantity(usageQuantity);

@@ -14,7 +14,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Grouping", namespace = StringUtils.EMPTY)
-public class CostsByTimeGrouping {
+public class Grouping {
     
     @XmlElement(name = "GroupName", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -64,8 +64,8 @@ public class CostsByTimeGrouping {
     @Override
     public boolean equals(Object o) {
         boolean equals = false;
-        if (ObjectUtils.isNotNull(o) && o instanceof CostsByTimeGrouping) {
-            CostsByTimeGrouping otherCostsByTimeGrouping = (CostsByTimeGrouping) o;
+        if (ObjectUtils.isNotNull(o) && o instanceof Grouping) {
+            Grouping otherCostsByTimeGrouping = (Grouping) o;
             equals = StringUtils.equals(groupName, otherCostsByTimeGrouping.getGroupName())
                     && StringUtils.equals(groupValue, otherCostsByTimeGrouping.getGroupValue())
                     && StringUtils.equals(friendlyName, otherCostsByTimeGrouping.getFriendlyName());

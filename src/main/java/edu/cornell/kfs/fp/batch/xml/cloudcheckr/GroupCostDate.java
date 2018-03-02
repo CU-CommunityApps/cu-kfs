@@ -21,7 +21,7 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GroupCostDate", namespace = StringUtils.EMPTY)
-public class CostDate {
+public class GroupCostDate {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am);
     
     @XmlElement(name = "Date", namespace = StringUtils.EMPTY)
@@ -35,7 +35,7 @@ public class CostDate {
     @XmlElement(name = "UsageQuantity", namespace = StringUtils.EMPTY)
     private Double usageQuantity;
     
-    public CostDate() {
+    public GroupCostDate() {
         cost = KualiDecimal.ZERO;
         usageQuantity = new Double(0);
     }
@@ -81,8 +81,8 @@ public class CostDate {
     @Override
     public boolean equals(Object o) {
         boolean equals = false;
-        if (ObjectUtils.isNotNull(o) && o instanceof CostDate) {
-            CostDate otherCostDate = (CostDate) o;
+        if (ObjectUtils.isNotNull(o) && o instanceof GroupCostDate) {
+            GroupCostDate otherCostDate = (GroupCostDate) o;
             equals = Objects.equals(cost, otherCostDate.getCost())
                     && Objects.equals(usageQuantity, otherCostDate.getUsageQuantity())
                     && Objects.equals(date, otherCostDate.getDate());

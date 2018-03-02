@@ -40,15 +40,15 @@ public class CloudCheckrWrapper {
     
     @XmlElementWrapper(name = "CostsByGroup", namespace = StringUtils.EMPTY)
     @XmlElement(name = "GroupingLevel", namespace = StringUtils.EMPTY, required = true)
-    private List<GroupLevel> costsByAccounts;
+    private List<GroupLevel> groupLevels;
     
     @XmlElementWrapper(name = "CostsByTime", namespace = StringUtils.EMPTY)
     @XmlElement(name = "GroupingByTime", namespace = StringUtils.EMPTY, required = true)
-    private List<CostsByTime> costsByTimes;
+    private List<GroupingByTime> groupingByTimes;
     
     public CloudCheckrWrapper() {
-        costsByAccounts = new ArrayList<GroupLevel>();
-        costsByTimes = new ArrayList<CostsByTime>();
+        groupLevels = new ArrayList<GroupLevel>();
+        groupingByTimes = new ArrayList<GroupingByTime>();
         total = KualiDecimal.ZERO;
         maximum = KualiDecimal.ZERO;
         minimum = KualiDecimal.ZERO;
@@ -88,19 +88,19 @@ public class CloudCheckrWrapper {
     }
 
     public List<GroupLevel> getCostsByAccounts() {
-        return costsByAccounts;
+        return groupLevels;
     }
 
     public void setCostsByAccounts(List<GroupLevel> costsByAccounts) {
-        this.costsByAccounts = costsByAccounts;
+        this.groupLevels = costsByAccounts;
     }
 
-    public List<CostsByTime> getCostsByTimes() {
-        return costsByTimes;
+    public List<GroupingByTime> getGroupingByTimes() {
+        return groupingByTimes;
     }
 
-    public void setCostsByTimes(List<CostsByTime> costsByTimes) {
-        this.costsByTimes = costsByTimes;
+    public void setGroupingByTime(List<GroupingByTime> groupingByTimes) {
+        this.groupingByTimes = groupingByTimes;
     }
     
     public String toString() {
@@ -110,8 +110,8 @@ public class CloudCheckrWrapper {
         sb.append(" minimum: ").append(minimum);
         sb.append(" average: ").append(average);
         sb.append(" costsByAccounts: ").append("[");
-        costsByAccounts.stream().forEach(account -> sb.append("account: (").append(account.toString()).append("), "));
-        costsByTimes.stream().forEach(costtime -> sb.append("costByTime: (").append(costtime.toString()).append("), "));
+        groupLevels.stream().forEach(account -> sb.append("account: (").append(account.toString()).append("), "));
+        groupingByTimes.stream().forEach(costtime -> sb.append("costByTime: (").append(costtime.toString()).append("), "));
         return sb.toString();
     }
     
@@ -122,14 +122,14 @@ public class CloudCheckrWrapper {
             CloudCheckrWrapper otherWrapper = (CloudCheckrWrapper) o;
             equals = total.equals(otherWrapper.total) && maximum.equals(otherWrapper.getMaximum())
                     && minimum.equals(otherWrapper.getMinimum()) && average.equals(otherWrapper.getAverage())
-                    && CollectionUtils.isEqualCollection(costsByAccounts, otherWrapper.getCostsByAccounts())
-                    && CollectionUtils.isEqualCollection(costsByTimes, otherWrapper.getCostsByTimes());
+                    && CollectionUtils.isEqualCollection(groupLevels, otherWrapper.getCostsByAccounts())
+                    && CollectionUtils.isEqualCollection(groupingByTimes, otherWrapper.getGroupingByTimes());
         }
         return equals;
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(total, maximum, minimum, average, costsByAccounts, costsByTimes);
+        return Objects.hash(total, maximum, minimum, average, groupLevels, groupingByTimes);
     }
 }

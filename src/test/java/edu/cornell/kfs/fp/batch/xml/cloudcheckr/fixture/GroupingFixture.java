@@ -3,9 +3,9 @@ package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 import org.apache.commons.lang.StringUtils;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CostsByTimeGrouping;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.Grouping;
 
-public enum CostsByTimeGroupingFixture {
+public enum GroupingFixture {
     GROUPING_DEPT1_ACCOUNT(CuFPConstants.CLOUDCHECKR.GROUP_LEVEL_AWS_ACCOUNT, CloudCheckrFixtureConstants.DEPARTMENT_1_GROUP_VALUE, 
             CloudCheckrFixtureConstants.DEPARTMENT_1_FRIENDLY_NAME),
     GROUPING_DEPT1_COSTCENTER1(CuFPConstants.CLOUDCHECKR.GROUP_LEVEL_COST_CENTER, CloudCheckrFixtureConstants.ACCOUNT_U353803),
@@ -24,18 +24,18 @@ public enum CostsByTimeGroupingFixture {
     public final String groupValue;
     public final String friendlyName;
     
-    private CostsByTimeGroupingFixture(String groupName, String groupValue, String friendlyName) {
+    private GroupingFixture(String groupName, String groupValue, String friendlyName) {
         this.groupName = groupName;
         this.groupValue = groupValue;
         this.friendlyName = friendlyName;
     }
     
-    private CostsByTimeGroupingFixture(String groupName, String groupValue) {
+    private GroupingFixture(String groupName, String groupValue) {
         this(groupName, groupValue, StringUtils.EMPTY);
     }
     
-    public CostsByTimeGrouping toCostsByTimeGrouping() {
-        CostsByTimeGrouping grouping = new CostsByTimeGrouping();
+    public Grouping toGrouping() {
+        Grouping grouping = new Grouping();
         grouping.setFriendlyName(friendlyName);
         grouping.setGroupName(groupName);
         grouping.setGroupValue(groupValue);
