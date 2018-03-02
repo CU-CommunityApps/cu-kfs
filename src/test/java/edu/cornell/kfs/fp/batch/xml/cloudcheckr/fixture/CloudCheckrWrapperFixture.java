@@ -10,22 +10,22 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
 public enum CloudCheckrWrapperFixture {
     BASIC_CORNELL_TEST(CloudCheckrFixtureConstants.CORNELL_TEST_FILE_TOTAL, CloudCheckrFixtureConstants.CORNELL_TEST_FILE_MAX, 
             CloudCheckrFixtureConstants.CORNELL_TEST_FILE_MIN, CloudCheckrFixtureConstants.CORNELL_TEST_FILE_AVG, 
-            awsAccountFixtureBuilder(AwsAccountFixture.DEPT1, AwsAccountFixture.DEPT2, AwsAccountFixture.DEPT3),
+            awsAccountFixtureBuilder(GroupLevelFixture.DEPT1_ACCOUNT_GROUP, GroupLevelFixture.DEPT2_ACCOUNT_GROUP, GroupLevelFixture.DEPT3_ACCOUNT_GROUP),
             costsByTimeFixtureBuilder(CostsByTimeFixture.DEPT1_GROUP1, CostsByTimeFixture.DEPT1_GROUP2, CostsByTimeFixture.DEPT1_GROUP3,
                     CostsByTimeFixture.DEPT1_GROUP4, CostsByTimeFixture.DEPT1_GROUP5, CostsByTimeFixture.DEPT2_GROUP1,
                     CostsByTimeFixture.DEPT3_GROUP1)),
     CLOUDCHECKR_TEST(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_TOTAL, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_MAX,
             CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_MIN, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_AVG,
-            awsAccountFixtureBuilder(AwsAccountFixture.CLOUDCHECKR_GROUP_1, AwsAccountFixture.CLOUDCHECKR_GROUP_2));
+            awsAccountFixtureBuilder(GroupLevelFixture.CLOUDCHECKR_GROUP_1, GroupLevelFixture.CLOUDCHECKR_GROUP_2));
     
     public final KualiDecimal total;
     public final KualiDecimal max;
     public final KualiDecimal min;
     public final KualiDecimal average;
-    public final List<AwsAccountFixture> awsAccountFixtures;
+    public final List<GroupLevelFixture> awsAccountFixtures;
     public final List<CostsByTimeFixture> costsByTimeFixtures;
     
-    private CloudCheckrWrapperFixture(double total, double max, double min, double average, AwsAccountFixture[] accountFixtureArray, 
+    private CloudCheckrWrapperFixture(double total, double max, double min, double average, GroupLevelFixture[] accountFixtureArray, 
             CostsByTimeFixture[] costsByTimeFixtureArray) {
         this.total = new KualiDecimal(total);
         this.max = new KualiDecimal(max);
@@ -35,7 +35,7 @@ public enum CloudCheckrWrapperFixture {
         costsByTimeFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(costsByTimeFixtureArray);
     }
     
-    private CloudCheckrWrapperFixture(double total, double max, double min, double average, AwsAccountFixture[] accountFixtureArray) {
+    private CloudCheckrWrapperFixture(double total, double max, double min, double average, GroupLevelFixture[] accountFixtureArray) {
         this(total, max, min, average, accountFixtureArray, new CostsByTimeFixture[0]);
     }
     
@@ -51,7 +51,7 @@ public enum CloudCheckrWrapperFixture {
     }
     
     
-    private static AwsAccountFixture[] awsAccountFixtureBuilder(AwsAccountFixture...accountFixtures) {
+    private static GroupLevelFixture[] awsAccountFixtureBuilder(GroupLevelFixture...accountFixtures) {
         return accountFixtures;
     }
     
