@@ -182,21 +182,5 @@ public class PaymentWorksConstants {
             return translationToKfsOwnershipTypeCode;
         }
     }
-    
-    public enum PaymentWorksGoodsVsServicesOptions {
-        GOODS("Goods"),
-        SERVICES("Services"),
-        GOODS_WITH_SERVICES("Goods with a service component");
-        
-        public final String optionValueAsString;
-        
-        private PaymentWorksGoodsVsServicesOptions(String optionValueAsString) {
-            this.optionValueAsString = optionValueAsString;
-        }
-        
-        public String getOptionValueAsString() {
-            return optionValueAsString;
-        }
-    }
 
 }
