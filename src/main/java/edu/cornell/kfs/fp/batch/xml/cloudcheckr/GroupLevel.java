@@ -125,13 +125,13 @@ public class GroupLevel {
     public boolean equals(Object o) {
         boolean equals = false;
         if (ObjectUtils.isNotNull(o) && o instanceof GroupLevel) {
-            GroupLevel otherGl = (GroupLevel) o;
-            equals = StringUtils.equals(groupName, otherGl.getGroupName())
-                    && StringUtils.equals(groupValue, otherGl.getGroupValue())
-                    && StringUtils.equals(friendlyName, otherGl.getFriendlyName())
-                    && Objects.equals(cost, otherGl.getCost())
-                    && Objects.equals(usageQuantity, otherGl.getUsageQuantity())
-                    && CollectionUtils.isEqualCollection(nextLevel, otherGl.getNextLevel());
+            GroupLevel otherGroupLevel = (GroupLevel) o;
+            equals = StringUtils.equals(groupName, otherGroupLevel.getGroupName())
+                    && StringUtils.equals(groupValue, otherGroupLevel.getGroupValue())
+                    && StringUtils.equals(friendlyName, otherGroupLevel.getFriendlyName())
+                    && Objects.equals(cost, otherGroupLevel.getCost())
+                    && Objects.equals(usageQuantity, otherGroupLevel.getUsageQuantity())
+                    && CollectionUtils.isEqualCollection(nextLevel, otherGroupLevel.getNextLevel());
         }
         return equals;
     }

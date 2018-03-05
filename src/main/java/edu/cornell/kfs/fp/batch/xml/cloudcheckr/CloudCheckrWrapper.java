@@ -40,15 +40,15 @@ public class CloudCheckrWrapper {
     
     @XmlElementWrapper(name = "CostsByGroup", namespace = StringUtils.EMPTY)
     @XmlElement(name = "GroupingLevel", namespace = StringUtils.EMPTY, required = true)
-    private List<GroupLevel> groupLevels;
+    private List<GroupLevel> costsByGroup;
     
     @XmlElementWrapper(name = "CostsByTime", namespace = StringUtils.EMPTY)
     @XmlElement(name = "GroupingByTime", namespace = StringUtils.EMPTY, required = true)
-    private List<GroupingByTime> groupingByTimes;
+    private List<GroupingByTime> costsByTime;
     
     public CloudCheckrWrapper() {
-        groupLevels = new ArrayList<GroupLevel>();
-        groupingByTimes = new ArrayList<GroupingByTime>();
+        costsByGroup = new ArrayList<GroupLevel>();
+        costsByTime = new ArrayList<GroupingByTime>();
         total = KualiDecimal.ZERO;
         maximum = KualiDecimal.ZERO;
         minimum = KualiDecimal.ZERO;
@@ -87,20 +87,20 @@ public class CloudCheckrWrapper {
         this.average = average;
     }
 
-    public List<GroupLevel> getCostsByAccounts() {
-        return groupLevels;
+    public List<GroupLevel> getCostsByGroup() {
+        return costsByGroup;
     }
 
-    public void setCostsByAccounts(List<GroupLevel> costsByAccounts) {
-        this.groupLevels = costsByAccounts;
+    public void setCostsByGroup(List<GroupLevel> costsByGroup) {
+        this.costsByGroup = costsByGroup;
     }
 
-    public List<GroupingByTime> getGroupingByTimes() {
-        return groupingByTimes;
+    public List<GroupingByTime> getCostsByTime() {
+        return costsByTime;
     }
 
-    public void setGroupingByTime(List<GroupingByTime> groupingByTimes) {
-        this.groupingByTimes = groupingByTimes;
+    public void setCostsByTime(List<GroupingByTime> costsByTime) {
+        this.costsByTime = costsByTime;
     }
     
     public String toString() {
@@ -110,8 +110,8 @@ public class CloudCheckrWrapper {
         sb.append(" minimum: ").append(minimum);
         sb.append(" average: ").append(average);
         sb.append(" costsByAccounts: ").append("[");
-        groupLevels.stream().forEach(account -> sb.append("account: (").append(account.toString()).append("), "));
-        groupingByTimes.stream().forEach(costtime -> sb.append("costByTime: (").append(costtime.toString()).append("), "));
+        costsByGroup.stream().forEach(costByGroup -> sb.append("cost by group: (").append(costByGroup.toString()).append("), "));
+        costsByTime.stream().forEach(costByTime -> sb.append("cost by time: (").append(costByTime.toString()).append("), "));
         return sb.toString();
     }
     
@@ -120,16 +120,18 @@ public class CloudCheckrWrapper {
         boolean equals = false;
         if (ObjectUtils.isNotNull(o) && o instanceof CloudCheckrWrapper) {
             CloudCheckrWrapper otherWrapper = (CloudCheckrWrapper) o;
-            equals = total.equals(otherWrapper.total) && maximum.equals(otherWrapper.getMaximum())
-                    && minimum.equals(otherWrapper.getMinimum()) && average.equals(otherWrapper.getAverage())
-                    && CollectionUtils.isEqualCollection(groupLevels, otherWrapper.getCostsByAccounts())
-                    && CollectionUtils.isEqualCollection(groupingByTimes, otherWrapper.getGroupingByTimes());
+            equals = CollectionUtils.isEqualCollection(costsByGroup, otherWrapper.getCostsByGroup())
+                    && CollectionUtils.isEqualCollection(costsByTime, otherWrapper.getCostsByTime())
+                    && Objects.equals(total, otherWrapper.getTotal())
+                    && Objects.equals(maximum, otherWrapper.getMaximum())
+                    && Objects.equals(minimum, otherWrapper.getMinimum())
+                    && Objects.equals(average, otherWrapper.getAverage());
         }
         return equals;
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(total, maximum, minimum, average, groupLevels, groupingByTimes);
+        return Objects.hash(total, maximum, minimum, average, costsByGroup, costsByTime);
     }
 }

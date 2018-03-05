@@ -20,8 +20,8 @@ public enum CloudCheckrWrapperFixture {
             groupingByTimeFixtureArrayBuilder(GroupingByTimeFixture.CLOUDCHECKR_GROUP1, GroupingByTimeFixture.CLOUDCHECKR_GROUP2));
     
     public final KualiDecimal total;
-    public final KualiDecimal max;
-    public final KualiDecimal min;
+    public final KualiDecimal maximum;
+    public final KualiDecimal minimum;
     public final KualiDecimal average;
     public final List<GroupLevelFixture> groupLevelFixtures;
     public final List<GroupingByTimeFixture> groupingByTimeFixtures;
@@ -29,8 +29,8 @@ public enum CloudCheckrWrapperFixture {
     private CloudCheckrWrapperFixture(double total, double max, double min, double average, GroupLevelFixture[] groupLevelFixtureArray, 
             GroupingByTimeFixture[] groupingByTimeFixtureArray) {
         this.total = new KualiDecimal(total);
-        this.max = new KualiDecimal(max);
-        this.min = new KualiDecimal(min);
+        this.maximum = new KualiDecimal(max);
+        this.minimum = new KualiDecimal(min);
         this.average = new KualiDecimal(average);
         groupLevelFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(groupLevelFixtureArray);
         groupingByTimeFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(groupingByTimeFixtureArray);
@@ -43,11 +43,11 @@ public enum CloudCheckrWrapperFixture {
     public CloudCheckrWrapper toCloudCheckrWrapper() {
         CloudCheckrWrapper wrapper = new CloudCheckrWrapper();
         wrapper.setAverage(average);
-        wrapper.setMaximum(max);
-        wrapper.setMinimum(min);
+        wrapper.setMaximum(maximum);
+        wrapper.setMinimum(minimum);
         wrapper.setTotal(total);
-        groupLevelFixtures.stream().forEach(awsAccount -> wrapper.getCostsByAccounts().add(awsAccount.toGroupLevel()));;
-        groupingByTimeFixtures.stream().forEach(fixture -> wrapper.getGroupingByTimes().add(fixture.toGroupingByTime()));
+        groupLevelFixtures.stream().forEach(groupLevelFixture -> wrapper.getCostsByGroup().add(groupLevelFixture.toGroupLevel()));;
+        groupingByTimeFixtures.stream().forEach(groupByTimeFixture -> wrapper.getCostsByTime().add(groupByTimeFixture.toGroupingByTime()));
         return wrapper;
     }
     
