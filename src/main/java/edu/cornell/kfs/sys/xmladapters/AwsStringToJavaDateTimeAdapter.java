@@ -12,7 +12,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class AwsStringToJavaDateTimeAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_hh_mm_ss);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_HH_mm_ss);
 
     @Override
     public Date unmarshal(String value) throws Exception {

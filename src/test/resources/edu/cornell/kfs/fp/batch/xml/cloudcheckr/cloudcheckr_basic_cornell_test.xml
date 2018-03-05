@@ -1,0 +1,240 @@
+<GetDetailedBillingWithGroupingResponseV2 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Total>5101.980261</Total>
+    <Max>3855.0375293243</Max>
+    <Min>266.0180803809</Min>
+    <Average>1700.6600803809</Average>
+    <CostsByGroup>
+    <GroupingLevel>
+            <GroupName>Account</GroupName>
+            <GroupValue>AWS-abc (Cornell Dept1)</GroupValue>
+            <FriendlyName>Cornell Dept1</FriendlyName>
+            <Cost>980.9246516995</Cost>
+            <UsageQuantity>0</UsageQuantity>
+            <NextLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>None</GroupValue>
+                    <FriendlyName />
+                    <Cost>18.7591161721</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>U353901</GroupValue>
+                    <FriendlyName />
+                    <Cost>2.4449795375</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>U353803</GroupValue>
+                    <FriendlyName />
+                    <Cost>951.4736250193</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>U353805</GroupValue>
+                    <FriendlyName />
+                    <Cost>4.1275978282</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>1503307</GroupValue>
+                    <FriendlyName />
+                    <Cost>4.1193331424</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+            </NextLevel>
+        </GroupingLevel>
+        <GroupingLevel>
+            <GroupName>Account</GroupName>
+            <GroupValue>AWS-def (Cornell dept2)</GroupValue>
+            <FriendlyName>Cornell dept2</FriendlyName>
+            <Cost>266.0180803809</Cost>
+            <UsageQuantity>0</UsageQuantity>
+            <NextLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>None</GroupValue>
+                    <FriendlyName />
+                    <Cost>266.0180803809</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+            </NextLevel>
+        </GroupingLevel>
+        <GroupingLevel>
+            <GroupName>Account</GroupName>
+            <GroupValue>AWS-ghi (Cornell dept3)</GroupValue>
+            <FriendlyName>Cornell dept3</FriendlyName>
+            <Cost>3855.0375293243</Cost>
+            <UsageQuantity>0</UsageQuantity>
+            <NextLevel>
+                <GroupingLevel>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>None</GroupValue>
+                    <FriendlyName />
+                    <Cost>3855.0375293243</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                    <NextLevel />
+                </GroupingLevel>
+            </NextLevel>
+        </GroupingLevel>
+    </CostsByGroup>
+    <CostsByTime>
+    <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-abc (Cornell Dept1)</GroupValue>
+                    <FriendlyName>Cornell Dept1</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>U353803</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>951.4736250193</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-abc (Cornell Dept1)</GroupValue>
+                    <FriendlyName>Cornell Dept1</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>None</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>18.7591161721</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-abc (Cornell Dept1)</GroupValue>
+                    <FriendlyName>Cornell Dept1</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>U353805</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>4.1275978282</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-abc (Cornell Dept1)</GroupValue>
+                    <FriendlyName>Cornell Dept1</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>1503307</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>4.1193331424</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-abc (Cornell Dept1)</GroupValue>
+                    <FriendlyName>Cornell Dept1</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>U353901</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>2.4449795375</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-def (Cornell dept2)</GroupValue>
+                    <FriendlyName>Cornell dept2</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>None</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>266.0180803809</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+        <GroupingByTime>
+            <Groups>
+                <Grouping>
+                    <GroupName>Account</GroupName>
+                    <GroupValue>AWS-ghi (Cornell dept3)</GroupValue>
+                    <FriendlyName>Cornell dept3</FriendlyName>
+                </Grouping>
+                <Grouping>
+                    <GroupName>Cost Center</GroupName>
+                    <GroupValue>None</GroupValue>
+                    <FriendlyName />
+                </Grouping>
+            </Groups>
+            <CostDates>
+                <GroupCostDate>
+                    <Date>2/1/2018 12:00:00 AM</Date>
+                    <Cost>3855.0375293243</Cost>
+                    <UsageQuantity>0</UsageQuantity>
+                </GroupCostDate>
+            </CostDates>
+        </GroupingByTime>
+    </CostsByTime>
+</GetDetailedBillingWithGroupingResponseV2>
