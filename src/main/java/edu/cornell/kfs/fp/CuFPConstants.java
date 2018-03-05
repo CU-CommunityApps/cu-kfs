@@ -171,6 +171,11 @@ public class CuFPConstants {
         public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
     }
     
+    public static class CLOUDCHECKR {
+        public static final String GROUP_LEVEL_AWS_ACCOUNT = "Account";
+        public static final String GROUP_LEVEL_COST_CENTER = "Cost Center";
+    }
+    
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
 
 }
