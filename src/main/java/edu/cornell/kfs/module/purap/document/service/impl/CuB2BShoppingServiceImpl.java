@@ -32,7 +32,6 @@ import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -72,7 +71,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     private VendorService vendorService;
     // KFSPTS-985
     UserFavoriteAccountService userFavoriteAccountService;
-    protected CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService;
+    private CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService;
     private ConfigurationService kualiConfigurationService;
 
     @Override
@@ -258,14 +257,6 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 			UserFavoriteAccountService userFavoriteAccountService) {
 		this.userFavoriteAccountService = userFavoriteAccountService;
 	}
-
-    public CuB2BShoppingErrorEmailService getCuB2BShoppingErrorEmailService() {
-        return cuB2BShoppingErrorEmailService;
-    }
-
-    public void setCuB2BShoppingErrorEmailService(CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService) {
-        this.cuB2BShoppingErrorEmailService = cuB2BShoppingErrorEmailService;
-    }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         super.setBusinessObjectService(businessObjectService);
@@ -454,12 +445,12 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     	 return reqItem;
     }
 
-    public ConfigurationService getKualiConfigurationService() {
-        return kualiConfigurationService;
-    }
-
     public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
+    }
+
+    public void setCuB2BShoppingErrorEmailService(CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService) {
+        this.cuB2BShoppingErrorEmailService = cuB2BShoppingErrorEmailService;
     }
 
 }

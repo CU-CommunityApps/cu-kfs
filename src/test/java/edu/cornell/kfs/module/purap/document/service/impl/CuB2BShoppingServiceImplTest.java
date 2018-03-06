@@ -2,10 +2,7 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.util.List;
 
-import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
-import io.jsonwebtoken.lang.Collections;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
+import org.apache.commons.collections.CollectionUtils;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
@@ -16,6 +13,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 
 import edu.cornell.kfs.module.purap.fixture.B2BShoppingCartItemFixture;
 import edu.cornell.kfs.module.purap.fixture.CuB2BShoppingCartFixture;
+import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuB2BShoppingServiceImplTest extends KualiTestBase {
@@ -39,14 +37,12 @@ public class CuB2BShoppingServiceImplTest extends KualiTestBase {
 		assertNotNull(requisitions);
 	}
 
-	//Cart with duplicate items is valid
 	public void testCreateRequisitionsFromCxmlWithDuplicateItems() throws Exception {
 		B2BShoppingCart cart = CuB2BShoppingCartFixture.B2B_CART_USING_VENDOR_ID.createB2BShoppingCartWithDuplicateItems();
-		assertTrue("Invalid Test: cart expected to have more than 1 item", cart.getItems().size() > 1);
 
 		List<CuRequisitionDocument> cuRequisitionDocuments = b2bShoppingService.createRequisitionsFromCxml(cart, UserNameFixture.ccs1.getPerson());
 
-		assertFalse(Collections.isEmpty(cuRequisitionDocuments));
+		assertFalse(CollectionUtils.isEmpty(cuRequisitionDocuments));
 	}
 
 	public void testCheckRequisitionAccountsAreUnique() throws Exception {
