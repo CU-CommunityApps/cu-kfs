@@ -106,6 +106,9 @@
    <bean id="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService-parentBean" abstract="true"
            class="edu.cornell.kfs.module.ld.identity.CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl" />
 
+   <bean id="laborScrubberValidator" parent="laborScrubberValidator-parentBean"
+           class="edu.cornell.kfs.module.ld.batch.service.impl.CuScrubberValidatorImpl"/>
+
    <!--  Validations -->
    <import resource="document/validation/configuration/LaborValidations.xml" />
    <import resource="document/validation/configuration/BenefitExpenseTransferValidations.xml" />
