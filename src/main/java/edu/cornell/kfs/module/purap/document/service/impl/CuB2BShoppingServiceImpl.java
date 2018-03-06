@@ -223,9 +223,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
                 else {
                     GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE,
                             requisitionItem.getItemIdentifierString());
-                    String errorMessage = kualiConfigurationService.getPropertyValueAsString(PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE);
-                    errorMessage = errorMessage.replace("{0}", requisitionItem.getItemIdentifierString());
-
+                    String errorMessage = getDuplicateAccountErrorMessage(purApAccountingLine, requisitionItem);
                     LOG.error(errorMessage);
                     cuB2BShoppingErrorEmailService.sendDuplicateRequisitionAccountErrorEmail(requisitionDocument, errorMessage);
                     return false;
@@ -234,6 +232,18 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         }
 
         return true;
+    }
+
+    private String getDuplicateAccountErrorMessage(PurApAccountingLine purApAccountingLine, RequisitionItem requisitionItem) {
+        String baseErrorMessage = kualiConfigurationService.getPropertyValueAsString(PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE);
+        baseErrorMessage = baseErrorMessage.replace("{0}", requisitionItem.getItemIdentifierString());
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(baseErrorMessage);
+        stringBuilder.append(" Duplicate Account String is ");
+        stringBuilder.append(purApAccountingLine.toString().substring(purApAccountingLine.toString().indexOf("[")).replace(", ]", "]"));
+        stringBuilder.append(".");
+        return stringBuilder.toString();
     }
 
     // KFSPTS-985
