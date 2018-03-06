@@ -60,4 +60,14 @@ public enum CuB2BShoppingCartFixture {
 
 		return cart;
 	}
+
+	public CuB2BShoppingCart createB2BShoppingCartWithDuplicateItems() {
+		CuB2BShoppingCart cart = createB2BShoppingCart();
+
+		for (B2BShoppingCartItemFixture itemFixture : itemFixturesList) {
+			cart.addShoppingCartItem(itemFixture.createB2BShoppingCartItem());
+		}
+
+		return cart;
+	}
 }

@@ -176,9 +176,16 @@
     <bean id="electronicInvoiceInputFileType" class="edu.cornell.kfs.module.purap.batch.CuElectronicInvoiceInputFileType" parent="electronicInvoiceInputFileType-parentBean"/>
     <bean id="b2BShoppingService" parent="b2BShoppingService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BShoppingServiceImpl">
         <property name="userFavoriteAccountService" ref="userFavoriteAccountService"/>
+        <property name="cuB2BShoppingErrorEmailService" ref="cuB2BShoppingErrorEmailService"/>
+        <property name="kualiConfigurationService" ref="kualiConfigurationService"/>
     </bean>
    
    <bean id="purapAccountingService" parent="purapAccountingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapAccountingServiceImpl"/>
+
+	<bean id="cuB2BShoppingErrorEmailService" class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BShoppingErrorEmailServiceImpl">
+		<property name="emailService" ref="emailService"/>
+		<property name="kualiConfigurationService" ref="kualiConfigurationService"/>
+	</bean>
    
    <bean id="requisitionService" parent="requisitionService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuRequisitionServiceImpl"/>
     
