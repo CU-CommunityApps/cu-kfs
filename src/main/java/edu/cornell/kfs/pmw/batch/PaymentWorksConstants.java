@@ -182,5 +182,41 @@ public class PaymentWorksConstants {
             return translationToKfsOwnershipTypeCode;
         }
     }
+    
+    public enum PaymentWorksGoodsVsServicesOptions {
+        GOODS("Goods"),
+        SERVICES("Services"),
+        GOODS_WITH_SERVICES("Goods with a service component");
+        
+        public final String optionValueAsString;
+        
+        private PaymentWorksGoodsVsServicesOptions(String optionValueAsString) {
+            this.optionValueAsString = optionValueAsString;
+        }
+        
+        public String getOptionValueAsString() {
+            return optionValueAsString;
+        }
+    }
+    
+    public static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
+    
+    public enum ErrorDescriptorForBadKfsNote {
+        W9("W9"),
+        GOODS_AND_SERVICES("Goods and Services"),
+        INITIATOR("Initiator"),
+        BUSINESS_PURPOSE("Business Purpose"),
+        CONFLICT_OF_INTEREST("Conflict of Interest");
+        
+        public final String noteDescriptionString;
+        
+        private ErrorDescriptorForBadKfsNote(String noteDescriptionString) {
+            this.noteDescriptionString = noteDescriptionString;
+        }
+        
+        public String getNoteDescriptionString() {
+            return noteDescriptionString;
+        }
+    }
 
 }
