@@ -38,7 +38,8 @@ public class CuB2BShoppingServiceImplTest extends KualiTestBase {
 	}
 
 	public void testCreateRequisitionsFromCxmlWithDuplicateItems() throws Exception {
-		B2BShoppingCart cart = CuB2BShoppingCartFixture.B2B_CART_USING_VENDOR_ID.createB2BShoppingCartWithDuplicateItems();
+		B2BShoppingCart cart = CuB2BShoppingCartFixture.B2B_CART_WITH_DUPLICATE_ITEM.createB2BShoppingCart();
+        cart.addShoppingCartItem(B2BShoppingCartItemFixture.B2B_CART_ITEM_DUPLICATE.createB2BShoppingCartItem());
 
 		List<CuRequisitionDocument> cuRequisitionDocuments = b2bShoppingService.createRequisitionsFromCxml(cart, UserNameFixture.ccs1.getPerson());
 
@@ -46,7 +47,8 @@ public class CuB2BShoppingServiceImplTest extends KualiTestBase {
 	}
 
 	public void testCheckRequisitionAccountsAreUnique() throws Exception {
-        B2BShoppingCart cart = CuB2BShoppingCartFixture.B2B_CART_USING_VENDOR_ID.createB2BShoppingCartWithDuplicateItems();
+        B2BShoppingCart cart = CuB2BShoppingCartFixture.B2B_CART_WITH_DUPLICATE_ITEM.createB2BShoppingCart();
+        cart.addShoppingCartItem(B2BShoppingCartItemFixture.B2B_CART_ITEM_DUPLICATE.createB2BShoppingCartItem());
 
         List<CuRequisitionDocument> cuRequisitionDocuments = b2bShoppingService.createRequisitionsFromCxml(cart, UserNameFixture.ccs1.getPerson());
         List requisitionAccounts = ((RequisitionItem)cuRequisitionDocuments.get(0).getItems().get(0)).getSourceAccountingLines();
