@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DocumentWrapper>
     <CreateDate>02/26/2018</CreateDate>
-    <ReportEmail>cah292@cornell.edu</ReportEmail>
+    <ReportEmail>xyz789@cornell.edu</ReportEmail>
     <Overview>Example IB XML file</Overview>
     <DocumentList>
         <Document>
@@ -9,7 +9,7 @@
             <DocumentType>IB</DocumentType>
             <Description>First IB Test Document</Description>
             <Explanation>This is an example IB document with multiple items</Explanation>
-            <OrganizationDocumentNumber>Org Doc Num 1</OrganizationDocumentNumber>
+            <OrganizationDocumentNumber>IntBillDoc1</OrganizationDocumentNumber>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -107,16 +107,16 @@
                     <Link>http://www.cornell.edu/index.html</Link>
                     <Description>Cornell index page</Description>
                     <FileName>index.html</FileName>
-                    <CredentialGroupCode>GRP01</CredentialGroupCode>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
         <Document>
             <Index>2</Index>
             <DocumentType>IB</DocumentType>
-            <Description>Second IB Test Document</Description>
+            <Description>Another IB Test Document</Description>
             <Explanation>This is a sample IB document without any item lines.</Explanation>
-            <OrganizationDocumentNumber>Org Doc Num 2</OrganizationDocumentNumber>
+            <OrganizationDocumentNumber>IntBillDoc2</OrganizationDocumentNumber>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -173,7 +173,7 @@
             <DocumentType>IB</DocumentType>
             <Description>FAIL BUSINESS RULES</Description>
             <Explanation>This IB document should not route!</Explanation>
-            <OrganizationDocumentNumber>Org Doc Num 3</OrganizationDocumentNumber>
+            <OrganizationDocumentNumber>IntBillDoc3</OrganizationDocumentNumber>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>

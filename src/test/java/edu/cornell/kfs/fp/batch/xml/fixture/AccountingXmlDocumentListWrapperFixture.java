@@ -9,6 +9,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum AccountingXmlDocumentListWrapperFixture {
     BASE_WRAPPER("09/28/2017", "abc123@cornell.edu", "Example XML file", documents()),
+    BASE_IB_WRAPPER("02/26/2018", "xyz789@cornell.edu", "Example IB XML file", documents()),
 
     MULTI_DI_DOCUMENT_TEST(
             BASE_WRAPPER,
@@ -60,7 +61,31 @@ public enum AccountingXmlDocumentListWrapperFixture {
     EMPTY_DOCUMENT_LIST_TEST(
             BASE_WRAPPER, documents()),
     NO_DOCUMENT_LIST_TEST(
-            BASE_WRAPPER, documents());
+            BASE_WRAPPER, documents()),
+    SINGLE_IB_DOCUMENT_TEST(
+            BASE_IB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_IB_DOCUMENT_TEST_DOC1)),
+    SINGLE_IB_DOCUMENT_NO_ITEMS_TEST(
+            BASE_IB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_IB_NO_ITEMS_DOCUMENT_TEST_DOC1)),
+    MULTI_IB_DOCUMENT_TEST(
+            BASE_IB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC2)),
+    MULTI_IB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST(
+            BASE_IB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC2,
+                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER)),
+    MULTI_DOCUMENT_TYPES_TEST(
+            "02/26/2018", "xyz789@cornell.edu", "Example IB XML file",
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DI,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_IB));
 
     public final String createDate;
     public final String reportEmail;

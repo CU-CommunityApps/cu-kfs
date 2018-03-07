@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -49,6 +48,10 @@ public enum AccountingDocumentMapping {
         this.generatorConstructor = generatorConstructor;
     }
 
+    public BiFunction<Supplier<Note>, Supplier<AdHocRoutePerson>, AccountingDocumentGeneratorBase<?>> getGeneratorConstructor() {
+        return generatorConstructor;
+    }
+
     public static Optional<AccountingDocumentMapping> getMappingByDocumentType(String documentTypeName) {
         try {
             return Optional.of(AccountingDocumentMapping.valueOf(documentTypeName + MAPPING_ENUM_CONST_SUFFIX));
@@ -61,12 +64,6 @@ public enum AccountingDocumentMapping {
         return Arrays.stream(AccountingDocumentMapping.values())
                 .filter((mapping) -> mapping.documentClass.isAssignableFrom(documentClass))
                 .findFirst();
-    }
-
-    public static Stream<BiFunction<Supplier<Note>, Supplier<AdHocRoutePerson>, AccountingDocumentGeneratorBase<?>>>
-            getGeneratorConstructorsAsStream() {
-        return Arrays.stream(AccountingDocumentMapping.values())
-                .map((mapping) -> mapping.generatorConstructor);
     }
 
 }

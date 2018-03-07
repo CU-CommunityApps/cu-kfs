@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +102,8 @@ public class CreateAccountingDocumentServiceImplTest {
         ConfigurationService configurationService = buildMockConfigurationService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(), configurationService);
-        createAccountingDocumentService.initializeDocumentGeneratorsFromMappingEnum();
+        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
+                AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -164,6 +166,41 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-attachments-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleIBDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-ib-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleIBDocumentLackingItems() throws Exception {
+        copyTestFilesAndCreateDoneFiles("ib-without-items-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_NO_ITEMS_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleIBDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-ib-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleIBDocumentsPlusDocumentWithRulesFailure() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-ib-plus-bad-rules-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleDocumentTypes() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-doc-types-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -513,8 +550,9 @@ public class CreateAccountingDocumentServiceImplTest {
             this.processingOrderedBaseFileNames = new ArrayList<>();
         }
 
-        public void initializeDocumentGeneratorsFromMappingEnum() {
-            this.documentGeneratorsByBeanName = AccountingDocumentMapping.getGeneratorConstructorsAsStream()
+        public void initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping... documentMappings) {
+            this.documentGeneratorsByBeanName = Arrays.stream(documentMappings)
+                    .map(AccountingDocumentMapping::getGeneratorConstructor)
                     .map(this::buildAccountingDocumentGenerator)
                     .collect(Collectors.toMap(
                             this::buildGeneratorBeanName, Function.identity()));
@@ -593,20 +631,6 @@ public class CreateAccountingDocumentServiceImplTest {
             String documentNumber = String.valueOf(++nextDocumentNumber);
             document.setDocumentNumber(documentNumber);
             document.getDocumentHeader().setDocumentNumber(documentNumber);
-            
-            if (document instanceof AccountingDocument) {
-                AccountingDocument accountingDocument = (AccountingDocument) document;
-                accountingDocument.setSourceAccountingLines(new ArrayList<>());
-                accountingDocument.setTargetAccountingLines(new ArrayList<>());
-                accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
-                accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
-            }
-            
-            if (document instanceof InternalBillingDocument) {
-                InternalBillingDocument internalBillingDocument = (InternalBillingDocument) document;
-                internalBillingDocument.setItems(new ArrayList<>());
-                internalBillingDocument.setNextItemLineNumber(Integer.valueOf(1));
-            }
             
             return document;
         }

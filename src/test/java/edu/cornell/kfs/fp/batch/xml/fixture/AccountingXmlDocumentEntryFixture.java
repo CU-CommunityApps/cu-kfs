@@ -2,7 +2,6 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.fp.document.InternalBillingDocument;
@@ -26,6 +25,40 @@ public enum AccountingXmlDocumentEntryFixture {
             CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR,
             "Placeholder for documents that are expected to fail business rule validation", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
+
+    BASE_IB_WITH_ITEMS(1, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            "First IB Test Document", "This is an example IB document with multiple items", "IntBillDoc1",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50_EXPENSE2),
+            items(
+                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
+                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    BASE_IB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            "Another IB Test Document", "This is a sample IB document without any item lines.", "IntBillDoc2",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_1000,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_500),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_1000,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_500),
+            items(),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
 
     MULTI_DI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -176,28 +209,15 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks()),
 
-    SINGLE_IB_DOCUMENT_TEST_DOC1(
-            BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
-            targetAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50),
-            items(
-                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
-                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
-            notes(
-                    "This is a sample note",
-                    "Another note"),
-            adHocRecipients(
-                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
-                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
-                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
-                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
-            backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE))
-    ;
+    SINGLE_IB_DOCUMENT_TEST_DOC1(BASE_IB_WITH_ITEMS, 1),
+
+    MULTI_IB_DOCUMENT_TEST_DOC1(BASE_IB_WITH_ITEMS, 1),
+    MULTI_IB_DOCUMENT_TEST_DOC2(BASE_IB_NO_ITEMS, 2),
+
+    SINGLE_IB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_IB_NO_ITEMS, 1),
+
+    MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
+    MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2);
 
     public final Long index;
     public final String documentTypeCode;
@@ -314,12 +334,6 @@ public enum AccountingXmlDocumentEntryFixture {
     private void addAccountingLinesToDocument(AccountingDocument accountingDocument) {
         Class<? extends SourceAccountingLine> sourceAccountingLineClass = accountingDocument.getSourceAccountingLineClass();
         Class<? extends TargetAccountingLine> targetAccountingLineClass = accountingDocument.getTargetAccountingLineClass();
-        
-        accountingDocument.setSourceAccountingLines(new ArrayList<>());
-        accountingDocument.setTargetAccountingLines(new ArrayList<>());
-        accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
-        accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
-        
         sourceAccountingLines.stream()
                 .map((fixture) -> fixture.toAccountingLineBo(sourceAccountingLineClass, accountingDocument.getDocumentNumber()))
                 .forEach(accountingDocument::addSourceAccountingLine);
@@ -346,15 +360,12 @@ public enum AccountingXmlDocumentEntryFixture {
 
     private void addItemsToDocumentIfNecessary(AccountingDocument accountingDocument) {
         if (accountingDocument instanceof InternalBillingDocument) {
-            addItemsToInternalBillingDocument((InternalBillingDocument) accountingDocument);
+            InternalBillingDocument internalBillingDocument = (InternalBillingDocument) accountingDocument;
+            String documentNumber = internalBillingDocument.getDocumentNumber();
+            items.stream()
+                    .map((fixture) -> fixture.toInternalBillingItem(documentNumber))
+                    .forEach(internalBillingDocument::addItem);
         }
-    }
-
-    private void addItemsToInternalBillingDocument(InternalBillingDocument internalBillingDocument) {
-        String documentNumber = internalBillingDocument.getDocumentNumber();
-        items.stream()
-                .map((fixture) -> fixture.toInternalBillingItem(documentNumber))
-                .forEach(internalBillingDocument::addItem);
     }
 
     // The following methods are only meant to improve the setup and readability of this enum's constants.

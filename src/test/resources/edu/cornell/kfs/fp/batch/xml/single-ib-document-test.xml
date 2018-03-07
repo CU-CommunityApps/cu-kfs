@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DocumentWrapper>
     <CreateDate>02/26/2018</CreateDate>
-    <ReportEmail>cah292@cornell.edu</ReportEmail>
+    <ReportEmail>xyz789@cornell.edu</ReportEmail>
     <Overview>Example IB XML file</Overview>
     <DocumentList>
         <Document>
@@ -9,7 +9,7 @@
             <DocumentType>IB</DocumentType>
             <Description>First IB Test Document</Description>
             <Explanation>This is an example IB document with multiple items</Explanation>
-            <OrganizationDocumentNumber>Org Doc Num 1</OrganizationDocumentNumber>
+            <OrganizationDocumentNumber>IntBillDoc1</OrganizationDocumentNumber>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
@@ -107,7 +107,7 @@
                     <Link>http://www.cornell.edu/index.html</Link>
                     <Description>Cornell index page</Description>
                     <FileName>index.html</FileName>
-                    <CredentialGroupCode>GRP01</CredentialGroupCode>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>

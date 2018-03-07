@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DocumentWrapper>
     <CreateDate>02/26/2018</CreateDate>
-    <ReportEmail>cah292@cornell.edu</ReportEmail>
+    <ReportEmail>xyz789@cornell.edu</ReportEmail>
     <Overview>Example IB XML file</Overview>
     <DocumentList>
         <Document>
             <Index>1</Index>
             <DocumentType>IB</DocumentType>
-            <Description>Second IB Test Document</Description>
+            <Description>Another IB Test Document</Description>
             <Explanation>This is a sample IB document without any item lines.</Explanation>
-            <OrganizationDocumentNumber>Org Doc Num 2</OrganizationDocumentNumber>
+            <OrganizationDocumentNumber>IntBillDoc2</OrganizationDocumentNumber>
             <SourceAccountingLineList>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
