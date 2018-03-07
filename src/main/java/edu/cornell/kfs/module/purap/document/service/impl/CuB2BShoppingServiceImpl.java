@@ -27,12 +27,14 @@ import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.impl.B2BShoppingServiceImpl;
+import org.kuali.kfs.module.purap.document.validation.impl.PurchasingAccountsPayableUniqueAccountingStringsValidation;
 import org.kuali.kfs.module.purap.exception.B2BShoppingException;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -214,37 +216,24 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         boolean requisitionAccountsUnique = true;
         for (RequisitionItem requisitionItem : requisitionItems) {
 
-            List<PurApAccountingLine> requisitionAccounts = requisitionItem.getSourceAccountingLines();
-            Set existingAccounts = new HashSet();
-            for(PurApAccountingLine purApAccountingLine : requisitionAccounts) {
-                if (!existingAccounts.contains(purApAccountingLine.toString())) {
-                    existingAccounts.add(purApAccountingLine.toString());
-                }
-                else {
-                    requisitionAccountsUnique = false;
-                    GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE,
-                            requisitionItem.getItemIdentifierString());
-                    String errorMessage = getDuplicateAccountErrorMessage(purApAccountingLine, requisitionItem);
-                    LOG.error(errorMessage);
-                    cuB2BShoppingErrorEmailService.sendDuplicateRequisitionAccountErrorEmail(requisitionDocument, errorMessage);
-                    break;
-                }
+            PurchasingAccountsPayableUniqueAccountingStringsValidation uniqueRequisitionAccountValidator =
+                    SpringContext.getBean(PurchasingAccountsPayableUniqueAccountingStringsValidation.class);
+            uniqueRequisitionAccountValidator.setItemForValidation(requisitionItem);
+
+            if (!uniqueRequisitionAccountValidator.validate(null)) {
+                requisitionAccountsUnique = false;
+                handleDuplicateAccountError(requisitionDocument, requisitionItem);
             }
         }
 
         return requisitionAccountsUnique;
     }
 
-    private String getDuplicateAccountErrorMessage(PurApAccountingLine purApAccountingLine, RequisitionItem requisitionItem) {
-        String baseErrorMessage = kualiConfigurationService.getPropertyValueAsString(PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE);
-        baseErrorMessage = baseErrorMessage.replace("{0}", requisitionItem.getItemIdentifierString());
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(baseErrorMessage);
-        stringBuilder.append(" Duplicate Account String is ");
-        stringBuilder.append(purApAccountingLine.toString().substring(purApAccountingLine.toString().indexOf("[")).replace(", ]", "]"));
-        stringBuilder.append(".");
-        return stringBuilder.toString();
+    private void handleDuplicateAccountError(RequisitionDocument requisitionDocument, RequisitionItem requisitionItem) {
+        String errorMessage = kualiConfigurationService.getPropertyValueAsString(PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE);
+        errorMessage = errorMessage.replace("{0}", requisitionItem.getItemIdentifierString());
+        LOG.error(errorMessage);
+        cuB2BShoppingErrorEmailService.sendDuplicateRequisitionAccountErrorEmail(requisitionDocument, errorMessage);
     }
 
     // KFSPTS-985
