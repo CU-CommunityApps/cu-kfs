@@ -83,7 +83,11 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
     
     private boolean noteTextSizeIsWithinLimit(String noteText) {
-        return (noteText.length() <= PaymentWorksConstants.NOTE_TEXT_DEFAULT_MAX_LENGTH);
+        return (noteTextIsNotBlank(noteText) && (noteText.length() <= PaymentWorksConstants.NOTE_TEXT_DEFAULT_MAX_LENGTH));
+    }
+    
+    private boolean noteTextIsNotBlank(String noteText) {
+        return (!StringUtils.isBlank(noteText));
     }
     
     private Note createNote(String noteText) {
