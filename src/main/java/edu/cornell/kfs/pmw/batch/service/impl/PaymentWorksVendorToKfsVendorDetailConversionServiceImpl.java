@@ -486,8 +486,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private KfsVendorDataWrapper populateW9Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {
         kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW9ReceivedIndicator(new Boolean(true));
         kfsVendorDataWrapper.getVendorDetail().getVendorHeader().setVendorW9SignedDate(getDateTimeService().getCurrentSqlDate());
-        Note w9Note = getPaymentWorksBatchUtilityService().createNote(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_W9_URL_EXISTS_MESSAGE));
-        kfsVendorDataWrapper.getVendorNotes().add(w9Note);
+        kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_W9_URL_EXISTS_MESSAGE), 
+                PaymentWorksConstants.ErrorDescriptorForBadKfsNote.W9.getNoteDescriptionString());
         return kfsVendorDataWrapper;
     }
     
@@ -604,23 +605,43 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private KfsVendorDataWrapper createGoodsAndServicesNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
-        StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_PROVIDED_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getServicesProvided());
-        Note goodsServicesNote = getPaymentWorksBatchUtilityService().createNote(sbText.toString());
-        kfsVendorDataWrapper.getVendorNotes().add(goodsServicesNote);
+        StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_PROVIDED_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getServicesProvided()).append(System.lineSeparator());
+        if (servicesAreBeingProvided(pmwVendor)) {
+            sbText = populateAnswersToServiceQuestions(sbText, pmwVendor);
+        }
+        kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.GOODS_AND_SERVICES.getNoteDescriptionString());
         return kfsVendorDataWrapper;
+    }
+    
+    private boolean servicesAreBeingProvided(PaymentWorksVendor pmwVendor) {
+        return (StringUtils.isNotBlank(pmwVendor.getServicesProvided())
+                && (StringUtils.equalsIgnoreCase(pmwVendor.getServicesProvided(), PaymentWorksConstants.PaymentWorksGoodsVsServicesOptions.SERVICES.getOptionValueAsString())
+                    || StringUtils.equalsIgnoreCase(pmwVendor.getServicesProvided(), PaymentWorksConstants.PaymentWorksGoodsVsServicesOptions.GOODS_WITH_SERVICES.getOptionValueAsString())));
+    }
+
+    private StringBuilder populateAnswersToServiceQuestions(StringBuilder sbText, PaymentWorksVendor pmwVendor) {
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_CURRENT_PAYROLL_PAID_LABEL, pmwVendor.isCurrentlyPaidThroughPayroll());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_EVER_PAYROLL_PAID_LABEL, pmwVendor.isEverPaidThroughPayroll());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NOT_SOLE_PROPRIETOR_LABEL, pmwVendor.isSeperateLegalEntityProvidingServices());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_RECEIVING_EQUIPMENT_TRAINING_LABEL, pmwVendor.isCornellProvidedTrainingOrEquipmentRequired());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_MARKETING_LABEL, pmwVendor.isInformalMarketing());
+        sbText = appendServicesAnswerToText(sbText, PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_INSURANCE_LABEL, pmwVendor.isServicesProvidedWithoutInsurance());
+        return sbText;
+    }
+
+    private StringBuilder appendServicesAnswerToText(StringBuilder sbText, String serviceQuestionLabel, boolean isAnswerAffimative) {
+        return(sbText.append(getConfigurationService().getPropertyValueAsString(serviceQuestionLabel)).append(KFSConstants.BLANK_SPACE).append((isAnswerAffimative ? KFSConstants.OptionLabels.YES : KFSConstants.OptionLabels.NO)).append(System.lineSeparator()).append(System.lineSeparator()));
     }
     
     private KfsVendorDataWrapper createInitiatorNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NOTES_INITIATOR_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getInitiatorNetId());
-        Note initiatorNote = getPaymentWorksBatchUtilityService().createNote(sbText.toString());
-        kfsVendorDataWrapper.getVendorNotes().add(initiatorNote);
+        kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.INITIATOR.getNoteDescriptionString());
         return kfsVendorDataWrapper;
     }
     
     private KfsVendorDataWrapper createVendorTypeBusinessPurposeNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_BUSINESS_PURPOSE_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getVendorType());
-        Note businessPurposeNote = getPaymentWorksBatchUtilityService().createNote(sbText.toString());
-        kfsVendorDataWrapper.getVendorNotes().add(businessPurposeNote);
+        kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.BUSINESS_PURPOSE.getNoteDescriptionString());
         return kfsVendorDataWrapper;
     }
     
@@ -630,8 +651,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getConflictOfInterestEmployeeName()).append(System.lineSeparator());
             sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_PHONE_NUMBER_LABEL)).append(pmwVendor.getConflictOfInterestEmployeePhoneNumber()).append(KFSConstants.BLANK_SPACE).append(System.lineSeparator());
             sbText.append(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_RELATIONSHIP_LABEL)).append(pmwVendor.getConflictOfInterestRelationshipToEmployee()).append(KFSConstants.BLANK_SPACE).append(System.lineSeparator());
-            Note conflictOfInterestNote = getPaymentWorksBatchUtilityService().createNote(sbText.toString());
-            kfsVendorDataWrapper.getVendorNotes().add(conflictOfInterestNote);
+            kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.CONFLICT_OF_INTEREST.getNoteDescriptionString());
         }
         return kfsVendorDataWrapper;
     }

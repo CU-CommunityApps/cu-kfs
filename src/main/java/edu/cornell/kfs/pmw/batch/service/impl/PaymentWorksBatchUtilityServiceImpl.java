@@ -12,7 +12,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
+import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
@@ -70,7 +72,21 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
 
     @Override 
-    public Note createNote(String noteText) {
+    public KfsVendorDataWrapper createNoteRecordingAnyErrors(KfsVendorDataWrapper kfsVendorDataWrapper, String noteText, String noteErrorDescriptor) {
+        if (noteTextSizeIsWithinLimit(noteText)) {
+            Note note = createNote(noteText);
+            kfsVendorDataWrapper.getVendorNotes().add(note);
+        } else {
+            LOG.error("createNoteRecordingAnyErrors: The " + noteErrorDescriptor + " Note contained " + noteText.length() + "characters and it can only have " + PaymentWorksConstants.NOTE_TEXT_DEFAULT_MAX_LENGTH);
+        }
+        return kfsVendorDataWrapper;
+    }
+    
+    private boolean noteTextSizeIsWithinLimit(String noteText) {
+        return (noteText.length() <= PaymentWorksConstants.NOTE_TEXT_DEFAULT_MAX_LENGTH);
+    }
+    
+    private Note createNote(String noteText) {
         Note newNote = new Note();
         newNote.setNoteText(noteText);
         newNote.setAuthorUniversalIdentifier(getSystemUser().getPrincipalId());
