@@ -211,27 +211,28 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     public boolean checkRequisitionAccountsAreUnique(RequisitionDocument requisitionDocument) {
 
         List<RequisitionItem> requisitionItems = requisitionDocument.getItems();
+        boolean requisitionAccountsUnique = true;
         for (RequisitionItem requisitionItem : requisitionItems) {
 
             List<PurApAccountingLine> requisitionAccounts = requisitionItem.getSourceAccountingLines();
-
             Set existingAccounts = new HashSet();
             for(PurApAccountingLine purApAccountingLine : requisitionAccounts) {
                 if (!existingAccounts.contains(purApAccountingLine.toString())) {
                     existingAccounts.add(purApAccountingLine.toString());
                 }
                 else {
+                    requisitionAccountsUnique = false;
                     GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE,
                             requisitionItem.getItemIdentifierString());
                     String errorMessage = getDuplicateAccountErrorMessage(purApAccountingLine, requisitionItem);
                     LOG.error(errorMessage);
                     cuB2BShoppingErrorEmailService.sendDuplicateRequisitionAccountErrorEmail(requisitionDocument, errorMessage);
-                    return false;
+                    break;
                 }
             }
         }
 
-        return true;
+        return requisitionAccountsUnique;
     }
 
     private String getDuplicateAccountErrorMessage(PurApAccountingLine purApAccountingLine, RequisitionItem requisitionItem) {
