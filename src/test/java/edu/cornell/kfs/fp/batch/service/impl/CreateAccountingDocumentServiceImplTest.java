@@ -12,12 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
@@ -35,6 +34,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -250,26 +250,26 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private void buildExpectedDocumentsAndAppendToLists(Consumer<AccountingXmlDocumentEntryFixture> fixtureListAppender,
             Consumer<AccountingDocument> documentListAppender, AccountingXmlDocumentEntryFixture... fixtures) {
-        Iterator<String> docIdsIterator = buildDocumentIdsIterator(fixtures.length);
-        String[] docIds = new String[fixtures.length];
+        MutableInt idCounter = new MutableInt(DOCUMENT_NUMBER_START);
         
-        IntStream.range(0, fixtures.length)
-                .filter((index) -> isDocumentExpectedToReachInitiationPoint(fixtures[index]))
-                .peek((index) -> docIds[index] = docIdsIterator.next())
-                .filter((index) -> isDocumentExpectedToPassBusinessRulesValidation(fixtures[index]))
-                .peek((index) -> fixtureListAppender.accept(fixtures[index]))
-                .mapToObj((index) -> fixtures[index].toAccountingDocument(docIds[index]))
+        Stream.of(fixtures)
+                .filter(this::isDocumentExpectedToReachInitiationPoint)
+                .map((fixture) -> buildDocumentIdToFixtureMapping(idCounter, fixture))
+                .filter((mapping) -> isDocumentExpectedToPassBusinessRulesValidation(mapping.getValue()))
+                .peek((mapping) -> fixtureListAppender.accept(mapping.getValue()))
+                .map(this::buildExpectedDocument)
                 .forEach(documentListAppender);
     }
 
-    private Iterator<String> buildDocumentIdsIterator(int length) {
-        if (length < 1) {
-            return Collections.emptyIterator();
-        }
-        return IntStream.rangeClosed(1, length)
-                .map((value) -> DOCUMENT_NUMBER_START + value)
-                .mapToObj(String::valueOf)
-                .iterator();
+    private Map.Entry<String, AccountingXmlDocumentEntryFixture> buildDocumentIdToFixtureMapping(
+            MutableInt idCounter, AccountingXmlDocumentEntryFixture fixture) {
+        idCounter.increment();
+        return new AbstractMap.SimpleImmutableEntry<>(idCounter.toString(), fixture);
+    }
+
+    private AccountingDocument buildExpectedDocument(Map.Entry<String, AccountingXmlDocumentEntryFixture> docIdToFixtureMapping) {
+        AccountingXmlDocumentEntryFixture fixture = docIdToFixtureMapping.getValue();
+        return fixture.toAccountingDocument(docIdToFixtureMapping.getKey());
     }
 
     @SuppressWarnings("unchecked")
