@@ -14,16 +14,19 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
@@ -32,7 +35,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.mutable.MutableInt;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -151,7 +153,7 @@ public class CreateAccountingDocumentServiceImplTest {
     public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
         copyTestFilesAndCreateDoneFiles("multi-di-plus-invalid-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_INVALID_SECOND_DOCUMENT_TEST);
+                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
     }
 
     @Test
@@ -232,27 +234,42 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentEntryFixture... fixtures) {
-        List<AccountingDocument> expectedAccountingDocuments = buildExpectedDocumentsList(fixtures);
+        List<AccountingXmlDocumentEntryFixture> expectedRoutableFixtures = new ArrayList<>(fixtures.length);
+        List<AccountingDocument> expectedAccountingDocuments = new ArrayList<>(fixtures.length);
+        buildExpectedDocumentsAndAppendToLists(expectedRoutableFixtures::add, expectedAccountingDocuments::add, fixtures);
+        
         assertEquals("Wrong number of routed documents", expectedAccountingDocuments.size(), routedAccountingDocuments.size());
+        
         for (int i = 0; i < expectedAccountingDocuments.size(); i++) {
-            AccountingXmlDocumentEntryFixture fixture = fixtures[i];
+            AccountingXmlDocumentEntryFixture fixture = expectedRoutableFixtures.get(i);
             Class<? extends AccountingDocument> expectedDocumentClass = AccountingDocumentClassMappingUtils
                     .getDocumentClassByDocumentType(fixture.documentTypeCode);
             assertAccountingDocumentIsCorrect(expectedDocumentClass, expectedAccountingDocuments.get(i), routedAccountingDocuments.get(i));
         }
     }
 
-    private List<AccountingDocument> buildExpectedDocumentsList(AccountingXmlDocumentEntryFixture... fixtures) {
-        MutableInt nextDocumentNumber = new MutableInt(DOCUMENT_NUMBER_START);
-        Supplier<String> docNumberSupplier = () -> {
-             nextDocumentNumber.increment();
-             return nextDocumentNumber.toString();
-        };
+    private void buildExpectedDocumentsAndAppendToLists(Consumer<AccountingXmlDocumentEntryFixture> fixtureListAppender,
+            Consumer<AccountingDocument> documentListAppender, AccountingXmlDocumentEntryFixture... fixtures) {
+        Iterator<String> docIdsIterator = buildDocumentIdsIterator(fixtures.length);
+        String[] docIds = new String[fixtures.length];
         
-        return Stream.of(fixtures)
-                .map((documentFixture) -> documentFixture.toAccountingDocument(docNumberSupplier.get()))
-                .filter(this::documentPassesBusinessRules)
-                .collect(Collectors.toCollection(ArrayList::new));
+        IntStream.range(0, fixtures.length)
+                .filter((index) -> isDocumentExpectedToReachInitiationPoint(fixtures[index]))
+                .peek((index) -> docIds[index] = docIdsIterator.next())
+                .filter((index) -> isDocumentExpectedToPassBusinessRulesValidation(fixtures[index]))
+                .peek((index) -> fixtureListAppender.accept(fixtures[index]))
+                .mapToObj((index) -> fixtures[index].toAccountingDocument(docIds[index]))
+                .forEach(documentListAppender);
+    }
+
+    private Iterator<String> buildDocumentIdsIterator(int length) {
+        if (length < 1) {
+            return Collections.emptyIterator();
+        }
+        return IntStream.rangeClosed(1, length)
+                .map((value) -> DOCUMENT_NUMBER_START + value)
+                .mapToObj(String::valueOf)
+                .iterator();
     }
 
     @SuppressWarnings("unchecked")
@@ -453,6 +470,14 @@ public class CreateAccountingDocumentServiceImplTest {
     private boolean documentPassesBusinessRules(Document document) {
         return !StringUtils.equalsIgnoreCase(
                 CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, document.getDocumentHeader().getDocumentDescription());
+    }
+
+    private boolean isDocumentExpectedToReachInitiationPoint(AccountingXmlDocumentEntryFixture fixture) {
+        return !AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER.equals(fixture);
+    }
+
+    private boolean isDocumentExpectedToPassBusinessRulesValidation(AccountingXmlDocumentEntryFixture fixture) {
+        return !AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER.equals(fixture);
     }
 
     private TestAccountingXmlDocumentDownloadAttachmentService buildAccountingXmlDocumentDownloadAttachmentService() throws Exception {

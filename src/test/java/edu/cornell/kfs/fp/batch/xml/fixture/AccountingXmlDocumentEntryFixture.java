@@ -21,44 +21,13 @@ import edu.cornell.kfs.sys.util.MockDocumentUtils;
 public enum AccountingXmlDocumentEntryFixture {
     BASE_DOCUMENT(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Test Document", "This is only a test document!", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), items(), notes(), adHocRecipients(), backupLinks()),
-    INVALID_DOCUMENT_PLACEHOLDER(1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+    BAD_CONVERSION_DOCUMENT_PLACEHOLDER(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Fail Conversion from XML",
+            "Placeholder for documents that are expected to fail XML-to-doc conversion", "ABCD1234",
+            sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
+    BAD_RULES_DOCUMENT_PLACEHOLDER(1, KFSConstants.ROOT_DOCUMENT_TYPE,
             CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR,
             "Placeholder for documents that are expected to fail business rule validation", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
-
-    BASE_IB_WITH_ITEMS(1, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
-            "First IB Test Document", "This is an example IB document with multiple items", "IntBillDoc1",
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100_INCOME1,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50_INCOME2),
-            targetAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100_EXPENSE1,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50_EXPENSE2),
-            items(
-                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
-                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
-            notes(
-                    "This is a sample note",
-                    "Another note"),
-            adHocRecipients(
-                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
-                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
-                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
-                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
-            backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
-    BASE_IB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
-            "Another IB Test Document", "This is a sample IB document without any item lines.", "IntBillDoc2",
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_1000,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_500),
-            targetAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_1000,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_500),
-            items(),
-            notes(),
-            adHocRecipients(),
-            backupLinks()),
 
     MULTI_DI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -120,27 +89,6 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.AWS_BILLING_INVOICE,
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
-
-    MULTI_DI_DOCUMENT_TEST_DOC1_BAD(
-            1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
-            CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, "This document should not route!", "ABCD1234",
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
-            targetAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50),
-            notes(
-                    "A fun testing note",
-                    "Another note"),
-            adHocRecipients(
-                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
-                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
-                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
-                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
-            backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
-                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
 
     SINGLE_DI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -205,6 +153,40 @@ public enum AccountingXmlDocumentEntryFixture {
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             sourceAccountingLines(),
             targetAccountingLines(),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+
+    BASE_IB_WITH_ITEMS(1, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            "First IB Test Document", "This is an example IB document with multiple items", "IntBill01",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254700_OBJ_4020_AMOUNT_100_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263700_OBJ_1280_AMOUNT_50_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254710_OBJ_4020_AMOUNT_100_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263600_OBJ_1280_AMOUNT_50_EXPENSE2),
+            items(
+                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
+                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    BASE_IB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            "Another IB Test Document", "This is a sample IB document without any item lines.", "IntBill02",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254700_OBJ_4020_AMOUNT_1000_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263700_OBJ_1280_AMOUNT_500_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254710_OBJ_4020_AMOUNT_1000_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263600_OBJ_1280_AMOUNT_500_EXPENSE2),
+            items(),
             notes(),
             adHocRecipients(),
             backupLinks()),

@@ -18,10 +18,14 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_1000710_OBJ_4000_AMOUNT_500(ACCT_1000710_OBJ_4000_AMOUNT_50, 500.00),
     ACCT_R504701_OBJ_2641_AMOUNT_100_04("IT", "R504701", "13579", "2641", "888", "ZZ-654321", "642CBA", "The source line", 100.04),
     ACCT_R504707_OBJ_2643_AMOUNT_100_04("WX", "R504707", "35799", "2643", "987", "JX-111999", "333GGG", "This is the target line!", 100.04),
-    ACCT_R504700_OBJ_2640_AMOUNT_100_INCOME1(ACCT_R504700_OBJ_2640_AMOUNT_100, "Income Line 1", 100.00),
-    ACCT_1000718_OBJ_4000_AMOUNT_50_INCOME2(ACCT_1000718_OBJ_4000_AMOUNT_50, "Income Line 2", 50.00),
-    ACCT_R504706_OBJ_2640_AMOUNT_100_EXPENSE1(ACCT_R504706_OBJ_2640_AMOUNT_100, "Expense Line 1", 100.00),
-    ACCT_1000710_OBJ_4000_AMOUNT_50_EXPENSE2(ACCT_1000710_OBJ_4000_AMOUNT_50, "Expense Line 2", 50.00);
+    ACCT_G254700_OBJ_4020_AMOUNT_100_INCOME1("IT", "G254700", null, "4020", null, null, null, "Income Line 1", 100.00),
+    ACCT_G263700_OBJ_1280_AMOUNT_50_INCOME2("IT", "G263700", null, "1280", null, null, null, "Income Line 2", 50.00),
+    ACCT_G254710_OBJ_4020_AMOUNT_100_EXPENSE1("IT", "G254710", null, "4020", null, null, null, "Expense Line 1", 100.00),
+    ACCT_G263600_OBJ_1280_AMOUNT_50_EXPENSE2("IT", "G263600", null, "1280", null, null, null, "Expense Line 2", 50.00),
+    ACCT_G254700_OBJ_4020_AMOUNT_1000_INCOME1(ACCT_G254700_OBJ_4020_AMOUNT_100_INCOME1, 1000.00),
+    ACCT_G263700_OBJ_1280_AMOUNT_500_INCOME2(ACCT_G263700_OBJ_1280_AMOUNT_50_INCOME2, 500.00),
+    ACCT_G254710_OBJ_4020_AMOUNT_1000_EXPENSE1(ACCT_G254710_OBJ_4020_AMOUNT_100_EXPENSE1, 1000.00),
+    ACCT_G263600_OBJ_1280_AMOUNT_500_EXPENSE2(ACCT_G263600_OBJ_1280_AMOUNT_50_EXPENSE2, 500.00);
 
     public final String chartCode;
     public final String accountNumber;
@@ -35,14 +39,9 @@ public enum AccountingXmlDocumentAccountingLineFixture {
 
     private AccountingXmlDocumentAccountingLineFixture(
             AccountingXmlDocumentAccountingLineFixture baseFixture, double newAmount) {
-        this(baseFixture, baseFixture.lineDescription, newAmount);
-    }
-
-    private AccountingXmlDocumentAccountingLineFixture(
-            AccountingXmlDocumentAccountingLineFixture baseFixture, String newDescription, double newAmount) {
         this(baseFixture.chartCode, baseFixture.accountNumber, baseFixture.subAccountNumber,
                 baseFixture.objectCode, baseFixture.subObjectCode, baseFixture.projectCode, baseFixture.orgRefId,
-                newDescription, newAmount);
+                baseFixture.lineDescription, newAmount);
     }
 
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,

@@ -18,26 +18,27 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC4)),
-    MULTI_DI_DOCUMENT_WITH_INVALID_SECOND_DOCUMENT_TEST(
+    MULTI_DI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3)),
     MULTI_DI_DOCUMENT_WITH_BAD_RULES_FIRST_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
-                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1_BAD,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3)),
     MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
-                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC4,
-                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER)),
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     SINGLE_DI_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
@@ -80,7 +81,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC2,
-                    AccountingXmlDocumentEntryFixture.INVALID_DOCUMENT_PLACEHOLDER)),
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example IB XML file",
             documents(
