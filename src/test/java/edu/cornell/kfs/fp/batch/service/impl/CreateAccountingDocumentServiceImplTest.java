@@ -41,6 +41,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.UserSession;
@@ -288,6 +289,12 @@ public class CreateAccountingDocumentServiceImplTest {
                 expectedDocument.getNotes(), actualDocument.getNotes(), this::assertNoteIsCorrect);
         assertObjectListIsCorrect("ad hoc persons",
                 expectedDocument.getAdHocRoutePersons(), actualDocument.getAdHocRoutePersons(), this::assertAdHocPersonIsCorrect);
+        
+        if (InternalBillingDocument.class.isAssignableFrom(documentClass)) {
+            assertObjectListIsCorrect("items",
+                    ((InternalBillingDocument) expectedDocument).getItems(), ((InternalBillingDocument) actualDocument).getItems(),
+                    this::assertInternalBillingItemIsCorrect);
+        }
     }
 
     private <T> void assertObjectListIsCorrect(String listLabel, List<? extends T> expectedObjects, List<? extends T> actualObjects,
@@ -317,6 +324,17 @@ public class CreateAccountingDocumentServiceImplTest {
         assertEquals("Wrong org ref ID", expectedLine.getOrganizationReferenceId(), actualLine.getOrganizationReferenceId());
         assertEquals("Wrong line description", expectedLine.getFinancialDocumentLineDescription(), actualLine.getFinancialDocumentLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+    }
+
+    private void assertInternalBillingItemIsCorrect(InternalBillingItem expectedItem, InternalBillingItem actualItem) {
+        assertEquals("Wrong document number", expectedItem.getDocumentNumber(), actualItem.getDocumentNumber());
+        assertEquals("Wrong item sequence number", expectedItem.getItemSequenceId(), actualItem.getItemSequenceId());
+        assertEquals("Wrong service date", expectedItem.getItemServiceDate(), actualItem.getItemServiceDate());
+        assertEquals("Wrong stock number", expectedItem.getItemStockNumber(), actualItem.getItemStockNumber());
+        assertEquals("Wrong item description", expectedItem.getItemStockDescription(), actualItem.getItemStockDescription());
+        assertEquals("Wrong item quantity", expectedItem.getItemQuantity(), actualItem.getItemQuantity());
+        assertEquals("Wrong unit of measure", expectedItem.getUnitOfMeasureCode(), actualItem.getUnitOfMeasureCode());
+        assertEquals("Wrong item cost", expectedItem.getItemUnitAmount(), actualItem.getItemUnitAmount());
     }
 
     private void assertNoteIsCorrect(Note expectedNote, Note actualNote) {
