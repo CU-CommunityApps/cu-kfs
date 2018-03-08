@@ -31,6 +31,8 @@ import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
+import org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -215,7 +217,8 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         for (RequisitionItem requisitionItem : requisitionItems) {
             uniqueRequisitionAccountValidator.setItemForValidation(requisitionItem);
 
-            if (!uniqueRequisitionAccountValidator.validate(null)) {
+            AttributedDocumentEvent attributedDocumentEvent = new AttributedRouteDocumentEvent(requisitionDocument);
+            if (!uniqueRequisitionAccountValidator.validate(attributedDocumentEvent)) {
                 requisitionAccountsUnique = false;
                 handleDuplicateAccountError(requisitionDocument, requisitionItem);
             }
