@@ -71,6 +71,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     UserFavoriteAccountService userFavoriteAccountService;
     private CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService;
     private ConfigurationService kualiConfigurationService;
+    private PurchasingAccountsPayableUniqueAccountingStringsValidation uniqueRequisitionAccountValidator;
 
     @Override
     public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) throws WorkflowException {
@@ -207,13 +208,11 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     }
 
     public boolean checkRequisitionAccountsAreUnique(RequisitionDocument requisitionDocument) {
+        boolean requisitionAccountsUnique = true;
+        uniqueRequisitionAccountValidator = getUniqueRequisitionAccountValidator();
 
         List<RequisitionItem> requisitionItems = requisitionDocument.getItems();
-        boolean requisitionAccountsUnique = true;
         for (RequisitionItem requisitionItem : requisitionItems) {
-
-            PurchasingAccountsPayableUniqueAccountingStringsValidation uniqueRequisitionAccountValidator =
-                    SpringContext.getBean(PurchasingAccountsPayableUniqueAccountingStringsValidation.class);
             uniqueRequisitionAccountValidator.setItemForValidation(requisitionItem);
 
             if (!uniqueRequisitionAccountValidator.validate(null)) {
@@ -449,4 +448,14 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
         this.cuB2BShoppingErrorEmailService = cuB2BShoppingErrorEmailService;
     }
 
+    public PurchasingAccountsPayableUniqueAccountingStringsValidation getUniqueRequisitionAccountValidator() {
+        if (uniqueRequisitionAccountValidator == null) {
+            uniqueRequisitionAccountValidator = SpringContext.getBean(PurchasingAccountsPayableUniqueAccountingStringsValidation.class);
+        }
+        return uniqueRequisitionAccountValidator;
+    }
+
+    public void setUniqueRequisitionAccountValidator(PurchasingAccountsPayableUniqueAccountingStringsValidation uniqueRequisitionAccountValidator) {
+        this.uniqueRequisitionAccountValidator = uniqueRequisitionAccountValidator;
+    }
 }
