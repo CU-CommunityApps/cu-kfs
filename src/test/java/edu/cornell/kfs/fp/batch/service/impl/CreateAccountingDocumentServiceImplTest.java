@@ -80,7 +80,6 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
-import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
@@ -670,8 +669,7 @@ public class CreateAccountingDocumentServiceImplTest {
         protected Document getNewDocument(Class<? extends Document> documentClass) {
             if (documentClass == null) {
                 throw new IllegalStateException("Document class should not have been null");
-            } else if (!CuDistributionOfIncomeAndExpenseDocument.class.equals(documentClass)
-                    && !InternalBillingDocument.class.equals(documentClass)) {
+            } else if (generatorDoesNotExistForDocumentClass(documentClass)) {
                 throw new IllegalStateException("Unexpected accounting document class: " + documentClass.getName());
             }
             
@@ -683,6 +681,11 @@ public class CreateAccountingDocumentServiceImplTest {
             document.getDocumentHeader().setDocumentNumber(documentNumber);
             
             return document;
+        }
+
+        protected boolean generatorDoesNotExistForDocumentClass(Class<? extends Document> documentClass) {
+            return documentGeneratorsByBeanName.values().stream()
+                    .noneMatch((generator) -> generator.getDocumentClass().equals(documentClass));
         }
 
         @Override
