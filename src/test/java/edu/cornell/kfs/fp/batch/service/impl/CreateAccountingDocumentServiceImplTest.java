@@ -206,6 +206,13 @@ public class CreateAccountingDocumentServiceImplTest {
                 AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST);
     }
 
+    @Test
+    public void testLoadSingleFileWithInvalidDIDocumentContainingIBItems() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-di-with-ib-items-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.DI_WITH_IB_ITEMS_TEST);
+    }
+
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertDocumentsWereCreatedAndRoutedCorrectly(fixtures);

@@ -83,10 +83,14 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     MULTI_DOCUMENT_TYPES_TEST(
-            "02/26/2018", "xyz789@cornell.edu", "Example IB XML file",
+            "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DI,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_IB));
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_IB)),
+    DI_WITH_IB_ITEMS_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER));
 
     public final String createDate;
     public final String reportEmail;
