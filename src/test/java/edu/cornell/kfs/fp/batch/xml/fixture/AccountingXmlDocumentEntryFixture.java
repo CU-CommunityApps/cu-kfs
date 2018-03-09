@@ -279,6 +279,8 @@ public enum AccountingXmlDocumentEntryFixture {
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(sourceAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
         documentEntry.setTargetAccountingLines(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(targetAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
+        documentEntry.setItems(
+                AccountingXmlDocumentFixtureUtils.convertToPojoList(items, AccountingXmlDocumentItemFixture::toItemPojo));
         documentEntry.setNotes(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(notes, AccountingXmlDocumentNote::new));
         documentEntry.setAdHocRecipients(

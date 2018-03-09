@@ -72,6 +72,24 @@ public class AccountingXmlDocumentPojoTest {
                 AccountingXmlDocumentListWrapperFixture.NO_DOCUMENT_LIST_TEST, "no-document-list-test.xml");
     }
 
+    @Test
+    public void testLoadMultipleIBsFromSameFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_TEST, "multi-ib-document-test.xml");
+    }
+
+    @Test
+    public void testLoadSingleIBFromFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_TEST, "single-ib-document-test.xml");
+    }
+
+    @Test
+    public void testLoadVaryingDocTypesFromSameFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST, "multi-doc-types-test.xml");
+    }
+
     private void assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
             AccountingXmlDocumentListWrapperFixture expectedResultFixture, String localFileName) throws Exception {
         AccountingXmlDocumentListWrapper expectedResult = expectedResultFixture.toDocumentListWrapperPojo();
