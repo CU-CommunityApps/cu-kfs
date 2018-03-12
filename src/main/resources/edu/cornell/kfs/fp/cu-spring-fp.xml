@@ -387,6 +387,17 @@
         <property name="projectCodeService" ref="projectCodeService"/>
     </bean>
 
+    <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl" parent="awsAccountingXmlDocumentAccountingLineServiceImpl-parent"/>
+    <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl-parent" class="edu.cornell.kfs.fp.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl" abstract="true">
+        <property name="parameterService" ref="parameterService"/>
+        <property name="chartService" ref="chartService"/>
+        <property name="accountService" ref="accountService"/>
+        <property name="subAccountService" ref="subAccountService"/>
+        <property name="objectCodeService" ref="objectCodeService"/>
+        <property name="subObjectCodeService" ref="subObjectCodeService"/>
+        <property name="projectCodeService" ref="projectCodeService"/>
+    </bean>
+
     <bean id="incomingACHandWiresBatchJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
