@@ -27,6 +27,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_G254710_OBJ_4020_AMOUNT_1000_EXPENSE1(ACCT_G254710_OBJ_4020_AMOUNT_100_EXPENSE1, 1000.00),
     ACCT_G263600_OBJ_1280_AMOUNT_500_EXPENSE2(ACCT_G263600_OBJ_1280_AMOUNT_50_EXPENSE2, 500.00);
 
+
     public final String chartCode;
     public final String accountNumber;
     public final String subAccountNumber;

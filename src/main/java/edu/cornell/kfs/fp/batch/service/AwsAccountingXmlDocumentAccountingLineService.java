@@ -1,4 +1,4 @@
-package edu.cornell.kfs.fp.service;
+package edu.cornell.kfs.fp.batch.service;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
