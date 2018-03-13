@@ -199,7 +199,9 @@ public enum AccountingXmlDocumentEntryFixture {
     SINGLE_IB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_IB_NO_ITEMS, 1),
 
     MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
-    MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2);
+    MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
+    
+    DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1);
 
     public final Long index;
     public final String documentTypeCode;

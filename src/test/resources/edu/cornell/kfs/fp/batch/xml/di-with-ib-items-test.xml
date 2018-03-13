@@ -8,7 +8,7 @@
             <Index>1</Index>
             <DocumentType>DI</DocumentType>
             <Description>Test Document</Description>
-            <Explanation>This document should fail validation because it has an IB item on it!</Explanation>
+            <Explanation>This is only a test document!</Explanation>
             <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
             <SourceAccountingLineList>
                 <Accounting>

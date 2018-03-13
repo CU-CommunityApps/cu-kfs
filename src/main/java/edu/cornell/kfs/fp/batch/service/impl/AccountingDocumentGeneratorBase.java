@@ -58,7 +58,6 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         populateDocumentAttachments(document, documentEntry);
         populateAdHocRecipients(document, documentEntry);
         populateCustomAccountingDocumentData(document, documentEntry);
-        performCustomValidation(document, documentEntry);
         return document;
     }
 
@@ -167,10 +166,6 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected void populateCustomAccountingDocumentData(T document, AccountingXmlDocumentEntry documentEntry) {
-        // Do nothing by default.
-    }
-
-    protected void performCustomValidation(T document, AccountingXmlDocumentEntry documentEntry) {
         // Do nothing by default.
     }
 

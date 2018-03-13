@@ -206,8 +206,8 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     @Test
-    public void testLoadSingleFileWithInvalidDIDocumentContainingIBItems() throws Exception {
-        copyTestFilesAndCreateDoneFiles("bad-di-with-ib-items-test");
+    public void testLoadSingleFileWithDIDocumentContainingIBItemsToIgnore() throws Exception {
+        copyTestFilesAndCreateDoneFiles("di-with-ib-items-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.DI_WITH_IB_ITEMS_TEST);
     }
