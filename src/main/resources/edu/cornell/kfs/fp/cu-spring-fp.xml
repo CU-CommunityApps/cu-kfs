@@ -388,7 +388,7 @@
     </bean>
 
     <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl" parent="awsAccountingXmlDocumentAccountingLineServiceImpl-parent"/>
-    <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl-parent" class="edu.cornell.kfs.fp.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl" abstract="true">
+    <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl-parent" class="edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl" abstract="true">
         <property name="parameterService" ref="parameterService"/>
         <property name="chartService" ref="chartService"/>
         <property name="accountService" ref="accountService"/>

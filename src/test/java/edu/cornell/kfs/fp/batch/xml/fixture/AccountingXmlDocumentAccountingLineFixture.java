@@ -19,6 +19,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_R504701_OBJ_2641_AMOUNT_100_04("IT", "R504701", "13579", "2641", "888", "ZZ-654321", "642CBA", "The source line", 100.04),
     ACCT_R504707_OBJ_2643_AMOUNT_100_04("WX", "R504707", "35799", "2643", "987", "JX-111999", "333GGG", "This is the target line!", 100.04);
 
+
     public final String chartCode;
     public final String accountNumber;
     public final String subAccountNumber;
