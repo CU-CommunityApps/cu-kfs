@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.kfs.sys.util;
+package edu.cornell.kfs.sys.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.TypeUtils;
 import org.kuali.kfs.krad.datadictionary.DataObjectEntry;
 import org.kuali.kfs.krad.service.DataDictionaryService;
