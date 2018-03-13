@@ -1,9 +1,12 @@
 package edu.cornell.kfs.sys.batch;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -40,6 +43,29 @@ public class CuBatchFileUtils extends BatchFileUtils {
             }
         }
         return directories;
+    }
+
+    public static byte[] safelyLoadFileBytes(String fileName) {
+        FileInputStream inputStream = null;
+
+        try {
+            inputStream = new FileInputStream(fileName);
+            return IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
+    }
+
+    public static void removeDoneFiles(List<String> dataFileNames) {
+
+        for (String dataFileName : dataFileNames) {
+            File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + ".done");
+            if (doneFile.exists()) {
+                doneFile.delete();
+            }
+        }
     }
     
     private static boolean isPrefixOfAnother(String str1, String str2) {

@@ -33,6 +33,8 @@
         </property>
 		<property name="jobNames">
             <list merge="true">
+                <value>kualiDeveloperCreationJob</value>
+                <value>kualiDeveloperXmlCreationJob</value>
 				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
@@ -78,7 +80,100 @@
  	    <property name="wildcardMatchStringAttributeName" value="filePath"/>
  	    <property name="namespaceRequiredOnStoredAttributeSet" value="false" />
  	</bean>
- 	
+
+    <bean id="kualiDeveloperXmlCreationJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="kualiDeveloperXmlFileStep" />
+            </list>
+        </property>
+    </bean>
+    <bean id="kualiDeveloperXmlFileStep" class="edu.cornell.kfs.sys.batch.KualiDeveloperXmlFileStep" parent="step">
+        <property name="kualiDeveloperXmlService" ref="kualiDeveloperXmlService"/>
+    </bean>
+
+    <bean id="kualiDeveloperXmlService" class="edu.cornell.kfs.sys.batch.service.impl.KualiDeveloperXmlServiceImpl">
+        <property name="batchInputFileService" ref="batchInputFileService"/>
+        <property name="kualiDeveloperBatchInputFileType" ref="kualiDeveloperXmlInputFileType"/>
+        <property name="fileStorageService" ref="fileStorageService"/>
+        <property name="configurationService" ref="kualiConfigurationService"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+    </bean>
+
+    <bean id="kualiDeveloperXmlInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="cuMarshalService" ref="cuMarshalService"/>
+        <property name="directoryPath" value="${staging.directory}/sys/kualiDeveloperXml"/>
+        <property name="fileExtension" value="xml"/>
+        <property name="fileTypeIdentifier" value="kualiDeveloperXmlInputFileType"/>
+        <property name="titleKey" value="message.batchUpload.title.kualiDeveloperXml"/>
+        <property name="fileNamePrefix" value="kualiDeveloperXml_"/>
+        <property name="pojoClass" value="edu.cornell.kfs.sys.batch.xml.KualiDeveloperXmlListWrapper"/>
+    </bean>
+
+    <bean id="kualiDeveloperCreationJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="kualiDeveloperFlatFileStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="kualiDeveloperFlatFileStep" class="edu.cornell.kfs.sys.batch.KualiDeveloperFlatFileStep" parent="step">
+        <property name="kualiDeveloperFeedService" ref="kualiDeveloperFeedService"/>
+        <property name="batchInputFileService" ref="batchInputFileService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="kualiDeveloperFlatInputFileType"  ref="kualiDeveloperFlatInputFileType"/>
+        <property name="businessObjectService" ref="businessObjectService"/>
+    </bean>
+
+    <bean id="kualiDeveloperFeedService" parent="kualiDeveloperFeedService-parentBean"/>
+
+    <bean id="kualiDeveloperFeedService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.KualiDeveloperFeedServiceImpl" abstract="true">
+        <property name="batchInputFileService">
+            <ref bean="batchInputFileService" />
+        </property>
+        <property name="kualiDeveloperFlatInputFileType">
+            <ref bean="kualiDeveloperFlatInputFileType" />
+        </property>
+        <property name="businessObjectService" ref="businessObjectService" />
+    </bean>
+
+    <bean id="kualiDeveloperFlatInputFileType" class= "edu.cornell.kfs.sys.batch.KualiDeveloperFlatInputFileType">
+        <property name="directoryPath">
+            <value>${staging.directory}/sys/kualiDeveloper</value>
+        </property>
+        <property name="fileExtension">
+            <value>data</value>
+        </property>
+        <property name="flatFileSpecification">
+            <ref bean="kualiDeveloperFlatFileSpecification"/>
+        </property>
+
+        <property name="processor" ref="KualiDeveloperFlatInputFileHandler" />
+    </bean>
+
+    <bean id="KualiDeveloperFlatInputFileHandler" parent="KualiDeveloperFlatInputFileHandler-parentBean" />
+    <bean id="KualiDeveloperFlatInputFileHandler-parentBean" class="edu.cornell.kfs.sys.batch.KualiDeveloperFlatInputFileHandler" abstract="true"/>
+
+    <bean id="kualiDeveloperFlatFileSpecification" parent="FixedWidthFlatFileSpecification" p:defaultBusinessObjectClass="edu.cornell.kfs.sys.businessobject.KualiDeveloper">
+        <property name="objectSpecifications">
+            <list>
+                <bean parent="FlatFileObjectSpecification" p:businessObjectClass="edu.cornell.kfs.sys.businessobject.KualiDeveloper">
+                    <property name="parseProperties">
+                        <list>
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="employeeId" p:start="0" p:end="16" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="firstName" p:start="16" p:end="80" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="lastName" p:start="80" p:end="144" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="positionName" p:start="144" p:end="272" p:rightTrim="true" />
+                            <bean parent="FixedWidthFlatFilePropertySpecification" p:propertyName="socialSecurityNumber" p:start="272" p:end="284" p:rightTrim="true" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
  	<bean id="documentRequeuerJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
 			<list>
@@ -86,8 +181,8 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
+
+    <bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
 		<property name="documentMaintenanceService" ref="documentMaintenanceService" />
 	</bean>
 	
@@ -193,8 +288,7 @@
         <property name="lookupableHelperService">
             <ref bean="userProcurementProfileLookupableHelperService" />
         </property>
-    </bean>
-
+    </bean>        
 	<!-- put back when we can make it work
 	-->
 	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean"/>

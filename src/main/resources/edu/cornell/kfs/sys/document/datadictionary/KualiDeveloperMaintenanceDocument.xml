@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="KualiDeveloperMaintenanceDocument" parent="KualiDeveloperMaintenanceDocument-parentBean"/>
+    <bean id="KualiDeveloperMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+        <property name="businessObjectClass" value="edu.cornell.kfs.sys.businessobject.KualiDeveloper"/>
+        <property name="maintainableClass" value="org.kuali.kfs.sys.document.FinancialSystemMaintainable"/>
+        <property name="maintainableSections">
+            <list>
+                <ref bean="KualiDeveloperMaintenanceDocument-EditKualiDeveloper"/>
+            </list>
+        </property>
+        <property name="documentTypeName" value="KDEV"/>
+        <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+        <property name="workflowAttributes">
+            <ref bean="KualiDeveloperMaintenanceDocument-workflowAttributes"/>
+        </property>
+    </bean>
+
+    <bean id="KualiDeveloperMaintenanceDocument-EditKualiDeveloper" parent="KualiDeveloperMaintenanceDocument-EditKualiDeveloper-parentBean"/>
+    <bean id="KualiDeveloperMaintenanceDocument-EditKualiDeveloper-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+        <property name="id" value="Edit Kuali Developer"/>
+        <property name="title" value="Edit Kuali Developer"/>
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="employeeId" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="firstName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="lastName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="positionName" p:required="false"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="socialSecurityNumber" p:required="false"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="KualiDeveloperMaintenanceDocument-workflowAttributes" parent="KualiDeveloperMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="KualiDeveloperMaintenanceDocument-workflowAttributes-parentBean" class="org.kuali.kfs.krad.datadictionary.WorkflowAttributes" abstract="true"/>
+
+</beans>
