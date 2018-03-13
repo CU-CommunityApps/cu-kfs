@@ -34,6 +34,10 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         LOG.info("createAccountingXmlDocumentAccountingLine for " + costCenterGroupLevel.getGroupName());
 
         String costCenterGroupValue = costCenterGroupLevel.getGroupValue();
+
+
+
+
         String chartCode = getChartCode(costCenterGroupValue);
         String accountingLineAccountNumber = getAccountingLineAccountNumber(costCenterGroupValue, defaultKfsAccountForAws, chartCode);
         String objectCode = getObjectCode(chartCode, costCenterGroupValue);
@@ -81,13 +85,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     protected String getAccountingLineAccountNumber(String costCenterGroupLevelValue, DefaultKfsAccountForAws defaultKfsAccountForAws, String chartCode) {
         String accountNumber = null;
+        String defaultAccountNumber = defaultKfsAccountForAws.getKfsDefaultAccount();
         if (StringUtils.contains(costCenterGroupLevelValue, "-")) {
             accountNumber = StringUtils.split(costCenterGroupLevelValue, "-")[0];
         }
-        else if (StringUtils.equalsIgnoreCase(costCenterGroupLevelValue, "None")){
-            return defaultKfsAccountForAws.getKfsDefaultAccount();
-        }
-        else if (StringUtils.contains(costCenterGroupLevelValue, "*")){
+        else if (StringUtils.contains(costCenterGroupLevelValue, "*")) {
             accountNumber = StringUtils.split(costCenterGroupLevelValue,"*")[1].trim();
         }
 
@@ -95,7 +97,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             return accountNumber;
         }
 
-        return costCenterGroupLevelValue;
+        return defaultAccountNumber;
     }
 
     protected boolean validateAccount(String chartCode, String accountNumber) {
