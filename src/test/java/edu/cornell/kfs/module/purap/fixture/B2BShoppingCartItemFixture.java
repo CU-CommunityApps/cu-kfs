@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.fixture;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 
 /**
@@ -34,7 +33,61 @@ public enum B2BShoppingCartItemFixture {
             "true",
             "true",
             "true"
-    );     
+    ),
+    B2B_CART_ITEM (
+            "10", // quantity
+            "A0125156", // supplierPartId
+            "1012273985063\1", // supplierPartAuxiliaryId
+            "252.60", // unitPrice
+            "USD", // unitPriceCurrency
+            "01:00 Kensington Microsaver Laptop Lock - security cable lock", // description
+            "EA", // unitOfMeasure
+            "64068F", // manufacturerPartID
+            "Dell", // manufacturerName
+            "4130-0", // externalSupplierId - vendorID
+            "Punchout", // productSource
+            "", // systemProductID
+            //"624007902" // SupplierID-DUNS: value in KFS
+            "002617843", // SupplierID-DUNS: value from SciQuest
+            "14035", // SupplierID-SystemSupplierID
+            "Cart name", // Cart Name
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true"
+    ),
+    B2B_CART_ITEM_DUPLICATE (
+            "10", // quantity
+            "A0125156", // supplierPartId
+            "1012273985063\1", // supplierPartAuxiliaryId
+            "252.60", // unitPrice
+            "USD", // unitPriceCurrency
+            "01:00 Kensington Microsaver Laptop Lock - security cable lock", // description
+            "EA", // unitOfMeasure
+            "64068F", // manufacturerPartID
+            "Dell", // manufacturerName
+            "4130-0", // externalSupplierId - vendorID
+            "Punchout", // productSource
+            "", // systemProductID
+            //"624007902" // SupplierID-DUNS: value in KFS
+            "002617843", // SupplierID-DUNS: value from SciQuest
+            "14035", // SupplierID-SystemSupplierID
+            "Cart name", // Cart Name
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true"
+    );
 
     public String quantity;
     public String supplierPartId;
@@ -118,23 +171,23 @@ public enum B2BShoppingCartItemFixture {
      */
     public B2BShoppingCartItem createB2BShoppingCartItem() {
         B2BShoppingCartItem item = new B2BShoppingCartItem();
-        
+
         item.setQuantity(quantity);
         item.setSupplierPartId(supplierPartId);
         item.setSupplierPartAuxiliaryId(supplierPartAuxiliaryId);
-        
+
         item.setUnitPrice(unitPrice);
         item.setUnitPriceCurrency(unitPriceCurrency);
         item.setDescription(description);
         item.setUnitOfMeasure(unitOfMeasure);
         item.setManufacturerPartID(manufacturerPartID);
         item.setManufacturerName(manufacturerName);
-        
+
         item.addExtrinsic("ExternalSupplierId", externalSupplierId);
         item.addExtrinsic("Product Source", productSource);
         item.addExtrinsic("SystemProductID", systemProductID);
         item.addExtrinsic("CartName", cartName);
-        
+
         item.addClassification("Controlled", controlled);
         item.addClassification("RadioactiveMinor", radioactiveMinor);
         item.addClassification("GreenProduct", greenProduct);
@@ -144,10 +197,11 @@ public enum B2BShoppingCartItemFixture {
         item.addClassification("Toxin", toxin);
         item.addClassification("Green", green);
         item.addClassification("EnergyStar", energyStar);
-        
+
         item.setSupplier("DUNS", duns);
         item.setSupplier("SystemSupplierID", systemSupplierID);
-        
+
         return item;
     }
+
 }

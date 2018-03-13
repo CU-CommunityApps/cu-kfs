@@ -8,12 +8,19 @@ import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 
 public enum CuB2BShoppingCartFixture {
 	B2B_CART_USING_VENDOR_ID("200", // messageStatusCode
-			"Success", // messageStatusText
-			"parke", // buyerCookieText
-			"500.00", // totalAmount
-			"Business Purpose", // businessPurpose
-			B2BShoppingCartItemFixture.B2B_ITEM_USING_VENDOR_ID // itemFixture
-	);
+            "Success", // messageStatusText
+            "parke", // buyerCookieText
+            "500.00", // totalAmount
+            "Business Purpose", // businessPurpose
+            B2BShoppingCartItemFixture.B2B_ITEM_USING_VENDOR_ID // itemFixture
+    ),
+    B2B_CART_WITH_DUPLICATE_ITEM("200", // messageStatusCode
+            "Success", // messageStatusText
+            "parke", // buyerCookieText
+            "500.00", // totalAmount
+            "Business Purpose", // businessPurpose
+            B2BShoppingCartItemFixture.B2B_CART_ITEM // itemFixture
+    );
 
 	public String messageStatusCode;
 	public String messageStatusText;
@@ -60,4 +67,5 @@ public enum CuB2BShoppingCartFixture {
 
 		return cart;
 	}
+
 }

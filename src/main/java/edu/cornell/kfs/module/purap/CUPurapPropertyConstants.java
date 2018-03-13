@@ -36,4 +36,7 @@ public class CUPurapPropertyConstants extends PurapPropertyConstants {
     public static final String PREQ_PAYEE_ACCT_NUMBER = "preqPayeeAccountNumber";
     public static final String PREQ_PAYEE_ACCT_NAME = "preqPayeeAccountName";
     public static final String DOCUMENT_PAYMENT_METHOD_CODE = "document.paymentMethodCode";
+
+    public static final String REQS_DUPLICATE_ACCT_ERROR_EMAIL_SUBJECT = "error.purap.requisition.eshop.duplicateAccount.emailSubject";
+
 }

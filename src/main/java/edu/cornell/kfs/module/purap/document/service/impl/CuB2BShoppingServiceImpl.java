@@ -7,9 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.jsonwebtoken.lang.Collections;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
@@ -22,12 +24,15 @@ import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.impl.B2BShoppingServiceImpl;
+import org.kuali.kfs.module.purap.document.validation.impl.PurchasingAccountsPayableUniqueAccountingStringsValidation;
 import org.kuali.kfs.module.purap.exception.B2BShoppingException;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
+import org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -35,6 +40,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -49,6 +55,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
+import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingErrorEmailService;
 
 public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuB2BShoppingServiceImpl.class);
@@ -64,6 +71,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     private VendorService vendorService;
     // KFSPTS-985
     UserFavoriteAccountService userFavoriteAccountService;
+    private CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService;
+    private ConfigurationService kualiConfigurationService;
+    private PurchasingAccountsPayableUniqueAccountingStringsValidation uniqueRequisitionAccountValidator;
 
     @Override
     public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) throws WorkflowException {
@@ -183,13 +193,45 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
             req.fixItemReferences();
 
-            // save requisition to database
-            purapService.saveDocumentNoValidation(req);
+            if (checkRequisitionAccountsAreUnique(req)) {
+                // save requisition to database
+                purapService.saveDocumentNoValidation(req);
 
-            // add requisition to List
-            requisitions.add(req);
+                // add requisition to List
+                requisitions.add(req);
+            }
         }
+
+        if (Collections.isEmpty(requisitions)) {
+            throw new B2BShoppingException("Invalid e-shop Request. No requisitions were created.");
+        }
+
         return requisitions;
+    }
+
+    public boolean checkRequisitionAccountsAreUnique(RequisitionDocument requisitionDocument) {
+        boolean requisitionAccountsUnique = true;
+        uniqueRequisitionAccountValidator = getUniqueRequisitionAccountValidator();
+
+        List<RequisitionItem> requisitionItems = requisitionDocument.getItems();
+        for (RequisitionItem requisitionItem : requisitionItems) {
+            uniqueRequisitionAccountValidator.setItemForValidation(requisitionItem);
+
+            AttributedDocumentEvent attributedDocumentEvent = new AttributedRouteDocumentEvent(requisitionDocument);
+            if (!uniqueRequisitionAccountValidator.validate(attributedDocumentEvent)) {
+                requisitionAccountsUnique = false;
+                handleDuplicateAccountError(requisitionDocument, requisitionItem);
+            }
+        }
+
+        return requisitionAccountsUnique;
+    }
+
+    private void handleDuplicateAccountError(RequisitionDocument requisitionDocument, RequisitionItem requisitionItem) {
+        String errorMessage = kualiConfigurationService.getPropertyValueAsString(PurapKeyConstants.ERROR_ITEM_ACCOUNTING_NOT_UNIQUE);
+        errorMessage = errorMessage.replace("{0}", requisitionItem.getItemIdentifierString());
+        LOG.error(errorMessage);
+        cuB2BShoppingErrorEmailService.sendDuplicateRequisitionAccountErrorEmail(requisitionDocument, errorMessage);
     }
 
     // KFSPTS-985
@@ -401,4 +443,22 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     	 return reqItem;
     }
 
+    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
+        this.kualiConfigurationService = kualiConfigurationService;
+    }
+
+    public void setCuB2BShoppingErrorEmailService(CuB2BShoppingErrorEmailService cuB2BShoppingErrorEmailService) {
+        this.cuB2BShoppingErrorEmailService = cuB2BShoppingErrorEmailService;
+    }
+
+    public PurchasingAccountsPayableUniqueAccountingStringsValidation getUniqueRequisitionAccountValidator() {
+        if (uniqueRequisitionAccountValidator == null) {
+            uniqueRequisitionAccountValidator = SpringContext.getBean(PurchasingAccountsPayableUniqueAccountingStringsValidation.class);
+        }
+        return uniqueRequisitionAccountValidator;
+    }
+
+    public void setUniqueRequisitionAccountValidator(PurchasingAccountsPayableUniqueAccountingStringsValidation uniqueRequisitionAccountValidator) {
+        this.uniqueRequisitionAccountValidator = uniqueRequisitionAccountValidator;
+    }
 }
