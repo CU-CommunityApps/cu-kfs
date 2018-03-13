@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="AccountFundsUpdateDocument" parent="AccountFundsUpdateDocument-parentBean" />
+    <bean id="AccountFundsUpdateDocument-parentBean" abstract="true" parent="AccountingDocumentEntry">
+        <property name="allowsErrorCorrection" value="true" />
+        <property name="documentTypeName" value="AFU" />
+        <property name="documentClass" value="edu.cornell.kfs.fp.document.AccountFundsUpdateDocument" />
+        <property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.AccountFundsUpdateDocument" />
+        <property name="businessRulesClass" value="org.kuali.kfs.sys.document.validation.impl.AccountingRuleEngineRuleBase" />
+        <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.ExpiredAccountOverridePreRules"/>
+        <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.AccountingDocumentAuthorizerBase"/>
+        <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.AccountFundsUpdateDocumentPresentationController"/>
+        <property name="sessionDocument" value="true" />
+        <property name="allowsCopy" value="true" />
+
+        <property name="validationMap" ref="AccountFundsUpdateDocument-validations"/>
+        <property name="accountingLineGroups">
+            <map>
+                <entry>
+                    <key>
+                        <value>source</value>
+                    </key>
+                    <ref bean="AccountFundsUpdateDocument-sourceAccountingLineGroup" parent="AccountingLineGroup"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value>target</value>
+                    </key>
+                    <ref bean="AccountFundsUpdateDocument-targetAccountingLineGroup" parent="AccountingLineGroup"/>
+                </entry>
+            </map>
+        </property>
+        <property name="importedLineParserClass" value="org.kuali.kfs.fp.businessobject.BasicFormatWithLineDescriptionAccountingLineParser"/>
+        <property name="workflowAttributes">
+            <ref bean="AccountFundsUpdateDocument-workflowAttributes"/>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="AccountFundsUpdateDocument-reason"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Validations -->
+    <bean id="AccountFundsUpdateDocument-validations" parent="AccountFundsUpdateDocument-validations-parentBean"/>
+
+    <bean id="AccountFundsUpdateDocument-validations-parentBean" abstract="true" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map key-type="java.lang.Class">
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-routeDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedSaveDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-saveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedApproveDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-approveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AttributedBlanketApproveDocumentEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-blanketApproveDocumentValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.AddAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-addAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.DeleteAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-deleteAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-updateAccountingLineValidation</value>
+                </entry>
+                <entry>
+                    <key>
+                        <value>org.kuali.kfs.sys.document.validation.event.ReviewAccountingLineEvent</value>
+                    </key>
+                    <value>AccountFundsUpdate-reviewAccountingLineValidation</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!-- accounting line groups -->
+    <bean id="AccountFundsUpdateDocument-sourceAccountingLineGroup" parent="AccountFundsUpdateDocument-sourceAccountingLineGroup-parentBean"/>
+    <bean id="AccountFundsUpdateDocument-sourceAccountingLineGroup-parentBean" abstract="true" parent="AccountingLineGroup">
+        <property name="accountingLineView" ref="FinancialProcessing-SalesTax-accountingLineView"/>
+        <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.SourceAccountingLine"/>
+        <property name="groupLabel" value="From"/>
+        <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
+        <property name="importedLinePropertyPrefix" value="source"/>
+        <property name="totals" ref="AccountingDocument-sourceGroupTotals"/>
+        <property name="errorKey" value="document.sourceAccounting*,sourceAccountingLines,newSourceLine*"/> <!-- note people copying this: AV and JV have extra things that belong here -->
+    </bean>
+
+    <bean id="AccountFundsUpdateDocument-targetAccountingLineGroup" parent="AccountFundsUpdateDocument-targetAccountingLineGroup-parentBean"/>
+    <bean id="AccountFundsUpdateDocument-targetAccountingLineGroup-parentBean" abstract="true" parent="AccountingLineGroup">
+        <property name="accountingLineView" ref="FinancialProcessing-SalesTax-accountingLineView"/>
+        <property name="accountingLineClass" value="org.kuali.kfs.sys.businessobject.TargetAccountingLine"/>
+        <property name="groupLabel" value="To"/>
+        <property name="accountingLineAuthorizerClass" value="org.kuali.kfs.fp.document.authorization.FinancialProcessingAccountingLineAuthorizer"/>
+        <property name="importedLinePropertyPrefix" value="target"/>
+        <property name="totals" ref="AccountingDocument-targetGroupTotals"/>
+        <property name="errorKey" value="document.targetAccounting*,targetAccountingLines,newTargetLine*"/> <!-- note people copying this: AV and JV have extra things that belong here -->
+    </bean>
+
+    <!-- workflow attributes for routing -->
+    <bean id="AccountFundsUpdateDocument-workflowAttributes" parent="AccountFundsUpdateDocument-workflowAttributes-parentBean"/>
+    <bean id="AccountFundsUpdateDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes">
+
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
+                <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+    <bean id="AccountFundsUpdateDocument-reason" parent="AccountFundsUpdateDocument-reason-parentBean"/>
+
+    <bean id="AccountFundsUpdateDocument-reason-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="reason"/>
+        <property name="shortLabel" value="Reason"/>
+        <property name="label" value="Reason"/>
+        <property name="required" value="true"/>
+        <property name="maxLength" value="150"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50"/>
+        </property>
+    </bean>
+
+</beans>

@@ -30,6 +30,9 @@
             
         <form-bean name="CuDisbursementVoucherForm"
             type="edu.cornell.kfs.fp.document.web.struts.CuDisbursementVoucherForm" />
+
+        <form-bean name="CuInternalBillingForm"
+                   type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingForm" />
         
         <form-bean name="RecurringDisbursementVoucherForm" type="edu.cornell.kfs.fp.document.web.struts.RecurringDisbursementVoucherForm"/>    
         
@@ -54,6 +57,8 @@
 			type="edu.cornell.kfs.fp.document.web.struts.YearEndJournalVoucherForm" />
 		
 		<form-bean name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm" />
+
+		<form-bean name="AccountFundsUpdateForm" type="edu.cornell.kfs.fp.document.web.struts.AccountFundsUpdateForm"/>
 
     </form-beans>
     
@@ -212,6 +217,20 @@
                 parameter="methodToCall" validate="true" attribute="KualiForm">
             <set-property property="cancellable" value="true"/>
             <forward name="basic" path="/jsp/fp/CorporateBilledCorporatePaid.jsp"/>
+        </action>
+
+        <action path="/financialAccountFundsUpdate" name="AccountFundsUpdateForm" input="/jsp/fp/AccountFundsUpdate.jsp"
+                type="edu.cornell.kfs.fp.document.web.struts.AccountFundsUpdateAction" scope="request"
+                parameter="methodToCall" validate="true" attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/fp/AccountFundsUpdate.jsp" />
+        </action>
+        
+        <action path="/financialCuInternalBilling" name="CuInternalBillingForm" input="/jsp/fp/InternalBilling.jsp"
+                type="edu.cornell.kfs.fp.document.web.struts.CuInternalBillingAction" scope="request"
+                parameter="methodToCall" validate="true" attribute="KualiForm">
+            <set-property property="cancellable" value="true" />
+            <forward name="basic" path="/jsp/fp/InternalBilling.jsp" />
         </action>
         
     </action-mappings>

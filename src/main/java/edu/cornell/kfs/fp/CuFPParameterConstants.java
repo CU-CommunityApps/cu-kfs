@@ -69,4 +69,6 @@ public class CuFPParameterConstants {
         public static final String CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS = "CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS";
     }
 
+    public static final String INTERNAL_BILLING_COMPONENT = "InternalBilling";
+    public static final String MAX_TOTAL_THRESHOLD_AMOUNT = "MAX_TOTAL_THRESHOLD_AMOUNT";
 }

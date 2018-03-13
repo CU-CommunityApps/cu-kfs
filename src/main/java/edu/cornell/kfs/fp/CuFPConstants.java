@@ -178,4 +178,8 @@ public class CuFPConstants {
     
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
 
+    public static class AccountFundsUpdateDocumentConstants {
+        public static final String ACCOUNT_FUNDS_UPDATE_DOCUMENT_TYPE_NAME = "AFU";
+    }
+
 }
