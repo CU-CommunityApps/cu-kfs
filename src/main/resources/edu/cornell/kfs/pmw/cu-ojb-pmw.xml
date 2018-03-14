@@ -35,7 +35,7 @@
     <field-descriptor name="processTimestamp" column="PROC_TS" jdbc-type="TIMESTAMP"/>
 
     <field-descriptor name="requestingCompanyId" column="REQ_CMP_ID" jdbc-type="VARCHAR" />
-    <field-descriptor name="requestingCompanyTin" column="REQ_CMP_TIN" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="requestingCompanyTin" column="REQ_CMP_TIN" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="requestingCompanyTinType" column="REQ_CMP_TIN_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="requestingCompanyTaxCountry" column="REQ_CMP_TAX_CNTRY" jdbc-type="VARCHAR" />
     <field-descriptor name="requestingCompanyLegalName" column="REQ_CMP_LEGAL_NM" jdbc-type="VARCHAR" />
@@ -48,7 +48,7 @@
     <field-descriptor name="requestingCompanyTaxClassificationCode" column="REQ_CMP_TAX_CLASS_CD" jdbc-type="INTEGER" />
     <field-descriptor name="requestingCompanyTaxClassificationName" column="REQ_CMP_TAX_CLASS_NM" jdbc-type="VARCHAR" />
     <field-descriptor name="requestingCompanyUrl" column="REQ_CMP_URL" jdbc-type="VARCHAR" />
-    <field-descriptor name="requestingCompanyW8W9" column="REQ_CMP_W8W9_URL" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="requestingCompanyW8W9" column="REQ_CMP_W8W9_URL" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="requestingCompanyCorporateEmail" column="REQ_CMP_CORP_EMAIL" jdbc-type="VARCHAR" />
 
     <field-descriptor name="corpAddressStreet1" column="CORP_LN1_ADDR" jdbc-type="VARCHAR" />
@@ -68,9 +68,9 @@
     <field-descriptor name="remittanceAddressValidated" column="REMIT_ADDR_VALIDATED" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
 
     <field-descriptor name="bankAcctBankName" column="BNK_ACCT_BNK_NM" jdbc-type="VARCHAR" />
-    <field-descriptor name="bankAcctRoutingNumber" column="BNK_ACCT_ROUTING_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-    <field-descriptor name="bankAcctBankAccountNumber" column="BNK_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
-    <field-descriptor name="bankAcctBankValidationFile" column="BNK_ACCT_VAL_FILE" jdbc-type="VARCHAR" conversion="org.kuali.rice.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="bankAcctRoutingNumber" column="BNK_ACCT_ROUTING_NBR" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="bankAcctBankAccountNumber" column="BNK_ACCT_NBR" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+    <field-descriptor name="bankAcctBankValidationFile" column="BNK_ACCT_VAL_FILE" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
     <field-descriptor name="bankAcctAchEmail" column="BNK_ACCT_ACH_EMAIL" jdbc-type="VARCHAR" />
     <field-descriptor name="bankAcctType" column="BNK_ACCT_TYPE" jdbc-type="VARCHAR" />
     <field-descriptor name="bankAcctAuthorized" column="BNK_ACCT_AUTH" jdbc-type="VARCHAR" />
