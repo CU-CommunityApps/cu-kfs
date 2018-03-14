@@ -2,9 +2,9 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -20,8 +20,11 @@ import edu.cornell.kfs.sys.util.MockDocumentUtils;
 @SuppressWarnings("deprecation")
 public enum AccountingXmlDocumentEntryFixture {
     BASE_DOCUMENT(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Test Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(), targetAccountingLines(), items(), notes(), adHocRecipients(), backupLinks()),
+    BAD_CONVERSION_DOCUMENT_PLACEHOLDER(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Fail Conversion from XML",
+            "Placeholder for documents that are expected to fail XML-to-doc conversion", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
-    INVALID_DOCUMENT_PLACEHOLDER(1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+    BAD_RULES_DOCUMENT_PLACEHOLDER(1, KFSConstants.ROOT_DOCUMENT_TYPE,
             CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR,
             "Placeholder for documents that are expected to fail business rule validation", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
@@ -86,27 +89,6 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.AWS_BILLING_INVOICE,
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
-
-    MULTI_DI_DOCUMENT_TEST_DOC1_BAD(
-            1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
-            CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, "This document should not route!", "ABCD1234",
-            sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
-            targetAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_R504706_OBJ_2640_AMOUNT_100,
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1000710_OBJ_4000_AMOUNT_50),
-            notes(
-                    "A fun testing note",
-                    "Another note"),
-            adHocRecipients(
-                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
-                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
-                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
-                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
-            backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
-                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
 
     SINGLE_DI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -173,7 +155,53 @@ public enum AccountingXmlDocumentEntryFixture {
             targetAccountingLines(),
             notes(),
             adHocRecipients(),
-            backupLinks());
+            backupLinks()),
+
+    BASE_IB_WITH_ITEMS(1, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            "First IB Test Document", "This is an example IB document with multiple items", "IntBill01",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254700_OBJ_4020_AMOUNT_100_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263700_OBJ_1280_AMOUNT_50_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254710_OBJ_4020_AMOUNT_100_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263600_OBJ_1280_AMOUNT_50_EXPENSE2),
+            items(
+                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
+                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    BASE_IB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
+            "Another IB Test Document", "This is a sample IB document without any item lines.", "IntBill02",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254700_OBJ_4020_AMOUNT_1000_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263700_OBJ_1280_AMOUNT_500_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254710_OBJ_4020_AMOUNT_1000_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263600_OBJ_1280_AMOUNT_500_EXPENSE2),
+            items(),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+
+    SINGLE_IB_DOCUMENT_TEST_DOC1(BASE_IB_WITH_ITEMS, 1),
+
+    MULTI_IB_DOCUMENT_TEST_DOC1(BASE_IB_WITH_ITEMS, 1),
+    MULTI_IB_DOCUMENT_TEST_DOC2(BASE_IB_NO_ITEMS, 2),
+
+    SINGLE_IB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_IB_NO_ITEMS, 1),
+
+    MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
+    MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
+    
+    DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1);
 
     public final Long index;
     public final String documentTypeCode;
@@ -182,6 +210,7 @@ public enum AccountingXmlDocumentEntryFixture {
     public final String organizationDocumentNumber;
     public final List<AccountingXmlDocumentAccountingLineFixture> sourceAccountingLines;
     public final List<AccountingXmlDocumentAccountingLineFixture> targetAccountingLines;
+    public final List<AccountingXmlDocumentItemFixture> items;
     public final List<String> notes;
     public final List<AccountingXmlDocumentAdHocRecipientFixture> adHocRecipients;
     public final List<AccountingXmlDocumentBackupLinkFixture> backupLinks;
@@ -194,9 +223,25 @@ public enum AccountingXmlDocumentEntryFixture {
                 sourceAccountingLines, targetAccountingLines, notes, adHocRecipients, backupLinks);
     }
 
+    private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index,
+            String documentTypeCode, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
+                sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks);
+    }
+
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber,
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks);
+    }
+
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this.index = Long.valueOf(index);
         this.documentTypeCode = documentTypeCode;
@@ -205,9 +250,24 @@ public enum AccountingXmlDocumentEntryFixture {
         this.organizationDocumentNumber = defaultToEmptyStringIfBlank(organizationDocumentNumber);
         this.sourceAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
         this.targetAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
+        this.items = AccountingXmlDocumentFixtureUtils.toImmutableList(items);
         this.notes = AccountingXmlDocumentFixtureUtils.toImmutableList(notes);
         this.adHocRecipients = AccountingXmlDocumentFixtureUtils.toImmutableList(adHocRecipients);
         this.backupLinks = AccountingXmlDocumentFixtureUtils.toImmutableList(backupLinks);
+    }
+
+    private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index) {
+        this.index = Long.valueOf(index);
+        this.documentTypeCode = baseFixture.documentTypeCode;
+        this.description = baseFixture.description;
+        this.explanation = baseFixture.explanation;
+        this.organizationDocumentNumber = baseFixture.organizationDocumentNumber;
+        this.sourceAccountingLines = baseFixture.sourceAccountingLines;
+        this.targetAccountingLines = baseFixture.targetAccountingLines;
+        this.items = baseFixture.items;
+        this.notes = baseFixture.notes;
+        this.adHocRecipients = baseFixture.adHocRecipients;
+        this.backupLinks = baseFixture.backupLinks;
     }
 
     public AccountingXmlDocumentEntry toDocumentEntryPojo() {
@@ -221,6 +281,8 @@ public enum AccountingXmlDocumentEntryFixture {
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(sourceAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
         documentEntry.setTargetAccountingLines(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(targetAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
+        documentEntry.setItems(
+                AccountingXmlDocumentFixtureUtils.convertToPojoList(items, AccountingXmlDocumentItemFixture::toItemPojo));
         documentEntry.setNotes(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(notes, AccountingXmlDocumentNote::new));
         documentEntry.setAdHocRecipients(
@@ -238,6 +300,7 @@ public enum AccountingXmlDocumentEntryFixture {
         
         populateNumberAndHeaderOnDocument(accountingDocument, documentNumber);
         addAccountingLinesToDocument(accountingDocument);
+        addItemsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
         
@@ -257,12 +320,6 @@ public enum AccountingXmlDocumentEntryFixture {
     private void addAccountingLinesToDocument(AccountingDocument accountingDocument) {
         Class<? extends SourceAccountingLine> sourceAccountingLineClass = accountingDocument.getSourceAccountingLineClass();
         Class<? extends TargetAccountingLine> targetAccountingLineClass = accountingDocument.getTargetAccountingLineClass();
-        
-        accountingDocument.setSourceAccountingLines(new ArrayList<>());
-        accountingDocument.setTargetAccountingLines(new ArrayList<>());
-        accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
-        accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
-        
         sourceAccountingLines.stream()
                 .map((fixture) -> fixture.toAccountingLineBo(sourceAccountingLineClass, accountingDocument.getDocumentNumber()))
                 .forEach(accountingDocument::addSourceAccountingLine);
@@ -287,6 +344,16 @@ public enum AccountingXmlDocumentEntryFixture {
                 .forEach(adHocPersons::add);
     }
 
+    private void addItemsToDocumentIfNecessary(AccountingDocument accountingDocument) {
+        if (accountingDocument instanceof InternalBillingDocument) {
+            InternalBillingDocument internalBillingDocument = (InternalBillingDocument) accountingDocument;
+            String documentNumber = internalBillingDocument.getDocumentNumber();
+            items.stream()
+                    .map((fixture) -> fixture.toInternalBillingItem(documentNumber))
+                    .forEach(internalBillingDocument::addItem);
+        }
+    }
+
     // The following methods are only meant to improve the setup and readability of this enum's constants.
 
     private static AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines(AccountingXmlDocumentAccountingLineFixture... fixtures) {
@@ -295,6 +362,10 @@ public enum AccountingXmlDocumentEntryFixture {
 
     private static AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines(AccountingXmlDocumentAccountingLineFixture... fixtures) {
         return fixtures;
+    }
+
+    private static AccountingXmlDocumentItemFixture[] items(AccountingXmlDocumentItemFixture... items) {
+        return items;
     }
 
     private static String[] notes(String... values) {

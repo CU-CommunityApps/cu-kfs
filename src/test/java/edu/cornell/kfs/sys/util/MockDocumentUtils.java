@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import org.easymock.EasyMock;
+import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.Note;
@@ -47,12 +48,30 @@ public class MockDocumentUtils {
         documentMockingConfigurer.accept(document);
         EasyMock.replay(document);
         
+        performInitializationFromSkippedConstructor(document);
+        
+        return document;
+    }
+
+    private static void performInitializationFromSkippedConstructor(Document document) {
         document.setDocumentHeader(new FinancialSystemDocumentHeader());
         document.setAdHocRoutePersons(new ArrayList<>());
         document.setAdHocRouteWorkgroups(new ArrayList<>());
         document.setNotes(new ArrayList<>());
         
-        return document;
+        if (document instanceof AccountingDocument) {
+            AccountingDocument accountingDocument = (AccountingDocument) document;
+            accountingDocument.setSourceAccountingLines(new ArrayList<>());
+            accountingDocument.setTargetAccountingLines(new ArrayList<>());
+            accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
+            accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
+        }
+        
+        if (document instanceof InternalBillingDocument) {
+            InternalBillingDocument internalBillingDocument = (InternalBillingDocument) document;
+            internalBillingDocument.setItems(new ArrayList<>());
+            internalBillingDocument.setNextItemLineNumber(Integer.valueOf(1));
+        }
     }
 
     public static Note buildMockNote(String noteText) {
