@@ -12,12 +12,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +41,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.businessobject.InternalBillingItem;
+import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -70,9 +77,9 @@ import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentS
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
+import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
-import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
@@ -88,10 +95,6 @@ public class CreateAccountingDocumentServiceImplTest {
     private static final String FULL_FILE_PATH_FORMAT = "%s/%s%s";
     private static final int DOCUMENT_NUMBER_START = 1000;
 
-    @SuppressWarnings("deprecation")
-    private static final String DI_GENERATOR_BEAN_NAME = CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX
-            + KFSConstants.FinancialDocumentTypeCodes.DISTRIBUTION_OF_INCOME_AND_EXPENSE;
-
     private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
@@ -101,6 +104,8 @@ public class CreateAccountingDocumentServiceImplTest {
         ConfigurationService configurationService = buildMockConfigurationService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(), configurationService);
+        createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
+                AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -148,7 +153,7 @@ public class CreateAccountingDocumentServiceImplTest {
     public void testLoadSingleFileWithMultipleDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
         copyTestFilesAndCreateDoneFiles("multi-di-plus-invalid-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
-                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_INVALID_SECOND_DOCUMENT_TEST);
+                AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
     }
 
     @Test
@@ -163,6 +168,48 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("multi-di-plus-bad-attachments-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DI_DOCUMENT_WITH_BAD_ATTACHMENTS_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleIBDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-ib-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleIBDocumentLackingItems() throws Exception {
+        copyTestFilesAndCreateDoneFiles("ib-without-items-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_NO_ITEMS_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleIBDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-ib-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleIBDocumentsPlusDocumentWithRulesFailure() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-ib-plus-bad-rules-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleDocumentTypes() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-doc-types-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithDIDocumentContainingIBItemsToIgnore() throws Exception {
+        copyTestFilesAndCreateDoneFiles("di-with-ib-items-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.DI_WITH_IB_ITEMS_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -194,27 +241,42 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentEntryFixture... fixtures) {
-        List<AccountingDocument> expectedAccountingDocuments = buildExpectedDocumentsList(fixtures);
+        List<AccountingXmlDocumentEntryFixture> expectedRoutableFixtures = new ArrayList<>(fixtures.length);
+        List<AccountingDocument> expectedAccountingDocuments = new ArrayList<>(fixtures.length);
+        buildExpectedDocumentsAndAppendToLists(expectedRoutableFixtures::add, expectedAccountingDocuments::add, fixtures);
+        
         assertEquals("Wrong number of routed documents", expectedAccountingDocuments.size(), routedAccountingDocuments.size());
+        
         for (int i = 0; i < expectedAccountingDocuments.size(); i++) {
-            AccountingXmlDocumentEntryFixture fixture = fixtures[i];
+            AccountingXmlDocumentEntryFixture fixture = expectedRoutableFixtures.get(i);
             Class<? extends AccountingDocument> expectedDocumentClass = AccountingDocumentClassMappingUtils
                     .getDocumentClassByDocumentType(fixture.documentTypeCode);
             assertAccountingDocumentIsCorrect(expectedDocumentClass, expectedAccountingDocuments.get(i), routedAccountingDocuments.get(i));
         }
     }
 
-    private List<AccountingDocument> buildExpectedDocumentsList(AccountingXmlDocumentEntryFixture... fixtures) {
-        MutableInt nextDocumentNumber = new MutableInt(DOCUMENT_NUMBER_START);
-        Supplier<String> docNumberSupplier = () -> {
-             nextDocumentNumber.increment();
-             return nextDocumentNumber.toString();
-        };
+    private void buildExpectedDocumentsAndAppendToLists(Consumer<AccountingXmlDocumentEntryFixture> fixtureListAppender,
+            Consumer<AccountingDocument> documentListAppender, AccountingXmlDocumentEntryFixture... fixtures) {
+        MutableInt idCounter = new MutableInt(DOCUMENT_NUMBER_START);
         
-        return Stream.of(fixtures)
-                .map((documentFixture) -> documentFixture.toAccountingDocument(docNumberSupplier.get()))
-                .filter(this::documentPassesBusinessRules)
-                .collect(Collectors.toCollection(ArrayList::new));
+        Stream.of(fixtures)
+                .filter(this::isDocumentExpectedToReachInitiationPoint)
+                .map((fixture) -> buildDocumentIdToFixtureMapping(idCounter, fixture))
+                .filter((mapping) -> isDocumentExpectedToPassBusinessRulesValidation(mapping.getValue()))
+                .peek((mapping) -> fixtureListAppender.accept(mapping.getValue()))
+                .map(this::buildExpectedDocument)
+                .forEach(documentListAppender);
+    }
+
+    private Map.Entry<String, AccountingXmlDocumentEntryFixture> buildDocumentIdToFixtureMapping(
+            MutableInt idCounter, AccountingXmlDocumentEntryFixture fixture) {
+        idCounter.increment();
+        return new AbstractMap.SimpleImmutableEntry<>(idCounter.toString(), fixture);
+    }
+
+    private AccountingDocument buildExpectedDocument(Map.Entry<String, AccountingXmlDocumentEntryFixture> docIdToFixtureMapping) {
+        AccountingXmlDocumentEntryFixture fixture = docIdToFixtureMapping.getValue();
+        return fixture.toAccountingDocument(docIdToFixtureMapping.getKey());
     }
 
     @SuppressWarnings("unchecked")
@@ -233,6 +295,12 @@ public class CreateAccountingDocumentServiceImplTest {
                 expectedDocument.getNotes(), actualDocument.getNotes(), this::assertNoteIsCorrect);
         assertObjectListIsCorrect("ad hoc persons",
                 expectedDocument.getAdHocRoutePersons(), actualDocument.getAdHocRoutePersons(), this::assertAdHocPersonIsCorrect);
+        
+        if (InternalBillingDocument.class.isAssignableFrom(documentClass)) {
+            assertObjectListIsCorrect("items",
+                    ((InternalBillingDocument) expectedDocument).getItems(), ((InternalBillingDocument) actualDocument).getItems(),
+                    this::assertInternalBillingItemIsCorrect);
+        }
     }
 
     private <T> void assertObjectListIsCorrect(String listLabel, List<? extends T> expectedObjects, List<? extends T> actualObjects,
@@ -262,6 +330,17 @@ public class CreateAccountingDocumentServiceImplTest {
         assertEquals("Wrong org ref ID", expectedLine.getOrganizationReferenceId(), actualLine.getOrganizationReferenceId());
         assertEquals("Wrong line description", expectedLine.getFinancialDocumentLineDescription(), actualLine.getFinancialDocumentLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+    }
+
+    private void assertInternalBillingItemIsCorrect(InternalBillingItem expectedItem, InternalBillingItem actualItem) {
+        assertEquals("Wrong document number", expectedItem.getDocumentNumber(), actualItem.getDocumentNumber());
+        assertEquals("Wrong item sequence number", expectedItem.getItemSequenceId(), actualItem.getItemSequenceId());
+        assertEquals("Wrong service date", expectedItem.getItemServiceDate(), actualItem.getItemServiceDate());
+        assertEquals("Wrong stock number", expectedItem.getItemStockNumber(), actualItem.getItemStockNumber());
+        assertEquals("Wrong item description", expectedItem.getItemStockDescription(), actualItem.getItemStockDescription());
+        assertEquals("Wrong item quantity", expectedItem.getItemQuantity(), actualItem.getItemQuantity());
+        assertEquals("Wrong unit of measure", expectedItem.getUnitOfMeasureCode(), actualItem.getUnitOfMeasureCode());
+        assertEquals("Wrong item cost", expectedItem.getItemUnitAmount(), actualItem.getItemUnitAmount());
     }
 
     private void assertNoteIsCorrect(Note expectedNote, Note actualNote) {
@@ -417,6 +496,14 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuFPTestConstants.BUSINESS_RULE_VALIDATION_DESCRIPTION_INDICATOR, document.getDocumentHeader().getDocumentDescription());
     }
 
+    private boolean isDocumentExpectedToReachInitiationPoint(AccountingXmlDocumentEntryFixture fixture) {
+        return !AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER.equals(fixture);
+    }
+
+    private boolean isDocumentExpectedToPassBusinessRulesValidation(AccountingXmlDocumentEntryFixture fixture) {
+        return !AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER.equals(fixture);
+    }
+
     private TestAccountingXmlDocumentDownloadAttachmentService buildAccountingXmlDocumentDownloadAttachmentService() throws Exception {
         TestAccountingXmlDocumentDownloadAttachmentService downloadAttachmentService = new TestAccountingXmlDocumentDownloadAttachmentService();
         downloadAttachmentService.setAttachmentService(buildMockAttachmentService());
@@ -495,21 +582,44 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private static class TestCreateAccountingDocumentServiceImpl extends CreateAccountingDocumentServiceImpl {
-        private CuDistributionOfIncomeAndExpenseDocumentGenerator diGenerator;
+        private Map<String, AccountingDocumentGenerator<?>> documentGeneratorsByBeanName;
+        private PersonService personService;
+        private AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
+        private ConfigurationService configurationService;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService) {
-            diGenerator = new CuDistributionOfIncomeAndExpenseDocumentGenerator(
+            this.personService = personService;
+            this.downloadAttachmentService = downloadAttachmentService;
+            this.configurationService = configurationService;
+            this.nextDocumentNumber = DOCUMENT_NUMBER_START;
+            this.processingOrderedBaseFileNames = new ArrayList<>();
+        }
+
+        public void initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping... documentMappings) {
+            this.documentGeneratorsByBeanName = Arrays.stream(documentMappings)
+                    .map(AccountingDocumentMapping::getGeneratorConstructor)
+                    .map(this::buildAccountingDocumentGenerator)
+                    .collect(Collectors.toMap(
+                            this::buildGeneratorBeanName, Function.identity()));
+        }
+
+        protected AccountingDocumentGenerator<?> buildAccountingDocumentGenerator(
+                BiFunction<Supplier<Note>, Supplier<AdHocRoutePerson>, AccountingDocumentGeneratorBase<?>> generatorConstructor) {
+            AccountingDocumentGeneratorBase<?> accountingDocumentGenerator = generatorConstructor.apply(
                     MockDocumentUtils::buildMockNote, MockDocumentUtils::buildMockAdHocRoutePerson);
-            diGenerator.setPersonService(personService);
-            diGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
-            diGenerator.setConfigurationService(configurationService);
-            nextDocumentNumber = DOCUMENT_NUMBER_START;
-            processingOrderedBaseFileNames = new ArrayList<>();
-            
+            accountingDocumentGenerator.setPersonService(personService);
+            accountingDocumentGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
+            accountingDocumentGenerator.setConfigurationService(configurationService);
+            return accountingDocumentGenerator;
+        }
+
+        protected String buildGeneratorBeanName(AccountingDocumentGenerator<?> documentGenerator) {
+            return CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX
+                    + AccountingDocumentClassMappingUtils.getDocumentTypeByDocumentClass(documentGenerator.getDocumentClass());
         }
 
         public List<String> getProcessingOrderedBaseFileNames() {
@@ -543,24 +653,23 @@ public class CreateAccountingDocumentServiceImplTest {
         }
 
         @Override
-        protected AccountingDocumentGenerator<? extends AccountingDocument> findDocumentGenerator(String beanName) {
+        protected AccountingDocumentGenerator<?> findDocumentGenerator(String beanName) {
             if (StringUtils.isBlank(beanName)) {
                 throw new IllegalStateException("Document generator bean name should not have been blank");
+            } else {
+                return documentGeneratorsByBeanName.computeIfAbsent(beanName, this::throwExceptionIfGeneratorIsNotFound);
             }
-            
-            switch (beanName) {
-                case DI_GENERATOR_BEAN_NAME :
-                    return diGenerator;
-                default :
-                    throw new IllegalStateException("Unrecognized document generator bean name: " + beanName);
-            }
+        }
+
+        protected AccountingDocumentGenerator<?> throwExceptionIfGeneratorIsNotFound(String beanName) {
+            throw new IllegalStateException("Unrecognized document generator bean name: " + beanName);
         }
 
         @Override
         protected Document getNewDocument(Class<? extends Document> documentClass) {
             if (documentClass == null) {
                 throw new IllegalStateException("Document class should not have been null");
-            } else if (!CuDistributionOfIncomeAndExpenseDocument.class.equals(documentClass)) {
+            } else if (generatorDoesNotExistForDocumentClass(documentClass)) {
                 throw new IllegalStateException("Unexpected accounting document class: " + documentClass.getName());
             }
             
@@ -571,15 +680,12 @@ public class CreateAccountingDocumentServiceImplTest {
             document.setDocumentNumber(documentNumber);
             document.getDocumentHeader().setDocumentNumber(documentNumber);
             
-            if (document instanceof AccountingDocument) {
-                AccountingDocument accountingDocument = (AccountingDocument) document;
-                accountingDocument.setSourceAccountingLines(new ArrayList<>());
-                accountingDocument.setTargetAccountingLines(new ArrayList<>());
-                accountingDocument.setNextSourceLineNumber(Integer.valueOf(1));
-                accountingDocument.setNextTargetLineNumber(Integer.valueOf(1));
-            }
-            
             return document;
+        }
+
+        protected boolean generatorDoesNotExistForDocumentClass(Class<? extends Document> documentClass) {
+            return documentGeneratorsByBeanName.values().stream()
+                    .noneMatch((generator) -> generator.getDocumentClass().equals(documentClass));
         }
 
         @Override

@@ -836,4 +836,10 @@
         <property name="configurationService" ref="configurationService"/>
     </bean>
 
+    <bean id="AccountingDocumentGenerator_IB" class="edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator">
+        <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
+
 </beans>

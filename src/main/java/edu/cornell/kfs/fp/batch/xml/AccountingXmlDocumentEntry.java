@@ -43,6 +43,10 @@ public class AccountingXmlDocumentEntry {
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentAccountingLine> targetAccountingLines;
 
+    @XmlElementWrapper(name = "ItemList", namespace = StringUtils.EMPTY, required = false)
+    @XmlElement(name = "Item", namespace = StringUtils.EMPTY, required = false)
+    protected List<AccountingXmlDocumentItem> items;
+
     @XmlElementWrapper(name = "NoteList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Note", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentNote> notes;
@@ -58,6 +62,7 @@ public class AccountingXmlDocumentEntry {
     public AccountingXmlDocumentEntry() {
         this.sourceAccountingLines = new ArrayList<>();
         this.targetAccountingLines = new ArrayList<>();
+        this.items = new ArrayList<>();
         this.notes = new ArrayList<>();
         this.adHocRecipients = new ArrayList<>();
         this.backupLinks = new ArrayList<>();
@@ -117,6 +122,14 @@ public class AccountingXmlDocumentEntry {
 
     public void setTargetAccountingLines(List<AccountingXmlDocumentAccountingLine> targetAccountingLines) {
         this.targetAccountingLines = targetAccountingLines;
+    }
+
+    public List<AccountingXmlDocumentItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<AccountingXmlDocumentItem> items) {
+        this.items = items;
     }
 
     public List<AccountingXmlDocumentNote> getNotes() {

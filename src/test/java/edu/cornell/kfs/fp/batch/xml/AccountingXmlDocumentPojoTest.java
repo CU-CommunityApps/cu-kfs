@@ -72,6 +72,24 @@ public class AccountingXmlDocumentPojoTest {
                 AccountingXmlDocumentListWrapperFixture.NO_DOCUMENT_LIST_TEST, "no-document-list-test.xml");
     }
 
+    @Test
+    public void testLoadMultipleIBsFromSameFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.MULTI_IB_DOCUMENT_TEST, "multi-ib-document-test.xml");
+    }
+
+    @Test
+    public void testLoadSingleIBFromFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_IB_DOCUMENT_TEST, "single-ib-document-test.xml");
+    }
+
+    @Test
+    public void testLoadVaryingDocTypesFromSameFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST, "multi-doc-types-test.xml");
+    }
+
     private void assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
             AccountingXmlDocumentListWrapperFixture expectedResultFixture, String localFileName) throws Exception {
         AccountingXmlDocumentListWrapper expectedResult = expectedResultFixture.toDocumentListWrapperPojo();
@@ -103,6 +121,9 @@ public class AccountingXmlDocumentPojoTest {
                 expectedDocument.getTargetAccountingLines(), actualDocument.getTargetAccountingLines(),
                 "targetAccountingLines", this::assertAccountingLineWasUnmarshalledCorrectly);
         assertListOfXmlPojosWasUnmarshalledCorrectly(
+                expectedDocument.getItems(), actualDocument.getItems(),
+                "items", this::assertItemWasUnmarshalledCorrectly);
+        assertListOfXmlPojosWasUnmarshalledCorrectly(
                 expectedDocument.getNotes(), actualDocument.getNotes(),
                 "notes", this::assertNoteWasUnmarshalledCorrectly);
         assertListOfXmlPojosWasUnmarshalledCorrectly(
@@ -132,6 +153,16 @@ public class AccountingXmlDocumentPojoTest {
         assertEquals("Wrong org ref id", expectedLine.getOrgRefId(), actualLine.getOrgRefId());
         assertEquals("Wrong line description", expectedLine.getLineDescription(), actualLine.getLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+    }
+
+    private void assertItemWasUnmarshalledCorrectly(
+            AccountingXmlDocumentItem expectedItem, AccountingXmlDocumentItem actualItem) {
+        assertEquals("Wrong service date", expectedItem.getServiceDate(), actualItem.getServiceDate());
+        assertEquals("Wrong stock number", expectedItem.getStockNumber(), actualItem.getStockNumber());
+        assertEquals("Wrong item description", expectedItem.getDescription(), actualItem.getDescription());
+        assertEquals("Wrong item quantity", expectedItem.getQuantity(), actualItem.getQuantity());
+        assertEquals("Wrong UOM code", expectedItem.getUnitOfMeasureCode(), actualItem.getUnitOfMeasureCode());
+        assertEquals("Wrong item cost", expectedItem.getItemCost(), actualItem.getItemCost());
     }
 
     private void assertNoteWasUnmarshalledCorrectly(
