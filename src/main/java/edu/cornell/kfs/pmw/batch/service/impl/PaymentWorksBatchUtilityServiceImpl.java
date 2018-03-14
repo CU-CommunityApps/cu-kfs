@@ -7,29 +7,50 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.businessobject.VendorAddress;
+import org.kuali.kfs.vnd.businessobject.VendorContact;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
+import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoCountryToFipsCountryAssociation;
+import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
+import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUtilityService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
 
+    protected BusinessObjectService businessObjectService;
+    protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
     protected PersonService personService;
+    protected PaymentWorksVendorDao paymentWorksVendorDao;
     
     private Person systemUser = null;
 
@@ -107,6 +128,181 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         return systemUser;
     }
     
+    @Override
+    public boolean foundExistingPaymentWorksVendorByKfsDocumentNumber(String kfsDocumentNumber) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_VENDOR_DOCUMENT_NUMBER, kfsDocumentNumber);
+        return(getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) == 1);
+    }
+
+    @Override
+    public boolean foundExistingPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_VENDOR_REQUEST_ID, pmwVendorId);
+        return(getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) == 1);
+    }
+
+    @Override
+    public void registerKfsPvenApprovalForExistingPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail) {
+        PaymentWorksVendor pmwVendor = getPaymentWorksVendorByDocumentNumber(kfsVendorDocumentNumber);
+        if (ObjectUtils.isNotNull(pmwVendor)) {
+            LOG.info("registerKfsPvenApprovalForExistingPaymentWorksVendor: Approving PaymentWorks originating Vendor with table ID '" + pmwVendor.getId()
+                     + "' and kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "' and pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId()
+                     + "' and vendor number '");
+            getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED, vendorDetail.getVendorHeaderGeneratedIdentifier(),
+                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), getDateTimeService().getCurrentTimestamp());
+        } else {
+            LOG.error("registerKfsPvenApprovalForExistingPaymentWorksVendor: PaymentWorks staging table retrieval by KFS document number '" + kfsVendorDocumentNumber + "' failed to find vendor to set KFS Approve status values.");
+        }
+    }
+
+    @Override
+    public void registerKfsPvenApprovalForKfsEnteredVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail) {
+        if (isDomesticVendor(vendorDetail) && isDisbursementVoucherVendor(vendorDetail)) {
+            PaymentWorksVendor pmwVendor = populateKfsEnteredPaymentWorksVendor(kfsVendorDocumentNumber, vendorDetail, PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED);
+            LOG.info("registerKfsPvenApprovalForKfsEnteredVendor: Approving KFS originating vendor '"
+                     + vendorDetail.getVendorHeaderGeneratedIdentifier() + "-" + vendorDetail.getVendorDetailAssignedIdentifier() + "' with kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "'");
+            PaymentWorksVendor savedPmwVendor = getBusinessObjectService().save(pmwVendor);
+        } else {
+            LOG.error("registerKfsPvenApprovalForKfsEnteredVendor: Vendor '" + vendorDetail.getVendorHeaderGeneratedIdentifier()
+                      + "-" + vendorDetail.getVendorDetailAssignedIdentifier() + "' with KFS document number '" + kfsVendorDocumentNumber
+                      + "' was not inserted into PaymentWorks table because of either it's KFS vendorCorpCitizenCode being '" + vendorDetail.getVendorHeader().getVendorCorpCitizenCode()
+                      + "' or its KFS vendorTypeCode being '" + vendorDetail.getVendorHeader().getVendorTypeCode() + "'.");
+        }
+    }
+
+    @Override
+    public void registerKfsPvenDisapprovalForExistingPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail) {
+        PaymentWorksVendor pmwVendor = getPaymentWorksVendorByDocumentNumber(kfsVendorDocumentNumber);
+        if (ObjectUtils.isNotNull(pmwVendor)) {
+            LOG.info("registerKfsPvenDisapprovalForExistingPaymentWorksVendor: Disapproving PaymentWorks originating Vendor with table ID '" + pmwVendor.getId()
+                     + "' and kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "' and pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId() + "'");
+            getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_DISAPPROVED, vendorDetail.getVendorHeaderGeneratedIdentifier(),
+                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), getDateTimeService().getCurrentTimestamp());
+        } else {
+            LOG.error("registerKfsPvenDisapprovalForExistingPaymentWorksVendor: Vendor retrieval by KFS document number '" + kfsVendorDocumentNumber
+                    + "' did not find vendor with pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId() + "'.");
+        }
+    }
+
+    @Override
+    public void registerKfsPvenApprovalForKfsEditedVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail) {
+        LOG.info("registerKfsPvenApprovalForKfsEditedVendor: Approval for Edited Vendor with KFS document number '" + kfsVendorDocumentNumber + "'  NOT inserted into PaymentWorks table. PMW Edit functionality not present yet.");
+    }
+
+    private PaymentWorksVendor getPaymentWorksVendorByDocumentNumber(String documentNumber) {
+        Map criteria = new HashMap();
+        criteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_VENDOR_DOCUMENT_NUMBER, documentNumber);
+        Collection<PaymentWorksVendor> newVendors = getBusinessObjectService().findMatching(PaymentWorksVendor.class, criteria);
+        if (newVendors.isEmpty()) {
+            return null;
+        } else {
+            return newVendors.iterator().next();
+        } 
+    }
+    
+    private boolean isDisbursementVoucherVendor(VendorDetail vendorDetail) {
+        return (StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorTypeCode(), VendorConstants.VendorTypes.DISBURSEMENT_VOUCHER));
+    }
+    
+    private boolean isDomesticVendor(VendorDetail vendorDetail) {
+        LOG.info("isDomesticVendor: Country Code used in comparison was " + vendorDetail.getVendorHeader().getVendorCorpCitizenCode());
+        //Returning true for null here is valid. 
+        //"Country of Incorporation/Citizenship" is not a required field.
+        //That value is left blank on the edoc for US vendors when their data 
+        //is either hand keyed into KFS or entered through Purchasing's AVF form.
+        return (ObjectUtils.isNull(vendorDetail.getVendorHeader().getVendorCorpCitizenCode()) 
+                || StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorCorpCitizenCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES));
+    }
+
+    private PaymentWorksVendor populateKfsEnteredPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail, String kfsVendorProcessingStatus) {
+        PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setPmwTransactionType(PaymentWorksConstants.PaymentWorksTransactionType.KFS_ORIGINATING_VENDOR);
+        pmwVendor.setKfsVendorProcessingStatus(kfsVendorProcessingStatus);
+        pmwVendor.setKfsVendorDocumentNumber(kfsVendorDocumentNumber);
+        pmwVendor.setProcessTimestamp(getDateTimeService().getCurrentTimestamp());
+        
+        pmwVendor.setKfsVendorHeaderGeneratedIdentifier(vendorDetail.getVendorHeaderGeneratedIdentifier());
+        pmwVendor.setKfsVendorDetailAssignedIdentifier(vendorDetail.getVendorDetailAssignedIdentifier());
+        pmwVendor.setRequestingCompanyTin(vendorDetail.getVendorHeader().getVendorTaxNumber());
+        populateVendorLegalName(pmwVendor, vendorDetail);
+        populateRemitAddress(pmwVendor, vendorDetail);
+        populateContactEmail(pmwVendor, vendorDetail);
+        return pmwVendor;
+    }
+    
+    private void populateVendorLegalName(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
+        if (vendorNameIsBlank(vendorDetail)) {
+            pmwVendor.setRequestingCompanyLegalName(formatVendorName(vendorDetail));
+        }
+        else {
+            pmwVendor.setRequestingCompanyLegalName(vendorDetail.getVendorName());
+        }
+    }
+
+    // Concatenates the vendorLastName and a delimiter and the vendorFirstName fields in a similar manner to the
+    // KualiCo base code PRIVATE method org.kuali.kfs.vnd.document.VendorMaintainableImpl.setVendorName which 
+    // formats the business object name values just prior to saving the data to the database.
+    private String formatVendorName(VendorDetail vendorDetail) {
+        StringBuilder sb = new StringBuilder(vendorDetail.getVendorLastName() + VendorConstants.NAME_DELIM + vendorDetail.getVendorFirstName());
+        return sb.toString();
+    }
+    
+    private boolean vendorNameIsBlank(VendorDetail vendorDetail) {
+        return (StringUtils.isBlank(vendorDetail.getVendorName()));
+    }
+
+    private void populateRemitAddress(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
+        List<VendorAddress> remitAddresses = findAllActiveRemitAddresses(vendorDetail.getVendorAddresses());
+        if (remitAddresses.size() == 1) {
+            VendorAddress remitAddress = remitAddresses.get(0);
+            pmwVendor.setRemittanceAddressStreet1(remitAddress.getVendorLine1Address());
+            pmwVendor.setRemittanceAddressStreet2(remitAddress.getVendorLine2Address());
+            pmwVendor.setRemittanceAddressCity(remitAddress.getVendorCityName());
+            pmwVendor.setRemittanceAddressState(remitAddress.getVendorStateCode());
+            pmwVendor.setRemittanceAddressCountry(convertFipsCountryCodeToIsoCountryCode(remitAddress.getVendorCountryCode()));
+            pmwVendor.setRemittanceAddressZipCode(remitAddress.getVendorZipCode());
+        } else {
+            LOG.error("populateRemitAddress: KFS Approved PVEN does not contain one and only one Active Remit Address for vendor " + vendorDetail.getVendorHeaderGeneratedIdentifier() + "-" + vendorDetail.getVendorDetailAssignedIdentifier());
+        }
+    }
+    
+    private List<VendorAddress> findAllActiveRemitAddresses(List<VendorAddress> addresses) {
+        return (addresses.stream()
+                         .filter(address -> address.getVendorAddressTypeCode().equalsIgnoreCase(VendorConstants.AddressTypes.REMIT))
+                         .filter(address -> address.isActive())
+                         .collect(Collectors.toList()));
+    }
+    
+    private void populateContactEmail(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
+        List<VendorContact> vendorInformationContacts = findAllActiveVendorInformationContacts(vendorDetail.getVendorContacts());
+        if (vendorInformationContacts.size() == 1) {
+            VendorContact vendorContact = vendorInformationContacts.get(0);
+            pmwVendor.setVendorInformationEmail(vendorContact.getVendorContactEmailAddress());
+        } else {
+            LOG.error("populateContactEmail: KFS Approved PVEN does not contain one and only one Active Vendor Information Contact for vendor " + vendorDetail.getVendorHeaderGeneratedIdentifier() + "-" + vendorDetail.getVendorDetailAssignedIdentifier());
+        }
+    }
+    
+    private List<VendorContact> findAllActiveVendorInformationContacts(List<VendorContact> contacts) {
+        return (contacts.stream()
+                        .filter(contact -> contact.getVendorContactTypeCode().equalsIgnoreCase(PaymentWorksConstants.KFSVendorContactTypes.VENDOR_INFORMATION_FORM))
+                        .filter(contact -> contact.isActive())
+                        .collect(Collectors.toList()));
+    }
+    
+    public String convertFipsCountryCodeToIsoCountryCode(String fipsCountryCode) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put(PaymentWorksPropertiesConstants.PaymentWorksIsoCountryToFipsCountryAssociation.FIPS_CNTRY_CD, fipsCountryCode);
+        Collection<PaymentWorksIsoCountryToFipsCountryAssociation> fipsIsoCollection = getBusinessObjectService().findMatching(PaymentWorksIsoCountryToFipsCountryAssociation.class, fieldValues);
+        if (fipsIsoCollection.isEmpty()) {
+            return null;
+        } else {
+            PaymentWorksIsoCountryToFipsCountryAssociation fipsToIso = fipsIsoCollection.iterator().next();
+            return fipsToIso.getIsoCountryCode();
+        } 
+    }
+    
     public void setSystemUser(Person systemUser) {
         this.systemUser = systemUser;
     }
@@ -125,6 +321,30 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
+    }
+
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public PaymentWorksVendorDao getPaymentWorksVendorDao() {
+        return paymentWorksVendorDao;
+    }
+
+    public void setPaymentWorksVendorDao(PaymentWorksVendorDao paymentWorksVendorDao) {
+        this.paymentWorksVendorDao = paymentWorksVendorDao;
+    }
+
+    public DateTimeService getDateTimeService() {
+        return dateTimeService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
 }

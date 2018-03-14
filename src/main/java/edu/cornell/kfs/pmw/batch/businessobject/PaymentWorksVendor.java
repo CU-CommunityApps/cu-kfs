@@ -16,6 +16,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     private static final long serialVersionUID = -6784832598701451681L;
     
+    private Integer id;
     private String pmwVendorRequestId;
     private String pmwRequestStatus;
     private String pmwTransactionType;
@@ -153,7 +154,15 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private boolean cornellProvidedTrainingOrEquipmentRequired;
     private boolean informalMarketing;
     private boolean servicesProvidedWithoutInsurance;
-    
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getRequestingCompanyId() {
         return requestingCompanyId;
     }
@@ -1086,7 +1095,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     public String toString() {
         StringBuilder sb = new StringBuilder("PaymentWorksVendor::  pmwVendorRequestId:  ").append(pmwVendorRequestId).append(System.lineSeparator());
         sb.append("requestingCompanyId: ").append(requestingCompanyId).append(System.lineSeparator());
-        sb.append("requestingCompanyTin").append((StringUtils.isNotBlank(requestingCompanyTin) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
+        sb.append("requestingCompanyTin: ").append((StringUtils.isNotBlank(requestingCompanyTin) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
         sb.append("requestingCompanyTinType: ").append(requestingCompanyTinType).append(System.lineSeparator());
         sb.append("requestingCompanyTaxCountry: ").append(requestingCompanyTaxCountry).append(System.lineSeparator());
         sb.append("requestingCompanyLegalName: ").append(requestingCompanyLegalName).append(System.lineSeparator());
@@ -1207,4 +1216,5 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         sb.append("servicesProvidedWithoutInsurance: ").append((servicesProvidedWithoutInsurance ? KFSConstants.Booleans.TRUE : KFSConstants.Booleans.FALSE)).append(System.lineSeparator());
         return sb.toString();
     }
+
 }

@@ -2,7 +2,7 @@ package edu.cornell.kfs.pmw.batch.service;
 
 import org.kuali.rice.kim.api.identity.Person;
 
-import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 
@@ -16,4 +16,15 @@ public interface PaymentWorksBatchUtilityService {
     
     Person getSystemUser();
     
+    boolean foundExistingPaymentWorksVendorByKfsDocumentNumber(String kfsDocumentNumber);
+    
+    boolean foundExistingPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId);
+    
+    void registerKfsPvenApprovalForExistingPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail);
+    
+    void registerKfsPvenApprovalForKfsEnteredVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail);
+    
+    void registerKfsPvenDisapprovalForExistingPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail);
+    
+    void registerKfsPvenApprovalForKfsEditedVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail);
 }

@@ -28,6 +28,8 @@ public class PaymentWorksConstants {
         public static final String VENDOR_REQUESTED = "Vendor Requested";
         public static final String VENDOR_CREATED = "Vendor Created";
         public static final String VENDOR_REJECTED = "Vendor Rejected";
+        public static final String VENDOR_APPROVED = "Vendor Approved";
+        public static final String VENDOR_DISAPPROVED = "Vendor Disapproved";
     }
     
     public static final class KFSAchProcessingStatus {
@@ -36,6 +38,7 @@ public class PaymentWorksConstants {
     
     public static final class PaymentWorksTransactionType {
         public static final String NEW_VENDOR = "NV";
+        public static final String KFS_ORIGINATING_VENDOR = "KV";
     }
     
     public static final class PaymentWorksVendorType {

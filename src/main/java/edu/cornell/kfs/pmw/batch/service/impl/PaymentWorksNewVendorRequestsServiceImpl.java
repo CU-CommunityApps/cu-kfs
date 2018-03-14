@@ -1,8 +1,10 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -27,6 +29,7 @@ import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksIsoFipsCountryDao;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsService;
@@ -56,6 +59,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     protected PaymentWorksVendorDao paymentWorksVendorDao;
     protected PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
     protected PaymentWorksIsoFipsCountryDao paymentWorksIsoFipsCountryDao;
+    protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
     protected Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap = null; 
     protected Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap = null;
@@ -140,7 +144,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private boolean pmwNewVendorAttributesConformToKfsLengthsOrFormats(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
         boolean allValidationPassed = enteredLegalNameConformsToKfsLength(stgNewVendorRequestDetailToProcess, errorMessages);
-
+        
         if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyW8W9())) {
             errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_W8_W9_URL_IS_NULL_OR_BLANK));
             allValidationPassed = false;
@@ -287,7 +291,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     }
     
     private boolean pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        if (isExistingPaymentWorksVendor(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId())) {
+        if (getPaymentWorksBatchUtilityService().foundExistingPaymentWorksVendorByPaymentWorksVendorId(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId())) {
             errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.DUPLICATE_NEW_VENDOR_REQUEST_ERROR_MESSAGE));
             return false;
         } 
@@ -296,12 +300,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean isExistingPaymentWorksVendor(String pmwVendorId) {
-        Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_VENDOR_REQUEST_ID, pmwVendorId);
-        return(getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) > 0);
-    }
-
     private PaymentWorksVendor savePaymentWorksVendorToStagingTable(PaymentWorksVendor pmwVendorToSave) {
         pmwVendorToSave.setProcessTimestamp(getDateTimeService().getCurrentTimestamp());
         pmwVendorToSave = getBusinessObjectService().save(pmwVendorToSave);
@@ -319,7 +317,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     private void updatePmwNewVendorStagingTableBasedOnSuccessfulCreateVendorProcessing(PaymentWorksVendor pmwVendor) {
         LOG.info("updatePmwNewVendorStagingTableBasedOnSuccessfulCreateVendorProcessing: entered");
         pmwVendor = setStatusValuesForPaymentWorksApprovedNewVendorKfsVendorCreatedAchPendingPven(pmwVendor);
-        getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getPmwVendorRequestId(), 
+        getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(),
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(), 
                                                                                   pmwVendor.getKfsAchProcessingStatus(), 
@@ -330,7 +328,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     private void updatePmwNewVendorStagingTableBasedOnCreateVendorFailing(PaymentWorksVendor pmwVendor) {
         LOG.info("updatePmwNewVendorStagingTableBasedOnCreateVendorFailing: entered");
         pmwVendor = setStatusValuesForPaymentWorksRejectedNewVendorRejectedKfsVendor(pmwVendor);
-        getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getPmwVendorRequestId(), 
+        getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
@@ -474,6 +472,14 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public PaymentWorksBatchUtilityService getPaymentWorksBatchUtilityService() {
+        return paymentWorksBatchUtilityService;
+    }
+
+    public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
+        this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
     }
 
 }
