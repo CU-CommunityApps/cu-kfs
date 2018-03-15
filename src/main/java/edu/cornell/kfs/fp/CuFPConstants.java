@@ -154,6 +154,7 @@ public class CuFPConstants {
         public static final String AWS_PROCESSING_DATE_PROPERTY_NAME = "AWS_PROCESSING_DATE";
         public static final String AWS_FROM_ACCOUNT_PROPERTY_NAME = "AWS_FROM_ACCOUNT_NUMBER";
         public static final String AWS_OBJECT_CODE_PROPERTY_NAME = "AWS_OBJECT_CODE";
+        public static final String AWS_CHART_CODE_PROPERTY_NAME = "AWS_CHART_CODE";
         public static final String AWS_DEFAULT_DOCUMENT_DESCRIPTION_PROPERTY_NAME = "AWS_DEFAULT_DOCUMENT_DESCRIPTION";
         public static final String AWS_NOTE_HELP_TEXT_PROERTY_NAME = "AWS_NOTE_HELP_TEXT";
         public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
