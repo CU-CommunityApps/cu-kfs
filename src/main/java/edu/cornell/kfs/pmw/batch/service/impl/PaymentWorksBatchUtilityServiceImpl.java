@@ -194,7 +194,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         Map criteria = new HashMap();
         criteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_VENDOR_DOCUMENT_NUMBER, documentNumber);
         Collection<PaymentWorksVendor> newVendors = getBusinessObjectService().findMatching(PaymentWorksVendor.class, criteria);
-        if (newVendors.isEmpty()) {
+        if (ObjectUtils.isNull(newVendors) || newVendors.isEmpty()) {
             return null;
         } else {
             return newVendors.iterator().next();
@@ -254,7 +254,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     private void populateRemitAddress(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
         List<VendorAddress> remitAddresses = findAllActiveRemitAddresses(vendorDetail.getVendorAddresses());
-        if (remitAddresses.size() == 1) {
+        if (ObjectUtils.isNotNull(remitAddresses) && remitAddresses.size() == 1) {
             VendorAddress remitAddress = remitAddresses.get(0);
             pmwVendor.setRemittanceAddressStreet1(remitAddress.getVendorLine1Address());
             pmwVendor.setRemittanceAddressStreet2(remitAddress.getVendorLine2Address());
@@ -276,7 +276,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     
     private void populateContactEmail(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
         List<VendorContact> vendorInformationContacts = findAllActiveVendorInformationContacts(vendorDetail.getVendorContacts());
-        if (vendorInformationContacts.size() == 1) {
+        if (ObjectUtils.isNotNull(vendorInformationContacts) && vendorInformationContacts.size() == 1) {
             VendorContact vendorContact = vendorInformationContacts.get(0);
             pmwVendor.setVendorInformationEmail(vendorContact.getVendorContactEmailAddress());
         } else {

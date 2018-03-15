@@ -15,18 +15,23 @@ public class PaymentWorksIsoCountryToFipsCountryAssociation extends PersistableB
     public Integer getId() {
         return id;
     }
+    
     public void setId(Integer id) {
         this.id = id;
     }
+    
     public String getIsoCountryCode() {
         return isoCountryCode;
     }
+    
     public void setIsoCountryCode(String isoCountryCode) {
         this.isoCountryCode = isoCountryCode;
     }
+    
     public String getFipsCountryCode() {
         return fipsCountryCode;
     }
+    
     public void setFipsCountryCode(String fipsCountryCode) {
         this.fipsCountryCode = fipsCountryCode;
     }
