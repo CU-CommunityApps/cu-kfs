@@ -19,6 +19,7 @@
 <descriptor-repository version="1.0">
 
 <class-descriptor class="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor" table="CU_PMW_VENDOR_T">
+    <field-descriptor name="id" column="ID" jdbc-type="INTEGER" primarykey="true" sequence-name="CU_PMW_VNDR_SEQ" autoincrement="true" />
     <field-descriptor name="pmwVendorRequestId" column="PMW_VND_REQ_ID" jdbc-type="VARCHAR" primarykey="true" />
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
@@ -166,6 +167,15 @@
     <field-descriptor name="paymentWorksFieldId" column="PMW_FIELD_ID" jdbc-type="VARCHAR" />
     <field-descriptor name="paymentWorksFieldLabel" column="PMW_FIELD_LABEL" jdbc-type="VARCHAR" />
     <field-descriptor name="kfsPaymentWorksStagingTableColumn" column="KFS_PMW_STG_TBL_COL" jdbc-type="VARCHAR" />
+    <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+</class-descriptor>
+
+<class-descriptor class="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoCountryToFipsCountryAssociation" table="CU_PMW_ISO_FIPS_CNTRY_MAP_T">
+    <field-descriptor name="id" column="ID" jdbc-type="INTEGER" primarykey="true" />
+    <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+    <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+    <field-descriptor name="isoCountryCode" column="ISO_CNTRY_CD" jdbc-type="VARCHAR" />
+    <field-descriptor name="fipsCountryCode" column="FIPS_CNTRY_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 </class-descriptor>
 
