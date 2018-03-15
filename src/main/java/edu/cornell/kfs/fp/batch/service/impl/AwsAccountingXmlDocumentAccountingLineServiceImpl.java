@@ -37,8 +37,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     @Override
     public AccountingXmlDocumentAccountingLine createAccountingXmlDocumentAccountingLine(GroupLevel costCenterGroupLevel,
-                                                                                         DefaultKfsAccountForAws defaultKfsAccountForAws) {
-        LOG.info("createAccountingXmlDocumentAccountingLine for " + costCenterGroupLevel.getGroupName());
+                                                                                         DefaultKfsAccountForAws defaultKfsAccountForAws) throws IllegalArgumentException {
+        LOG.debug("createAccountingXmlDocumentAccountingLine for " + costCenterGroupLevel.getGroupName());
+        if (!costCenterGroupLevel.isCostCenterGroupLevel()) {
+            throw new IllegalArgumentException("Invalid Group Level, expected Cost Center Group Level.");
+        }
 
         String costCenterGroupValue = costCenterGroupLevel.getGroupValue();
         AccountingXmlDocumentAccountingLine xmlAccountingLine = getEmptyAccountingXmlDocumentAccountingLine();
@@ -60,8 +63,8 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private AccountingXmlDocumentAccountingLine fixAccountFieldReferences(AccountingXmlDocumentAccountingLine xmlAccountingLine, String defaultAccountString) {
         if (!validateChartCode(xmlAccountingLine.getChartCode())) {
-            String defaultCharCode = getDefaultChartCodeFromParameter();
-            xmlAccountingLine.setChartCode(defaultCharCode);
+            String defaultChartCode = getDefaultChartCodeFromParameter();
+            xmlAccountingLine.setChartCode(defaultChartCode);
         }
 
         if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber())) {

@@ -1,17 +1,17 @@
 package edu.cornell.kfs.fp.batch.xml;
 
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import edu.cornell.kfs.module.cam.util.CuKualiDecimalUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-
-import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Accounting", namespace = StringUtils.EMPTY)
@@ -137,9 +137,14 @@ public class AccountingXmlDocumentAccountingLine {
                     StringUtils.equals(this.projectCode, xmlAccountingLine.getProjectCode()) &&
                     StringUtils.equals(this.orgRefId, xmlAccountingLine.getOrgRefId()) &&
                     StringUtils.equals(this.lineDescription, xmlAccountingLine.getLineDescription()) &&
-                    CuKualiDecimalUtils.equals(this.amount, xmlAccountingLine.getAmount());
+                    ObjectUtils.equals(this.amount, xmlAccountingLine.getAmount());
         }
 
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId, lineDescription, amount);
     }
 }
