@@ -1,13 +1,12 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import java.util.List;
 
 public enum GroupLevelFixture {
     DEPT_1_COST_CENTER_1(CloudCheckrFixtureConstants.ACCOUNT_NONE, CloudCheckrFixtureConstants.DEPT1_COSTCENTER2_COST),
@@ -40,6 +39,7 @@ public enum GroupLevelFixture {
             CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VALUE_EC2, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_EC2,
             CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_EC2_COST, 0,
             groupLevelFixtureArrayBuilder(CLOUDCHECKR_EXAMPLE_COST_CENTER_VANW)),
+
 
     ACCT_NONE_COST_1(CloudCheckrFixtureConstants.ACCOUNT_NONE, 1.00),
     ACCT_165833X_COST_2("165833X", 2.00),

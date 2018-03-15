@@ -6,6 +6,6 @@ import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 
 public interface AwsAccountingXmlDocumentAccountingLineService {
 
-    AccountingXmlDocumentAccountingLine createAccountingXmlDocumentAccountingLine(GroupLevel groupLevel, DefaultKfsAccountForAws defaultKfsAccountForAws);
+    AccountingXmlDocumentAccountingLine createAccountingXmlDocumentAccountingLine(GroupLevel groupLevel, DefaultKfsAccountForAws defaultKfsAccountForAws) throws IllegalArgumentException;
 
 }
