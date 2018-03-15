@@ -96,7 +96,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             return false;
         }
         Chart chart = chartService.getByPrimaryId(chartCode);
-        if (ObjectUtils.isNull(chart) || !chart.isActive()){
+        if (ObjectUtils.isNull(chart) || !chart.isActive()) {
             LOG.error(String.format("Invalid Chart Code %s", chartCode));
             return false;
         }
@@ -153,7 +153,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             LOG.error(String.format("Could not find Object Code (%s, %s).", chartCode, objectCodeValue));
             return false;
         }
-        if (!objectCode.isActive()){
+        if (!objectCode.isActive()) {
             LOG.error(String.format("Invalid Object Code (%s, %s) is not active.", chartCode, objectCodeValue));
             return false;
         }
@@ -170,7 +170,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             LOG.error(String.format("Could not find Sub-Account (%s, %s, %s).", chartCode, accountNumber, subAccountNumber));
             return false;
         }
-        if (!subAccount.isActive()){
+        if (!subAccount.isActive()) {
             LOG.error(String.format("Invalid Sub-Account (%s, %s, %s) is not active.", chartCode, accountNumber, subAccountNumber));
             return false;
         }
@@ -187,7 +187,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             LOG.error(String.format("Could not find Sub-Object Code (%s, %s, %s, %s).", chartCode, accountNumber, objectCode, subObjectCode));
             return false;
         }
-        if (!subObject.isActive()){
+        if (!subObject.isActive()) {
             LOG.error(String.format("Invalid Sub-Object Code (%s, %s, %s, %s) is not active.", chartCode, accountNumber, objectCode, subObjectCode));
             return false;
         }
@@ -204,7 +204,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             LOG.error(String.format("Could not find Project Code %s", projectCodeValue));
             return false;
         }
-        if (!projectCode.isActive()){
+        if (!projectCode.isActive()) {
             LOG.error(String.format("Invalid Project Code %s is not Active", projectCodeValue));
             return false;
         }
