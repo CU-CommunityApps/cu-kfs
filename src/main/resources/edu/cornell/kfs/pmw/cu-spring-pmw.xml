@@ -97,7 +97,10 @@
     
     <bean id="paymentWorksBatchUtilityService" parent="paymentWorksBatchUtilityService-parentBean" />
     <bean id="paymentWorksBatchUtilityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksBatchUtilityServiceImpl" abstract="true">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="dateTimeService" ref="dateTimeService" />
         <property name="parameterService" ref="parameterService" />
+        <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
         <property name="personService" ref="personService" />
     </bean>
     
@@ -129,6 +132,7 @@
         <property name="dataDictionaryService" ref="dataDictionaryService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="paymentWorksDataProcessingIntoKfsService" ref="paymentWorksDataProcessingIntoKfsService" />
         <property name="paymentWorksIsoFipsCountryDao" ref="paymentWorksIsoFipsCountryDao" />
         <property name="paymentWorksNewVendorRequestsReportService" ref="paymentWorksNewVendorRequestsReportService" />
