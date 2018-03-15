@@ -125,16 +125,21 @@ public class AccountingXmlDocumentAccountingLine {
         this.amount = amount;
     }
 
-    public boolean equals(AccountingXmlDocumentAccountingLine xmlAccountingLine) {
+    @Override
+    public boolean equals(Object xmlAccountingLineObject) {
+        if (xmlAccountingLineObject instanceof  AccountingXmlDocumentAccountingLine) {
+            AccountingXmlDocumentAccountingLine xmlAccountingLine = (AccountingXmlDocumentAccountingLine) xmlAccountingLineObject;
+            return StringUtils.equals(this.chartCode, xmlAccountingLine.getChartCode()) &&
+                    StringUtils.equals(this.accountNumber, xmlAccountingLine.getAccountNumber()) &&
+                    StringUtils.equals(this.subAccountNumber, xmlAccountingLine.getSubAccountNumber()) &&
+                    StringUtils.equals(this.objectCode, xmlAccountingLine.getObjectCode()) &&
+                    StringUtils.equals(this.subObjectCode, xmlAccountingLine.getSubObjectCode()) &&
+                    StringUtils.equals(this.projectCode, xmlAccountingLine.getProjectCode()) &&
+                    StringUtils.equals(this.orgRefId, xmlAccountingLine.getOrgRefId()) &&
+                    StringUtils.equals(this.lineDescription, xmlAccountingLine.getLineDescription()) &&
+                    CuKualiDecimalUtils.equals(this.amount, xmlAccountingLine.getAmount());
+        }
 
-        return StringUtils.equals(this.chartCode, xmlAccountingLine.getChartCode()) &&
-                StringUtils.equals(this.accountNumber, xmlAccountingLine.getAccountNumber()) &&
-                StringUtils.equals(this.subAccountNumber, xmlAccountingLine.getSubAccountNumber()) &&
-                StringUtils.equals(this.objectCode, xmlAccountingLine.getObjectCode()) &&
-                StringUtils.equals(this.subObjectCode, xmlAccountingLine.getSubObjectCode()) &&
-                StringUtils.equals(this.projectCode, xmlAccountingLine.getProjectCode()) &&
-                StringUtils.equals(this.orgRefId, xmlAccountingLine.getOrgRefId()) &&
-                StringUtils.equals(this.lineDescription, xmlAccountingLine.getLineDescription()) &&
-                CuKualiDecimalUtils.equals(this.amount, xmlAccountingLine.getAmount());
+        return false;
     }
 }

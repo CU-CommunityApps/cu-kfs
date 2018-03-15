@@ -30,16 +30,16 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_1658328_OBJ_6600_AMOUNT_1("IT", "1658328", null, "6600", null, null, null, null, 1.00),
     ACCT_1658328_OBJ_6600_AMOUNT_2("IT", "1658328", null, "6600", null, null, null, null, 2.00),
     ACCT_165835X_OBJ_6600_AMOUNT_3("IT", "165835X", null, "6600", null, null, null, null, 3.00),
-    ACCT_1658333_SA_5333_OBJ_6600_AMOUNT_4("IT", "1658333", "5333", "6600", null, null, null, null, 4.00),
-    ACCT_1658333_OBJ_6600_AMOUNT_5("IT", "1658333", null, "6600", null, null, null, null, 5.00),
+    ACCT_R583805_SA_70170_OBJ_6600_AMOUNT_4("IT", "R583805", "70170", "6600", null, null, null, null, 4.00),
+    ACCT_R583805_OBJ_6600_AMOUNT_5("IT", "R583805", null, "6600", null, null, null, null, 5.00),
     ACCT_R589966_OBJ_1000_AMOUNT_6("IT", "R589966", "NONCA", "1000", null, "EB-PLGIFT", "AEH56", null, 6.00),
     ACCT_1023715_OBJ_4020_SO109_AMOUNT_7("IT", "1023715", "97601", "4020", "109", null, "AEH56", null, 7.00),
     ACCT_1023715_OBJ_4020_AMOUNT_8("IT", "1023715", "97601", "4020", null, null, "AEH56", null, 8.00),
-    ACCT_R589966_OBJ_4020_AMOUNT_9("IT", "R589966", null, "4020", null, null, "AEH56", null, 9.00),
-    ACCT_J801000_OBJ_4020_AMOUNT_10("CS", "J801000", "SHAN", "6600", null, null, null, null, 10.00),
-    ACCT_J801000_OBJ_4020_AMOUNT_11("CS", "J801000", null, "6600", null, null, null, null, 11.00),
-    ACCT_J801000_OBJ_4020_AMOUNT_12("IT", "None", null, "6600", null, null, null, null, 12.00),
-    ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID("IT", "CS*J801000*SHAN*6600***something", null, "6600", null, null, null, null, 13.00),
+    ACCT_R589966_OBJ_1000_AMOUNT_9("IT", "R589966", null, "1000", null, null, "AEH56", null, 9.00),
+    ACCT_J801000_SA_SHAN_OBJ_6600_AMOUNT_10("CS", "J801000", "SHAN", "6600", null, null, null, null, 10.00),
+    ACCT_J801000_OBJ_6600_AMOUNT_11("CS", "J801000", null, "6600", null, null, null, null, 11.00),
+    ACCT_NONE_OBJ_6600_AMOUNT_12("IT", "None", null, "6600", null, null, null, null, 12.00),
+    ACCT_J801000_OBJ_6600_AMOUNT_13_INVALID("IT", "CS*J801000*SHAN*6600***something", null, "6600", null, null, null, null, 13.00),
     ACCT_1023715_OBJ_4020_AMOUNT_14_INVALID("IT", "IT*1023715*97601*4020*109**AEH56*BAR", null, "6600", null, null, null, null, 14.00);
 
     public final String chartCode;
