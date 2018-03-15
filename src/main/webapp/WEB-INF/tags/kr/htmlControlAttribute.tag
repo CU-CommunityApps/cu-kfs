@@ -18,9 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag import="java.util.Map" %>
-<%@ tag import="org.kuali.kfs.kns.util.ActionFormUtilMap" %>
 <%@ tag import="java.util.ArrayList" %>
+<%@ tag import="java.util.Map" %>
 <%@ include file="/kr/WEB-INF/jsp/tldHeader.jsp"%>
 <%@ attribute name="property" required="true" description="The property being rendered." %>
 <%@ attribute name="attributeEntry" required="true" type="java.util.Map" description="The Map of data dictionary attributes about the property to render a control for." %>
