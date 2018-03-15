@@ -1,18 +1,18 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
+import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture.GroupLevelFixture;
+import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentAccountingLineFixture;
+import edu.cornell.kfs.fp.batch.xml.fixture.DefaultKfsAccountForAwsFixture;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
-
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
-import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
-import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture.GroupLevelFixture;
-import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentAccountingLineFixture;
-import edu.cornell.kfs.fp.batch.xml.fixture.DefaultKfsAccountForAwsFixture;
 
 @ConfigureContext(session = org.kuali.kfs.sys.fixture.UserNameFixture.ccs1)
 public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends KualiTestBase {
@@ -104,16 +104,10 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends Kuali
                 AccountingXmlDocumentAccountingLineFixture.ACCT_NONE_OBJ_6600_AMOUNT_12);
     }
 
-    public void testVerifyInvalidStarDelimitedAccountStringUsesValidDefaultStarDelimitedAccountString() {
-        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_J801000_COST_13,        //todo: confirm requirements
-        DefaultKfsAccountForAwsFixture.AWS_PQR_KFS_J801000,
-        AccountingXmlDocumentAccountingLineFixture.ACCT_J801000_OBJ_6600_AMOUNT_13_INVALID);
-    }
-
     public void testVerifyInvalidStarDelimitedAccountStringUsesInvalidDefaultAsAccount() {
-        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_1023715_COST_14,
+        verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_1023715_COST_13,
                 DefaultKfsAccountForAwsFixture.AWS_STU_KFS_1023715_INVALID,
-                AccountingXmlDocumentAccountingLineFixture.ACCT_1023715_OBJ_4020_AMOUNT_14_INVALID);
+                AccountingXmlDocumentAccountingLineFixture.ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID);
     }
 
     private void verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture groupLevelCostCenterFixture,

@@ -15,13 +15,13 @@ import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
 import edu.cornell.kfs.fp.CuFPConstants;
-import org.kuali.kfs.sys.KFSConstants;
 
 public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAccountingXmlDocumentAccountingLineService {
 
@@ -62,6 +62,10 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         if (!validateChartCode(xmlAccountingLine.getChartCode())) {
             String defaultCharCode = getDefaultChartCodeFromParameter();
             xmlAccountingLine.setChartCode(defaultCharCode);
+        }
+
+        if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber())) {
+            return getDefaultAccountingLine(defaultAccountString);
         }
 
         if (!StringUtils.equalsIgnoreCase(defaultAccountString, CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION) &&
@@ -121,6 +125,10 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         if (StringUtils.isBlank(accountNumber)) {
             LOG.error("Account Number cannot be blank.");
             return false;
+        }
+
+        if (StringUtils.equalsIgnoreCase(accountNumber, CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION)) {
+            return true;
         }
 
         Account account = accountService.getByPrimaryId(chartCode, accountNumber);
@@ -236,7 +244,6 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             xmlAccountingLine.setAccountNumber(defaultAccountString);
         }
 
-        validateAccount(xmlAccountingLine.getChartCode(), defaultAccountString);
         return xmlAccountingLine;
     }
 

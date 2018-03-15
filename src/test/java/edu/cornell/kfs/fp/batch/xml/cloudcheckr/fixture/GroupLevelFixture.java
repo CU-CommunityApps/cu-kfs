@@ -54,7 +54,7 @@ public enum GroupLevelFixture {
     ACCT_J80100X_COST_11("J80100X", 11.00),
     ACCT_NONE_COST_12(CloudCheckrFixtureConstants.ACCOUNT_NONE, 12.00),
     ACCT_J801000_COST_13("CS*J801000*SHAN*6600***something", 13.00),
-    ACCT_1023715_COST_14("IT*1023715*97601*4020*109**AEH56*foo", 14.00);
+    ACCT_1023715_COST_13("IT*1023715*97601*4020*109**AEH56*foo", 14.00);
 
     public final String groupName;
     public final String groupValue;

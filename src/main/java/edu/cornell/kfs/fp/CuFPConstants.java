@@ -1,10 +1,9 @@
 package edu.cornell.kfs.fp;
 
-import java.util.Calendar;
-
+import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
 import org.apache.commons.lang.StringUtils;
 
-import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
+import java.util.Calendar;
 
 /**
  Copyright Cornell University
@@ -170,6 +169,7 @@ public class CuFPConstants {
         public static final String HTTP_METHOD_GET_NAME = "GET";
         public static final String DI_ROUTE_ANNOTATION = "DI automatically created by AWS Billing Batch Job";
         public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
+        public static final String ACCOUNT_NONE = "None";
     }
     
     public static class CLOUDCHECKR {
