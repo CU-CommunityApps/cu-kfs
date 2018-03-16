@@ -1,5 +1,11 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -16,12 +22,7 @@ import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
-import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
-import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
-import edu.cornell.kfs.fp.CuFPConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAccountingXmlDocumentAccountingLineService {
 
@@ -34,13 +35,14 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
     protected ObjectCodeService objectCodeService;
     protected SubObjectCodeService subObjectCodeService;
     protected ProjectCodeService projectCodeService;
+    protected ConfigurationService configurationService;
 
     @Override
     public AccountingXmlDocumentAccountingLine createAccountingXmlDocumentAccountingLine(GroupLevel costCenterGroupLevel,
                                                                                          DefaultKfsAccountForAws defaultKfsAccountForAws) throws IllegalArgumentException {
         LOG.debug("createAccountingXmlDocumentAccountingLine for " + costCenterGroupLevel.getGroupName());
         if (!costCenterGroupLevel.isCostCenterGroupLevel()) {
-            throw new IllegalArgumentException("Invalid Group Level, expected Cost Center Group Level.");
+            throw new IllegalArgumentException(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_INVALID_GROUP_LEVEL_TYPE));
         }
 
         String costCenterGroupValue = costCenterGroupLevel.getGroupValue();
@@ -103,8 +105,12 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             return false;
         }
         Chart chart = chartService.getByPrimaryId(chartCode);
-        if (ObjectUtils.isNull(chart) || !chart.isActive()) {
-            LOG.error(String.format("Invalid Chart Code %s", chartCode));
+        if (ObjectUtils.isNull(chart)) {
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_NOT_FOUND), chartCode));
+            return false;
+        }
+        if (!chart.isActive()) {
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_INACTIVE), chartCode));
             return false;
         }
         return true;
@@ -126,7 +132,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private boolean validateAccount(String chartCode, String accountNumber) {
         if (StringUtils.isBlank(accountNumber)) {
-            LOG.error("Account Number cannot be blank.");
+            LOG.error(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NUMBER_BLANK));
             return false;
         }
 
@@ -136,19 +142,19 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
         Account account = accountService.getByPrimaryId(chartCode, accountNumber);
         if (ObjectUtils.isNull(account)) {
-            LOG.error(String.format("Could not find Account (%s, %s).", chartCode, accountNumber));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND), chartCode, accountNumber));
             return false;
         }
         if (!account.isActive()) {
-            LOG.error(String.format("Invalid Account (%s, %s) is not active.", chartCode, accountNumber));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_INACTIVE), chartCode, accountNumber));
             return false;
         }
         if (account.isClosed()) {
-            LOG.error(String.format("Invalid Account (%s, %s) is closed.", chartCode, accountNumber));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED), chartCode, accountNumber));
             return false;
         }
         if (account.isExpired()) {
-            LOG.error(String.format("Invalid Account (%s, %s) is expired.", chartCode, accountNumber));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_EXPIRED), chartCode, accountNumber));
             return false;
         }
         return true;
@@ -161,11 +167,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
         ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chartCode, objectCodeValue);
         if (ObjectUtils.isNull(objectCode)) {
-            LOG.error(String.format("Could not find Object Code (%s, %s).", chartCode, objectCodeValue));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND), chartCode, objectCodeValue));
             return false;
         }
         if (!objectCode.isActive()) {
-            LOG.error(String.format("Invalid Object Code (%s, %s) is not active.", chartCode, objectCodeValue));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_INACTIVE), chartCode, objectCodeValue));
             return false;
         }
         return true;
@@ -178,11 +184,13 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
         SubAccount subAccount = subAccountService.getByPrimaryId(chartCode, accountNumber, subAccountNumber);
         if (ObjectUtils.isNull(subAccount)) {
-            LOG.error(String.format("Could not find Sub-Account (%s, %s, %s).", chartCode, accountNumber, subAccountNumber));
+            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_NOT_FOUND);
+            LOG.error(String.format(errorMessage, chartCode, accountNumber, subAccountNumber));
             return false;
         }
         if (!subAccount.isActive()) {
-            LOG.error(String.format("Invalid Sub-Account (%s, %s, %s) is not active.", chartCode, accountNumber, subAccountNumber));
+            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_INACTIVE);
+            LOG.error(String.format(errorMessage, chartCode, accountNumber, subAccountNumber));
             return false;
         }
         return true;
@@ -195,11 +203,13 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
         SubObjectCode subObject = subObjectCodeService.getByPrimaryIdForCurrentYear(chartCode, accountNumber, objectCode, subObjectCode);
         if (ObjectUtils.isNull(subObject)) {
-            LOG.error(String.format("Could not find Sub-Object Code (%s, %s, %s, %s).", chartCode, accountNumber, objectCode, subObjectCode));
+            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_NOT_FOUND);
+            LOG.error(String.format(errorMessage, chartCode, accountNumber, objectCode, subObjectCode));
             return false;
         }
         if (!subObject.isActive()) {
-            LOG.error(String.format("Invalid Sub-Object Code (%s, %s, %s, %s) is not active.", chartCode, accountNumber, objectCode, subObjectCode));
+            String errorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_INACTIVE);
+            LOG.error(String.format(errorMessage, chartCode, accountNumber, objectCode, subObjectCode));
             return false;
         }
         return true;
@@ -212,11 +222,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
         ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeValue);
         if (ObjectUtils.isNull(projectCode)) {
-            LOG.error(String.format("Could not find Project Code %s", projectCodeValue));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_NOT_FOUND), projectCodeValue));
             return false;
         }
         if (!projectCode.isActive()) {
-            LOG.error(String.format("Invalid Project Code %s is not Active", projectCodeValue));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_INACTIVE), projectCodeValue));
             return false;
         }
         return true;
@@ -227,7 +237,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             return false;
         }
         if (orgRefId.length() > 8) {
-            LOG.error(String.format("Organization Reference ID cannot be more than 8 characters in length. (%s)", orgRefId));
+            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG), orgRefId));
             return false;
         }
         return true;
@@ -328,5 +338,12 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     public void setProjectCodeService(ProjectCodeService projectCodeService) {
         this.projectCodeService = projectCodeService;
+    }
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 }
