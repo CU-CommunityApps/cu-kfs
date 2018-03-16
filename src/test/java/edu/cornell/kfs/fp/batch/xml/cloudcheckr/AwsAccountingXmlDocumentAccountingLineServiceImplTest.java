@@ -1,6 +1,9 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
 import edu.cornell.kfs.coa.fixture.ChartFixture;
+import edu.cornell.kfs.coa.fixture.ObjectCodeFixture;
+import edu.cornell.kfs.coa.fixture.ProjectCodeFixture;
+import edu.cornell.kfs.coa.fixture.SubAccountFixture;
 import edu.cornell.kfs.coa.fixture.SubObjectCodeFixture;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -17,8 +20,14 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.ProjectCode;
+import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.coa.service.ChartService;
+import org.kuali.kfs.coa.service.ObjectCodeService;
+import org.kuali.kfs.coa.service.ProjectCodeService;
+import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.ConfigureContext;
@@ -40,25 +49,69 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends Kuali
         this.awsAccountingXmlDocumentAccountingLineService.setConfigurationService(buildMockConfigurationService());
         this.awsAccountingXmlDocumentAccountingLineService.setParameterService(buildMockParameterService());
         this.awsAccountingXmlDocumentAccountingLineService.setChartService(buildMockChartService());
+        //this.awsAccountingXmlDocumentAccountingLineService.setAccountService(buildMockAccountService());
+        this.awsAccountingXmlDocumentAccountingLineService.setObjectCodeService(buildMockObjectCodeService());
         this.awsAccountingXmlDocumentAccountingLineService.setSubObjectCodeService(buildMockSubObjectCodeService());
+        this.awsAccountingXmlDocumentAccountingLineService.setSubAccountService(buildMockSubAccountService());
+        this.awsAccountingXmlDocumentAccountingLineService.setProjectCodeService(buildMockProjectCodeService());
     }
-
 
     private ChartService buildMockChartService() {
         ChartService chartService = EasyMock.createMock(ChartService.class);
 
-        Chart chartIt = createMockChart(ChartFixture.CHART_IT);
         EasyMock.expect(chartService.getByPrimaryId(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_DEFAULT_CHART_CODE))
-                .andStubReturn(chartIt);
+                .andStubReturn(createMockChart(ChartFixture.CHART_IT));
 
-        Chart chartCs = createMockChart(ChartFixture.CHART_CS);
         EasyMock.expect(chartService.getByPrimaryId(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_CHART_CODE_CS))
-                .andStubReturn(chartCs);
+                .andStubReturn(createMockChart(ChartFixture.CHART_CS));
 
         EasyMock.replay(chartService);
         return chartService;
     }
 
+    private SubAccountService buildMockSubAccountService() {
+        SubAccountService subAccountService = EasyMock.createMock(SubAccountService.class);
+
+        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R583805", "70170"))
+                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_70170));
+
+        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R589966", "NONCA"))
+                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_NONCA));
+
+        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R589966", "NONCX"))
+                .andStubReturn(null);
+
+        EasyMock.expect(subAccountService.getByPrimaryId("IT", "1023715", "97601"))
+                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_97601));
+
+        EasyMock.expect(subAccountService.getByPrimaryId("CS", "J801000", "SHAN"))
+                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_SHAN));
+
+        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R583805", "533X"))
+                .andStubReturn(null);
+
+        EasyMock.replay(subAccountService);
+        return subAccountService;
+    }
+
+    private ObjectCodeService buildMockObjectCodeService() {
+        ObjectCodeService objectCodeService = EasyMock.createMock(ObjectCodeService.class);
+
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("IT", "6600"))
+                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_6600));
+
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("IT", "4020"))
+                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_4020));
+
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("IT", "1000"))
+                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_1000));
+
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("CS", "6600"))
+                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_CS_6600));
+
+        EasyMock.replay(objectCodeService);
+        return objectCodeService;
+    }
 
     private SubObjectCodeService buildMockSubObjectCodeService() {
         SubObjectCodeService subObjectCodeService = EasyMock.createMock(SubObjectCodeService.class);
@@ -74,6 +127,19 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends Kuali
         return subObjectCodeService;
     }
 
+    private ProjectCodeService buildMockProjectCodeService() {
+        ProjectCodeService projectCodeService = EasyMock.createMock(ProjectCodeService.class);
+
+        EasyMock.expect(projectCodeService.getByPrimaryId("EB-PLGIFX"))
+                .andStubReturn(null);
+
+        EasyMock.expect(projectCodeService.getByPrimaryId("EB-PLGIFT"))
+                .andStubReturn(createMockProjectCode(ProjectCodeFixture.PC_EB_PLGIFT));
+
+        EasyMock.replay(projectCodeService);
+        return projectCodeService;
+    }
+
     public static Chart createMockChart(ChartFixture chartFixture) {
         Chart chart = EasyMock.createMock(Chart.class);
         EasyMock.expect(chart.isActive()).andStubReturn(chartFixture.active);
@@ -81,11 +147,32 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends Kuali
         return chart;
     }
 
+    public static SubAccount createMockSubAccount(SubAccountFixture subAccountFixture) {
+        SubAccount subAccount = EasyMock.createMock(SubAccount.class);
+        EasyMock.expect(subAccount.isActive()).andStubReturn(subAccountFixture.active);
+        EasyMock.replay(subAccount);
+        return subAccount;
+    }
+
+    public static ObjectCode createMockObjectCode(ObjectCodeFixture objectCodeFixture) {
+        ObjectCode objectCode = EasyMock.createMock(ObjectCode.class);
+        EasyMock.expect(objectCode.isActive()).andStubReturn(objectCodeFixture.active);
+        EasyMock.replay(objectCode);
+        return objectCode;
+    }
+
     public static SubObjectCode createMockSubObjectCode(SubObjectCodeFixture subObjectCodeFixture) {
         SubObjectCode subObjectCode = EasyMock.createMock(SubObjectCode.class);
         EasyMock.expect(subObjectCode.isActive()).andStubReturn(subObjectCodeFixture.active);
         EasyMock.replay(subObjectCode);
         return subObjectCode;
+    }
+
+    public static ProjectCode createMockProjectCode(ProjectCodeFixture projectCodeFixture) {
+        ProjectCode projectCode = EasyMock.createMock(ProjectCode.class);
+        EasyMock.expect(projectCode.isActive()).andStubReturn(projectCodeFixture.active);
+        EasyMock.replay(projectCode);
+        return projectCode;
     }
 
     private ParameterService buildMockParameterService() {
