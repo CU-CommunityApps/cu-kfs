@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
+import edu.cornell.kfs.coa.fixture.ChartFixture;
+import edu.cornell.kfs.coa.fixture.SubObjectCodeFixture;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
@@ -14,6 +16,10 @@ import org.apache.commons.lang.ObjectUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.SubObjectCode;
+import org.kuali.kfs.coa.service.ChartService;
+import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
@@ -33,6 +39,53 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends Kuali
         this.awsAccountingXmlDocumentAccountingLineService = (AwsAccountingXmlDocumentAccountingLineServiceImpl) SpringContext.getBean(AwsAccountingXmlDocumentAccountingLineService.class);
         this.awsAccountingXmlDocumentAccountingLineService.setConfigurationService(buildMockConfigurationService());
         this.awsAccountingXmlDocumentAccountingLineService.setParameterService(buildMockParameterService());
+        this.awsAccountingXmlDocumentAccountingLineService.setChartService(buildMockChartService());
+        this.awsAccountingXmlDocumentAccountingLineService.setSubObjectCodeService(buildMockSubObjectCodeService());
+    }
+
+
+    private ChartService buildMockChartService() {
+        ChartService chartService = EasyMock.createMock(ChartService.class);
+
+        Chart chartIt = createMockChart(ChartFixture.CHART_IT);
+        EasyMock.expect(chartService.getByPrimaryId(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_DEFAULT_CHART_CODE))
+                .andStubReturn(chartIt);
+
+        Chart chartCs = createMockChart(ChartFixture.CHART_CS);
+        EasyMock.expect(chartService.getByPrimaryId(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_CHART_CODE_CS))
+                .andStubReturn(chartCs);
+
+        EasyMock.replay(chartService);
+        return chartService;
+    }
+
+
+    private SubObjectCodeService buildMockSubObjectCodeService() {
+        SubObjectCodeService subObjectCodeService = EasyMock.createMock(SubObjectCodeService.class);
+
+        SubObjectCode subObjectCode = createMockSubObjectCode(SubObjectCodeFixture.SO_109);
+        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear("IT", "1023715", "4020", "109"))
+                .andStubReturn(subObjectCode);
+
+        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear("IT", "1023715", "4020", "10X"))
+                .andStubReturn(null);
+
+        EasyMock.replay(subObjectCodeService);
+        return subObjectCodeService;
+    }
+
+    public static Chart createMockChart(ChartFixture chartFixture) {
+        Chart chart = EasyMock.createMock(Chart.class);
+        EasyMock.expect(chart.isActive()).andStubReturn(chartFixture.active);
+        EasyMock.replay(chart);
+        return chart;
+    }
+
+    public static SubObjectCode createMockSubObjectCode(SubObjectCodeFixture subObjectCodeFixture) {
+        SubObjectCode subObjectCode = EasyMock.createMock(SubObjectCode.class);
+        EasyMock.expect(subObjectCode.isActive()).andStubReturn(subObjectCodeFixture.active);
+        EasyMock.replay(subObjectCode);
+        return subObjectCode;
     }
 
     private ParameterService buildMockParameterService() {

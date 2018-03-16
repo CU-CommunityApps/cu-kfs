@@ -30,5 +30,6 @@ public class CuFPTestConstants {
     public static final String TEST_VALIDATION_OBJ_REF_ID_TOO_LONG_ERROR_MESSAGE = "Organization Reference ID %s cannot be more than 8 characters in length.";
 
     public static final String TEST_VALIDATION_AWS_BILLING_DEFAULT_CHART_CODE = "IT";
+    public static final String TEST_VALIDATION_AWS_BILLING_CHART_CODE_CS = "CS";
     public static final String TEST_VALIDATION_AWS_BILLING_DEFAULT_OBJECT_CODE = "6600";
 }
