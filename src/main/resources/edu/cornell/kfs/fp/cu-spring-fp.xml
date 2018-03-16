@@ -396,6 +396,7 @@
         <property name="objectCodeService" ref="objectCodeService"/>
         <property name="subObjectCodeService" ref="subObjectCodeService"/>
         <property name="projectCodeService" ref="projectCodeService"/>
+        <property name="configurationService" ref="kualiConfigurationService"/>
     </bean>
 
     <bean id="incomingACHandWiresBatchJob" parent="scheduledJobDescriptor">
