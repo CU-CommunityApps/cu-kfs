@@ -31,9 +31,9 @@ public class CuFPKeyConstants {
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_SHARED_DOCUMENT_EXPLANATION = "report.create.accounting.document.shared.document.explanation";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR = "report.create.accounting.document.xml.processing.error";
 
+    public static final String ERROR_INVALID_GROUP_LEVEL_TYPE = "error.aws.billing.invalid.group.level.type";
     public static final String ERROR_CHART_NOT_FOUND = "error.aws.billing.chart.not.found";
     public static final String ERROR_CHART_INACTIVE = "error.aws.billing.chart.inactive";
-    public static final String ERROR_INVALID_GROUP_LEVEL_TYPE = "error.aws.billing.invalid.group.level.type";
     public static final String ERROR_ACCOUNT_NUMBER_BLANK = "error.aws.billing.account.blank";
     public static final String ERROR_ACCOUNT_NOT_FOUND = "error.aws.billing.account.not.found";
     public static final String ERROR_ACCOUNT_INACTIVE = "error.aws.billing.account.inactive";

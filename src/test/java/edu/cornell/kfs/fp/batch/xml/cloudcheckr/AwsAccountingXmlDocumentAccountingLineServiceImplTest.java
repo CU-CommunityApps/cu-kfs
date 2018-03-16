@@ -1,29 +1,96 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr;
 
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
+import edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture.GroupLevelFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentAccountingLineFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.DefaultKfsAccountForAwsFixture;
-
 import org.apache.commons.lang.ObjectUtils;
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.ConfigureContext;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 @ConfigureContext(session = org.kuali.kfs.sys.fixture.UserNameFixture.ccs1)
 public class AwsAccountingXmlDocumentAccountingLineServiceImplTest extends KualiTestBase {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwsAccountingXmlDocumentAccountingLineServiceImplTest.class);
 
-    private AwsAccountingXmlDocumentAccountingLineService awsAccountingXmlDocumentAccountingLineService;
+    private AwsAccountingXmlDocumentAccountingLineServiceImpl awsAccountingXmlDocumentAccountingLineService;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.awsAccountingXmlDocumentAccountingLineService = SpringContext.getBean(AwsAccountingXmlDocumentAccountingLineService.class);
+        this.awsAccountingXmlDocumentAccountingLineService = (AwsAccountingXmlDocumentAccountingLineServiceImpl) SpringContext.getBean(AwsAccountingXmlDocumentAccountingLineService.class);
+        this.awsAccountingXmlDocumentAccountingLineService.setConfigurationService(buildMockConfigurationService());
+        this.awsAccountingXmlDocumentAccountingLineService.setParameterService(buildMockParameterService());
+    }
+
+    private ParameterService buildMockParameterService() {
+        ParameterService parameterService = EasyMock.createMock(ParameterService.class);
+
+        EasyMock.expect(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PROPERTY_NAME))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_DEFAULT_CHART_CODE);
+        EasyMock.expect(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_DEFAULT_OBJECT_CODE);
+
+        EasyMock.replay(parameterService);
+        return parameterService;
+    }
+
+    private ConfigurationService buildMockConfigurationService() {
+        ConfigurationService configurationService = EasyMock.createMock(ConfigurationService.class);
+
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_INVALID_GROUP_LEVEL_TYPE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_GROUP_LEVEL_TYPE_INVALID_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_NOT_FOUND))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_CHART_NOT_FOUND_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_INACTIVE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_CHART_INACTIVE_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NUMBER_BLANK))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_NUMBER_BLANK_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_NOT_FOUND_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_INACTIVE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_INACTIVE_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_CLOSED_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_EXPIRED))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_EXPIRED_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_OBJECT_CODE_NOT_FOUND_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_INACTIVE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_OBJECT_CODE_INACTIVE_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_NOT_FOUND))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_ACCOUNT_NOT_FOUND_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_INACTIVE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_ACCOUNT_INACTIVE_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_NOT_FOUND))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_OBJECT_NOT_FOUND_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_INACTIVE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_OBJECT_INACTIVE_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_NOT_FOUND))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_PROJECT_NOT_FOUND_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_INACTIVE))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_PROJECT_INACTIVE_ERROR_MESSAGE);
+        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG))
+                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_OBJ_REF_ID_TOO_LONG_ERROR_MESSAGE);
+
+        EasyMock.replay(configurationService);
+        return configurationService;
     }
 
     @After
