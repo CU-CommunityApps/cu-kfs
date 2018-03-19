@@ -70,28 +70,28 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     private AccountService buildMockAccountService() {
         AccountService accountService = EasyMock.createMock(AccountService.class);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1658328"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1658328))
                 .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_1658328));
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "165833X"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_165833X))
                 .andStubReturn(null);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "R583805"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805))
                 .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_R583805));
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "R589966"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966))
                 .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_R589966));
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715))
                 .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_1023715));
 
-        EasyMock.expect(accountService.getByPrimaryId("CS", "J801000"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS, CuFPTestConstants.TEST_ACCOUNT_NUMBER_J801000))
                 .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_CS_J801000));
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "J80100X"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_J80100X))
                 .andStubReturn(null);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "IT*1023715*97601*4020*109**AEH56*foo"))
+        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_INVALID_STAR_ACCOUNT_STRING))
                 .andStubReturn(null);
 
         EasyMock.replay(accountService);
@@ -101,22 +101,34 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     private SubAccountService buildMockSubAccountService() {
         SubAccountService subAccountService = EasyMock.createMock(SubAccountService.class);
 
-        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R583805", "70170"))
+        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+                    CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805,
+                    CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_70170))
                 .andStubReturn(createMockSubAccount(SubAccountFixture.SA_70170));
 
-        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R589966", "NONCA"))
+        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+                    CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966,
+                    CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_NONCA))
                 .andStubReturn(createMockSubAccount(SubAccountFixture.SA_NONCA));
 
-        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R589966", "NONCX"))
+        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+                    CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966,
+                    CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_NONCX))
                 .andStubReturn(null);
 
-        EasyMock.expect(subAccountService.getByPrimaryId("IT", "1023715", "97601"))
+        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+                    CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715,
+                    CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_97601))
                 .andStubReturn(createMockSubAccount(SubAccountFixture.SA_97601));
 
-        EasyMock.expect(subAccountService.getByPrimaryId("CS", "J801000", "SHAN"))
+        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS,
+                    CuFPTestConstants.TEST_ACCOUNT_NUMBER_J801000,
+                    CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_SHAN))
                 .andStubReturn(createMockSubAccount(SubAccountFixture.SA_SHAN));
 
-        EasyMock.expect(subAccountService.getByPrimaryId("IT", "R583805", "533X"))
+        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+                    CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805,
+                    CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_533X))
                 .andStubReturn(null);
 
         EasyMock.replay(subAccountService);
@@ -126,16 +138,16 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     private ObjectCodeService buildMockObjectCodeService() {
         ObjectCodeService objectCodeService = EasyMock.createMock(ObjectCodeService.class);
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("IT", "6600"))
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE))
                 .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_6600));
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("IT", "4020"))
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_OBJ_CODE_4020))
                 .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_4020));
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("IT", "1000"))
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_OBJ_CODE_1000))
                 .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_1000));
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear("CS", "6600"))
+        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS, CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE))
                 .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_CS_6600));
 
         EasyMock.replay(objectCodeService);
@@ -146,10 +158,12 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
         SubObjectCodeService subObjectCodeService = EasyMock.createMock(SubObjectCodeService.class);
 
         SubObjectCode subObjectCode = createMockSubObjectCode(SubObjectCodeFixture.SO_109);
-        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear("IT", "1023715", "4020", "109"))
+        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
+                    CuFPTestConstants.TEST_OBJ_CODE_4020, "109"))
                 .andStubReturn(subObjectCode);
 
-        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear("IT", "1023715", "4020", "10X"))
+        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
+                    CuFPTestConstants.TEST_OBJ_CODE_4020, "10X"))
                 .andStubReturn(null);
 
         EasyMock.replay(subObjectCodeService);
@@ -222,7 +236,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
         EasyMock.expect(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_AWS_BILLING_DEFAULT_OBJECT_CODE);
+                .andStubReturn(CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE);
 
         EasyMock.replay(parameterService);
         return parameterService;
