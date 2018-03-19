@@ -27,11 +27,21 @@ public class CuFPTestConstants {
 
     public static final String TEST_AWS_BILLING_DEFAULT_CHART_CODE = "IT";
     public static final String TEST_AWS_BILLING_CHART_CODE_CS = "CS";
-    public static final String TEST_VALIDATION_AWS_BILLING_DEFAULT_OBJECT_CODE = "6600";
-
+    public static final String TEST_AWS_DEFAULT_OBJ_CODE = "6600";
     public static final String TEST_ACCOUNT_NUMBER_1658328 = "1658328";
     public static final String TEST_ACCOUNT_NUMBER_R583805 = "R583805";
+    public static final String TEST_INVALID_STAR_ACCOUNT_STRING = "IT*1023715*97601*4020*109**AEH56*foo";
     public static final String TEST_ACCOUNT_NUMBER_R589966 = "R589966";
+    public static final String TEST_ACCOUNT_NUMBER_J80100X = "J80100X";
+    public static final String TEST_ACCOUNT_NUMBER_165833X = "165833X";
     public static final String TEST_ACCOUNT_NUMBER_1023715 = "1023715";
     public static final String TEST_ACCOUNT_NUMBER_J801000 = "J801000";
+    public static final String TEST_SUB_ACCOUNT_NUMBER_70170 = "70170";
+    public static final String TEST_SUB_ACCOUNT_NUMBER_NONCA = "NONCA";
+    public static final String TEST_SUB_ACCOUNT_NUMBER_NONCX = "NONCX";
+    public static final String TEST_SUB_ACCOUNT_NUMBER_533X = "533X";
+    public static final String TEST_SUB_ACCOUNT_NUMBER_97601 = "97601";
+    public static final String TEST_SUB_ACCOUNT_NUMBER_SHAN = "SHAN";
+    public static final String TEST_OBJ_CODE_1000 = "1000";
+    public static final String TEST_OBJ_CODE_4020 = "4020";
 }
