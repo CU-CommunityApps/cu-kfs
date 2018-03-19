@@ -39,10 +39,23 @@ public enum GroupLevelFixture {
     CLOUDCHECKR_GROUP_2(CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_NAME_SERVICE, 
             CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_VALUE_EC2, CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_GROUP_FRIENDLY_NAME_EC2,
             CloudCheckrFixtureConstants.CLOUDCHECKR_EXAMPLE_EC2_COST, 0,
-            groupLevelFixtureArrayBuilder(CLOUDCHECKR_EXAMPLE_COST_CENTER_VANW));
-    
-    
-    
+            groupLevelFixtureArrayBuilder(CLOUDCHECKR_EXAMPLE_COST_CENTER_VANW)),
+
+
+    ACCT_NONE_COST_1(CloudCheckrFixtureConstants.ACCOUNT_NONE, 1.00),
+    ACCT_165833X_COST_2(CloudCheckrFixtureConstants.ACCOUNT_165833X, 2.00),
+    ACCT_165833X_COST_3(CloudCheckrFixtureConstants.ACCOUNT_165833X, 3.00),
+    ACCT_R583805_70710_COST_4(CloudCheckrFixtureConstants.ACCOUNT_STRING_R583805_70170, 4.00),
+    ACCT_R583805_533X_COST_5(CloudCheckrFixtureConstants.ACCOUNT_STRING_R583805_533X, 5.00),
+    ACCT_R589966_STAR_VALID_COST_6(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_R589966_NONCA_1000, 6.00),
+    ACCT_1023715_STAR_VALID_COST_7(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_1023715_97601_4020, 7.00),
+    ACCT_1023715_STAR_INVALID_SUB_OBJ_COST_8(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_1023715_97601_4020_10X, 8.00),
+    ACCT_R589966_STAR_PART_VALID_COST_9(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_R589966_NONCX_1000, 9.00),
+    ACCT_J801000_COST_10(CloudCheckrFixtureConstants.ACCOUNT_STRING_CS_J801000_SHAN_6600, 10.00),
+    ACCT_J80100X_COST_11(CloudCheckrFixtureConstants.ACCOUNT_J80100X, 11.00),
+    ACCT_NONE_COST_12(CloudCheckrFixtureConstants.ACCOUNT_NONE, 12.00),
+    ACCT_1023715_COST_13(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_1023715_97601_4020_109, 13);
+
     public final String groupName;
     public final String groupValue;
     public final String friendlyName;
