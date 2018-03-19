@@ -36,7 +36,6 @@ public class CuFPKeyConstants {
     public static final String ERROR_CHART_INACTIVE = "error.aws.billing.chart.inactive";
     public static final String ERROR_ACCOUNT_NUMBER_BLANK = "error.aws.billing.account.blank";
     public static final String ERROR_ACCOUNT_NOT_FOUND = "error.aws.billing.account.not.found";
-    public static final String ERROR_ACCOUNT_INACTIVE = "error.aws.billing.account.inactive";
     public static final String ERROR_ACCOUNT_CLOSED = "error.aws.billing.account.closed";
     public static final String ERROR_ACCOUNT_EXPIRED = "error.aws.billing.account.expired";
     public static final String ERROR_OBJECT_CODE_NOT_FOUND = "error.aws.billing.object.code.not.found";

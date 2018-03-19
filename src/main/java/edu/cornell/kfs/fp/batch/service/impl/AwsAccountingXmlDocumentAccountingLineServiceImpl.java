@@ -145,10 +145,6 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
             LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND), chartCode, accountNumber));
             return false;
         }
-        if (!account.isActive()) {
-            LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_INACTIVE), chartCode, accountNumber));
-            return false;
-        }
         if (account.isClosed()) {
             LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED), chartCode, accountNumber));
             return false;
