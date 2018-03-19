@@ -1,25 +1,10 @@
-/*
- * The Kuali Financial System, a comprehensive financial management system for higher education.
- *
- * Copyright 2005-2017 Kuali, Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package edu.cornell.kfs.coa.fixture;
 
+import edu.cornell.kfs.fp.CuFPTestConstants;
+
 public enum SubObjectCodeFixture {
-    SO_109("IT", "1023715", "4020", "109", true);
+    SO_109(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715,
+            CuFPTestConstants.TEST_OBJ_CODE_4020, CuFPTestConstants.TEST_SUB_OBJ_CODE_109, true);
 
     public final String chartOfAccountsCode;
     public final String accountNumber;

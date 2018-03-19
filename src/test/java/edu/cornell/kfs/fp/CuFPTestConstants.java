@@ -47,4 +47,9 @@ public class CuFPTestConstants {
     public static final String TEST_SUB_ACCOUNT_NUMBER_SHAN = "SHAN";
     public static final String TEST_OBJ_CODE_1000 = "1000";
     public static final String TEST_OBJ_CODE_4020 = "4020";
+    public static final String TEST_SUB_OBJ_CODE_109 = "109";
+    public static final String TEST_SUB_OBJ_CODE_10X = "10X";
+    public static final String TEST_PROJECT_CODE_EB_PLGIFX = "EB-PLGIFX";
+    public static final String TEST_PROJECT_CODE_EB_PLGIFT = "EB-PLGIFT";
+
 }
