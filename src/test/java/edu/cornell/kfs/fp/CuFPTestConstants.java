@@ -16,7 +16,6 @@ public class CuFPTestConstants {
     public static final String TEST_VALIDATION_CHART_INACTIVE_ERROR_MESSAGE = "Invalid Chart %s is not active.";
     public static final String TEST_VALIDATION_ACCOUNT_NUMBER_BLANK_ERROR_MESSAGE = "Account Number cannot be blank.";
     public static final String TEST_VALIDATION_ACCOUNT_NOT_FOUND_ERROR_MESSAGE = "Could not find Account (%s, %s).";
-    public static final String TEST_VALIDATION_ACCOUNT_INACTIVE_ERROR_MESSAGE = "Invalid Account (%s, %s) is not active.";
     public static final String TEST_VALIDATION_ACCOUNT_CLOSED_ERROR_MESSAGE = "Invalid Account (%s, %s) is closed.";
     public static final String TEST_VALIDATION_ACCOUNT_EXPIRED_ERROR_MESSAGE = "Invalid Account (%s, %s) is expired.";
     public static final String TEST_VALIDATION_OBJECT_CODE_NOT_FOUND_ERROR_MESSAGE = "Could not find Object Code (%s, %s).";
@@ -29,7 +28,13 @@ public class CuFPTestConstants {
     public static final String TEST_VALIDATION_PROJECT_INACTIVE_ERROR_MESSAGE = "Invalid Project Code %s is not active.";
     public static final String TEST_VALIDATION_OBJ_REF_ID_TOO_LONG_ERROR_MESSAGE = "Organization Reference ID %s cannot be more than 8 characters in length.";
 
-    public static final String TEST_VALIDATION_AWS_BILLING_DEFAULT_CHART_CODE = "IT";
-    public static final String TEST_VALIDATION_AWS_BILLING_CHART_CODE_CS = "CS";
+    public static final String TEST_AWS_BILLING_DEFAULT_CHART_CODE = "IT";
+    public static final String TEST_AWS_BILLING_CHART_CODE_CS = "CS";
     public static final String TEST_VALIDATION_AWS_BILLING_DEFAULT_OBJECT_CODE = "6600";
+
+    public static final String TEST_ACCOUNT_NUMBER_1658328 = "1658328";
+    public static final String TEST_ACCOUNT_NUMBER_R583805 = "R583805";
+    public static final String TEST_ACCOUNT_NUMBER_R589966 = "R589966";
+    public static final String TEST_ACCOUNT_NUMBER_1023715 = "1023715";
+    public static final String TEST_ACCOUNT_NUMBER_J801000 = "J801000";
 }
