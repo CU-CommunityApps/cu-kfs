@@ -1,11 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.CuFPKeyConstants;
-import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
-import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -23,6 +17,13 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 
 public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAccountingXmlDocumentAccountingLineService {
 

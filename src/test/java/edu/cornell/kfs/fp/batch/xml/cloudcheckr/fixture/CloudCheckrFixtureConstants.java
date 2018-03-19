@@ -33,7 +33,6 @@ public class CloudCheckrFixtureConstants {
     public static final String ACCOUNT_STRING_IT_R589966_NONCX_1000 = "IT*R589966*NONCX*1000**EB-PLGIFX*AEH56";
     public static final String ACCOUNT_STRING_CS_J801000_SHAN_6600 = "CS*J801000*SHAN*6600***";
     public static final String ACCOUNT_J80100X = "J80100X";
-    public static final String ACCOUNT_STRING_CS_J801000_SHAN_6600_SOMETHING = "CS*J801000*SHAN*6600***something";
     public static final String ACCOUNT_STRING_IT_1023715_97601_4020_109 = "IT*1023715*97601*4020*109**AEH56*foo";
     
     public static final String DEPARTMENT_1_GROUP_VALUE = "AWS-abc (Cornell Dept1)";

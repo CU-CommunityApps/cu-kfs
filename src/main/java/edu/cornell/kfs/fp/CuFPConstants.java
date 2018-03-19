@@ -1,9 +1,10 @@
 package edu.cornell.kfs.fp;
 
-import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
+import java.util.Calendar;
+
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Calendar;
+import edu.cornell.kfs.sys.CUKFSConstants.PreEncumbranceSourceAccountingLineConstants;
 
 /**
  Copyright Cornell University

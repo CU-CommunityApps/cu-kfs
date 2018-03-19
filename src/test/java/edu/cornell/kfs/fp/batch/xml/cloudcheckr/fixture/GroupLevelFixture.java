@@ -1,12 +1,13 @@
 package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
-import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import java.util.List;
+import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
+import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
 
 public enum GroupLevelFixture {
     DEPT_1_COST_CENTER_1(CloudCheckrFixtureConstants.ACCOUNT_NONE, CloudCheckrFixtureConstants.DEPT1_COSTCENTER2_COST),
@@ -53,8 +54,7 @@ public enum GroupLevelFixture {
     ACCT_J801000_COST_10(CloudCheckrFixtureConstants.ACCOUNT_STRING_CS_J801000_SHAN_6600, 10.00),
     ACCT_J80100X_COST_11(CloudCheckrFixtureConstants.ACCOUNT_J80100X, 11.00),
     ACCT_NONE_COST_12(CloudCheckrFixtureConstants.ACCOUNT_NONE, 12.00),
-    ACCT_J801000_COST_13(CloudCheckrFixtureConstants.ACCOUNT_STRING_CS_J801000_SHAN_6600_SOMETHING, 13.00),
-    ACCT_1023715_COST_13(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_1023715_97601_4020_109, 14.00);
+    ACCT_1023715_COST_13(CloudCheckrFixtureConstants.ACCOUNT_STRING_IT_1023715_97601_4020_109, 13);
 
     public final String groupName;
     public final String groupValue;
