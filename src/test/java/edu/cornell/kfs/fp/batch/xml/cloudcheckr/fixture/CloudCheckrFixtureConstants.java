@@ -24,6 +24,16 @@ public class CloudCheckrFixtureConstants {
     public static final String ACCOUNT_U353803 = "U353803";
     public static final String ACCOUNT_U353805 = "U353805";
     public static final String ACCOUNT_1503307 = "1503307";
+    public static final String ACCOUNT_165833X = "165833X";
+    public static final String ACCOUNT_STRING_R583805_70170 = "R583805-70170";
+    public static final String ACCOUNT_STRING_R583805_533X = "R583805-533X";
+    public static final String ACCOUNT_STRING_IT_R589966_NONCA_1000 = "IT*R589966*NONCA*1000**EB-PLGIFT*AEH56";
+    public static final String ACCOUNT_STRING_IT_1023715_97601_4020 = "IT*1023715*97601*4020*109**AEH56";
+    public static final String ACCOUNT_STRING_IT_1023715_97601_4020_10X = "IT*1023715*97601*4020*10X**AEH56";
+    public static final String ACCOUNT_STRING_IT_R589966_NONCX_1000 = "IT*R589966*NONCX*1000**EB-PLGIFX*AEH56";
+    public static final String ACCOUNT_STRING_CS_J801000_SHAN_6600 = "CS*J801000*SHAN*6600***";
+    public static final String ACCOUNT_J80100X = "J80100X";
+    public static final String ACCOUNT_STRING_IT_1023715_97601_4020_109 = "IT*1023715*97601*4020*109**AEH56*foo";
     
     public static final String DEPARTMENT_1_GROUP_VALUE = "AWS-abc (Cornell Dept1)";
     public static final String DEPARTMENT_1_FRIENDLY_NAME = "Cornell Dept1";
