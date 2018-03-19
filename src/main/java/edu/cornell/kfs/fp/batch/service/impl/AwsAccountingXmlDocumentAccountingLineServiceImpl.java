@@ -71,12 +71,12 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
         }
 
         if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.ACCOUNT_NONE, xmlAccountingLine.getAccountNumber())) {
-            return getDefaultAccountingLine(defaultAccountString);
+            xmlAccountingLine = getDefaultAccountingLine(defaultAccountString);
         }
 
         if (!StringUtils.equalsIgnoreCase(defaultAccountString, CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION) &&
                 !validateAccount(xmlAccountingLine.getChartCode(), xmlAccountingLine.getAccountNumber())) {
-            return getDefaultAccountingLine(defaultAccountString);
+            xmlAccountingLine = getDefaultAccountingLine(defaultAccountString);
         }
 
         if (!validateObjectCode(xmlAccountingLine.getChartCode(), xmlAccountingLine.getObjectCode())) {
