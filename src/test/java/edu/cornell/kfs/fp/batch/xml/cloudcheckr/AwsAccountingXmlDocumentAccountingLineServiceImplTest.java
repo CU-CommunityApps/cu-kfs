@@ -142,7 +142,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     public void testVerifyInternalDefaultAccountUsesCostCenterValueAsAccount() {
         verifyServiceCreatesExpectedAccountingLine(GroupLevelFixture.ACCT_NONE_COST_12,
                 DefaultKfsAccountForAwsFixture.AWS_MNO_KFS_INTERNAL,
-                AccountingXmlDocumentAccountingLineFixture.ACCT_NONE_OBJ_6600_AMOUNT_12);
+                AccountingXmlDocumentAccountingLineFixture.ACCT_INTERNAL_OBJ_6600_AMOUNT_12);
     }
 
     @Test
