@@ -1,10 +1,11 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
+
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 
 public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_R504700_OBJ_2640_AMOUNT_100("IT", "R504700", null, "2640", null, null, null, null, 100.00),
