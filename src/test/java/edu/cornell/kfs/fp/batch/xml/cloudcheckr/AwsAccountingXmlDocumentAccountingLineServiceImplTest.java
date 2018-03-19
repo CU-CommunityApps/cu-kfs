@@ -171,12 +171,12 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
         SubObjectCodeService subObjectCodeService = mock(SubObjectCodeService.class);
 
         SubObjectCode mockedSubObjectCode = createMockSubObjectCode(SubObjectCodeFixture.SO_109);
-        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
-                    CuFPTestConstants.TEST_OBJ_CODE_4020, "109"))
+        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715,
+                    CuFPTestConstants.TEST_OBJ_CODE_4020, CuFPTestConstants.TEST_SUB_OBJ_CODE_109))
                 .thenReturn(mockedSubObjectCode);
 
-        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
-                    CuFPTestConstants.TEST_OBJ_CODE_4020, "10X"))
+        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715,
+                    CuFPTestConstants.TEST_OBJ_CODE_4020, CuFPTestConstants.TEST_SUB_OBJ_CODE_10X))
                 .thenReturn(null);
 
         return subObjectCodeService;
@@ -185,11 +185,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     private ProjectCodeService buildMockProjectCodeService() {
         ProjectCodeService projectCodeService = mock(ProjectCodeService.class);
 
-        when(projectCodeService.getByPrimaryId("EB-PLGIFX"))
+        when(projectCodeService.getByPrimaryId(CuFPTestConstants.TEST_PROJECT_CODE_EB_PLGIFX))
                 .thenReturn(null);
 
         ProjectCode mockedProjectCode = createMockProjectCode(ProjectCodeFixture.PC_EB_PLGIFT);
-        when(projectCodeService.getByPrimaryId("EB-PLGIFT"))
+        when(projectCodeService.getByPrimaryId(CuFPTestConstants.TEST_PROJECT_CODE_EB_PLGIFT))
                 .thenReturn(mockedProjectCode);
 
         return projectCodeService;
