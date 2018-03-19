@@ -176,7 +176,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private boolean validateSubAccountNumber(String chartCode, String accountNumber, String subAccountNumber) {
         if (StringUtils.isBlank(subAccountNumber)) {
-            return false;
+            return true;
         }
 
         SubAccount subAccount = subAccountService.getByPrimaryId(chartCode, accountNumber, subAccountNumber);
@@ -195,7 +195,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private boolean validateSubObjectCode(String chartCode, String accountNumber, String objectCode, String subObjectCode) {
         if (StringUtils.isBlank(subObjectCode)) {
-            return false;
+            return true;
         }
 
         SubObjectCode subObject = subObjectCodeService.getByPrimaryIdForCurrentYear(chartCode, accountNumber, objectCode, subObjectCode);
@@ -214,7 +214,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private boolean validateProjectCode(String projectCodeValue) {
         if (StringUtils.isBlank(projectCodeValue)) {
-            return false;
+            return true;
         }
 
         ProjectCode projectCode = projectCodeService.getByPrimaryId(projectCodeValue);
@@ -231,7 +231,7 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private boolean validateOrgRefId(String orgRefId) {
         if (StringUtils.isBlank(orgRefId)) {
-            return false;
+            return true;
         }
         if (orgRefId.length() > 8) {
             LOG.error(String.format(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG), orgRefId));
