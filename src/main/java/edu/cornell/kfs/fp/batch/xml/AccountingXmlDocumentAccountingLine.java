@@ -1,10 +1,5 @@
 package edu.cornell.kfs.fp.batch.xml;
 
-import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,6 +7,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Objects;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Accounting", namespace = StringUtils.EMPTY)

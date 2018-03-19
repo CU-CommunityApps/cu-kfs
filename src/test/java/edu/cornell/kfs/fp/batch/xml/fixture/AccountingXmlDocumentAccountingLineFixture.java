@@ -1,11 +1,10 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
-import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
-
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
 public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_R504700_OBJ_2640_AMOUNT_100("IT", "R504700", null, "2640", null, null, null, null, 100.00),
@@ -31,8 +30,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_J801000_SA_SHAN_OBJ_6600_AMOUNT_10("CS", "J801000", "SHAN", "6600", null, null, null, null, 10.00),
     ACCT_J801000_OBJ_6600_AMOUNT_11("CS", "J801000", null, "6600", null, null, null, null, 11.00),
     ACCT_NONE_OBJ_6600_AMOUNT_12("IT", "Internal", null, "6600", null, null, null, null, 12.00),
-    ACCT_J801000_OBJ_6600_AMOUNT_13_INVALID("IT", "CS*J801000*SHAN*6600***something", null, "6600", null, null, null, null, 13.00),
-    ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID("IT", "IT*1023715*97601*4020*109**AEH56*BAR", null, "6600", null, null, null, null, 14.00);
+    ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID("IT", "IT*1023715*97601*4020*109**AEH56*BAR", null, "6600", null, null, null, null, 13.00);
 
     public final String chartCode;
     public final String accountNumber;
