@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.kns.web.ui.Field;
@@ -22,6 +21,11 @@ import org.kuali.rice.krad.data.DataObjectService;
 import org.kuali.rice.location.api.country.CountryService;
 import org.kuali.rice.location.impl.country.CountryBo;
 import org.kuali.rice.location.impl.country.CountryServiceImpl;
+
+import org.mockito.AdditionalMatchers;
+import org.mockito.Matchers;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 
@@ -131,24 +135,21 @@ public class CuPaymentDetailInquirableTest {
     }
 
     private ParameterService buildMockRiceParameterServiceExpectingNoCalls() {
-        ParameterService parameterService = EasyMock.createMock(ParameterService.class);
-        EasyMock.replay(parameterService);
+        ParameterService parameterService = mock(ParameterService.class);
         return parameterService;
     }
 
     private DataObjectService buildMockDataObjectService() {
-        DataObjectService dataObjectService = EasyMock.createMock(DataObjectService.class);
+        DataObjectService dataObjectService = mock(DataObjectService.class);
         
-        EasyMock.expect(
-                dataObjectService.find(CountryBo.class, KFSConstants.COUNTRY_CODE_UNITED_STATES))
-                .andStubReturn(buildUnitedStatesCountryBo());
+        when(dataObjectService.find(CountryBo.class, KFSConstants.COUNTRY_CODE_UNITED_STATES))
+                .thenReturn(buildUnitedStatesCountryBo());
         
-        EasyMock.expect(
-                dataObjectService.find(
-                        EasyMock.eq(CountryBo.class), EasyMock.not(EasyMock.eq(KFSConstants.COUNTRY_CODE_UNITED_STATES))))
-                .andStubReturn(null);
-        
-        EasyMock.replay(dataObjectService);
+        when(
+                dataObjectService.find(Matchers.eq(CountryBo.class), AdditionalMatchers
+                        .not(Matchers.eq(KFSConstants.COUNTRY_CODE_UNITED_STATES))))
+                .thenReturn(null);
+
         return dataObjectService;
     }
 
