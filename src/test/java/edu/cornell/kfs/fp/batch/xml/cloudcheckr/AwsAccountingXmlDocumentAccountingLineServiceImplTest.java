@@ -16,7 +16,6 @@ import edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture.GroupLevelFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentAccountingLineFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.DefaultKfsAccountForAwsFixture;
 import org.apache.commons.lang.ObjectUtils;
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +34,9 @@ import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwsAccountingXmlDocumentAccountingLineServiceImplTest.class);
@@ -55,230 +57,240 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
     }
 
     private ChartService buildMockChartService() {
-        ChartService chartService = EasyMock.createMock(ChartService.class);
+        ChartService chartService = mock(ChartService.class);
 
-        EasyMock.expect(chartService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE))
-                .andStubReturn(createMockChart(ChartFixture.CHART_IT));
+        Chart expectedChart = createMockChart(ChartFixture.CHART_IT);
+        when(chartService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE))
+                .thenReturn(expectedChart);
 
-        EasyMock.expect(chartService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS))
-                .andStubReturn(createMockChart(ChartFixture.CHART_CS));
-
-        EasyMock.replay(chartService);
+        expectedChart = createMockChart(ChartFixture.CHART_CS);
+        when(chartService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS))
+                .thenReturn(expectedChart);
+        
         return chartService;
     }
 
     private AccountService buildMockAccountService() {
-        AccountService accountService = EasyMock.createMock(AccountService.class);
+        AccountService accountService = mock(AccountService.class);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1658328))
-                .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_1658328));
+        Account mockedAccount = createMockAccount(AwsAccountFixture.ACCOUNT_1658328);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1658328))
+                .thenReturn(mockedAccount);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_165833X))
-                .andStubReturn(null);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_165833X))
+                .thenReturn(null);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805))
-                .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_R583805));
+        mockedAccount = createMockAccount(AwsAccountFixture.ACCOUNT_R583805);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805))
+                .thenReturn(mockedAccount);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966))
-                .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_R589966));
+        mockedAccount = createMockAccount(AwsAccountFixture.ACCOUNT_R589966);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966))
+                .thenReturn(mockedAccount);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715))
-                .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_1023715));
+        mockedAccount = createMockAccount(AwsAccountFixture.ACCOUNT_R589966);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715))
+                .thenReturn(mockedAccount);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS, CuFPTestConstants.TEST_ACCOUNT_NUMBER_J801000))
-                .andStubReturn(createMockAccount(AwsAccountFixture.ACCOUNT_CS_J801000));
+        mockedAccount = createMockAccount(AwsAccountFixture.ACCOUNT_CS_J801000);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS, CuFPTestConstants.TEST_ACCOUNT_NUMBER_J801000))
+                .thenReturn(mockedAccount);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_J80100X))
-                .andStubReturn(null);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_ACCOUNT_NUMBER_J80100X))
+                .thenReturn(null);
 
-        EasyMock.expect(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_INVALID_STAR_ACCOUNT_STRING))
-                .andStubReturn(null);
+        when(accountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_INVALID_STAR_ACCOUNT_STRING))
+                .thenReturn(null);
 
-        EasyMock.replay(accountService);
         return accountService;
     }
 
     private SubAccountService buildMockSubAccountService() {
-        SubAccountService subAccountService = EasyMock.createMock(SubAccountService.class);
+        SubAccountService subAccountService = mock(SubAccountService.class);
 
-        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+        SubAccount mockedSubAccount = createMockSubAccount(SubAccountFixture.SA_70170);
+        when(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
                     CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805,
                     CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_70170))
-                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_70170));
+                .thenReturn(mockedSubAccount);
 
-        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+        mockedSubAccount = createMockSubAccount(SubAccountFixture.SA_NONCA);
+        when(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
                     CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966,
                     CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_NONCA))
-                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_NONCA));
+                .thenReturn(mockedSubAccount);
 
-        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+        when(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
                     CuFPTestConstants.TEST_ACCOUNT_NUMBER_R589966,
                     CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_NONCX))
-                .andStubReturn(null);
+                .thenReturn(null);
 
-        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+        mockedSubAccount = createMockSubAccount(SubAccountFixture.SA_97601);
+        when(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
                     CuFPTestConstants.TEST_ACCOUNT_NUMBER_1023715,
                     CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_97601))
-                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_97601));
+                .thenReturn(mockedSubAccount);
 
-        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS,
+        mockedSubAccount = createMockSubAccount(SubAccountFixture.SA_SHAN);
+        when(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS,
                     CuFPTestConstants.TEST_ACCOUNT_NUMBER_J801000,
                     CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_SHAN))
-                .andStubReturn(createMockSubAccount(SubAccountFixture.SA_SHAN));
+                .thenReturn(mockedSubAccount);
 
-        EasyMock.expect(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
+        when(subAccountService.getByPrimaryId(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE,
                     CuFPTestConstants.TEST_ACCOUNT_NUMBER_R583805,
                     CuFPTestConstants.TEST_SUB_ACCOUNT_NUMBER_533X))
-                .andStubReturn(null);
+                .thenReturn(null);
 
-        EasyMock.replay(subAccountService);
         return subAccountService;
     }
 
     private ObjectCodeService buildMockObjectCodeService() {
-        ObjectCodeService objectCodeService = EasyMock.createMock(ObjectCodeService.class);
+        ObjectCodeService objectCodeService = mock(ObjectCodeService.class);
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE))
-                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_6600));
+        ObjectCode mockedObjectCode = createMockObjectCode(ObjectCodeFixture.OC_IT_6600);
+        when(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE))
+                .thenReturn(mockedObjectCode);
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_OBJ_CODE_4020))
-                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_4020));
+        mockedObjectCode = createMockObjectCode(ObjectCodeFixture.OC_IT_4020);
+        when(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_OBJ_CODE_4020))
+                .thenReturn(mockedObjectCode);
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_OBJ_CODE_1000))
-                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_IT_1000));
+        mockedObjectCode = createMockObjectCode(ObjectCodeFixture.OC_IT_1000);
+        when(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, CuFPTestConstants.TEST_OBJ_CODE_1000))
+                .thenReturn(mockedObjectCode);
 
-        EasyMock.expect(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS, CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE))
-                .andStubReturn(createMockObjectCode(ObjectCodeFixture.OC_CS_6600));
+        mockedObjectCode = createMockObjectCode(ObjectCodeFixture.OC_CS_6600);
+        when(objectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_CHART_CODE_CS, CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE))
+                .thenReturn(mockedObjectCode);
 
-        EasyMock.replay(objectCodeService);
         return objectCodeService;
     }
 
     private SubObjectCodeService buildMockSubObjectCodeService() {
-        SubObjectCodeService subObjectCodeService = EasyMock.createMock(SubObjectCodeService.class);
+        SubObjectCodeService subObjectCodeService = mock(SubObjectCodeService.class);
 
-        SubObjectCode subObjectCode = createMockSubObjectCode(SubObjectCodeFixture.SO_109);
-        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
+        SubObjectCode mockedSubObjectCode = createMockSubObjectCode(SubObjectCodeFixture.SO_109);
+        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
                     CuFPTestConstants.TEST_OBJ_CODE_4020, "109"))
-                .andStubReturn(subObjectCode);
+                .thenReturn(mockedSubObjectCode);
 
-        EasyMock.expect(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
+        when(subObjectCodeService.getByPrimaryIdForCurrentYear(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE, "1023715",
                     CuFPTestConstants.TEST_OBJ_CODE_4020, "10X"))
-                .andStubReturn(null);
+                .thenReturn(null);
 
-        EasyMock.replay(subObjectCodeService);
         return subObjectCodeService;
     }
 
     private ProjectCodeService buildMockProjectCodeService() {
-        ProjectCodeService projectCodeService = EasyMock.createMock(ProjectCodeService.class);
+        ProjectCodeService projectCodeService = mock(ProjectCodeService.class);
 
-        EasyMock.expect(projectCodeService.getByPrimaryId("EB-PLGIFX"))
-                .andStubReturn(null);
+        when(projectCodeService.getByPrimaryId("EB-PLGIFX"))
+                .thenReturn(null);
 
-        EasyMock.expect(projectCodeService.getByPrimaryId("EB-PLGIFT"))
-                .andStubReturn(createMockProjectCode(ProjectCodeFixture.PC_EB_PLGIFT));
+        ProjectCode mockedProjectCode = createMockProjectCode(ProjectCodeFixture.PC_EB_PLGIFT);
+        when(projectCodeService.getByPrimaryId("EB-PLGIFT"))
+                .thenReturn(mockedProjectCode);
 
-        EasyMock.replay(projectCodeService);
         return projectCodeService;
     }
 
     public static Chart createMockChart(ChartFixture chartFixture) {
-        Chart chart = EasyMock.createMock(Chart.class);
-        EasyMock.expect(chart.isActive()).andStubReturn(chartFixture.active);
-        EasyMock.replay(chart);
+        Chart chart = mock(Chart.class);
+        when(chart.isActive()).thenReturn(chartFixture.active);
+        
         return chart;
     }
 
     public static Account createMockAccount(AwsAccountFixture accountFixture) {
-        Account account = EasyMock.createMock(Account.class);
-        EasyMock.expect(account.isClosed()).andStubReturn(!accountFixture.active);
-        EasyMock.expect(account.isExpired()).andStubReturn(accountFixture.expired);
-        EasyMock.replay(account);
+        Account account = mock(Account.class);
+        when(account.isClosed()).thenReturn(!accountFixture.active);
+        when(account.isExpired()).thenReturn(accountFixture.expired);
+        
         return account;
     }
 
     public static SubAccount createMockSubAccount(SubAccountFixture subAccountFixture) {
-        SubAccount subAccount = EasyMock.createMock(SubAccount.class);
-        EasyMock.expect(subAccount.isActive()).andStubReturn(subAccountFixture.active);
-        EasyMock.replay(subAccount);
+        SubAccount subAccount = mock(SubAccount.class);
+        when(subAccount.isActive()).thenReturn(subAccountFixture.active);
+        
         return subAccount;
     }
 
     public static ObjectCode createMockObjectCode(ObjectCodeFixture objectCodeFixture) {
-        ObjectCode objectCode = EasyMock.createMock(ObjectCode.class);
-        EasyMock.expect(objectCode.isActive()).andStubReturn(objectCodeFixture.active);
-        EasyMock.replay(objectCode);
+        ObjectCode objectCode = mock(ObjectCode.class);
+        when(objectCode.isActive()).thenReturn(objectCodeFixture.active);
+        
         return objectCode;
     }
 
     public static SubObjectCode createMockSubObjectCode(SubObjectCodeFixture subObjectCodeFixture) {
-        SubObjectCode subObjectCode = EasyMock.createMock(SubObjectCode.class);
-        EasyMock.expect(subObjectCode.isActive()).andStubReturn(subObjectCodeFixture.active);
-        EasyMock.replay(subObjectCode);
+        SubObjectCode subObjectCode = mock(SubObjectCode.class);
+        when(subObjectCode.isActive()).thenReturn(subObjectCodeFixture.active);
+        
         return subObjectCode;
     }
 
     public static ProjectCode createMockProjectCode(ProjectCodeFixture projectCodeFixture) {
-        ProjectCode projectCode = EasyMock.createMock(ProjectCode.class);
-        EasyMock.expect(projectCode.isActive()).andStubReturn(projectCodeFixture.active);
-        EasyMock.replay(projectCode);
+        ProjectCode projectCode = mock(ProjectCode.class);
+        when(projectCode.isActive()).thenReturn(projectCodeFixture.active);
+        
         return projectCode;
     }
 
     private ParameterService buildMockParameterService() {
-        ParameterService parameterService = EasyMock.createMock(ParameterService.class);
+        ParameterService parameterService = mock(ParameterService.class);
 
-        EasyMock.expect(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
+        when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PROPERTY_NAME))
-                .andStubReturn(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE);
-        EasyMock.expect(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
+                .thenReturn(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE);
+        when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME))
-                .andStubReturn(CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE);
+                .thenReturn(CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE);
 
-        EasyMock.replay(parameterService);
+        
         return parameterService;
     }
 
     private ConfigurationService buildMockConfigurationService() {
-        ConfigurationService configurationService = EasyMock.createMock(ConfigurationService.class);
+        ConfigurationService configurationService = mock(ConfigurationService.class);
 
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_INVALID_GROUP_LEVEL_TYPE))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_GROUP_LEVEL_TYPE_INVALID_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_NOT_FOUND))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_CHART_NOT_FOUND_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_INACTIVE))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_CHART_INACTIVE_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NUMBER_BLANK))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_NUMBER_BLANK_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_NOT_FOUND_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_CLOSED_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_EXPIRED))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_EXPIRED_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_OBJECT_CODE_NOT_FOUND_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_INACTIVE))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_OBJECT_CODE_INACTIVE_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_NOT_FOUND))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_ACCOUNT_NOT_FOUND_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_INACTIVE))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_ACCOUNT_INACTIVE_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_NOT_FOUND))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_OBJECT_NOT_FOUND_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_INACTIVE))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_SUB_OBJECT_INACTIVE_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_NOT_FOUND))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_PROJECT_NOT_FOUND_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_INACTIVE))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_PROJECT_INACTIVE_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_OBJ_REF_ID_TOO_LONG_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_INVALID_GROUP_LEVEL_TYPE))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_GROUP_LEVEL_TYPE_INVALID_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_NOT_FOUND))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_CHART_NOT_FOUND_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CHART_INACTIVE))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_CHART_INACTIVE_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NUMBER_BLANK))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_NUMBER_BLANK_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_NOT_FOUND))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_NOT_FOUND_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_CLOSED))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_CLOSED_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ACCOUNT_EXPIRED))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_ACCOUNT_EXPIRED_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_OBJECT_CODE_NOT_FOUND_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_OBJECT_CODE_INACTIVE))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_OBJECT_CODE_INACTIVE_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_NOT_FOUND))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_SUB_ACCOUNT_NOT_FOUND_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_ACCOUNT_INACTIVE))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_SUB_ACCOUNT_INACTIVE_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_NOT_FOUND))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_SUB_OBJECT_NOT_FOUND_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_SUB_OBJECT_INACTIVE))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_SUB_OBJECT_INACTIVE_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_NOT_FOUND))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_PROJECT_NOT_FOUND_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_PROJECT_CODE_INACTIVE))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_PROJECT_INACTIVE_ERROR_MESSAGE);
+        when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_ORG_REF_ID_TOO_LONG))
+                .thenReturn(CuFPTestConstants.TEST_VALIDATION_OBJ_REF_ID_TOO_LONG_ERROR_MESSAGE);
 
-        EasyMock.replay(configurationService);
+        
         return configurationService;
     }
 
