@@ -268,4 +268,5 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
         PersistableBusinessObject bo = document.getNoteTarget();
         return bo != null && StringUtils.isNotBlank(bo.getObjectId());
     }
+    
 }
