@@ -9,6 +9,11 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.PersistenceService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
@@ -36,16 +41,12 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.PersistenceService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
@@ -60,7 +61,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
     private PersistenceService persistenceService;
     private PhoneNumberService phoneNumberService;
     private PurchasingService purchasingService;
-    private PurapService purapService;
+    private CuPurapService purapService;
     private VendorService vendorService;
     // KFSPTS-985
     UserFavoriteAccountService userFavoriteAccountService;
@@ -158,7 +159,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
             //KFSPTS-1446 : Needed to move the setting of method of PO transmission to after the templateVendorAddress call because that method will set the method of PO transmission to the value on the vendor address. 
             //req.setPurchaseOrderTransmissionMethodCode(PurapConstants.POTransmissionMethods.ELECTRONIC);
-            req.setOrganizationAutomaticPurchaseOrderLimit(purapService.getApoLimit(req.getVendorContractGeneratedIdentifier(), req.getChartOfAccountsCode(), req.getOrganizationCode()));
+            req.setOrganizationAutomaticPurchaseOrderLimit(purapService.getApoLimit(req));
 
             //retrieve from an item (sent in cxml at item level, but stored in db at REQ level)
             req.setExternalOrganizationB2bSupplierIdentifier(getSupplierIdFromFirstItem(itemsForVendor));
@@ -246,7 +247,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
 
     public void setPurapService(PurapService purapService) {
         super.setPurapService(purapService);
-        this.purapService = purapService;
+        this.purapService = (CuPurapService) purapService;
     }
 
     public void setVendorService(VendorService vendorService) {

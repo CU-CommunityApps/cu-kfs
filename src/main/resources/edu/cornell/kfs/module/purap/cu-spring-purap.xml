@@ -236,7 +236,9 @@
     </bean>
     
     <bean id="b2bDao" class="edu.cornell.kfs.module.purap.dataaccess.impl.CuB2BDaoImpl"/>
-    <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl" />
+    <bean id="purapService" parent="purapService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurapServiceImpl">
+        <property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
+    </bean>
     <bean id="pdpExtractService" parent="pdpExtractService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractServiceImpl" />
 
 	<bean id="creditMemoDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" />

@@ -5,34 +5,49 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
-import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
-import org.kuali.kfs.module.purap.businessobject.PurApItem;
-import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
-import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
-import org.kuali.kfs.module.purap.document.service.impl.PurapServiceImpl;
-import org.kuali.kfs.module.purap.util.PurApItemUtils;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.InfrastructureException;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.PurapKeyConstants;
+import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.businessobject.OrganizationParameter;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
+import org.kuali.kfs.module.purap.businessobject.PurApItem;
+import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
+import org.kuali.kfs.module.purap.document.PurchasingDocument;
+import org.kuali.kfs.module.purap.document.RequisitionDocument;
+import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
+import org.kuali.kfs.module.purap.document.service.impl.PurapServiceImpl;
+import org.kuali.kfs.module.purap.util.PurApItemUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.NonTransactional;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantView;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 
 @NonTransactional
-public class CuPurapServiceImpl extends PurapServiceImpl {
+public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapService {
+
+    protected ParameterEvaluatorService parameterEvaluatorService;
 
     // ==== CU Customization (KFSPTS-1656): Save IWantDocument routing data. ====
     @Override
@@ -215,5 +230,79 @@ public class CuPurapServiceImpl extends PurapServiceImpl {
         distributedAccount.setAmount(new KualiDecimal(amount));
     }
 
-    
+    /**
+     * This implementation is almost identical to the three-arg version of the method,
+     * except that this one will return a different default limit for qualifying
+     * Federal-fund-related documents.
+     * 
+     * @see edu.cornell.kfs.module.purap.document.service.CuPurapService#getApoLimit(org.kuali.kfs.module.purap.document.PurchasingDocumentBase)
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public KualiDecimal getApoLimit(PurchasingDocument purchasingDocument) {
+        Integer vendorContractGeneratedIdentifier = purchasingDocument.getVendorContractGeneratedIdentifier();
+        String chart = purchasingDocument.getChartOfAccountsCode();
+        String org = purchasingDocument.getOrganizationCode();
+        KualiDecimal purchaseOrderTotalLimit = vendorService.getApoLimitFromContract(vendorContractGeneratedIdentifier, chart, org);
+
+        if (ObjectUtils.isNull(purchaseOrderTotalLimit) && !ObjectUtils.isNull(chart) && !ObjectUtils.isNull(org)) {
+            OrganizationParameter organizationParameter = new OrganizationParameter();
+            organizationParameter.setChartOfAccountsCode(chart);
+            organizationParameter.setOrganizationCode(org);
+            Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
+            orgParamKeys.put(KRADPropertyConstants.ACTIVE_INDICATOR, true);
+            organizationParameter = businessObjectService.findByPrimaryKey(OrganizationParameter.class, orgParamKeys);
+            purchaseOrderTotalLimit = (organizationParameter == null) ? null : organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
+        }
+
+        if (ObjectUtils.isNull(purchaseOrderTotalLimit)) {
+            String defaultLimitParameterName = shouldUseFederalApoLimit(purchasingDocument)
+                    ? CUPurapParameterConstants.AUTOMATIC_FEDERAL_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT
+                    : PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT;
+            
+            String defaultLimit = parameterService.getParameterValueAsString(RequisitionDocument.class, defaultLimitParameterName);
+            purchaseOrderTotalLimit = new KualiDecimal(defaultLimit);
+        }
+
+        return purchaseOrderTotalLimit;
+    }
+
+    protected boolean shouldUseFederalApoLimit(PurchasingDocument purchasingDocument) {
+        return purchaseOrderCostSourceIsEligibleForFederalApoLimit(purchasingDocument)
+                && documentHasAtLeastOneAccountWithCfdaNumber(purchasingDocument);
+    }
+
+    protected boolean purchaseOrderCostSourceIsEligibleForFederalApoLimit(PurchasingDocument purchasingDocument) {
+        ParameterEvaluator evaluator = parameterEvaluatorService.getParameterEvaluator(
+                RequisitionDocument.class, CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT,
+                purchasingDocument.getPurchaseOrderCostSourceCode());
+        return evaluator.evaluationSucceeds();
+    }
+
+    protected boolean documentHasAtLeastOneAccountWithCfdaNumber(PurchasingDocument purchasingDocument) {
+        return accountingLineListHasAtLeastOneAccountWithCfdaNumber(purchasingDocument.getSourceAccountingLines())
+                || accountingLineListHasAtLeastOneAccountWithCfdaNumber(purchasingDocument.getTargetAccountingLines());
+    }
+
+    protected boolean accountingLineListHasAtLeastOneAccountWithCfdaNumber(List<?> accountingLines) {
+        return accountingLines.stream()
+                .map((line) -> (AccountingLine) line)
+                .peek(this::refreshAccountReferenceIfNecessary)
+                .map(AccountingLine::getAccount)
+                .filter(ObjectUtils::isNotNull)
+                .map(Account::getAccountCfdaNumber)
+                .anyMatch(StringUtils::isNotBlank);
+    }
+
+    protected void refreshAccountReferenceIfNecessary(AccountingLine accountingLine) {
+        if (StringUtils.isNotBlank(accountingLine.getChartOfAccountsCode()) && StringUtils.isNotBlank(accountingLine.getAccountNumber())
+                && ObjectUtils.isNull(accountingLine.getAccount())) {
+            accountingLine.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+        }
+    }
+
+    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
+        this.parameterEvaluatorService = parameterEvaluatorService;
+    }
+
 }

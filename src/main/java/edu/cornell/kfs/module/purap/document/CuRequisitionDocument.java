@@ -9,24 +9,29 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
-import org.kuali.kfs.module.purap.businessobject.BillingAddress;
-import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.businessobject.RequisitionAccount;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
-import org.kuali.kfs.module.purap.businessobject.options.RequisitionStatusValuesFinder;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
-import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -41,26 +46,18 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.COMPONENT;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPACE;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.PersistenceService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 @NAMESPACE(namespace = KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE)
 @COMPONENT(component = "Requisition")
@@ -90,6 +87,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
 
     /**
      * Overridden to unmask name and phone number. This will be able to be removed once this fix is in the base code.
+     * 
+     * Also overridden to use the alternate CuPurapService method for setting the APO limit.
      */
     @Override
     public void initiateDocument() throws WorkflowException {
@@ -100,6 +99,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
         this.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
         this.setRequestorPersonName(currentUser.getNameUnmasked());
         this.setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
+        
+        this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
     }
 
     protected boolean isB2BAutoPurchaseOrder() {
@@ -168,6 +169,11 @@ public class CuRequisitionDocument extends RequisitionDocument {
         return principalId;
     }
     
+    @Override
+    public void toCopy() throws WorkflowException, ValidationException {
+        super.toCopy();
+        this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
+    }
     
     /**
      * toCopyFromGateway
@@ -280,8 +286,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
         if (!PurapConstants.RequisitionSources.B2B.equals(this.getRequisitionSourceCode())) {
             SpringContext.getBean(PurapService.class).addBelowLineItems(this);
         }
-        this.setOrganizationAutomaticPurchaseOrderLimit(SpringContext.getBean(PurapService.class)
-                .getApoLimit(this.getVendorContractGeneratedIdentifier(), this.getChartOfAccountsCode(), this.getOrganizationCode()));
+        this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
         clearCapitalAssetFields();
         SpringContext.getBean(PurapService.class).clearTax(this, this.isUseTaxIndicator());
         
@@ -435,7 +440,11 @@ public class CuRequisitionDocument extends RequisitionDocument {
     public Date getCreateDateForResult() {
         return getCreateDate();
     }
-        
+
+    protected CuPurapService getPurapService() {
+        return SpringContext.getBean(CuPurapService.class);
+    }
+
 }
 
 
