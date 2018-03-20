@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javafx.beans.binding.When;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coa.businessobject.Account;
