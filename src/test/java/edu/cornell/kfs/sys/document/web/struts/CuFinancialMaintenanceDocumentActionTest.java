@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.easymock.EasyMock;
-import org.easymock.IMockBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -32,6 +30,10 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.NoteType;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+
 @SuppressWarnings("deprecation")
 public class CuFinancialMaintenanceDocumentActionTest {
 
@@ -43,8 +45,6 @@ public class CuFinancialMaintenanceDocumentActionTest {
     public void setUp() throws Exception {
         setupPartiallyMockedStrutsAction();
     }
-
-
 
     @Test
     public void testInitiatedAccountDocWithBoNote() throws Exception {
@@ -116,95 +116,74 @@ public class CuFinancialMaintenanceDocumentActionTest {
                 strutsAction.shouldSaveBoNoteAfterUpdate(testDocument, testNote));
     }
 
-
-
     protected void setupPartiallyMockedStrutsAction() {
-        List<String> mockedMethods = new ArrayList<>();
-        Set<String> usableOrOverloadedMethods = new HashSet<>(Arrays.asList(
-                "shouldSaveDocumentAfterNoteUpdate", "promptBeforeValidation"));
-        for (Method method : CuFinancialMaintenanceDocumentAction.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !usableOrOverloadedMethods.contains(method.getName())) {
-                mockedMethods.add(method.getName());
-            }
-        }
-        IMockBuilder<CuFinancialMaintenanceDocumentAction> builder = EasyMock.createMockBuilder(
-                CuFinancialMaintenanceDocumentAction.class).addMockedMethods(mockedMethods.toArray(new String[0]));
-        strutsAction = builder.createMock();
-        EasyMock.replay(strutsAction);
+            strutsAction = mock(CuFinancialMaintenanceDocumentAction.class, CALLS_REAL_METHODS);
     }
 
     protected void setupMockMaintenanceDocument(Class<? extends PersistableBusinessObject> dataObjectClass, DocumentStatus documentStatus, String objectId) {
         Maintainable mockMaintainable = createMockMaintainable(dataObjectClass, objectId);
-        testDocument = EasyMock.createMock(FinancialSystemMaintenanceDocument.class);
-        EasyMock.expect(((FinancialSystemMaintenanceDocument) testDocument).getNewMaintainableObject()).andStubReturn(
-                mockMaintainable);
-        EasyMock.expect(testDocument.getNoteTarget()).andStubReturn(
-                (PersistableBusinessObject) mockMaintainable.getDataObject());
-        EasyMock.expect(testDocument.getDocumentHeader()).andStubReturn(
-                createMockDocumentHeader(documentStatus));
-        EasyMock.replay(testDocument);
+        PersistableBusinessObject mockDataObject = (PersistableBusinessObject) mockMaintainable.getDataObject();
+        DocumentHeader mockDocumentHeader = createMockDocumentHeader(documentStatus);
+        testDocument = mock(FinancialSystemMaintenanceDocument.class);
+        when(((FinancialSystemMaintenanceDocument) testDocument).getNewMaintainableObject()).thenReturn(mockMaintainable);
+        when(testDocument.getNoteTarget()).thenReturn(mockDataObject);
+        when(testDocument.getDocumentHeader()).thenReturn(mockDocumentHeader);
     }
 
     protected void setupMockTransactionalDocument(DocumentStatus documentStatus) {
-        testDocument = EasyMock.createMock(FinancialSystemTransactionalDocumentBase.class);
-        EasyMock.expect(testDocument.getDocumentHeader()).andStubReturn(
-                createMockDocumentHeader(documentStatus));
-        EasyMock.replay(testDocument);
+        testDocument = mock(FinancialSystemTransactionalDocumentBase.class);
+        DocumentHeader mockDocumentHeader = createMockDocumentHeader(documentStatus);
+        when(testDocument.getDocumentHeader()).thenReturn(mockDocumentHeader);
     }
 
     protected Maintainable createMockMaintainable(Class<? extends PersistableBusinessObject> dataObjectClass, String objectId) {
         PersistableBusinessObject mockDataObject = createMockDataObject(dataObjectClass, objectId);
-        Maintainable maintainable = EasyMock.createMock(FinancialSystemMaintainable.class);
-        EasyMock.expect(maintainable.getDataObjectClass()).andStubReturn(dataObjectClass);
-        EasyMock.expect(maintainable.getDataObject()).andStubReturn(mockDataObject);
-        EasyMock.expect(maintainable.getBusinessObject()).andStubReturn(mockDataObject);
-        EasyMock.replay(maintainable);
+        Maintainable maintainable = mock(FinancialSystemMaintainable.class);
+        when(maintainable.getDataObjectClass()).thenReturn(dataObjectClass);
+        when(maintainable.getDataObject()).thenReturn(mockDataObject);
+        when(maintainable.getBusinessObject()).thenReturn(mockDataObject);
         return maintainable;
     }
 
     protected <T extends PersistableBusinessObject> T createMockDataObject(Class<T> dataObjectClass, String objectId) {
-        T dataObject = EasyMock.createMock(dataObjectClass);
-        EasyMock.expect(dataObject.getObjectId()).andStubReturn(objectId);
-        EasyMock.replay(dataObject);
+        T dataObject = mock(dataObjectClass);
+        when(dataObject.getObjectId()).thenReturn(objectId);
         return dataObject;
     }
 
     protected DocumentHeader createMockDocumentHeader(DocumentStatus documentStatus) {
-        DocumentHeader documentHeader = EasyMock.createMock(FinancialSystemDocumentHeader.class);
-        EasyMock.expect(documentHeader.getWorkflowDocument()).andStubReturn(
-                createMockWorkflowDocument(documentStatus));
-        EasyMock.replay(documentHeader);
+        DocumentHeader documentHeader = mock(FinancialSystemDocumentHeader.class);
+        WorkflowDocument mockWorkflowDocument = createMockWorkflowDocument(documentStatus);
+        when(documentHeader.getWorkflowDocument()).thenReturn(mockWorkflowDocument);
         return documentHeader;
     }
 
     protected WorkflowDocument createMockWorkflowDocument(DocumentStatus documentStatus) {
-        WorkflowDocument workflowDocument = EasyMock.createMock(WorkflowDocumentImpl.class);
-        EasyMock.expect(workflowDocument.getStatus()).andStubReturn(documentStatus);
-        EasyMock.expect(workflowDocument.isInitiated()).andStubReturn(DocumentStatus.INITIATED.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isSaved()).andStubReturn(DocumentStatus.SAVED.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isEnroute()).andStubReturn(DocumentStatus.ENROUTE.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isException()).andStubReturn(DocumentStatus.EXCEPTION.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isProcessed()).andStubReturn(DocumentStatus.PROCESSED.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isFinal()).andStubReturn(DocumentStatus.FINAL.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isCanceled()).andStubReturn(DocumentStatus.CANCELED.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isDisapproved()).andStubReturn(DocumentStatus.DISAPPROVED.equals(documentStatus));
-        EasyMock.expect(workflowDocument.isRecalled()).andStubReturn(DocumentStatus.RECALLED.equals(documentStatus));
-        EasyMock.replay(workflowDocument);
+        WorkflowDocument workflowDocument = mock(WorkflowDocumentImpl.class);
+        when(workflowDocument.getStatus()).thenReturn(documentStatus);
+        when(workflowDocument.isInitiated()).thenReturn(DocumentStatus.INITIATED.equals(documentStatus));
+        when(workflowDocument.isSaved()).thenReturn(DocumentStatus.SAVED.equals(documentStatus));
+        when(workflowDocument.isEnroute()).thenReturn(DocumentStatus.ENROUTE.equals(documentStatus));
+        when(workflowDocument.isException()).thenReturn(DocumentStatus.EXCEPTION.equals(documentStatus));
+        when(workflowDocument.isProcessed()).thenReturn(DocumentStatus.PROCESSED.equals(documentStatus));
+        when(workflowDocument.isFinal()).thenReturn(DocumentStatus.FINAL.equals(documentStatus));
+        when(workflowDocument.isCanceled()).thenReturn(DocumentStatus.CANCELED.equals(documentStatus));
+        when(workflowDocument.isDisapproved()).thenReturn(DocumentStatus.DISAPPROVED.equals(documentStatus));
+        when(workflowDocument.isRecalled()).thenReturn(DocumentStatus.RECALLED.equals(documentStatus));
+        
         return workflowDocument;
     }
 
     protected void setupMockNote(NoteType noteType) {
-        testNote = EasyMock.createMock(Note.class);
-        EasyMock.expect(testNote.getNoteType()).andStubReturn(
-                createMockNoteTypeBo(noteType));
-        EasyMock.expect(testNote.getNoteTypeCode()).andStubReturn(noteType.getCode());
-        EasyMock.replay(testNote);
+        testNote = mock(Note.class);
+        org.kuali.kfs.krad.bo.NoteType mockNoteType = createMockNoteTypeBo(noteType);
+        when(testNote.getNoteType()).thenReturn(mockNoteType);
+        when(testNote.getNoteTypeCode()).thenReturn(noteType.getCode());
     }
 
     protected org.kuali.kfs.krad.bo.NoteType createMockNoteTypeBo(NoteType noteTypeEnum) {
-        org.kuali.kfs.krad.bo.NoteType noteTypeBo = EasyMock.createMock(org.kuali.kfs.krad.bo.NoteType.class);
-        EasyMock.expect(noteTypeBo.getNoteTypeCode()).andStubReturn(noteTypeEnum.getCode());
-        EasyMock.replay(noteTypeBo);
+        org.kuali.kfs.krad.bo.NoteType noteTypeBo = mock(org.kuali.kfs.krad.bo.NoteType.class);
+        when(noteTypeBo.getNoteTypeCode()).thenReturn(noteTypeEnum.getCode());
         return noteTypeBo;
     }
 }

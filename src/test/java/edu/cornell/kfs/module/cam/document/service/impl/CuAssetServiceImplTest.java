@@ -23,9 +23,11 @@ import org.kuali.kfs.coreservice.api.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.coreservice.impl.parameter.ParameterServiceImpl;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 
-import org.easymock.EasyMock;
 
 public class CuAssetServiceImplTest {
     
@@ -92,23 +94,21 @@ public class CuAssetServiceImplTest {
     }
 
     protected ParameterService createMockParameterServiceAllowRetiredAssets(boolean result) {
-        ParameterService parameterService = EasyMock.createMock(ParameterServiceImpl.class);
-        EasyMock.expect(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).andStubReturn(result);
+        ParameterService parameterService = mock(ParameterServiceImpl.class);
+        when(parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)).thenReturn(result);
         List<String> statusCodes = new ArrayList<String>();
         statusCodes.add(RETIRED_STATUS_CD);
-        EasyMock.expect(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.Parameters.RETIRED_STATUS_CODES)).andStubReturn(statusCodes);
+        when(parameterService.getParameterValuesAsString(Asset.class, CamsConstants.Parameters.RETIRED_STATUS_CODES)).thenReturn(statusCodes);
 
-        EasyMock.replay(parameterService);
         return parameterService;
     }
     
     protected BusinessObjectService createMockBusinessObjectService(String tagNumber, List<Asset> result) {
-        BusinessObjectService businessObjectService = EasyMock.createMock(BusinessObjectServiceImpl.class);
+        BusinessObjectService businessObjectService = mock(BusinessObjectServiceImpl.class);
         Map<String, String> params = new HashMap<String, String>();
         params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, tagNumber);
-        EasyMock.expect(businessObjectService.findMatching(Asset.class, params)).andStubReturn(result);
-        
-        EasyMock.replay(businessObjectService);
+        when(businessObjectService.findMatching(Asset.class, params)).thenReturn(result);
+
         return businessObjectService;
     }
     
