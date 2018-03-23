@@ -436,7 +436,6 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
                 cancelButtonTag.doStartTag();
                 cancelButtonTag.doEndTag();
 
-
                 out.write("' +\n");
 
                 out.write("\t'</div>');\n");
