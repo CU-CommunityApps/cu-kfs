@@ -47,5 +47,13 @@ public class DefaultKfsAccountForAwsResultWrapper {
     public int hashCode() {
         return Objects.hash(defaultKfsAccountsForAws);
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("DefaultKfsAccountForAwsResultWrapper {");
+        defaultKfsAccountsForAws.stream().forEach(acct -> sb.append("[").append(acct.toString()).append("]"));
+        sb.append("}");
+        return sb.toString();
+    }
 
 }

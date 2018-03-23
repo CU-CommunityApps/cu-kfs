@@ -370,25 +370,23 @@
     
     <bean id="amazonWebServicesBillingService" parent="amazonWebServicesBillingService-parent"/>
     <bean id="amazonWebServicesBillingService-parent" class="edu.cornell.kfs.fp.service.impl.AmazonWebServicesBillingServiceImpl" abstract="true">
-    	<property name="awsURL">
-            <value>${aws.service.url}</value>
-        </property>
-        <property name="awsToken">
-            <value>${aws.service.token}</value>
-        </property>
+    	<property name="directoryPath" value="${staging.directory}/fp/accountingXmlDocument"/>
         <property name="parameterService" ref="parameterService"/>
         <property name="documentService" ref="documentService"/>
-        <property name="chartService" ref="chartService"/>
-        <property name="accountService" ref="accountService"/>
-        <property name="subAccountService" ref="subAccountService"/>
         <property name="businessObjectService" ref="businessObjectService"/>
-        <property name="objectCodeService" ref="objectCodeService"/>
-        <property name="subObjectCodeService" ref="subObjectCodeService"/>
-        <property name="projectCodeService" ref="projectCodeService"/>
+        <property name="cloudcheckrService" ref="cloudcheckrService"/>
+        <property name="awsAccountingXmlDocumentAccountingLineService" ref="awsAccountingXmlDocumentAccountingLineService"/>
+        <property name="cuMarshalService" ref="cuMarshalService"/>
+        <property name="fileStorageService" ref="fileStorageService"/>
+    </bean>
+    
+    <bean id="cloudcheckrService" parent="cloudcheckrService-parent"/>
+    <bean id="cloudcheckrService-parent" class="edu.cornell.kfs.fp.batch.service.impl.CloudcheckrServiceImpl" abstract="true">
+    	<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
     </bean>
 
-    <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl" parent="awsAccountingXmlDocumentAccountingLineServiceImpl-parent"/>
-    <bean id="awsAccountingXmlDocumentAccountingLineServiceImpl-parent" class="edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl" abstract="true">
+    <bean id="awsAccountingXmlDocumentAccountingLineService" parent="awsAccountingXmlDocumentAccountingLineService-parent"/>
+    <bean id="awsAccountingXmlDocumentAccountingLineService-parent" class="edu.cornell.kfs.fp.batch.service.impl.AwsAccountingXmlDocumentAccountingLineServiceImpl" abstract="true">
         <property name="parameterService" ref="parameterService"/>
         <property name="chartService" ref="chartService"/>
         <property name="accountService" ref="accountService"/>

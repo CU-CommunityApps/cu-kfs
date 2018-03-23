@@ -160,14 +160,12 @@ public class CuFPConstants {
         public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
         
         public static final int PROCESSING_DAY_OF_MONTH = 15;
+        public static final String DATE_FORMAT = "yyyy-MM-dd";
+        public static final String AWS_BILL_CREDENTIAL_GROUP_CODE = "AWSBILL";
+        public static final String AWS_BILL_AUTH_HEADEER_TOKEN_KEY = "x-api-key";
         
         public static final String DEFAULT_BILLING_PERIOD_PARAMETER = "CURRENT";
         public static final String INTERNAL_KFS_ACCOUNT_DESCRIPTION = "internal";
-        public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
-        public static final String AUTHORIZATION_TOKEN_VALUE_STARTER = "Token ";
-        public static final String URL_PARAMETER_YEAR  = "year=";
-        public static final String URL_PARAMETER_MONTH = "&month=";
-        public static final String HTTP_METHOD_GET_NAME = "GET";
         public static final String DI_ROUTE_ANNOTATION = "DI automatically created by AWS Billing Batch Job";
         public static final String TRANSACTION_DESCRIPTION_STARTER = "AWS CHARGES ";
         public static final String ACCOUNT_NONE = "None";
@@ -176,6 +174,9 @@ public class CuFPConstants {
     public static class CLOUDCHECKR {
         public static final String GROUP_LEVEL_AWS_ACCOUNT = "Account";
         public static final String GROUP_LEVEL_COST_CENTER = "Cost Center";
+        public static final String CLOUDCHECKR_CREDENTIAL_GROUP_CODE = "CLOUDCHECKR";
+        public static final String CLOUDCHECKR_ENDPOINT_CREDENTIAL_KEY = "CLOUDCHECKR_URL";
+        public static final String DEFAULT_KFS_ACCOUNT_ENOPOINT_CREDENTIAL_KEY = "DEFAULT_ACCOUNT_URL";
     }
     
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
