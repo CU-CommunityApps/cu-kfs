@@ -1,7 +1,7 @@
 /**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2017 Kuali, Inc.
+ * Copyright 2005-2018 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,14 +22,6 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -46,6 +38,14 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class PaymentDetail extends PersistableBusinessObjectBase {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentDetail.class);
@@ -80,7 +80,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     public boolean isDetailAmountProvided() {
-        return (origInvoiceAmount != null) || (invTotDiscountAmount != null) || (invTotShipAmount != null) || (invTotOtherDebitAmount != null) || (invTotOtherCreditAmount != null);
+        return (origInvoiceAmount != null) || (invTotDiscountAmount != null) || (invTotShipAmount != null)
+                || (invTotOtherDebitAmount != null) || (invTotOtherCreditAmount != null);
     }
 
     public KualiDecimal getCalculatedPaymentAmount() {
@@ -99,8 +100,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Determines if the disbursement date is past the number of days old (configured in system parameter) in which actions can take
-     * place
+     * Determines if the disbursement date is past the number of days old (configured in system parameter) in which
+     * actions can take place.
      *
      * @return true if actions are allowed on disbursement, false otherwise
      */
@@ -112,7 +113,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             return true;
         }
 
-        String daysStr = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentDetail.class, PdpParameterConstants.DISBURSEMENT_CANCELLATION_DAYS);
+        String daysStr = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentDetail.class,
+                PdpParameterConstants.DISBURSEMENT_CANCELLATION_DAYS);
         int days = Integer.valueOf(daysStr);
 
         Calendar c = Calendar.getInstance();
@@ -150,7 +152,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return total of all account detail amounts
+     * @return total of all account detail amounts.
      */
     public KualiDecimal getAccountTotal() {
         KualiDecimal acctTotal = new KualiDecimal(0.00);
@@ -173,8 +175,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Takes a <code>String</code> and attempt to format as <code>Timestamp</code for setting the
-     * invoiceDate field
+     * Takes a {@link String} and attempt to format as {@link Timestamp} for setting the invoiceDate field.
      *
      * @param invoiceDate Timestamp as string
      */
@@ -217,12 +218,13 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             pnt.setPaymentDetail(this);
             notes.add(pnt);
         } else {
-            LOG.warn("Did not add note to payment detail build from Document #: " + (!StringUtils.isBlank(custPaymentDocNbr) ? custPaymentDocNbr : "") + " because note was empty");
+            LOG.warn("Did not add note to payment detail build from Document #: " + (!StringUtils.isBlank(
+                    custPaymentDocNbr) ? custPaymentDocNbr : "") + " because note was empty");
         }
     }
 
     /**
-     * Constructs a new <code>PaymentNoteText</code> for the given payment text and adds to the detail <code>List</code>
+     * Constructs a new {@link PaymentNoteText} for the given payment text and adds to the detail {@link List}.
      *
      * @param paymentText note text
      */
@@ -243,7 +245,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     public void postPersist() {
         super.postPersist();
         // add extended attribute
-        PaymentDetailExtendedAttribute paymentDetailExtendedAttribute =  new PaymentDetailExtendedAttribute();
+        PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = new PaymentDetailExtendedAttribute();
         paymentDetailExtendedAttribute.setId(this.getId());
         paymentDetailExtendedAttribute.setCrCancelledPayment(false);
         this.setExtension(paymentDetailExtendedAttribute);
@@ -252,7 +254,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.id column="PMT_DTL_ID" generator-class="sequence"
      * @hibernate.generator-param name="sequence" value="PDP.PDP_PMT_DTL_ID_SEQ"
      */
@@ -261,7 +262,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="CUST_PMT_DOC_NBR" length="9"
      */
     public String getCustPaymentDocNbr() {
@@ -269,7 +269,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="INV_NBR" length="14"
      */
     public String getInvoiceNbr() {
@@ -277,7 +276,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="INV_TOT_DSCT_AMT" length="14"
      */
     public KualiDecimal getInvTotDiscountAmount() {
@@ -285,7 +283,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="INV_TOT_OTHR_CRDT_AMT" length="14"
      */
     public KualiDecimal getInvTotOtherCreditAmount() {
@@ -293,7 +290,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="INV_TOT_OTHR_DEBIT_AMT" length="14"
      */
     public KualiDecimal getInvTotOtherDebitAmount() {
@@ -301,7 +297,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="INV_TOT_SHP_AMT" length="14"
      */
     public KualiDecimal getInvTotShipAmount() {
@@ -309,7 +304,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="NET_PMT_AMT" length="14"
      */
     public KualiDecimal getNetPaymentAmount() {
@@ -317,7 +311,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="ORG_DOC_NBR" length="10"
      */
     public String getOrganizationDocNbr() {
@@ -325,7 +318,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="ORIG_INV_AMT" length="14"
      */
     public KualiDecimal getOrigInvoiceAmount() {
@@ -333,7 +325,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PO_NBR" length="9"
      */
     public String getPurchaseOrderNbr() {
@@ -341,7 +332,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="REQS_NBR" length=8"
      */
     public String getRequisitionNbr() {
@@ -349,7 +339,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return Returns the paymentGroup.
+     * @return the paymentGroup.
      */
     public PaymentGroup getPaymentGroup() {
         return paymentGroup;
@@ -464,7 +454,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return Returns the financialDocumentTypeCode.
+     * @return the financialDocumentTypeCode.
      */
     public String getFinancialDocumentTypeCode() {
         return financialDocumentTypeCode;
@@ -478,7 +468,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return Returns the primaryCancelledPayment.
+     * @return the primaryCancelledPayment.
      */
     public Boolean getPrimaryCancelledPayment() {
         return primaryCancelledPayment;
@@ -499,35 +489,27 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Gets the paymentGroupId attribute.
-     *
-     * @return Returns the paymentGroupId.
+     * @return the paymentGroupId attribute.
      */
     public KualiInteger getPaymentGroupId() {
         return paymentGroupId;
     }
 
     /**
-     * Sets the paymentGroupId attribute value.
-     *
-     * @param paymentGroupId The paymentGroupId to set.
+     * @param paymentGroupId The paymentGroupId value to set.
      */
     public void setPaymentGroupId(KualiInteger paymentGroupId) {
         this.paymentGroupId = paymentGroupId;
     }
 
     /**
-     * Gets the financialSystemOriginCode attribute.
-     *
-     * @return Returns the financialSystemOriginCode.
+     * @return Returns the financialSystemOriginCode attribute.
      */
     public String getFinancialSystemOriginCode() {
         return financialSystemOriginCode;
     }
 
     /**
-     * Sets the financialSystemOriginCode attribute value.
-     *
      * @param financialSystemOriginCode The financialSystemOriginCode to set.
      */
     public void setFinancialSystemOriginCode(String financialSystemOriginCode) {
@@ -549,9 +531,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method returns a String representation of the payment detail notes
-     *
-     * @return the String representation of the payment detail notes
+     * @return the String representation of the payment detail notes.
      */
     public String getNotesText() {
         StringBuffer notes = new StringBuffer();
@@ -566,7 +546,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     /**
      * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
      */
-
     protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
         LinkedHashMap m = new LinkedHashMap();
 
@@ -576,24 +555,21 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method returns the number of payments in the payment group associated with this payment detail.
-     *
-     * @return the number of payments in the payment group
+     * @return the number of payments in the payment group associated with this payment detail.
      */
     public int getNbrOfPaymentsInPaymentGroup() {
         return paymentGroup.getPaymentDetails().size();
     }
 
     /**
-     * This method returns the number of payments in the disbursement associated with this payment detail.
-     *
-     * @return the number of payments in the disbursement
+     * @return the number of payments in the disbursement associated with this payment detail.
      */
     public int getNbrOfPaymentsInDisbursement() {
 
         int nbrOfPaymentsInDisbursement = 0;
         if (ObjectUtils.isNotNull((paymentGroup.getDisbursementNbr()))) {
-            List<PaymentGroup> paymentGroupList = SpringContext.getBean(PaymentGroupService.class).getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
+            List<PaymentGroup> paymentGroupList = SpringContext.getBean(PaymentGroupService.class)
+                    .getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
             for (PaymentGroup paymentGroup : paymentGroupList) {
                 nbrOfPaymentsInDisbursement += paymentGroup.getPaymentDetails().size();
             }

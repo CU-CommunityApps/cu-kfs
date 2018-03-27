@@ -189,7 +189,7 @@
 
   <bean id="PayeeACHAccount-achTransactionType" parent="PayeeACHAccount-achTransactionType-parentBean"/>
 
-  <bean id="PayeeACHAccount-achTransactionType-parentBean" abstract="true" parent="ACHTransactionType-code-parentBean">
+  <bean id="PayeeACHAccount-achTransactionType-parentBean" abstract="true" parent="ACHTransactionType-code">
     <property name="name" value="achTransactionType"/>
   </bean>
   
