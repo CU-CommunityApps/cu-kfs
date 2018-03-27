@@ -22,9 +22,9 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2017-12-14</kfs.version>
-        <rice.version>2.6.1</rice.version>
-        <cynergy.version>2.6.1</cynergy.version>
+        <kfs.version>2018-02-15</kfs.version>
+        <rice.version>2.6.2</rice.version>
+        <cynergy.version>2.6.2</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
 
         <aws-java-sdk-dynamodb.version>1.11.18</aws-java-sdk-dynamodb.version>

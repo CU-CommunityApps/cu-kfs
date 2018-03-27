@@ -49,21 +49,13 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		super();
 		ccAddresses = new HashSet<String>();
 	}
-
+	
 	@Override
-	public void initialize() {
-		try {
-			fullFilePath = generateFullFilePath();
-			LOG.debug("initialize, fullFilePath: " + fullFilePath);
-			printStream = new PrintStream(fullFilePath);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-
-		page = initialPageNumber;
-		initializeBusinessObjectReportHelpers();
-		this.writeHeader(title);
-	}
+    protected String generateFullFilePath() {
+        String fullFilePath = super.generateFullFilePath();
+        LOG.debug("generateFullFilePath, fullFilePath: " + fullFilePath);
+        return fullFilePath;
+    }
 
 	@Override
 	public File getReportFile() {

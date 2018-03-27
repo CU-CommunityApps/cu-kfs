@@ -1,13 +1,13 @@
-/*
+/**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
- * 
- * Copyright 2005-2017 Kuali, Inc.
- * 
+ *
+ * Copyright 2005-2018 Kuali, Inc.
+ *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -53,7 +53,7 @@ import org.kuali.rice.core.api.util.type.KualiInteger;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
 /**
- * This class represents the PaymentGroup
+ * This class represents the PaymentGroup.
  */
 public class PaymentGroup extends PersistableBusinessObjectBase {
 	private static final long serialVersionUID = 1L;
@@ -118,16 +118,11 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     protected List<PaymentGroupHistory> paymentGroupHistory = new ArrayList<PaymentGroupHistory>();
     protected List<PaymentDetail> paymentDetails = new ArrayList<PaymentDetail>();
 
-    /**
-     * Constructs a PaymentGroup.java.
-     */
     public PaymentGroup() {
         super();
     }
 
     /**
-     * This method gets the dailyReportSpecialHandling
-     *
      * @return dailyReportSpecialHandling
      */
     public boolean isDailyReportSpecialHandling() {
@@ -135,8 +130,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method gets the dailyReportAttachment
-     *
      * @return dailyReportAttachment
      */
     public boolean isDailyReportAttachment() {
@@ -144,8 +137,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method gets the paymentStatusCode
-     *
      * @return paymentStatusCode
      */
     public String getPaymentStatusCode() {
@@ -153,7 +144,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
     
     /**
-     * @return String containing the payment status code and indication or cancel/reissued payments or stale payments
+     * @return String containing the payment status code and indication or cancel/reissued payments or stale payments.
      */
     public String getPaymentStatusCodeWithHistory() {
         if (paymentStatus == null) {
@@ -168,7 +159,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
         boolean isCanceledReissued = false;
         for (PaymentGroupHistory paymentGroupHistory : getPaymentGroupHistory()) {
-            if (PdpConstants.PaymentChangeCodes.CANCEL_REISSUE_DISBURSEMENT.equals(paymentGroupHistory.getPaymentChangeCode())) {
+            if (PdpConstants.PaymentChangeCodes.CANCEL_REISSUE_DISBURSEMENT.equals(
+                    paymentGroupHistory.getPaymentChangeCode())) {
                 isCanceledReissued = true;
             }
         }
@@ -215,8 +207,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method gets the notle lines
-     *
      * @return the note lines
      */
     public int getNoteLines() {
@@ -230,9 +220,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Get the total of all the detail items
-     * 
-     * @return
+     * @return the total of all the detail items.
      */
     public KualiDecimal getNetPaymentAmount() {
         KualiDecimal amt = KualiDecimal.ZERO;
@@ -253,18 +241,16 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method sets the payment details list
-     *
-     * @param paymentDetail
+     * @param paymentDetail the payment details list to set.
      */
     public void setPaymentDetails(List<PaymentDetail> paymentDetail) {
         this.paymentDetails = paymentDetail;
     }
 
     /**
-     * This method adds a paymentDetail
+     * This method adds a paymentDetail.
      *
-     * @param pgh the payments detail to be added
+     * @param pgh the payments detail to be added.
      */
     public void addPaymentDetails(PaymentDetail pgh) {
         pgh.setPaymentGroup(this);
@@ -285,18 +271,16 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method sets the payment group history list
-     *
-     * @param paymentGroupHistory
+     * @param paymentGroupHistory the payment group history list to set.
      */
     public void setPaymentGroupHistory(List<PaymentGroupHistory> paymentGroupHistory) {
         this.paymentGroupHistory = paymentGroupHistory;
     }
 
     /**
-     * This method adds a paymentGroupHistory
+     * This method adds a paymentGroupHistory.
      *
-     * @param pd the paymentGroupHistory to be added
+     * @param pd the paymentGroupHistory to be added.
      */
     public void addPaymentGroupHistory(PaymentGroupHistory pd) {
         pd.setPaymentGroup(this);
@@ -304,16 +288,15 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method deletes a paymentGroupHistory
+     * This method deletes a paymentGroupHistory.
      *
-     * @param pd the paymentGroupHistory to be deleted
+     * @param pd the paymentGroupHistory to be deleted.
      */
     public void deletePaymentGroupHistory(PaymentGroupHistory pd) {
         paymentGroupHistory.remove(pd);
     }
 
     /**
-     * @return
      * @hibernate.id column="PMT_GRP_ID" generator-class="sequence"
      * @hibernate.generator-param name="sequence" value="PDP.PDP_PMT_GRP_ID_SEQ"
      */
@@ -322,7 +305,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.one-to-one class="edu.iu.uis.pdp.bo.AchAccountNumber"
      */
     public AchAccountNumber getAchAccountNumber() {
@@ -330,17 +312,13 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method sets the achAccountNumber
-     *
-     * @param aan
+     * @param aan the achAccountNumber to set.
      */
     public void setAchAccountNumber(AchAccountNumber aan) {
         this.achAccountNumber = aan;
     }
 
     /**
-     * This method gets the sortValue
-     *
      * @return sortValue
      */
     public String getSortValue() {
@@ -348,13 +326,13 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method sets the sort value
-     *
-     * @param sortGroupId
+     * @param sortGroupId the sort value to set.
      */
     public void setSortValue(int sortGroupId) {
-        String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
-        String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentGroup.class, defaultSortOrderParameterName);
+        String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class)
+                .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID_PARAMETER);
+        String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+                PaymentGroup.class, defaultSortOrderParameterName);
 
         StringBuffer sb = new StringBuffer();
 
@@ -368,8 +346,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         if (defaultSortOrderParameterValue.equals(String.valueOf(sortGroupId))) {
             sb.append(this.getPayeeId());
             sb.append(this.getPayeeIdTypeCd());
-        }
-        else {
+        } else {
             sb.append(this.getPayeeName());
         }
         this.sortValue = sb.toString();
@@ -429,7 +406,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="ACH_BNK_RTNG_NBR" length="9"
      */
     public String getAchBankRoutingNbr() {
@@ -437,7 +413,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="ADV_EMAIL_ADDR" length="50"
      */
     public String getAdviceEmailAddress() {
@@ -445,7 +420,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="ALTRNT_PAYEE_ID" length="25"
      */
     public String getAlternatePayeeId() {
@@ -453,7 +427,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="ALTRNT_PAYEE_ID_TYP_CD" length="2"
      */
     public String getAlternatePayeeIdTypeCd() {
@@ -461,7 +434,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.many-to-one column="BNK_ID" class="edu.iu.uis.pdp.bo.Bank" not-null="false"
      */
     public Bank getBank() {
@@ -469,7 +441,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.many-to-one column="PMT_BATCH_ID" class="edu.iu.uis.pdp.bo.Batch" not-null="true"
      */
     public Batch getBatch() {
@@ -480,18 +451,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Gets the bankCode attribute.
-     * 
-     * @return Returns the bankCode.
+     * @return the bankCode attribute.
      */
     public String getBankCode() {
         return bankCode;
     }
 
     /**
-     * Sets the bankCode attribute value.
-     * 
-     * @param bankCode The bankCode to set.
+     * @param bankCode The bankCode value to set.
      */
     public void setBankCode(String bankCode) {
         this.bankCode = bankCode;
@@ -514,7 +481,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_CRDT_MEMO_AMT" length="14"
      */
     public KualiDecimal getCreditMemoAmount() {
@@ -522,7 +488,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_CRDT_MEMO_NBR" length="14"
      */
     public String getCreditMemoNbr() {
@@ -530,8 +495,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method gets the disbursementDate.
-     *
      * @return disbursementDate
      */
     public Date getDisbursementDate() {
@@ -539,7 +502,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="DISB_NBR" length="9"
      */
     public KualiInteger getDisbursementNbr() {
@@ -547,7 +509,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.many-to-one column="DISB_TYP_CD" class="edu.iu.uis.pdp.bo.DisbursementType" not-null="false"
      */
     public DisbursementType getDisbursementType() {
@@ -559,7 +520,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_LN1_ADDR" length="45"
      */
     public String getLine1Address() {
@@ -567,7 +527,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_LN2_ADDR" length="45"
      */
     public String getLine2Address() {
@@ -575,7 +534,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_LN3_ADDR" length="45"
      */
     public String getLine3Address() {
@@ -583,7 +541,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_LN4_ADDR" length="45"
      */
     public String getLine4Address() {
@@ -591,7 +548,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="NRA_PMT_IND" type="yes_no"
      */
     public Boolean getNraPayment() {
@@ -599,7 +555,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PAYEE_ID" length="25"
      */
     public String getPayeeId() {
@@ -607,7 +562,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PAYEE_ID_TYP_CD" length="1"
      */
     public String getPayeeIdTypeCd() {
@@ -615,7 +569,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_PAYEE_NM" length="40"
      */
     public String getPayeeName() {
@@ -623,7 +576,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PAYEE_OWNR_CD" length="2"
      */
     public String getPayeeOwnerCd() {
@@ -631,7 +583,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_DT"
      */
     public Date getPaymentDate() {
@@ -639,7 +590,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.many-to-one column="PMT_STAT_CD" class="edu.iu.uis.pdp.bo.PaymentStatus" not-null="true"
      */
     public PaymentStatus getPaymentStatus() {
@@ -647,7 +597,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PHYS_CMP_PROC_CD" length="2"
      */
     public String getPhysCampusProcessCd() {
@@ -655,7 +604,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.many-to-one column="PROC_ID" class="edu.iu.uis.pdp.bo.PaymentProcess" not-null="false"
      */
     public PaymentProcess getProcess() {
@@ -663,7 +611,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PROC_IMD_IND" type="yes_no" length="1"
      */
     public Boolean getProcessImmediate() {
@@ -671,7 +618,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_ATTCHMNT_IND" type="yes_no" length="1"
      */
     public Boolean getPymtAttachment() {
@@ -679,7 +625,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_SPCL_HANDLG_IND" type="yes_no" length="1"
      */
     public Boolean getPymtSpecialHandling() {
@@ -687,7 +632,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_TXBL_IND" type="yes_no" length="1"
      */
     public Boolean getTaxablePayment() {
@@ -695,7 +639,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return
      * @hibernate.property column="PMT_ZIP_CD" length="2"
      */
     public String getZipCd() {
@@ -703,7 +646,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param integer
+     * @param s
      */
     public void setAchBankRoutingNbr(String s) {
         achBankRoutingNbr = s;
@@ -731,14 +674,14 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param integer
+     * @param bank
      */
     public void setBank(Bank bank) {
         this.bank = bank;
     }
 
     /**
-     * @param integer
+     * @param b
      */
     public void setBatch(Batch b) {
         batch = b;
@@ -777,8 +720,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method sets disbursementDate.
-     *
      * @param disbursementDate a string representing the disbursementDate
      * @throws ParseException
      */
@@ -798,7 +739,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param string
+     * @param dt
      */
     public void setDisbursementType(DisbursementType dt) {
         disbursementType = dt;
@@ -889,8 +830,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Takes a <code>String</code> and attempt to format as <code>Timestamp</code for setting the
-     * paymentDate field
+     * Takes a {@link String} and attempt to format as {@link Timestamp} for setting the paymentDate field.
      * 
      * @param paymentDate Timestamp as string
      */
@@ -899,7 +839,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param string
+     * @param stat
      */
     public void setPaymentStatus(PaymentStatus stat) {
         paymentStatus = stat;
@@ -913,7 +853,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param integer
+     * @param p
      */
     public void setProcess(PaymentProcess p) {
         if (p != null) {
@@ -954,7 +894,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param string
+     * @param pymtSpecialHandling
      */
     public void setPymtSpecialHandling(Boolean pymtSpecialHandling) {
         this.pymtSpecialHandling = pymtSpecialHandling;
@@ -993,7 +933,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @return Returns the achAccountType.
+     * @return the achAccountType.
      */
     public String getAchAccountType() {
         return achAccountType;
@@ -1023,23 +963,18 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Gets the batchId attribute.
-     * 
-     * @return Returns the batchId.
+     * @return the batchId attribute.
      */
     public KualiInteger getBatchId() {
         return batchId;
     }
 
     /**
-     * Sets the batchId attribute value.
-     * 
-     * @param batchId The batchId to set.
+     * @param batchId The batchId value to set.
      */
     public void setBatchId(KualiInteger batchId) {
         this.batchId = batchId;
     }
-
     
     protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
         LinkedHashMap m = new LinkedHashMap();
@@ -1074,35 +1009,33 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * Gets the adviceEmailSentDate attribute.
-     * 
-     * @return Returns the adviceEmailSentDate.
+     * @return the adviceEmailSentDate attribute.
      */
     public Timestamp getAdviceEmailSentDate() {
         return adviceEmailSentDate;
     }
 
     /**
-     * Sets the adviceEmailSentDate attribute value.
-     * 
-     * @param adviceEmailSentDate The adviceEmailSentDate to set.
+     * @param adviceEmailSentDate The adviceEmailSentDate value to set.
      */
     public void setAdviceEmailSentDate(Timestamp adviceEmailSentDate) {
         this.adviceEmailSentDate = adviceEmailSentDate;
     }
 
     /**
-     * This method gets a string representation of the address lines
-     *
      * @return the street as a combined representation of the address lines
      */
     public String getStreet() {
         StringBuffer street = new StringBuffer();
 
-        street.append(StringUtils.isNotBlank(line1Address) ? (line1Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-        street.append(StringUtils.isNotBlank(line2Address) ? (line2Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-        street.append(StringUtils.isNotBlank(line3Address) ? (line3Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
-        street.append(StringUtils.isNotBlank(line4Address) ? (line4Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
+        street.append(StringUtils
+                .isNotBlank(line1Address) ? (line1Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
+        street.append(StringUtils
+                .isNotBlank(line2Address) ? (line2Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
+        street.append(StringUtils
+                .isNotBlank(line3Address) ? (line3Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
+        street.append(StringUtils
+                .isNotBlank(line4Address) ? (line4Address + KFSConstants.NEWLINE) : KFSConstants.EMPTY_STRING);
 
         return street.toString();
     }
@@ -1127,8 +1060,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * This method gets the payeeIdTypeDesc
-     *
      * @return the payeeIdTypeDesc
      */
     public String getPayeeIdTypeDesc() {
