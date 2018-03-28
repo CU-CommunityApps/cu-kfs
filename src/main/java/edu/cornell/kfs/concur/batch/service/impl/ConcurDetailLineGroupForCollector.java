@@ -95,6 +95,8 @@ public class ConcurDetailLineGroupForCollector {
                 return ConcurSAECollectorLineType.CASH;
             case ConcurConstants.PAYMENT_CODE_UNIVERSITY_BILLED_OR_PAID :
                 return ConcurSAECollectorLineType.CORP_CARD;
+            case ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER :
+                return ConcurSAECollectorLineType.PRE_PAID_OR_OTHER;
             default :
                 throw new IllegalArgumentException("Found an unexpected payment code for regular detail line; this should NEVER happen! Code: "
                         + detailLine.getPaymentCode());
