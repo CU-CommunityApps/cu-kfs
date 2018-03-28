@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -243,16 +245,20 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         Integer vendorContractGeneratedIdentifier = purchasingDocument.getVendorContractGeneratedIdentifier();
         String chart = purchasingDocument.getChartOfAccountsCode();
         String org = purchasingDocument.getOrganizationCode();
-        KualiDecimal purchaseOrderTotalLimit = vendorService.getApoLimitFromContract(vendorContractGeneratedIdentifier, chart, org);
+        KualiDecimal purchaseOrderTotalLimit = null;
+        
+        if (canUseApoLimitFromOrganizationOrContract(purchasingDocument)) {
+            purchaseOrderTotalLimit = vendorService.getApoLimitFromContract(vendorContractGeneratedIdentifier, chart, org);
 
-        if (ObjectUtils.isNull(purchaseOrderTotalLimit) && !ObjectUtils.isNull(chart) && !ObjectUtils.isNull(org)) {
-            OrganizationParameter organizationParameter = new OrganizationParameter();
-            organizationParameter.setChartOfAccountsCode(chart);
-            organizationParameter.setOrganizationCode(org);
-            Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
-            orgParamKeys.put(KRADPropertyConstants.ACTIVE_INDICATOR, true);
-            organizationParameter = businessObjectService.findByPrimaryKey(OrganizationParameter.class, orgParamKeys);
-            purchaseOrderTotalLimit = (organizationParameter == null) ? null : organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
+            if (ObjectUtils.isNull(purchaseOrderTotalLimit) && !ObjectUtils.isNull(chart) && !ObjectUtils.isNull(org)) {
+                OrganizationParameter organizationParameter = new OrganizationParameter();
+                organizationParameter.setChartOfAccountsCode(chart);
+                organizationParameter.setOrganizationCode(org);
+                Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
+                orgParamKeys.put(KRADPropertyConstants.ACTIVE_INDICATOR, true);
+                organizationParameter = businessObjectService.findByPrimaryKey(OrganizationParameter.class, orgParamKeys);
+                purchaseOrderTotalLimit = (organizationParameter == null) ? null : organizationParameter.getOrganizationAutomaticPurchaseOrderLimit();
+            }
         }
 
         if (ObjectUtils.isNull(purchaseOrderTotalLimit)) {
@@ -267,16 +273,39 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         return purchaseOrderTotalLimit;
     }
 
+    protected boolean canUseApoLimitFromOrganizationOrContract(PurchasingDocument purchasingDocument) {
+        return purchaseOrderCostSourceIsEligibleForOverridingFederalApoLimit(purchasingDocument)
+                || !allAccountsOnDocumentHaveCfdaNumber(purchasingDocument);
+    }
+
     protected boolean shouldUseFederalApoLimit(PurchasingDocument purchasingDocument) {
         return purchaseOrderCostSourceIsEligibleForFederalApoLimit(purchasingDocument)
                 && documentHasAtLeastOneAccountWithCfdaNumber(purchasingDocument);
     }
 
+    protected boolean purchaseOrderCostSourceIsEligibleForOverridingFederalApoLimit(PurchasingDocument purchasingDocument) {
+        return evaluateCostSourceAgainstParameter(purchasingDocument.getPurchaseOrderCostSourceCode(),
+                CUPurapParameterConstants.CONTRACTING_SOURCES_ALLOWED_OVERRIDE_OF_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT);
+    }
+
     protected boolean purchaseOrderCostSourceIsEligibleForFederalApoLimit(PurchasingDocument purchasingDocument) {
+        return evaluateCostSourceAgainstParameter(purchasingDocument.getPurchaseOrderCostSourceCode(),
+                CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT);
+    }
+
+    protected boolean evaluateCostSourceAgainstParameter(String purchaseOrderCostSourceCode, String parameterName) {
         ParameterEvaluator evaluator = parameterEvaluatorService.getParameterEvaluator(
-                RequisitionDocument.class, CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT,
-                purchasingDocument.getPurchaseOrderCostSourceCode());
+                RequisitionDocument.class, parameterName, purchaseOrderCostSourceCode);
         return evaluator.evaluationSucceeds();
+    }
+
+    protected boolean allAccountsOnDocumentHaveCfdaNumber(PurchasingDocument purchasingDocument) {
+        if (CollectionUtils.isEmpty(purchasingDocument.getSourceAccountingLines())
+                && CollectionUtils.isEmpty(purchasingDocument.getTargetAccountingLines())) {
+            return false;
+        }
+        return allExistingAccountingLinesInListHaveAccountWithCfdaNumber(purchasingDocument.getSourceAccountingLines())
+                && allExistingAccountingLinesInListHaveAccountWithCfdaNumber(purchasingDocument.getTargetAccountingLines());
     }
 
     protected boolean documentHasAtLeastOneAccountWithCfdaNumber(PurchasingDocument purchasingDocument) {
@@ -284,20 +313,36 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 || accountingLineListHasAtLeastOneAccountWithCfdaNumber(purchasingDocument.getTargetAccountingLines());
     }
 
+    protected boolean allExistingAccountingLinesInListHaveAccountWithCfdaNumber(List<?> accountingLines) {
+        return getPotentiallyBlankAccountCfdaNumbersAsStream(accountingLines)
+                .allMatch(StringUtils::isNotBlank);
+    }
+
     protected boolean accountingLineListHasAtLeastOneAccountWithCfdaNumber(List<?> accountingLines) {
+        return getPotentiallyBlankAccountCfdaNumbersAsStream(accountingLines)
+                .anyMatch(StringUtils::isNotBlank);
+    }
+
+    protected Stream<String> getPotentiallyBlankAccountCfdaNumbersAsStream(List<?> accountingLines) {
         return accountingLines.stream()
                 .map((line) -> (AccountingLine) line)
                 .peek(this::refreshAccountReferenceIfNecessary)
                 .map(AccountingLine::getAccount)
-                .filter(ObjectUtils::isNotNull)
-                .map(Account::getAccountCfdaNumber)
-                .anyMatch(StringUtils::isNotBlank);
+                .map(this::getPotentiallyBlankAccountCfdaNumber);
     }
 
     protected void refreshAccountReferenceIfNecessary(AccountingLine accountingLine) {
         if (StringUtils.isNotBlank(accountingLine.getChartOfAccountsCode()) && StringUtils.isNotBlank(accountingLine.getAccountNumber())
                 && ObjectUtils.isNull(accountingLine.getAccount())) {
             accountingLine.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+        }
+    }
+
+    protected String getPotentiallyBlankAccountCfdaNumber(Account account) {
+        if (ObjectUtils.isNotNull(account)) {
+            return StringUtils.defaultIfBlank(account.getAccountCfdaNumber(), StringUtils.EMPTY);
+        } else {
+            return StringUtils.EMPTY;
         }
     }
 

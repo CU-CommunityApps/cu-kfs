@@ -78,7 +78,10 @@ public enum RequisitionItemFixture {
             8000, 2, "80141605", 4000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITHOUT_CFDA_NUMBER, false),
 
     REQ_QTY_ITEM_AMOUNT_AT_15K_NO_CFDA(2, "EA", "4444444", "item desc 2", "ITEM", "Punchout",
-            15000, 1, "80141605", 15000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITHOUT_CFDA_NUMBER, false);
+            15000, 1, "80141605", 15000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITHOUT_CFDA_NUMBER, false),
+
+    REQ_QTY_ITEM_AMOUNT_AT_15K_WITH_CFDA(2, "EA", "4444444", "item desc 2", "ITEM", "Punchout",
+            15000, 1, "80141605", 15000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITH_CFDA_NUMBER, false);
 
     public static final int BASE_ITEM_ID = 1000;
 

@@ -24,12 +24,12 @@ public enum RequisitionLiteFixture {
 
     REQS_CFDA_LINE_AND_VENDOR_CONTRACT_WITH_LIMIT(
             CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_CONTRACT_CHART,
-            CuPurapTestConstants.TEST_CONTRACT_ORG, CuPurapTestConstants.COST_SOURCE_INVOICE,
+            CuPurapTestConstants.TEST_CONTRACT_ORG, CuPurapTestConstants.COST_SOURCE_CONTRACT,
             RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
 
     REQS_CFDA_LINE_AND_VENDOR_CONTRACT_WITHOUT_LIMIT(
             CuPurapTestConstants.TEST_CONTRACT_ID_6666, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
-            CuPurapTestConstants.COST_SOURCE_INVOICE, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
+            CuPurapTestConstants.COST_SOURCE_CONTRACT, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
 
     REQS_CFDA_LINE_AND_INELIGIBLE_COST_SOURCE_AND_VENDOR_CONTRACT_WITHOUT_LIMIT(
             CuPurapTestConstants.TEST_CONTRACT_ID_6666, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
@@ -39,13 +39,40 @@ public enum RequisitionLiteFixture {
             null, CuPurapTestConstants.TEST_PARM_CHART, CuPurapTestConstants.TEST_PARM_ORG,
             CuPurapTestConstants.COST_SOURCE_ESTIMATE, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
 
+    REQS_NON_CFDA_LINE_AND_ORG_PARM(
+            null, CuPurapTestConstants.TEST_PARM_CHART, CuPurapTestConstants.TEST_PARM_ORG,
+            CuPurapTestConstants.COST_SOURCE_ESTIMATE, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_NO_CFDA),
+
     REQS_CFDA_LINE_AND_ORG_PARM_AND_VENDOR_CONTRACT_WITH_LIMIT(
             CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_PARM_CHART, CuPurapTestConstants.TEST_PARM_ORG,
-            CuPurapTestConstants.COST_SOURCE_INVOICE, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
+            CuPurapTestConstants.COST_SOURCE_CONTRACT, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
 
     REQS_CFDA_LINE_AND_ORG_PARM_AND_VENDOR_CONTRACT_WITHOUT_LIMIT(
             CuPurapTestConstants.TEST_CONTRACT_ID_6666, CuPurapTestConstants.TEST_PARM_CHART, CuPurapTestConstants.TEST_PARM_ORG,
-            CuPurapTestConstants.COST_SOURCE_INVOICE, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA);
+            CuPurapTestConstants.COST_SOURCE_CONTRACT, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
+
+    REQS_CFDA_LINE_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE(
+            CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
+            CuPurapTestConstants.COST_SOURCE_INVOICE, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA),
+
+    REQS_NO_LINES_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE(
+            CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
+            CuPurapTestConstants.COST_SOURCE_INVOICE),
+
+    REQS_MULTI_LINE_NO_CFDA_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE(
+            CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
+            CuPurapTestConstants.COST_SOURCE_INVOICE,
+            RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_NO_CFDA, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_15K_NO_CFDA),
+
+    REQS_MULTI_LINE_SOME_CFDA_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE(
+            CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
+            CuPurapTestConstants.COST_SOURCE_INVOICE,
+            RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_15K_NO_CFDA),
+
+    REQS_MULTI_LINE_ALL_CFDA_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE(
+            CuPurapTestConstants.TEST_CONTRACT_ID_1357, CuPurapTestConstants.TEST_CONTRACT_CHART, CuPurapTestConstants.TEST_CONTRACT_ORG,
+            CuPurapTestConstants.COST_SOURCE_INVOICE,
+            RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA, RequisitionItemFixture.REQ_QTY_ITEM_AMOUNT_AT_15K_WITH_CFDA);
 
     public static final int BASE_DOCUMENT_NUMBER = 15000;
 

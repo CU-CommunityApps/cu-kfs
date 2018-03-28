@@ -44,6 +44,8 @@ public class CuPurapServiceImplTest {
 
     private static final String TEST_EXCLUDED_COST_SOURCES = CuPurapTestConstants.COST_SOURCE_PRICING_AGREEMENT
             + CUKFSConstants.SEMICOLON + CuPurapTestConstants.COST_SOURCE_EDU_AND_INST_COOP;
+    private static final String TEST_COST_SOURCES_FOR_APO_OVERRIDE = CuPurapTestConstants.COST_SOURCE_PREFERRED
+            + CUKFSConstants.SEMICOLON + CuPurapTestConstants.COST_SOURCE_CONTRACT;
 
     private CuPurapServiceImpl purapService;
 
@@ -117,7 +119,13 @@ public class CuPurapServiceImplTest {
     @Test
     public void testApoLimitForCfdaDocumentWithMatchingOrgParameter() throws Exception {
         assertPurapServiceIdentifiesCorrectApoLimit(
-                TEST_ORG_PARM_APO_LIMIT, RequisitionLiteFixture.REQS_CFDA_LINE_AND_ORG_PARM);
+                TEST_DEFAULT_FEDERAL_APO_LIMIT, RequisitionLiteFixture.REQS_CFDA_LINE_AND_ORG_PARM);
+    }
+
+    @Test
+    public void testApoLimitForNonCfdaDocumentWithMatchingOrgParameter() throws Exception {
+        assertPurapServiceIdentifiesCorrectApoLimit(
+                TEST_ORG_PARM_APO_LIMIT, RequisitionLiteFixture.REQS_NON_CFDA_LINE_AND_ORG_PARM);
     }
 
     @Test
@@ -130,6 +138,36 @@ public class CuPurapServiceImplTest {
     public void testApoLimitForCfdaDocumentWithMatchingOrgParameterAndVendorContractMissingLimit() throws Exception {
         assertPurapServiceIdentifiesCorrectApoLimit(
                 TEST_ORG_PARM_APO_LIMIT, RequisitionLiteFixture.REQS_CFDA_LINE_AND_ORG_PARM_AND_VENDOR_CONTRACT_WITHOUT_LIMIT);
+    }
+
+    @Test
+    public void testApoLimitForCfdaDocumentWithVendorContractLimitAndNonFedOverrideSource() throws Exception {
+        assertPurapServiceIdentifiesCorrectApoLimit(
+                TEST_DEFAULT_FEDERAL_APO_LIMIT, RequisitionLiteFixture.REQS_CFDA_LINE_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE);
+    }
+
+    @Test
+    public void testApoLimitForNoLinesDocumentWithVendorContractLimitAndNonFedOverrideSource() throws Exception {
+        assertPurapServiceIdentifiesCorrectApoLimit(
+                TEST_VENDOR_CONTRACT_APO_LIMIT, RequisitionLiteFixture.REQS_NO_LINES_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE);
+    }
+
+    @Test
+    public void testApoLimitForMultiLineNonCfdaDocumentWithVendorContractLimitAndNonFedOverrideSource() throws Exception {
+        assertPurapServiceIdentifiesCorrectApoLimit(
+                TEST_VENDOR_CONTRACT_APO_LIMIT, RequisitionLiteFixture.REQS_MULTI_LINE_NO_CFDA_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE);
+    }
+
+    @Test
+    public void testApoLimitForMultiLinePartialCfdaDocumentWithVendorContractLimitAndNonFedOverrideSource() throws Exception {
+        assertPurapServiceIdentifiesCorrectApoLimit(
+                TEST_VENDOR_CONTRACT_APO_LIMIT, RequisitionLiteFixture.REQS_MULTI_LINE_SOME_CFDA_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE);
+    }
+
+    @Test
+    public void testApoLimitForMultiLineAllCfdaDocumentWithVendorContractLimitAndNonFedOverrideSource() throws Exception {
+        assertPurapServiceIdentifiesCorrectApoLimit(
+                TEST_DEFAULT_FEDERAL_APO_LIMIT, RequisitionLiteFixture.REQS_MULTI_LINE_ALL_CFDA_AND_VENDOR_CONTRACT_NON_FED_OVERRIDE_SOURCE);
     }
 
     private void assertPurapServiceIdentifiesCorrectApoLimit(KualiDecimal expectedLimit, RequisitionLiteFixture documentFixture) throws Exception {
@@ -200,7 +238,8 @@ public class CuPurapServiceImplTest {
 
     private ParameterService buildMockParameterService() {
         ParameterService parameterService = mock(ParameterService.class);
-        Parameter costSourceParameter = buildParameterForCostSourceExclusions();
+        Parameter costSourceExclusionParameter = buildParameterForCostSourceExclusions();
+        Parameter costSourceApoOverrideParameter = buildParameterForCostSourceApoOverride();
         
         when(parameterService.getParameterValueAsString(
                 RequisitionDocument.class, PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT))
@@ -210,18 +249,31 @@ public class CuPurapServiceImplTest {
                 .thenReturn(TEST_DEFAULT_FEDERAL_APO_LIMIT.toString());
         when(parameterService.getParameter(
                 RequisitionDocument.class, CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT))
-                .thenReturn(costSourceParameter);
+                .thenReturn(costSourceExclusionParameter);
+        when(parameterService.getParameter(
+                RequisitionDocument.class, CUPurapParameterConstants.CONTRACTING_SOURCES_ALLOWED_OVERRIDE_OF_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT))
+                .thenReturn(costSourceApoOverrideParameter);
         
         return parameterService;
     }
 
     private Parameter buildParameterForCostSourceExclusions() {
+        return buildCostSourceParameterDTO(CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT,
+                TEST_EXCLUDED_COST_SOURCES, EvaluationOperator.DISALLOW);
+    }
+
+    private Parameter buildParameterForCostSourceApoOverride() {
+        return buildCostSourceParameterDTO(CUPurapParameterConstants.CONTRACTING_SOURCES_ALLOWED_OVERRIDE_OF_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT,
+                TEST_COST_SOURCES_FOR_APO_OVERRIDE, EvaluationOperator.ALLOW);
+    }
+
+    private Parameter buildCostSourceParameterDTO(String parameterName, String parameterValue, EvaluationOperator evaluationOperator) {
         ParameterType.Builder typeBuilder = ParameterType.Builder.create(KfsParameterConstants.PARAMETER_CONFIG_TYPE_CODE);
         Parameter.Builder parameterBuilder = Parameter.Builder.create(
                 KFSConstants.APPLICATION_NAMESPACE_CODE, PurapConstants.PURAP_NAMESPACE, "Requisition",
-                CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT, typeBuilder);
-        parameterBuilder.setValue(TEST_EXCLUDED_COST_SOURCES);
-        parameterBuilder.setEvaluationOperator(EvaluationOperator.DISALLOW);
+                parameterName, typeBuilder);
+        parameterBuilder.setValue(parameterValue);
+        parameterBuilder.setEvaluationOperator(evaluationOperator);
         return parameterBuilder.build();
     }
 
