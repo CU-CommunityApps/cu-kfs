@@ -11,4 +11,6 @@ public interface CloudcheckrService {
     public CloudCheckrWrapper getCloudCheckrWrapper(String startDate, String endDate) throws URISyntaxException, IOException;
     
     public DefaultKfsAccountForAwsResultWrapper getDefaultKfsAccountForAwsResultWrapper() throws URISyntaxException, IOException;
+    
+    public String buildAttachmentUrl(String year, String month, String account);
 }

@@ -31,6 +31,7 @@ import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
 import edu.cornell.kfs.fp.batch.service.CloudcheckrService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
@@ -126,6 +127,14 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         documentWrapper.setReportEmail("nms32@cornell.edu");
         documentWrapper.setOverview("AWS Billing documents for " + findMonthName() + " " + findProcessYear());
         
+        addDocumentsToDocumentWrapper(cloudCheckrWrapper, defaultAccountWrapper, resultsDTO, documentWrapper);
+        return documentWrapper;
+        
+    }
+
+    protected void addDocumentsToDocumentWrapper(CloudCheckrWrapper cloudCheckrWrapper,
+            DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper, AmazonBillResultsDTO resultsDTO,
+            AccountingXmlDocumentListWrapper documentWrapper) {
         Long documentIndex = new Long(1);
         
         for (GroupLevel awsAccountGroup : cloudCheckrWrapper.getCostsByGroup()) {
@@ -139,39 +148,67 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 document.setExplanation(buildDocumentExplanation(awsAccount));
                 document.setDescription(buildDocumentDescription(parseDeaprtmentNameFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue())));
                 
-                DefaultKfsAccountForAws defaultKfsAccount = findDefaultKfsAccountForAws(awsAccount, defaultAccountWrapper, resultsDTO);
-                KualiDecimal sourceLineTotal = KualiDecimal.ZERO;
-                for (GroupLevel costCenterGroup : awsAccountGroup.getNextLevel()) {
-                    AccountingXmlDocumentAccountingLine targetLine = awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(costCenterGroup, defaultKfsAccount);
-                    sourceLineTotal = sourceLineTotal.add(targetLine.getAmount());
-                    document.getTargetAccountingLines().add(targetLine);
-                }
+                KualiDecimal targetLineTotal = addTargetLinesToDocument(defaultAccountWrapper, resultsDTO, awsAccountGroup, document, awsAccount);
                 
-                AccountingXmlDocumentAccountingLine sourceLine = new AccountingXmlDocumentAccountingLine();
-                /**
-                 * @todo get the chart from a parameter
-                 */
-                sourceLine.setChartCode("IT");
-                sourceLine.setAccountNumber(getTransactionFromAccountNumber());
-                sourceLine.setObjectCode(getTransactionObjectCode());
-                sourceLine.setAmount(sourceLineTotal);
-                document.getSourceAccountingLines().add(sourceLine);
+                addSourceLineToDocument(document, targetLineTotal);
                 
-                AccountingXmlDocumentNote note = new AccountingXmlDocumentNote();
-                note.setDescription(getHelpNoteText());
-                document.getNotes().add(note);
+                addNotesToDocument(document);
+                
+                addBackupDocumentLinksToDocument(document, awsAccount);
                 
                 documentWrapper.getDocuments().add(document);
                 resultsDTO.xmlCreationCount++;
                 documentIndex = Long.sum(documentIndex, 1);
             } else {
                 resultsDTO.awsAccountWithExstingDI.add(awsAccountGroup.getGroupValue());
-                LOG.error("buildAccountingXmlDocumentListWrapper, a DI already exists for " + awsAccountGroup.getGroupValue());
+                LOG.error("addDocumentsToDocumentWrapper, a DI already exists for " + awsAccountGroup.getGroupValue());
             }
             
         }
-        return documentWrapper;
-        
+    }
+
+    protected KualiDecimal addTargetLinesToDocument(DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper,
+            AmazonBillResultsDTO resultsDTO, GroupLevel awsAccountGroup, AccountingXmlDocumentEntry document,
+            String awsAccount) {
+        DefaultKfsAccountForAws defaultKfsAccount = findDefaultKfsAccountForAws(awsAccount, defaultAccountWrapper, resultsDTO);
+        KualiDecimal targetLineTotal = KualiDecimal.ZERO;
+        for (GroupLevel costCenterGroup : awsAccountGroup.getNextLevel()) {
+            if (KualiDecimal.ZERO.isLessThan(costCenterGroup.getCost())) {
+                AccountingXmlDocumentAccountingLine targetLine = awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(costCenterGroup, defaultKfsAccount);
+                targetLineTotal = targetLineTotal.add(targetLine.getAmount());
+                document.getTargetAccountingLines().add(targetLine);
+            } else {
+                LOG.error("buildAccountingXmlDocumentListWrapper, found a group with a cost of zero: " + costCenterGroup);
+            }
+        }
+        return targetLineTotal;
+    }
+
+    protected void addBackupDocumentLinksToDocument(AccountingXmlDocumentEntry document, String awsAccount) {
+        AccountingXmlDocumentBackupLink link = new AccountingXmlDocumentBackupLink();
+        link.setCredentialGroupCode(CuFPConstants.AmazonWebServiceBillingConstants.AWS_BILL_CREDENTIAL_GROUP_CODE);
+        link.setDescription("Cloudcheckr invoice file");
+        link.setFileName("invoice.pdf");
+        link.setLinkUrl(cloudcheckrService.buildAttachmentUrl(findProcessYear(), findProcessMonthNumber(), awsAccount));
+        document.getBackupLinks().add(link);
+    }
+
+    protected void addNotesToDocument(AccountingXmlDocumentEntry document) {
+        AccountingXmlDocumentNote note = new AccountingXmlDocumentNote();
+        note.setDescription(getHelpNoteText());
+        document.getNotes().add(note);
+    }
+
+    protected void addSourceLineToDocument(AccountingXmlDocumentEntry document, KualiDecimal targetLineTotal) {
+        AccountingXmlDocumentAccountingLine sourceLine = new AccountingXmlDocumentAccountingLine();
+        /**
+         * @todo get the chart from a parameter
+         */
+        sourceLine.setChartCode("IT");
+        sourceLine.setAccountNumber(getTransactionFromAccountNumber());
+        sourceLine.setObjectCode(getTransactionObjectCode());
+        sourceLine.setAmount(targetLineTotal);
+        document.getSourceAccountingLines().add(sourceLine);
     }
     
     private DefaultKfsAccountForAws findDefaultKfsAccountForAws(String awsAccount, DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper, 

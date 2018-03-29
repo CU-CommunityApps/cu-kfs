@@ -10,6 +10,8 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.CloudcheckrService;
 import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAwsResultWrapper;
@@ -91,6 +93,22 @@ public class CloudcheckrServiceImpl extends DisposableClientServiceImplBase impl
         builder.header(CuFPConstants.AmazonWebServiceBillingConstants.AWS_BILL_AUTH_HEADEER_TOKEN_KEY, xApiKeyValue);
         builder.accept(MediaType.APPLICATION_XML);
         return builder.buildGet();
+    }
+    
+    public String buildAttachmentUrl(String year, String month, String account) {
+        if (StringUtils.length(month) < 2) {
+            month = "0" + month;
+        }
+        
+        String attachmentUrl = MessageFormat.format(findAttachmentUrlBase(), year, month, account);
+        LOG.debug("buildAttachmentUrl, attachment URL: " + attachmentUrl);
+        return attachmentUrl;
+    }
+    
+    protected String findAttachmentUrlBase() {
+        return webServiceCredentialService.getWebServiceCredentialValue(
+                CuFPConstants.CLOUDCHECKR.CLOUDCHECKR_CREDENTIAL_GROUP_CODE, 
+                CuFPConstants.CLOUDCHECKR.CLOUDCHECKR_ATTACH_URL);
     }
     
     public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {

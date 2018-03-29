@@ -177,6 +177,7 @@ public class CuFPConstants {
         public static final String CLOUDCHECKR_CREDENTIAL_GROUP_CODE = "CLOUDCHECKR";
         public static final String CLOUDCHECKR_ENDPOINT_CREDENTIAL_KEY = "CLOUDCHECKR_URL";
         public static final String DEFAULT_KFS_ACCOUNT_ENOPOINT_CREDENTIAL_KEY = "DEFAULT_ACCOUNT_URL";
+        public static final String CLOUDCHECKR_ATTACH_URL = "CLOUDCHECKR_ATTACH_URL";
     }
     
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
