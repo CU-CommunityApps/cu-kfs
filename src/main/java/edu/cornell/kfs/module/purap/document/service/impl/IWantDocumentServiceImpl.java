@@ -8,12 +8,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.service.PersistenceService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.BillingAddress;
@@ -30,15 +40,14 @@ import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
-import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.KimConstants;
@@ -49,21 +58,8 @@ import org.kuali.rice.kim.api.identity.employment.EntityEmployment;
 import org.kuali.rice.kim.api.identity.entity.Entity;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.service.PersistenceService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
-import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
@@ -72,8 +68,10 @@ import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
 import edu.cornell.kfs.module.purap.businessobject.PersonData;
 import edu.cornell.kfs.module.purap.dataaccess.LevelOrganizationDao;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 public class IWantDocumentServiceImpl implements IWantDocumentService {
@@ -88,7 +86,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     private AttachmentService attachmentService;
     private NoteService noteService;
     private ParameterService parameterService;
-    private PurapService purapService;
+    private CuPurapService purapService;
     private BusinessObjectService businessObjectService;
     private PersonService personService;
     private FinancialSystemUserService financialSystemUserService;
@@ -341,7 +339,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
       * @param requisitionDocument
       * @param iWantDocument
       */
-    private void setUpDeliverToSectionOfReqDoc(RequisitionDocument requisitionDocument, IWantDocument iWantDocument, PurapService purapService) {
+    private void setUpDeliverToSectionOfReqDoc(RequisitionDocument requisitionDocument, IWantDocument iWantDocument, CuPurapService purapService) {
 
         Person deliverTo = null;          
 
@@ -370,9 +368,8 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 requisitionDocument.setRequestorPersonPhoneNumber(iWantDocument.getInitiatorPhoneNumber());
                 parseAndSetRequestorAddress(iWantDocument.getDeliverToAddress(), requisitionDocument);
 
-                requisitionDocument.setOrganizationAutomaticPurchaseOrderLimit(purapService.getApoLimit(
-                        requisitionDocument.getVendorContractGeneratedIdentifier(),
-                        requisitionDocument.getChartOfAccountsCode(), requisitionDocument.getOrganizationCode()));
+                requisitionDocument.setOrganizationAutomaticPurchaseOrderLimit(
+                        purapService.getApoLimit(requisitionDocument));
 
                 // populate billing address
                 BillingAddress billingAddress = new BillingAddress();
@@ -434,9 +431,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 // set the APO limit
                 requisitionDocument
                         .setOrganizationAutomaticPurchaseOrderLimit(purapService
-                                .getApoLimit(requisitionDocument.getVendorContractGeneratedIdentifier(),
-                                        requisitionDocument.getChartOfAccountsCode(),
-                                        requisitionDocument.getOrganizationCode()));
+                                .getApoLimit(requisitionDocument));
 
                 // populate billing address
                 BillingAddress billingAddress = new BillingAddress();
@@ -982,11 +977,11 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         this.noteService = noteService;
     }
     
-    public PurapService getPurapService() {
+    public CuPurapService getPurapService() {
         return purapService;
     }
     
-    public void setPurapService(PurapService purapService) {
+    public void setPurapService(CuPurapService purapService) {
         this.purapService = purapService;
     }
     

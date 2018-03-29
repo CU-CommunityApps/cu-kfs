@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.fixture;
 
 import java.math.BigDecimal;
 
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -65,7 +66,24 @@ public enum RequisitionItemFixture {
 	REQ_QTY_ITEM_AMOUNT_ABOVE_5K(new Integer(1), "EA", "1234567", "item desc", "ITEM", "Punchout",
 			new KualiDecimal(6000), new KualiDecimal(1), "80141605",
 			new BigDecimal(6000), PurapAccountingLineFixture.REQ_ITEM_ACCT_LINE,
-			false);
+			false),
+
+    REQ_QTY_ITEM_AMOUNT_AT_8K_NO_ACCT_LINE(1, "EA", "1234567", "item desc", "ITEM", "Punchout",
+            8000, 2, "80141605", 4000, null, false),
+
+    REQ_QTY_ITEM_AMOUNT_AT_8K_WITH_CFDA(1, "EA", "1234567", "item desc", "ITEM", "Punchout",
+            8000, 2, "80141605", 4000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITH_CFDA_NUMBER, false),
+
+    REQ_QTY_ITEM_AMOUNT_AT_8K_NO_CFDA(1, "EA", "1234567", "item desc", "ITEM", "Punchout",
+            8000, 2, "80141605", 4000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITHOUT_CFDA_NUMBER, false),
+
+    REQ_QTY_ITEM_AMOUNT_AT_15K_NO_CFDA(2, "EA", "4444444", "item desc 2", "ITEM", "Punchout",
+            15000, 1, "80141605", 15000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITHOUT_CFDA_NUMBER, false),
+
+    REQ_QTY_ITEM_AMOUNT_AT_15K_WITH_CFDA(2, "EA", "4444444", "item desc 2", "ITEM", "Punchout",
+            15000, 1, "80141605", 15000, PurapAccountingLineFixture.REQ_ITEM_ACCT_WITH_CFDA_NUMBER, false);
+
+    public static final int BASE_ITEM_ID = 1000;
 
 	public final Integer itemLineNumber;
 	public final String itemUnitOfMeasureCode;
@@ -80,6 +98,21 @@ public enum RequisitionItemFixture {
 
 	public final PurapAccountingLineFixture accountingLineFixture;
 	public final boolean itemAssignedToTradeInIndicator;
+
+    private RequisitionItemFixture(int itemLineNumber,
+            String itemUnitOfMeasureCode, String itemCatalogNumber,
+            String itemDescription, String itemTypeCode,
+            String externalOrganizationB2bProductTypeName,
+            double extendedPrice, double itemQuantity,
+            String purchasingCommodityCode, double itemUnitPrice,
+            PurapAccountingLineFixture accountingLineFixture,
+            boolean itemAssignedToTradeInIndicator) {
+        this(Integer.valueOf(itemLineNumber), itemUnitOfMeasureCode, itemCatalogNumber,
+                itemDescription, itemTypeCode, externalOrganizationB2bProductTypeName,
+                new KualiDecimal(extendedPrice), new KualiDecimal(itemQuantity),
+                purchasingCommodityCode, new BigDecimal(itemUnitPrice),
+                accountingLineFixture, itemAssignedToTradeInIndicator);
+    }
 
 	private RequisitionItemFixture(Integer itemLineNumber,
 			String itemUnitOfMeasureCode, String itemCatalogNumber,
@@ -137,5 +170,33 @@ public enum RequisitionItemFixture {
 		return item;
 
 	}
+
+    public RequisitionItem createRequisitionItemForMicroTest() {
+        RequisitionItem item = new RequisitionItem();
+        item.setItemIdentifier(getOrdinalBasedItemIdentifier());
+        item.setItemLineNumber(itemLineNumber);
+        item.setItemUnitOfMeasureCode(itemUnitOfMeasureCode);
+        item.setItemCatalogNumber(itemCatalogNumber);
+        item.setItemDescription(itemDescription);
+        item.setItemTypeCode(itemTypeCode);
+        item.setExternalOrganizationB2bProductTypeName(externalOrganizationB2bProductTypeName);
+        item.setExtendedPrice(extendedPrice);
+        item.setItemQuantity(itemQuantity);
+        item.setPurchasingCommodityCode(purchasingCommodityCode);
+        item.setItemUnitPrice(itemUnitPrice);
+        item.setItemAssignedToTradeInIndicator(itemAssignedToTradeInIndicator);
+
+        if (accountingLineFixture != null) {
+            PurApAccountingLine accountingLine = accountingLineFixture.createRequisitionAccountForMicroTest(
+                    item.getItemIdentifier());
+            item.getSourceAccountingLines().add(accountingLine);
+        }
+
+        return item;
+    }
+
+    public Integer getOrdinalBasedItemIdentifier() {
+        return Integer.valueOf(BASE_ITEM_ID + ordinal());
+    }
 
 }

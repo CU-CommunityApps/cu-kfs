@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapRuleConstants;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
@@ -16,9 +17,9 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 
 public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuRequisitionServiceImpl.class);
@@ -31,11 +32,11 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
      * @return String containing the reason why the requisition was not eligible to become an APO if it was not eligible, or an
      *         empty String if the requisition is eligible to become an APO.
      */
+    @Override
     protected String checkAutomaticPurchaseOrderRules(RequisitionDocument requisition) {
         String requisitionSource = requisition.getRequisitionSourceCode();
         KualiDecimal reqTotal = requisition.getTotalDollarAmount();
-        KualiDecimal apoLimit = purapService.getApoLimit(requisition.getVendorContractGeneratedIdentifier(),
-                requisition.getChartOfAccountsCode(), requisition.getOrganizationCode());
+        KualiDecimal apoLimit = ((CuPurapService) purapService).getApoLimit(requisition);
         requisition.setOrganizationAutomaticPurchaseOrderLimit(apoLimit);
 
         if (LOG.isDebugEnabled()) {
