@@ -26,10 +26,12 @@ import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
@@ -188,6 +190,15 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
             notes = noteService.getByRemoteObjectId(po.getNoteTarget().getObjectId());
         }
         return notes;
+    }
+
+    @Override
+    public KualiDecimal getInternalPurchasingDollarLimit(PurchaseOrderDocument document) {
+        if (document.getVendorContract() != null && document.getContractManager() == null) {
+            return ((CuPurapService) purapService).getApoLimit(document);
+        } else {
+            return super.getInternalPurchasingDollarLimit(document);
+        }
     }
 
     @Override

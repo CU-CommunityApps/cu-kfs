@@ -9,6 +9,8 @@ import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
+import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
@@ -71,6 +73,17 @@ public class MockDocumentUtils {
             InternalBillingDocument internalBillingDocument = (InternalBillingDocument) document;
             internalBillingDocument.setItems(new ArrayList<>());
             internalBillingDocument.setNextItemLineNumber(Integer.valueOf(1));
+        }
+        
+        if (document instanceof PurchasingAccountsPayableDocument) {
+            PurchasingAccountsPayableDocument purapDocument = (PurchasingAccountsPayableDocument) document;
+            purapDocument.setItems(new ArrayList<>());
+        }
+        
+        if (document instanceof PurchasingDocument) {
+            PurchasingDocument purchasingDocument = (PurchasingDocument) document;
+            purchasingDocument.setPurchasingCapitalAssetItems(new ArrayList<>());
+            purchasingDocument.setPurchasingCapitalAssetSystems(new ArrayList<>());
         }
     }
 

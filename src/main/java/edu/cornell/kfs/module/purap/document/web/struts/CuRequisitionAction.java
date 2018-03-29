@@ -12,6 +12,18 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
+import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.AuthorizationException;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.service.SessionDocumentService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
@@ -28,26 +40,15 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.RiceConstants;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
-import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
-import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.exception.AuthorizationException;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.service.SessionDocumentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.CuRequisitionDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 public class CuRequisitionAction extends RequisitionAction {
 
@@ -229,6 +230,21 @@ public class CuRequisitionAction extends RequisitionAction {
         }
 
         return forward;
+    }
+
+    @Override
+    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ActionForward forward = super.refresh(mapping, form, request, response);
+        
+        RequisitionForm requisitionForm = (RequisitionForm) form;
+        RequisitionDocument document = requisitionForm.getRequisitionDocument();
+        document.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(document));
+        
+        return forward;
+    }
+
+    protected CuPurapService getPurapService() {
+        return SpringContext.getBean(CuPurapService.class);
     }
 
 }

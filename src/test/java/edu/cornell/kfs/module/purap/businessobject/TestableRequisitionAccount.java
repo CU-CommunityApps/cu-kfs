@@ -63,4 +63,13 @@ public class TestableRequisitionAccount extends PurApAccountingLineBase {
         return accountLinePercent;
     }
 
+    /*
+     * TODO: Temporary hack to avoid Spring call in setAccountNumber() method, without interfering
+     * with existing tests that work around this issue. This should be removed once we standardize
+     * a better way of avoiding this Spring call during micro-tests.
+     */
+    public static void setAccountNumberForMicroTest(TestableRequisitionAccount accountingLine, String accountNumber) {
+        accountingLine.accountNumber = accountNumber;
+    }
+
 }
