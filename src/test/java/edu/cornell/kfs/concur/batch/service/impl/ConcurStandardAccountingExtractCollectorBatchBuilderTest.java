@@ -487,7 +487,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected boolean fixturePassesMinimalTestValidation(ConcurSAEDetailLineFixture fixture) {
         return StringUtils.isNotBlank(fixture.reportId) && StringUtils.isNotBlank(fixture.journalAccountCode)
                 && (fixtureRepresentsCashLine(fixture) || fixtureRepresentsCorporateCardLine(fixture)
-                        || fixtureRepresentsUnusedAtmCashAdvanceLine(fixture));
+                        || fixtureRepresentsUnusedAtmCashAdvanceLine(fixture) || fixtureRepresentsCorporatePaidOrOtherLine(fixture));
     }
 
     protected boolean fixtureRepresentsCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
@@ -499,6 +499,10 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
                 && StringUtils.equals(ConcurConstants.PAYMENT_CODE_PSEUDO, fixture.paymentCode)
                 && StringUtils.equalsIgnoreCase(
                         ConcurConstants.CASH_ADVANCE_PAYMENT_CODE_NAME_UNIVERSITY_BILLED_OR_PAID, fixture.cashAdvancePaymentCodeName);
+    }
+
+    protected boolean fixtureRepresentsCorporatePaidOrOtherLine(ConcurSAEDetailLineFixture fixture) {
+        return StringUtils.equals(fixture.paymentCode, ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER);
     }
 
     protected boolean fixtureRepresentsOrphanedCashAdvanceLine(ConcurSAEDetailLineFixture fixture) {
