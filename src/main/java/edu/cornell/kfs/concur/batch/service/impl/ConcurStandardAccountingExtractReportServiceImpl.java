@@ -46,7 +46,6 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected String transactionsBypassedLabel;
     protected String pdpRecordsProcessedLabel;
     protected String reportValidationErrorsSubTitle;
-    protected String reportValidationErrorsSubTitleCOPDNote;
     protected String reportValidationErrorsSubTitleXXXXNote;
     protected String reportMissingObjectCodesSubTitle;
     
@@ -175,8 +174,8 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
                 writeErrorResultsForErrorItem(errorItem);
             };
             
-            writeErrorSubReport(reportData.getValidationErrorFileLines(), errorItemWriter, getReportValidationErrorsSubTitle(), 
-                    getReportValidationErrorsSubTitleCOPDNote(), getReportValidationErrorsSubTitleXXXXNote());
+            writeErrorSubReport(reportData.getValidationErrorFileLines(), errorItemWriter, getReportValidationErrorsSubTitle(),
+                    getReportValidationErrorsSubTitleXXXXNote());
         }
         getReportWriterService().pageBreak();
     }
@@ -481,18 +480,6 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     public void setReportValidationErrorsSubTitle(String reportValidationErrorsSubTitle) {
         this.reportValidationErrorsSubTitle = reportValidationErrorsSubTitle;
     }
-
-    public String getReportValidationErrorsSubTitleCOPDNote() {
-        if (StringUtils.isEmpty(reportValidationErrorsSubTitleCOPDNote)) {
-            setReportValidationErrorsSubTitleCOPDNote(ConcurConstants.StandardAccountingExtractReport.SAE_VALIDATION_SUB_REPORT_BYPASSED_COPD_NOTE);
-        }
-        return reportValidationErrorsSubTitleCOPDNote;
-    }
-
-    public void setReportValidationErrorsSubTitleCOPDNote(String reportValidationErrorsSubTitleCOPDNote) {
-        this.reportValidationErrorsSubTitleCOPDNote = reportValidationErrorsSubTitleCOPDNote;
-    }
-
     public String getReportValidationErrorsSubTitleXXXXNote() {
         if (StringUtils.isEmpty(reportValidationErrorsSubTitleXXXXNote)) {
             setReportValidationErrorsSubTitleXXXXNote(ConcurConstants.StandardAccountingExtractReport.SAE_VALIDATION_SUB_REPORT_BYPASSED_XXXX_NOTE);

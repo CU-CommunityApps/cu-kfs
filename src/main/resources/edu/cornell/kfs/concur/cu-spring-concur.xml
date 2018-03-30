@@ -531,7 +531,6 @@
         <property name="transactionsBypassedLabel" value="Bypassed Expense Type XXXX Transactions :"/>
         <property name="pdpRecordsProcessedLabel" value="PDP Records Processed :"/>
         <property name="reportValidationErrorsSubTitle" value="Concur Standard Accounting Extract Records With Validation Errors"/>
-        <property name="reportValidationErrorsSubTitleCOPDNote" value="COPD Represents Pre-Paid Other Method Payment Type. This is information only and does not represent errors."/>
         <property name="reportValidationErrorsSubTitleXXXXNote" value="XXXX Represent Cash Advance. This is information only and does not represent errors."/>
         <property name="reportMissingObjectCodesSubTitle" value="Concur Standard Accounting Extract Records With Missing Object Codes"/>
     </bean>
