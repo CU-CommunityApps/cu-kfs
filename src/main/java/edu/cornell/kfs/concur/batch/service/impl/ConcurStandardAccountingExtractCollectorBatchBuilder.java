@@ -265,8 +265,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                 reportCorporateCardPayment(saeLine);
                 return true;
             case ConcurConstants.PAYMENT_CODE_PRE_PAID_OR_OTHER :
-                reportUnprocessedLine(saeLine, "The line has the Pre-Paid/Other (COPD) payment code");
-                return false;
+                return true;
             case ConcurConstants.PAYMENT_CODE_PSEUDO :
                 if (concurStandardAccountingExtractCashAdvanceService.isAtmCashAdvanceLineWithUnusedAmount(saeLine)) {
                     return true;
