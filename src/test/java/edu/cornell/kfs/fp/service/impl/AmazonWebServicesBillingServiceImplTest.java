@@ -60,6 +60,9 @@ public class AmazonWebServicesBillingServiceImplTest {
         when(configService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT))
             .thenReturn("AWS account {0}");
         
+        when(configService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ACCOUNTING_LINE_DESCRIPTION))
+        .thenReturn("AWS CHARGES {0} {1}");
+        
         return configService;
     }
     
