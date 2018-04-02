@@ -12,8 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.service.impl.fixture.AmazonWebServiceBiillingServiceDateFixture;
 
 public class AmazonWebServicesBillingServiceImplTest {
@@ -29,6 +31,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     public void setUp() throws Exception {
         amazonService = new AmazonWebServicesBillingServiceImpl();
         amazonService.setParameterService(getMockedParameterService());
+        amazonService.setConfigurationService(getMockedConfigurationService());
     }
 
     @After
@@ -46,6 +49,18 @@ public class AmazonWebServicesBillingServiceImplTest {
 
 
         return parameterService;
+    }
+    
+    private ConfigurationService getMockedConfigurationService() {
+        ConfigurationService configService = mock(ConfigurationService.class);
+        
+        when(configService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT))
+            .thenReturn("{0} invoice for {1}");
+        
+        when(configService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT))
+            .thenReturn("AWS account {0}");
+        
+        return configService;
     }
     
     @Test

@@ -378,6 +378,7 @@
         <property name="awsAccountingXmlDocumentAccountingLineService" ref="awsAccountingXmlDocumentAccountingLineService"/>
         <property name="cuMarshalService" ref="cuMarshalService"/>
         <property name="fileStorageService" ref="fileStorageService"/>
+        <property name="configurationService" ref="configurationService"/>
     </bean>
     
     <bean id="cloudcheckrService" parent="cloudcheckrService-parent"/>

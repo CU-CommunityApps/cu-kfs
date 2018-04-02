@@ -25,9 +25,11 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.FileStorageService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
 import edu.cornell.kfs.fp.batch.service.CloudcheckrService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -41,6 +43,7 @@ import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CloudCheckrWrapper;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import edu.cornell.kfs.fp.service.AmazonWebServicesBillingService;
 import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBillingService, Serializable {
@@ -58,15 +61,14 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected AwsAccountingXmlDocumentAccountingLineService awsAccountingXmlDocumentAccountingLineService;
     protected CUMarshalService cuMarshalService;
     protected FileStorageService fileStorageService;
+    protected ConfigurationService configurationService;
 
 
     @Override
     public void generateDistributionOfIncomeDocumentsFromAWSService() {
-        /*
-         * @todo property
-         */
-        String openingLogStatement = "generateDistributionOfIncomeDocumentsFromAWSService(), Processing Year:{0} Month: {1}, Start Date: {2}, End Date: {3}";
-        LOG.info(MessageFormat.format(openingLogStatement, findProcessYear(), findMonthName(), findStartDate(), findEndDate()));
+        String startMessageBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.MESSAGE_AWS_BILLING_JOB_START_MESSAGE);
+        LOG.info("generateDistributionOfIncomeDocumentsFromAWSService, " + 
+                MessageFormat.format(startMessageBase, findProcessYear(), findMonthName(), findStartDate(), findEndDate()));
         CloudCheckrWrapper cloudCheckrWrapper = null;
         DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper = null;
         AmazonBillResultsDTO resultsDTO = new AmazonBillResultsDTO();
@@ -100,11 +102,8 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     protected boolean generateXML(AccountingXmlDocumentListWrapper documentWrapper) {
         boolean success = true;
-        /*
-         * @todo property
-         */
-        String fileNameBase = "{0}/AmazonBill-{1}-{2}.xml";
-        String fileName = MessageFormat.format(fileNameBase, directoryPath, findProcessYear(), findMonthName());
+        String fileNameBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_OUTPUT_FILE_NAME_FORMAT);
+        String fileName = MessageFormat.format(fileNameBase, directoryPath, findProcessYear(), findMonthName(), findProcessYear());
         try {
             cuMarshalService.marshalObjectToXML(documentWrapper, fileName);
             fileStorageService.createDoneFile(fileName);
@@ -150,7 +149,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 document.setIndex(documentIndex);
                 String awsAccount = parseAWSAccountFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
                 document.setExplanation(buildDocumentExplanation(awsAccount));
-                document.setDescription(buildDocumentDescription(parseDeaprtmentNameFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue())));
+                
+                String departmentName = parseDeaprtmentNameFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
+                document.setDescription(buildDocumentDescription(departmentName));
                 
                 KualiDecimal targetLineTotal = addTargetLinesToDocument(defaultAccountWrapper, resultsDTO, awsAccountGroup, document, awsAccount);
                 
@@ -158,7 +159,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 
                 addNotesToDocument(document);
                 
-                addBackupDocumentLinksToDocument(document, awsAccount);
+                addBackupDocumentLinksToDocument(document, awsAccount, departmentName);
                 
                 documentWrapper.getDocuments().add(document);
                 resultsDTO.xmlCreationCount++;
@@ -189,14 +190,18 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         return targetLineTotal;
     }
 
-    protected void addBackupDocumentLinksToDocument(AccountingXmlDocumentEntry document, String awsAccount) {
+    protected void addBackupDocumentLinksToDocument(AccountingXmlDocumentEntry document, String awsAccount, String departmentName) {
         AccountingXmlDocumentBackupLink link = new AccountingXmlDocumentBackupLink();
         link.setCredentialGroupCode(CuFPConstants.AmazonWebServiceBillingConstants.AWS_BILL_CREDENTIAL_GROUP_CODE);
-        /**
-         * @todo do some there better here, more similar to what nicole does by hand
-         */
-        link.setDescription("Cloudcheckr invoice file");
-        link.setFileName("invoice.pdf");
+
+        String fileNameFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_INVOICE_FILE_NAME_FORMAT);
+        String noSpacesDepartmentName = StringUtils.replace(departmentName, " ", "-");
+        link.setFileName(MessageFormat.format(fileNameFormat, noSpacesDepartmentName, findMonthName(), findProcessYear()));
+        
+        String noteTextFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_INVOICE_NOTE_TEXT_FORMAT);
+        
+        link.setDescription(MessageFormat.format(noteTextFormat, departmentName, findMonthName(), findProcessYear()));
+        
         link.setLinkUrl(cloudcheckrService.buildAttachmentUrl(findProcessYear(), findProcessMonthNumber(), awsAccount));
         document.getBackupLinks().add(link);
     }
@@ -280,22 +285,20 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     protected String buildDocumentDescription(String departmentName) {
-        /**
-         * @todo move this properties
-         */
-        String documentDescriptionBase = "{1} invoice for {0}";
-        String documentDescription = MessageFormat.format(documentDescriptionBase, departmentName, findMonthName());
+        String documentDescriptionBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT);
+        String documentDescription = MessageFormat.format(documentDescriptionBase, findMonthName(), departmentName);
         return StringUtils.substring(documentDescription, 0, 40);
     }
     
     protected String buildDocumentExplanation(String AWSAccount) {
-        /*
-         * @todo property
-         */
-        return "AWS account " + AWSAccount;
+        String explanationFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT);
+        return MessageFormat.format(explanationFormat, AWSAccount);
     }
 
     protected String buildAccountingLineDescription() {
+        /**
+         * @todo property
+         */
         return CuFPConstants.AmazonWebServiceBillingConstants.TRANSACTION_DESCRIPTION_STARTER + findMonthName() + " " + findProcessYear();
     }
 
@@ -399,6 +402,10 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     public void setFileStorageService(FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
     private class AmazonBillResultsDTO {
