@@ -1,8 +1,9 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +38,8 @@ public class PurchaseOrderTransmissionMethodDataRulesServiceImplTest {
 		poTransMethodSataRulesService = new PurchaseOrderTransmissionMethodDataRulesServiceImpl();
 
 		PostalCodeValidationService postalCodeValidationSerivce = new testablePostalCodeValidationServiceImpl();
-		StateService mockStateService = EasyMock.createMock(StateService.class);
-		EasyMock.expect(mockStateService.getState(COUNTRY, STATE)).andReturn(makeState());
-		EasyMock.replay(mockStateService);
+		StateService mockStateService = mock(StateService.class);
+		when(mockStateService.getState(COUNTRY, STATE)).thenReturn(makeState());
 		((PostalCodeValidationServiceImpl)postalCodeValidationSerivce).setStateService(mockStateService);
 		((PurchaseOrderTransmissionMethodDataRulesServiceImpl)this.poTransMethodSataRulesService).setPostalCodeValidationService(postalCodeValidationSerivce);
 		
