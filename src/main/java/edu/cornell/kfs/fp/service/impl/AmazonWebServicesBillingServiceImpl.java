@@ -49,9 +49,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AmazonWebServicesBillingServiceImpl.class);
     
     private String billingPeriodParameterValue;
-    private String transactionObjectCode;
-    private String transactionFromAccountNumber;
-    private String helpNoteText;
     private String directoryPath;
     
     protected ParameterService parameterService;
@@ -65,6 +62,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     @Override
     public void generateDistributionOfIncomeDocumentsFromAWSService() {
+        /*
+         * @todo property
+         */
         String openingLogStatement = "generateDistributionOfIncomeDocumentsFromAWSService(), Processing Year:{0} Month: {1}, Start Date: {2}, End Date: {3}";
         LOG.info(MessageFormat.format(openingLogStatement, findProcessYear(), findMonthName(), findStartDate(), findEndDate()));
         CloudCheckrWrapper cloudCheckrWrapper = null;
@@ -91,11 +91,18 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         }
         
         logResults(resultsDTO);
-
+        resetProperties();
+    }
+    
+    protected void resetProperties() {
+        billingPeriodParameterValue = null;
     }
 
     protected boolean generateXML(AccountingXmlDocumentListWrapper documentWrapper) {
         boolean success = true;
+        /*
+         * @todo property
+         */
         String fileNameBase = "{0}/AmazonBill-{1}-{2}.xml";
         String fileName = MessageFormat.format(fileNameBase, directoryPath, findProcessYear(), findMonthName());
         try {
@@ -111,9 +118,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     
     private void logResults(AmazonBillResultsDTO resultsDTO) {
         LOG.info("logResults, number of DI XML Created: " + resultsDTO.xmlCreationCount);
+        LOG.info("logResults, amazon accounts that had XML DI created: " + resultsDTO.awsAccountGeneratedDIxml);
         LOG.info("logResults, amazon accounts that already had a DI for this month: " + resultsDTO.awsAccountWithExstingDI);
         LOG.info("logResults, amazon accounts that DO NOT have a default kfs account: " + resultsDTO.awsAccountWithoutDefaultAccount);
-        LOG.info("logResults, amazon accounts that do have a default kfs account: " + resultsDTO.awsAccountWithDefaultAccount);
     }
     
     protected AccountingXmlDocumentListWrapper buildAccountingXmlDocumentListWrapper(CloudCheckrWrapper cloudCheckrWrapper, 
@@ -121,10 +128,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         
         AccountingXmlDocumentListWrapper documentWrapper = new AccountingXmlDocumentListWrapper();
         documentWrapper.setCreateDate(Calendar.getInstance().getTime());
-        /**
-         * @todo create a report email address parameter and use that
-         */
-        documentWrapper.setReportEmail("nms32@cornell.edu");
+        documentWrapper.setReportEmail(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_ADMIN_EMAIL_PROPERTY_NAME));
         documentWrapper.setOverview("AWS Billing documents for " + findMonthName() + " " + findProcessYear());
         
         addDocumentsToDocumentWrapper(cloudCheckrWrapper, defaultAccountWrapper, resultsDTO, documentWrapper);
@@ -142,7 +146,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             KualiDecimal cost = null;
             if (shouldBuildDistributionOfIncomeDocument(amazonAccountDetail, cost)) {
                 AccountingXmlDocumentEntry document = new AccountingXmlDocumentEntry();
-                document.setDocumentTypeCode("DI");
+                document.setDocumentTypeCode(CuFPConstants.DI);
                 document.setIndex(documentIndex);
                 String awsAccount = parseAWSAccountFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
                 document.setExplanation(buildDocumentExplanation(awsAccount));
@@ -158,6 +162,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 
                 documentWrapper.getDocuments().add(document);
                 resultsDTO.xmlCreationCount++;
+                resultsDTO.awsAccountGeneratedDIxml.add(awsAccount);
                 documentIndex = Long.sum(documentIndex, 1);
             } else {
                 resultsDTO.awsAccountWithExstingDI.add(awsAccountGroup.getGroupValue());
@@ -187,6 +192,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected void addBackupDocumentLinksToDocument(AccountingXmlDocumentEntry document, String awsAccount) {
         AccountingXmlDocumentBackupLink link = new AccountingXmlDocumentBackupLink();
         link.setCredentialGroupCode(CuFPConstants.AmazonWebServiceBillingConstants.AWS_BILL_CREDENTIAL_GROUP_CODE);
+        /**
+         * @todo do some there better here, more similar to what nicole does by hand
+         */
         link.setDescription("Cloudcheckr invoice file");
         link.setFileName("invoice.pdf");
         link.setLinkUrl(cloudcheckrService.buildAttachmentUrl(findProcessYear(), findProcessMonthNumber(), awsAccount));
@@ -195,19 +203,17 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     protected void addNotesToDocument(AccountingXmlDocumentEntry document) {
         AccountingXmlDocumentNote note = new AccountingXmlDocumentNote();
-        note.setDescription(getHelpNoteText());
+        note.setDescription(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_NOTE_HELP_TEXT_PROERTY_NAME));
         document.getNotes().add(note);
     }
 
     protected void addSourceLineToDocument(AccountingXmlDocumentEntry document, KualiDecimal targetLineTotal) {
         AccountingXmlDocumentAccountingLine sourceLine = new AccountingXmlDocumentAccountingLine();
-        /**
-         * @todo get the chart from a parameter
-         */
-        sourceLine.setChartCode("IT");
-        sourceLine.setAccountNumber(getTransactionFromAccountNumber());
-        sourceLine.setObjectCode(getTransactionObjectCode());
+        sourceLine.setChartCode(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PROPERTY_NAME));
+        sourceLine.setAccountNumber(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_FROM_ACCOUNT_PROPERTY_NAME));
+        sourceLine.setObjectCode(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME));
         sourceLine.setAmount(targetLineTotal);
+        sourceLine.setLineDescription(buildAccountingLineDescription());
         document.getSourceAccountingLines().add(sourceLine);
     }
     
@@ -215,7 +221,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             AmazonBillResultsDTO resultsDTO) {
         for (DefaultKfsAccountForAws defaultAccount : defaultAccountWrapper.getDefaultKfsAccountsForAws()) {
             if (StringUtils.equalsIgnoreCase(awsAccount, defaultAccount.getAwsAccount())) {
-                resultsDTO.awsAccountWithDefaultAccount.add(awsAccount);
                 return defaultAccount;
             }
         }
@@ -224,23 +229,23 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
 
     protected DefaultKfsAccountForAws createDefaultKfsAccountForAwsAccount(String awsAccount) {
-        LOG.info("createDefaultKfsAccountForAwsAccount, no match found for AWS Account " + awsAccount + ", will return a default account to allow further processing.");
+        LOG.error("createDefaultKfsAccountForAwsAccount, no match found for AWS Account " + awsAccount + ", will return a default account to allow further processing.");
         DefaultKfsAccountForAws defaultKfsAccountForAws = new DefaultKfsAccountForAws();
         defaultKfsAccountForAws.setAwsAccount(awsAccount);
-        defaultKfsAccountForAws.setKfsDefaultAccount("nodftat");
+        defaultKfsAccountForAws.setKfsDefaultAccount("nodfact");
         defaultKfsAccountForAws.setUpdatedAt(Calendar.getInstance().getTime());
         return defaultKfsAccountForAws;
     }
     
     protected String parseAWSAccountFromCloudCheckrGroupValue(String cloudCheckrAWSAccount) {
-        int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, "(");
+        int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.LEFT_PARENTHESIS);
         String parsedAWSAccount = StringUtils.substring(cloudCheckrAWSAccount, 0, indexOfFirstOpenParen);
         return StringUtils.trim(parsedAWSAccount);
     }
     
     protected String parseDeaprtmentNameFromCloudCheckrGroupValue(String cloudCheckrAWSAccount) {
-        int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, "(");
-        int indexOfFirstCloseParen = StringUtils.indexOf(cloudCheckrAWSAccount, ")");
+        int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.LEFT_PARENTHESIS);
+        int indexOfFirstCloseParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.RIGHT_PARENTHESIS);
         String parsedDepartmentName = StringUtils.substring(cloudCheckrAWSAccount, indexOfFirstOpenParen + 1, indexOfFirstCloseParen);
         return StringUtils.trim(parsedDepartmentName);
     }
@@ -267,7 +272,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     private Collection<DocumentHeader> findDocumentHeadersForAmazonDetail(AmazonAccountDetail amazonAccountDetail) {
-        Map fieldValues = new HashMap();
+        Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put(KFSPropertyConstants.EXPLANATION, buildDocumentExplanation(amazonAccountDetail.getAwsAccount()));
         fieldValues.put(KFSPropertyConstants.DOCUMENT_DESCRIPTION, buildDocumentDescription(amazonAccountDetail.getBusinessPurpose()));
         Collection<DocumentHeader> documentHeaders = businessObjectService.findMatching(DocumentHeader.class, fieldValues);
@@ -284,6 +289,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     protected String buildDocumentExplanation(String AWSAccount) {
+        /*
+         * @todo property
+         */
         return "AWS account " + AWSAccount;
     }
 
@@ -336,11 +344,13 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     
     public String getBillingPeriodParameterValue() {
         if (StringUtils.isEmpty(billingPeriodParameterValue)) {
-            String processingDate = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME);
-            billingPeriodParameterValue = StringUtils.isNotBlank(processingDate) ? processingDate : CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER;
-            LOG.debug("getBillingPeriodParameterValue() The AWS_PROCESSING_DATE parameter value is " + processingDate + " and returning " + billingPeriodParameterValue);
+            String processingDate = getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME);
+            billingPeriodParameterValue = StringUtils.isNotBlank(processingDate) ? processingDate : 
+                CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("getBillingPeriodParameterValue() The AWS_PROCESSING_DATE parameter value is '" + processingDate + 
+                        "' and returning " + billingPeriodParameterValue);
+            }
         }
         return billingPeriodParameterValue;
     }
@@ -348,45 +358,14 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     public void setBillingPeriodParameterValue(String billingPeriodParameterValue) {
         this.billingPeriodParameterValue = billingPeriodParameterValue;
     }
-    
-    
-    public String getTransactionObjectCode() {
-        if (transactionObjectCode == null) {
-            transactionObjectCode = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME);
+
+    protected String getAWSParameterValue(String parameterName) {
+        String parmValue = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, parameterName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getAWSParameterValue, parametername: " + parameterName + " value: " + parmValue);
         }
-        return transactionObjectCode;
-    }
-
-    public void setTransactionObjectCode(String transactionObjectCode) {
-        this.transactionObjectCode = transactionObjectCode;
-    }
-
-    public String getTransactionFromAccountNumber() {
-        if (transactionFromAccountNumber == null) {
-            transactionFromAccountNumber = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_FROM_ACCOUNT_PROPERTY_NAME);
-        }
-        return transactionFromAccountNumber;
-    }
-
-    public void setTransactionFromAccountNumber(String transactionFromAccountNumber) {
-        this.transactionFromAccountNumber = transactionFromAccountNumber;
-    }
-
-    public String getHelpNoteText() {
-        if (helpNoteText == null) {
-            helpNoteText = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_NOTE_HELP_TEXT_PROERTY_NAME);
-        }
-        return helpNoteText;
-    }
-    
-    public void setHelpNoteText(String helpNoteText) {
-        this.helpNoteText = helpNoteText;
+        return parmValue;
     }
     
     public void setDirectoryPath(String directoryPath) {
@@ -425,13 +404,13 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     private class AmazonBillResultsDTO {
         public int xmlCreationCount;
         public List<String> awsAccountWithoutDefaultAccount;
-        public List<String> awsAccountWithDefaultAccount;
         public List<String> awsAccountWithExstingDI;
+        public List<String> awsAccountGeneratedDIxml;
         
         public AmazonBillResultsDTO() {
             awsAccountWithoutDefaultAccount = new ArrayList<String>();
-            awsAccountWithDefaultAccount = new ArrayList<String>();
             awsAccountWithExstingDI = new ArrayList<String>();
+            awsAccountGeneratedDIxml = new ArrayList<String>();
         }
         
     }

@@ -157,6 +157,7 @@ public class CuFPConstants {
         public static final String AWS_CHART_CODE_PROPERTY_NAME = "AWS_CHART_CODE";
         public static final String AWS_DEFAULT_DOCUMENT_DESCRIPTION_PROPERTY_NAME = "AWS_DEFAULT_DOCUMENT_DESCRIPTION";
         public static final String AWS_NOTE_HELP_TEXT_PROERTY_NAME = "AWS_NOTE_HELP_TEXT";
+        public static final String AWS_ADMIN_EMAIL_PROPERTY_NAME = "AWS_ADMIN_EMAIL";
         public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
         
         public static final int PROCESSING_DAY_OF_MONTH = 15;
@@ -181,5 +182,5 @@ public class CuFPConstants {
     }
     
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
-
+    public static final String DI = "DI";
 }
