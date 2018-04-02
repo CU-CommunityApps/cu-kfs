@@ -286,24 +286,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         }
         return success;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    protected void resetProperties() {
-        billingPeriodParameterValue = null;
-    }
-
-    
     
     private void logResults(AmazonBillResultsDTO resultsDTO) {
         LOG.info("logResults, number of DI XML Created: " + resultsDTO.xmlCreationCount);
@@ -312,20 +294,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         LOG.info("logResults, amazon accounts that DO NOT have a default kfs account: " + resultsDTO.awsAccountWithoutDefaultAccount);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-   
+    protected void resetProperties() {
+        billingPeriodParameterValue = null;
+    }
 
     protected String findStartDate() {
         DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
