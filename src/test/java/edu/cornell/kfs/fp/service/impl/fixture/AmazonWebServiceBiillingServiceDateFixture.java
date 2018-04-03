@@ -5,6 +5,7 @@ public enum AmazonWebServiceBiillingServiceDateFixture {
     JANUARY_2017("2017,1", "January", "1", "2017", "2017-01-01", "2017-01-31"),
     DECEMBER_2015("2015,12", "December", "12", "2015", "2015-12-01", "2015-12-31"),
     FEBRUARY_2016("2016,2", "February", "2", "2016", "2016-02-01", "2016-02-29"),
+    JUNE_2016("2016,6", "June", "6", "2016", "2016-06-01", "2016-06-30"),
     FEBRUARY_2017("2017,2", "February", "2", "2017", "2017-02-01", "2017-02-28");
     
     public final String processMonthInputParameter;

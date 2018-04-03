@@ -20,11 +20,6 @@ import edu.cornell.kfs.fp.service.impl.fixture.AmazonWebServiceBiillingServiceDa
 
 public class AmazonWebServicesBillingServiceImplTest {
 
-    public static final String APRIL_2016_PARAM_VALUE = "2106,4";
-    public static final String JUNE_2016_PARAM_VALUE = "2016,6";
-    public static final String DEC_2015_PARAM_VALUE = "2015,12";
-    private static double allowableVarianceAmount = 0;
-    
     private AmazonWebServicesBillingServiceImpl amazonService;
 
     @Before
@@ -68,7 +63,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testBuildDocumentExplanation() {
-        amazonService.setBillingPeriodParameterValue(JUNE_2016_PARAM_VALUE);
+        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBiillingServiceDateFixture.JUNE_2016.processMonthInputParameter);
         String AWSAccount = "12345";
         String results = amazonService.buildDocumentExplanation(AWSAccount);
         String expected = "AWS account " + AWSAccount;
@@ -93,7 +88,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testBuildAccountingLineDescription() {
-        amazonService.setBillingPeriodParameterValue(DEC_2015_PARAM_VALUE);
+        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBiillingServiceDateFixture.DECEMBER_2015.processMonthInputParameter);
         String results = amazonService.buildAccountingLineDescription();
         String expected = "AWS CHARGES December 2015";
         assertEquals(expected, results);
