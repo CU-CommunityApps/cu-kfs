@@ -26,6 +26,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -264,11 +265,12 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         return true;
     }
     
-    private Collection<DocumentHeader> findDocumentHeadersForAmazonDetail(String awsAccount, String departmentName) {
+    private Collection<FinancialSystemDocumentHeader> findDocumentHeadersForAmazonDetail(String awsAccount, String departmentName) {
         Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put(KFSPropertyConstants.EXPLANATION, buildDocumentExplanation(awsAccount));
         fieldValues.put(KFSPropertyConstants.DOCUMENT_DESCRIPTION, buildDocumentDescription(departmentName));
-        Collection<DocumentHeader> documentHeaders = businessObjectService.findMatching(DocumentHeader.class, fieldValues);
+        fieldValues.put("FDOC_TYP_NM", CuFPConstants.DI);
+        Collection<FinancialSystemDocumentHeader> documentHeaders = businessObjectService.findMatching(FinancialSystemDocumentHeader.class, fieldValues);
         return documentHeaders;
     }
     
