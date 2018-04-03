@@ -121,6 +121,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         Long documentIndex = new Long(1);
         
         for (GroupLevel awsAccountGroup : cloudCheckrWrapper.getCostsByGroup()) {
+            resultsDTO.numberOfAwsAccountInCloudCheckr++;
             AccountingXmlDocumentEntry document = new AccountingXmlDocumentEntry();
             document.setDocumentTypeCode(CuFPConstants.DI);
             document.setIndex(documentIndex);
@@ -269,7 +270,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put(KFSPropertyConstants.EXPLANATION, buildDocumentExplanation(awsAccount));
         fieldValues.put(KFSPropertyConstants.DOCUMENT_DESCRIPTION, buildDocumentDescription(departmentName));
-        fieldValues.put("FDOC_TYP_NM", CuFPConstants.DI);
+        fieldValues.put(KFSPropertyConstants.WORKFLOW_DOCUMENT_TYPE_NAME, CuFPConstants.DI);
         Collection<FinancialSystemDocumentHeader> documentHeaders = businessObjectService.findMatching(FinancialSystemDocumentHeader.class, fieldValues);
         return documentHeaders;
     }
@@ -277,7 +278,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected boolean generateXML(AccountingXmlDocumentListWrapper documentWrapper) {
         boolean success = true;
         String fileNameBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_OUTPUT_FILE_NAME_FORMAT);
-        String fileName = MessageFormat.format(fileNameBase, directoryPath, findProcessYear(), findMonthName());
+        String fileName = MessageFormat.format(fileNameBase, directoryPath, findProcessYear(), findMonthName(), Calendar.getInstance().getTime().getTime());
         try {
             cuMarshalService.marshalObjectToXML(documentWrapper, fileName);
             fileStorageService.createDoneFile(fileName);
@@ -290,10 +291,11 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     private void logResults(AmazonBillResultsDTO resultsDTO) {
+        LOG.info("logResults, number of AWS accounts in cloudcheckr: " + resultsDTO.numberOfAwsAccountInCloudCheckr);
         LOG.info("logResults, number of DI XML Created: " + resultsDTO.xmlCreationCount);
         LOG.info("logResults, amazon accounts that had XML DI created: " + resultsDTO.awsAccountGeneratedDIxml);
         LOG.info("logResults, amazon accounts that already had a DI for this month: " + resultsDTO.awsAccountWithExstingDI);
-        LOG.info("logResults, amazon accounts that DO NOT have a default kfs account: " + resultsDTO.awsAccountWithoutDefaultAccount);
+        LOG.info("logResults, amazon accounts that do NOT have a default kfs account: " + resultsDTO.awsAccountWithoutDefaultAccount);
     }
     
     protected void resetProperties() {
@@ -407,6 +409,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
 
     private class AmazonBillResultsDTO {
+        public int numberOfAwsAccountInCloudCheckr;
         public int xmlCreationCount;
         public List<String> awsAccountWithoutDefaultAccount;
         public List<String> awsAccountWithExstingDI;
