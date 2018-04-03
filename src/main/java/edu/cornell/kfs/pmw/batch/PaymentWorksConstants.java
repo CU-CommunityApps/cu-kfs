@@ -11,6 +11,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants;
 public class PaymentWorksConstants {
     
     public static final String PAYMENTWORKS_NAMESPACE_CODE = "KFS-PMW";
+    public static final String PAYMENTWORKS_WEB_SERVICE_GROUP_CODE = "PMW";
 
     public static final String OUTPUT_ATTRIBUTE_BEGIN_DELIMITER = ":<";
     public static final String OUTPUT_ATTRIBUTE_END_DELIMITER = "> ";
@@ -102,6 +103,11 @@ public class PaymentWorksConstants {
     public static final class PaymentWorksBatchReportNames {
         public static final String NEW_VENDOR_REQUESTS_REPORT_NAME = "New Vendor Requests Create KFS Vendor";
         public static final String NEW_VENDOR_REQUESTS_PAYEE_ACH_REPORT_NAME = "New Vendor Requests Create KFS Payee ACH Account";
+    }
+    
+    public static final class PaymentWorksCredentialKeys {
+        public static final String PAYMENTWORKS_USER_ID = "paymentworks.user.id";
+        public static final String PAYMENTWORKS_AUTHORIZATION_TOKEN = "paymentworks.authorization.token";
     }
     
     public enum PaymentWorksNewVendorRequestStatusType {
