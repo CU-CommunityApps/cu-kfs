@@ -19,6 +19,8 @@ public class PaymentWorksConstants {
     public final static String REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = "^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$";
     public final static Pattern PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = Pattern.compile(REGEX_FOR_MM_SLASH_DD_SLASH_YYYY);
     
+    public static final String NULL_STRING = "NULL";
+    
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";
         public static final String NO = "NO";

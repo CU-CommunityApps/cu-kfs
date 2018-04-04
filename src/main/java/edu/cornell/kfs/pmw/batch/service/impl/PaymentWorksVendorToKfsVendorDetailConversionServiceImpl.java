@@ -83,7 +83,16 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper = buildRemainingVendorNotes(pmwVendor, kfsVendorDataWrapper);
             kfsVendorDataWrapper.getVendorDetail().setBoNotes(kfsVendorDataWrapper.getVendorNotes());
         }
+        validatePaymentWorksVendorCustomFields(pmwVendor, kfsVendorDataWrapper);
         return kfsVendorDataWrapper;
+    }
+    
+    protected void validatePaymentWorksVendorCustomFields(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
+        LOG.info("validatePaymentWorksVendorCustomFields, entering, about to validate vendor type: " + pmwVendor.getVendorType());
+        if (StringUtils.isBlank(pmwVendor.getVendorType()) || 
+                StringUtils.equalsIgnoreCase(pmwVendor.getVendorType(), PaymentWorksConstants.NULL_STRING)) {
+            kfsVendorDataWrapper.getErrorMessages().add(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY));
+        }
     }
     
     private boolean paymentWorksVendorIsPurchaseOrderVendor(PaymentWorksVendor pmwVendor) {
@@ -640,7 +649,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     private KfsVendorDataWrapper createVendorTypeBusinessPurposeNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
-        StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_BUSINESS_PURPOSE_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getVendorType());
+        StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_PAYMENT_REASON_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getVendorType());
         kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.BUSINESS_PURPOSE.getNoteDescriptionString());
         return kfsVendorDataWrapper;
     }
