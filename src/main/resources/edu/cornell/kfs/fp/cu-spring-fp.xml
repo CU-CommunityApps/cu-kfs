@@ -379,9 +379,10 @@
         <property name="cuMarshalService" ref="cuMarshalService"/>
         <property name="fileStorageService" ref="fileStorageService"/>
         <property name="configurationService" ref="configurationService"/>
+        <property name="dataDictionaryService" ref="dataDictionaryService"/>
     </bean>
     
-    <bean id="cloudCheckrService" parent="cloudcheckrService-parent"/>
+    <bean id="cloudCheckrService" parent="cloudCheckrService-parent"/>
     <bean id="cloudCheckrService-parent" class="edu.cornell.kfs.fp.batch.service.impl.CloudCheckrServiceImpl" abstract="true">
     	<property name="webServiceCredentialService" ref="webServiceCredentialService"/>
     </bean>

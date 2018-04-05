@@ -378,7 +378,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         this.businessObjectService = businessObjectService;
     }
 
-    public void setClouCheckrService(CloudCheckrService cloudCheckrService) {
+    public void setCloudCheckrService(CloudCheckrService cloudCheckrService) {
         this.cloudCheckrService = cloudCheckrService;
     }
 
