@@ -20,7 +20,7 @@ package org.kuali.kfs.module.purap.document;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;

@@ -22,7 +22,7 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;

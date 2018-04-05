@@ -19,8 +19,8 @@
 package org.kuali.kfs.sys.document.web.renderers;
 
 import edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.taglib.html.HiddenTag;
 import org.kuali.kfs.kns.web.taglib.html.KNSFileTag;
 import org.kuali.kfs.kns.web.taglib.html.KNSSubmitTag;

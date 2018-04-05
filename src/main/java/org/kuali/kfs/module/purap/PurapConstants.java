@@ -18,7 +18,7 @@
  */
 package org.kuali.kfs.module.purap;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.businessobject.AvailabilityMatrix;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;

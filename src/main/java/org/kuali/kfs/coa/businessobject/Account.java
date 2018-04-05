@@ -19,8 +19,8 @@
 package org.kuali.kfs.coa.businessobject;
 
 import edu.cornell.kfs.coa.service.CuAccountService;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.kuali.kfs.coa.service.SubFundGroupService;
 import org.kuali.kfs.gl.businessobject.SufficientFundRebuild;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation;
