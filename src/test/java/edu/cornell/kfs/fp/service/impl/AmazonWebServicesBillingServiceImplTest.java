@@ -16,7 +16,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
-import edu.cornell.kfs.fp.service.impl.fixture.AmazonWebServiceBiillingServiceDateFixture;
+import edu.cornell.kfs.fp.service.impl.fixture.AmazonWebServiceBillingServiceDateFixture;
 
 public class AmazonWebServicesBillingServiceImplTest {
 
@@ -40,7 +40,7 @@ public class AmazonWebServicesBillingServiceImplTest {
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME))
-                .thenReturn(AmazonWebServiceBiillingServiceDateFixture.JULY_2016.processMonthInputParameter);
+                .thenReturn(AmazonWebServiceBillingServiceDateFixture.JULY_2016.processMonthInputParameter);
 
 
         return parameterService;
@@ -63,7 +63,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testBuildDocumentExplanation() {
-        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBiillingServiceDateFixture.JUNE_2016.processMonthInputParameter);
+        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBillingServiceDateFixture.JUNE_2016.processMonthInputParameter);
         String AWSAccount = "12345";
         String results = amazonService.buildDocumentExplanation(AWSAccount);
         String expected = "AWS account " + AWSAccount;
@@ -88,7 +88,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testBuildAccountingLineDescription() {
-        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBiillingServiceDateFixture.DECEMBER_2015.processMonthInputParameter);
+        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBillingServiceDateFixture.DECEMBER_2015.processMonthInputParameter);
         String results = amazonService.buildAccountingLineDescription();
         String expected = "AWS CHARGES December 2015";
         assertEquals(expected, results);
@@ -96,35 +96,35 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testFindMonthInfoJuly() {
-        validateDateProcessing(AmazonWebServiceBiillingServiceDateFixture.JULY_2016);
+        validateDateProcessing(AmazonWebServiceBillingServiceDateFixture.JULY_2016);
         
     }
     
     @Test
     public void testFindMonthInfoJanuary() {
-        validateDateProcessing(AmazonWebServiceBiillingServiceDateFixture.JANUARY_2017);
+        validateDateProcessing(AmazonWebServiceBillingServiceDateFixture.JANUARY_2017);
         
     }
     
     @Test
     public void testFindMonthInfoDecember() {
-        validateDateProcessing(AmazonWebServiceBiillingServiceDateFixture.DECEMBER_2015);
+        validateDateProcessing(AmazonWebServiceBillingServiceDateFixture.DECEMBER_2015);
         
     }
     
     @Test
     public void testFindMonthInfoLeapYear() {
-        validateDateProcessing(AmazonWebServiceBiillingServiceDateFixture.FEBRUARY_2016);
+        validateDateProcessing(AmazonWebServiceBillingServiceDateFixture.FEBRUARY_2016);
         
     }
     
     @Test
     public void testFindMonthInfoNonLeapFebruary() {
-        validateDateProcessing(AmazonWebServiceBiillingServiceDateFixture.FEBRUARY_2017);
+        validateDateProcessing(AmazonWebServiceBillingServiceDateFixture.FEBRUARY_2017);
         
     }
     
-    protected void validateDateProcessing(AmazonWebServiceBiillingServiceDateFixture dateFixture) {
+    protected void validateDateProcessing(AmazonWebServiceBillingServiceDateFixture dateFixture) {
         amazonService.setBillingPeriodParameterValue(dateFixture.processMonthInputParameter);
         assertEquals(dateFixture.monthName, amazonService.findMonthName());
         assertEquals(dateFixture.monthNumber, amazonService.findProcessMonthNumber());
@@ -160,7 +160,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     public void testParseDeaprtmentNameFromCloudCheckrGroupValue() {
         String cloudCheckrAWSAccount = "98643985626 (Cornell Departmental Account)";
         String expectedCornellDepartment = "Cornell Departmental Account";
-        String actualCornellDepartment = amazonService.parseDeaprtmentNameFromCloudCheckrGroupValue(cloudCheckrAWSAccount);
+        String actualCornellDepartment = amazonService.parseDepartmentNameFromCloudCheckrGroupValue(cloudCheckrAWSAccount);
         assertEquals(expectedCornellDepartment, actualCornellDepartment);
     }
 }

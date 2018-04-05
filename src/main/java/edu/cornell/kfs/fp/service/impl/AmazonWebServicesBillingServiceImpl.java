@@ -128,7 +128,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             String awsAccount = parseAWSAccountFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
             document.setExplanation(buildDocumentExplanation(awsAccount));
             
-            String departmentName = parseDeaprtmentNameFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
+            String departmentName = parseDepartmentNameFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
             document.setDescription(buildDocumentDescription(departmentName));
             
             KualiDecimal targetLineTotal = addTargetLinesToDocument(defaultAccountWrapper, resultsDTO, awsAccountGroup, document, awsAccount);
@@ -145,7 +145,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 resultsDTO.awsAccountGeneratedDIxml.add(awsAccount);
                 documentIndex = Long.sum(documentIndex, 1);
             } else {
-                resultsDTO.awsAccountWithExstingDI.add(awsAccountGroup.getGroupValue());
+                resultsDTO.awsAccountWithExistingDI.add(awsAccountGroup.getGroupValue());
             }
             
         }
@@ -162,7 +162,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         return MessageFormat.format(explanationFormat, AWSAccount);
     }
     
-    protected String parseDeaprtmentNameFromCloudCheckrGroupValue(String cloudCheckrAWSAccount) {
+    protected String parseDepartmentNameFromCloudCheckrGroupValue(String cloudCheckrAWSAccount) {
         int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.LEFT_PARENTHESIS);
         int indexOfFirstCloseParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.RIGHT_PARENTHESIS);
         String parsedDepartmentName = StringUtils.substring(cloudCheckrAWSAccount, indexOfFirstOpenParen + 1, indexOfFirstCloseParen);
@@ -229,7 +229,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     
     protected void addNotesToDocument(AccountingXmlDocumentEntry document) {
         AccountingXmlDocumentNote note = new AccountingXmlDocumentNote();
-        note.setDescription(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_NOTE_HELP_TEXT_PROERTY_NAME));
+        note.setDescription(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_NOTE_HELP_TEXT_PROPERTY_NAME));
         document.getNotes().add(note);
     }
     
@@ -294,7 +294,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         LOG.info("logResults, number of AWS accounts in cloudcheckr: " + resultsDTO.numberOfAwsAccountInCloudCheckr);
         LOG.info("logResults, number of DI XML Created: " + resultsDTO.xmlCreationCount);
         LOG.info("logResults, amazon accounts that had XML DI created: " + resultsDTO.awsAccountGeneratedDIxml);
-        LOG.info("logResults, amazon accounts that already had a DI for this month: " + resultsDTO.awsAccountWithExstingDI);
+        LOG.info("logResults, amazon accounts that already had a DI for this month: " + resultsDTO.awsAccountWithExistingDI);
         LOG.info("logResults, amazon accounts that do NOT have a default kfs account: " + resultsDTO.awsAccountWithoutDefaultAccount);
     }
     
@@ -412,12 +412,12 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         public int numberOfAwsAccountInCloudCheckr;
         public int xmlCreationCount;
         public List<String> awsAccountWithoutDefaultAccount;
-        public List<String> awsAccountWithExstingDI;
+        public List<String> awsAccountWithExistingDI;
         public List<String> awsAccountGeneratedDIxml;
         
         public AmazonBillResultsDTO() {
             awsAccountWithoutDefaultAccount = new ArrayList<String>();
-            awsAccountWithExstingDI = new ArrayList<String>();
+            awsAccountWithExistingDI = new ArrayList<String>();
             awsAccountGeneratedDIxml = new ArrayList<String>();
         }
         
