@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -24,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksCredentialKeys;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
@@ -42,10 +42,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
 
     private static final String REFRESH_TOKEN_URL_FORMAT = "%s/users/%s/refresh_auth_token/";
     private static final String EMPTY_JSON_WRAPPER = "{}";
-    private static final String STATUS_FIELD = "status";
-    private static final String AUTH_TOKEN_FIELD = "auth_token";
-    private static final String DETAIL_FIELD = "detail";
-    private static final String STATUS_OK = "ok";
 
     private String paymentWorksUrl;
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
@@ -286,9 +282,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                     PaymentWorksConstants.PAYMENTWORKS_WEB_SERVICE_GROUP_CODE,
                     PaymentWorksCredentialKeys.PAYMENTWORKS_AUTHORIZATION_TOKEN, newToken);
             LOG.info("refreshPaymentWorksAuthorizationToken(): Token was successfully refreshed");
-        } catch (RuntimeException e) {
-            LOG.error("refreshPaymentWorksAuthorizationToken(): Unexpected exception while refreshing token", e);
-            throw e;
         } finally {
             CURestClientUtils.closeQuietly(refreshTokenResponse);
         }
@@ -318,7 +311,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         
         checkForSuccessfulTokenRefreshStatus(rootNode);
         
-        JsonNode tokenNode = rootNode.findValue(AUTH_TOKEN_FIELD);
+        JsonNode tokenNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.AUTH_TOKEN_FIELD);
         if (ObjectUtils.isNull(tokenNode)) {
             LOG.error("getPaymentWorksAuthorizationTokenFromResponse(): Did not receive new token from PaymentWorks");
             throw new RuntimeException("Token refresh failed: PaymentWorks did not send a new token");
@@ -334,17 +327,17 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
 
     private void checkForSuccessfulTokenRefreshStatus(JsonNode rootNode) {
-        JsonNode detailNode = rootNode.findValue(DETAIL_FIELD);
+        JsonNode detailNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.DETAIL_FIELD);
         if (ObjectUtils.isNotNull(detailNode)) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Token refresh failed. Detail message: " + detailNode.textValue());
             throw new RuntimeException("Token refresh failed: Received failure response from PaymentWorks");
         }
         
-        JsonNode statusNode = rootNode.findValue(STATUS_FIELD);
+        JsonNode statusNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.STATUS_FIELD);
         if (ObjectUtils.isNull(statusNode)) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Did not receive a refresh status from PaymentWorks");
             throw new RuntimeException("Token refresh failed: Did not receive a refresh status from PaymentWorks");
-        } else if (!StringUtils.equalsIgnoreCase(STATUS_OK, statusNode.textValue())) {
+        } else if (!StringUtils.equalsIgnoreCase(PaymentWorksTokenRefreshConstants.STATUS_OK, statusNode.textValue())) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Unexpected status from PaymentWorks response: " + statusNode.textValue());
             throw new RuntimeException("Token refresh failed: Received an unexpected refresh status from PaymentWorks");
         }
