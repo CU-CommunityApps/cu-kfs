@@ -35,7 +35,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
-import edu.cornell.kfs.fp.batch.service.CloudcheckrService;
+import edu.cornell.kfs.fp.batch.service.CloudCheckrService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
@@ -59,7 +59,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected ParameterService parameterService;
     protected DocumentService documentService;
     protected BusinessObjectService businessObjectService;
-    protected CloudcheckrService cloudcheckrService;
+    protected CloudCheckrService cloudCheckrService;
     protected AwsAccountingXmlDocumentAccountingLineService awsAccountingXmlDocumentAccountingLineService;
     protected CUMarshalService cuMarshalService;
     protected FileStorageService fileStorageService;
@@ -78,8 +78,8 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         boolean success = true;
         
         try {
-            cloudCheckrWrapper = cloudcheckrService.getCloudCheckrWrapper(findStartDate(), findEndDate());
-            defaultAccountWrapper = cloudcheckrService.getDefaultKfsAccountForAwsResultWrapper();
+            cloudCheckrWrapper = cloudCheckrService.getCloudCheckrWrapper(findStartDate(), findEndDate());
+            defaultAccountWrapper = cloudCheckrService.getDefaultKfsAccountForAwsResultWrapper();
         } catch (URISyntaxException | IOException exception) {
             LOG.error("unable to call cloud checker service", exception);
             success = false;
@@ -245,7 +245,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         
         link.setDescription(MessageFormat.format(noteTextFormat, departmentName, findMonthName(), findProcessYear()));
         
-        link.setLinkUrl(cloudcheckrService.buildAttachmentUrl(findProcessYear(), findProcessMonthNumber(), awsAccount));
+        link.setLinkUrl(cloudCheckrService.buildAttachmentUrl(findProcessYear(), findProcessMonthNumber(), awsAccount));
         document.getBackupLinks().add(link);
     }
     
@@ -387,8 +387,8 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         this.businessObjectService = businessObjectService;
     }
 
-    public void setCloudcheckrService(CloudcheckrService cloudcheckrService) {
-        this.cloudcheckrService = cloudcheckrService;
+    public void setClouCheckrService(CloudCheckrService cloudCheckrService) {
+        this.cloudCheckrService = cloudCheckrService;
     }
 
     public void setAwsAccountingXmlDocumentAccountingLineService(

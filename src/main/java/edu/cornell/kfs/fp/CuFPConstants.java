@@ -163,7 +163,7 @@ public class CuFPConstants {
         public static final int PROCESSING_DAY_OF_MONTH = 15;
         public static final String DATE_FORMAT = "yyyy-MM-dd";
         public static final String AWS_BILL_CREDENTIAL_GROUP_CODE = "AWSBILL";
-        public static final String AWS_BILL_AUTH_HEADEER_TOKEN_KEY = "x-api-key";
+        public static final String AWS_BILL_AUTH_HEADER_TOKEN_KEY = "x-api-key";
         
         public static final String DEFAULT_BILLING_PERIOD_PARAMETER = "CURRENT";
         public static final String INTERNAL_KFS_ACCOUNT_DESCRIPTION = "internal";
@@ -177,7 +177,7 @@ public class CuFPConstants {
         public static final String GROUP_LEVEL_COST_CENTER = "Cost Center";
         public static final String CLOUDCHECKR_CREDENTIAL_GROUP_CODE = "CLOUDCHECKR";
         public static final String CLOUDCHECKR_ENDPOINT_CREDENTIAL_KEY = "CLOUDCHECKR_URL";
-        public static final String DEFAULT_KFS_ACCOUNT_ENOPOINT_CREDENTIAL_KEY = "DEFAULT_ACCOUNT_URL";
+        public static final String DEFAULT_KFS_ACCOUNT_ENDPOINT_CREDENTIAL_KEY = "DEFAULT_ACCOUNT_URL";
         public static final String CLOUDCHECKR_ATTACH_URL = "CLOUDCHECKR_ATTACH_URL";
     }
     
