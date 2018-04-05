@@ -11,7 +11,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -25,8 +28,9 @@ public class AmazonWebServicesBillingServiceImplTest {
     @Before
     public void setUp() throws Exception {
         amazonService = new AmazonWebServicesBillingServiceImpl();
-        amazonService.setParameterService(getMockedParameterService());
+        amazonService.setParameterService(getMockedParameterService(AmazonWebServiceBillingServiceDateFixture.JULY_2016.processMonthInputParameter));
         amazonService.setConfigurationService(getMockedConfigurationService());
+        amazonService.setDataDictionaryService(getMockedDataDictionaryService());
     }
 
     @After
@@ -34,14 +38,13 @@ public class AmazonWebServicesBillingServiceImplTest {
         amazonService = null;
     }
     
-    private ParameterService getMockedParameterService() {
+    private ParameterService getMockedParameterService(String processMonth) {
         ParameterService parameterService = mock(ParameterService.class);
 
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME))
-                .thenReturn(AmazonWebServiceBillingServiceDateFixture.JULY_2016.processMonthInputParameter);
-
+        .thenReturn(processMonth);
 
         return parameterService;
     }
@@ -61,9 +64,15 @@ public class AmazonWebServicesBillingServiceImplTest {
         return configService;
     }
     
+    private DataDictionaryService getMockedDataDictionaryService() {
+        DataDictionaryService ddService = mock(DataDictionaryService.class);
+        when(ddService.getAttributeMaxLength(DocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION)).thenReturn(40);
+        return ddService;
+    }
+    
     @Test
     public void testBuildDocumentExplanation() {
-        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBillingServiceDateFixture.JUNE_2016.processMonthInputParameter);
+        amazonService.setParameterService(getMockedParameterService(AmazonWebServiceBillingServiceDateFixture.JUNE_2016.processMonthInputParameter));
         String AWSAccount = "12345";
         String results = amazonService.buildDocumentExplanation(AWSAccount);
         String expected = "AWS account " + AWSAccount;
@@ -88,7 +97,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testBuildAccountingLineDescription() {
-        amazonService.setBillingPeriodParameterValue(AmazonWebServiceBillingServiceDateFixture.DECEMBER_2015.processMonthInputParameter);
+        amazonService.setParameterService(getMockedParameterService(AmazonWebServiceBillingServiceDateFixture.DECEMBER_2015.processMonthInputParameter));
         String results = amazonService.buildAccountingLineDescription();
         String expected = "AWS CHARGES December 2015";
         assertEquals(expected, results);
@@ -125,7 +134,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     }
     
     protected void validateDateProcessing(AmazonWebServiceBillingServiceDateFixture dateFixture) {
-        amazonService.setBillingPeriodParameterValue(dateFixture.processMonthInputParameter);
+        amazonService.setParameterService(getMockedParameterService(dateFixture.processMonthInputParameter));
         assertEquals(dateFixture.monthName, amazonService.findMonthName());
         assertEquals(dateFixture.monthNumber, amazonService.findProcessMonthNumber());
         assertEquals(dateFixture.year, amazonService.findProcessYear());
@@ -135,7 +144,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     
     @Test
     public void testFindMonthInfoCurrent() {
-        amazonService.setBillingPeriodParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER);
+        amazonService.setParameterService(getMockedParameterService(CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER));
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);
         

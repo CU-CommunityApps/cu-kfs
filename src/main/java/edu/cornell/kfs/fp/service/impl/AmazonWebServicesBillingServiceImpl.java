@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -53,7 +54,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     private static final long serialVersionUID = 7430710204404759511L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AmazonWebServicesBillingServiceImpl.class);
     
-    private String billingPeriodParameterValue;
     private String directoryPath;
     
     protected ParameterService parameterService;
@@ -64,6 +64,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected CUMarshalService cuMarshalService;
     protected FileStorageService fileStorageService;
     protected ConfigurationService configurationService;
+    protected DataDictionaryService dataDictionaryService;
 
 
     @Override
@@ -95,7 +96,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         }
         
         logResults(resultsDTO);
-        resetProperties();
         
         if (!success) {
             throw new RuntimeException("There was a problem with Amazon Billing Service");
@@ -172,7 +172,8 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected String buildDocumentDescription(String departmentName) {
         String documentDescriptionBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT);
         String documentDescription = MessageFormat.format(documentDescriptionBase, findMonthName(), departmentName);
-        return StringUtils.substring(documentDescription, 0, 40);
+        int descriptionMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION);
+        return StringUtils.substring(documentDescription, 0, descriptionMaxLength);
     }
     
     protected KualiDecimal addTargetLinesToDocument(DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper,
@@ -298,10 +299,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         LOG.info("logResults, amazon accounts that do NOT have a default kfs account: " + resultsDTO.awsAccountWithoutDefaultAccount);
     }
     
-    protected void resetProperties() {
-        billingPeriodParameterValue = null;
-    }
-
     protected String findStartDate() {
         DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
         Calendar cal = findProcessDate();
@@ -346,20 +343,14 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     public String getBillingPeriodParameterValue() {
-        if (StringUtils.isEmpty(billingPeriodParameterValue)) {
-            String processingDate = getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME);
-            billingPeriodParameterValue = StringUtils.isNotBlank(processingDate) ? processingDate : 
-                CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("getBillingPeriodParameterValue() The AWS_PROCESSING_DATE parameter value is '" + processingDate + 
-                        "' and returning " + billingPeriodParameterValue);
-            }
+        String processingDate = getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME);
+        String billingPeriodParameterValue = StringUtils.isNotBlank(processingDate) ? processingDate : 
+            CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getBillingPeriodParameterValue() The AWS_PROCESSING_DATE parameter value is '" + processingDate + 
+                    "' and returning " + billingPeriodParameterValue);
         }
         return billingPeriodParameterValue;
-    }
-
-    public void setBillingPeriodParameterValue(String billingPeriodParameterValue) {
-        this.billingPeriodParameterValue = billingPeriodParameterValue;
     }
 
     protected String getAWSParameterValue(String parameterName) {
@@ -406,6 +397,10 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
     private class AmazonBillResultsDTO {
