@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;

@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.rice.kim.api.identity.Person;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.cornell.kfs.sys.batch.CuBatchInputFileType;
 

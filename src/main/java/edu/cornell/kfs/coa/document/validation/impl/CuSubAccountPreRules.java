@@ -1,7 +1,7 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;

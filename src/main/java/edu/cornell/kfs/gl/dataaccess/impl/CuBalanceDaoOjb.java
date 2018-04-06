@@ -1,7 +1,7 @@
 package edu.cornell.kfs.gl.dataaccess.impl;
 
 import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;

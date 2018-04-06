@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;

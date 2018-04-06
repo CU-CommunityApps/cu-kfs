@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.document.authorization;
 
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.authorization.DisbursementVoucherDocumentPresentationController;
 import org.kuali.kfs.sys.KFSConstants;
