@@ -121,20 +121,29 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
-        List<String> errorMessages = new ArrayList<String>();
-        if (pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess) &&
-            pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) &&
-            allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages) &&
-            pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)){
-            return true;
-        }
-        else {
-            if (!errorMessages.isEmpty()){
-                reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-                reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
-            }
+    private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, 
+            PaymentWorksNewVendorRequestsBatchReportData reportData) {
+        if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getVendorType()) 
+                || StringUtils.equalsIgnoreCase(stgNewVendorRequestDetailToProcess.getVendorType(), PaymentWorksConstants.NULL_STRING)) {
+            reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(
+                    stgNewVendorRequestDetailToProcess.toString(), 
+                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY)));
             return false;
+        } else {
+            List<String> errorMessages = new ArrayList<String>();
+            if (pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess) &&
+                pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) &&
+                allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages) &&
+                pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)){
+                return true;
+            } else {
+                if (!errorMessages.isEmpty()){
+                    reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
+                    reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(
+                            stgNewVendorRequestDetailToProcess.toString(), errorMessages));
+                }
+                return false;
+            }
         }
     }
     
