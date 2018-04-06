@@ -38,6 +38,8 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -62,27 +64,24 @@ public class CuCreditMemoServiceImplTest {
     private PurapService purapService;
     private VendorService vendorService;
     private CuVendorCreditMemoDocument creditMemoDocument;
-    @Mock
     private static Person mo14Person;
-    @Mock
     private static UserSession mo14Session;
 
     @Before
 	public void setUp() throws Exception {
-        accountsPayableService = EasyMock.createNiceMock(AccountsPayableService.class);
-        EasyMock.expect(accountsPayableService.getExpiredOrClosedAccountList(creditMemoDocument)).andReturn(new HashMap<>());
-        EasyMock.replay(accountsPayableService);
-
-        dataDictionaryService = EasyMock.createNiceMock(DataDictionaryService.class);
-        EasyMock.expect(dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KRADPropertyConstants.DOCUMENT_DESCRIPTION)).andReturn(200);
-        EasyMock.replay(dataDictionaryService);
-
+        accountsPayableService = Mockito.mock(AccountsPayableService.class);
+        Mockito.when(accountsPayableService.getExpiredOrClosedAccountList(creditMemoDocument)).thenReturn(new HashMap<>());
+        
+        dataDictionaryService = Mockito.mock(DataDictionaryService.class);
+        Mockito.when(dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KRADPropertyConstants.DOCUMENT_DESCRIPTION)).thenReturn(200);
+        
         dateTimeService = new DateTimeServiceImpl();
-        documentService = new MockDocumentServiceImpl();
-        noteService = EasyMock.createMock(NoteService.class);
-        purapService = EasyMock.createMock(PurapService.class);
+        documentService = buildMockDocumentService();
+        noteService = Mockito.mock(NoteService.class);
+        purapService = Mockito.mock(PurapService.class);
         vendorService = new MockVendorServiceImpl();
 
+        
         creditMemoServiceImpl = PowerMock.createPartialMock(CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, "reIndexDocument", "getCreditMemoDocumentById");
 
         creditMemoServiceImpl.setDocumentService(documentService);
@@ -99,6 +98,24 @@ public class CuCreditMemoServiceImplTest {
 
         GlobalVariables.setUserSession(mo14Session);
 	}
+    
+    private DocumentService buildMockDocumentService() {
+        DocumentService mockDocumentService = Mockito.mock(DocumentService.class);
+        Mockito.when(mockDocumentService.createNoteFromDocument(Mockito.any(Document.class), Mockito.anyString())).then(this::buildDocumentNote);
+        return mockDocumentService;
+    }
+    private Note buildDocumentNote(InvocationOnMock invocation) {
+        Document document = invocation.getArgument(0);
+        String noteText = invocation.getArgument(1);
+        
+        Note note = Mockito.mock(Note.class);
+        Mockito.when(note.getNotePostedTimestamp()).thenReturn(dateTimeService.getCurrentTimestamp());
+        Mockito.when(note.getVersionNumber()).thenReturn(Long.valueOf(1L));
+        Mockito.when(note.getNoteText()).thenReturn(noteText);
+        Mockito.when(note.getNoteTypeCode()).thenReturn(document.getNoteType().getCode());
+
+        return note;
+    }
 
     private CuVendorCreditMemoDocument setupVendorCreditMemoDocument() {
         ArrayList<String> methodNames = new ArrayList<>();
@@ -181,29 +198,6 @@ public class CuCreditMemoServiceImplTest {
 		Assert.assertNotNull(creditMemoDocument.getPaymentMethodCode());
 		Assert.assertEquals("P", creditMemoDocument.getPaymentMethodCode());
 	}
-
-	private class MockDocumentServiceImpl extends DocumentServiceImpl {
-
-	    @Override
-        public Note createNoteFromDocument(Document document, String text) {
-            ArrayList<String> methodNames = new ArrayList<>();
-            for (Method method : Note.class.getMethods()) {
-                if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get")) {
-                    methodNames.add(method.getName());
-                }
-            }
-            IMockBuilder<Note> builder = EasyMock.createMockBuilder(Note.class).addMockedMethods(methodNames.toArray(new String[0]));
-            Note note = builder.createNiceMock();
-
-            note.setNotePostedTimestamp(dateTimeService.getCurrentTimestamp());
-            note.setVersionNumber(Long.valueOf(1L));
-            note.setNoteText(text);
-            note.setNoteTypeCode(document.getNoteType().getCode());
-
-            return note;
-        }
-
-    }
 
     class TestCuCreditMemoServiceImpl extends CuCreditMemoServiceImpl {
         @Override
