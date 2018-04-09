@@ -125,9 +125,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             PaymentWorksNewVendorRequestsBatchReportData reportData) {
 
         List<String> errorMessages = new ArrayList<String>();
-        if (validateVendorType(stgNewVendorRequestDetailToProcess, errorMessages) && 
-                pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess) &&
-                pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) && 
+        if (pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess) &&
+                pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) &&
+                validateVendorType(stgNewVendorRequestDetailToProcess, errorMessages) && 
                 allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages) && 
                 pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)){
             return true;
