@@ -374,7 +374,8 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             if (needComma) {
                 sb.append(", ");
             }
-            sb.append(key).append(" (").append(buildFriendlyAccountName(accountsInError.get(key))).append(")");
+            sb.append(key).append(" (account name: ").append(buildFriendlyAccountName(accountsInError.get(key))).append(")");
+            needComma = true;
         }
         String emailMessage = MessageFormat.format(bodyFormat, sb.toString());
         return emailMessage;
