@@ -19,7 +19,7 @@
 package org.kuali.kfs.module.purap.util;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantView;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.document.Document;

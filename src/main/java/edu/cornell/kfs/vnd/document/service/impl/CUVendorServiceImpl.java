@@ -20,16 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
-import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.lookup.VendorLookupableHelperServiceImpl;
 import org.kuali.kfs.vnd.document.service.impl.VendorServiceImpl;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -37,9 +35,6 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
-import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 @Transactional

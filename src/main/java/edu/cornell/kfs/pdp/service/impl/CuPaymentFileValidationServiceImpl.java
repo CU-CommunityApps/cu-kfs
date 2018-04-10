@@ -2,7 +2,7 @@ package edu.cornell.kfs.pdp.service.impl;
 
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
@@ -21,7 +21,6 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;

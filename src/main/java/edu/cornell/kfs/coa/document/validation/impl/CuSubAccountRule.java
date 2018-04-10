@@ -1,16 +1,10 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
-import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.validation.impl.SubAccountRule;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
-
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 public class CuSubAccountRule extends SubAccountRule {
 	

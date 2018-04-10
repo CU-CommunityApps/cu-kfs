@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.document;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;

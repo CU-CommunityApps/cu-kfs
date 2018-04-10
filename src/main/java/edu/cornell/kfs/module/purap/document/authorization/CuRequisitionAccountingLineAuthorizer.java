@@ -2,10 +2,8 @@ package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
-import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.authorization.RequisitionAccountingLineAuthorizer;

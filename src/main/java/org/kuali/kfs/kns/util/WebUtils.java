@@ -21,8 +21,8 @@ package org.kuali.kfs.kns.util;
 import edu.cornell.cynergy.kns.util.CynergyWebUtils;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
@@ -761,7 +761,7 @@ public class WebUtils {
      * @return
      */
     public static String filterHtmlAndReplaceRiceMarkup(String inputString) {
-        String outputString = StringEscapeUtils.escapeHtml(inputString);
+        String outputString = StringEscapeUtils.escapeHtml4(inputString);
         // string has been escaped of all <, >, and & (and other characters)
 
         Map<String, String> findAndReplacePatterns = new LinkedHashMap<String, String>();

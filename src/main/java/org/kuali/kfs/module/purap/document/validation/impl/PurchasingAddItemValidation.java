@@ -21,7 +21,7 @@ package org.kuali.kfs.module.purap.document.validation.impl;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;

@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.document.web.struts;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;

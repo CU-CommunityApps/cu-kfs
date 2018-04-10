@@ -18,13 +18,12 @@
  */
 package org.kuali.kfs.fp.document.web.struts;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
-import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants.TabByReasonCode;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
@@ -52,7 +51,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.PayeeACHService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -83,6 +81,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherAction.class);
 
     private static final String DV_ADHOC_NODE = "AdHoc"; // ==== CU Customization ====
+
+    protected DisbursementVoucherPayeeService disbursementVoucherPayeeService;
 
     /**
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
@@ -139,23 +139,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                     }
                 }
 
-                updateAchSignupStatusFlagForPayee(dvDoc);
+                dvDoc.setAchSignUpStatusFlag(getDisbursementVoucherPayeeService().isPayeeSignedUpForACH(dvDoc.getDvPayeeDetail()));
             }
         }
 
         return dest;
-    }
-
-    private void updateAchSignupStatusFlagForPayee(
-            DisbursementVoucherDocument dvDoc) {
-        DisbursementVoucherPayeeDetail dvPayee = dvDoc.getDvPayeeDetail();
-        boolean signedupForACH = false;
-        if (dvPayee != null) {
-            String payeeTypeCode = dvPayee.getDisbursementVoucherPayeeTypeCode();
-            String payeeIdNumber = dvPayee.getDisbVchrPayeeIdNumber();
-            signedupForACH = SpringContext.getBean(PayeeACHService.class).isPayeeSignedUpForACH(payeeTypeCode, payeeIdNumber);
-        }
-        dvDoc.setAchSignUpStatusFlag(signedupForACH);
     }
 
     /**
@@ -846,5 +834,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         disbursementVoucherExtractService.extractSingleImmediatePayment(dvDocument);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+    protected DisbursementVoucherPayeeService getDisbursementVoucherPayeeService() {
+        if (disbursementVoucherPayeeService == null) {
+            disbursementVoucherPayeeService = SpringContext.getBean(DisbursementVoucherPayeeService.class);
+        }
+        
+        return disbursementVoucherPayeeService;
     }
 }

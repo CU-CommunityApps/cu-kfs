@@ -20,8 +20,8 @@ package org.kuali.kfs.module.cam.document.service.impl;
 
 import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAttribute;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;

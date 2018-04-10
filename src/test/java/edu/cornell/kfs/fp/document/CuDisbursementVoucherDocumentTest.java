@@ -519,6 +519,11 @@ public class CuDisbursementVoucherDocumentTest {
         public DisbursementPayee getPayeeFromPerson(Person person) {
             return null;
         }
+        
+        @Override
+        public boolean isPayeeSignedUpForACH(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
+            return false;
+        }
     }
 
     private static class TestDisbursementVoucherPayeeDetail extends CuDisbursementVoucherPayeeDetail {

@@ -1,19 +1,13 @@
 package edu.cornell.kfs.fp.document.service.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherTaxServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.MessageMap;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
-import edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation;
 
 public class CuDisbursementVoucherTaxServiceImpl extends DisbursementVoucherTaxServiceImpl implements CuDisbursementVoucherTaxService{
 	

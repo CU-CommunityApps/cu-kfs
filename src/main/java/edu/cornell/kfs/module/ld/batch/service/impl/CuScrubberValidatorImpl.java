@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.ld.batch.service.impl;
 import java.text.MessageFormat;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.gl.batch.service.AccountingCycleCachingService;
 import org.kuali.kfs.gl.businessobject.OriginEntryInformation;
@@ -74,7 +74,7 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
             Account account, UniversityDate universityRunDate, LaborAccountingCycleCachingService laborAccountingCycleCachingService) {
         LaborObject laborObject = laborAccountingCycleCachingService.getLaborObject(
                 laborOriginEntry.getUniversityFiscalYear(), laborOriginEntry.getChartOfAccountsCode(), laborOriginEntry.getFinancialObjectCode());
-        boolean isFringeTransaction = laborObject != null && org.apache.commons.lang.StringUtils.equals(
+        boolean isFringeTransaction = laborObject != null && StringUtils.equals(
                 LaborConstants.BenefitExpenseTransfer.LABOR_LEDGER_BENEFIT_CODE, laborObject.getFinancialObjectFringeOrSalaryCode());
 
         if (isFringeTransaction && !account.isAccountsFringesBnftIndicator()) {

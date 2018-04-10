@@ -3,9 +3,7 @@ package edu.cornell.kfs.pdp.service.impl;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.mail.MessagingException;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.ACHBank;

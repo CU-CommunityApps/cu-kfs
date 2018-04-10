@@ -2,14 +2,11 @@ package edu.cornell.kfs.fp.document.authorization;
 
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.fp.document.authorization.ProcurementCardDocumentPresentationController;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
-import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.kew.api.WorkflowDocument;
 
 public class CuProcurementCardDocumentPresentationController extends ProcurementCardDocumentPresentationController {
     private static final long serialVersionUID = 1L;

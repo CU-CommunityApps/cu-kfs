@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pdp.businessobject.inquiry;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Section;
 import org.kuali.kfs.krad.util.ObjectUtils;
