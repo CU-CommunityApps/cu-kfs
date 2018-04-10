@@ -29,7 +29,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
-import org.kuali.kfs.sys.mail.MailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -98,7 +97,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             }
         }
         
-        logDTOs(resultsDTOs);
+        resultsDTOs.stream().forEach(result -> result.logResults());
         
         if (!totalJobSuccess) {
             sendErrorEmailForFailedAccounts(resultsDTOs);
@@ -305,8 +304,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     private boolean shouldBuildDistributionOfIncomeDocument(String awsAccount, String departmentName, KualiDecimal cost) {
-        /*
-         * @todo reenable this
         for (DocumentHeader dh : findDocumentHeadersForAmazonDetail(awsAccount, departmentName)) {
             try {
                 DistributionOfIncomeAndExpenseDocument di = (DistributionOfIncomeAndExpenseDocument) documentService.getByDocumentHeaderId(dh.getDocumentNumber());
@@ -320,7 +317,6 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 throw new RuntimeException(e);
             }
         }
-        */
         return true;
     }
     
@@ -349,39 +345,39 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         return success;
     }
     
-    private void logDTOs(List<AmazonBillResultsDTO> resultsDTOs) {
-        resultsDTOs.stream().forEach(result -> result.logResults());
-    }
-    
     private void sendErrorEmailForFailedAccounts(List<AmazonBillResultsDTO> resultsDTOs) {
         Map<String, String> accountsInError = new HashMap<String, String>();
         resultsDTOs.stream()
             .filter(result -> !result.successfullyProcessed)
             .forEach(result -> accountsInError.put(result.masterAccountNumber, result.masterAccountName));
+        
         if (!accountsInError.isEmpty()) {
             BodyMailMessage message = new BodyMailMessage();
             message.addToAddress(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_ADMIN_EMAIL_PARAMETER_NAME));
             message.setFromAddress(emailService.getDefaultFromAddress());
             message.setSubject(configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_SUBJECT));
-            String bodyFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_BODY);
-            
-            StringBuilder sb = new StringBuilder();
-            boolean needComma = false;
-            for (String key : accountsInError.keySet()) {
-                if (needComma) {
-                    sb.append(", ");
-                }
-                sb.append(key).append(" (").append(buildFriendlyAccountName(accountsInError.get(key))).append(")");
-            }
-            
-            message.setMessage(MessageFormat.format(bodyFormat, sb.toString()));
-            
-            
+            String messageBody = buildErrorEmailMessageBody(accountsInError);
+            LOG.error("sendErrorEmailForFailedAccounts. sending error email with the body of " + messageBody);
+            message.setMessage(messageBody);
             emailService.sendMessage(message, false);
         } else {
             LOG.info("sendErrorEmailForFailedAccounts, no accounts in error, so email to be sent.");
         }
         
+    }
+
+    protected String buildErrorEmailMessageBody(Map<String, String> accountsInError) {
+        String bodyFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_BODY);
+        StringBuilder sb = new StringBuilder();
+        boolean needComma = false;
+        for (String key : accountsInError.keySet()) {
+            if (needComma) {
+                sb.append(", ");
+            }
+            sb.append(key).append(" (").append(buildFriendlyAccountName(accountsInError.get(key))).append(")");
+        }
+        String emailMessage = MessageFormat.format(bodyFormat, sb.toString());
+        return emailMessage;
     }
     
     protected String findStartDate() {

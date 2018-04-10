@@ -380,6 +380,7 @@
         <property name="fileStorageService" ref="fileStorageService"/>
         <property name="configurationService" ref="configurationService"/>
         <property name="dataDictionaryService" ref="dataDictionaryService"/>
+        <property name="emailService" ref="emailService"/>
     </bean>
     
     <bean id="cloudCheckrService" parent="cloudCheckrService-parent"/>
