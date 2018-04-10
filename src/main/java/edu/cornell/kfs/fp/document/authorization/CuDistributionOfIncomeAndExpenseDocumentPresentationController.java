@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.document.authorization;
 
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.fp.document.authorization.DistributionOfIncomeAndExpenseDocumentPresentationController;
 import org.kuali.kfs.krad.document.Document;

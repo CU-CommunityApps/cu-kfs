@@ -14,9 +14,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<!DOCTYPE digester-rules 
-    PUBLIC "-//Jakarta Apache //DTD digester-rules XML V1.0//EN" 
-    "http://jakarta.apache.org/commons/digester/dtds/digester-rules.dtd">
+<!DOCTYPE digester-rules PUBLIC
+    "-//Apache Commons //DTD digester-rules XML V1.0//EN"
+    "http://commons.apache.org/digester/dtds/digester-rules-3.0.dtd">
 
 <digester-rules>
     <pattern value="dv_file">

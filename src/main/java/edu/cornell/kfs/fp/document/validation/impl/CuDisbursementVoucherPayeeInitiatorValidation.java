@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherPayeeInitiatorValidation;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;

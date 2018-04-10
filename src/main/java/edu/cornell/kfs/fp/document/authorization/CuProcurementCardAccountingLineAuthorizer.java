@@ -3,8 +3,8 @@ package edu.cornell.kfs.fp.document.authorization;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.document.authorization.ProcurementCardAccountingLineAuthorizer;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.sys.KFSConstants.RouteLevelNames;

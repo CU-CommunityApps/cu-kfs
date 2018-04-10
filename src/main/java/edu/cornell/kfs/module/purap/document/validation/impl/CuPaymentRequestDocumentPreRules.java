@@ -2,7 +2,7 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;

@@ -14,9 +14,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<!DOCTYPE digester-rules 
-    PUBLIC "-//Jakarta Apache //DTD digester-rules XML V1.0//EN" 
-    "http://jakarta.apache.org/commons/digester/dtds/digester-rules.dtd">
+<!DOCTYPE digester-rules PUBLIC
+    "-//Apache Commons //DTD digester-rules XML V1.0//EN"
+    "http://commons.apache.org/digester/dtds/digester-rules-3.0.dtd">
 
 <digester-rules>
     <pattern value="pdp_file">
@@ -39,8 +39,11 @@
 
             <call-method-rule pattern="payee_name" methodname="setPayeeName" paramcount="0" />
             <call-method-rule pattern="payee_id" methodname="setPayeeIdAndName" paramcount="0" />
-            <alias attr-name="id_type" prop-name="payeeIdTypeCd" />
-            <set-properties-rule pattern="payee_id" />
+            <pattern value="payee_id">
+                <set-properties-rule>
+                    <alias attr-name="id_type" prop-name="payeeIdTypeCd"/>
+                </set-properties-rule>
+            </pattern>
             
             <call-method-rule pattern="payee_own_cd" methodname="setPayeeOwnerCdFromVendor" paramcount="0" />
             <call-method-rule pattern="customer_institution_identifier" methodname="setCustomerInstitutionNumber" paramcount="0" />
@@ -52,14 +55,35 @@
             <call-method-rule pattern="state" methodname="setState" paramcount="0" />
             <call-method-rule pattern="zip" methodname="setZipCd" paramcount="0" />
             <call-method-rule pattern="country" methodname="setCountry" paramcount="0" /> -->
-            <call-method-rule pattern="campus_address_ind" methodname="setCampusAddress" paramcount="0" paramtypes="java.lang.Boolean"/>
+            <pattern value="campus_address_ind">
+                <call-method-rule methodname="setCampusAddress" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
             <call-method-rule pattern="payment_date" methodname="setPaymentDate" paramcount="0" />
-            <call-method-rule pattern="attachment_ind" methodname="setPymtAttachment" paramcount="0" paramtypes="java.lang.Boolean" />
-            <call-method-rule pattern="immediate_ind" methodname="setProcessImmediate" paramcount="0" paramtypes="java.lang.Boolean" />
-            <call-method-rule pattern="special_handling_ind" methodname="setPymtSpecialHandling" paramcount="0" paramtypes="java.lang.Boolean" />
-            <call-method-rule pattern="taxable_ind" methodname="setTaxablePayment" paramcount="0" paramtypes="java.lang.Boolean" />
-            <call-method-rule pattern="nra_ind" methodname="setNraPayment" paramcount="0" paramtypes="java.lang.Boolean" />
-            <call-method-rule pattern="combine_group_ind" methodname="setCombineGroups" paramcount="0" paramtypes="java.lang.Boolean" />
+            <pattern value="attachment_ind">
+                <call-method-rule methodname="setPymtAttachment" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
+            <pattern value="immediate_ind">
+                <call-method-rule methodname="setProcessImmediate" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
+            <pattern value="special_handling_ind">
+                <call-method-rule methodname="setPymtSpecialHandling" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
+            <pattern value="taxable_ind">
+                <call-method-rule methodname="setTaxablePayment" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
+            <pattern value="nra_ind">
+                <call-method-rule methodname="setNraPayment" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
+            <pattern value="combine_group_ind">
+                <call-method-rule methodname="setCombineGroups" paramcount="0" paramtypes="java.lang.Boolean"/>
+                <call-param-rule paramnumber="0" />
+            </pattern>
             <call-method-rule pattern="bank_code" methodname="setBankCode" paramcount="0" />
             
             <pattern value="detail">  
