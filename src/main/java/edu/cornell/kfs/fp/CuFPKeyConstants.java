@@ -56,4 +56,6 @@ public class CuFPKeyConstants {
     public static final String AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT = "aws.billing.service.document.explanation.format";
     public static final String AWS_BILLING_SERVICE_ACCOUNTING_LINE_DESCRIPTION = "aws.billing.service.accounting.line.description";
     public static final String AWS_BILLING_SERVICE_ACCOUNTING_XML_OVERVIEW = "aws.billing.service.xml.document.overview.format";
+    public static final String AWS_BILLING_SERVICE_ERROR_EMAIL_SUBJECT = "aws.billing.service.error.email.subject";
+    public static final String AWS_BILLING_SERVICE_ERROR_EMAIL_BODY = "aws.billing.service.error.email.body";
 }

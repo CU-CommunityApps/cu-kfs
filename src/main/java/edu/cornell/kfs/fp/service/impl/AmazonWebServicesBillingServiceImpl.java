@@ -28,6 +28,9 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.mail.MailMessage;
+import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -65,6 +68,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     protected FileStorageService fileStorageService;
     protected ConfigurationService configurationService;
     protected DataDictionaryService dataDictionaryService;
+    protected EmailService emailService;
 
 
     @Override
@@ -97,6 +101,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         logDTOs(resultsDTOs);
         
         if (!totalJobSuccess) {
+            sendErrorEmailForFailedAccounts(resultsDTOs);
             throw new RuntimeException("There was a problem with Amazon Billing Service");
         }
     }
@@ -153,12 +158,15 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         documentWrapper.setReportEmail(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_ADMIN_EMAIL_PARAMETER_NAME));
         
         String overViewBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ACCOUNTING_XML_OVERVIEW);
-        String friendlyAccountName = StringUtils.replace(masterAccountName, "+", KFSConstants.BLANK_SPACE);
-        documentWrapper.setOverview(MessageFormat.format(overViewBase, friendlyAccountName, findMonthName(), findProcessYear()));
+        documentWrapper.setOverview(MessageFormat.format(overViewBase, buildFriendlyAccountName(masterAccountName), findMonthName(), findProcessYear()));
         
         addDocumentsToDocumentWrapper(cloudCheckrWrapper, defaultAccountWrapper, documentWrapper, masterAccountNumber, resultsDTO);
         return documentWrapper;
         
+    }
+    
+    protected String buildFriendlyAccountName(String accountName) {
+        return StringUtils.replace(accountName, "+", KFSConstants.BLANK_SPACE);
     }
     
     protected void addDocumentsToDocumentWrapper(CloudCheckrWrapper cloudCheckrWrapper,
@@ -345,6 +353,37 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         resultsDTOs.stream().forEach(result -> result.logResults());
     }
     
+    private void sendErrorEmailForFailedAccounts(List<AmazonBillResultsDTO> resultsDTOs) {
+        Map<String, String> accountsInError = new HashMap<String, String>();
+        resultsDTOs.stream()
+            .filter(result -> !result.successfullyProcessed)
+            .forEach(result -> accountsInError.put(result.masterAccountNumber, result.masterAccountName));
+        if (!accountsInError.isEmpty()) {
+            BodyMailMessage message = new BodyMailMessage();
+            message.addToAddress(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_ADMIN_EMAIL_PARAMETER_NAME));
+            message.setFromAddress(emailService.getDefaultFromAddress());
+            message.setSubject(configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_SUBJECT));
+            String bodyFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_BODY);
+            
+            StringBuilder sb = new StringBuilder();
+            boolean needComma = false;
+            for (String key : accountsInError.keySet()) {
+                if (needComma) {
+                    sb.append(", ");
+                }
+                sb.append(key).append(" (").append(buildFriendlyAccountName(accountsInError.get(key))).append(")");
+            }
+            
+            message.setMessage(MessageFormat.format(bodyFormat, sb.toString()));
+            
+            
+            emailService.sendMessage(message, false);
+        } else {
+            LOG.info("sendErrorEmailForFailedAccounts, no accounts in error, so email to be sent.");
+        }
+        
+    }
+    
     protected String findStartDate() {
         DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
         Calendar cal = findProcessDate();
@@ -447,6 +486,10 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     private class AmazonBillResultsDTO {
