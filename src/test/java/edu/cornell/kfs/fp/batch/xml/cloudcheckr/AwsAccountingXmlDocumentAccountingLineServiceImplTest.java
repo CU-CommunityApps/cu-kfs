@@ -316,11 +316,11 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
 
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PROPERTY_NAME))
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PARAMETER_NAME))
                 .thenReturn(CuFPTestConstants.TEST_AWS_BILLING_DEFAULT_CHART_CODE);
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME))
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PARAMETER_NAME))
                 .thenReturn(CuFPTestConstants.TEST_AWS_DEFAULT_OBJ_CODE);
 
 

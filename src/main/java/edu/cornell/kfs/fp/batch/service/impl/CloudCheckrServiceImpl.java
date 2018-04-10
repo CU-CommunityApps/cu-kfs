@@ -27,9 +27,9 @@ public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase impl
     protected WebServiceCredentialService webServiceCredentialService;
 
     @Override
-    public CloudCheckrWrapper getCloudCheckrWrapper(String startDate, String endDate) throws URISyntaxException, IOException {
+    public CloudCheckrWrapper getCloudCheckrWrapper(String startDate, String endDate, String masterAccountName) throws URISyntaxException, IOException {
         String cloudCheckrURL = findCloudCheckrEndPoint();
-        String formattedUrl = MessageFormat.format(cloudCheckrURL, startDate, endDate);
+        String formattedUrl = MessageFormat.format(cloudCheckrURL, startDate, endDate, masterAccountName);
         Response response = null;
         try {
             Invocation request = buildReportDetailsClientRequest(formattedUrl);
@@ -95,12 +95,13 @@ public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase impl
         return builder.buildGet();
     }
     
-    public String buildAttachmentUrl(String year, String month, String account) {
+    @Override
+    public String buildAttachmentUrl(String year, String month, String account, String masterAccountNumber) {
         if (StringUtils.length(month) < 2) {
             month = "0" + month;
         }
         
-        String attachmentUrl = MessageFormat.format(findAttachmentUrlBase(), year, month, account);
+        String attachmentUrl = MessageFormat.format(findAttachmentUrlBase(), year, month, account, masterAccountNumber);
         LOG.debug("buildAttachmentUrl, attachment URL: " + attachmentUrl);
         return attachmentUrl;
     }

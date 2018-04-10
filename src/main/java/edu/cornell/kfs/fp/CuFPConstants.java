@@ -151,13 +151,14 @@ public class CuFPConstants {
     }
     
     public static class AmazonWebServiceBillingConstants {
-        public static final String AWS_PROCESSING_DATE_PROPERTY_NAME = "AWS_PROCESSING_DATE";
-        public static final String AWS_FROM_ACCOUNT_PROPERTY_NAME = "AWS_FROM_ACCOUNT_NUMBER";
-        public static final String AWS_OBJECT_CODE_PROPERTY_NAME = "AWS_OBJECT_CODE";
-        public static final String AWS_CHART_CODE_PROPERTY_NAME = "AWS_CHART_CODE";
-        public static final String AWS_DEFAULT_DOCUMENT_DESCRIPTION_PROPERTY_NAME = "AWS_DEFAULT_DOCUMENT_DESCRIPTION";
-        public static final String AWS_NOTE_HELP_TEXT_PROPERTY_NAME = "AWS_NOTE_HELP_TEXT";
-        public static final String AWS_ADMIN_EMAIL_PROPERTY_NAME = "AWS_ADMIN_EMAIL";
+        public static final String AWS_PROCESSING_DATE_PARAMETER_NAME = "AWS_PROCESSING_DATE";
+        public static final String AWS_FROM_ACCOUNT_PARAMETER_NAME = "AWS_FROM_ACCOUNT_NUMBER";
+        public static final String AWS_OBJECT_CODE_PARAMETER_NAME = "AWS_OBJECT_CODE";
+        public static final String AWS_CHART_CODE_PARAMETER_NAME = "AWS_CHART_CODE";
+        public static final String AWS_DEFAULT_DOCUMENT_DESCRIPTION_PARAMETER_NAME = "AWS_DEFAULT_DOCUMENT_DESCRIPTION";
+        public static final String AWS_NOTE_HELP_TEXT_PARAMETER_NAME = "AWS_NOTE_HELP_TEXT";
+        public static final String AWS_ADMIN_EMAIL_PARAMETER_NAME = "AWS_ADMIN_EMAIL";
+        public static final String AWS_CORNELL_MASTER_ACCOUNTS_PARAMETER_NAME = "AWS_MASTER_ACCOUNTS";
         public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
         
         public static final int PROCESSING_DAY_OF_MONTH = 15;

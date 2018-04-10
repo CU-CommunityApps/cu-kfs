@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,8 +44,13 @@ public class AmazonWebServicesBillingServiceImplTest {
 
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME))
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PARAMETER_NAME))
         .thenReturn(processMonth);
+        
+        when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_CORNELL_MASTER_ACCOUNTS_PARAMETER_NAME))
+        .thenReturn("078742956215=Cornell Master;951690301649=Cornell Master v2;361772241175=Cornell Master Sandbox v2");
 
         return parameterService;
     }
@@ -171,5 +177,15 @@ public class AmazonWebServicesBillingServiceImplTest {
         String expectedCornellDepartment = "Cornell Departmental Account";
         String actualCornellDepartment = amazonService.parseDepartmentNameFromCloudCheckrGroupValue(cloudCheckrAWSAccount);
         assertEquals(expectedCornellDepartment, actualCornellDepartment);
+    }
+    
+    @Test
+    public void testBuildMasterAccountMap() {
+        Map<String, String> masterAccountMap = amazonService.buildMasterAccountMap();
+        
+        assertEquals("Cornell Master", masterAccountMap.get("078742956215"));
+        assertEquals("Cornell Master v2", masterAccountMap.get("951690301649"));
+        assertEquals("Cornell Master Sandbox v2", masterAccountMap.get("361772241175"));
+        assertEquals(3, masterAccountMap.keySet().size());
     }
 }
