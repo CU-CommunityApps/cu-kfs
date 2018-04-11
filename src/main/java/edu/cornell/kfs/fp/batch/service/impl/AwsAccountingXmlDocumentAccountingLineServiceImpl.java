@@ -259,14 +259,14 @@ public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAcc
 
     private String getDefaultChartCodeFromParameter() {
         return getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PROPERTY_NAME);
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PARAMETER_NAME);
     }
 
     private String getDefaultObjectCodeFromParameter() {
         return getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME);
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PARAMETER_NAME);
     }
 
     private AccountingXmlDocumentAccountingLine getEmptyAccountingXmlDocumentAccountingLine() {
