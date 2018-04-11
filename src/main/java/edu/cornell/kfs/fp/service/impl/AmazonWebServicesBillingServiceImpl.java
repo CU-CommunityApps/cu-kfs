@@ -348,7 +348,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             LOG.info("generateXML, successfully created an XML and DONE file for " + fileName);
         } catch (JAXBException | IOException e) {
             success = false;
-            LOG.error("generateDistributionOfIncomeDocumentsFromAWSService, unable to marshal documentWrapper to " + fileName, e);
+            LOG.error("generateXML, unable to marshal documentWrapper to " + fileName, e);
         }
         return success;
     }
