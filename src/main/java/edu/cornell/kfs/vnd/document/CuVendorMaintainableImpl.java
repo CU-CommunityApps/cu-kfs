@@ -48,7 +48,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
     
-    protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
+    protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
     @Override
     public void saveBusinessObject() {
