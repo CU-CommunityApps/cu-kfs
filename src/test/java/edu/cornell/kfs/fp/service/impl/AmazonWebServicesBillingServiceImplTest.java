@@ -43,12 +43,12 @@ public class AmazonWebServicesBillingServiceImplTest {
         ParameterService parameterService = mock(ParameterService.class);
 
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PARAMETER_NAME))
         .thenReturn(processMonth);
         
         when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL,
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME,
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME,
                 CuFPConstants.AmazonWebServiceBillingConstants.AWS_CORNELL_MASTER_ACCOUNTS_PARAMETER_NAME))
         .thenReturn("078742956215=Cornell Master;951690301649=Cornell Master v2;361772241175=Cornell Master Sandbox v2");
 

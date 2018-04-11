@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -55,7 +54,7 @@ public class DefaultKfsAccountForAwsResultWrapper {
         StringBuilder sb = new StringBuilder("DefaultKfsAccountForAwsResultWrapper {");
         String joinedStringOutput = defaultKfsAccountsForAws.stream()
                 .map(acct -> acct.toString())
-                .collect(Collectors.joining("] [", "[", StringUtils.EMPTY));
+                .collect(Collectors.joining("] [", "[", "]"));
         sb.append(joinedStringOutput).append("}");
         return sb.toString();
     }

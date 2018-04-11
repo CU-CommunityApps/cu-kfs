@@ -159,7 +159,7 @@ public class CuFPConstants {
         public static final String AWS_NOTE_HELP_TEXT_PARAMETER_NAME = "AWS_NOTE_HELP_TEXT";
         public static final String AWS_ADMIN_EMAIL_PARAMETER_NAME = "AWS_ADMIN_EMAIL";
         public static final String AWS_CORNELL_MASTER_ACCOUNTS_PARAMETER_NAME = "AWS_MASTER_ACCOUNTS";
-        public static final String AWS_COMPENT_NAME = "LoadAWSBillsStep";
+        public static final String AWS_COMPONENT_NAME = "LoadAWSBillsStep";
         
         public static final int PROCESSING_DAY_OF_MONTH = 15;
         public static final String DATE_FORMAT = "yyyy-MM-dd";

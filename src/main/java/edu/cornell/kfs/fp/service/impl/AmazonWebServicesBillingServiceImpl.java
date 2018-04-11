@@ -445,7 +445,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
 
     protected String getAWSParameterValue(String parameterName) {
         String parmValue = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, parameterName);
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME, parameterName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("getAWSParameterValue, parametername: " + parameterName + " value: " + parmValue);
         }
