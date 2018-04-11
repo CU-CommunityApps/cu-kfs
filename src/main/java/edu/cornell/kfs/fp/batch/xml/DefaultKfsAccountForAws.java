@@ -73,5 +73,14 @@ public class DefaultKfsAccountForAws {
     public int hashCode() {
         return Objects.hash(awsAccount, kfsDefaultAccount, updatedAt);
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("default account: ");
+        sb.append("awsAccount: ").append(awsAccount);
+        sb.append(", kfsDefaultAccount: ").append(kfsDefaultAccount);
+        sb.append(", updatedAt: ").append(updatedAt);
+        return sb.toString();
+    }
 
 }

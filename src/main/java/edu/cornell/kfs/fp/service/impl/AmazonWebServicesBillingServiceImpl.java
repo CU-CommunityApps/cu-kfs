@@ -2,380 +2,322 @@ package edu.cornell.kfs.fp.service.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.client.ClientConfig;
-import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.businessobject.Chart;
-import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.kfs.coa.businessobject.ProjectCode;
-import org.kuali.kfs.coa.businessobject.SubAccount;
-import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import org.kuali.kfs.coa.service.AccountService;
-import org.kuali.kfs.coa.service.ChartService;
-import org.kuali.kfs.coa.service.ObjectCodeService;
-import org.kuali.kfs.coa.service.ProjectCodeService;
-import org.kuali.kfs.coa.service.SubAccountService;
-import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
+import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
-import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.EmailService;
+import org.kuali.kfs.sys.service.FileStorageService;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.businessobject.AmazonBillingCostCenterDTO;
-import edu.cornell.kfs.fp.businessobject.AmazonBillingDistributionOfIncomeTransactionDTO;
-import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
+import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.batch.service.AwsAccountingXmlDocumentAccountingLineService;
+import edu.cornell.kfs.fp.batch.service.CloudCheckrService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
+import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAws;
+import edu.cornell.kfs.fp.batch.xml.DefaultKfsAccountForAwsResultWrapper;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CloudCheckrWrapper;
+import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 import edu.cornell.kfs.fp.service.AmazonWebServicesBillingService;
-import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetail;
-import edu.cornell.kfs.fp.xmlObjects.AmazonAccountDetailContainer;
-import edu.cornell.kfs.sys.util.CURestClientUtils;
+import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBillingService, Serializable {
 
     private static final long serialVersionUID = 7430710204404759511L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AmazonWebServicesBillingServiceImpl.class);
     
-    private String awsURL;
-    private String awsToken;
-    private String billingPeriodParameterValue;
-    private String defaultDocumentDescription;
-    private String transactionObjectCode;
-    private String transactionFromAccountNumber;
-    private String helpNoteText;
-
+    private String directoryPath;
+    
     protected ParameterService parameterService;
     protected DocumentService documentService;
-    protected ChartService chartService;
-    protected AccountService accountService;
-    protected SubAccountService subAccountService;
     protected BusinessObjectService businessObjectService;
-    protected ObjectCodeService objectCodeService;
-    protected SubObjectCodeService subObjectCodeService;
-    protected ProjectCodeService projectCodeService;
+    protected CloudCheckrService cloudCheckrService;
+    protected AwsAccountingXmlDocumentAccountingLineService awsAccountingXmlDocumentAccountingLineService;
+    protected CUMarshalService cuMarshalService;
+    protected FileStorageService fileStorageService;
+    protected ConfigurationService configurationService;
+    protected DataDictionaryService dataDictionaryService;
+    protected EmailService emailService;
+
 
     @Override
     public void generateDistributionOfIncomeDocumentsFromAWSService() {
-        LOG.info("generateDistributionOfIncomeDocumentsFromAWSService(): AWS URL: " + getAwsURL());
-        LOG.info("generateDistributionOfIncomeDocumentsFromAWSService(): Processing Year: " + findProcessYear() + "  Month: " + findProcessMonthNumber());
-        
-        String jsonResults = buildJsonOutput();
-        LOG.debug("JSON results: " + jsonResults);
-
-        List<AmazonAccountDetail> amazonAccountDetails = buildAmazonAcountListFromJson(jsonResults);
-        LOG.info("generateDistributionOfIncomeDocumentsFromAWSService() Number of amazon account details received: " + amazonAccountDetails.size());
-        
-        boolean didProcessingCompleteWithoutErrors = true;
-        
-        if (amazonAccountDetails.size() == 0) {
-            LOG.error("generateDistributionOfIncomeDocumentsFromAWSService() No amazon account detail objects parsed from the webservice.");
-            didProcessingCompleteWithoutErrors =  false;
-        }
-        
-        didProcessingCompleteWithoutErrors = didProcessingCompleteWithoutErrors && processAmazonAccountDetails(amazonAccountDetails);
-        
-        clearMemberVariables();
-        if (!didProcessingCompleteWithoutErrors) {
-            throw new RuntimeException("There was error processing AWS Billing.");
-        }
-    }
-    
-    private String buildJsonOutput() {
-        Client client = null;
-        Response response = null;
+        String startMessageBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.MESSAGE_AWS_BILLING_JOB_START_MESSAGE);
+        boolean totalJobSuccess = true;
+        LOG.info("generateDistributionOfIncomeDocumentsFromAWSService, " + 
+                MessageFormat.format(startMessageBase, findProcessYear(), findMonthName(), findStartDate(), findEndDate()));
+        DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper = null;
+        List<AmazonBillResultsDTO> resultsDTOs = new ArrayList<AmazonBillResultsDTO>();
         
         try {
-            ClientConfig clientConfig = new ClientConfig();
-            client = ClientBuilder.newClient(clientConfig);
-            
-            Invocation request = buildClientRequest(client);
-            response = request.invoke();
-            
-            response.bufferEntity();
-            String results = response.readEntity(String.class);
-            return results;
-        } finally {
-            CURestClientUtils.closeQuietly(response);
-            CURestClientUtils.closeQuietly(client);
+            defaultAccountWrapper = cloudCheckrService.getDefaultKfsAccountForAwsResultWrapper();
+            if (LOG.isDebugEnabled()) {
+                LOG.info("generateDistributionOfIncomeDocumentsFromAWSService, defaultAccountWrapper: " + defaultAccountWrapper.toString());
+            }
+        } catch (URISyntaxException | IOException e) {
+            LOG.error("generateDistributionOfIncomeDocumentsFromAWSService, Unable to call default account service.", e);
+            totalJobSuccess = false;
+        }
+        
+        Map<String, String> masterAccountMap = buildMasterAccountMap();
+        
+        if (ObjectUtils.isNotNull(defaultAccountWrapper)) {
+            for (String masterAccountNumber : masterAccountMap.keySet()) {
+                String masterAccountName = masterAccountMap.get(masterAccountNumber);
+                AmazonBillResultsDTO resultsDTO = processRootAccount(masterAccountNumber, masterAccountName, defaultAccountWrapper);
+                totalJobSuccess &= resultsDTO.successfullyProcessed;
+                resultsDTOs.add(resultsDTO);
+            }
+        }
+        
+        resultsDTOs.stream().forEach(AmazonBillResultsDTO::logResults);
+        
+        if (!totalJobSuccess) {
+            sendErrorEmailForFailedAccounts(resultsDTOs);
+            throw new RuntimeException("There was a problem with Amazon Billing Service");
         }
     }
     
-    protected Invocation buildClientRequest(Client client) {
-        URI uri = buildAwsServiceUrl();
-        return client.target(uri)
-                .request()
-                .accept(MediaType.APPLICATION_JSON)
-                .header(CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_HEADER_NAME, 
-                        CuFPConstants.AmazonWebServiceBillingConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getAwsToken())
-                .buildGet();
-    }
-    
-    protected URI buildAwsServiceUrl() {
-        try {
-            return new URI(getAwsURL() + CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_YEAR + findProcessYear() + 
-                    CuFPConstants.AmazonWebServiceBillingConstants.URL_PARAMETER_MONTH + findProcessMonthNumber());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    protected List<AmazonAccountDetail> buildAmazonAcountListFromJson(String jsonResults) {
-        ObjectMapper mapper = new ObjectMapper();
-        AmazonAccountDetailContainer detailContainer = new AmazonAccountDetailContainer();
-        try {
-            detailContainer = mapper.readValue(jsonResults, AmazonAccountDetailContainer.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return detailContainer.getAccountDetail();
-    }
-
-    protected boolean processAmazonAccountDetails(List<AmazonAccountDetail> amazonAccountDetails) {
-        boolean didProcessingCompleteWithoutErrors = true;
+    protected AmazonBillResultsDTO processRootAccount(String masterAccountNumber, String masterAccountName, 
+            DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper) {
         AmazonBillResultsDTO resultsDTO = new AmazonBillResultsDTO();
-        for (AmazonAccountDetail amazonAccountDetail : amazonAccountDetails) {
-            if (StringUtils.equalsIgnoreCase(CuFPConstants.AmazonWebServiceBillingConstants.INTERNAL_KFS_ACCOUNT_DESCRIPTION, amazonAccountDetail.getKfsAccount())) {
-                LOG.info("processAmazonAccountDetails() Found an internal kfs account, ignoring this transaction for AWS account " 
-                    + amazonAccountDetail.getAwsAccount());
-                resultsDTO.internalCount++;
-            } else {
-                didProcessingCompleteWithoutErrors = processExternalBill(amazonAccountDetail, resultsDTO) && didProcessingCompleteWithoutErrors;
-            }
-        }
-        logSummaryReport(resultsDTO);
-        return didProcessingCompleteWithoutErrors;
-    }
-
-    private boolean processExternalBill(AmazonAccountDetail amazonAccountDetail, AmazonBillResultsDTO resultsDTO) {
-        boolean valid = true;
+        resultsDTO.masterAccountName = masterAccountName;
+        resultsDTO.masterAccountNumber = masterAccountNumber;
+        boolean masterAccountSuccess = true;
+        CloudCheckrWrapper cloudCheckrWrapper = null;
         try {
-            AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO = buildTransactionDTO(amazonAccountDetail);
-            if (transactionDTO.isTransactionInputError()) {
-                valid = false;
-                LOG.error("processAmazonAccountDetails() there errors that prevent a creation of a DI " + amazonAccountDetail.toString());
-                resultsDTO.erroredCount++;
-            } else if (shouldBuildDistributionOfIncomeDocument(amazonAccountDetail, transactionDTO.getAmount())) {
-                buidAndRouteDistributionOfIncomeDocument(amazonAccountDetail, transactionDTO, resultsDTO);
-            } else {
-                resultsDTO.existingDICount++;
-            }
-        } catch (Throwable e) {
-            valid = false;
-            LOG.error("processAmazonAccountDetails() there was a problem building a DI for " + amazonAccountDetail.toString(), e);
-            GlobalVariables.getMessageMap().getErrorMessages().clear();
-            resultsDTO.erroredCount++;
+            cloudCheckrWrapper = cloudCheckrService.getCloudCheckrWrapper(findStartDate(), findEndDate(), masterAccountName);
+        } catch (URISyntaxException | IOException e) {
+            StringBuilder errorMessageBuilder = new StringBuilder("processRootAccount, unable to call cloudcheckr endpoint.");
+            errorMessageBuilder.append("This exception may print the URL which has an access token in it, so not logging the exception on purpose.");
+            errorMessageBuilder.append(" startDate: ").append(findStartDate());
+            errorMessageBuilder.append(" endDate: ").append(findEndDate());
+            errorMessageBuilder.append(" masterAccountName: ").append(masterAccountName);
+            LOG.error(errorMessageBuilder);
+            masterAccountSuccess = false;
         }
-        return valid;
+        if (ObjectUtils.isNotNull(cloudCheckrWrapper) && ObjectUtils.isNotNull(defaultAccountWrapper)) {
+            AccountingXmlDocumentListWrapper documentWrapper = buildAccountingXmlDocumentListWrapper(cloudCheckrWrapper, defaultAccountWrapper, 
+                    masterAccountNumber, masterAccountName, resultsDTO);
+            LOG.info("processRootAccount, built documentWrapper: " + documentWrapper);
+            masterAccountSuccess &= generateXML(documentWrapper, masterAccountName);
+        } else {
+            masterAccountSuccess = false;
+            LOG.error("processRootAccount, cloudCheckrWrapper or defaultAccountWrapper was not built, can not generate DIs");
+        }
+        resultsDTO.successfullyProcessed = masterAccountSuccess;
+        return resultsDTO;
     }
     
-    protected AmazonBillingDistributionOfIncomeTransactionDTO buildTransactionDTO(AmazonAccountDetail amazonAccountDetail) {
-        
-        AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO = new AmazonBillingDistributionOfIncomeTransactionDTO();
-        transactionDTO.setLineDescription(buildAccountingLineDescription());
-        
-        updateTransactionDTOAmount(amazonAccountDetail, transactionDTO);
-        
-        try {
-            AmazonBillingCostCenterDTO costCenterDTO = convertCostCenterToAmazonBillingCostCenterDTO(amazonAccountDetail.getCostCenter());
-            updateTransactionDTOChartAccountSubAccount(transactionDTO, costCenterDTO, amazonAccountDetail.getKfsAccount());
-            updateTransactionDTOObjectCodes(transactionDTO, costCenterDTO);
-            updateTransactionDTOProjectCodeNumber(transactionDTO, costCenterDTO);
-            transactionDTO.setOrganizationReferenceId(costCenterDTO.getOrgReferenceId());
-        } catch (Exception e) {
-            transactionDTO.setTransactionInputError(true);
-            LOG.error("buildAmazonDistributionOfIncomeTransactionDTO: There was a problem parsing cost center.", e);
+    protected Map<String, String> buildMasterAccountMap() {
+        String cornellMasterAccounts = getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_CORNELL_MASTER_ACCOUNTS_PARAMETER_NAME);
+        Map<String, String> masterAccountMap = new HashMap<String, String>();
+        for (String masterAccountNameSet : StringUtils.split(cornellMasterAccounts, ";")) {
+            String[] master = StringUtils.split(masterAccountNameSet, "=");
+            masterAccountMap.put(master[0], master[1]);
+            
         }
-        return transactionDTO;
+        logMasterAccountMap(masterAccountMap);
+        return masterAccountMap;
+    }
+    
+    private void logMasterAccountMap(Map<String, String> masterAccountMap) {
+        for (String key : masterAccountMap.keySet()) {
+            LOG.info("logMasterAccountMap, Account Number: " + key + " Account Name: " + masterAccountMap.get(key));
+        }
+    }
+    
+    protected AccountingXmlDocumentListWrapper buildAccountingXmlDocumentListWrapper(CloudCheckrWrapper cloudCheckrWrapper, 
+            DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper, String masterAccountNumber, String masterAccountName, AmazonBillResultsDTO resultsDTO) {
+        
+        AccountingXmlDocumentListWrapper documentWrapper = new AccountingXmlDocumentListWrapper();
+        documentWrapper.setCreateDate(Calendar.getInstance().getTime());
+        documentWrapper.setReportEmail(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_ADMIN_EMAIL_PARAMETER_NAME));
+        
+        String overViewBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ACCOUNTING_XML_OVERVIEW);
+        documentWrapper.setOverview(MessageFormat.format(overViewBase, buildFriendlyAccountName(masterAccountName), findMonthName(), findProcessYear()));
+        
+        addDocumentsToDocumentWrapper(cloudCheckrWrapper, defaultAccountWrapper, documentWrapper, masterAccountNumber, resultsDTO);
+        return documentWrapper;
+        
+    }
+    
+    protected String buildFriendlyAccountName(String accountName) {
+        return StringUtils.replace(accountName, "+", KFSConstants.BLANK_SPACE);
+    }
+    
+    protected void addDocumentsToDocumentWrapper(CloudCheckrWrapper cloudCheckrWrapper,
+            DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper, AccountingXmlDocumentListWrapper documentWrapper,
+            String masterAccountNumber, AmazonBillResultsDTO resultsDTO) {
+        Long documentIndex = new Long(1);
+        
+        for (GroupLevel awsAccountGroup : cloudCheckrWrapper.getCostsByGroup()) {
+            resultsDTO.numberOfAwsAccountInCloudCheckr++;
+            AccountingXmlDocumentEntry document = new AccountingXmlDocumentEntry();
+            document.setDocumentTypeCode(CuFPConstants.DI);
+            document.setIndex(documentIndex);
+            String awsAccount = parseAWSAccountFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
+            document.setExplanation(buildDocumentExplanation(awsAccount));
+            
+            String departmentName = parseDepartmentNameFromCloudCheckrGroupValue(awsAccountGroup.getGroupValue());
+            document.setDescription(buildDocumentDescription(departmentName));
+            
+            KualiDecimal targetLineTotal = addTargetLinesToDocument(defaultAccountWrapper, resultsDTO, awsAccountGroup, document, awsAccount);
+            
+            addSourceLineToDocument(document, targetLineTotal);
+            
+            addNotesToDocument(document);
+            
+            addBackupDocumentLinksToDocument(document, awsAccount, departmentName, masterAccountNumber);
+            
+            if (shouldBuildDistributionOfIncomeDocument(awsAccount, departmentName, targetLineTotal)) {
+                documentWrapper.getDocuments().add(document);
+                resultsDTO.xmlCreationCount++;
+                resultsDTO.awsAccountGeneratedDIxml.add(awsAccount);
+                documentIndex = Long.sum(documentIndex, 1);
+            } else {
+                resultsDTO.awsAccountWithExistingDI.add(awsAccountGroup.getGroupValue());
+            }
+            
+        }
+    }
+    
+    protected String parseAWSAccountFromCloudCheckrGroupValue(String cloudCheckrAWSAccount) {
+        int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.LEFT_PARENTHESIS);
+        String parsedAWSAccount = StringUtils.substring(cloudCheckrAWSAccount, 0, indexOfFirstOpenParen);
+        return StringUtils.trim(parsedAWSAccount);
+    }
+    
+    protected String buildDocumentExplanation(String AWSAccount) {
+        String explanationFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT);
+        return MessageFormat.format(explanationFormat, AWSAccount);
+    }
+    
+    protected String parseDepartmentNameFromCloudCheckrGroupValue(String cloudCheckrAWSAccount) {
+        int indexOfFirstOpenParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.LEFT_PARENTHESIS);
+        int indexOfFirstCloseParen = StringUtils.indexOf(cloudCheckrAWSAccount, CuFPConstants.RIGHT_PARENTHESIS);
+        String parsedDepartmentName = StringUtils.substring(cloudCheckrAWSAccount, indexOfFirstOpenParen + 1, indexOfFirstCloseParen);
+        return StringUtils.trim(parsedDepartmentName);
+    }
+    
+    protected String buildDocumentDescription(String departmentName) {
+        String documentDescriptionBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT);
+        String documentDescription = MessageFormat.format(documentDescriptionBase, findMonthName(), findProcessYear(), departmentName);
+        int descriptionMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION);
+        return StringUtils.substring(documentDescription, 0, descriptionMaxLength);
+    }
+    
+    protected KualiDecimal addTargetLinesToDocument(DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper,
+            AmazonBillResultsDTO resultsDTO, GroupLevel awsAccountGroup, AccountingXmlDocumentEntry document,
+            String awsAccount) {
+        DefaultKfsAccountForAws defaultKfsAccount = findDefaultKfsAccountForAws(awsAccount, defaultAccountWrapper, resultsDTO);
+        KualiDecimal targetLineTotal = KualiDecimal.ZERO;
+        for (GroupLevel costCenterGroup : awsAccountGroup.getNextLevel()) {
+            if (KualiDecimal.ZERO.isLessThan(costCenterGroup.getCost())) {
+                AccountingXmlDocumentAccountingLine targetLine = awsAccountingXmlDocumentAccountingLineService.createAccountingXmlDocumentAccountingLine(costCenterGroup, defaultKfsAccount);
+                targetLineTotal = targetLineTotal.add(targetLine.getAmount());
+                document.getTargetAccountingLines().add(targetLine);
+            } else {
+                LOG.error("addTargetLinesToDocument, found a group with a cost of zero: " + costCenterGroup);
+            }
+        }
+        return targetLineTotal;
+    }
+    
+    private DefaultKfsAccountForAws findDefaultKfsAccountForAws(String awsAccount, DefaultKfsAccountForAwsResultWrapper defaultAccountWrapper, 
+            AmazonBillResultsDTO resultsDTO) {
+        for (DefaultKfsAccountForAws defaultAccount : defaultAccountWrapper.getDefaultKfsAccountsForAws()) {
+            if (StringUtils.equalsIgnoreCase(awsAccount, defaultAccount.getAwsAccount())) {
+                return defaultAccount;
+            }
+        }
+        resultsDTO.awsAccountWithoutDefaultAccount.add(awsAccount);
+        return createDefaultKfsAccountForAwsAccount(awsAccount);
     }
 
-    private void updateTransactionDTOAmount(AmazonAccountDetail amazonAccountDetail, AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO) {
-        transactionDTO.setAmount(convertCostStringToKualiDecimal(amazonAccountDetail.getCost()));
-        if (transactionDTO.getAmount().isLessEqual(KualiDecimal.ZERO)) {
-            transactionDTO.setTransactionInputError(true);
-        }
+    private DefaultKfsAccountForAws createDefaultKfsAccountForAwsAccount(String awsAccount) {
+        LOG.error("createDefaultKfsAccountForAwsAccount, no match found for AWS Account " + awsAccount + ", will return a default account to allow further processing.");
+        DefaultKfsAccountForAws defaultKfsAccountForAws = new DefaultKfsAccountForAws();
+        defaultKfsAccountForAws.setAwsAccount(awsAccount);
+        defaultKfsAccountForAws.setKfsDefaultAccount("nodfact");
+        defaultKfsAccountForAws.setUpdatedAt(Calendar.getInstance().getTime());
+        return defaultKfsAccountForAws;
     }
     
-    protected KualiDecimal convertCostStringToKualiDecimal(String costString) {
-        KualiDecimal cost = new KualiDecimal(costString);
-        final double oneCent = .01;
-        if (cost.doubleValue() < oneCent) {
-            return KualiDecimal.ZERO;
-        }
-        return cost;
+    protected void addSourceLineToDocument(AccountingXmlDocumentEntry document, KualiDecimal targetLineTotal) {
+        AccountingXmlDocumentAccountingLine sourceLine = new AccountingXmlDocumentAccountingLine();
+        sourceLine.setChartCode(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_CHART_CODE_PARAMETER_NAME));
+        sourceLine.setAccountNumber(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_FROM_ACCOUNT_PARAMETER_NAME));
+        sourceLine.setObjectCode(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PARAMETER_NAME));
+        sourceLine.setAmount(targetLineTotal);
+        sourceLine.setLineDescription(buildAccountingLineDescription());
+        document.getSourceAccountingLines().add(sourceLine);
     }
     
-    protected AmazonBillingCostCenterDTO convertCostCenterToAmazonBillingCostCenterDTO(String costCenter) throws Exception {
-        AmazonBillingCostCenterDTO costCenterDTO = new AmazonBillingCostCenterDTO();
-        
-        if (StringUtils.contains(costCenter, KFSConstants.DASH)) {
-            String[] costCenterArray = StringUtils.splitPreserveAllTokens(costCenter, KFSConstants.DASH);
-            if (costCenterArray.length == 2) {
-                costCenterDTO.setAccountNumber(costCenterArray[0]);
-                costCenterDTO.setSubAccountNumber(costCenterArray[1]);
-            } else if (costCenterArray.length == 7) {
-                costCenterDTO.setChartCode(costCenterArray[0]);
-                costCenterDTO.setAccountNumber(costCenterArray[1]);
-                costCenterDTO.setSubAccountNumber(costCenterArray[2]);
-                costCenterDTO.setObjectCode(costCenterArray[3]);
-                costCenterDTO.setSubObjectCode(costCenterArray[4]);
-                costCenterDTO.setProjectCode(costCenterArray[5]);
-                costCenterDTO.setOrgReferenceId(costCenterArray[6]);
-            } else {
-                throw new Exception("There was an incorrect number of elements in the Cost Center");
-            }
-        } else {
-            costCenterDTO.setAccountNumber(costCenter);
-        }
-        
-        return costCenterDTO;
+    protected String buildAccountingLineDescription() {
+        String descriptionBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ACCOUNTING_LINE_DESCRIPTION);
+        return MessageFormat.format(descriptionBase, findMonthName(), findProcessYear());
     }
     
-    private void updateTransactionDTOChartAccountSubAccount(AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO, AmazonBillingCostCenterDTO costCenterDTO,
-            String amazonDetailKFSAccount) {
-        Account account = retrieveAccount(costCenterDTO.getAccountNumber(), amazonDetailKFSAccount);
-        if (validAccount(account)) {
-            transactionDTO.setAccountNumber(account.getAccountNumber());
-            updateTansactionDTOChart(transactionDTO, costCenterDTO, account);
-            updateTransactionDTOSubAccount(transactionDTO, costCenterDTO, account);
-        } else {
-            LOG.info("updateTransactionDTOChartAccountSubAccount() Invalid account.");
-            transactionDTO.setTransactionInputError(true);
-        }
+    protected void addNotesToDocument(AccountingXmlDocumentEntry document) {
+        AccountingXmlDocumentNote note = new AccountingXmlDocumentNote();
+        note.setDescription(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_NOTE_HELP_TEXT_PARAMETER_NAME));
+        document.getNotes().add(note);
     }
+    
+    protected void addBackupDocumentLinksToDocument(AccountingXmlDocumentEntry document, String awsAccount, String departmentName, String masterAccountNumber) {
+        AccountingXmlDocumentBackupLink link = new AccountingXmlDocumentBackupLink();
+        link.setCredentialGroupCode(CuFPConstants.AmazonWebServiceBillingConstants.AWS_BILL_CREDENTIAL_GROUP_CODE);
 
-    private Account retrieveAccount(String costCenterAccount, String amazonDetailKFSAccount) {
-        Account account = null;
-        if (StringUtils.isNotBlank(costCenterAccount)) {
-            account = findAccountFromAccountNumber(costCenterAccount);
-        } else {
-            account = findAccountFromAccountNumber(amazonDetailKFSAccount);
-        }
-        return account;
+        String fileNameFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_INVOICE_FILE_NAME_FORMAT);
+        String noSpacesDepartmentName = StringUtils.replace(departmentName, KRADConstants.BLANK_SPACE, KFSConstants.DASH);
+        link.setFileName(MessageFormat.format(fileNameFormat, noSpacesDepartmentName, findMonthName(), findProcessYear()));
+        
+        String noteTextFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_INVOICE_NOTE_TEXT_FORMAT);
+        
+        link.setDescription(MessageFormat.format(noteTextFormat, departmentName, findMonthName(), findProcessYear()));
+        
+        link.setLinkUrl(cloudCheckrService.buildAttachmentUrl(findProcessYear(), findProcessMonthNumber(), awsAccount, masterAccountNumber));
+        document.getBackupLinks().add(link);
     }
     
-    
-    
-    private Account findAccountFromAccountNumber(String accountNumber) {
-        if (StringUtils.isNotBlank(accountNumber)) {
-            Account account = getAccountService().getUniqueAccountForAccountNumber(accountNumber);
-            return account;
-        }
-        return null;
-    }
-    
-    private boolean validAccount(Account account) {
-        return account != null && account.isActive() && !account.isExpired();
-    }
-    
-    private void updateTansactionDTOChart(AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO, AmazonBillingCostCenterDTO costCenterDTO, 
-            Account account) {
-        if (StringUtils.isNotBlank(costCenterDTO.getChartCode())) {
-            Chart chart = getChartService().getByPrimaryId(costCenterDTO.getChartCode());
-            if (ObjectUtils.isNotNull(chart) && chart.isActive()) {
-                transactionDTO.setChartCode(chart.getChartOfAccountsCode());
-            } else {
-                LOG.info("updateTansactionDTOChart() Invalid Chart.");
-                transactionDTO.setTransactionInputError(true);
-            }
-        } else {
-            transactionDTO.setChartCode(account.getChartOfAccountsCode());
-        }
-    }
-    
-    private void updateTransactionDTOSubAccount(AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO, AmazonBillingCostCenterDTO costCenterDTO, 
-            Account account) {
-        if (StringUtils.isNotBlank(costCenterDTO.getSubAccountNumber())) {
-            SubAccount subAccount = findSubAccountFromSubAccountNumber(account, costCenterDTO.getSubAccountNumber());
-            if (ObjectUtils.isNotNull(subAccount)) {
-                transactionDTO.setSubAccountNumber(subAccount.getSubAccountNumber());
-            } else {
-                LOG.info("updateTransactionDTOSubAccount() Invalid Sub Account.");
-                transactionDTO.setTransactionInputError(true);
-            }
-        }
-    }
-    
-    private SubAccount findSubAccountFromSubAccountNumber(Account account, String subAccountNumber) {
-        SubAccount subAccount = null;
-        if (ObjectUtils.isNotNull(account)) {
-            subAccount = getSubAccountService().getByPrimaryId(account.getChartOfAccountsCode(), account.getAccountNumber(), subAccountNumber);
-            if (ObjectUtils.isNull(subAccount) || !subAccount.isActive()) {
-                LOG.info("findSubAccountFromSubAccountNumber() An invalid sub account number was provided: " + subAccountNumber);
-                subAccount = null;
-            }
-        }
-        return subAccount;
-    }
-    
-    private void updateTransactionDTOObjectCodes(AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO, AmazonBillingCostCenterDTO costCenterDTO) {
-        if (StringUtils.isNotBlank(costCenterDTO.getObjectCode())) {
-            ObjectCode objectCode = getObjectCodeService().getByPrimaryIdForCurrentYear(transactionDTO.getChartCode(), costCenterDTO.getObjectCode());
-            if (ObjectUtils.isNotNull(objectCode)) {
-                transactionDTO.setObjectCodeNumber(objectCode.getFinancialObjectCode());
-                if (StringUtils.isNotBlank(costCenterDTO.getSubObjectCode())) {
-                    SubObjectCode subObjectCode = getSubObjectCodeService().getByPrimaryIdForCurrentYear(transactionDTO.getChartCode(), 
-                            transactionDTO.getAccountNumber(), objectCode.getFinancialObjectCode(), costCenterDTO.getSubObjectCode());
-                    if (ObjectUtils.isNotNull(subObjectCode)) {
-                        transactionDTO.setSubObjectCodeNumber(subObjectCode.getFinancialSubObjectCode());
-                    } else {
-                        LOG.info("updateTransactionDTOObjectCodes() Invalid Sub Object Code.");
-                        transactionDTO.setTransactionInputError(true);
-                    }
-                }
-            } else {
-                LOG.info("updateTransactionDTOObjectCodes() Invalid Object Code.");
-                transactionDTO.setTransactionInputError(true);
-            }
-        } else {
-            transactionDTO.setObjectCodeNumber(getTransactionObjectCode());
-        }
-    }
-    
-    private void updateTransactionDTOProjectCodeNumber(AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO, AmazonBillingCostCenterDTO costCenterDTO) {
-        if (StringUtils.isNotBlank(costCenterDTO.getProjectCode())) {
-            ProjectCode projectCode = getProjectCodeService().getByPrimaryId(costCenterDTO.getProjectCode());
-            if (ObjectUtils.isNotNull(projectCode)) {
-                transactionDTO.setProjectCodeNumber(projectCode.getCode());
-            } else {
-                LOG.info("updateTransactionDTOProjectCodeNumber() Invalid Project Code.");
-                transactionDTO.setTransactionInputError(true);
-            }
-        }
-    }
-    
-    private boolean shouldBuildDistributionOfIncomeDocument(AmazonAccountDetail amazonAccountDetail, KualiDecimal cost) {
-        for (DocumentHeader dh : findDocumentHeadersForAmazonDetail(amazonAccountDetail)) {
+    private boolean shouldBuildDistributionOfIncomeDocument(String awsAccount, String departmentName, KualiDecimal cost) {
+        for (DocumentHeader dh : findDocumentHeadersForAmazonDetail(awsAccount, departmentName)) {
             try {
-                DistributionOfIncomeAndExpenseDocument di = (DistributionOfIncomeAndExpenseDocument) getDocumentService().getByDocumentHeaderId(dh.getDocumentNumber());
+                DistributionOfIncomeAndExpenseDocument di = (DistributionOfIncomeAndExpenseDocument) documentService.getByDocumentHeaderId(dh.getDocumentNumber());
                 if (di.getTotalDollarAmount().equals(cost)) {
-                    LOG.info("shouldBuildDistributionOfIncomeDocument() DI document number " + di.getDocumentNumber() + " already exists for Amazon account: " + amazonAccountDetail.toString());
+                    LOG.info("shouldBuildDistributionOfIncomeDocument() DI document number " + di.getDocumentNumber() + 
+                            " already exists for Amazon account: " + awsAccount);
                     return false;
                 }
             } catch (WorkflowException e) {
@@ -386,104 +328,81 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         return true;
     }
     
-    private Collection<DocumentHeader> findDocumentHeadersForAmazonDetail(AmazonAccountDetail amazonAccountDetail) {
-        Map fieldValues = new HashMap();
-        fieldValues.put(KFSPropertyConstants.EXPLANATION, buildDocumentExplanation(amazonAccountDetail.getAwsAccount()));
-        fieldValues.put(KFSPropertyConstants.DOCUMENT_DESCRIPTION, buildDocumentDescription(amazonAccountDetail.getBusinessPurpose()));
-        Collection<DocumentHeader> documentHeaders = getBusinessObjectService().findMatching(DocumentHeader.class, fieldValues);
+    private Collection<FinancialSystemDocumentHeader> findDocumentHeadersForAmazonDetail(String awsAccount, String departmentName) {
+        Map<String, String> fieldValues = new HashMap<String, String>();
+        fieldValues.put(KFSPropertyConstants.EXPLANATION, buildDocumentExplanation(awsAccount));
+        fieldValues.put(KFSPropertyConstants.DOCUMENT_DESCRIPTION, buildDocumentDescription(departmentName));
+        fieldValues.put(KFSPropertyConstants.WORKFLOW_DOCUMENT_TYPE_NAME, CuFPConstants.DI);
+        Collection<FinancialSystemDocumentHeader> documentHeaders = businessObjectService.findMatching(FinancialSystemDocumentHeader.class, fieldValues);
         return documentHeaders;
     }
     
-    private void buidAndRouteDistributionOfIncomeDocument(AmazonAccountDetail amazonAccountDetail, 
-            AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO, AmazonBillResultsDTO resultsDTO) throws WorkflowException {
-        CuDistributionOfIncomeAndExpenseDocument diDocument = createDistributionOfIncomeDocument(amazonAccountDetail, transactionDTO);
-        getDocumentService().routeDocument(diDocument, CuFPConstants.AmazonWebServiceBillingConstants.DI_ROUTE_ANNOTATION, null);
-        LOG.info("buidAndRouteDistributionOfIncomeDocument() Created DI document " + diDocument.getDocumentNumber() + " for AWS account " + 
-                amazonAccountDetail.getAwsAccount() + " with a Cornell acount of " + transactionDTO.getAccountNumber() + " for a value of " + transactionDTO.getAmount().doubleValue());
-        resultsDTO.diCreationCount++;
-    }
-
-    private CuDistributionOfIncomeAndExpenseDocument createDistributionOfIncomeDocument(AmazonAccountDetail amazonAccountDetail, 
-            AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO) throws WorkflowException {
-        CuDistributionOfIncomeAndExpenseDocument diDocument = (CuDistributionOfIncomeAndExpenseDocument) getDocumentService().getNewDocument(
-                CuDistributionOfIncomeAndExpenseDocument.class);
-        diDocument.getDocumentHeader().setDocumentDescription(buildDocumentDescription(amazonAccountDetail.getBusinessPurpose()));
-        diDocument.getDocumentHeader().setExplanation(buildDocumentExplanation(amazonAccountDetail.getAwsAccount()));
-        diDocument.getNotes().add(buildDINote());
-        diDocument.getTargetAccountingLines().add((buildToAccountingLine(diDocument.getDocumentNumber(), transactionDTO)));
-        diDocument.getSourceAccountingLines().add(buildFromAccountLine(diDocument.getDocumentNumber(), transactionDTO.getAmount()));
-        diDocument.setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
-        return diDocument;
-    }
-    
-    protected String buildDocumentDescription(String businessPurpose) {
-        String documentDescription;
-        if (StringUtils.isNotBlank(businessPurpose)) {
-            documentDescription = businessPurpose;
-        } else {
-            documentDescription = getDefaultDocumentDescription();
+    protected boolean generateXML(AccountingXmlDocumentListWrapper documentWrapper, String masterAccountName) {
+        boolean success = true;
+        String fileNameBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_OUTPUT_FILE_NAME_FORMAT);
+        String fileName = MessageFormat.format(fileNameBase, directoryPath, findProcessYear(), findMonthName(), masterAccountName, 
+                Calendar.getInstance().getTime().getTime());
+        try {
+            cuMarshalService.marshalObjectToXML(documentWrapper, fileName);
+            fileStorageService.createDoneFile(fileName);
+            LOG.info("generateXML, successfully created an XML and DONE file for " + fileName);
+        } catch (JAXBException | IOException e) {
+            success = false;
+            LOG.error("generateXML, unable to marshal documentWrapper to " + fileName, e);
         }
-        return StringUtils.substring(documentDescription, 0, 40);
+        return success;
     }
     
-    protected String buildDocumentExplanation(String AWSAccount) {
-        return "AWS charges for account number " + AWSAccount + " for " + findMonthName() + " " + findProcessYear();
+    private void sendErrorEmailForFailedAccounts(List<AmazonBillResultsDTO> resultsDTOs) {
+        Map<String, String> accountsInError = new HashMap<String, String>();
+        resultsDTOs.stream()
+            .filter(result -> !result.successfullyProcessed)
+            .forEach(result -> accountsInError.put(result.masterAccountNumber, result.masterAccountName));
+        
+        if (!accountsInError.isEmpty()) {
+            BodyMailMessage message = new BodyMailMessage();
+            message.addToAddress(getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_ADMIN_EMAIL_PARAMETER_NAME));
+            message.setFromAddress(emailService.getDefaultFromAddress());
+            message.setSubject(configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_SUBJECT));
+            String messageBody = buildErrorEmailMessageBody(accountsInError);
+            LOG.error("sendErrorEmailForFailedAccounts. sending error email with the body of " + messageBody);
+            message.setMessage(messageBody);
+            emailService.sendMessage(message, false);
+        } else {
+            LOG.info("sendErrorEmailForFailedAccounts, no accounts in error, so email to be sent.");
+        }
+        
     }
 
-    private Note buildDINote() {
-        Note diNote = new Note();
-        diNote.setNoteText(getHelpNoteText());
-        diNote.setAuthorUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
-        diNote.setNotePostedTimestampToCurrent();
-        return diNote;
+    protected String buildErrorEmailMessageBody(Map<String, String> accountsInError) {
+        String bodyFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_ERROR_EMAIL_BODY);
+        StringBuilder sb = new StringBuilder();
+        boolean needComma = false;
+        for (String key : accountsInError.keySet()) {
+            if (needComma) {
+                sb.append(", ");
+            }
+            sb.append(key).append(" (account name: ").append(buildFriendlyAccountName(accountsInError.get(key))).append(")");
+            needComma = true;
+        }
+        String emailMessage = MessageFormat.format(bodyFormat, sb.toString());
+        return emailMessage;
     }
     
-    private TargetAccountingLine buildToAccountingLine(String diDocumentNumber, AmazonBillingDistributionOfIncomeTransactionDTO transactionDTO) {
-        TargetAccountingLine line = new TargetAccountingLine();
-        line.setDocumentNumber(diDocumentNumber);
-        line.setChartOfAccountsCode(transactionDTO.getChartCode());
-        line.setAccountNumber(transactionDTO.getAccountNumber());
-        line.setSubAccountNumber(transactionDTO.getSubAccountNumber());
-        line.setFinancialObjectCode(transactionDTO.getObjectCodeNumber());
-        line.setFinancialSubObjectCode(transactionDTO.getSubObjectCodeNumber());
-        line.setProjectCode(transactionDTO.getProjectCodeNumber());
-        line.setOrganizationReferenceId(StringUtils.substring(transactionDTO.getOrganizationReferenceId(), 0, 8));
-        line.setAmount(transactionDTO.getAmount());
-        line.setFinancialDocumentLineDescription(buildAccountingLineDescription());
-        line.setSequenceNumber(new Integer(1));
-        return line;
+    protected String findStartDate() {
+        DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
+        Calendar cal = findProcessDate();
+        cal.set(Calendar.DATE, 1);
+        return transactionDateFormat.format(cal.getTime());
     }
     
-    private SourceAccountingLine buildFromAccountLine(String diDocumentNumber, KualiDecimal amount) {
-        SourceAccountingLine line = new SourceAccountingLine();
-        Account fromAccount = findAccountFromAccountNumber(getTransactionFromAccountNumber());
-        line.setDocumentNumber(diDocumentNumber);
-        line.setAccountNumber(fromAccount.getAccountNumber());
-        line.setChartOfAccountsCode(fromAccount.getChartOfAccountsCode());
-        line.setFinancialObjectCode(getTransactionObjectCode());
-        line.setAmount(amount);
-        line.setFinancialDocumentLineDescription(buildAccountingLineDescription());
-        line.setSequenceNumber(new Integer(1));
-        return line;
-    }
-    
-    protected String buildAccountingLineDescription() {
-        return CuFPConstants.AmazonWebServiceBillingConstants.TRANSACTION_DESCRIPTION_STARTER + findMonthName() + " " + findProcessYear();
-    }
-    
-    private void logSummaryReport(AmazonBillResultsDTO resultsDTO) {
-        LOG.info("logSummaryReport() Number of DIs created: " + resultsDTO.diCreationCount);
-        LOG.info("logSummaryReport() Number of internal account records found: " + resultsDTO.internalCount);
-        LOG.info("logSummaryReport() Number of already existing DIs found: " + resultsDTO.existingDICount);
-        LOG.info("logSummaryReport() Number of accounts that had errors preventing creation of a DI: " + resultsDTO.erroredCount);
-    }
-    
-    private void clearMemberVariables() {
-        billingPeriodParameterValue = null;
-        defaultDocumentDescription = null;;
-        transactionObjectCode = null;;
-        transactionFromAccountNumber = null;;
-        helpNoteText = null;
+    protected String findEndDate() {
+        DateFormat transactionDateFormat = new SimpleDateFormat(CuFPConstants.AmazonWebServiceBillingConstants.DATE_FORMAT);
+        Calendar cal = findProcessDate();
+        cal.set(Calendar.DATE, 1);
+        cal.add(Calendar.MONTH, 1);
+        cal.add(Calendar.DATE, -1);
+        return transactionDateFormat.format(cal.getTime());
     }
     
     protected String findProcessYear() {
@@ -514,165 +433,98 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     }
     
     public String getBillingPeriodParameterValue() {
-        if (StringUtils.isEmpty(billingPeriodParameterValue)) {
-            String processingDate = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PROPERTY_NAME);
-            billingPeriodParameterValue = StringUtils.isNotBlank(processingDate) ? processingDate : CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER;
-            LOG.debug("getBillingPeriodParameterValue() The AWS_PROCESSING_DATE parameter value is " + processingDate + " and returning " + billingPeriodParameterValue);
+        String processingDate = getAWSParameterValue(CuFPConstants.AmazonWebServiceBillingConstants.AWS_PROCESSING_DATE_PARAMETER_NAME);
+        String billingPeriodParameterValue = StringUtils.isNotBlank(processingDate) ? processingDate : 
+            CuFPConstants.AmazonWebServiceBillingConstants.DEFAULT_BILLING_PERIOD_PARAMETER;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getBillingPeriodParameterValue() The AWS_PROCESSING_DATE parameter value is '" + processingDate + 
+                    "' and returning " + billingPeriodParameterValue);
         }
         return billingPeriodParameterValue;
     }
 
-    public void setBillingPeriodParameterValue(String billingPeriodParameterValue) {
-        this.billingPeriodParameterValue = billingPeriodParameterValue;
+    protected String getAWSParameterValue(String parameterName) {
+        String parmValue = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPONENT_NAME, parameterName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getAWSParameterValue, parametername: " + parameterName + " value: " + parmValue);
+        }
+        return parmValue;
     }
     
-    public String getDefaultDocumentDescription() {
-        if (defaultDocumentDescription == null) {
-            defaultDocumentDescription = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_DEFAULT_DOCUMENT_DESCRIPTION_PROPERTY_NAME);
-        }
-        return defaultDocumentDescription;
-    }
-
-    public void setDefaultDocumentDescription(String defaultDocumentDescription) {
-        this.defaultDocumentDescription = defaultDocumentDescription;
-    }
-
-    public String getTransactionObjectCode() {
-        if (transactionObjectCode == null) {
-            transactionObjectCode = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_OBJECT_CODE_PROPERTY_NAME);
-        }
-        return transactionObjectCode;
-    }
-
-    public void setTransactionObjectCode(String transactionObjectCode) {
-        this.transactionObjectCode = transactionObjectCode;
-    }
-
-    public String getTransactionFromAccountNumber() {
-        if (transactionFromAccountNumber == null) {
-            transactionFromAccountNumber = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_FROM_ACCOUNT_PROPERTY_NAME);
-        }
-        return transactionFromAccountNumber;
-    }
-
-    public void setTransactionFromAccountNumber(String transactionFromAccountNumber) {
-        this.transactionFromAccountNumber = transactionFromAccountNumber;
-    }
-
-    public String getHelpNoteText() {
-        if (helpNoteText == null) {
-            helpNoteText = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_COMPENT_NAME, 
-                    CuFPConstants.AmazonWebServiceBillingConstants.AWS_NOTE_HELP_TEXT_PROERTY_NAME);
-        }
-        return helpNoteText;
-    }
-    
-    public void setHelpNoteText(String helpNoteText) {
-        this.helpNoteText = helpNoteText;
-    }
-    
-    public String getAwsURL() {
-        return awsURL;
-    }
-
-    public void setAwsURL(String awsURL) {
-        this.awsURL = awsURL;
-    }
-
-    public String getAwsToken() {
-        return awsToken;
-    }
-
-    public void setAwsToken(String awsToken) {
-        this.awsToken = awsToken;
-    }
-    
-    public ParameterService getParameterService() {
-        return parameterService;
+    public void setDirectoryPath(String directoryPath) {
+        this.directoryPath = directoryPath;
     }
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
-
-    public DocumentService getDocumentService() {
-        return documentService;
-    }
-
+    
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
     }
-
-    public AccountService getAccountService() {
-        return accountService;
-    }
-
-    public void setAccountService(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    public BusinessObjectService getBusinessObjectService() {
-        return businessObjectService;
-    }
-
+       
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    public ChartService getChartService() {
-        return chartService;
+    public void setCloudCheckrService(CloudCheckrService cloudCheckrService) {
+        this.cloudCheckrService = cloudCheckrService;
     }
 
-    public void setChartService(ChartService chartService) {
-        this.chartService = chartService;
+    public void setAwsAccountingXmlDocumentAccountingLineService(
+            AwsAccountingXmlDocumentAccountingLineService awsAccountingXmlDocumentAccountingLineService) {
+        this.awsAccountingXmlDocumentAccountingLineService = awsAccountingXmlDocumentAccountingLineService;
     }
 
-    public SubAccountService getSubAccountService() {
-        return subAccountService;
+    public void setCuMarshalService(CUMarshalService cuMarshalService) {
+        this.cuMarshalService = cuMarshalService;
     }
 
-    public void setSubAccountService(SubAccountService subAccountService) {
-        this.subAccountService = subAccountService;
+    public void setFileStorageService(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
     }
 
-    public ObjectCodeService getObjectCodeService() {
-        return objectCodeService;
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
-    public void setObjectCodeService(ObjectCodeService objectCodeService) {
-        this.objectCodeService = objectCodeService;
+    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+        this.dataDictionaryService = dataDictionaryService;
     }
 
-    public SubObjectCodeService getSubObjectCodeService() {
-        return subObjectCodeService;
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
-    public void setSubObjectCodeService(SubObjectCodeService subObjectCodeService) {
-        this.subObjectCodeService = subObjectCodeService;
-    }
-
-    public ProjectCodeService getProjectCodeService() {
-        return projectCodeService;
-    }
-
-    public void setProjectCodeService(ProjectCodeService projectCodeService) {
-        this.projectCodeService = projectCodeService;
-    }
-    
     private class AmazonBillResultsDTO {
-        public int internalCount = 0;
-        public int erroredCount = 0;
-        public int diCreationCount = 0;
-        public int existingDICount = 0;
+        public String masterAccountNumber;
+        public String masterAccountName;
+        public boolean successfullyProcessed;
+        public int numberOfAwsAccountInCloudCheckr;
+        public int xmlCreationCount;
+        public List<String> awsAccountWithoutDefaultAccount;
+        public List<String> awsAccountWithExistingDI;
+        public List<String> awsAccountGeneratedDIxml;
+        
+        public AmazonBillResultsDTO() {
+            awsAccountWithoutDefaultAccount = new ArrayList<String>();
+            awsAccountWithExistingDI = new ArrayList<String>();
+            awsAccountGeneratedDIxml = new ArrayList<String>();
+        }
+        
+        public void logResults() {
+            String headerFooter = "*****************************";
+            LOG.info(headerFooter);
+            LOG.info("logResults, masterAccountNumber: " + masterAccountNumber + " masterAccountName: " + masterAccountName);
+            LOG.info("logResults, successfullyProcessed: " + successfullyProcessed);
+            LOG.info("logResults, numberOfAwsAccountInCloudCheckr: " + numberOfAwsAccountInCloudCheckr);
+            LOG.info("logResults, xmlCreationCount: " + xmlCreationCount);
+            LOG.info("logResults, awsAccountWithoutDefaultAccount: " + awsAccountWithoutDefaultAccount);
+            LOG.info("logResults, awsAccountWithExistingDI: " + awsAccountWithExistingDI);
+            LOG.info("logResults, awsAccountGeneratedDIxml: " + awsAccountGeneratedDIxml);
+            LOG.info(headerFooter);
+        }
     }
     
 }

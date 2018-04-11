@@ -47,4 +47,15 @@ public class CuFPKeyConstants {
     public static final String ERROR_PROJECT_CODE_NOT_FOUND = "error.aws.billing.project.code.not.found";
     public static final String ERROR_PROJECT_CODE_INACTIVE = "error.aws.billing.project.code.inactive";
     public static final String ERROR_ORG_REF_ID_TOO_LONG = "error.aws.billing.org.ref.id.too.long";
+    
+    public static final String MESSAGE_AWS_BILLING_JOB_START_MESSAGE = "message.aws.billing.service.start.message";
+    public static final String AWS_BILLING_SERVICE_OUTPUT_FILE_NAME_FORMAT = "aws.billing.service.output.file.name.format";
+    public static final String AWS_BILLING_SERVICE_INVOICE_FILE_NAME_FORMAT = "aws.billing.service.invoice.pdf.file.name.format";
+    public static final String AWS_BILLING_SERVICE_INVOICE_NOTE_TEXT_FORMAT = "aws.billing.service.invoice.note.text.format";
+    public static final String AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT = "aws.billing.service.document.description.format";
+    public static final String AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT = "aws.billing.service.document.explanation.format";
+    public static final String AWS_BILLING_SERVICE_ACCOUNTING_LINE_DESCRIPTION = "aws.billing.service.accounting.line.description";
+    public static final String AWS_BILLING_SERVICE_ACCOUNTING_XML_OVERVIEW = "aws.billing.service.xml.document.overview.format";
+    public static final String AWS_BILLING_SERVICE_ERROR_EMAIL_SUBJECT = "aws.billing.service.error.email.subject";
+    public static final String AWS_BILLING_SERVICE_ERROR_EMAIL_BODY = "aws.billing.service.error.email.body";
 }
