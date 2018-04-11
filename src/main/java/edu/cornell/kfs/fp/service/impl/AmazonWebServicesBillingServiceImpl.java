@@ -118,7 +118,12 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         try {
             cloudCheckrWrapper = cloudCheckrService.getCloudCheckrWrapper(findStartDate(), findEndDate(), masterAccountName);
         } catch (URISyntaxException | IOException e) {
-            LOG.error("processRootAccount, unable to call cloudcheckr endpoint.  This exception may print the URL which has an access token in it, so not logging the exception on purpose.");
+            StringBuilder errorMessageBuilder = new StringBuilder("processRootAccount, unable to call cloudcheckr endpoint.");
+            errorMessageBuilder.append("This exception may print the URL which has an access token in it, so not logging the exception on purpose.");
+            errorMessageBuilder.append(" startDate: ").append(findStartDate());
+            errorMessageBuilder.append(" endDate: ").append(findEndDate());
+            errorMessageBuilder.append(" masterAccountName: ").append(masterAccountName);
+            LOG.error(errorMessageBuilder);
             masterAccountSuccess = false;
         }
         if (ObjectUtils.isNotNull(cloudCheckrWrapper) && ObjectUtils.isNotNull(defaultAccountWrapper)) {
