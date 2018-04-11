@@ -81,6 +81,9 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         
         try {
             defaultAccountWrapper = cloudCheckrService.getDefaultKfsAccountForAwsResultWrapper();
+            if (LOG.isDebugEnabled()) {
+                LOG.info("generateDistributionOfIncomeDocumentsFromAWSService, defaultAccountWrapper: " + defaultAccountWrapper.toString());
+            }
         } catch (URISyntaxException | IOException e) {
             LOG.error("generateDistributionOfIncomeDocumentsFromAWSService, Unable to call default account service.", e);
             totalJobSuccess = false;
@@ -97,7 +100,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
             }
         }
         
-        resultsDTOs.stream().forEach(result -> result.logResults());
+        resultsDTOs.stream().forEach(AmazonBillResultsDTO::logResults);
         
         if (!totalJobSuccess) {
             sendErrorEmailForFailedAccounts(resultsDTOs);
@@ -121,11 +124,11 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
         if (ObjectUtils.isNotNull(cloudCheckrWrapper) && ObjectUtils.isNotNull(defaultAccountWrapper)) {
             AccountingXmlDocumentListWrapper documentWrapper = buildAccountingXmlDocumentListWrapper(cloudCheckrWrapper, defaultAccountWrapper, 
                     masterAccountNumber, masterAccountName, resultsDTO);
-            LOG.info("generateDistributionOfIncomeDocumentsFromAWSService, built documentWrapper: " + documentWrapper);
+            LOG.info("processRootAccount, built documentWrapper: " + documentWrapper);
             masterAccountSuccess &= generateXML(documentWrapper, masterAccountName);
         } else {
             masterAccountSuccess = false;
-            LOG.error("generateDistributionOfIncomeDocumentsFromAWSService, cloudCheckrWrapper or defaultAccountWrapper was not built, can not generate DIs");
+            LOG.error("processRootAccount, cloudCheckrWrapper or defaultAccountWrapper was not built, can not generate DIs");
         }
         resultsDTO.successfullyProcessed = masterAccountSuccess;
         return resultsDTO;
@@ -224,7 +227,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
     
     protected String buildDocumentDescription(String departmentName) {
         String documentDescriptionBase = configurationService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT);
-        String documentDescription = MessageFormat.format(documentDescriptionBase, findMonthName(), departmentName);
+        String documentDescription = MessageFormat.format(documentDescriptionBase, findMonthName(), findProcessYear(), departmentName);
         int descriptionMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION);
         return StringUtils.substring(documentDescription, 0, descriptionMaxLength);
     }
@@ -240,7 +243,7 @@ public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBil
                 targetLineTotal = targetLineTotal.add(targetLine.getAmount());
                 document.getTargetAccountingLines().add(targetLine);
             } else {
-                LOG.error("buildAccountingXmlDocumentListWrapper, found a group with a cost of zero: " + costCenterGroup);
+                LOG.error("addTargetLinesToDocument, found a group with a cost of zero: " + costCenterGroup);
             }
         }
         return targetLineTotal;

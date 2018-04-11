@@ -37,7 +37,7 @@ public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase impl
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 return response.readEntity(CloudCheckrWrapper.class);
             } else {
-                LOG.error("getCloudCheckrWrapper, error calling enpoint.  The HTTP response was " + response.getStatus());
+                LOG.error("getCloudCheckrWrapper, error calling endpoint.  The HTTP response was " + response.getStatus());
                 throw new IOException("Invalid response code: " + response.getStatus());
             }
         } finally {
@@ -67,7 +67,7 @@ public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase impl
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 return response.readEntity(DefaultKfsAccountForAwsResultWrapper.class);
             } else {
-                LOG.error("getDefaultKfsAccountForAwsResultWrapper, error calling enpoint.  The HTTP response was " + response.getStatus());
+                LOG.error("getDefaultKfsAccountForAwsResultWrapper, error calling endpoint.  The HTTP response was " + response.getStatus());
                 throw new IOException("Invalid response code: " + response.getStatus());
             }
         } finally {
