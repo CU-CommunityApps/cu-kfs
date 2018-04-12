@@ -121,34 +121,21 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, 
-            PaymentWorksNewVendorRequestsBatchReportData reportData) {
-
+    private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         List<String> errorMessages = new ArrayList<String>();
         if (pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess) &&
-                pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) &&
-                validateVendorType(stgNewVendorRequestDetailToProcess, errorMessages) && 
-                allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages) && 
-                pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)){
+            pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) &&
+            allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages) &&
+            pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)){
             return true;
-        } else {
+        }
+        else {
             if (!errorMessages.isEmpty()){
                 reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-                reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(
-                        stgNewVendorRequestDetailToProcess.toString(), errorMessages));
+                reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
             }
             return false;
         }
-    }
-    
-    private boolean validateVendorType(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        boolean valid = true;
-        if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getVendorType()) || 
-                StringUtils.equalsIgnoreCase(stgNewVendorRequestDetailToProcess.getVendorType(), PaymentWorksConstants.NULL_STRING)) {
-            valid = false;
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY));
-        }
-        return valid;
     }
     
     private boolean pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(PaymentWorksVendor stgNewVendorRequestDetailToProcess) {
@@ -173,11 +160,30 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             allValidationPassed = false;
         }
         
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), errorMessages);
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION), errorMessages);
-        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages);
+        allValidationPassed = validateVendorType(stgNewVendorRequestDetailToProcess.getVendorType(), errorMessages) && allValidationPassed;
+        
+        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getMbeCertificationExpirationDate(), 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_MINORTY_BUSINESS_DESCRIPTION), errorMessages) 
+                && allValidationPassed;
+        
+        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getWbeCertificationExpirationDate(), 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_WOMAN_OWNED_BUSINESS_DESCRIPTION), errorMessages) 
+                && allValidationPassed;
+        
+        allValidationPassed = enteredDateIsFormattedProperly(stgNewVendorRequestDetailToProcess.getVeteranCertificationExpirationDate(), 
+                getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_NYS_CERTIFIED_DISABLED_VETERAN_BUSINESS_DESCRIPTION), errorMessages) 
+                && allValidationPassed;
         
         return allValidationPassed;
+    }
+    
+    private boolean validateVendorType(String vendorType, List<String> errorMessages) {
+        boolean valid = true;
+        if (StringUtils.isBlank(vendorType) || StringUtils.equalsIgnoreCase(vendorType, PaymentWorksConstants.NULL_STRING)) {
+            valid = false;
+            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY));
+        }
+        return valid;
     }
     
     private boolean enteredLegalNameConformsToKfsLength(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
