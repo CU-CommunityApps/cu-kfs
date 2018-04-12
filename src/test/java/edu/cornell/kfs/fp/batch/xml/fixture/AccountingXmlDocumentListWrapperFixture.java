@@ -87,8 +87,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DI,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_IB,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TF1,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TF2)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF1,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF2)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(
