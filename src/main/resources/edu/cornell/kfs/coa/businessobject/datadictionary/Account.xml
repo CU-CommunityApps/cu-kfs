@@ -194,8 +194,8 @@
                    <property name="insertAfter">
                        <list>
                            <bean parent="FieldDefinition" p:attributeName="extension.programCode" p:maxLength="1024" />
-                           <bean parent="FieldDefinition" p:attributeName="extension.appropriationAccountNumber" />
-                           <bean parent="FieldDefinition" p:attributeName="extension.majorReportingCategoryCode" />
+                           <bean parent="FieldDefinition" p:attributeName="extension.appropriationAccountNumber" p:maxLength="1024" />
+                           <bean parent="FieldDefinition" p:attributeName="extension.majorReportingCategoryCode" p:maxLength="1024" />
                        </list>
                    </property>
                </bean>
