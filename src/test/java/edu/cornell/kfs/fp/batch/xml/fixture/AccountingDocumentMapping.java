@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.TransferOfFundsDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
@@ -17,6 +18,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.businessobject.TestSourceAccountingLine;
 import edu.cornell.kfs.sys.businessobject.TestTargetAccountingLine;
@@ -28,7 +30,10 @@ public enum AccountingDocumentMapping {
             CuDistributionOfIncomeAndExpenseDocumentGenerator::new),
     IB_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
             InternalBillingDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
-            InternalBillingDocumentGenerator::new);
+            InternalBillingDocumentGenerator::new),
+    TF_DOCUMENT(KFSConstants.TRANSFER_FUNDS,
+            TransferOfFundsDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
+            TransferOfFundsDocumentGenerator::new);
 
     public static final String MAPPING_ENUM_CONST_SUFFIX = "_DOCUMENT";
 

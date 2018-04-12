@@ -200,6 +200,31 @@ public enum AccountingXmlDocumentEntryFixture {
 
     MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
+    MULTI_DOC_TYPE_TEST_TF1(3, KFSConstants.TRANSFER_FUNDS,
+            "Test TF Document", "This is only a test document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_100_FROM),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S343717_OBJ_7070_AMT_100_TO),
+            notes(
+                    "A fun testing note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    MULTI_DOC_TYPE_TEST_TF2(4, KFSConstants.TRANSFER_FUNDS,
+            "Test TF Document2", "This is only a test document2!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_1000_FROM),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S343717_OBJ_7070_AMT_1000_TO),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
     
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1);
 
