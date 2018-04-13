@@ -12,7 +12,7 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_RECEIVING_EQUIPMENT_TRAINING_LABEL = "note.label.paymentworks.pven.goods.services.provider.receiving.equipment.training";
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_MARKETING_LABEL = "note.label.paymentworks.pven.goods.services.provider.no.marketing";
     public static final String NEW_VENDOR_PVEN_NOTES_GOODS_AND_SERVICES_NO_INSURANCE_LABEL = "note.label.paymentworks.pven.goods.services.provider.no.insurance.policy"; 
-    public static final String NEW_VENDOR_PVEN_NOTES_BUSINESS_PURPOSE_LABEL = "note.label.paymentworks.pven.business.purpose";
+    public static final String NEW_VENDOR_PVEN_NOTES_PAYMENT_REASON_LABEL = "note.label.paymentworks.pven.payment.reason";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_MESSAGE = "note.message.paymentworks.pven.conflict.of.interest";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_PHONE_NUMBER_LABEL = "note.label.paymentworks.pven.conflict.of.interest.phone.number";
@@ -51,5 +51,6 @@ public class PaymentWorksKeyConstants {
     public static final String FOREIGN_VENDOR_PROCESSING_NOT_AUTOMATIC_YET = "error.paymentworks.foreign.vendor.not.implemented.yet"; //REMOVE THIS MESSAGE AFTER FOREIGN VENDORS HAVE BEEN IMPLEMENTED
     public static final String PO_VENDOR_PROCESSING_NOT_AUTOMATIC_YET = "error.paymentworks.po.vendor.not.implemented.yet"; //REMOVE THIS MESSAGE AFTER PO VENDORS HAVE BEEN IMPLEMENTED
     public static final String COULD_NOT_DETERMINE_TAX_BUSINESS_RULE_TO_USE = "error.paymentworks.unknown.tax.business.rule";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY = "error.paymentworks.empty.vendor.type";
 
 }
