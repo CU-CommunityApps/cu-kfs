@@ -1689,6 +1689,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     /**
      * Temporary override to work around an issue where input files with unsupported "xmlns:*" attributes
      * could not be parsed successfully, but otherwise behaves the same as in the superclass.
+     * The only change was an added call to a new "removeUnsupportedXmlnsAttributes" method.
      * 
      * @see org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceHelperServiceImpl#addNamespaceDefinition(
      * org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad, java.io.File)
@@ -1770,8 +1771,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected boolean isUnsupportedXmlnsAttribute(Attr attribute) {
-        return StringUtils.startsWith(attribute.getName(), XMLNS_ATTRIBUTE_PREFIX)
-                && !ALLOWED_XMLNS_ATTRIBUTES_PATTERN.matcher(attribute.getName()).matches();
+        String attributeName = StringUtils.lowerCase(attribute.getName());
+        return StringUtils.startsWith(attributeName, XMLNS_ATTRIBUTE_PREFIX)
+                && !ALLOWED_XMLNS_ATTRIBUTES_PATTERN.matcher(attributeName).matches();
     }
 
 }

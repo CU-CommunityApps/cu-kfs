@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.CuPurapTestConstants;
@@ -74,7 +75,7 @@ public class CuElectronicInvoiceHelperServiceFixture {
             
             if (StringUtils.isNotBlank(xmlnsAttributeName)) {
                 xmlChunk.append(String.format(ATTRIBUTE_NAME_VALUE_FORMAT, xmlnsAttributeName, CuPurapTestConstants.EINVOICE_NAMESPACE_URL));
-                xmlChunk.append("\n");
+                xmlChunk.append(KFSConstants.NEWLINE);
             }
             
             if (StringUtils.isNotBlank(xmlnsXsiAttributeName)) {
