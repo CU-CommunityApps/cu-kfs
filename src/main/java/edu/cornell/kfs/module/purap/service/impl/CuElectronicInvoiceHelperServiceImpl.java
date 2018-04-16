@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +24,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -29,6 +42,22 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.kuali.kfs.gl.service.impl.StringHelper;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.batch.ElectronicInvoiceStep;
@@ -76,24 +105,13 @@ import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.ErrorMessage;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AutoPopulatingList;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -112,7 +130,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     private static final String REJECT = "Reject";
     private static final String ACCEPT = "Accept";
 	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
-	
+	private static final String XMLNS_ATTRIBUTE_PREFIX = "xmlns";
+	private static final Pattern ALLOWED_XMLNS_ATTRIBUTES_PATTERN = Pattern.compile("^xmlns(:xsi)?$");
+
     //KFSPTS-1891
 	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
 
@@ -1664,6 +1684,94 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }catch (Exception e) {
             LOG.error("Error creating reject reason note - " + e.getMessage());
         }
+    }
+
+    /**
+     * Temporary override to work around an issue where input files with unsupported "xmlns:*" attributes
+     * could not be parsed successfully, but otherwise behaves the same as in the superclass.
+     * 
+     * @see org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceHelperServiceImpl#addNamespaceDefinition(
+     * org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad, java.io.File)
+     */
+    @Override
+    protected byte[] addNamespaceDefinition(ElectronicInvoiceLoad eInvoiceLoad, File invoiceFile) {
+        LOG.debug("addNamespaceDefinition() started");
+
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builderFactory.setValidating(false); // It's not needed to validate here
+        builderFactory.setIgnoringElementContentWhitespace(true);
+
+        DocumentBuilder builder = null;
+        try {
+            builder = builderFactory.newDocumentBuilder();  // Create the parser
+        } catch (ParserConfigurationException e) {
+            LOG.error("addNamespaceDefinition() Error getting document builder - " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        Document xmlDoc = null;
+
+        try {
+            LOG.info("addNamespaceDefinition: builder.parse");
+            xmlDoc = builder.parse(invoiceFile);
+        } catch (Exception e) {
+            LOG.info("addNamespaceDefinition: Error parsing the file - " + e.getMessage());
+            rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
+            return null;
+        }
+        LOG.info("addNamespaceDefinition: xmlDoc.getDocumentElement()");
+
+        Node node = xmlDoc.getDocumentElement();
+        Element element = (Element) node;
+
+        removeUnsupportedXmlnsAttributes(element);
+
+        String xmlnsValue = element.getAttribute("xmlns");
+        String xmlnsXsiValue = element.getAttribute("xmlns:xsi");
+
+        LOG.info("addNamespaceDefinition: getInvoiceFile");
+
+        if (StringUtils.equals(xmlnsValue, "http://www.kuali.org/kfs/purap/electronicInvoice") &&
+            StringUtils.equals(xmlnsXsiValue, "http://www.w3.org/2001/XMLSchema-instance")) {
+            LOG.info("addNamespaceDefinition: xmlns and xmlns:xsi attributes already exists in the invoice xml");
+        } else {
+            element.setAttribute("xmlns", "http://www.kuali.org/kfs/purap/electronicInvoice");
+            element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            Source source = new DOMSource(xmlDoc);
+            Result result = new StreamResult(out);
+            transformer.transform(source, result);
+        } catch (TransformerException e) {
+            LOG.fatal("Failed to transform " + invoiceFile.getName() + " xml." + e);
+            throw new RuntimeException(e);
+        }
+
+        LOG.info("addNamespaceDefinition() Namespace validation completed");
+
+        return out.toByteArray();
+    }
+
+    protected void removeUnsupportedXmlnsAttributes(Element element) {
+        NamedNodeMap attributesMap = element.getAttributes();
+        Attr[] attributes = new Attr[attributesMap.getLength()];
+        
+        for (int i = 0; i < attributesMap.getLength(); i++) {
+            attributes[i] = (Attr) attributesMap.item(i);
+        }
+        
+        Arrays.stream(attributes)
+                .filter(this::isUnsupportedXmlnsAttribute)
+                .forEach(element::removeAttributeNode);
+    }
+
+    protected boolean isUnsupportedXmlnsAttribute(Attr attribute) {
+        return StringUtils.startsWith(attribute.getName(), XMLNS_ATTRIBUTE_PREFIX)
+                && !ALLOWED_XMLNS_ATTRIBUTES_PATTERN.matcher(attribute.getName()).matches();
     }
 
 }

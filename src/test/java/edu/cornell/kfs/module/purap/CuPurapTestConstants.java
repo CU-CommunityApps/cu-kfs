@@ -16,4 +16,12 @@ public final class CuPurapTestConstants {
     public static final String TEST_PARM_CHART = "RR";
     public static final String TEST_PARM_ORG = "8642";
 
+    public static final String PAYLOAD_ID_ATTRIBUTE = "payloadID";
+    public static final String TIMESTAMP_ATTRIBUTE = "timestamp";
+    public static final String VERSION_ATTRIBUTE = "version";
+    public static final String XML_LANG_ATTRIBUTE = "xml:lang";
+    public static final String XMLNS_ATTRIBUTE = "xmlns";
+    public static final String XMLNS_XSI_ATTRIBUTE = "xmlns:xsi";
+    public static final String EINVOICE_NAMESPACE_URL = "http://www.kuali.org/kfs/purap/electronicInvoice";
+    public static final String XSI_NAMESPACE_URL = "http://www.w3.org/2001/XMLSchema-instance";
 }
