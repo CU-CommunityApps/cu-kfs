@@ -2,12 +2,19 @@ package edu.cornell.kfs.module.purap.fixture;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+
+import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 
 public class CuElectronicInvoiceHelperServiceFixture {
-    
+        private static final String ATTRIBUTE_NAME_VALUE_FORMAT = "%s=\"%s\"";
+
         private static String vendorDUNSNumber;
         private static String poNumber;
         private static String docNumber;
@@ -21,11 +28,23 @@ public class CuElectronicInvoiceHelperServiceFixture {
             return getXMLChunk().concat("TestForCorruptedXML");
         }
         
-        public static String getCXMLForPaymentDocCreation(String vendorDuns,String poNbr){
+        public static String getCorruptedCXML(String vendorDuns, String poNbr,
+                String xmlnsAttributeName, String xmlnsXsiAttributeName) {
+            return getCXMLForPaymentDocCreation(vendorDuns, poNbr, xmlnsAttributeName, xmlnsXsiAttributeName)
+                    .concat("TestForCorruptedXML");
+        }
+        
+        public static String getCXMLForPaymentDocCreation(String vendorDuns, String poNbr) {
+            return getCXMLForPaymentDocCreation(vendorDuns, poNbr,
+                    CuPurapTestConstants.XMLNS_ATTRIBUTE, CuPurapTestConstants.XMLNS_XSI_ATTRIBUTE);
+        }
+        
+        public static String getCXMLForPaymentDocCreation(String vendorDuns, String poNbr,
+                String xmlnsAttributeName, String xmlnsXsiAttributeName) {
             vendorDUNSNumber = vendorDuns;
             poNumber = poNbr;
             itemQty = "1";
-            return getXMLChunk();
+            return getXMLChunk(xmlnsAttributeName, xmlnsXsiAttributeName);
         }
 
         public static String getCXMLForRejectDocCreation(String vendorDUNS,String poNbr){
@@ -36,6 +55,10 @@ public class CuElectronicInvoiceHelperServiceFixture {
         }
         
         private static String getXMLChunk(){
+            return getXMLChunk(CuPurapTestConstants.XMLNS_ATTRIBUTE, CuPurapTestConstants.XMLNS_XSI_ATTRIBUTE);
+        }
+        
+        private static String getXMLChunk(String xmlnsAttributeName, String xmlnsXsiAttributeName){
             
             StringBuffer xmlChunk = new StringBuffer();
 
@@ -48,9 +71,18 @@ public class CuElectronicInvoiceHelperServiceFixture {
             xmlChunk.append("timestamp=").
                             append(getCXMLDate(true)).append("\n");
             
-            xmlChunk.append("version=\"1.2.014\" xml:lang=\"en\"\n"); 
-            xmlChunk.append("xmlns=\"http://www.kuali.org/kfs/purap/electronicInvoice\"\n"); 
-            xmlChunk.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+            xmlChunk.append("version=\"1.2.014\" xml:lang=\"en\"\n");
+            
+            if (StringUtils.isNotBlank(xmlnsAttributeName)) {
+                xmlChunk.append(String.format(ATTRIBUTE_NAME_VALUE_FORMAT, xmlnsAttributeName, CuPurapTestConstants.EINVOICE_NAMESPACE_URL));
+                xmlChunk.append(KFSConstants.NEWLINE);
+            }
+            
+            if (StringUtils.isNotBlank(xmlnsXsiAttributeName)) {
+                xmlChunk.append(String.format(ATTRIBUTE_NAME_VALUE_FORMAT, xmlnsXsiAttributeName, CuPurapTestConstants.XSI_NAMESPACE_URL));
+            }
+            xmlChunk.append(">\n");
+            
             
             xmlChunk.append(getHeaderXMLChunk());
             xmlChunk.append(getRequestXMLChunk());
@@ -203,8 +235,8 @@ public class CuElectronicInvoiceHelperServiceFixture {
             StringBuffer dateString = new StringBuffer();
             
             Date d = new Date();
-            SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
-            SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
+            SimpleDateFormat date = getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
+            SimpleDateFormat time = getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
             
             dateString.append("\"" + date.format(d)).append("T");
             if (includeTime){
@@ -216,4 +248,16 @@ public class CuElectronicInvoiceHelperServiceFixture {
             return dateString.toString();
             
         }
-    }
+
+        private static SimpleDateFormat getSimpleDateFormat(String formatName) {
+            if (SpringContext.isInitialized()) {
+                return PurApDateFormatUtils.getSimpleDateFormat(formatName);
+            } else if (StringUtils.equals(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT, formatName)) {
+                return new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            } else if (StringUtils.equals(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT, formatName)) {
+                return new SimpleDateFormat("HH:mm:ss.sss", Locale.US);
+            } else {
+                throw new IllegalArgumentException("Unexpected format name: " + formatName);
+            }
+        }
+}
