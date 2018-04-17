@@ -1,8 +1,15 @@
 package edu.cornell.kfs.krad.service.impl;
 
-import edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl;
-import edu.cornell.cynergy.antivirus.service.ScanResult;
-import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +22,8 @@ import org.junit.rules.ExpectedException;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.dao.AttachmentDao;
+import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
 import org.kuali.kfs.krad.service.impl.NoteServiceImpl;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -22,16 +31,12 @@ import org.kuali.kfs.sys.util.Guid;
 import org.kuali.kfs.vnd.businessobject.PhoneType;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
+import edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl;
+import edu.cornell.cynergy.antivirus.service.ScanResult;
+import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
 
 public class CuAttachmentServiceImplTest {
 
@@ -57,21 +62,51 @@ public class CuAttachmentServiceImplTest {
     public void setUp() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         virusInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + VIRUS_FILE_NAME);
         goodInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
+        noteVirus = setupMockNote(String.valueOf(new Guid()));
+        
         attachmentService = new CuAttachmentServiceImpl();
         attachmentService.setKualiConfigurationService(new MockConfigurationService());
-        attachmentService.setAttachmentDao(new MockAttachmentDao());
-        attachmentService.setNoteService(new MockNoteService());
+        attachmentService.setAttachmentDao(buildMockAttachmentDao());
+        attachmentService.setNoteService(buildMockNoteService());
         attachmentService.setAntiVirusService(new MockAntivirusService());
 
         attachment = new Attachment();
         attachment.setObjectId(String.valueOf(new Guid()));
         attachment.setAttachmentIdentifier(attachment.getObjectId());
-        Note noteGood = setupMockNote();
+        Note noteGood = setupMockNote(String.valueOf(new Guid()));
         attachment.setNote(noteGood);
         createAttachmentFile(noteGood, GOOD_FILE_NAME);
 
-        noteVirus = setupMockNote();
+        
         createAttachmentFile(noteVirus, VIRUS_FILE_NAME);
+    }
+    
+    private NoteService buildMockNoteService() {
+        NoteService mockNoteService = Mockito.mock(NoteService.class);
+        Mockito.when(mockNoteService.getNoteByNoteId(Mockito.any())).thenReturn(noteVirus);
+        return mockNoteService;
+    }
+    
+    private Note setupMockNote(String remoteObjectIdentifier) {
+        Note mockNote = Mockito.mock(Note.class);
+        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(remoteObjectIdentifier);
+        return mockNote;
+    }
+    
+    private CuAttachmentDaoOjb buildMockAttachmentDao() {
+        CuAttachmentDaoOjb mockDao = Mockito.mock(CuAttachmentDaoOjb.class);
+        Mockito.when(mockDao.getAttachmentByAttachmentId(Mockito.any())).then(this::buildAttachment);
+        return mockDao;
+    }
+    
+    private Attachment buildAttachment(InvocationOnMock invocation) {
+        String attachmentIdentifier = invocation.getArgument(0);
+        Attachment attachment = new Attachment();
+        attachment.setObjectId(attachmentIdentifier);
+        attachment.setAttachmentIdentifier(attachmentIdentifier);
+        Note note = setupMockNote(attachmentIdentifier);
+        attachment.setNote(note);
+        return attachment;
     }
 
     private void createAttachmentFile(Note note, String fileName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException {
@@ -81,11 +116,7 @@ public class CuAttachmentServiceImplTest {
         FileUtils.copyFile(sourceFile, attachmentFile);
     }
 
-    private Note setupMockNote() {
-        Note mockNote = Mockito.mock(Note.class);
-        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(String.valueOf(new Guid()));
-        return mockNote;
-    }
+    
 
     private String buildDocumentDirectory(Note note) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         return buildDocumentDirectory(note.getRemoteObjectIdentifier());
@@ -109,15 +140,10 @@ public class CuAttachmentServiceImplTest {
 
     @Test
     public void retrieveAttachmentContentsNoNote() throws Exception {
-        attachment.setNote(setupMockNoteWithoutRemoteObjectId());
+        attachment.setNote(setupMockNote(null));
         validateRetrieveAttachmentContents(attachment, VIRUS_FILE_CONTENTS);
     }
 
-    private Note setupMockNoteWithoutRemoteObjectId() {
-        Note mockNote = Mockito.mock(Note.class);
-        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(null);
-        return mockNote;
-    }
 
     @Test
     public void retrieveAttachmentContentsNoNoteRemoteObjectId() throws Exception {
@@ -196,12 +222,6 @@ public class CuAttachmentServiceImplTest {
         return pbo;
     }
 
-    private Note setupMockNote(String objectId) {
-        Note mockNote = Mockito.mock(Note.class);
-        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(objectId);
-        return mockNote;
-    }
-
     private InputStream setupInputStream(String pathname) throws FileNotFoundException {
         File sourceFile = new File(pathname);
         return new FileInputStream(sourceFile);
@@ -239,30 +259,6 @@ public class CuAttachmentServiceImplTest {
         }
 
     }
-
-    private class MockAttachmentDao extends CuAttachmentDaoOjb {
-
-        @Override
-        public Attachment getAttachmentByAttachmentId(String attachmentIdentifier) {
-            Attachment attachment = new Attachment();
-            attachment.setObjectId(attachmentIdentifier);
-            attachment.setAttachmentIdentifier(attachmentIdentifier);
-            Note note = setupMockNote(attachmentIdentifier);
-            attachment.setNote(note);
-
-            return attachment;
-        }
-
-    }
-
-    private class MockNoteService extends NoteServiceImpl {
-
-        @Override
-        public Note getNoteByNoteId(Long aLong) {
-            return noteVirus;
-        }
-
-   }
 
    private class MockAntivirusService extends DummyAntiVirusServiceImpl {
 
