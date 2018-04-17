@@ -23,6 +23,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.util.Guid;
 import org.kuali.kfs.vnd.businessobject.PhoneType;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.mockito.Mockito;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -47,12 +48,17 @@ public class CuAttachmentServiceImplTest {
     private CuAttachmentServiceImpl attachmentService;
     private Attachment attachment;
     private Note noteVirus;
+    
+    private InputStream virusInputStream;
+    private InputStream goodInputStream;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        virusInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + VIRUS_FILE_NAME);
+        goodInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         attachmentService = new CuAttachmentServiceImpl();
         attachmentService.setKualiConfigurationService(new MockConfigurationService());
         attachmentService.setAttachmentDao(new MockAttachmentDao());
@@ -78,11 +84,8 @@ public class CuAttachmentServiceImplTest {
     }
 
     private Note setupMockNote() {
-        Note mockNote = EasyMock.createMock(Note.class);
-
-        EasyMock.expect(mockNote.getRemoteObjectIdentifier()).andStubReturn(String.valueOf(new Guid()));
-        EasyMock.replay(mockNote);
-
+        Note mockNote = Mockito.mock(Note.class);
+        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(String.valueOf(new Guid()));
         return mockNote;
     }
 
@@ -113,11 +116,8 @@ public class CuAttachmentServiceImplTest {
     }
 
     private Note setupMockNoteWithoutRemoteObjectId() {
-        Note mockNote = EasyMock.createMock(Note.class);
-
-        EasyMock.expect(mockNote.getRemoteObjectIdentifier()).andStubReturn(null);
-        EasyMock.replay(mockNote);
-
+        Note mockNote = Mockito.mock(Note.class);
+        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(null);
         return mockNote;
     }
 
@@ -138,9 +138,8 @@ public class CuAttachmentServiceImplTest {
         attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl());
 
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
-        InputStream inputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
 
-        Attachment createdAttachment = attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 10, inputStream, "txt");
+        Attachment createdAttachment = attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 10, goodInputStream, "txt");
         InputStream createdInputStream = new BufferedInputStream(new FileInputStream(buildDocumentDirectory(pbo.getObjectId()) + File.separator + createdAttachment.getAttachmentIdentifier()));
         String fileContents = IOUtils.toString(createdInputStream, "UTF-8");
 
@@ -154,40 +153,35 @@ public class CuAttachmentServiceImplTest {
     @Test
     public void createAttachmentWithVirus() throws Exception {
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
-        InputStream inputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + VIRUS_FILE_NAME);
         setupExpectedException("file contents failed virus scan");
-        attachmentService.createAttachment(pbo, VIRUS_FILE_NAME, "txt", 50, inputStream, "txt");
+        attachmentService.createAttachment(pbo, VIRUS_FILE_NAME, "txt", 50, virusInputStream, "txt");
     }
 
     @Test
     public void createAttachmentWithVirusInvalidDocument() throws Exception {
-        InputStream inputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         setupExpectedException("invalid (null or uninitialized) document");
-        attachmentService.createAttachment(null, GOOD_FILE_NAME, "txt", 50, inputStream, "txt");
+        attachmentService.createAttachment(null, GOOD_FILE_NAME, "txt", 50, goodInputStream, "txt");
     }
 
     @Test
     public void createAttachmentWithVirusInvalidFileName() throws Exception {
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
-        InputStream inputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         setupExpectedException("invalid (blank) fileName");
-        attachmentService.createAttachment(pbo, "", "txt", 50, inputStream, "txt");
+        attachmentService.createAttachment(pbo, "", "txt", 50, goodInputStream, "txt");
     }
 
     @Test
     public void createAttachmentWithVirusInvalidMimeType() throws Exception {
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
-        InputStream inputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         setupExpectedException("invalid (blank) mimeType");
-        attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "", 50, inputStream, "txt");
+        attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "", 50, goodInputStream, "txt");
     }
 
     @Test
     public void createAttachmentWithVirusInvalidFileSize() throws Exception {
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
-        InputStream inputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         setupExpectedException("invalid (non-positive) fileSize");
-        attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 0, inputStream, "txt");
+        attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 0, goodInputStream, "txt");
     }
 
     @Test
@@ -205,11 +199,8 @@ public class CuAttachmentServiceImplTest {
     }
 
     private Note setupMockNote(String objectId) {
-        Note mockNote = EasyMock.createMock(Note.class);
-
-        EasyMock.expect(mockNote.getRemoteObjectIdentifier()).andStubReturn(objectId);
-        EasyMock.replay(mockNote);
-
+        Note mockNote = Mockito.mock(Note.class);
+        Mockito.when(mockNote.getRemoteObjectIdentifier()).thenReturn(objectId);
         return mockNote;
     }
 
