@@ -1,13 +1,11 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl;
-import edu.cornell.cynergy.antivirus.service.DummyScanResult;
 import edu.cornell.cynergy.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -270,14 +268,9 @@ public class CuAttachmentServiceImplTest {
 
        @Override
        public ScanResult scan(InputStream inputStream) {
-
-           ScanResult mockScanResult = EasyMock.createMock(DummyScanResult.class);
-
-           EasyMock.expect(mockScanResult.getResult()).andStubReturn(ScanResult.Status.FAILED.toString());
-           EasyMock.expect(mockScanResult.getStatus()).andStubReturn(ScanResult.Status.FAILED);
-           EasyMock.replay(mockScanResult);
-
-           return mockScanResult;
+           ScanResult scanResult = Mockito.mock(ScanResult.class);
+           Mockito.when(scanResult.getResult()).thenReturn(ScanResult.Status.FAILED.toString());
+           return scanResult;
        }
    }
 
