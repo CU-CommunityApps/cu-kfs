@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,18 +21,16 @@ import org.junit.rules.ExpectedException;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.dao.AttachmentDao;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
-import org.kuali.kfs.krad.service.impl.NoteServiceImpl;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.util.Guid;
 import org.kuali.kfs.vnd.businessobject.PhoneType;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
+import edu.cornell.cynergy.antivirus.service.AntiVirusService;
 import edu.cornell.cynergy.antivirus.service.DummyAntiVirusServiceImpl;
 import edu.cornell.cynergy.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
@@ -65,10 +62,10 @@ public class CuAttachmentServiceImplTest {
         noteVirus = setupMockNote(String.valueOf(new Guid()));
         
         attachmentService = new CuAttachmentServiceImpl();
-        attachmentService.setKualiConfigurationService(new MockConfigurationService());
+        attachmentService.setKualiConfigurationService(buildMockConfigurationService());
         attachmentService.setAttachmentDao(buildMockAttachmentDao());
         attachmentService.setNoteService(buildMockNoteService());
-        attachmentService.setAntiVirusService(new MockAntivirusService());
+        attachmentService.setAntiVirusService(buildMockAntiVirusService());
 
         attachment = new Attachment();
         attachment.setObjectId(String.valueOf(new Guid()));
@@ -108,6 +105,29 @@ public class CuAttachmentServiceImplTest {
         attachment.setNote(note);
         return attachment;
     }
+    
+    private ConfigurationService buildMockConfigurationService() {
+        ConfigurationService mockConfigurationService = Mockito.mock(ConfigurationService.class);
+        Mockito.when(mockConfigurationService.getPropertyValueAsString(Mockito.any())).then(this::getCongigurationPropertyAsString);
+        return mockConfigurationService;
+    }
+    
+    private String getCongigurationPropertyAsString(InvocationOnMock invocation) {
+        String inputString = invocation.getArgument(0);
+        if (StringUtils.equals(inputString, KRADConstants.ATTACHMENTS_DIRECTORY_KEY)) {
+            return TEST_ATTACHMENTS_PATH;
+        }
+        return null;
+    }
+    
+    private AntiVirusService buildMockAntiVirusService() {
+        ScanResult falseResult = Mockito.mock(ScanResult.class);
+        Mockito.when(falseResult.getResult()).thenReturn(ScanResult.Status.FAILED.toString());
+        
+        AntiVirusService mockAntivirusService = Mockito.mock(AntiVirusService.class);
+        Mockito.when(mockAntivirusService.scan(Mockito.any(InputStream.class))).thenReturn(falseResult);
+        return mockAntivirusService;
+    }
 
     private void createAttachmentFile(Note note, String fileName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException {
         String documentDirectory = buildDocumentDirectory(note);
@@ -115,8 +135,6 @@ public class CuAttachmentServiceImplTest {
         File sourceFile = new File(ATTACHMENT_TEST_FILE_PATH + File.separator + fileName);
         FileUtils.copyFile(sourceFile, attachmentFile);
     }
-
-    
 
     private String buildDocumentDirectory(Note note) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         return buildDocumentDirectory(note.getRemoteObjectIdentifier());
@@ -231,43 +249,5 @@ public class CuAttachmentServiceImplTest {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(exceptionMessage);
     }
-
-    private class MockConfigurationService implements ConfigurationService {
-
-        @Override
-        public String getPropertyValueAsString(String s) {
-            if (StringUtils.equals(s, KRADConstants.ATTACHMENTS_DIRECTORY_KEY)) {
-                return TEST_ATTACHMENTS_PATH;
-            }
-
-            return null;
-        }
-
-        @Override
-        public boolean getPropertyValueAsBoolean(String s) {
-            return false;
-        }
-
-        @Override
-        public boolean getPropertyValueAsBoolean(String s, boolean b) {
-            return false;
-        }
-
-        @Override
-        public Map<String, String> getAllProperties() {
-            return null;
-        }
-
-    }
-
-   private class MockAntivirusService extends DummyAntiVirusServiceImpl {
-
-       @Override
-       public ScanResult scan(InputStream inputStream) {
-           ScanResult scanResult = Mockito.mock(ScanResult.class);
-           Mockito.when(scanResult.getResult()).thenReturn(ScanResult.Status.FAILED.toString());
-           return scanResult;
-       }
-   }
 
 }
