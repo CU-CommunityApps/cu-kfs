@@ -83,10 +83,10 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
         } else {
             byte[] fileContentsAsByteArray = IOUtils.toByteArray(fileContents);
             InputStream fileContentsToScan = new ByteArrayInputStream(fileContentsAsByteArray);
-            ScanResult scnResults = antiVirusService.scan(fileContentsToScan);
-            if (!ScanResult.Status.PASSED.equals(scnResults.getStatus())) {
-                LOG.error("createAttachment, virus protection failure!  uploadedFileName: " + uploadedFileName + 
-                        " mimeType: " + mimeType + " attachmentTypeCode: " + attachmentTypeCode + " parent object: " + parent);
+
+            if (!ScanResult.Status.PASSED.equals(antiVirusService.scan(fileContentsToScan).getStatus())) {
+                LOG.error("createAttachment, virus protection failure!  uploadedFileName: " + uploadedFileName 
+                        + " mimeType: " + mimeType + " attachmentTypeCode: " + attachmentTypeCode + " parent object: " + parent);
                 throw new IllegalArgumentException("file contents failed virus scan");
             } else {
                 InputStream fileContentsForAttachment = new ByteArrayInputStream(fileContentsAsByteArray);

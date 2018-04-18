@@ -1,6 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ import java.lang.reflect.Method;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -56,7 +58,7 @@ public class CuAttachmentServiceImplTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
-    public void setUp() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException{
         virusInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + VIRUS_FILE_NAME);
         goodInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         noteVirus = setupMockNote(String.valueOf(new Guid()));
@@ -76,6 +78,15 @@ public class CuAttachmentServiceImplTest {
 
         
         createAttachmentFile(noteVirus, VIRUS_FILE_NAME);
+    }
+    
+    @After
+    public void tearDown() throws IOException {
+        FileUtils.forceDelete(new File(TEST_PATH).getAbsoluteFile());
+        virusInputStream = null;
+        goodInputStream = null;
+        noteVirus = null;
+        attachmentService = null;
     }
     
     private NoteService buildMockNoteService() {
@@ -121,12 +132,27 @@ public class CuAttachmentServiceImplTest {
     }
     
     private AntiVirusService buildMockAntiVirusService() {
-        ScanResult falseResult = Mockito.mock(ScanResult.class);
-        Mockito.when(falseResult.getResult()).thenReturn(ScanResult.Status.FAILED.toString());
-        
         AntiVirusService mockAntivirusService = Mockito.mock(AntiVirusService.class);
-        Mockito.when(mockAntivirusService.scan(Mockito.any(InputStream.class))).thenReturn(falseResult);
+        Mockito.when(mockAntivirusService.scan(Mockito.any(InputStream.class))).then(this::getScanResultFromInputStream);
         return mockAntivirusService;
+    }
+    
+    private ScanResult getScanResultFromInputStream(InvocationOnMock invocation) {
+        InputStream scannedInputStream = invocation.getArgument(0);
+        String scannedContents;
+        try {
+            scannedContents = IOUtils.toString(scannedInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        ScanResult result = Mockito.mock(ScanResult.class);
+        
+        if (StringUtils.equals(scannedContents, GOOD_FILE_CONTENTS)) {
+            Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.PASSED);
+        } else {
+            Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.FAILED);
+        }
+        return result;
     }
 
     private void createAttachmentFile(Note note, String fileName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException {
@@ -144,11 +170,6 @@ public class CuAttachmentServiceImplTest {
         Method getDocumentDirectoryMethod = AttachmentServiceImpl.class.getDeclaredMethod("getDocumentDirectory", String.class);
         getDocumentDirectoryMethod.setAccessible(true);
         return (String) getDocumentDirectoryMethod.invoke(attachmentService, objectId);
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        FileUtils.forceDelete(new File(TEST_PATH).getAbsoluteFile());
     }
 
     @Test
@@ -190,6 +211,12 @@ public class CuAttachmentServiceImplTest {
         Assert.assertEquals(10L, createdAttachment.getAttachmentFileSize().longValue());
         Assert.assertEquals("txt", createdAttachment.getAttachmentMimeTypeCode());
         Assert.assertEquals("txt", createdAttachment.getAttachmentTypeCode());
+    }
+    
+    @Test
+    public void createAttachmentWithOutVirus() throws Exception {
+        PersistableBusinessObject pbo = setupPersistableBusinessObject();
+        attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 50, goodInputStream, "txt");
     }
 
     @Test
