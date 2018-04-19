@@ -266,6 +266,9 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             LOG.debug("performPaymentWorksApprovalProcessingForVendor: edit action");
             processKfsVendorEditActionApproval(kfsDocumentNumber, vendorDetail);
         }
+        else {
+            LOG.info("performPaymentWorksApprovalProcessingForVendor: No PVEN Approval processing performed for PMW because not existing PMW vendor -OR- KFS PVEN maintenance action not currently being tracked for PMW.");
+        }
     }
     
     private boolean isMaintenanceActionNewOrNewWithExisting(String maintenanceAction) {
@@ -296,6 +299,9 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private void performPaymentWorksDisapprovalCancelProcessingForVendor(VendorDetail vendorDetail, String kfsDocumentNumber, String maintenanceAction) {
         if (isExistingPaymentWorksVendor(kfsDocumentNumber) && (isMaintenanceActionNewOrNewWithExisting(maintenanceAction))) {
             getPaymentWorksBatchUtilityService().registerKfsPvenDisapprovalForExistingPaymentWorksVendor(kfsDocumentNumber, vendorDetail);
+        }
+        else {
+            LOG.info("performPaymentWorksDisapprovalCancelProcessingForVendor: No PVEN Disapproval processing performed for PMW because not existing PMW vendor with maintenance action currently being tracked for PMW.");
         }
     }
     
