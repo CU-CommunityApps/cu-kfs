@@ -33,6 +33,8 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
@@ -45,6 +47,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     private static final String PROC_METHODS_FIELD_NAME = "extension.procurementMethods";
     private static final String PROC_METHODS_MULTISELECT_FIELD_NAME = "extension.procurementMethodsArray";
     private static final String MULTISELECT_FIELD_PATH_PREFIX = "dataObject.";
+    
+    protected transient PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
     @Override
     public void saveBusinessObject() {
@@ -224,5 +228,91 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             }
         }
         
+    }
+    
+    @Override
+    public void doRouteStatusChange(DocumentHeader header) {
+        LOG.debug("doRouteStatusChange: entering");
+        super.doRouteStatusChange(header);
+        VendorDetail vendorDetail = (VendorDetail) getBusinessObject();
+        WorkflowDocument workflowDoc = header.getWorkflowDocument();
+        
+        if (workflowDoc.isProcessed()) {
+            LOG.debug("doRouteStatusChange: workflow is processed");
+            if (recordPvenRouteStatusChangeForPaymentWorksIsEnabled()) {
+                performPaymentWorksApprovalProcessingForVendor(vendorDetail, this.getDocumentNumber(), this.getMaintenanceAction());
+            }
+        }
+        else if (workflowDoc.isDisapproved() || workflowDoc.isCanceled()) {
+            LOG.debug("doRouteStatusChange: disapproved or canceled");
+            if (recordPvenRouteStatusChangeForPaymentWorksIsEnabled()) {
+                performPaymentWorksDisapprovalCancelProcessingForVendor(vendorDetail, this.getDocumentNumber(), this.getMaintenanceAction());
+            }
+        }
+    }
+    
+    private void performPaymentWorksApprovalProcessingForVendor(VendorDetail vendorDetail, String kfsDocumentNumber, String maintenanceAction) {
+        if (isExistingPaymentWorksVendor(kfsDocumentNumber) && isMaintenanceActionNewOrNewWithExisting(maintenanceAction)) {
+            LOG.debug("performPaymentWorksApprovalProcessingForVendor: isExistingPaymentWorksVendor");
+            this.saveBusinessObject();
+            processExistingPaymentWorksVendorApproval(kfsDocumentNumber, vendorDetail);
+        }
+        else if (isMaintenanceActionNewOrNewWithExisting(maintenanceAction)) {
+            LOG.debug("performPaymentWorksApprovalProcessingForVendor: new action resulting from AVf or hand keying");
+            this.saveBusinessObject();
+            processKfsVendorNewActionApproval(kfsDocumentNumber, vendorDetail);
+        }
+        else if (StringUtils.equals(KRADConstants.MAINTENANCE_EDIT_ACTION, maintenanceAction)) {
+            LOG.debug("performPaymentWorksApprovalProcessingForVendor: edit action");
+            processKfsVendorEditActionApproval(kfsDocumentNumber, vendorDetail);
+        }
+        else {
+            LOG.info("performPaymentWorksApprovalProcessingForVendor: No PVEN Approval processing performed for PMW because not existing PMW vendor -OR- KFS PVEN maintenance action not currently being tracked for PMW.");
+        }
+    }
+    
+    private boolean isMaintenanceActionNewOrNewWithExisting(String maintenanceAction) {
+        return (StringUtils.equals(KRADConstants.MAINTENANCE_NEW_ACTION, maintenanceAction)
+                || StringUtils.equals(KRADConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, maintenanceAction));
+    }
+    
+    private boolean isExistingPaymentWorksVendor(String kfsDocumentNumber) {
+        return getPaymentWorksBatchUtilityService().foundExistingPaymentWorksVendorByKfsDocumentNumber(kfsDocumentNumber);
+    }
+    
+    private boolean recordPvenRouteStatusChangeForPaymentWorksIsEnabled() {
+        return (getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND).equalsIgnoreCase(KFSConstants.ParameterValues.YES));
+    }
+    
+    private void processExistingPaymentWorksVendorApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
+        getPaymentWorksBatchUtilityService().registerKfsPvenApprovalForExistingPaymentWorksVendor(kfsDocumentNumber, vendorDetail);
+    }
+    
+    private void processKfsVendorNewActionApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
+        getPaymentWorksBatchUtilityService().registerKfsPvenApprovalForKfsEnteredVendor(kfsDocumentNumber, vendorDetail);
+    }
+    
+    private void processKfsVendorEditActionApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
+        getPaymentWorksBatchUtilityService().registerKfsPvenApprovalForKfsEditedVendor(kfsDocumentNumber, vendorDetail);
+    }
+    
+    private void performPaymentWorksDisapprovalCancelProcessingForVendor(VendorDetail vendorDetail, String kfsDocumentNumber, String maintenanceAction) {
+        if (isExistingPaymentWorksVendor(kfsDocumentNumber) && (isMaintenanceActionNewOrNewWithExisting(maintenanceAction))) {
+            getPaymentWorksBatchUtilityService().registerKfsPvenDisapprovalForExistingPaymentWorksVendor(kfsDocumentNumber, vendorDetail);
+        }
+        else {
+            LOG.info("performPaymentWorksDisapprovalCancelProcessingForVendor: No PVEN Disapproval processing performed for PMW because not existing PMW vendor with maintenance action currently being tracked for PMW.");
+        }
+    }
+    
+    public PaymentWorksBatchUtilityService getPaymentWorksBatchUtilityService() {
+        if (paymentWorksBatchUtilityService == null) {
+            paymentWorksBatchUtilityService = SpringContext.getBean(PaymentWorksBatchUtilityService.class);
+        }
+        return paymentWorksBatchUtilityService;
+    }
+
+    public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
+        this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
     }
 }
