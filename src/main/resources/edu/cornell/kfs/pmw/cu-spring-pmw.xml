@@ -27,6 +27,7 @@
         <property name="jobNames">
             <list>
                 <value>paymentWorksNewVendorCreateKfsVendorBatchJob</value>
+                <value>paymentWorksNewVendorCreateKfsAchBatchJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -51,6 +52,18 @@
     
     <bean id="paymentWorksNewVendorCreateKfsVendorStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsVendorStep">
         <property name="paymentWorksNewVendorRequestsService" ref="paymentWorksNewVendorRequestsService" />
+    </bean>
+    
+    <bean id="paymentWorksNewVendorCreateKfsAchBatchJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="paymentWorksNewVendorCreateKfsAchStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="paymentWorksNewVendorCreateKfsAchStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsAchStep">
+        <property name="paymentWorksNewVendorPayeeAchService" ref="paymentWorksNewVendorPayeeAchService" />
     </bean>
 
     <bean id="paymentWorksDtoToPaymentWorksVendorConversionService" parent="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" />
@@ -98,16 +111,17 @@
     <bean id="paymentWorksBatchUtilityService" parent="paymentWorksBatchUtilityService-parentBean" />
     <bean id="paymentWorksBatchUtilityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksBatchUtilityServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="parameterService" ref="parameterService" />
         <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
         <property name="personService" ref="personService" />
     </bean>
     
-    <bean id="paymentWorksDataProcessingIntoKfsService" parent="paymentWorksDataProcessingIntoKfsService-parentBean" />
-    <bean id="paymentWorksDataProcessingIntoKfsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDataProcessingIntoKfsServiceImpl" abstract="true">
-        <property name="configurationService" ref="configurationService" />
+    <bean id="paymentWorksVendorDataProcessingIntoKfsService" parent="paymentWorksVendorDataProcessingIntoKfsService-parentBean" />
+    <bean id="paymentWorksVendorDataProcessingIntoKfsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorDataProcessingIntoKfsServiceImpl" abstract="true">
         <property name="documentService" ref="documentService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="paymentWorksNewVendorRequestsReportService" ref="paymentWorksNewVendorRequestsReportService" />
         <property name="paymentWorksVendorToKfsVendorDetailConversionService" ref="paymentWorksVendorToKfsVendorDetailConversionService" />
     </bean>
@@ -116,13 +130,20 @@
         <property name="filePath" value="${reports.directory}/pmw"/>
     </bean>
     
+    <bean id="paymentWorksReportService" abstract="true" parent="paymentWorksReportService-parentBean" />
+    <bean id="paymentWorksReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksReportServiceImpl" abstract="true">
+        <property name="configurationService" ref="configurationService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
+    </bean>
+    
     <bean id="paymentWorksNewVendorRequestsReportService" parent="paymentWorksNewVendorRequestsReportService-parentBean" />
     <bean id="paymentWorksNewVendorRequestsReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsReportServiceImpl" abstract="true">
-        <property name="configurationService" ref="configurationService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
 
     <bean id="paymentWorksNewVendorRequestsService" parent="paymentWorksNewVendorRequestsService-parentBean" />
@@ -133,9 +154,46 @@
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="kfsSupplierDiversityDao" ref="kfsSupplierDiversityDao" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksDataProcessingIntoKfsService" ref="paymentWorksDataProcessingIntoKfsService" />
+        <property name="paymentWorksVendorDataProcessingIntoKfsService" ref="paymentWorksVendorDataProcessingIntoKfsService" />
         <property name="paymentWorksIsoFipsCountryDao" ref="paymentWorksIsoFipsCountryDao" />
         <property name="paymentWorksNewVendorRequestsReportService" ref="paymentWorksNewVendorRequestsReportService" />
+        <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
+        <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
+    </bean>
+    
+    <bean id="paymentWorksVendorToKfsPayeeAchAccountConversionService" parent="paymentWorksVendorToKfsPayeeAchAccountConversionService-parentBean" />
+    <bean id="paymentWorksVendorToKfsPayeeAchAccountConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl" abstract="true">
+        <property name="configurationService" ref="configurationService"/>
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="sequenceAccessorService" ref="sequenceAccessorService" />
+    </bean>
+
+    <bean id="paymentWorksNewVendorPayeeAchReportService" parent="paymentWorksNewVendorPayeeAchReportService-parentBean" />
+    <bean id="paymentWorksNewVendorPayeeAchReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorPayeeAchReportServiceImpl" abstract="true">
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
+        <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
+        <property name="reportWriterService" ref="paymentWorksReportWriterService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+
+    <bean id="paymentWorksVendorAchDataProcessingIntoKfsService" parent="paymentWorksVendorAchDataProcessingIntoKfsService-parentBean" />
+    <bean id="paymentWorksVendorAchDataProcessingIntoKfsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl" abstract="true">
+        <property name="documentService" ref="documentService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksNewVendorPayeeAchReportService" ref="paymentWorksNewVendorPayeeAchReportService" />
+        <property name="paymentWorksVendorToKfsPayeeAchAccountConversionService" ref="paymentWorksVendorToKfsPayeeAchAccountConversionService" />
+    </bean>
+    
+    <bean id="paymentWorksNewVendorPayeeAchService" parent="paymentWorksNewVendorPayeeAchService-parentBean" />
+    <bean id="paymentWorksNewVendorPayeeAchService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorPayeeAchServiceImpl" abstract="true">
+        <property name="achBankService" ref="pdpAchBankService" />
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksNewVendorPayeeAchReportService" ref="paymentWorksNewVendorPayeeAchReportService" />
+        <property name="paymentWorksVendorAchDataProcessingIntoKfsService" ref="paymentWorksVendorAchDataProcessingIntoKfsService" />
         <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
         <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
     </bean>

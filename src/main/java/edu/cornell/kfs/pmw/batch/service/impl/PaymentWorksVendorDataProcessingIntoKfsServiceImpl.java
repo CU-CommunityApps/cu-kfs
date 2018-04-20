@@ -1,6 +1,5 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import org.springframework.util.AutoPopulatingList;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -24,25 +22,26 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
-
+import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataProcessingIntoKfsService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 
-public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWorksDataProcessingIntoKfsService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksDataProcessingIntoKfsServiceImpl.class);
+public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements PaymentWorksVendorDataProcessingIntoKfsService {
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorDataProcessingIntoKfsServiceImpl.class);
 
     protected PaymentWorksVendorToKfsVendorDetailConversionService paymentWorksVendorToKfsVendorDetailConversionService;
     protected DocumentService documentService;
     protected PaymentWorksNewVendorRequestsReportService paymentWorksNewVendorRequestsReportService;
-    protected ConfigurationService configurationService;
+    protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     
     @Override
     public boolean createValidateAndRouteKFSVendor(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
@@ -68,12 +67,12 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
                 LOG.info("createKfsVendorMaintenaceDocument: vendorMaintenceDoc created for pmwVendorId = " + pmwVendor.getPmwVendorRequestId());
             }
             else {
-                reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-                reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwVendor.toString(), kfsVendorDataWrapper.getErrorMessages()));
+                reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+                reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwVendor.toString(), kfsVendorDataWrapper.getErrorMessages()));
                 LOG.info("createKfsVendorMaintenaceDocument: vendorMaintenceDoc not created due to pmw-to-kfs data conversion error(s): " + kfsVendorDataWrapper.getErrorMessages().toString());
             }
         } catch (WorkflowException we) {
-            List<String> edocCreateErrors = convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
+            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
             LOG.error("createKfsVendorMaintenaceDocument: eDoc creation error(s): " + edocCreateErrors.toString());
             LOG.error("createKfsVendorMaintenaceDocument: eDoc creation exception caught: " + we.getMessage());
@@ -91,7 +90,7 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
             LOG.info("kfsVendorMaintenanceDocumentValidated: vendorMaintenceDoc validate.");
             documentValidated = true;
         } catch (ValidationException ve) {
-            List<String> validationErrors = convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
+            List<String> validationErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, validationErrors);
             LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation error(s): " + validationErrors.toString());
             LOG.error("kfsVendorMaintenanceDocumentValidated: eDoc validation exception caught: " + ve.getMessage());
@@ -108,7 +107,7 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
             LOG.info("kfsVendorMaintenceDocumentRouted: vendorMaintenceDoc routed.");
             documentRouted = true;
         } catch (WorkflowException we) {
-            List<String> edocCreateErrors = convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
+            List<String> edocCreateErrors = getPaymentWorksBatchUtilityService().convertReportDataValidationErrors(GlobalVariables.getMessageMap().getErrorMessages());
             captureKfsProcessingErrorsForVendor(pmwVendor, reportData, edocCreateErrors);
             LOG.error("kfsVendorMaintenceDocumentRouted: eDoc routing error(s): " + edocCreateErrors.toString());
             LOG.error("kfsVendorMaintenceDocumentRouted: eDoc routing exception caught: " + we.getMessage());
@@ -119,26 +118,8 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
     }
     
     private void captureKfsProcessingErrorsForVendor(PaymentWorksVendor pmwVendorWithFailure, PaymentWorksNewVendorRequestsBatchReportData reportData, List<String> validationErrors) {
-        reportData.getPendingPaymentWorksVendorsWithProcessingErrors().incrementRecordCount();
-        reportData.addPmwVendorsWithErrorsWhenProcessingAttempted(getPaymentWorksNewVendorRequestsReportService().createBatchReportVendorItem(pmwVendorWithFailure, validationErrors));
-    }
-
-    private List<String> convertReportDataValidationErrors(Map<String, AutoPopulatingList<ErrorMessage>> kfsGlobalVariablesMessageMap) {
-        List<String> reportDataErrors = new ArrayList<String>();
-        ErrorMessage errorMessage = null;
-        String errorText = KFSConstants.EMPTY_STRING;
-        
-        for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> errorEntry : kfsGlobalVariablesMessageMap.entrySet()) {
-            Iterator<ErrorMessage> iterator = errorEntry.getValue().iterator();
-            while (iterator.hasNext()) {
-                errorMessage = iterator.next();
-                errorText = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
-                errorText = MessageFormat.format(errorText, (Object[]) errorMessage.getMessageParameters());
-                reportDataErrors.add(errorText);
-                LOG.error("convertReportDataValidationErrors: errorKey: " + errorMessage.getErrorKey() + "  errorMessages:: " + errorText);
-            }
-        }
-        return reportDataErrors;
+        reportData.getRecordsWithProcessingErrorsSummary().incrementRecordCount();
+        reportData.addRecordWithProcessingErrors(getPaymentWorksNewVendorRequestsReportService().createBatchReportVendorItem(pmwVendorWithFailure, validationErrors));
     }
     
     private MaintenanceDocument buildVendorMaintenanceDocument(PaymentWorksVendor paymentWorksVendor, KfsVendorDataWrapper kfsVendorDataWrapper) throws WorkflowException {
@@ -202,12 +183,12 @@ public class PaymentWorksDataProcessingIntoKfsServiceImpl implements PaymentWork
         this.paymentWorksNewVendorRequestsReportService = paymentWorksNewVendorRequestsReportService;
     }
 
-    public ConfigurationService getConfigurationService() {
-        return configurationService;
+    public PaymentWorksBatchUtilityService getPaymentWorksBatchUtilityService() {
+        return paymentWorksBatchUtilityService;
     }
 
-    public void setConfigurationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
+    public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
+        this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
     }
 
 }

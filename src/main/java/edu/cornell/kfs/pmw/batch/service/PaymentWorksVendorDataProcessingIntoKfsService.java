@@ -9,7 +9,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 
-public interface PaymentWorksDataProcessingIntoKfsService {
+public interface PaymentWorksVendorDataProcessingIntoKfsService {
     
     boolean createValidateAndRouteKFSVendor(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap,
                                             Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap, PaymentWorksNewVendorRequestsBatchReportData reportData);

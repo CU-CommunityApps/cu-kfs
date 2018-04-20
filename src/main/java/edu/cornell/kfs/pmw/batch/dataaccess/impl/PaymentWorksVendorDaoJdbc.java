@@ -39,6 +39,13 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
         getJdbcTemplate().batchUpdate(updateSql);
     }
+    
+    @Override
+    public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, Timestamp processingTimeStamp) {
+        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null);
+        LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
+        getJdbcTemplate().batchUpdate(updateSql);
+    }
 
     private String buildUpdateExistingPaymentWorksVendorInStagingTableSql(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber,
                                                                           Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier) {

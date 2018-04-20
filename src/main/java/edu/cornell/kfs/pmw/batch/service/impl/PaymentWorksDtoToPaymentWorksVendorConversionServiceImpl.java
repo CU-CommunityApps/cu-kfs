@@ -50,8 +50,8 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
             extractCustomFields(stgVendor, pmwNewVendorRequestDetailDTO, reportData);
         }
         else {
-            reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-            reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestDetailDTO.toString(),
+            reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+            reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestDetailDTO.toString(),
                     MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_DETAIL_WAS_NOT_FOUND_ERROR_MESSAGE), pmwNewVendorRequestDetailDTO.getId())));
         }
         return stgVendor;
@@ -178,8 +178,8 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
         List<String> customFieldErrors = new ArrayList<String>();
         processEachPaymentWorksCustomFieldReceived(stgNewVendor, pmwNewVendorDetailDTO, customFieldErrors);
         if (errorsGeneratedForValueConversionOfPaymentWorksCustomFieldToPaymentWorksVendorAttribute(stgNewVendor)) {
-            reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-            reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendor.toString(), customFieldErrors));
+            reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+            reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendor.toString(), customFieldErrors));
         }
     }
 

@@ -31,8 +31,8 @@
     <field-descriptor name="kfsVendorDocumentNumber" column="PVEN_FDOC_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="kfsVendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER" />
     <field-descriptor name="kfsVendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER" />
+    <field-descriptor name="kfsAchProcessingStatus" column="KFS_ACH_PROC_STAT" jdbc-type="VARCHAR" />
     <field-descriptor name="kfsAchDocumentNumber" column="PAAT_FDOC_NBR" jdbc-type="VARCHAR" />
-    <field-descriptor name="kfsAchProcessingStatus" column="KFS_ACH_PROC_STAT" jdbc-type="VARCHAR" />\
     <field-descriptor name="processTimestamp" column="PROC_TS" jdbc-type="TIMESTAMP"/>
 
     <field-descriptor name="requestingCompanyId" column="REQ_CMP_ID" jdbc-type="VARCHAR" />
