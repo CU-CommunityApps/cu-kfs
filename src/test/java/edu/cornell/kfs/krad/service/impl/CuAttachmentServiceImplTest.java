@@ -46,6 +46,7 @@ public class CuAttachmentServiceImplTest {
     private static final String TEST_ATTACHMENTS_PATH = TEST_PATH + File.separator + "attachments";
     private static final String VIRUS_FILE_CONTENTS = "This is a pretend virus infected attachment file.";
     private static final String VIRUS_FILE_NAME = "virus.txt";
+    private static final String ERROR_FILE_NAME = "error.txt";
 
     private CuAttachmentServiceImpl attachmentService;
     private Attachment attachment;
@@ -53,6 +54,7 @@ public class CuAttachmentServiceImplTest {
     
     private InputStream virusInputStream;
     private InputStream goodInputStream;
+    private InputStream errorInputStream;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -61,6 +63,7 @@ public class CuAttachmentServiceImplTest {
     public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException {
         virusInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + VIRUS_FILE_NAME);
         goodInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
+        errorInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + ERROR_FILE_NAME);
         noteVirus = setupMockNote(String.valueOf(new Guid()));
         
         attachmentService = new CuAttachmentServiceImpl();
@@ -149,8 +152,10 @@ public class CuAttachmentServiceImplTest {
         
         if (StringUtils.equals(scannedContents, GOOD_FILE_CONTENTS)) {
             Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.PASSED);
-        } else {
+        } else if (StringUtils.equals(scannedContents, VIRUS_FILE_CONTENTS)) {
             Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.FAILED);
+        } else {
+            Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.ERROR);
         }
         return result;
     }
@@ -224,6 +229,13 @@ public class CuAttachmentServiceImplTest {
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
         setupExpectedException("file contents failed virus scan");
         attachmentService.createAttachment(pbo, VIRUS_FILE_NAME, "txt", 50, virusInputStream, "txt");
+    }
+    
+    @Test
+    public void createAttachmentWithError() throws Exception {
+        PersistableBusinessObject pbo = setupPersistableBusinessObject();
+        setupExpectedException("file contents failed virus scan");
+        attachmentService.createAttachment(pbo, ERROR_FILE_NAME, "txt", 50, errorInputStream, "txt");
     }
 
     @Test
