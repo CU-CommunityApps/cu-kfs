@@ -58,7 +58,7 @@ public class CuAttachmentServiceImplTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Before
-    public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException{
+    public void setUp() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException {
         virusInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + VIRUS_FILE_NAME);
         goodInputStream = setupInputStream(ATTACHMENT_TEST_FILE_PATH + File.separator + GOOD_FILE_NAME);
         noteVirus = setupMockNote(String.valueOf(new Guid()));
@@ -119,11 +119,11 @@ public class CuAttachmentServiceImplTest {
     
     private ConfigurationService buildMockConfigurationService() {
         ConfigurationService mockConfigurationService = Mockito.mock(ConfigurationService.class);
-        Mockito.when(mockConfigurationService.getPropertyValueAsString(Mockito.any())).then(this::getCongigurationPropertyAsString);
+        Mockito.when(mockConfigurationService.getPropertyValueAsString(Mockito.any())).then(this::getConfigurationPropertyAsString);
         return mockConfigurationService;
     }
     
-    private String getCongigurationPropertyAsString(InvocationOnMock invocation) {
+    private String getConfigurationPropertyAsString(InvocationOnMock invocation) {
         String inputString = invocation.getArgument(0);
         if (StringUtils.equals(inputString, KRADConstants.ATTACHMENTS_DIRECTORY_KEY)) {
             return TEST_ATTACHMENTS_PATH;
