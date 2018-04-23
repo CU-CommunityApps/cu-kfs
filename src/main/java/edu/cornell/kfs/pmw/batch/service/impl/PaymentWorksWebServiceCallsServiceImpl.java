@@ -2,6 +2,7 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     private static final long serialVersionUID = -4282596886353845280L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
 
-    private static final String REFRESH_TOKEN_URL_FORMAT = "%s/users/%s/refresh_auth_token/";
+    private static final String REFRESH_TOKEN_URL_FORMAT = "%susers/%s/refresh_auth_token/";
     private static final String EMPTY_JSON_WRAPPER = "{}";
 
     private String paymentWorksUrl;
@@ -285,8 +286,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         } finally {
             CURestClientUtils.closeQuietly(refreshTokenResponse);
         }
-        
-        LOG.info("refreshPaymentWorksAuthorizationToken(): Processing ended");
     }
 
     private URI buildRefreshAuthorizationTokenURI() {
@@ -300,15 +299,11 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
 
     private String getPaymentWorksAuthorizationTokenFromResponse(String jsonResponse) {
-        JsonNode rootNode;
-        
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            rootNode = objectMapper.readTree(jsonResponse);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (StringUtils.isBlank(jsonResponse)) {
+            throw new RuntimeException("Token refresh failed: No response content was received from PaymentWorks");
         }
         
+        JsonNode rootNode = readJsonTree(jsonResponse);
         checkForSuccessfulTokenRefreshStatus(rootNode);
         
         JsonNode tokenNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.AUTH_TOKEN_FIELD);
@@ -326,10 +321,20 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         return newToken;
     }
 
+    private JsonNode readJsonTree(String jsonText) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readTree(jsonText);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     private void checkForSuccessfulTokenRefreshStatus(JsonNode rootNode) {
         JsonNode detailNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.DETAIL_FIELD);
         if (ObjectUtils.isNotNull(detailNode)) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Token refresh failed. Detail message: " + detailNode.textValue());
+            handleDetailMessageFromTokenRefreshFailure(detailNode.textValue());
             throw new RuntimeException("Token refresh failed: Received failure response from PaymentWorks");
         }
         
@@ -341,6 +346,10 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Unexpected status from PaymentWorks response: " + statusNode.textValue());
             throw new RuntimeException("Token refresh failed: Received an unexpected refresh status from PaymentWorks");
         }
+    }
+
+    protected void handleDetailMessageFromTokenRefreshFailure(String detailMessage) {
+        // This is just a hook for unit testing convenience.
     }
 
     public String getPaymentWorksUserId() {
