@@ -4,13 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksEmailableReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
 
 public class PaymentWorksReportEmailServiceImpl implements PaymentWorksReportEmailService {

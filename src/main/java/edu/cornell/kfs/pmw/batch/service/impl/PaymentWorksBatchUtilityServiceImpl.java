@@ -1,15 +1,21 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.springframework.util.AutoPopulatingList;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,6 +32,8 @@ import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksBankAccountType;
+import edu.cornell.kfs.pmw.batch.businessobject.KfsAchDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoCountryToFipsCountryAssociation;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
@@ -35,18 +43,21 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUtilityService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
 
     protected BusinessObjectService businessObjectService;
+    protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
     protected PersonService personService;
@@ -91,16 +102,33 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         }
         return fileByteContent;
     }
-
+    
     @Override 
     public KfsVendorDataWrapper createNoteRecordingAnyErrors(KfsVendorDataWrapper kfsVendorDataWrapper, String noteText, String noteErrorDescriptor) {
-        if (noteTextSizeIsWithinLimit(noteText)) {
-            Note note = createNote(noteText);
-            kfsVendorDataWrapper.getVendorNotes().add(note);
-        } else {
-            LOG.error("createNoteRecordingAnyErrors: The " + noteErrorDescriptor + " Note contained " + noteText.length() + "characters and it can only have " + PaymentWorksConstants.NOTE_TEXT_DEFAULT_MAX_LENGTH);
+        Note newNote = createNoteWithErrorsLogged(noteText, noteErrorDescriptor);
+        if (!ObjectUtils.isNull(newNote)) {
+            kfsVendorDataWrapper.getVendorNotes().add(newNote);
         }
         return kfsVendorDataWrapper;
+    }
+    
+    @Override 
+    public KfsAchDataWrapper createNoteRecordingAnyErrors(KfsAchDataWrapper kfsAchDataWrapper, String noteText, String noteErrorDescriptor) {
+        Note newNote = createNoteWithErrorsLogged(noteText, noteErrorDescriptor);
+        if (!ObjectUtils.isNull(newNote)) {
+            kfsAchDataWrapper.getPayeeAchAccountNotes().add(newNote);
+        }
+        return kfsAchDataWrapper;
+    }
+    
+    private Note createNoteWithErrorsLogged(String noteText, String noteErrorDescriptor) {
+        Note noteBeingCreated = null;
+        if (noteTextSizeIsWithinLimit(noteText)) {
+            noteBeingCreated = createNote(noteText);
+        } else {
+            LOG.error("createNoteWithErrorsLogged: The " + noteErrorDescriptor + " Note contained " + noteText.length() + "characters and it can only have " + PaymentWorksConstants.NOTE_TEXT_DEFAULT_MAX_LENGTH);
+        }
+        return noteBeingCreated;
     }
     
     private boolean noteTextSizeIsWithinLimit(String noteText) {
@@ -303,6 +331,31 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         } 
     }
     
+    public List<String> convertReportDataValidationErrors(Map<String, AutoPopulatingList<ErrorMessage>> kfsGlobalVariablesMessageMap) {
+        List<String> reportDataErrors = new ArrayList<String>();
+        ErrorMessage errorMessage = null;
+        String errorText = KFSConstants.EMPTY_STRING;
+        
+        for (Map.Entry<String, AutoPopulatingList<ErrorMessage>> errorEntry : kfsGlobalVariablesMessageMap.entrySet()) {
+            Iterator<ErrorMessage> iterator = errorEntry.getValue().iterator();
+            while (iterator.hasNext()) {
+                errorMessage = iterator.next();
+                errorText = getConfigurationService().getPropertyValueAsString(errorMessage.getErrorKey());
+                errorText = MessageFormat.format(errorText, (Object[]) errorMessage.getMessageParameters());
+                reportDataErrors.add(errorText);
+                LOG.error("convertReportDataValidationErrors: errorKey: " + errorMessage.getErrorKey() + "  errorMessages:: " + errorText);
+            }
+        }
+        return reportDataErrors;
+    }
+    
+    public List<PaymentWorksBankAccountType> findAllPmwBankAccountTypesMatching(String pmwBankAccountTypeToVerify) {
+        List<PaymentWorksBankAccountType> matchingValues = Arrays.stream(PaymentWorksConstants.PaymentWorksBankAccountType.values())
+                                                                 .filter(pmwBankAccountType -> pmwBankAccountType.getPmwCode().equalsIgnoreCase(pmwBankAccountTypeToVerify))
+                                                                 .collect(Collectors.toList());
+        return matchingValues;
+    }
+    
     public void setSystemUser(Person systemUser) {
         this.systemUser = systemUser;
     }
@@ -329,6 +382,14 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
     public PaymentWorksVendorDao getPaymentWorksVendorDao() {

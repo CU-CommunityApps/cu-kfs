@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -21,6 +21,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
@@ -28,9 +29,11 @@ import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksIsoFipsCountryDao;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
+import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
+import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataProcessingIntoKfsService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
@@ -54,7 +57,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
     protected KfsSupplierDiversityDao kfsSupplierDiversityDao;
-    protected PaymentWorksDataProcessingIntoKfsService paymentWorksDataProcessingIntoKfsService;
+    protected PaymentWorksVendorDataProcessingIntoKfsService paymentWorksVendorDataProcessingIntoKfsService;
     protected PaymentWorksNewVendorRequestsReportService paymentWorksNewVendorRequestsReportService;
     protected PaymentWorksVendorDao paymentWorksVendorDao;
     protected PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
@@ -64,13 +67,14 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     protected Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap = null; 
     protected Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap = null;
     
+
     @Override
     public void createKfsVendorsFromPmwNewVendorRequests() {
         LOG.info("createKfsVendorsFromPmwNewVendorRequests: was invoked");
         List<String> pmwNewVendorIdentifers = getPaymentWorksWebServiceCallsService().obtainPmwIdentifiersForPendingNewVendorRequests();
         if (pmwNewVendorIdentifers.isEmpty()) {
             LOG.info("createKfsVendorsFromPmwNewVendorRequests: No PENDING New Vendors found to process.");
-            getPaymentWorksNewVendorRequestsReportService().sendEmailThatNoDataWasFoundToProcess();
+            sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors();
         } 
         else {
             LOG.info("createKfsVendorsFromPmwNewVendorRequests: Found " + pmwNewVendorIdentifers.size() + " PENDING New Vendors to process.");
@@ -79,9 +83,17 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         LOG.info("createKfsVendorsFromPmwNewVendorRequests: leaving method");
     }
     
+    private void sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors() {
+        List<String> emailBodyItems = new ArrayList<String>();
+        emailBodyItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_PENDING_VENDORS_FOUND_EMAIL_BODY);
+        List<String> emailSubjectItems = new ArrayList<String>();
+        emailSubjectItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_PENDING_VENDORS_FOUND_EMAIL_SUBJECT);
+        getPaymentWorksNewVendorRequestsReportService().sendEmailThatNoDataWasFoundToProcess(emailSubjectItems, emailBodyItems);
+    }
+    
     private void processEachPaymentWorksNewVendorRequestIntoKFS(List<String> identifiersForPendingNewVendorsToProcess) {
         PaymentWorksNewVendorRequestsBatchReportData reportData = new PaymentWorksNewVendorRequestsBatchReportData();
-        reportData.getPendingNewVendorsFoundInPmw().setRecordCount(identifiersForPendingNewVendorsToProcess.size());
+        reportData.getRecordsFoundToProcessSummary().setRecordCount(identifiersForPendingNewVendorsToProcess.size());
 
         for (String pmwNewVendorRequestId : identifiersForPendingNewVendorsToProcess) {
             LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS: Processing started for PMW-vendor-id=" + pmwNewVendorRequestId);
@@ -110,7 +122,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     }
     
     private boolean pmwNewVendorRequestProcessingIntoKfsWasSuccessful(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
-        if (getPaymentWorksDataProcessingIntoKfsService().createValidateAndRouteKFSVendor(savedStgNewVendorRequestDetailToProcess, getPaymentWorksIsoToFipsCountryMap(), getPaymentWorksToKfsDiversityMap(), reportData)) { 
+        if (getPaymentWorksVendorDataProcessingIntoKfsService().createValidateAndRouteKFSVendor(savedStgNewVendorRequestDetailToProcess, getPaymentWorksIsoToFipsCountryMap(), getPaymentWorksToKfsDiversityMap(), reportData)) { 
             updatePmwNewVendorStagingTableBasedOnSuccessfulCreateVendorProcessing(savedStgNewVendorRequestDetailToProcess);
             updatePmwNewVendorReportBasedOnSuccessfulCreateVendorProcessing(savedStgNewVendorRequestDetailToProcess, reportData);
             return true;
@@ -131,8 +143,8 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
         else {
             if (!errorMessages.isEmpty()){
-                reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-                reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
+                reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+                reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
             }
             return false;
         }
@@ -378,15 +390,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             return true;
         }
         else {
-            reportData.getPendingPaymentWorksVendorsThatCouldNotBeProcessed().incrementRecordCount();
-            reportData.addPmwVendorsThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestModifiedByOjbSave.toString(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_SAVE_TO_PMW_STAGING_TABLE_FAILED_ERROR_MESSAGE)));
+            reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
+            reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestModifiedByOjbSave.toString(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_SAVE_TO_PMW_STAGING_TABLE_FAILED_ERROR_MESSAGE)));
             return false;
         }
     }
     
     private void updatePmwNewVendorReportBasedOnSuccessfulCreateVendorProcessing(PaymentWorksVendor savedStgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
-        reportData.getPendingPaymentWorksVendorsProcessed().incrementRecordCount();
-        reportData.getPmwVendorsProcessed().add(getPaymentWorksNewVendorRequestsReportService().createBatchReportVendorItem(savedStgNewVendorRequestDetailToProcess));
+        reportData.getRecordsProcessedSummary().incrementRecordCount();
+        reportData.addRecordProcessed(getPaymentWorksNewVendorRequestsReportService().createBatchReportVendorItem(savedStgNewVendorRequestDetailToProcess));
     }
     
     public PaymentWorksWebServiceCallsService getPaymentWorksWebServiceCallsService() {
@@ -414,13 +426,13 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         this.paymentWorksNewVendorRequestsReportService = paymentWorksNewVendorRequestsReportService;
     }
 
-    public PaymentWorksDataProcessingIntoKfsService getPaymentWorksDataProcessingIntoKfsService() {
-        return paymentWorksDataProcessingIntoKfsService;
+    public PaymentWorksVendorDataProcessingIntoKfsService getPaymentWorksVendorDataProcessingIntoKfsService() {
+        return paymentWorksVendorDataProcessingIntoKfsService;
     }
 
-    public void setPaymentWorksDataProcessingIntoKfsService(
-            PaymentWorksDataProcessingIntoKfsService paymentWorksDataProcessingIntoKfsService) {
-        this.paymentWorksDataProcessingIntoKfsService = paymentWorksDataProcessingIntoKfsService;
+    public void setPaymentWorksVendorDataProcessingIntoKfsService(
+            PaymentWorksVendorDataProcessingIntoKfsService paymentWorksVendorDataProcessingIntoKfsService) {
+        this.paymentWorksVendorDataProcessingIntoKfsService = paymentWorksVendorDataProcessingIntoKfsService;
     }
 
     public DateTimeService getDateTimeService() {
