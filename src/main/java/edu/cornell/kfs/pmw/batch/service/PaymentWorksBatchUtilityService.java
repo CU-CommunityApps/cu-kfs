@@ -40,5 +40,5 @@ public interface PaymentWorksBatchUtilityService {
     
     List<String> convertReportDataValidationErrors(Map<String, AutoPopulatingList<ErrorMessage>> kfsGlobalVariablesMessageMap);
     
-    List<PaymentWorksBankAccountType> findAllPmwBankAccountTypesMaching(String pmwBankAccountTypeToVerify);
+    List<PaymentWorksBankAccountType> findAllPmwBankAccountTypesMatching(String pmwBankAccountTypeToVerify);
 }

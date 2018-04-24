@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -38,10 +38,6 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl extends PaymentWorks
         LOG.debug("generateAndEmailReport entered");
         File reportFile = generateReport(reportData);
         sendResultsEmail(reportData, reportFile);
-    }
-    
-    public void sendEmailThatNoDataWasFoundToProcess(List<String> emailSubjectItems, List<String> emailBodyItems) {
-        super.sendEmailThatNoDataWasFoundToProcess(emailSubjectItems, emailBodyItems); 
     }
     
     private File generateReport(PaymentWorksNewVendorRequestsBatchReportData reportData) {

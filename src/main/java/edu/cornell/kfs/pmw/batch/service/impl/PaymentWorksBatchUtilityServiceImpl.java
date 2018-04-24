@@ -1,7 +1,7 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.util.AutoPopulatingList;
 
@@ -349,9 +349,8 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         return reportDataErrors;
     }
     
-    public List<PaymentWorksBankAccountType> findAllPmwBankAccountTypesMaching(String pmwBankAccountTypeToVerify) {
-        List<PaymentWorksBankAccountType> matchingValues = Arrays.asList(PaymentWorksConstants.PaymentWorksBankAccountType.values())
-                                                                 .stream()
+    public List<PaymentWorksBankAccountType> findAllPmwBankAccountTypesMatching(String pmwBankAccountTypeToVerify) {
+        List<PaymentWorksBankAccountType> matchingValues = Arrays.stream(PaymentWorksConstants.PaymentWorksBankAccountType.values())
                                                                  .filter(pmwBankAccountType -> pmwBankAccountType.getPmwCode().equalsIgnoreCase(pmwBankAccountTypeToVerify))
                                                                  .collect(Collectors.toList());
         return matchingValues;

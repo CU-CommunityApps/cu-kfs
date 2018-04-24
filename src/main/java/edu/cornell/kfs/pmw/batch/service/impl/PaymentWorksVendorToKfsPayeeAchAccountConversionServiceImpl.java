@@ -36,7 +36,7 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
     private KfsAchDataWrapper createPayeeAchForVendor(PaymentWorksVendor pmwVendor) {
         KfsAchDataWrapper kfsAchDataWrapper = populatePayeeAchAccount(pmwVendor);
         kfsAchDataWrapper.setPayeeAchAccountExplanation(createPayeeAchExplanation(pmwVendor));
-        kfsAchDataWrapper= buildPayeeAchNotes(pmwVendor, kfsAchDataWrapper);
+        kfsAchDataWrapper = buildPayeeAchNotes(pmwVendor, kfsAchDataWrapper);
         return kfsAchDataWrapper;
     }
     
@@ -56,14 +56,17 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
     }
     
     private String convertBankAccountTypeFromPmwToKfs(String pmwBankAccountType) {
-        List<PaymentWorksConstants.PaymentWorksBankAccountType> matchingPmwBanksAccountTypes = getPaymentWorksBatchUtilityService().findAllPmwBankAccountTypesMaching(pmwBankAccountType);
+        List<PaymentWorksConstants.PaymentWorksBankAccountType> matchingPmwBanksAccountTypes = getPaymentWorksBatchUtilityService().findAllPmwBankAccountTypesMatching(pmwBankAccountType);
         return matchingPmwBanksAccountTypes.get(0).translationToKfsBankAccountTypeCode;
     }
     
     private String formatPayeeNumberForVendor(PaymentWorksVendor pmwVendor) {
-        StringBuilder sbText = new StringBuilder(pmwVendor.getKfsVendorHeaderGeneratedIdentifier());
-        sbText.append(PaymentWorksConstants.KFSPayeeAchMaintenaceDocumentConstants.HYPHEN_FOR_VENDOR_NUMBER);
+        LOG.info("formatPayeeNumberForVendor: pmwVendor.kfsVendorHeaderGeneratedIdentifier = " + pmwVendor.getKfsVendorHeaderGeneratedIdentifier() + "  pmwVendor.kfsVendorDetailAssignedIdentifier = " + pmwVendor.getKfsVendorDetailAssignedIdentifier());
+        StringBuilder sbText = new StringBuilder();
+        sbText.append(pmwVendor.getKfsVendorHeaderGeneratedIdentifier());
+        sbText.append(KFSConstants.DASH);
         sbText.append(pmwVendor.getKfsVendorDetailAssignedIdentifier());
+        LOG.info("formatPayeeNumberForVendor: formatted vendor number = " + sbText.toString());
         return sbText.toString();
     }
     

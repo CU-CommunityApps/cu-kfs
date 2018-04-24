@@ -48,9 +48,9 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
     public boolean createValidateAndRouteKfsPayeeAch(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
         boolean processingSuccessful = false;
         MaintenanceDocument paatMaintenceDoc = createKfsPayeeAchMaintenaceDocument(pmwVendor, reportData);
-        if (ObjectUtils.isNotNull(paatMaintenceDoc) && 
-            kfsPayeeAchMaintenanceDocumentValidated(paatMaintenceDoc, reportData, pmwVendor) &&
-            kfsPayeeAchMaintenceDocumentRouted(paatMaintenceDoc, reportData, pmwVendor)) {
+        if (ObjectUtils.isNotNull(paatMaintenceDoc)
+            && kfsPayeeAchMaintenanceDocumentValidated(paatMaintenceDoc, reportData, pmwVendor)
+            && kfsPayeeAchMaintenceDocumentRouted(paatMaintenceDoc, reportData, pmwVendor)) {
             pmwVendor.setKfsAchDocumentNumber(paatMaintenceDoc.getDocumentNumber());
             processingSuccessful = true;
         }

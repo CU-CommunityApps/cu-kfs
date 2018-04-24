@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -21,34 +21,41 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, Timestamp processingTimeStamp) {
-        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null);
+        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null, null);
         LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
         getJdbcTemplate().batchUpdate(updateSql);
     }
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, Timestamp  processingTimeStamp) {
-        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, processingTimeStamp, null, null);
+        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, processingTimeStamp, null, null, null);
         LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
         getJdbcTemplate().batchUpdate(updateSql);
     }
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String kfsVendorProcessingStatus, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, Timestamp processingTimeStamp) {
-        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, KFSConstants.EMPTY_STRING, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp, vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier);
+        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, KFSConstants.EMPTY_STRING, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp, vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, null);
         LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
         getJdbcTemplate().batchUpdate(updateSql);
     }
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, Timestamp processingTimeStamp) {
-        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null);
+        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null, null);
+        LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
+        getJdbcTemplate().batchUpdate(updateSql);
+    }
+    
+    @Override
+    public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, Timestamp processingTimeStamp, String kfsAchDocumentNumber) {
+        String updateSql = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null, kfsAchDocumentNumber);
         LOG.info("updateExistingPaymentWorksVendorInStagingTable: updateSQL = " + updateSql);
         getJdbcTemplate().batchUpdate(updateSql);
     }
 
     private String buildUpdateExistingPaymentWorksVendorInStagingTableSql(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber,
-                                                                          Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier) {
+                                                                          Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) {
         StringBuilder sql = new StringBuilder();
         sql.append("update kfs.cu_pmw_vendor_t set");
         if (StringUtils.isNotBlank(pmwRequestStatus)) {
@@ -67,6 +74,9 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         }
         if (ObjectUtils.isNotNull(vendorDetailAssignedIdentifier)) {
             sql.append(", vndr_dtl_asnd_id = '" + vendorDetailAssignedIdentifier.intValue() + "'");
+        }
+        if (ObjectUtils.isNotNull(kfsAchDocumentNumber)) {
+            sql.append(", paat_fdoc_nbr = '" + kfsAchDocumentNumber + "'");
         }
         sql.append(" where id = '" + id + "'");
         

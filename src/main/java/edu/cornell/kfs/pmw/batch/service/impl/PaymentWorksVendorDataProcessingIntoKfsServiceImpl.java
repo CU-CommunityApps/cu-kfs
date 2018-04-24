@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.util.AutoPopulatingList;
 import org.kuali.rice.kew.api.exception.WorkflowException;
@@ -135,7 +135,6 @@ public class PaymentWorksVendorDataProcessingIntoKfsServiceImpl implements Payme
         vendorMaintDoc.getDocumentHeader().setDocumentDescription(buildVendorMainenanceDocumentDescription(newVendorDetail, isNewVendor));
         vendorMaintDoc.getNewMaintainableObject().setMaintenanceAction(documentAction);
         for (Note note : notesToPersist) {
-            note.setRemoteObjectIdentifier(vendorMaintDoc.getObjectId());
             vendorMaintDoc.addNote(note);
         }
         return vendorMaintDoc;

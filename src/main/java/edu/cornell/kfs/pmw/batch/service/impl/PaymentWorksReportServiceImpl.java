@@ -59,16 +59,7 @@ public abstract class PaymentWorksReportServiceImpl implements PaymentWorksRepor
     }
     
     public PaymentWorksBatchReportVendorItem createBatchReportVendorItem(PaymentWorksVendor pmwVendorProcessed) {
-        return new PaymentWorksBatchReportVendorItem(pmwVendorProcessed.getPmwVendorRequestId(),
-                                                     pmwVendorProcessed.getProcessTimestamp(),
-                                                     pmwVendorProcessed.getVendorType(), 
-                                                     pmwVendorProcessed.getRequestingCompanyLegalName(),
-                                                     pmwVendorProcessed.getRequestingCompanyLegalFirstName(),
-                                                     pmwVendorProcessed.getRequestingCompanyLegalLastName(), 
-                                                     pmwVendorProcessed.getRequestingCompanyTinType(),
-                                                     pmwVendorProcessed.getRequestingCompanyCorporateEmail(),
-                                                     pmwVendorProcessed.getInitiatorNetId(),
-                                                     null);
+        return createBatchReportVendorItem(pmwVendorProcessed, (List<String>) null);
     }
 
     public PaymentWorksBatchReportVendorItem createBatchReportVendorItem(PaymentWorksVendor pmwVendorWithErrors, List<String> errorMessages) {
@@ -87,16 +78,7 @@ public abstract class PaymentWorksReportServiceImpl implements PaymentWorksRepor
     public PaymentWorksBatchReportVendorItem createBatchReportVendorItem(PaymentWorksVendor pmwVendorWithErrors, String errorMessage) {
         List<String> errorMessages = new ArrayList<String>();
         errorMessages.add(errorMessage);
-        return new PaymentWorksBatchReportVendorItem(pmwVendorWithErrors.getPmwVendorRequestId(),
-                                                     pmwVendorWithErrors.getProcessTimestamp(),
-                                                     pmwVendorWithErrors.getVendorType(), 
-                                                     pmwVendorWithErrors.getRequestingCompanyLegalName(),
-                                                     pmwVendorWithErrors.getRequestingCompanyLegalFirstName(),
-                                                     pmwVendorWithErrors.getRequestingCompanyLegalLastName(), 
-                                                     pmwVendorWithErrors.getRequestingCompanyTinType(),
-                                                     pmwVendorWithErrors.getRequestingCompanyCorporateEmail(),
-                                                     pmwVendorWithErrors.getInitiatorNetId(),
-                                                     errorMessages);
+        return createBatchReportVendorItem(pmwVendorWithErrors, errorMessages);
     }
 
     protected void initializeReportTitleAndFileName(String fileNamePrefixToUse, String reportTitleToUse) {

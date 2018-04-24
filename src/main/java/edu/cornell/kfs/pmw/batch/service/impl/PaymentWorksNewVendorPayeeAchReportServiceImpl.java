@@ -5,8 +5,8 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -17,6 +17,7 @@ import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
+import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportSummaryItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksEmailableReportData;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
@@ -39,10 +40,6 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         LOG.debug("generateAndEmailReport entered");
         File reportFile = generateReport(reportData);
         sendResultsEmail(reportData, reportFile);
-    }
-    
-    public void sendEmailThatNoDataWasFoundToProcess(List<String> emailSubjectItems, List<String> emailBodyItems) {
-        super.sendEmailThatNoDataWasFoundToProcess(emailSubjectItems, emailBodyItems); 
     }
     
     private File generateReport(PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
@@ -156,27 +153,19 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         }
     }
 
-    private void ensureSummaryLabelsHaveValues (PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
-        if (StringUtils.isEmpty(reportData.getRecordsFoundToProcessSummary().getItemLabel())) {
-            reportData.getRecordsFoundToProcessSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_APPROVED_VENDORS_WITH_PENDING_ACH_FOUND_LABEL));
-        }
-        if (StringUtils.isEmpty(reportData.getRecordsThatCouldNotBeProcessedSummary().getItemLabel())) {
-            reportData.getRecordsThatCouldNotBeProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_NOT_PROCESSED_LABEL));
-        }
-        if (StringUtils.isEmpty(reportData.getRecordsProcessedSummary().getItemLabel())) {
-            reportData.getRecordsProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_SUCCESSFULLY_PROCESSED_LABEL));
-        }
-        if (StringUtils.isEmpty(reportData.getRecordsWithProcessingErrorsSummary().getItemLabel())) {
-            reportData.getRecordsWithProcessingErrorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_ERRORED_LABEL));
-        }
-        if (StringUtils.isEmpty(reportData.getDisapprovedVendorsSummary().getItemLabel())) {
-            reportData.getDisapprovedVendorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_DISAPPROVED_VENDORS_WITH_PENDING_ACH_FOUND_LABEL));
-        }
-        if (StringUtils.isEmpty(reportData.getNoAchDataProvidedVendorsSummary().getItemLabel())) {
-            reportData.getNoAchDataProvidedVendorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_VENDORS_WITH_NO_PENDING_ACH_DATA_FOUND_LABEL));
-        }
-        if (StringUtils.isEmpty(reportData.getRecordsGeneratingExceptionSummary().getItemLabel())){
-            reportData.getRecordsGeneratingExceptionSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_GENERATING_EXCEPTIONS_LABEL));
+    private void ensureSummaryLabelsHaveValues(PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsFoundToProcessSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_APPROVED_VENDORS_WITH_PENDING_ACH_FOUND_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsThatCouldNotBeProcessedSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_NOT_PROCESSED_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsProcessedSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_SUCCESSFULLY_PROCESSED_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsWithProcessingErrorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_ERRORED_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getDisapprovedVendorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_DISAPPROVED_VENDORS_WITH_PENDING_ACH_FOUND_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getNoAchDataProvidedVendorsSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_VENDORS_WITH_NO_PENDING_ACH_DATA_FOUND_LABEL);
+        setSummaryItemLabelToDefaultWhenBlank(reportData.getRecordsGeneratingExceptionSummary(), PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_GENERATING_EXCEPTIONS_LABEL);
+    }
+    
+    private void setSummaryItemLabelToDefaultWhenBlank(PaymentWorksBatchReportSummaryItem summaryItem, String defaultLabelParameterKey) {
+        if (StringUtils.isEmpty(summaryItem.getItemLabel())) {
+            summaryItem.setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(defaultLabelParameterKey));
         }
     }
 
@@ -199,11 +188,11 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
     public String getReportFileNamePrefix() {
         if (ObjectUtils.isNull(reportFileNamePrefix)) {
             setReportFileNamePrefix(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FILE_NAME_PREFIX));
-            LOG.info("getReportFileNamePrefix just set reportFileNamePrefix to param value=" +getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FILE_NAME_PREFIX)+ "=");
+            LOG.info("getReportFileNamePrefix: just set reportFileNamePrefix to param value = " + getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_FILE_NAME_PREFIX));
         }
         else
         {
-            LOG.info("getReportFileNamePrefix sees reportFileNamePrefix as null =" + reportFileNamePrefix + "=");
+            LOG.info("getReportFileNamePrefix: sees reportFileNamePrefix as = " + reportFileNamePrefix);
         }
         return reportFileNamePrefix;
     }

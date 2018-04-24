@@ -17,7 +17,7 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_PHONE_NUMBER_LABEL = "note.label.paymentworks.pven.conflict.of.interest.phone.number";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_RELATIONSHIP_LABEL = "note.label.paymentworks.pven.conflict.of.interest.relationship";
-    public static final String NEW_VENDOR_PAAT_NOTES_PMW_VENDOR_NUMBER_LABEL= "note.label.paymentworks.vendor.number.paat.created.from";
+    public static final String NEW_VENDOR_PAAT_NOTES_PMW_VENDOR_NUMBER_LABEL = "note.label.paymentworks.vendor.number.paat.created.from";
     
     //Boiler plate for PaymentWorks generated KFS Payee ACH Account Explanation
     public static final String PAYEE_ACH_ACCOUNT_BANK_ACCOUNT_LABEL = "explanation.label.paymentworks.bank.account";

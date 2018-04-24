@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -113,7 +113,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                     performProcessingWhenAchAccountDataNotProvidedForDisapprovedKfsVendor(pmwVendor, reportData);
                 }
             } catch (Exception ex) {
-                LOG.error("processEachPaymentWorksDisapprovedNewVendorWithAndWithoutAchData: PMW Vendor ID " + pmwVendor.toString() + " generated Exception: " + ex.getStackTrace());
+                LOG.error("processEachPaymentWorksDisapprovedNewVendorWithAndWithoutAchData: PMW Vendor ID " + pmwVendor.toString() + " generated Exception(s): ", ex);
                 performProcessingWhenExceptionGeneratedForKfsDisapprovedVendorDuringAchCreation(pmwVendor, reportData);
             }
         }
@@ -282,8 +282,8 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     }
     
     private boolean pmwBankAccountTypeIsDefinedInKfs(String pmwBankAccountTypeToVerify) {
-        List<PaymentWorksBankAccountType> matchingValues = getPaymentWorksBatchUtilityService().findAllPmwBankAccountTypesMaching(pmwBankAccountTypeToVerify);
-        return matchingValues.size() == 1 ? true : false;
+        List<PaymentWorksBankAccountType> matchingValues = getPaymentWorksBatchUtilityService().findAllPmwBankAccountTypesMatching(pmwBankAccountTypeToVerify);
+        return (matchingValues.size() == 1);
     }
     
     private void performProcessingWhenInvalidAchAccountDataIsProvidedForApprovedKfsVendor(PaymentWorksVendor pmwVendor) {
@@ -367,7 +367,8 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   pmwVendor.getKfsAchProcessingStatus(),
-                                                                                  getDateTimeService().getCurrentTimestamp());
+                                                                                  getDateTimeService().getCurrentTimestamp(),
+                                                                                  pmwVendor.getKfsAchDocumentNumber());
     }
     
     private void updatePmwNewVendorStagingTableKfsAchProcessingStatusBasedOnKfsDisapprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
