@@ -19,6 +19,10 @@ public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksManageAuthorizationTokenAction.class);
 
+    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
     public ActionForward refreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
             getPaymentWorksWebServiceCallsService().refreshPaymentWorksAuthorizationToken();

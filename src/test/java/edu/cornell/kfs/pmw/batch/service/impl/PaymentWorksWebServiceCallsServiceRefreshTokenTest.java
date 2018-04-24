@@ -29,8 +29,8 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends LocalServerTestBase {
 
-    private static final String TEST_USERID_1 = "123abc";
-    private static final String TEST_USERID_2 = "555555";
+    private static final String TEST_USERID_1 = "123ab";
+    private static final String TEST_USERID_2 = "55555";
     private static final String INVALID_TOKEN = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
     private TestPaymentWorksWebServiceCallsServiceImpl webServiceCallsService;
@@ -52,10 +52,10 @@ public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends LocalSer
         HttpHost httpHost = start();
         
         this.baseServerUrl = httpHost.toURI();
+        String mockPaymentWorksUrl = baseServerUrl + CUKFSConstants.SLASH;
         
         webServiceCallsService = new TestPaymentWorksWebServiceCallsServiceImpl();
-        webServiceCallsService.setWebServiceCredentialService(buildMockWebServiceCredentialService());
-        webServiceCallsService.setPaymentWorksUrl(baseServerUrl + CUKFSConstants.SLASH);
+        webServiceCallsService.setWebServiceCredentialService(buildMockWebServiceCredentialService(mockPaymentWorksUrl));
     }
 
     /**
@@ -74,9 +74,12 @@ public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends LocalSer
         }
     }
 
-    private WebServiceCredentialService buildMockWebServiceCredentialService() {
+    private WebServiceCredentialService buildMockWebServiceCredentialService(String mockPaymentWorksUrl) {
         WebServiceCredentialService webServiceCredentialService = mock(WebServiceCredentialService.class);
         
+        when(webServiceCredentialService.getWebServiceCredentialValue(
+                PaymentWorksConstants.PAYMENTWORKS_WEB_SERVICE_GROUP_CODE, PaymentWorksCredentialKeys.PAYMENTWORKS_API_URL))
+                .thenReturn(mockPaymentWorksUrl);
         when(webServiceCredentialService.getWebServiceCredentialValue(
                 PaymentWorksConstants.PAYMENTWORKS_WEB_SERVICE_GROUP_CODE, PaymentWorksCredentialKeys.PAYMENTWORKS_USER_ID))
                 .then(this::getUserId);

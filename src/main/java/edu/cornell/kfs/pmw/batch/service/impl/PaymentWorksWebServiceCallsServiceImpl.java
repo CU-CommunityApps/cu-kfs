@@ -44,7 +44,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     private static final String REFRESH_TOKEN_URL_FORMAT = "%susers/%s/refresh_auth_token/";
     private static final String EMPTY_JSON_WRAPPER = "{}";
 
-    private String paymentWorksUrl;
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
     protected WebServiceCredentialService webServiceCredentialService;
     
@@ -360,17 +359,13 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         return getWebServiceCredentialValue(PaymentWorksCredentialKeys.PAYMENTWORKS_AUTHORIZATION_TOKEN);
     }
 
+    public String getPaymentWorksUrl() {
+        return getWebServiceCredentialValue(PaymentWorksCredentialKeys.PAYMENTWORKS_API_URL);
+    }
+
     protected String getWebServiceCredentialValue(String credentialKey) {
         return webServiceCredentialService.getWebServiceCredentialValue(
                 PaymentWorksConstants.PAYMENTWORKS_WEB_SERVICE_GROUP_CODE, credentialKey);
-    }
-
-    public String getPaymentWorksUrl() {
-        return paymentWorksUrl;
-    }
-
-    public void setPaymentWorksUrl(String paymentWorksUrl) {
-        this.paymentWorksUrl = paymentWorksUrl;
     }
 
     public PaymentWorksDtoToPaymentWorksVendorConversionService getPaymentWorksDtoToPaymentWorksVendorConversionService() {

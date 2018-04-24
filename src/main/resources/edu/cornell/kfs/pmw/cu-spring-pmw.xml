@@ -82,12 +82,7 @@
     <bean id="paymentWorksWebServiceCallsService" parent="paymentWorksWebServiceCallsService-parentBean" />
     <bean id="paymentWorksWebServiceCallsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksWebServiceCallsServiceImpl" abstract="true">
         <property name="paymentWorksDtoToPaymentWorksVendorConversionService" ref="paymentWorksDtoToPaymentWorksVendorConversionService" />
-        <property name="paymentWorksAuthorizationToken">
-            <value>${paymentworks.authorization.token}</value>
-        </property>
-        <property name="paymentWorksUrl">
-            <value>${paymentworks.api.url}</value>
-        </property>
+        <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
     </bean>
     
     <bean id="paymentWorksVendorDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksVendorDaoJdbc">

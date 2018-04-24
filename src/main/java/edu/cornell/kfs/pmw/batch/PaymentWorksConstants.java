@@ -106,6 +106,7 @@ public class PaymentWorksConstants {
     }
     
     public static final class PaymentWorksCredentialKeys {
+        public static final String PAYMENTWORKS_API_URL = "paymentworks.api.url";
         public static final String PAYMENTWORKS_USER_ID = "paymentworks.user.id";
         public static final String PAYMENTWORKS_AUTHORIZATION_TOKEN = "paymentworks.authorization.token";
     }
