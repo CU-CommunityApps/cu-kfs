@@ -17,6 +17,19 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_PHONE_NUMBER_LABEL = "note.label.paymentworks.pven.conflict.of.interest.phone.number";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_RELATIONSHIP_LABEL = "note.label.paymentworks.pven.conflict.of.interest.relationship";
+    public static final String NEW_VENDOR_PAAT_NOTES_PMW_VENDOR_NUMBER_LABEL = "note.label.paymentworks.vendor.number.paat.created.from";
+    
+    //Boiler plate for PaymentWorks generated KFS Payee ACH Account Explanation
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ACCOUNT_LABEL = "explanation.label.paymentworks.bank.account";
+    public static final String PAYEE_ACH_ACCOUNT_NAME_ON_ACCOUNT_LABEL  = "explanation.label.paymentworks.name.on.account";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_LABEL = "explanation.label.paymentworks.bank.address";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_COUNTRY_LABEL  = "explanation.label.paymentworks.bank.address.country";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_STREET1_LABEL = "explanation.label.paymentworks.bank.address.street1";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_STREET2_LABEL = "explanation.label.paymentworks.bank.address.street2";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_CITY_LABEL = "explanation.label.paymentworks.bank.address.city";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_STATE_LABEL = "explanation.label.paymentworks.bank.address.state";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_ZIP_LABEL = "explanation.label.paymentworks.bank.address.zip";
+    public static final String PAYEE_ACH_ACCOUNT_BANK_SWIFTCODE = "explanation.label.paymentworks.bank.swiftcode";
     
     //PaymentWorks Batch Report Messages
     public static final String NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE = "error.paymentworks.new.vendor.custom.field.not.staging.table.column";
@@ -24,6 +37,7 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_DETAIL_WAS_NOT_FOUND_ERROR_MESSAGE = "error.paymentworks.new.vendor.detail.not.returned.by.web.service";
     public static final String DUPLICATE_NEW_VENDOR_REQUEST_ERROR_MESSAGE = "error.paymentworks.duplicate.new.vendor.request"; 
     public static final String INITIAL_SAVE_TO_PMW_STAGING_TABLE_FAILED_ERROR_MESSAGE = "error.paymentworks.intial.staging.table.save.failed";
+    public static final String EXCEPTION_GENERATED_DURING_PROCESSING = "error.paymentworks.exception.generated";
     public static final String END_OF_REPORT_MESSAGE = "message.paymentworks.end.of.report";
     public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "message.paymentworks.no.records.with.validation.errors";
     public static final String NO_VALIDATION_ERRORS_TO_OUTPUT_MESSAGE = "message.paymentworks.no.validation.errors";
@@ -52,5 +66,11 @@ public class PaymentWorksKeyConstants {
     public static final String PO_VENDOR_PROCESSING_NOT_AUTOMATIC_YET = "error.paymentworks.po.vendor.not.implemented.yet"; //REMOVE THIS MESSAGE AFTER PO VENDORS HAVE BEEN IMPLEMENTED
     public static final String COULD_NOT_DETERMINE_TAX_BUSINESS_RULE_TO_USE = "error.paymentworks.unknown.tax.business.rule";
     public static final String ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY = "error.paymentworks.empty.vendor.type";
+    public static final String ERROR_VENDOR_HEADER_GENERATED_IDENTIFIER_MISSING = "error.paymentworks.vendor.header.generated.identifier.missing";
+    public static final String ERROR_VENDOR_HEADER_DETAILED_ASSIGNED_IDENTIFIER_MISSING = "error.paymentworks.vendor.header.detailed.assigned.identifier.missing";
+    public static final String ERROR_BANK_ROUTING_NUMBER_INVALID = "error.paymentworks.bank.routing.number.invalid";
+    public static final String ERROR_BANK_ACCOUNT_NUMBER_INVALID = "error.paymentworks.bank.account.number.invalid";
+    public static final String ERROR_BANK_ACCOUNT_TYPE_INVALID = "error.paymentworks.bank.account.type.invalid";
+    public final static String NO_ACH_DATA_PROVIDED_BY_VENDOR_MESSAGE = "message.paymentworks.no.ach.data.provided";
 
 }
