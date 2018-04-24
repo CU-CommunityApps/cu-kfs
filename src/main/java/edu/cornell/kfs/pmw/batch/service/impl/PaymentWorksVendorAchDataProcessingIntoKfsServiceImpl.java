@@ -103,7 +103,7 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
     private boolean kfsPayeeAchMaintenceDocumentRouted(MaintenanceDocument paatMaintenceDoc, PaymentWorksNewVendorPayeeAchBatchReportData reportData, PaymentWorksVendor pmwVendor) {
         boolean documentRouted = false;
         try {
-            getDocumentService().routeDocument(paatMaintenceDoc, PaymentWorksConstants.KFSPayeeAchMaintenaceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION, null);
+            getDocumentService().routeDocument(paatMaintenceDoc, PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.PAYMENTWORKS_NEW_VENDOR_ACH_CREATE_ROUTE_ANNOTATION, null);
             LOG.info("kfsPayeeAchMaintenceDocumentRouted: paatMaintenceDoc routed.");
             documentRouted = true;
         } catch (WorkflowException we) {
@@ -148,17 +148,16 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         achAccount.setActive(newPayeeAchAccount.isActive());
         
         for (Note note : notesToPersist) {
-            note.setRemoteObjectIdentifier(paatMaintenceDoc.getObjectId());
             paatMaintenceDoc.addNote(note);
         }
         return paatMaintenceDoc;
     }
     
     private String buildPayeeAchMaintenanceDocumentDescription(PayeeACHAccount newPayeeAchAccount) {
-        StringBuilder sb = new StringBuilder(PaymentWorksConstants.KFSPayeeAchMaintenaceDocumentConstants.DESCRIPTION_PREFIX_FOR_NEW_PAYEE_ACH).append(KFSConstants.BLANK_SPACE);
+        StringBuilder sb = new StringBuilder(PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.DESCRIPTION_PREFIX_FOR_NEW_PAYEE_ACH).append(KFSConstants.BLANK_SPACE);
         sb.append(newPayeeAchAccount.getPayeeIdNumber()).append(KFSConstants.BLANK_SPACE).append(newPayeeAchAccount.getPayeeName());
-        if (sb.toString().length() > PaymentWorksConstants.KFSPayeeAchMaintenaceDocumentConstants.DESCRIPTION_MAX_LENGTH) {
-            return sb.toString().substring(0, PaymentWorksConstants.KFSPayeeAchMaintenaceDocumentConstants.DESCRIPTION_MAX_LENGTH);
+        if (sb.toString().length() > PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.DESCRIPTION_MAX_LENGTH) {
+            return sb.toString().substring(0, PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.DESCRIPTION_MAX_LENGTH);
         } else {
             return sb.toString();
         }

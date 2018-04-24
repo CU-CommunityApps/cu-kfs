@@ -50,7 +50,7 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
         kfsAchDataWrapper.getPayeeAchAccount().setBankAccountTypeCode(convertBankAccountTypeFromPmwToKfs(pmwVendor.getBankAcctType()));
         kfsAchDataWrapper.getPayeeAchAccount().setPayeeName(pmwVendor.getRequestingCompanyLegalName());
         kfsAchDataWrapper.getPayeeAchAccount().setPayeeEmailAddress(pmwVendor.getBankAcctAchEmail());
-        kfsAchDataWrapper.getPayeeAchAccount().setAchTransactionType(PaymentWorksConstants.KFSPayeeAchMaintenaceDocumentConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE);
+        kfsAchDataWrapper.getPayeeAchAccount().setAchTransactionType(PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE);
         kfsAchDataWrapper.getPayeeAchAccount().setActive(true);
         return kfsAchDataWrapper;
     }
