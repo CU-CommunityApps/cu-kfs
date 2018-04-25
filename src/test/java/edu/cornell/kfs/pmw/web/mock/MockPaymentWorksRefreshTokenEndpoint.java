@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -45,6 +46,7 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
     private static final int TOKEN_LENGTH = 40;
 
     private ConcurrentMap<String, String> authorizationTokenMap = new ConcurrentHashMap<>();
+    private AtomicInteger idCounter = new AtomicInteger(0);
     private Pattern refreshTokenUrlPattern = Pattern.compile(RELATIVE_REFRESH_TOKEN_ENDPOINT_URL_REGEX);
 
     @Override
@@ -56,14 +58,15 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
         if (!StringUtils.isAlphanumeric(userId)) {
             throw new IllegalArgumentException("userId should have been alphanumeric");
         }
-        
         String newToken = generateRandomToken();
         authorizationTokenMap.put(userId, newToken);
         return newToken;
     }
 
     protected String generateRandomToken() {
-        return StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH));
+        String baseToken = StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH - 1));
+        int nextId = idCounter.updateAndGet((value) -> (value + 1) % 10);
+        return baseToken + String.valueOf(nextId);
     }
 
     public String getCurrentTokenForUser(String userId) {

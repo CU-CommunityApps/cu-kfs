@@ -108,60 +108,62 @@ public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends LocalSer
         return null;
     }
 
-    private void setupInitialTokenForCurrentUser() {
-        currentAuthorizationToken = refreshTokenEndpoint.generateNewTokenForUser(userId);
-        oldAuthorizationToken = currentAuthorizationToken;
+    private void setAsCurrentUserAndSetupInitialToken(String newUserId) {
+        setAsCurrentUser(newUserId);
+        setOldAndCurrentTokens(refreshTokenEndpoint.generateNewTokenForUser(newUserId));
+    }
+
+    private void setAsCurrentUser(String newUserId) {
+        userId = newUserId;
+    }
+
+    private void setOldAndCurrentTokens(String token) {
+        currentAuthorizationToken = token;
+        oldAuthorizationToken = token;
     }
 
     @Test
     public void testRefreshTokenForValidUser() throws Exception {
-        userId = TEST_USERID_1;
-        setupInitialTokenForCurrentUser();
+        setAsCurrentUserAndSetupInitialToken(TEST_USERID_1);
         
         webServiceCallsService.refreshPaymentWorksAuthorizationToken();
+        
         assertTrue("The mock endpoint should have returned a successful response",
                 StringUtils.isBlank(webServiceCallsService.getLastDetailMessage()));
-        assertEquals("Current token does not match the one configured on the service endpoint",
+        assertEquals("Current token does not match the one configured on the mock service endpoint",
                 refreshTokenEndpoint.getCurrentTokenForUser(userId), currentAuthorizationToken);
         assertNotEquals("Token should have been updated by the service call", oldAuthorizationToken, currentAuthorizationToken);
     }
 
     @Test
     public void testRefreshTokenForUninitializedUser() throws Exception {
-        userId = TEST_USERID_1;
-        oldAuthorizationToken = INVALID_TOKEN;
-        currentAuthorizationToken = INVALID_TOKEN;
+        setAsCurrentUser(TEST_USERID_1);
+        setOldAndCurrentTokens(INVALID_TOKEN);
         
         assertTokenRefreshFailsAsIntended(PaymentWorksTestConstants.RefreshTokenErrorMessages.INVALID_USER_ID);
     }
 
     @Test
     public void testRefreshTokenForValidUserAndInvalidToken() throws Exception {
-        userId = TEST_USERID_1;
-        setupInitialTokenForCurrentUser();
-        oldAuthorizationToken = INVALID_TOKEN;
-        currentAuthorizationToken = INVALID_TOKEN;
+        setAsCurrentUserAndSetupInitialToken(TEST_USERID_1);
+        setOldAndCurrentTokens(INVALID_TOKEN);
         
         assertTokenRefreshFailsAsIntended(PaymentWorksTestConstants.RefreshTokenErrorMessages.INVALID_AUTHORIZATION_TOKEN);
     }
 
     @Test
     public void testRefreshTokenForCorrectTokenButIncorrectUninitializedUser() throws Exception {
-        userId = TEST_USERID_1;
-        setupInitialTokenForCurrentUser();
-        userId = TEST_USERID_2;
+        setAsCurrentUserAndSetupInitialToken(TEST_USERID_1);
+        setAsCurrentUser(TEST_USERID_2);
         
         assertTokenRefreshFailsAsIntended(PaymentWorksTestConstants.RefreshTokenErrorMessages.INVALID_USER_ID);
     }
 
     @Test
     public void testRefreshTokenForMismatchedUserAndToken() throws Exception {
-        userId = TEST_USERID_1;
-        setupInitialTokenForCurrentUser();
-        userId = TEST_USERID_2;
-        setupInitialTokenForCurrentUser();
-        currentAuthorizationToken = refreshTokenEndpoint.getCurrentTokenForUser(TEST_USERID_1);
-        oldAuthorizationToken = currentAuthorizationToken;
+        setAsCurrentUserAndSetupInitialToken(TEST_USERID_1);
+        setAsCurrentUserAndSetupInitialToken(TEST_USERID_2);
+        setOldAndCurrentTokens(refreshTokenEndpoint.getCurrentTokenForUser(TEST_USERID_1));
         
         assertTokenRefreshFailsAsIntended(PaymentWorksTestConstants.RefreshTokenErrorMessages.INVALID_AUTHORIZATION_TOKEN);
     }
@@ -172,13 +174,8 @@ public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends LocalSer
             fail("The web service call should have failed");
         } catch (RuntimeException e) {
             assertEquals("Wrong value for failure message", expectedMessage, webServiceCallsService.getLastDetailMessage());
-            if (StringUtils.isNotBlank(oldAuthorizationToken)) {
-                assertEquals("Current token should not have changed as a result of the service failure",
-                        oldAuthorizationToken, currentAuthorizationToken);
-            } else {
-                assertTrue("A new token should not have been initialized as a result of the service failure",
-                        StringUtils.isBlank(currentAuthorizationToken));
-            }
+            assertEquals("Current token should not have changed as a result of the service failure",
+                    oldAuthorizationToken, currentAuthorizationToken);
         }
     }
 
