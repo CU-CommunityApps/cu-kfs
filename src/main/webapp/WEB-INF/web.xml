@@ -35,7 +35,7 @@
 
     <context-param>
         <param-name>javamelody.system-actions-enabled</param-name>
-        <param-value>true</param-value>
+        <param-value>false</param-value>
     </context-param>
 
     <filter>
