@@ -22,7 +22,7 @@ import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.pmw.PaymentWorksTestConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksCredentialKeys;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCredentialKeys;
 import edu.cornell.kfs.pmw.web.mock.MockPaymentWorksRefreshTokenEndpoint;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;

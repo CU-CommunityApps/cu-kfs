@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.cornell.kfs.pmw.PaymentWorksTestConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
 /**

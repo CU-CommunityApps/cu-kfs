@@ -13,4 +13,21 @@ public class PaymentWorksWebServiceConstants {
         
         public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
         public static final String AUTHORIZATION_TOKEN_VALUE_STARTER = "Token ";
+
+    public static final String EMPTY_JSON_WRAPPER = "{}";
+
+    public static final class PaymentWorksCredentialKeys {
+        public static final String PAYMENTWORKS_API_URL = "paymentworks.api.url";
+        public static final String PAYMENTWORKS_USER_ID = "paymentworks.user.id";
+        public static final String PAYMENTWORKS_AUTHORIZATION_TOKEN = "paymentworks.authorization.token";
+    }
+
+    public static final class PaymentWorksTokenRefreshConstants {
+        public static final String REFRESH_TOKEN_URL_FORMAT = "%susers/%s/refresh_auth_token/";
+        public static final String STATUS_FIELD = "status";
+        public static final String AUTH_TOKEN_FIELD = "auth_token";
+        public static final String DETAIL_FIELD = "detail";
+        public static final String STATUS_OK = "ok";
+    }
+
 }

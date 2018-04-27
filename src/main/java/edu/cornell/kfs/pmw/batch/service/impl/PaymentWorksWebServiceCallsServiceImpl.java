@@ -23,13 +23,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksCredentialKeys;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCredentialKeys;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDetailDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestsRootDTO;
@@ -40,9 +40,6 @@ import edu.cornell.kfs.sys.util.CURestClientUtils;
 public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
-
-    private static final String REFRESH_TOKEN_URL_FORMAT = "%susers/%s/refresh_auth_token/";
-    private static final String EMPTY_JSON_WRAPPER = "{}";
 
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
     protected WebServiceCredentialService webServiceCredentialService;
@@ -275,7 +272,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         
         try {
             URI refreshTokenURI = buildRefreshAuthorizationTokenURI();
-            refreshTokenResponse = buildJsonResponse(refreshTokenURI, EMPTY_JSON_WRAPPER);
+            refreshTokenResponse = buildJsonResponse(refreshTokenURI, PaymentWorksWebServiceConstants.EMPTY_JSON_WRAPPER);
             String jsonResponse = refreshTokenResponse.readEntity(String.class);
             String newToken = getPaymentWorksAuthorizationTokenFromResponse(jsonResponse);
             webServiceCredentialService.updateWebServiceCredentialValue(
@@ -293,7 +290,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             LOG.error("buildRefreshAuthorizationTokenURI(): PaymentWorks User ID was not alphanumeric");
             throw new IllegalStateException("Malformed PaymentWorks User ID");
         }
-        String url = String.format(REFRESH_TOKEN_URL_FORMAT, getPaymentWorksUrl(), userId);
+        String url = String.format(PaymentWorksTokenRefreshConstants.REFRESH_TOKEN_URL_FORMAT, getPaymentWorksUrl(), userId);
         return buildURI(url);
     }
 
@@ -344,6 +341,8 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         } else if (!StringUtils.equalsIgnoreCase(PaymentWorksTokenRefreshConstants.STATUS_OK, statusNode.textValue())) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Unexpected status from PaymentWorks response: " + statusNode.textValue());
             throw new RuntimeException("Token refresh failed: Received an unexpected refresh status from PaymentWorks");
+        } else {
+            LOG.info("checkForSuccessfulTokenRefreshStatus(): Received a successful refresh status from PaymentWorks");
         }
     }
 
