@@ -5,6 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +25,6 @@ import java.util.function.Consumer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.easymock.Capture;
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +39,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.BusinessObjectFlatFileSerializerFieldUtils;
@@ -199,17 +204,16 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected ConcurStandardAccountingExtractCollectorBatchBuilder buildMockBatchBuilder() {
-        return buildMockObject(ConcurStandardAccountingExtractCollectorBatchBuilder.class, (builder) -> {
-            Capture<Integer> sequenceNumberArg = EasyMock.newCapture();
-            Capture<ConcurStandardAccountingExtractFile> saeFileContentsArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    builder.buildCollectorBatchFromStandardAccountingExtract(
-                            EasyMock.captureInt(sequenceNumberArg), EasyMock.capture(saeFileContentsArg), EasyMock.anyObject()))
-                    .andStubAnswer(() -> buildFixtureBasedCollectorBatch(sequenceNumberArg.getValue(), saeFileContentsArg.getValue()));
-        });
+        ConcurStandardAccountingExtractCollectorBatchBuilder batchBuilder = mock(ConcurStandardAccountingExtractCollectorBatchBuilder.class);
+        when(batchBuilder.buildCollectorBatchFromStandardAccountingExtract(
+                anyInt(), any(ConcurStandardAccountingExtractFile.class), any(ConcurStandardAccountingExtractBatchReportData.class)))
+                .thenAnswer(this::buildFixtureBasedCollectorBatch);
+        return batchBuilder;
     }
 
-    protected CollectorBatch buildFixtureBasedCollectorBatch(Integer sequenceNumber, ConcurStandardAccountingExtractFile saeFileContents) {
+    protected CollectorBatch buildFixtureBasedCollectorBatch(InvocationOnMock invocation) {
+        Integer sequenceNumber = invocation.getArgument(0);
+        ConcurStandardAccountingExtractFile saeFileContents = invocation.getArgument(1);
         String fixtureConstantName = StringUtils.substringBeforeLast(saeFileContents.getOriginalFileName(), KFSConstants.DELIMITER);
         ConcurCollectorBatchFixture fixture;
         
@@ -225,9 +229,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected <T> T buildMockObject(Class<T> objectClass, Consumer<T> objectConfigurer) {
-        T mockObject = EasyMock.createMock(objectClass);
+        T mockObject = mock(objectClass);
         objectConfigurer.accept(mockObject);
-        EasyMock.replay(mockObject);
         return mockObject;
     }
 
@@ -283,7 +286,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         fieldLengthMap.put(KFSPropertyConstants.CAMPUS_CODE, 2);
         fieldLengthMap.put(KFSPropertyConstants.PHONE_NUMBER, 10);
         
-        return buildMockParserFieldUtils(CollectorBatchHeaderFieldUtil.class, fieldLengthMap);
+        return buildMockParserFieldUtils(new CollectorBatchHeaderFieldUtil(), fieldLengthMap);
     }
 
     protected OriginEntryFieldUtil buildMockOriginEntryFieldUtil() {
@@ -314,7 +317,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         fieldLengthMap.put(KFSPropertyConstants.FINANCIAL_DOCUMENT_REVERSAL_DATE, 10);
         fieldLengthMap.put(KFSPropertyConstants.TRANSACTION_ENCUMBRANCE_UPDT_CD, 1);
         
-        return buildMockParserFieldUtils(OriginEntryFieldUtil.class, fieldLengthMap);
+        return buildMockParserFieldUtils(new OriginEntryFieldUtil(), fieldLengthMap);
     }
 
     protected CollectorBatchTrailerRecordFieldUtil buildMockBatchTrailerRecordFieldUtil() {
@@ -329,7 +332,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         fieldLengthMap.put(KFSPropertyConstants.TRAILER_RECORD_SECOND_EMPTY_FIELD, 42);
         fieldLengthMap.put(KFSPropertyConstants.TOTAL_AMOUNT, 19);
         
-        return buildMockParserFieldUtils(CollectorBatchTrailerRecordFieldUtil.class, fieldLengthMap);
+        return buildMockParserFieldUtils(new CollectorBatchTrailerRecordFieldUtil(), fieldLengthMap);
     }
 
     /**
@@ -340,15 +343,11 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
      * of the class so that the "getFieldLengthMap" method will return a pre-defined Map instead.
      */
     protected <T extends BusinessObjectStringParserFieldUtils> T buildMockParserFieldUtils(
-            Class<T> fieldUtilsClass, Map<String,Integer> fieldLengthMap) {
-        T mockParserFieldUtils = EasyMock.partialMockBuilder(fieldUtilsClass)
-                .withConstructor()
-                .addMockedMethod(GET_FIELD_LENGTH_MAP_METHOD)
-                .createNiceMock();
-        EasyMock.expect(mockParserFieldUtils.getFieldLengthMap())
-                .andStubReturn(fieldLengthMap);
-        EasyMock.replay(mockParserFieldUtils);
-        return mockParserFieldUtils;
+            T fieldUtilsImpl, Map<String,Integer> fieldLengthMap) {
+        T fieldUtilsSpy = spy(fieldUtilsImpl);
+        doReturn(fieldLengthMap)
+                .when(fieldUtilsSpy).getFieldLengthMap();
+        return fieldUtilsSpy;
     }
 
     /**
