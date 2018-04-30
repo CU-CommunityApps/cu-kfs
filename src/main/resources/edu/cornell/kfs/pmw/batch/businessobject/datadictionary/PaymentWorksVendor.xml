@@ -695,17 +695,23 @@
     </bean>
 
     <bean id="PaymentWorksVendor-kfsVendorDocumentNumber" parent="PaymentWorksVendor-kfsVendorDocumentNumber-parentBean" />
-    <bean id="PaymentWorksVendor-kfsVendorDocumentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber" />
+    <bean id="PaymentWorksVendor-kfsVendorDocumentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
+        <property name="name" value="kfsVendorDocumentNumber"/>
+    </bean>
     
     <bean id="PaymentWorksVendor-kfsAchDocumentNumber" parent="PaymentWorksVendor-kfsAchDocumentNumber-parentBean" />
-    <bean id="PaymentWorksVendor-kfsAchDocumentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber" />
+    <bean id="PaymentWorksVendor-kfsAchDocumentNumber-parentBean" abstract="true" parent="DocumentHeader-documentNumber">
+        <property name="name" value="kfsAchDocumentNumber"/>
+    </bean>
 
     <bean id="PaymentWorksVendor-kfsVendorHeaderGeneratedIdentifier" parent="PaymentWorksVendor-kfsVendorHeaderGeneratedIdentifier-parentBean" />
     <bean id="PaymentWorksVendor-kfsVendorHeaderGeneratedIdentifier-parentBean" abstract="true" parent="VendorDetail-vendorHeaderGeneratedIdentifier">
+        <property name="name" value="kfsVendorHeaderGeneratedIdentifier"/>
     </bean>
 
     <bean id="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier" parent="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier-parentBean" />
     <bean id="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier-parentBean" abstract="true" parent="VendorDetail-vendorDetailAssignedIdentifier">
+        <property name="name" value="kfsVendorDetailAssignedIdentifier"/>
     </bean>
 
     <bean id="PaymentWorksVendor-servicesProvided" parent="PaymentWorksVendor-servicesProvided-parentBean" />
@@ -1379,17 +1385,17 @@
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName" />
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyTelephone" />
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
-                <bean parent="FieldDefinition" p:attributeName="processStatus" />
+                <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
             </list>
         </property>
         <property name="resultFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="vendorRequestId" />
+                <bean parent="FieldDefinition" p:attributeName="pmwVendorRequestId" />
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyName" />
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName" />
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyTelephone" />
                 <bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
-                <bean parent="FieldDefinition" p:attributeName="processStatus" />
+                <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
             </list>
         </property>
     </bean>
@@ -1404,7 +1410,7 @@
                     <property name="numberOfColumns" value="1" />
                     <property name="inquiryFields">
                         <list>
-                            <bean parent="FieldDefinition" p:attributeName="vendorRequestId" />
+                            <bean parent="FieldDefinition" p:attributeName="pmwVendorRequestId" />
                             <bean parent="FieldDefinition" p:attributeName="requestingCompanyId" />
                             <bean parent="FieldDefinition" p:attributeName="requestingCompanyTin" />
                             <bean parent="FieldDefinition" p:attributeName="requestingCompanyTinType" />
@@ -1431,17 +1437,13 @@
                             <bean parent="FieldDefinition" p:attributeName="corpAddressState" />
                             <bean parent="FieldDefinition" p:attributeName="corpAddressCountry" />
                             <bean parent="FieldDefinition" p:attributeName="corpAddressZipCode" />
-                            <bean parent="FieldDefinition" p:attributeName="requestStatus" />
-                            <bean parent="FieldDefinition" p:attributeName="transactionType" />
-                            <bean parent="FieldDefinition" p:attributeName="groupName" />
-                            <bean parent="FieldDefinition" p:attributeName="vendorName" />
-                            <bean parent="FieldDefinition" p:attributeName="processStatus" />
+                            <bean parent="FieldDefinition" p:attributeName="pmwRequestStatus" />
+                            <bean parent="FieldDefinition" p:attributeName="pmwTransactionType" />
+                            <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
                             <bean parent="FieldDefinition" p:attributeName="processTimestamp" />
-                            <bean parent="FieldDefinition" p:attributeName="documentNumber" />
-                            <bean parent="FieldDefinition" p:attributeName="vendorHeaderGeneratedIdentifier" />
-                            <bean parent="FieldDefinition" p:attributeName="vendorDetailAssignedIdentifier" />
-                            <bean parent="FieldDefinition" p:attributeName="documentNumberList" />
-                            <bean parent="FieldDefinition" p:attributeName="vendorNumberList" />
+                            <bean parent="FieldDefinition" p:attributeName="kfsVendorDocumentNumber" />
+                            <bean parent="FieldDefinition" p:attributeName="kfsVendorHeaderGeneratedIdentifier" />
+                            <bean parent="FieldDefinition" p:attributeName="kfsVendorDetailAssignedIdentifier" />
                             <bean parent="FieldDefinition" p:attributeName="taxCountry" />
                             <bean parent="FieldDefinition" p:attributeName="vendorType" />
                             <bean parent="FieldDefinition" p:attributeName="initiatorNetId" />
