@@ -15,4 +15,6 @@ public interface PaymentWorksWebServiceCallsService {
     
     void sendRejectedStatusToPaymentWorksForNewVendor(String rejectedVendorId);
     
+    void refreshPaymentWorksAuthorizationToken();
+    
 }

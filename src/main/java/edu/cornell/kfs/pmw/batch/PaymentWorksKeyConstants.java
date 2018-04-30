@@ -31,6 +31,9 @@ public class PaymentWorksKeyConstants {
     public static final String PAYEE_ACH_ACCOUNT_BANK_ADDRESS_ZIP_LABEL = "explanation.label.paymentworks.bank.address.zip";
     public static final String PAYEE_ACH_ACCOUNT_BANK_SWIFTCODE = "explanation.label.paymentworks.bank.swiftcode";
     
+    public static final String MESSAGE_AUTH_TOKEN_REFRESH_SUCCESS = "message.paymentworks.auth.token.refresh.success";
+    public static final String ERROR_AUTH_TOKEN_REFRESH_FAILURE = "error.paymentworks.auth.token.refresh.failure";
+    
     //PaymentWorks Batch Report Messages
     public static final String NEW_VENDOR_REQUEST_CUSTOM_FIELD_MISSING_ERROR_MESSAGE = "error.paymentworks.new.vendor.custom.field.not.staging.table.column";
     public static final String NEW_VENDOR_REQUEST_CUSTOM_FIELD_CONVERSION_EXCEPTION_ERROR_MESSAGE = "error.paymentworks.new.vendor.custom.field.conversion.exception"; 

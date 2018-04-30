@@ -20,6 +20,8 @@
 <!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
 <struts-config>
     <form-beans>
+        <form-bean name="KualiForm"
+                   type="org.kuali.kfs.kns.web.struts.form.KualiForm"/>
 
                             <!-- Check Recon Form -->
         <form-bean name="CheckReconciliationReportForm"
@@ -206,7 +208,12 @@
         		scope="request" parameter="methodToCall" attribute="KualiForm">
             <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
-        
+
+        <action path="/pmw/manageAuthorizationToken" name="KualiForm" type="edu.cornell.kfs.pmw.web.struts.PaymentWorksManageAuthorizationTokenAction" 
+                scope="request" parameter="methodToCall" attribute="KualiForm">
+            <forward name="basic" path="/jsp/pmw/manageAuthorizationToken.jsp"/>
+        </action>
+
         <action path="/corporateBilledCorporatePaid" name="ProcurementCardForm" input="/jsp/fp/CorporateBilledCorporatePaid.jsp"
                 type="org.kuali.kfs.fp.document.web.struts.ProcurementCardAction" scope="request"
                 parameter="methodToCall" validate="true" attribute="KualiForm">
