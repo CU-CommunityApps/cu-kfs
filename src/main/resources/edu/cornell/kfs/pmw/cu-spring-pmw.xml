@@ -28,6 +28,7 @@
             <list>
                 <value>paymentWorksNewVendorCreateKfsVendorBatchJob</value>
                 <value>paymentWorksNewVendorCreateKfsAchBatchJob</value>
+                <value>paymentWorksRefreshAuthorizationTokenJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -66,6 +67,18 @@
         <property name="paymentWorksNewVendorPayeeAchService" ref="paymentWorksNewVendorPayeeAchService" />
     </bean>
 
+    <bean id="paymentWorksRefreshAuthorizationTokenJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="paymentWorksRefreshAuthorizationTokenStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="paymentWorksRefreshAuthorizationTokenStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksRefreshAuthorizationTokenStep">
+        <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
+    </bean>
+
     <bean id="paymentWorksDtoToPaymentWorksVendorConversionService" parent="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" />
     <bean id="paymentWorksDtoToPaymentWorksVendorConversionService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
@@ -82,12 +95,7 @@
     <bean id="paymentWorksWebServiceCallsService" parent="paymentWorksWebServiceCallsService-parentBean" />
     <bean id="paymentWorksWebServiceCallsService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksWebServiceCallsServiceImpl" abstract="true">
         <property name="paymentWorksDtoToPaymentWorksVendorConversionService" ref="paymentWorksDtoToPaymentWorksVendorConversionService" />
-        <property name="paymentWorksAuthorizationToken">
-            <value>${paymentworks.authorization.token}</value>
-        </property>
-        <property name="paymentWorksUrl">
-            <value>${paymentworks.api.url}</value>
-        </property>
+        <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
     </bean>
     
     <bean id="paymentWorksVendorDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksVendorDaoJdbc">

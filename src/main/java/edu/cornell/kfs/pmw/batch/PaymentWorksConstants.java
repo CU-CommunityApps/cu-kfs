@@ -11,6 +11,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants;
 public class PaymentWorksConstants {
     
     public static final String PAYMENTWORKS_NAMESPACE_CODE = "KFS-PMW";
+    public static final String PAYMENTWORKS_WEB_SERVICE_GROUP_CODE = "PMW";
 
     public static final String OUTPUT_ATTRIBUTE_BEGIN_DELIMITER = ":<";
     public static final String OUTPUT_ATTRIBUTE_END_DELIMITER = "> ";

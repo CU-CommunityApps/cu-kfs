@@ -1,11 +1,12 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -13,32 +14,35 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.glassfish.jersey.client.ClientConfig;
 
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.ClientConfig;
+import org.kuali.kfs.krad.util.ObjectUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCredentialKeys;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDetailDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestsRootDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
-
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
-    
-    private String paymentWorksUrl;
-    private String paymentWorksAuthorizationToken;
+
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
+    protected WebServiceCredentialService webServiceCredentialService;
     
     @Override
     public List<String> obtainPmwIdentifiersForPendingNewVendorRequests() {
@@ -261,21 +265,106 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         }
         return allPmwVendorIdentifiers;
     }
-    
-    public String getPaymentWorksUrl() {
-        return paymentWorksUrl;
+
+    public void refreshPaymentWorksAuthorizationToken() {
+        LOG.info("refreshPaymentWorksAuthorizationToken(): Processing started");
+        Response refreshTokenResponse = null;
+        
+        try {
+            URI refreshTokenURI = buildRefreshAuthorizationTokenURI();
+            refreshTokenResponse = buildJsonResponse(refreshTokenURI, PaymentWorksWebServiceConstants.EMPTY_JSON_WRAPPER);
+            String jsonResponse = refreshTokenResponse.readEntity(String.class);
+            String newToken = getPaymentWorksAuthorizationTokenFromResponse(jsonResponse);
+            webServiceCredentialService.updateWebServiceCredentialValue(
+                    PaymentWorksConstants.PAYMENTWORKS_WEB_SERVICE_GROUP_CODE,
+                    PaymentWorksCredentialKeys.PAYMENTWORKS_AUTHORIZATION_TOKEN, newToken);
+            LOG.info("refreshPaymentWorksAuthorizationToken(): Token was successfully refreshed");
+        } finally {
+            CURestClientUtils.closeQuietly(refreshTokenResponse);
+        }
     }
 
-    public void setPaymentWorksUrl(String paymentWorksUrl) {
-        this.paymentWorksUrl = paymentWorksUrl;
+    private URI buildRefreshAuthorizationTokenURI() {
+        String userId = getPaymentWorksUserId();
+        if (!StringUtils.isAlphanumeric(userId)) {
+            LOG.error("buildRefreshAuthorizationTokenURI(): PaymentWorks User ID was not alphanumeric");
+            throw new IllegalStateException("Malformed PaymentWorks User ID");
+        }
+        String url = String.format(PaymentWorksTokenRefreshConstants.REFRESH_TOKEN_URL_FORMAT, getPaymentWorksUrl(), userId);
+        return buildURI(url);
+    }
+
+    private String getPaymentWorksAuthorizationTokenFromResponse(String jsonResponse) {
+        if (StringUtils.isBlank(jsonResponse)) {
+            throw new RuntimeException("Token refresh failed: No response content was received from PaymentWorks");
+        }
+        
+        JsonNode rootNode = readJsonTree(jsonResponse);
+        checkForSuccessfulTokenRefreshStatus(rootNode);
+        
+        JsonNode tokenNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.AUTH_TOKEN_FIELD);
+        if (ObjectUtils.isNull(tokenNode)) {
+            LOG.error("getPaymentWorksAuthorizationTokenFromResponse(): Did not receive new token from PaymentWorks");
+            throw new RuntimeException("Token refresh failed: PaymentWorks did not send a new token");
+        }
+        
+        String newToken = tokenNode.textValue();
+        if (StringUtils.isBlank(newToken)) {
+            LOG.error("getPaymentWorksAuthorizationTokenFromResponse(): Received a blank token from PaymentWorks");
+            throw new RuntimeException("Token refresh failed: PaymentWorks sent a blank token");
+        }
+        
+        return newToken;
+    }
+
+    private JsonNode readJsonTree(String jsonText) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readTree(jsonText);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private void checkForSuccessfulTokenRefreshStatus(JsonNode rootNode) {
+        JsonNode detailNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.DETAIL_FIELD);
+        if (ObjectUtils.isNotNull(detailNode)) {
+            LOG.error("checkForSuccessfulTokenRefreshStatus(): Token refresh failed. Detail message: " + detailNode.textValue());
+            handleDetailMessageFromTokenRefreshFailure(detailNode.textValue());
+            throw new RuntimeException("Token refresh failed: Received failure response from PaymentWorks");
+        }
+        
+        JsonNode statusNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.STATUS_FIELD);
+        if (ObjectUtils.isNull(statusNode)) {
+            LOG.error("checkForSuccessfulTokenRefreshStatus(): Did not receive a refresh status from PaymentWorks");
+            throw new RuntimeException("Token refresh failed: Did not receive a refresh status from PaymentWorks");
+        } else if (!StringUtils.equalsIgnoreCase(PaymentWorksTokenRefreshConstants.STATUS_OK, statusNode.textValue())) {
+            LOG.error("checkForSuccessfulTokenRefreshStatus(): Unexpected status from PaymentWorks response: " + statusNode.textValue());
+            throw new RuntimeException("Token refresh failed: Received an unexpected refresh status from PaymentWorks");
+        } else {
+            LOG.info("checkForSuccessfulTokenRefreshStatus(): Received a successful refresh status from PaymentWorks");
+        }
+    }
+
+    protected void handleDetailMessageFromTokenRefreshFailure(String detailMessage) {
+        // This is just a hook for unit testing convenience.
+    }
+
+    public String getPaymentWorksUserId() {
+        return getWebServiceCredentialValue(PaymentWorksCredentialKeys.PAYMENTWORKS_USER_ID);
     }
 
     public String getPaymentWorksAuthorizationToken() {
-        return paymentWorksAuthorizationToken;
+        return getWebServiceCredentialValue(PaymentWorksCredentialKeys.PAYMENTWORKS_AUTHORIZATION_TOKEN);
     }
 
-    public void setPaymentWorksAuthorizationToken(String paymentWorksAuthorizationToken) {
-        this.paymentWorksAuthorizationToken = paymentWorksAuthorizationToken;
+    public String getPaymentWorksUrl() {
+        return getWebServiceCredentialValue(PaymentWorksCredentialKeys.PAYMENTWORKS_API_URL);
+    }
+
+    protected String getWebServiceCredentialValue(String credentialKey) {
+        return webServiceCredentialService.getWebServiceCredentialValue(
+                PaymentWorksConstants.PAYMENTWORKS_WEB_SERVICE_GROUP_CODE, credentialKey);
     }
 
     public PaymentWorksDtoToPaymentWorksVendorConversionService getPaymentWorksDtoToPaymentWorksVendorConversionService() {
@@ -285,5 +374,9 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     public void setPaymentWorksDtoToPaymentWorksVendorConversionService(
             PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService) {
         this.paymentWorksDtoToPaymentWorksVendorConversionService = paymentWorksDtoToPaymentWorksVendorConversionService;
+    }
+
+    public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
+        this.webServiceCredentialService = webServiceCredentialService;
     }
 }
