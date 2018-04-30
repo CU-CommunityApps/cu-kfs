@@ -49,17 +49,8 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPosterServiceImpl extends PosterServiceImpl implements PosterService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPosterServiceImpl.class);
-    /**
-     * Calculates the percentage and rounds HALF_UP
-     * 
-     * @see org.kuali.kfs.gl.batch.service.impl.PosterServiceImpl#getPercentage(org.kuali.rice.core.api.util.type.KualiDecimal, java.math.BigDecimal)
-     */
-    @Override
-    protected KualiDecimal getPercentage(KualiDecimal amount, BigDecimal percent) {
-        BigDecimal result = amount.bigDecimalValue().multiply(percent).divide(BDONEHUNDRED, 2, BigDecimal.ROUND_HALF_UP);
-        return new KualiDecimal(result);
-    }
 
+    
     /**
      * CUMod to prefix the "Indirect Cost Recovery System Generated" edoc number with "ICR"
      * 
