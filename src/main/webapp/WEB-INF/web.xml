@@ -157,7 +157,6 @@
         <filter-name>ResourceLoginFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
         <url-pattern>/sys/*</url-pattern>
-
         <url-pattern>/ar/api/*</url-pattern>
         <url-pattern>/cam/api/*</url-pattern>
         <url-pattern>/cg/api/*</url-pattern>
