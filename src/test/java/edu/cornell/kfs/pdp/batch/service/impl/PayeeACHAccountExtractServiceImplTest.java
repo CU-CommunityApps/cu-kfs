@@ -2,6 +2,12 @@ package edu.cornell.kfs.pdp.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,40 +15,22 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
-import org.kuali.kfs.pdp.businessobject.ACHBank;
-import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
-import org.kuali.kfs.pdp.service.AchBankService;
-import org.kuali.kfs.pdp.service.AchService;
-import org.kuali.kfs.pdp.service.impl.AchBankServiceImpl;
-import org.kuali.kfs.pdp.service.impl.AchServiceImpl;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
-import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
-import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.impl.identity.PersonImpl;
-import org.kuali.rice.kim.impl.identity.PersonServiceImpl;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
-import org.kuali.kfs.kns.service.impl.DataDictionaryServiceImpl;
-import org.kuali.rice.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
@@ -52,84 +40,82 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
-import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
+import org.kuali.kfs.pdp.PdpPropertyConstants;
+import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
+import org.kuali.kfs.pdp.service.AchBankService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
+import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
+import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
+import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.kim.api.identity.PersonService;
+import org.kuali.rice.krad.bo.BusinessObject;
+import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.coa.businessobject.options.CUCheckingSavingsValuesFinder;
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.CUPdpParameterConstants;
+import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
+import edu.cornell.kfs.pdp.CUPdpTestConstants;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsv;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsvInputFileType;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep;
+import edu.cornell.kfs.pdp.batch.fixture.ACHBankFixture;
+import edu.cornell.kfs.pdp.batch.fixture.ACHFileFixture;
+import edu.cornell.kfs.pdp.batch.fixture.ACHPersonPayeeFixture;
+import edu.cornell.kfs.pdp.batch.fixture.ACHRowFixture;
+import edu.cornell.kfs.pdp.batch.fixture.ACHUpdateFixture;
+import edu.cornell.kfs.pdp.batch.fixture.PayeeACHAccountFixture;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
-import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
+import edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl;
+import edu.cornell.kfs.pdp.service.CuAchService;
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 
 @SuppressWarnings("deprecation")
 public class PayeeACHAccountExtractServiceImplTest {
 
-    private static final String BANK_ACCOUNT_NUMBER = "bankAccountNumber";
-    private static final String BANK_NAME = "bankRouting.bankName";
-    private static final String BANK_ACCOUNT_TYPE_CODE = "bankAccountTypeCode";
-    private static final Integer DOCUMENT_DESCRIPTION_MAX_LENGTH = Integer.valueOf(40);
-
     private static final String ACH_SOURCE_FILE_PATH = "src/test/resources/edu/cornell/kfs/pdp/batch/service/fixture";
     private static final String ACH_TESTING_FILE_PATH = "test/pdp/payeeACHAccountExtract";
     private static final String ACH_TESTING_DIRECTORY = ACH_TESTING_FILE_PATH + "/";
-    private static final String FILE_PATH_FORMAT = "{0}/{1}.{2}";
-    private static final String ACH_CSV_FILE_EXTENSION = "csv";
-    private static final String ACH_DONE_FILE_EXTENSION = "done";
+    private static final String FILE_PATH_FORMAT = "{0}/{1}{2}";
+    private static final String LITERAL_MASK_VALUE = "********";
+    private static final Integer DOCUMENT_DESCRIPTION_MAX_LENGTH = Integer.valueOf(40);
+    private static final int INITIAL_DOCUMENT_ID = 1000;
 
-    private static final String BAD_HEADERS_FILE = "pdp_ach_test_badHeaders";
-    private static final String BAD_LINES_FILE = "pdp_ach_test_badLines";
-    private static final String GOOD_LINES_FILE = "pdp_ach_test_good";
-    private static final String MIX_GOOD_BAD_LINES_FILE = "pdp_ach_test_mixGoodBadLines";
-
-    private static final String KFS_DIRECT_DEPOSIT_TYPE = "PRAP";
-    private static final String COMPLETED_DATE_FROM_TEST_FILES = "01/01/2016";
-
-    private static final String TEST_PRINCIPALID = "1234567";
-    private static final String TEST_PRINCIPALNAME = "jad987";
-    private static final String TEST_ENTITYID = "2345678";
-    private static final String TEST_NAME = "Doe, John A.";
-    private static final String TEST_EMPLOYEEID = "1122333";
-    private static final String TEST_EMAIL = "jad987@someplace.edu";
-    private static final String TEST_BANK_ROUTING_NUMBER = "111000999";
-    private static final String TEST_BANK_NAME = "First Bank";
-    private static final String TEST_BANK_ACCOUNT_TYPE = CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_CHECKING_ACCOUNT_TYPE;
-    private static final String TEST_ACCOUNT_NUMBER = "44333222111";
-
-    private static final String TEST_ALT_PRINCIPALID = "9876543";
-    private static final String TEST_ALT_PRINCIPALNAME = "jd8888";
-    private static final String TEST_ALT_ENTITYID = "8765432";
-    private static final String TEST_ALT_NAME = "Doe, Jane";
-    private static final String TEST_ALT_EMPLOYEEID = "4455666";
-    private static final String TEST_ALT_EMAIL = "jd8888@someplace.edu";
-    private static final String TEST_ALT_BANK_ROUTING_NUMBER = "666777888";
-    private static final String TEST_ALT_BANK_NAME = "Second Bank";
-    private static final String TEST_ALT_BANK_ACCOUNT_TYPE = CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_SAVINGS_ACCOUNT_TYPE;
-    private static final String TEST_ALT_ACCOUNT_NUMBER = "66555444333";
-
-    private static final String UNRESOLVED_EMAIL_STRING
-            = "Payment $ \\n\\ for [payeeIdentifierTypeCode] of [payeeIdNumber] will go to [bankAccountTypeCode] account at [bankRouting.bankName].[bankAccountNumber]";
+    private static final String UNRESOLVED_EMAIL_STRING = "Payment $ \\n\\ for [payeeIdentifierTypeCode] of [payeeIdNumber]"
+            + " will go to [bankAccountTypeCode] account at [bankRouting.bankName].[bankAccountNumber]";
     private static final String EMAIL_STRING_AS_FORMAT = "Payment $ \n\\ for {0} of {1} will go to {2} account at {3}.";
     private static final String PERSONAL_SAVINGS_ACCOUNT_TYPE_LABEL = "Personal Savings";
 
     private TestPayeeACHAccountExtractService payeeACHAccountExtractService;
-
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PayeeACHAccountExtractServiceImplTest.class);
+    private AtomicInteger documentIdCounter;
 
     @Before
     public void setUp() throws Exception {
         payeeACHAccountExtractService = new TestPayeeACHAccountExtractService();
         payeeACHAccountExtractService.setBatchInputFileService(new BatchInputFileServiceImpl());
-        payeeACHAccountExtractService.setBatchInputFileTypes(Collections.<BatchInputFileType>singletonList(getBatchInputFileType()));
-        payeeACHAccountExtractService.setParameterService(new MockParameterServiceImpl());
-        payeeACHAccountExtractService.setEmailService(new EmailServiceImpl());
+        payeeACHAccountExtractService.setBatchInputFileTypes(
+                Collections.singletonList(createACHBatchInputFileType()));
+        payeeACHAccountExtractService.setParameterService(createMockParameterService());
+        payeeACHAccountExtractService.setEmailService(new TestEmailService());
         payeeACHAccountExtractService.setDocumentService(createMockDocumentService());
         payeeACHAccountExtractService.setDataDictionaryService(createMockDataDictionaryService());
         payeeACHAccountExtractService.setPersonService(createMockPersonService());
         payeeACHAccountExtractService.setSequenceAccessorService(new MockSequenceAccessorService());
         payeeACHAccountExtractService.setAchService(createMockAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
+        
+        documentIdCounter = new AtomicInteger(INITIAL_DOCUMENT_ID);
     }
 
     @After
@@ -138,65 +124,56 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
 
     @Test
-    public void testLoadValidFile() throws Exception {
-        // Load only the "good" file, which we expect to completely succeed.
-        List<PayeeACHAccountExtractDetail> expectedSuccessfulDetails = Arrays.asList(
-                getExpectedExtractDetailForTestAccount());
-        
-        copyInputFilesAndGenerateDoneFiles(GOOD_LINES_FILE);
-        payeeACHAccountExtractService.processACHBatchDetails();
-        assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(1, 0, 0), getExpectedResultsForGoodFile(), expectedSuccessfulDetails);
-        assertDoneFilesWereDeleted(GOOD_LINES_FILE);
+    public void testLoadValidFileWithSingleDataRow() throws Exception {
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_SINGLE_SUCCESSFUL_LINE);
     }
 
     @Test
     public void testLoadFileWithInvalidFormat() throws Exception {
-        // Load only the badly-formatted file, which we expect to fail altogether.
-        copyInputFilesAndGenerateDoneFiles(BAD_HEADERS_FILE);
-        payeeACHAccountExtractService.processACHBatchDetails();
-        assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(0, 0, 1), new AchRowResults(), Collections.<PayeeACHAccountExtractDetail>emptyList());
-        assertDoneFilesWereDeleted(BAD_HEADERS_FILE);
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_BAD_HEADERS);
+    }
+
+    @Test
+    public void testLoadFileWithoutAccountRows() throws Exception {
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_HEADER_ROW_ONLY);
     }
 
     @Test
     public void testLoadFileWithAllInvalidRows() throws Exception {
-        // Load only the rows-with-bad-data file, which we expect to load but to have all of its data lines rejected (due to validation problems).
-        copyInputFilesAndGenerateDoneFiles(BAD_LINES_FILE);
-        payeeACHAccountExtractService.processACHBatchDetails();
-        assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(0, 1, 0), getExpectedResultsForBadLinesFile(), Collections.<PayeeACHAccountExtractDetail>emptyList());
-        assertDoneFilesWereDeleted(BAD_LINES_FILE);
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_ONLY_VALIDATION_FAILURE_LINES);
     }
 
     @Test
     public void testLoadFileWithSomeInvalidRows() throws Exception {
-        // Load only the some-good-and-bad-rows file, which we expect to load but to have some of its data lines rejected (due to validation problems).
-        copyInputFilesAndGenerateDoneFiles(MIX_GOOD_BAD_LINES_FILE);
-        payeeACHAccountExtractService.processACHBatchDetails();
-        assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(0, 1, 0), getExpectedResultsForMixedGoodBadLinesFile(), Collections.<PayeeACHAccountExtractDetail>emptyList());
-        assertDoneFilesWereDeleted(MIX_GOOD_BAD_LINES_FILE);
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_GOOD_AND_BAD_LINES);
+    }
+
+    @Test
+    public void testLoadFileWithLineMatchingExistingAccounts() throws Exception {
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_SINGLE_MATCHING_LINE);
+    }
+
+    @Test
+    public void testLoadFileWithMultipleValidRows() throws Exception {
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_MULTIPLE_SUCCESSFUL_LINES);
+    }
+
+    @Test
+    public void testLoadFileWithLinesPartiallyOrFullyMatchingExistingAccounts() throws Exception {
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_PARTIAL_AND_FULL_MATCHES);
     }
 
     @Test
     public void testLoadMultipleFiles() throws Exception {
-        // Load the badly-formatted file, the all-invalid-data file, and the some-invalid-data file.
-        AchRowResults expectedRowResults = AchRowResults.createSummarizedResults(getExpectedResultsForBadLinesFile(), getExpectedResultsForMixedGoodBadLinesFile());
-        copyInputFilesAndGenerateDoneFiles(BAD_HEADERS_FILE, BAD_LINES_FILE, MIX_GOOD_BAD_LINES_FILE);
-        payeeACHAccountExtractService.processACHBatchDetails();
-        assertFileAndRowLoadingResultsAreCorrect(
-                new AchFileResults(0, 2, 1), expectedRowResults, Collections.<PayeeACHAccountExtractDetail>emptyList());
-        assertDoneFilesWereDeleted(BAD_HEADERS_FILE);
-        assertDoneFilesWereDeleted(BAD_LINES_FILE);
-        assertDoneFilesWereDeleted(MIX_GOOD_BAD_LINES_FILE);
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_BAD_HEADERS,
+                ACHFileFixture.FILE_WITH_SINGLE_SUCCESSFUL_LINE, ACHFileFixture.FILE_WITH_GOOD_AND_BAD_LINES,
+                ACHFileFixture.FILE_WITH_SINGLE_MATCHING_LINE, ACHFileFixture.FILE_WITH_PARTIAL_AND_FULL_MATCHES);
     }
 
     @Test
     public void testEmailBodyPlaceholderResolution() throws Exception {
         // NOTE: We expect that all potentially-sensitive placeholders except bank name will be replaced with empty text.
-        PayeeACHAccount achAccount = createEmployeePayeeACHAccountForAlternateUser();
+        PayeeACHAccount achAccount = PayeeACHAccountFixture.JANE_DOE_SAVINGS_ACCOUNT_EMPLOYEE_NEW.toPayeeACHAccount();
         String expectedBody = MessageFormat.format(EMAIL_STRING_AS_FORMAT, achAccount.getPayeeIdentifierTypeCode(),
                 achAccount.getPayeeIdNumber(), PERSONAL_SAVINGS_ACCOUNT_TYPE_LABEL, achAccount.getBankRouting().getBankName());
         String actualBody = payeeACHAccountExtractService.getResolvedEmailBody(achAccount, UNRESOLVED_EMAIL_STRING);
@@ -204,62 +181,101 @@ public class PayeeACHAccountExtractServiceImplTest {
         assertEquals("Email body placeholders and special characters were not resolved properly", expectedBody, actualBody);
     }
 
-    private void assertFileAndRowLoadingResultsAreCorrect(AchFileResults expectedFileResults,
-            AchRowResults expectedRowResults, List<PayeeACHAccountExtractDetail> expectedSuccessfulDetails) throws Exception {
-        AchFileResults actualFileResults = payeeACHAccountExtractService.getFileResults();
-        AchRowResults actualRowResults = payeeACHAccountExtractService.getRowResults();
-        List<PayeeACHAccountExtractDetail> actualSuccessfulDetails = payeeACHAccountExtractService.getSuccessfulDetails();
+    private void assertACHAccountExtractionHasCorrectResults(ACHFileFixture... fixtures) throws Exception {
+        List<ACHFileFixture> expectedResults = Arrays.asList(fixtures);
+        String[] fileNames = Arrays.stream(fixtures)
+                .map(ACHFileFixture::getBaseFileName)
+                .toArray(String[]::new);
         
-        assertEquals("Wrong number of completely successful files", expectedFileResults.getNumSuccessfulFiles(), actualFileResults.getNumSuccessfulFiles());
-        assertEquals("Wrong number of files with bad data rows", expectedFileResults.getNumFilesWithBadRows(), actualFileResults.getNumFilesWithBadRows());
-        assertEquals("Wrong number of files that could not be processed", expectedFileResults.getNumBadFiles(), actualFileResults.getNumBadFiles());
-        assertRowProcessingResultsAreCorrect(expectedRowResults, actualRowResults);
-        assertExtractedDetailsAreCorrect(expectedSuccessfulDetails, actualSuccessfulDetails);
+        copyInputFilesAndGenerateDoneFiles(fileNames);
+        payeeACHAccountExtractService.processACHBatchDetails();
+        
+        assertFilesHaveExpectedResults(expectedResults, payeeACHAccountExtractService.getFileResults());
+        assertDoneFilesWereDeleted(fileNames);
     }
 
-    private void assertRowProcessingResultsAreCorrect(
-            AchRowResults expectedRowResults, AchRowResults actualRowResults) throws Exception {
-        assertEquals("Wrong number of invalid file rows", expectedRowResults.getNumBadRows(), actualRowResults.getNumBadRows());
-        assertPayeeResultsAreCorrect(expectedRowResults.getEmployeeRowResults(), actualRowResults.getEmployeeRowResults(), "Employee");
-        assertPayeeResultsAreCorrect(expectedRowResults.getEntityRowResults(), actualRowResults.getEntityRowResults(), "Entity");
-    }
-
-    private void assertPayeeResultsAreCorrect(AchSuccessfulRowResults expectedResults,
-            AchSuccessfulRowResults actualResults, String payeeTypeLabel) throws Exception {
-        assertEquals(payeeTypeLabel + " types have wrong number of new rows", expectedResults.getNumNewRows(), actualResults.getNumNewRows());
-        assertEquals(payeeTypeLabel + " types have wrong number of existing rows", expectedResults.getNumExistingRows(), actualResults.getNumExistingRows());
-    }
-
-    private void assertExtractedDetailsAreCorrect(List<PayeeACHAccountExtractDetail> expectedSuccessfulDetails,
-            List<PayeeACHAccountExtractDetail> actualSuccessfulDetails) throws Exception {
-        assertEquals("Wrong number of payee details processed", expectedSuccessfulDetails.size(), actualSuccessfulDetails.size());
-        for (int i = 0; i < expectedSuccessfulDetails.size(); i++) {
-            PayeeACHAccountExtractDetail expectedDetail = expectedSuccessfulDetails.get(i);
-            PayeeACHAccountExtractDetail actualDetail = actualSuccessfulDetails.get(i);
-            assertEquals("Wrong payment detail employee ID", expectedDetail.getEmployeeID(), actualDetail.getEmployeeID());
-            assertEquals("Wrong payment detail netID", expectedDetail.getNetID(), actualDetail.getNetID());
-            assertEquals("Wrong payment detail last name", expectedDetail.getLastName(), actualDetail.getLastName());
-            assertEquals("Wrong payment detail first name", expectedDetail.getFirstName(), actualDetail.getFirstName());
-            assertEquals("Wrong payment detail payment type", expectedDetail.getPaymentType(), actualDetail.getPaymentType());
-            assertEquals("Wrong payment detail balance account indicator", expectedDetail.getBalanceAccount(), actualDetail.getBalanceAccount());
-            assertEquals("Wrong payment detail routing number", expectedDetail.getBankRoutingNumber(), actualDetail.getBankRoutingNumber());
-            assertEquals("Wrong payment detail account number", expectedDetail.getBankAccountNumber(), actualDetail.getBankAccountNumber());
-            assertEquals("Wrong payment detail account type", expectedDetail.getBankAccountType(), actualDetail.getBankAccountType());
+    private void assertFilesHaveExpectedResults(List<ACHFileFixture> expectedResults, Map<String, ACHFileResult> actualResults) throws Exception {
+        assertEquals("Wrong number of processed files", expectedResults.size(), actualResults.size());
+        for (int i = 0; i < expectedResults.size(); i++) {
+            ACHFileFixture expectedResult = expectedResults.get(i);
+            ACHFileResult actualResult = actualResults.get(expectedResult.baseFileName);
+            assertFileHasExpectedResults(i, expectedResult, actualResult);
         }
+    }
+
+    private void assertFileHasExpectedResults(int index, ACHFileFixture expectedResult, ACHFileResult actualResult) throws Exception {
+        assertEquals("Wrong file-processable state at index " + index, expectedResult.processableFile, actualResult.isProcessableFile());
+        if (expectedResult.processableFile) {
+            List<ACHRowFixture> expectedRows = expectedResult.rowResults;
+            List<ACHRowResult> actualRows = actualResult.getRowResults();
+            assertEquals("Wrong number of processed file rows", expectedRows.size(), actualRows.size());
+            
+            for (int i = 0; i < expectedRows.size(); i++) {
+                ACHRowFixture expectedRow = expectedRows.get(i);
+                ACHRowResult actualRow = actualRows.get(i);
+                assertRowHasExpectedUpdates(i, expectedRow, actualRow);
+            }
+        }
+    }
+
+    private void assertRowHasExpectedUpdates(int index, ACHRowFixture expectedRow, ACHRowResult actualRow) throws Exception {
+        assertEquals("Wrong row validation result at index " + index, expectedRow.validRow, actualRow.isValidRow());
+        if (expectedRow.validRow) {
+            assertAccountHasExpectedUpdates(
+                    PayeeIdTypeCodes.EMPLOYEE, expectedRow.employeeUpdateResult, actualRow.getDocumentForEmployeeAccountUpdate());
+            assertAccountHasExpectedUpdates(
+                    PayeeIdTypeCodes.ENTITY, expectedRow.entityUpdateResult, actualRow.getDocumentForEntityAccountUpdate());
+        }
+    }
+
+    private void assertAccountHasExpectedUpdates(String payeeType, ACHUpdateFixture expectedUpdate, MaintenanceDocument document) throws Exception {
+        if (expectedUpdate == ACHUpdateFixture.NO_UPDATE) {
+           assertTrue("There should not have been an update to the account for payee type " + payeeType, ObjectUtils.isNull(document));
+           return;
+        }
+        
+        assertTrue("There should have been an update to the account for payee type " + payeeType, ObjectUtils.isNotNull(document));
+        
+        FinancialSystemMaintainable newMaintainable = (FinancialSystemMaintainable) document.getNewMaintainableObject();
+        assertTrue("New maintainable should not be null", ObjectUtils.isNotNull(newMaintainable));
+        assertEquals("Wrong data object class", PayeeACHAccount.class, newMaintainable.getDataObjectClass());
+        assertEquals("Wrong maintenance action", expectedUpdate.getExpectedMaintenanceAction(), newMaintainable.getMaintenanceAction());
+        assertPayeeACHAccountIsCorrect(expectedUpdate.newAccount, newMaintainable);
+        
+        if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, expectedUpdate.getExpectedMaintenanceAction())) {
+            FinancialSystemMaintainable oldMaintainable = (FinancialSystemMaintainable) document.getOldMaintainableObject();
+            assertTrue("Old maintainable should not be null", ObjectUtils.isNotNull(oldMaintainable));
+            assertEquals("Wrong data object class on old maintainable", PayeeACHAccount.class, oldMaintainable.getDataObjectClass());
+            assertPayeeACHAccountIsCorrect(expectedUpdate.oldAccount, oldMaintainable);
+        }
+    }
+
+    private void assertPayeeACHAccountIsCorrect(
+            PayeeACHAccountFixture expectedAccountFixture, FinancialSystemMaintainable maintainable) throws Exception {
+        PayeeACHAccount expectedAccount = expectedAccountFixture.toPayeeACHAccount();
+        PayeeACHAccount actualAccount = (PayeeACHAccount) maintainable.getDataObject();
+        
+        assertTrue("ACH account should not be null", ObjectUtils.isNotNull(actualAccount));
+        assertEquals("Wrong payee ID type code", expectedAccount.getPayeeIdentifierTypeCode(), actualAccount.getPayeeIdentifierTypeCode());
+        assertEquals("Wrong payee ID number", expectedAccount.getPayeeIdNumber(), actualAccount.getPayeeIdNumber());
+        assertEquals("Wrong transaction type", expectedAccount.getAchTransactionType(), actualAccount.getAchTransactionType());
+        assertEquals("Wrong bank routing number", expectedAccount.getBankRoutingNumber(), actualAccount.getBankRoutingNumber());
+        assertEquals("Wrong bank account type", expectedAccount.getBankAccountTypeCode(), actualAccount.getBankAccountTypeCode());
+        assertEquals("Wrong bank account number", expectedAccount.getBankAccountNumber(), actualAccount.getBankAccountNumber());
     }
 
     private void assertDoneFilesWereDeleted(String... inputFileNames) throws Exception {
         for (String inputFileName : inputFileNames) {
-            File doneFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, ACH_DONE_FILE_EXTENSION));
+            File doneFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, BatchFileSystem.DONE_FILE_EXTENSION));
             assertFalse("There should not be a .done file for " + inputFileName, doneFile.exists());
         }
     }
 
     protected void copyInputFilesAndGenerateDoneFiles(String... inputFileNames) throws IOException {
         for (String inputFileName : inputFileNames) {
-            File sourceFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_SOURCE_FILE_PATH, inputFileName, ACH_CSV_FILE_EXTENSION));
-            File destFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, ACH_CSV_FILE_EXTENSION));
-            File doneFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, ACH_DONE_FILE_EXTENSION));
+            File sourceFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_SOURCE_FILE_PATH, inputFileName, CUKFSConstants.CSV_FILE_EXTENSION));
+            File destFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, CUKFSConstants.CSV_FILE_EXTENSION));
+            File doneFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, BatchFileSystem.DONE_FILE_EXTENSION));
             FileUtils.copyFile(sourceFile, destFile);
             doneFile.createNewFile();
         }
@@ -283,125 +299,109 @@ public class PayeeACHAccountExtractServiceImplTest {
         }
     }
 
-    private AchRowResults getExpectedResultsForBadLinesFile() {
-        // All file lines should fail.
-        return new AchRowResults(
-                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 0, 0), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 0, 0), 7);
-    }
-
-    private AchRowResults getExpectedResultsForGoodFile() {
-        // File line should succeed, resulting in 1 new employee account and 1 new entity account with no errors.
-        return new AchRowResults(
-                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 1, 0), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 1, 0), 0);
-    }
-
-    private AchRowResults getExpectedResultsForMixedGoodBadLinesFile() {
-        // Ten file lines should fail, and four file lines should succeed
-        return new AchRowResults(
-                new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE, 0, 4), new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY, 4, 0), 14);
-    }
-
-    private PayeeACHAccountExtractDetail getExpectedExtractDetailForTestAccount() {
-        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
-        detail.setEmployeeID(TEST_EMPLOYEEID);
-        detail.setNetID(TEST_PRINCIPALNAME);
-        detail.setLastName(StringUtils.substringBefore(TEST_NAME, ","));
-        detail.setFirstName(StringUtils.substringBetween(TEST_NAME, ", ", " "));
-        detail.setPaymentType(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_DIRECT_DEPOSIT_PAYMENT_TYPE);
-        detail.setBalanceAccount(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_BALANCE_ACCOUNT_YES_INDICATOR);
-        detail.setCompletedDate(COMPLETED_DATE_FROM_TEST_FILES);
-        detail.setBankName(TEST_BANK_NAME);
-        detail.setBankRoutingNumber(TEST_BANK_ROUTING_NUMBER);
-        detail.setBankAccountNumber(TEST_ACCOUNT_NUMBER);
-        detail.setBankAccountType(TEST_BANK_ACCOUNT_TYPE);
-        return detail;
-    }
-
-    private PayeeACHAccountExtractDetail getExpectedExtractDetailForAlternateTestAccount() {
-        PayeeACHAccountExtractDetail detail = new PayeeACHAccountExtractDetail();
-        detail.setEmployeeID(TEST_ALT_EMPLOYEEID);
-        detail.setNetID(TEST_ALT_PRINCIPALNAME);
-        detail.setLastName(StringUtils.substringBefore(TEST_ALT_NAME, ","));
-        detail.setFirstName(StringUtils.substringAfter(TEST_ALT_NAME, ", "));
-        detail.setPaymentType(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_DIRECT_DEPOSIT_PAYMENT_TYPE);
-        detail.setBalanceAccount(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_BALANCE_ACCOUNT_YES_INDICATOR);
-        detail.setCompletedDate(COMPLETED_DATE_FROM_TEST_FILES);
-        detail.setBankName(TEST_ALT_BANK_NAME);
-        detail.setBankRoutingNumber(TEST_ALT_BANK_ROUTING_NUMBER);
-        detail.setBankAccountNumber(TEST_ALT_ACCOUNT_NUMBER);
-        detail.setBankAccountType(TEST_ALT_BANK_ACCOUNT_TYPE);
-        return detail;
-    }
-
-    private PayeeACHAccountExtractCsvInputFileType getBatchInputFileType() {
+    private PayeeACHAccountExtractCsvInputFileType createACHBatchInputFileType() {
         PayeeACHAccountExtractCsvInputFileType fileType = new PayeeACHAccountExtractCsvInputFileType();
         fileType.setDirectoryPath(ACH_TESTING_FILE_PATH);
-        fileType.setFileExtension(ACH_CSV_FILE_EXTENSION);
+        fileType.setFileExtension(
+                StringUtils.substringAfter(CUKFSConstants.CSV_FILE_EXTENSION, CUKFSConstants.DELIMITER));
         fileType.setCsvEnumClass(PayeeACHAccountExtractCsv.class);
         return fileType;
     }
 
-    @SuppressWarnings("unchecked")
-    private DocumentService createMockDocumentService() throws Exception {
-        DocumentService mockDocumentService = EasyMock.createMock(DocumentServiceImpl.class);
-        EasyMock.expect(mockDocumentService.getNewDocument(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE)).andStubAnswer(new IAnswer<Document>() {
-                @Override
-                public Document answer() throws Throwable {
-                    return createMockPAATDocument();
-                }
+    private ParameterService createMockParameterService() throws Exception {
+        ParameterService parameterService = mock(ParameterService.class);
+        Stream<Pair<String, String>> parameterMappings = Stream.of(
+                Pair.of(CUPdpParameterConstants.ACH_PERSONAL_CHECKING_TRANSACTION_CODE, CUPdpTestConstants.PERSONAL_CHECKING_CODE),
+                Pair.of(CUPdpParameterConstants.ACH_PERSONAL_SAVINGS_TRANSACTION_CODE, CUPdpTestConstants.PERSONAL_SAVINGS_CODE),
+                Pair.of(CUPdpParameterConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE, CUPdpTestConstants.DIRECT_DEPOSIT_TYPE),
+                Pair.of(CUPdpParameterConstants.GENERATED_PAYEE_ACH_ACCOUNT_DOC_NOTE_TEXT, CUPdpTestConstants.GENERATED_PAAT_NOTE_TEXT),
+                Pair.of(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, CUPdpTestConstants.NEW_ACCOUNT_EMAIL_SUBJECT),
+                Pair.of(CUPdpParameterConstants.NEW_PAYEE_ACH_ACCOUNT_EMAIL_BODY, CUPdpTestConstants.NEW_ACCOUNT_EMAIL_BODY),
+                Pair.of(CUPdpParameterConstants.UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT, CUPdpTestConstants.UPDATED_ACCOUNT_EMAIL_SUBJECT),
+                Pair.of(CUPdpParameterConstants.UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_BODY, CUPdpTestConstants.UPDATED_ACCOUNT_EMAIL_BODY));
+        
+        parameterMappings.forEach((mapping) -> {
+            when(parameterService.getParameterValueAsString(PayeeACHAccountExtractStep.class, mapping.getKey()))
+                    .thenReturn(mapping.getValue());
         });
-        EasyMock.expect(mockDocumentService.routeDocument(EasyMock.isA(MaintenanceDocument.class),
-                EasyMock.or(EasyMock.isA(String.class), EasyMock.isNull(String.class)),
-                EasyMock.or(EasyMock.isA(List.class), EasyMock.isNull(List.class)))).andStubAnswer(new IAnswer<Document>() {
-                        @Override
-                        public Document answer() throws Throwable {
-                            return (Document) EasyMock.getCurrentArguments()[0];
-                        }
-                });
-        EasyMock.replay(mockDocumentService);
+        
+        when(parameterService.getParameterValueAsString(
+                KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM))
+                .thenReturn(CUPdpTestConstants.ACH_EMAIL_FROM_ADDRESS);
+        
+        return parameterService;
+    }
+
+    private DocumentService createMockDocumentService() throws Exception {
+        DocumentService mockDocumentService = mock(DocumentService.class);
+        
+        when(mockDocumentService.getNewDocument(CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE))
+                .then(this::createMockPAATDocument);
+        
+        when(mockDocumentService.routeDocument(any(Document.class), any(), any()))
+                .then(this::recordAndReturnDocument);
+        
         return mockDocumentService;
     }
 
-    private MaintenanceDocument createMockPAATDocument() throws Exception {
-        MaintenanceDocument paatDocument = EasyMock.createMock(MaintenanceDocumentBase.class);
-        EasyMock.expect(paatDocument.getNewMaintainableObject()).andStubReturn(createNewMaintainableForPAAT());
-        EasyMock.expect(paatDocument.getDocumentHeader()).andStubReturn(new DocumentHeader());
-        EasyMock.expect(paatDocument.getObjectId()).andStubReturn("0");
-        paatDocument.addNote(EasyMock.isA(Note.class));
-        EasyMock.expectLastCall().anyTimes();
-        EasyMock.replay(paatDocument);
+    private Document recordAndReturnDocument(InvocationOnMock invocation) throws Exception {
+        Document document = invocation.getArgument(0);
+        payeeACHAccountExtractService.addRoutedDocument((MaintenanceDocument) document);
+        return document;
+    }
+
+    private MaintenanceDocument createMockPAATDocument(InvocationOnMock invocation) throws Exception {
+        MaintenanceDocument paatDocument = mock(FinancialSystemMaintenanceDocument.class, CALLS_REAL_METHODS);
+        
+        paatDocument.setDocumentHeader(new FinancialSystemDocumentHeader());
+        paatDocument.setAdHocRoutePersons(new ArrayList<>());
+        paatDocument.setAdHocRouteWorkgroups(new ArrayList<>());
+        paatDocument.setNotes(new ArrayList<>());
+        paatDocument.setOldMaintainableObject(createNewMaintainableForPAAT());
+        paatDocument.setNewMaintainableObject(createNewMaintainableForPAAT());
+        
+        int nextId = documentIdCounter.incrementAndGet();
+        String documentNumber = String.valueOf(nextId);
+        paatDocument.setDocumentNumber(documentNumber);
+        paatDocument.getDocumentHeader().setDocumentNumber(documentNumber);
+        
         return paatDocument;
     }
 
     private FinancialSystemMaintainable createNewMaintainableForPAAT() {
-        FinancialSystemMaintainable maintainable = new PayeeACHAccountMaintainableImpl();
+        FinancialSystemMaintainable maintainable = new CuPayeeACHAccountMaintainableImpl();
         maintainable.setBoClass(PayeeACHAccount.class);
         maintainable.setDataObject(new PayeeACHAccount());
         return maintainable;
     }
 
     private DataDictionaryService createMockDataDictionaryService() throws Exception {
+        final String PAYEE_ACH_ACCOUNT_CLASSNAME = PayeeACHAccount.class.getName();
+        final String DOCUMENT_HEADER_CLASSNAME = DocumentHeader.class.getName();
         /*
          * Only a few specific attribute definitions should be masked or have values finders; the rest
          * should be plain. Also, we only care about the max lengths of a few specific properties.
          */
-        DataDictionaryService ddService = EasyMock.createMock(DataDictionaryServiceImpl.class);
+        DataDictionaryService ddService = mock(DataDictionaryService.class);
+        AttributeDefinition maskedAttribute = createMaskedAttributeDefinition();
+        AttributeDefinition unmaskedAttribute = createUnmaskedAttributeDefinition();
+        AttributeDefinition bankAccountTypeAttribute = createAttributeDefinitionWithValuesFinder(
+                CUCheckingSavingsValuesFinder.class.getName(), true);
         
-        EasyMock.expect(ddService.getAttributeDefinition(EasyMock.eq(PayeeACHAccount.class.getName()),
-                EasyMock.or(EasyMock.eq(BANK_ACCOUNT_NUMBER), EasyMock.eq(BANK_NAME)))).andStubReturn(createMaskedAttributeDefinition());
+        when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE))
+                .thenReturn(unmaskedAttribute);
+        when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, PdpPropertyConstants.PAYEE_ID_NUMBER))
+                .thenReturn(unmaskedAttribute);
+        when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, CUPdpPropertyConstants.BANK_ACCOUNT_TYPE_CODE))
+                .thenReturn(bankAccountTypeAttribute);
+        when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, CUPdpPropertyConstants.PAYEE_ACH_BANK_NAME))
+                .thenReturn(maskedAttribute);
+        when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, KFSPropertyConstants.BANK_ACCOUNT_NUMBER))
+                .thenReturn(maskedAttribute);
         
-        EasyMock.expect(ddService.getAttributeDefinition(PayeeACHAccount.class.getName(), BANK_ACCOUNT_TYPE_CODE)).andStubReturn(
-                createAttributeDefinitionWithValuesFinder(CUCheckingSavingsValuesFinder.class.getName(), true));
+        when(ddService.getAttributeMaxLength(DOCUMENT_HEADER_CLASSNAME, KRADPropertyConstants.DOCUMENT_DESCRIPTION))
+                .thenReturn(DOCUMENT_DESCRIPTION_MAX_LENGTH);
         
-        EasyMock.expect(ddService.getAttributeDefinition(EasyMock.eq(PayeeACHAccount.class.getName()), EasyMock.and(
-                EasyMock.not(EasyMock.eq(BANK_ACCOUNT_TYPE_CODE)), EasyMock.and(
-                        EasyMock.not(EasyMock.eq(BANK_ACCOUNT_NUMBER)), EasyMock.not(EasyMock.eq(BANK_NAME)))
-                ))).andStubReturn(createUnmaskedAttributeDefinition());
-        
-        EasyMock.expect(ddService.getAttributeMaxLength(
-                DocumentHeader.class.getName(), KRADPropertyConstants.DOCUMENT_DESCRIPTION)).andStubReturn(DOCUMENT_DESCRIPTION_MAX_LENGTH);
-        
-        EasyMock.replay(ddService);
         return ddService;
     }
 
@@ -411,7 +411,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         AttributeSecurity maskedSecurity = new AttributeSecurity();
         MaskFormatterLiteral literalMask = new MaskFormatterLiteral();
         maskedSecurity.setMask(true);
-        literalMask.setLiteral("********");
+        literalMask.setLiteral(LITERAL_MASK_VALUE);
         maskedSecurity.setMaskFormatter(literalMask);
         maskedDefinition.setAttributeSecurity(maskedSecurity);
         return maskedDefinition;
@@ -433,106 +433,50 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
 
     private PersonService createMockPersonService() throws Exception {
-        PersonService personService = EasyMock.createMock(PersonServiceImpl.class);
-        EasyMock.expect(personService.getPersonByPrincipalName(TEST_PRINCIPALNAME)).andStubReturn(createTestUser());
-        EasyMock.expect(personService.getPersonByPrincipalName(TEST_ALT_PRINCIPALNAME)).andStubReturn(createAlternateTestUser());
-        EasyMock.expect(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER)).andStubReturn(createSystemUser());
-        EasyMock.expect(personService.getPersonByPrincipalName(
-                EasyMock.and(EasyMock.not(EasyMock.eq(TEST_PRINCIPALNAME)), EasyMock.and(
-                        EasyMock.not(EasyMock.eq(TEST_ALT_PRINCIPALNAME)), EasyMock.not(EasyMock.eq(KFSConstants.SYSTEM_USER)))
-                ))).andStubReturn(null);
-        EasyMock.replay(personService);
+        PersonService personService = mock(PersonService.class);
+        Stream<ACHPersonPayeeFixture> fixtures = Stream.of(
+                ACHPersonPayeeFixture.JOHN_DOE, ACHPersonPayeeFixture.JANE_DOE, ACHPersonPayeeFixture.ROBERT_SMITH,
+                ACHPersonPayeeFixture.MARY_SMITH, ACHPersonPayeeFixture.KFS_SYSTEM_USER);
+        
+        fixtures.forEach((fixture) -> {
+            when(personService.getPersonByPrincipalName(fixture.principalName))
+                    .thenReturn(fixture.toPerson());
+        });
+        
         return personService;
     }
 
-    private Person createTestUser() {
-        Principal.Builder principal = Principal.Builder.create(TEST_PRINCIPALNAME);
-        principal.setPrincipalId(TEST_PRINCIPALID);
-        principal.setEntityId(TEST_ENTITYID);
-        principal.setActive(true);
+    private CuAchService createMockAchService() throws Exception {
+        CuAchService achService = mock(CuAchService.class);
+        Stream<PayeeACHAccountFixture> achFixtures = Stream.of(
+                PayeeACHAccountFixture.JANE_DOE_SAVINGS_ACCOUNT_EMPLOYEE_OLD, PayeeACHAccountFixture.ROBERT_SMITH_CHECKING_ACCOUNT_ENTITY_OLD,
+                PayeeACHAccountFixture.MARY_SMITH_CHECKING_ACCOUNT_EMPLOYEE_OLD, PayeeACHAccountFixture.MARY_SMITH_CHECKING_ACCOUNT_ENTITY_OLD);
         
-        return new MockPersonImpl(principal.build(), TEST_EMPLOYEEID, TEST_NAME, TEST_EMAIL);
-    }
-
-    private Person createAlternateTestUser() {
-        Principal.Builder principal = Principal.Builder.create(TEST_ALT_PRINCIPALNAME);
-        principal.setPrincipalId(TEST_ALT_PRINCIPALID);
-        principal.setEntityId(TEST_ALT_ENTITYID);
-        principal.setActive(true);
+        achFixtures.forEach((achFixture) -> {
+            when(achService.getPotentiallyInactiveAchInformation(
+                    achFixture.payeeIdentifierTypeCode, achFixture.getPayeeIdNumber(), CUPdpTestConstants.DIRECT_DEPOSIT_TYPE))
+                    .thenReturn(achFixture.toPayeeACHAccount());
+        });
         
-        return new MockPersonImpl(principal.build(), TEST_ALT_EMPLOYEEID, TEST_ALT_NAME, TEST_ALT_EMAIL);
-    }
-
-    private Person createSystemUser() {
-        Principal.Builder principal = Principal.Builder.create(KFSConstants.SYSTEM_USER);
-        principal.setPrincipalId(KFSConstants.SYSTEM_USER);
-        principal.setEntityId(KFSConstants.SYSTEM_USER);
-        principal.setActive(true);
-        
-        return new MockPersonImpl(principal.build());
-    }
-
-    private AchService createMockAchService() throws Exception {
-        AchService achService = EasyMock.createMock(AchServiceImpl.class);
-        // Only the alternate employee ID is expected to return a non-null payee result.
-        EasyMock.expect(achService.getAchInformation(EasyMock.eq(PayeeIdTypeCodes.ENTITY),
-                EasyMock.isA(String.class), EasyMock.eq(KFS_DIRECT_DEPOSIT_TYPE))).andStubReturn(null);
-        EasyMock.expect(achService.getAchInformation(PayeeIdTypeCodes.EMPLOYEE, TEST_ALT_EMPLOYEEID, KFS_DIRECT_DEPOSIT_TYPE)).andStubReturn(
-                createEmployeePayeeACHAccountForAlternateUser());
-        EasyMock.expect(achService.getAchInformation(EasyMock.eq(PayeeIdTypeCodes.EMPLOYEE),
-                EasyMock.not(EasyMock.eq(TEST_ALT_EMPLOYEEID)), EasyMock.eq(KFS_DIRECT_DEPOSIT_TYPE))).andStubReturn(null);
-        EasyMock.replay(achService);
         return achService;
     }
 
-    private PayeeACHAccount createEmployeePayeeACHAccountForAlternateUser() {
-        PayeeACHAccount achAccount = new PayeeACHAccount();
-        achAccount.setPayeeIdentifierTypeCode(PayeeIdTypeCodes.EMPLOYEE);
-        achAccount.setPayeeIdNumber(TEST_ALT_EMPLOYEEID);
-        achAccount.setAchTransactionType(KFS_DIRECT_DEPOSIT_TYPE);
-        achAccount.setBankRoutingNumber(TEST_ALT_BANK_ROUTING_NUMBER);
-        achAccount.setBankAccountTypeCode("32PPD");
-        achAccount.setBankAccountNumber(TEST_ALT_ACCOUNT_NUMBER);
-        achAccount.setBankRouting(createBank(TEST_ALT_BANK_ROUTING_NUMBER, TEST_ALT_BANK_NAME));
-        return achAccount;
-    }
-
     private AchBankService createMockAchBankService() throws Exception {
-        AchBankService achBankService = EasyMock.createMock(AchBankServiceImpl.class);
-        EasyMock.expect(achBankService.getByPrimaryId(TEST_BANK_ROUTING_NUMBER)).andStubReturn(
-                createBank(TEST_BANK_ROUTING_NUMBER, TEST_BANK_NAME));
-        EasyMock.expect(achBankService.getByPrimaryId(TEST_ALT_BANK_ROUTING_NUMBER)).andStubReturn(
-                createBank(TEST_ALT_BANK_ROUTING_NUMBER, TEST_ALT_BANK_NAME));
-        EasyMock.expect(achBankService.getByPrimaryId(EasyMock.and(
-                EasyMock.not(EasyMock.eq(TEST_BANK_ROUTING_NUMBER)), EasyMock.not(EasyMock.eq(TEST_ALT_BANK_ROUTING_NUMBER))))).andStubReturn(null);
-        EasyMock.replay(achBankService);
+        AchBankService achBankService = mock(AchBankService.class);
+        Stream<ACHBankFixture> banks = Stream.of(ACHBankFixture.FIRST_BANK, ACHBankFixture.SECOND_BANK);
+        
+        banks.forEach((bankFixture) -> {
+            when(achBankService.getByPrimaryId(bankFixture.bankRoutingNumber))
+                    .thenReturn(bankFixture.toACHBank());
+        });
+        
         return achBankService;
     }
 
-    private ACHBank createBank(String bankRoutingNumber, String bankName) {
-        ACHBank bank = new ACHBank();
-        bank.setBankRoutingNumber(bankRoutingNumber);
-        bank.setBankName(bankName);
-        bank.setActive(true);
-        return bank;
-    }
-
-    private static class MockPersonImpl extends PersonImpl {
-        private static final long serialVersionUID = 1L;
-        
-        public MockPersonImpl(Principal principal) {
-            super();
-            this.principalId = principal.getPrincipalId();
-            this.principalName = principal.getPrincipalName();
-            this.entityId = principal.getEntityId();
-            this.active = principal.isActive();
-        }
-        
-        public MockPersonImpl(Principal principal, String employeeId, String name, String emailAddress) {
-            this(principal);
-            this.employeeId = employeeId;
-            this.name = name;
-            this.emailAddress = emailAddress;
+    private static class TestEmailService extends EmailServiceImpl {
+        @Override
+        protected String getMode() {
+            return MODE_LOG;
         }
     }
 
@@ -555,73 +499,63 @@ public class PayeeACHAccountExtractServiceImplTest {
         
     }
 
-    // Helper implementation of PayeeACHAccountExtractService that tracks various statistics.
     private static class TestPayeeACHAccountExtractService extends PayeeACHAccountExtractServiceImpl {
-        private AchFileResults fileResults = new AchFileResults();
-        private AchRowResults rowResults = new AchRowResults();
-        private List<PayeeACHAccountExtractDetail> successfulDetails = new ArrayList<>();
+        private Map<String, ACHFileResult> fileResults = new HashMap<>();
+        private ACHFileResult currentFileResult;
+        private ACHRowResult currentRowResult;
         
         @Override
         protected List<String> loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
+            currentFileResult = new ACHFileResult();
+            
             try {
-                List<String>failedRowsErrors = new ArrayList<String>();
-                failedRowsErrors = super.loadACHBatchDetailFile(inputFileName, batchInputFileType);
-                if (failedRowsErrors.isEmpty()) {
-                    fileResults.incrementNumSuccessfulFiles();
-                } else {
-                    fileResults.incrementNumFilesWithBadRows();
-                }
-                return failedRowsErrors;
+                return super.loadACHBatchDetailFile(inputFileName, batchInputFileType);
             } catch (Exception e) {
-                fileResults.incrementNumBadFiles();
+                currentFileResult.markAsUnprocessable();
                 throw e;
+            } finally {
+                fileResults.put(generateFileResultKey(inputFileName), currentFileResult);
+                currentFileResult = null;
             }
+        }
+        
+        private String generateFileResultKey(String inputFileName) {
+            String key = inputFileName;
+            if (StringUtils.contains(key, CUKFSConstants.BACKSLASH)) {
+                key = StringUtils.substringAfterLast(inputFileName, CUKFSConstants.BACKSLASH);
+            }
+            if (StringUtils.contains(key, CUKFSConstants.SLASH)) {
+                key = StringUtils.substringAfterLast(key, CUKFSConstants.SLASH);
+            }
+            key = StringUtils.substringBeforeLast(key, CUKFSConstants.DELIMITER);
+            return key;
         }
         
         @Override
         protected String processACHBatchDetail(PayeeACHAccountExtractDetail achDetail) {
-            String failureMessage = super.processACHBatchDetail(achDetail);
-            if (ObjectUtils.isNull(failureMessage) || StringUtils.isBlank(failureMessage)) {
-                successfulDetails.add(achDetail);
-            } else {
-                rowResults.incrementNumBadRows();
+            currentRowResult = new ACHRowResult();
+            
+            try {
+                String failureMessage = super.processACHBatchDetail(achDetail);
+                if (StringUtils.isNotBlank(failureMessage)) {
+                    currentRowResult.markRowAsInvalid();
+                }
+                return failureMessage;
+            } catch (Exception e) {
+                currentRowResult.markRowAsInvalid();
+                throw e;
+            } finally {
+                currentFileResult.addRowResult(currentRowResult);
+                currentRowResult = null;
             }
-            return failureMessage;
-        }
-        
-        @Override
-        protected String addACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType) {
-            String processingResults = super.addACHAccount(payee, achDetail, payeeType);
-            if (PayeeIdTypeCodes.EMPLOYEE.equals(payeeType)) {
-                rowResults.getEmployeeRowResults().incrementNumNewRows();
-            } else if (PayeeIdTypeCodes.ENTITY.equals(payeeType)) {
-                rowResults.getEntityRowResults().incrementNumNewRows();
-            }
-            return processingResults;
-        }
-        
-        @Override
-        protected String updateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail, PayeeACHAccount achAccount) {
-            String processingResults = super.updateACHAccountIfNecessary(payee, achDetail, achAccount);
-            if (PayeeIdTypeCodes.EMPLOYEE.equals(achAccount.getPayeeIdentifierTypeCode())) {
-                rowResults.getEmployeeRowResults().incrementNumExistingRows();
-            } else if (PayeeIdTypeCodes.ENTITY.equals(achAccount.getPayeeIdentifierTypeCode())) {
-                rowResults.getEntityRowResults().incrementNumExistingRows();
-            }
-            return processingResults;
         }
         
         @Override
         protected Note createEmptyNote() {
-            Note note = EasyMock.createMock(Note.class);
-            
-            note.setNoteText(EasyMock.isA(String.class));
-            note.setRemoteObjectIdentifier(EasyMock.isA(String.class));
-            note.setAuthorUniversalIdentifier(EasyMock.isA(String.class));
-            note.setNoteTypeCode(EasyMock.isA(String.class));
-            note.setNotePostedTimestampToCurrent();
-            EasyMock.replay(note);
-            
+            Note note = mock(Note.class, CALLS_REAL_METHODS);
+            doNothing().when(note).setNotePostedTimestampToCurrent();
+            note.setNoteText(StringUtils.EMPTY);
+            note.setNoteTypeCode(NoteType.DOCUMENT_HEADER.getCode());
             return note;
         }
         
@@ -631,150 +565,81 @@ public class PayeeACHAccountExtractServiceImplTest {
             return super.getResolvedEmailBody(achAccount, emailBody);
         }
         
-        public AchFileResults getFileResults() {
+        public void addRoutedDocument(MaintenanceDocument routedDocument) {
+            FinancialSystemMaintainable newMaintainable = (FinancialSystemMaintainable) routedDocument.getNewMaintainableObject();
+            PayeeACHAccount achAccount = (PayeeACHAccount) newMaintainable.getDataObject();
+            
+            if (StringUtils.equals(PayeeIdTypeCodes.EMPLOYEE, achAccount.getPayeeIdentifierTypeCode())) {
+                currentRowResult.setDocumentForEmployeeAccountUpdate(routedDocument);
+            } else if (StringUtils.equals(PayeeIdTypeCodes.ENTITY, achAccount.getPayeeIdentifierTypeCode())) {
+                currentRowResult.setDocumentForEntityAccountUpdate(routedDocument);
+            } else {
+                throw new IllegalStateException("Unexpected payee ID type: " + achAccount.getPayeeIdentifierTypeCode());
+            }
+        }
+        
+        public Map<String, ACHFileResult> getFileResults() {
             return fileResults;
         }
+    }
+
+    private static class ACHFileResult {
+        private boolean processableFile;
+        private List<ACHRowResult> rowResults;
         
-        public AchRowResults getRowResults() {
+        public ACHFileResult() {
+            this.processableFile = true;
+            this.rowResults = new ArrayList<>();
+        }
+        
+        public void markAsUnprocessable() {
+            processableFile = false;
+        }
+
+        public boolean isProcessableFile() {
+            return processableFile;
+        }
+        
+        public void addRowResult(ACHRowResult rowResult) {
+            rowResults.add(rowResult);
+        }
+        
+        public List<ACHRowResult> getRowResults() {
             return rowResults;
         }
-        
-        public List<PayeeACHAccountExtractDetail> getSuccessfulDetails() {
-            return successfulDetails;
-        }
     }
 
-    // Helper object summarizing the statistics for the file rows.
-    private static class AchRowResults {
-        private final AchSuccessfulRowResults employeeRowResults;
-        private final AchSuccessfulRowResults entityRowResults;
-        private int numBadRows;
+    private static class ACHRowResult {
+        private MaintenanceDocument documentForEmployeeAccountUpdate;
+        private MaintenanceDocument documentForEntityAccountUpdate;
+        private boolean validRow;
 
-        public AchRowResults() {
-            this.employeeRowResults = new AchSuccessfulRowResults(PayeeIdTypeCodes.EMPLOYEE);
-            this.entityRowResults = new AchSuccessfulRowResults(PayeeIdTypeCodes.ENTITY);
+        public ACHRowResult() {
+            validRow = true;
         }
 
-        public AchRowResults(AchSuccessfulRowResults employeeRowResults, AchSuccessfulRowResults entityRowResults, int numBadRows) {
-            if (!PayeeIdTypeCodes.EMPLOYEE.equals(employeeRowResults.getPayeeType())) {
-                throw new IllegalArgumentException("employeeRowResults is not configured for employee payee types");
-            } else if (!PayeeIdTypeCodes.ENTITY.equals(entityRowResults.getPayeeType())) {
-                throw new IllegalArgumentException("entityRowResults is not configured for entity payee types");
-            }
-            this.employeeRowResults = employeeRowResults;
-            this.entityRowResults = entityRowResults;
-            this.numBadRows = numBadRows;
+        public MaintenanceDocument getDocumentForEmployeeAccountUpdate() {
+            return documentForEmployeeAccountUpdate;
         }
 
-        public void incrementNumBadRows() {
-            numBadRows++;
+        public void setDocumentForEmployeeAccountUpdate(MaintenanceDocument documentForEmployeeAccountUpdate) {
+            this.documentForEmployeeAccountUpdate = documentForEmployeeAccountUpdate;
         }
 
-        public AchSuccessfulRowResults getEmployeeRowResults() {
-            return employeeRowResults;
+        public MaintenanceDocument getDocumentForEntityAccountUpdate() {
+            return documentForEntityAccountUpdate;
         }
 
-        public AchSuccessfulRowResults getEntityRowResults() {
-            return entityRowResults;
+        public void setDocumentForEntityAccountUpdate(MaintenanceDocument documentForEntityAccountUpdate) {
+            this.documentForEntityAccountUpdate = documentForEntityAccountUpdate;
         }
 
-        public int getNumBadRows() {
-            return numBadRows;
+        public boolean isValidRow() {
+            return validRow;
         }
 
-        public static AchRowResults createSummarizedResults(AchRowResults... results) {
-            AchRowResults summary = new AchRowResults();
-            for (AchRowResults result : results) {
-                summary.employeeRowResults.addResults(result.employeeRowResults);
-                summary.entityRowResults.addResults(result.entityRowResults);
-                summary.numBadRows += result.numBadRows;
-            }
-            return summary;
-        }
-    }
-
-    // Helper object summarizing the statistics for a single file's impacts to payees.
-    private static class AchSuccessfulRowResults {
-        private final String payeeType;
-        private int numNewRows;
-        private int numExistingRows;
-
-        public AchSuccessfulRowResults(String payeeType) {
-            this.payeeType = payeeType;
-        }
-
-        protected AchSuccessfulRowResults(String payeeType, int numNewRows, int numExistingRows) {
-            this.payeeType = payeeType;
-            this.numNewRows = numNewRows;
-            this.numExistingRows = numExistingRows;
-        }
-
-        public void incrementNumNewRows() {
-            numNewRows++;
-        }
-
-        public void incrementNumExistingRows() {
-            numExistingRows++;
-        }
-
-        public String getPayeeType() {
-            return payeeType;
-        }
-
-        public int getNumNewRows() {
-            return numNewRows;
-        }
-
-        public int getNumExistingRows() {
-            return numExistingRows;
-        }
-
-        public void addResults(AchSuccessfulRowResults resultsToAdd) {
-            if (!StringUtils.equals(payeeType, resultsToAdd.payeeType)) {
-                throw new IllegalArgumentException("resultsToAdd does not have the same payee type as the current results");
-            }
-            numNewRows += resultsToAdd.numNewRows;
-            numExistingRows += resultsToAdd.numExistingRows;
-        }
-    }
-
-    // Helper object summarizing the statistics for the file processing as a whole.
-    private static class AchFileResults {
-        private int numSuccessfulFiles;
-        private int numFilesWithBadRows;
-        private int numBadFiles;
-
-        public AchFileResults() {
-        }
-
-        public AchFileResults(int numSuccessfulFiles, int numFilesWithBadRows, int numBadFiles) {
-            this.numSuccessfulFiles = numSuccessfulFiles;
-            this.numFilesWithBadRows = numFilesWithBadRows;
-            this.numBadFiles = numBadFiles;
-        }
-
-        public void incrementNumSuccessfulFiles() {
-            numSuccessfulFiles++;
-        }
-
-        public void incrementNumFilesWithBadRows() {
-            numFilesWithBadRows++;
-        }
-
-        public void incrementNumBadFiles() {
-            numBadFiles++;
-        }
-
-        public int getNumSuccessfulFiles() {
-            return numSuccessfulFiles;
-        }
-
-        public int getNumFilesWithBadRows() {
-            return numFilesWithBadRows;
-        }
-
-        public int getNumBadFiles() {
-            return numBadFiles;
+        public void markRowAsInvalid() {
+            this.validRow = false;
         }
     }
 

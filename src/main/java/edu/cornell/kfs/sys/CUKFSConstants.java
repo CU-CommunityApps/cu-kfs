@@ -151,5 +151,8 @@ public class CUKFSConstants {
     public static final String RIGHT_PARENTHESIS = ")";
     public static final String COLON = ":";
     public static final String SLASH = "/";
+    public static final String BACKSLASH = "\\";
+
+    public static final String CSV_FILE_EXTENSION = ".csv";
 
 }
