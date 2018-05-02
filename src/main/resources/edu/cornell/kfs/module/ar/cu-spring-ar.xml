@@ -31,5 +31,7 @@
 	<bean id="cu-arModuleService" parent="arModuleService-parentBean">
 	 	<property name="moduleConfiguration" ref="cu-ar"/>
 	</bean>
+
+	<bean id="customerLoadService" parent="customerLoadService-parentBean" class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
 	
 </beans>
