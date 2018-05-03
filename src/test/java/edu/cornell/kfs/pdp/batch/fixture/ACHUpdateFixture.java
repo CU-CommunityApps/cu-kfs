@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pdp.batch.fixture;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 public enum ACHUpdateFixture {
