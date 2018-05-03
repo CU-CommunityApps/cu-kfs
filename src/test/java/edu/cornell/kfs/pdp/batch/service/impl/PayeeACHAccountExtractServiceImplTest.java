@@ -19,10 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,7 @@ import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
@@ -58,7 +60,6 @@ import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.rice.krad.bo.BusinessObject;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.coa.businessobject.options.CUCheckingSavingsValuesFinder;
@@ -76,8 +77,10 @@ import edu.cornell.kfs.pdp.batch.fixture.ACHRowFixture;
 import edu.cornell.kfs.pdp.batch.fixture.ACHUpdateFixture;
 import edu.cornell.kfs.pdp.batch.fixture.PayeeACHAccountFixture;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
+import edu.cornell.kfs.pdp.businessobject.options.TestPayeeAchIdTypeValuesFinder;
 import edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl;
 import edu.cornell.kfs.pdp.service.CuAchService;
+import edu.cornell.kfs.pdp.service.impl.CuAchServiceImpl;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 
@@ -91,6 +94,7 @@ public class PayeeACHAccountExtractServiceImplTest {
     private static final String LITERAL_MASK_VALUE = "********";
     private static final Integer DOCUMENT_DESCRIPTION_MAX_LENGTH = Integer.valueOf(40);
     private static final int INITIAL_DOCUMENT_ID = 1000;
+    private static final long INITIAL_ACH_ACCOUNT_ID = 5000L;
 
     private static final String UNRESOLVED_EMAIL_STRING = "Payment $ \\n\\ for [payeeIdentifierTypeCode] of [payeeIdNumber]"
             + " will go to [bankAccountTypeCode] account at [bankRouting.bankName].[bankAccountNumber]";
@@ -99,9 +103,13 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     private TestPayeeACHAccountExtractService payeeACHAccountExtractService;
     private AtomicInteger documentIdCounter;
+    private AtomicLong achAccountIdCounter;
 
     @Before
     public void setUp() throws Exception {
+        documentIdCounter = new AtomicInteger(INITIAL_DOCUMENT_ID);
+        achAccountIdCounter = new AtomicLong(INITIAL_ACH_ACCOUNT_ID);
+        
         payeeACHAccountExtractService = new TestPayeeACHAccountExtractService();
         payeeACHAccountExtractService.setBatchInputFileService(new BatchInputFileServiceImpl());
         payeeACHAccountExtractService.setBatchInputFileTypes(
@@ -111,11 +119,9 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setDocumentService(createMockDocumentService());
         payeeACHAccountExtractService.setDataDictionaryService(createMockDataDictionaryService());
         payeeACHAccountExtractService.setPersonService(createMockPersonService());
-        payeeACHAccountExtractService.setSequenceAccessorService(new MockSequenceAccessorService());
-        payeeACHAccountExtractService.setAchService(createMockAchService());
+        payeeACHAccountExtractService.setSequenceAccessorService(createMockSequenceAccessorService());
+        payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
-        
-        documentIdCounter = new AtomicInteger(INITIAL_DOCUMENT_ID);
     }
 
     @After
@@ -173,8 +179,10 @@ public class PayeeACHAccountExtractServiceImplTest {
     @Test
     public void testEmailBodyPlaceholderResolution() throws Exception {
         // NOTE: We expect that all potentially-sensitive placeholders except bank name will be replaced with empty text.
+        TestPayeeAchIdTypeValuesFinder payeeIdTypeKeyValues = new TestPayeeAchIdTypeValuesFinder();
         PayeeACHAccount achAccount = PayeeACHAccountFixture.JANE_DOE_SAVINGS_ACCOUNT_EMPLOYEE_NEW.toPayeeACHAccount();
-        String expectedBody = MessageFormat.format(EMAIL_STRING_AS_FORMAT, achAccount.getPayeeIdentifierTypeCode(),
+        String expectedPayeeIdTypeLabel = payeeIdTypeKeyValues.getKeyLabel(achAccount.getPayeeIdentifierTypeCode());
+        String expectedBody = MessageFormat.format(EMAIL_STRING_AS_FORMAT, expectedPayeeIdTypeLabel,
                 achAccount.getPayeeIdNumber(), PERSONAL_SAVINGS_ACCOUNT_TYPE_LABEL, achAccount.getBankRouting().getBankName());
         String actualBody = payeeACHAccountExtractService.getResolvedEmailBody(achAccount, UNRESOLVED_EMAIL_STRING);
         
@@ -240,28 +248,34 @@ public class PayeeACHAccountExtractServiceImplTest {
         assertTrue("New maintainable should not be null", ObjectUtils.isNotNull(newMaintainable));
         assertEquals("Wrong data object class", PayeeACHAccount.class, newMaintainable.getDataObjectClass());
         assertEquals("Wrong maintenance action", expectedUpdate.getExpectedMaintenanceAction(), newMaintainable.getMaintenanceAction());
-        assertPayeeACHAccountIsCorrect(expectedUpdate.newAccount, newMaintainable);
+        assertPayeeACHAccountIsCorrect(expectedUpdate.getExpectedMaintenanceAction(), expectedUpdate.newAccount, newMaintainable);
         
         if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, expectedUpdate.getExpectedMaintenanceAction())) {
             FinancialSystemMaintainable oldMaintainable = (FinancialSystemMaintainable) document.getOldMaintainableObject();
             assertTrue("Old maintainable should not be null", ObjectUtils.isNotNull(oldMaintainable));
             assertEquals("Wrong data object class on old maintainable", PayeeACHAccount.class, oldMaintainable.getDataObjectClass());
-            assertPayeeACHAccountIsCorrect(expectedUpdate.oldAccount, oldMaintainable);
+            assertPayeeACHAccountIsCorrect(expectedUpdate.getExpectedMaintenanceAction(), expectedUpdate.oldAccount, oldMaintainable);
         }
     }
 
     private void assertPayeeACHAccountIsCorrect(
-            PayeeACHAccountFixture expectedAccountFixture, FinancialSystemMaintainable maintainable) throws Exception {
+            String expectedMaintenanceAction, PayeeACHAccountFixture expectedAccountFixture, FinancialSystemMaintainable maintainable) throws Exception {
         PayeeACHAccount expectedAccount = expectedAccountFixture.toPayeeACHAccount();
         PayeeACHAccount actualAccount = (PayeeACHAccount) maintainable.getDataObject();
         
         assertTrue("ACH account should not be null", ObjectUtils.isNotNull(actualAccount));
+        assertTrue("ACH account generated ID should not be null", ObjectUtils.isNotNull(actualAccount.getAchAccountGeneratedIdentifier()));
+        if (StringUtils.equals(KFSConstants.MAINTENANCE_EDIT_ACTION, expectedMaintenanceAction)) {
+            assertEquals("ACH account generated ID should not have changed",
+                    expectedAccount.getAchAccountGeneratedIdentifier(), actualAccount.getAchAccountGeneratedIdentifier());
+        }
         assertEquals("Wrong payee ID type code", expectedAccount.getPayeeIdentifierTypeCode(), actualAccount.getPayeeIdentifierTypeCode());
         assertEquals("Wrong payee ID number", expectedAccount.getPayeeIdNumber(), actualAccount.getPayeeIdNumber());
         assertEquals("Wrong transaction type", expectedAccount.getAchTransactionType(), actualAccount.getAchTransactionType());
         assertEquals("Wrong bank routing number", expectedAccount.getBankRoutingNumber(), actualAccount.getBankRoutingNumber());
         assertEquals("Wrong bank account type", expectedAccount.getBankAccountTypeCode(), actualAccount.getBankAccountTypeCode());
         assertEquals("Wrong bank account number", expectedAccount.getBankAccountNumber(), actualAccount.getBankAccountNumber());
+        assertEquals("Wrong active flag status", expectedAccount.isActive(), actualAccount.isActive());
     }
 
     private void assertDoneFilesWereDeleted(String... inputFileNames) throws Exception {
@@ -346,8 +360,18 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     private Document recordAndReturnDocument(InvocationOnMock invocation) throws Exception {
         Document document = invocation.getArgument(0);
+        setBankObjectOnPayeeACHAccountIfAbsent(document);
         payeeACHAccountExtractService.addRoutedDocument((MaintenanceDocument) document);
         return document;
+    }
+
+    private void setBankObjectOnPayeeACHAccountIfAbsent(Document document) {
+        MaintenanceDocument paatDocument = (MaintenanceDocument) document;
+        PayeeACHAccount achAccount = (PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject();
+        if (ObjectUtils.isNull(achAccount.getBankRouting())) {
+            ACHBankFixture.findBankByRoutingNumber(achAccount.getBankRoutingNumber())
+                    .ifPresent((bankFixture) -> achAccount.setBankRouting(bankFixture.toACHBank()));
+        }
     }
 
     private MaintenanceDocument createMockPAATDocument(InvocationOnMock invocation) throws Exception {
@@ -385,11 +409,13 @@ public class PayeeACHAccountExtractServiceImplTest {
         DataDictionaryService ddService = mock(DataDictionaryService.class);
         AttributeDefinition maskedAttribute = createMaskedAttributeDefinition();
         AttributeDefinition unmaskedAttribute = createUnmaskedAttributeDefinition();
+        AttributeDefinition payeeIdTypeAttribute = createAttributeDefinitionWithValuesFinder(
+                TestPayeeAchIdTypeValuesFinder.class.getName(), false);
         AttributeDefinition bankAccountTypeAttribute = createAttributeDefinitionWithValuesFinder(
                 CUCheckingSavingsValuesFinder.class.getName(), true);
         
         when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE))
-                .thenReturn(unmaskedAttribute);
+                .thenReturn(payeeIdTypeAttribute);
         when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, PdpPropertyConstants.PAYEE_ID_NUMBER))
                 .thenReturn(unmaskedAttribute);
         when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, CUPdpPropertyConstants.BANK_ACCOUNT_TYPE_CODE))
@@ -446,19 +472,43 @@ public class PayeeACHAccountExtractServiceImplTest {
         return personService;
     }
 
-    private CuAchService createMockAchService() throws Exception {
-        CuAchService achService = mock(CuAchService.class);
+    private SequenceAccessorService createMockSequenceAccessorService() throws Exception {
+        SequenceAccessorService sequenceAccessorService = mock(SequenceAccessorService.class);
+        
+        when(sequenceAccessorService.getNextAvailableSequenceNumber(PdpConstants.ACH_ACCOUNT_IDENTIFIER_SEQUENCE_NAME))
+                .then((invocation) -> Long.valueOf(achAccountIdCounter.incrementAndGet()));
+        
+        return sequenceAccessorService;
+    }
+
+    private CuAchService createAchService() throws Exception {
+        CuAchServiceImpl achService = new CuAchServiceImpl();
+        achService.setBusinessObjectService(createMockBusinessObjectService());
+        return achService;
+    }
+
+    private BusinessObjectService createMockBusinessObjectService() throws Exception {
+        BusinessObjectService businessObjectService = mock(BusinessObjectService.class);
+        
         Stream<PayeeACHAccountFixture> achFixtures = Stream.of(
                 PayeeACHAccountFixture.JANE_DOE_SAVINGS_ACCOUNT_EMPLOYEE_OLD, PayeeACHAccountFixture.ROBERT_SMITH_CHECKING_ACCOUNT_ENTITY_OLD,
                 PayeeACHAccountFixture.MARY_SMITH_CHECKING_ACCOUNT_EMPLOYEE_OLD, PayeeACHAccountFixture.MARY_SMITH_CHECKING_ACCOUNT_ENTITY_OLD);
         
         achFixtures.forEach((achFixture) -> {
-            when(achService.getPotentiallyInactiveAchInformation(
-                    achFixture.payeeIdentifierTypeCode, achFixture.getPayeeIdNumber(), CUPdpTestConstants.DIRECT_DEPOSIT_TYPE))
-                    .thenReturn(achFixture.toPayeeACHAccount());
+            Map<String, Object> mapForMatching = createPropertiesMapForMatching(achFixture);
+            when(businessObjectService.findMatching(PayeeACHAccount.class, mapForMatching))
+                    .thenReturn(Collections.singletonList(achFixture.toPayeeACHAccount()));
         });
         
-        return achService;
+        return businessObjectService;
+    }
+
+    private Map<String, Object> createPropertiesMapForMatching(PayeeACHAccountFixture achFixture) {
+        Map<String, Object> propertiesMap = new HashMap<>();
+        propertiesMap.put(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, achFixture.payeeIdentifierTypeCode);
+        propertiesMap.put(PdpPropertyConstants.ACH_TRANSACTION_TYPE, achFixture.achTransactionType);
+        propertiesMap.put(PdpPropertyConstants.PAYEE_ID_NUMBER, achFixture.getPayeeIdNumber());
+        return propertiesMap;
     }
 
     private AchBankService createMockAchBankService() throws Exception {
@@ -478,25 +528,6 @@ public class PayeeACHAccountExtractServiceImplTest {
         protected String getMode() {
             return MODE_LOG;
         }
-    }
-
-    private static class MockSequenceAccessorService implements SequenceAccessorService {
-        private long currentValue;
-
-        @Override
-        public Long getNextAvailableSequenceNumber(String sequenceName, Class<? extends BusinessObject> clazz) {
-            return getNextAvailableSequenceNumber(sequenceName);
-        }
-
-        @Override
-        public Long getNextAvailableSequenceNumber(String sequenceName) {
-            if (!PdpConstants.ACH_ACCOUNT_IDENTIFIER_SEQUENCE_NAME.equals(sequenceName)) {
-                throw new RuntimeException("Unexpected sequence name: " + sequenceName);
-            }
-            currentValue++;
-            return Long.valueOf(currentValue);
-        }
-        
     }
 
     private static class TestPayeeACHAccountExtractService extends PayeeACHAccountExtractServiceImpl {

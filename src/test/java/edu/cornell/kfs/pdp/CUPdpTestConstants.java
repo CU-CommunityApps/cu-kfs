@@ -14,4 +14,13 @@ public class CUPdpTestConstants {
             + " will go to [bankAccountTypeCode] account at [bankRouting.bankName] from now on.";
     public static final String ACH_EMAIL_FROM_ADDRESS = "test-from-address@someplace.edu";
 
+    public static class TestPayeeIdTypeLabels {
+        public static final String EMPLOYEE = "Employee ID";
+        public static final String FEIN = "Federal Employer Identification Number";
+        public static final String SSN = "Social Security Number";
+        public static final String ENTITY = "Entity ID";
+        public static final String VENDOR_ID = "Vendor Number";
+        public static final String OTHER = "Other";
+    }
+
 }
