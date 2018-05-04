@@ -216,9 +216,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     protected String processACHBatchDetail(PayeeACHAccountExtractDetail achDetail) {
         LOG.info("processACHBatchDetail: Starting processACHBatchDetail for: " + achDetail.getLogData());
         Person payee = personService.getPersonByPrincipalName(achDetail.getNetID());
-        String processingError;
 
-        processingError = validateACHBatchDetail(achDetail, payee);
+        String processingError = validateACHBatchDetail(achDetail, payee);
         if (StringUtils.isNotBlank(processingError)) {
             return processingError;
         }
@@ -390,7 +389,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             String accountUpdateErrors = createAndRoutePayeeACHAccountDocument(achData, this::setupDocumentForACHUpdate);
             processingResults.append(accountUpdateErrors);
         } else {
-            LOG.info("Input file's account information for payee of type '" + achAccount.getPayeeIdentifierTypeCode()
+            LOG.info("updateACHAccountIfNecessary: Input file's account information for payee of type '" + achAccount.getPayeeIdentifierTypeCode()
                     + "' matches what is already in KFS; no updates will be made for this entry.");
         }
         

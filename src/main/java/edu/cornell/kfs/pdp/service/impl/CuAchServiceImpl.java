@@ -16,10 +16,14 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
 
     private BusinessObjectService businessObjectService;
 
-    // This implementation is nearly identical to that from the AchServiceImpl.getAchInformation method.
+    /*
+     * This implementation is nearly identical to that from the AchServiceImpl.getAchInformation method.
+     * The only differences are that the fields map does not add an entry for the active indicator,
+     * and that the logging statements have been updated accordingly to match the new method name.
+     */
     @Override
     public PayeeACHAccount getPotentiallyInactiveAchInformation(String idType, String payeeId, String achTransactionType) {
-        LOG.debug("getAchInformation() started");
+        LOG.debug("getPotentiallyInactiveAchInformation() started");
 
         Map<String, Object> fields = new HashMap<String, Object>();
 
@@ -30,12 +34,12 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
         Collection<PayeeACHAccount> rows = businessObjectService.findMatching(PayeeACHAccount.class, fields);
         if (rows.size() != 1) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("getAchInformation() not found rows = " + rows.size());
+                LOG.debug("getPotentiallyInactiveAchInformation() not found rows = " + rows.size());
             }
 
             return null;
         } else {
-            LOG.debug("getAchInformation() found");
+            LOG.debug("getPotentiallyInactiveAchInformation() found");
 
             return rows.iterator().next();
         }
