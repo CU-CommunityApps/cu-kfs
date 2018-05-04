@@ -7,7 +7,7 @@
     <bean id="paymentWorksModuleConfiguration" parent="paymentWorksModuleConfiguration-parentBean" />
     <bean id="paymentWorksModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
         <property name="namespaceCode" value="KFS-PMW" />
-        <property name="initializeDataDictionary" value="false" />
+        <property name="initializeDataDictionary" value="true" />
         <property name="packagePrefixes">
             <list>
                 <value>edu.cornell.kfs.pmw</value>
