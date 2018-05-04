@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherPayeeServiceImpl;
+import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -17,6 +19,7 @@ import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
+import org.kuali.rice.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
@@ -27,7 +30,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 
 
 public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPayeeServiceImpl implements CuDisbursementVoucherPayeeService {
-
+    
     /**
      * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#getPayeeFromVendor(org.kuali.kfs.vnd.businessobject.VendorDetail)
      */
@@ -146,9 +149,33 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         return CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI.equals(payeeTypeCode);
     }
 
-    /**
-     * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#isVendor(org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail)
-     */
-    
+    public boolean isPayeeSignedUpForACH(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
+        boolean result = false;
 
+        if (ObjectUtils.isNotNull(disbursementVoucherPayeeDetail)) {
+            String payeeTypeCode = disbursementVoucherPayeeDetail.getDisbursementVoucherPayeeTypeCode();
+            String payeeIdNumber = disbursementVoucherPayeeDetail.getDisbVchrPayeeIdNumber();
+
+            result |= payeeACHService.isPayeeSignedUpForACH(payeeTypeCode, payeeIdNumber);
+
+            if (!result) {
+                result |= payeeACHService.isPayeeSignedUpForACH(PdpConstants.PayeeIdTypeCodes.ENTITY, getPayeeEntityId(payeeIdNumber));
+            }
+        }
+
+        return result;
+    }
+    
+    protected String getPayeeEntityId(String payeeIdNumber) {
+        String entityId = StringUtils.EMPTY;
+
+        Person person = personService.getPersonByEmployeeId(payeeIdNumber);
+        if (ObjectUtils.isNotNull(person)) {
+            entityId = person.getEntityId();
+        } else {
+            entityId = payeeIdNumber;
+        }
+
+        return entityId;
+    }
 }
