@@ -99,7 +99,7 @@ public class CuPaymentDetailInquirableTest {
     }
 
     private String getExpectedPostConversionCountryValue(String countryPropertyValue) {
-        if (countryPropertyValue == null) {
+        if (StringUtils.isBlank(countryPropertyValue)) {
             return StringUtils.EMPTY;
         } else if (StringUtils.equals(countryPropertyValue, KFSConstants.COUNTRY_CODE_UNITED_STATES)) {
             return COUNTRY_NAME_UNITED_STATES;
@@ -114,6 +114,7 @@ public class CuPaymentDetailInquirableTest {
         Section section = buildSection("Payment",
                 buildRow(
                         buildField(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID)));
+        
         assertSectionIsUpdatedProperly(expectedPropertyValues, section);
     }
 
