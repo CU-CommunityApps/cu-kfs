@@ -287,8 +287,8 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     protected void copyInputFilesAndGenerateDoneFiles(String... inputFileNames) throws IOException {
         for (String inputFileName : inputFileNames) {
-            File sourceFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_SOURCE_FILE_PATH, inputFileName, CUKFSConstants.CSV_FILE_EXTENSION));
-            File destFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, CUKFSConstants.CSV_FILE_EXTENSION));
+            File sourceFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_SOURCE_FILE_PATH, inputFileName, CUPdpTestConstants.CSV_FILE_EXTENSION));
+            File destFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, CUPdpTestConstants.CSV_FILE_EXTENSION));
             File doneFile = new File(MessageFormat.format(FILE_PATH_FORMAT, ACH_TESTING_FILE_PATH, inputFileName, BatchFileSystem.DONE_FILE_EXTENSION));
             FileUtils.copyFile(sourceFile, destFile);
             doneFile.createNewFile();
@@ -317,7 +317,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         PayeeACHAccountExtractCsvInputFileType fileType = new PayeeACHAccountExtractCsvInputFileType();
         fileType.setDirectoryPath(ACH_TESTING_FILE_PATH);
         fileType.setFileExtension(
-                StringUtils.substringAfter(CUKFSConstants.CSV_FILE_EXTENSION, CUKFSConstants.DELIMITER));
+                StringUtils.substringAfter(CUPdpTestConstants.CSV_FILE_EXTENSION, CUKFSConstants.DELIMITER));
         fileType.setCsvEnumClass(PayeeACHAccountExtractCsv.class);
         return fileType;
     }
@@ -552,8 +552,8 @@ public class PayeeACHAccountExtractServiceImplTest {
         
         private String generateFileResultKey(String inputFileName) {
             String key = inputFileName;
-            if (StringUtils.contains(key, CUKFSConstants.BACKSLASH)) {
-                key = StringUtils.substringAfterLast(inputFileName, CUKFSConstants.BACKSLASH);
+            if (StringUtils.contains(key, CUPdpTestConstants.BACKSLASH)) {
+                key = StringUtils.substringAfterLast(inputFileName, CUPdpTestConstants.BACKSLASH);
             }
             if (StringUtils.contains(key, CUKFSConstants.SLASH)) {
                 key = StringUtils.substringAfterLast(key, CUKFSConstants.SLASH);

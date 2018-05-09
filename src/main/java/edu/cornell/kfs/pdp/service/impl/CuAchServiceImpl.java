@@ -16,13 +16,8 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
 
     private BusinessObjectService businessObjectService;
 
-    /*
-     * This implementation is nearly identical to that from the AchServiceImpl.getAchInformation method.
-     * The only differences are that the fields map does not add an entry for the active indicator,
-     * and that the logging statements have been updated accordingly to match the new method name.
-     */
     @Override
-    public PayeeACHAccount getPotentiallyInactiveAchInformation(String idType, String payeeId, String achTransactionType) {
+    public PayeeACHAccount getAchInformationIncludingInactive(String idType, String payeeId, String achTransactionType) {
         LOG.debug("getPotentiallyInactiveAchInformation() started");
 
         Map<String, Object> fields = new HashMap<String, Object>();

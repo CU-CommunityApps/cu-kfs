@@ -5,6 +5,6 @@ import org.kuali.kfs.pdp.service.AchService;
 
 public interface CuAchService extends AchService {
 
-    PayeeACHAccount getPotentiallyInactiveAchInformation(String idType, String payeeId, String achTransactionType);
+    PayeeACHAccount getAchInformationIncludingInactive(String idType, String payeeId, String achTransactionType);
 
 }

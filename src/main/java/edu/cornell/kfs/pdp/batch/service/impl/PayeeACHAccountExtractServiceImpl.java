@@ -234,7 +234,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
     protected String addOrUpdateACHAccountIfNecessary(
             Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType, String payeeIdNumber) {
-        PayeeACHAccount achAccount = achService.getPotentiallyInactiveAchInformation(
+        PayeeACHAccount achAccount = achService.getAchInformationIncludingInactive(
                 payeeType, payeeIdNumber, getDirectDepositTransactionType());
         
         if (ObjectUtils.isNull(achAccount)) {
@@ -735,7 +735,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
      * 
      * @param errorMessage
      */
-    // Copied and tweaked this method from CustomerLoadServiceImpl.
     private void criticalError(String errorMessage) {
         LOG.error("criticalError: " + errorMessage);
         throw new RuntimeException(errorMessage);
