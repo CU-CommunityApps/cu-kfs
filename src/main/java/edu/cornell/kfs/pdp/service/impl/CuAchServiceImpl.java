@@ -18,7 +18,7 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
 
     @Override
     public PayeeACHAccount getAchInformationIncludingInactive(String idType, String payeeId, String achTransactionType) {
-        LOG.debug("getPotentiallyInactiveAchInformation() started");
+        LOG.debug("getAchInformationIncludingInactive() started");
 
         Map<String, Object> fields = new HashMap<String, Object>();
 
@@ -29,12 +29,12 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
         Collection<PayeeACHAccount> rows = businessObjectService.findMatching(PayeeACHAccount.class, fields);
         if (rows.size() != 1) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("getPotentiallyInactiveAchInformation() not found rows = " + rows.size());
+                LOG.debug("getAchInformationIncludingInactive() not found rows = " + rows.size());
             }
 
             return null;
         } else {
-            LOG.debug("getPotentiallyInactiveAchInformation() found");
+            LOG.debug("getAchInformationIncludingInactive() found");
 
             return rows.iterator().next();
         }
