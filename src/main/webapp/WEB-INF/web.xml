@@ -109,6 +109,7 @@
         <url-pattern>/monitoring/*</url-pattern>
         <url-pattern>/purap/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
+        <url-pattern>/webapp/*</url-pattern>
         <url-pattern>/index.jsp</url-pattern>
     </filter-mapping>
 
@@ -122,6 +123,7 @@
         <url-pattern>/monitoring/*</url-pattern>
         <url-pattern>/purap/*</url-pattern>
         <url-pattern>/app/*</url-pattern>
+        <url-pattern>/webapp/*</url-pattern>
         <url-pattern>/index.jsp</url-pattern>
     </filter-mapping>
 
@@ -151,6 +153,7 @@
         <servlet-name>remote</servlet-name>
         <servlet-name>goto</servlet-name>
         <url-pattern>/index.jsp</url-pattern>
+        <url-pattern>/webapp/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
@@ -293,6 +296,16 @@
         <servlet-name>goto</servlet-name>
         <jsp-file>/WEB-INF/jsp/goto.jsp</jsp-file>
     </servlet>
+
+    <servlet>
+        <servlet-name>webapp</servlet-name>
+        <jsp-file>/webapp.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>webapp</servlet-name>
+        <url-pattern>/webapp/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>remoting</servlet-name>
