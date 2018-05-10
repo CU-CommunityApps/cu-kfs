@@ -145,6 +145,8 @@
         </property>
     </bean>
 
+    <bean id="pdpAchService" parent="pdpAchService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuAchServiceImpl"/>
+
     <bean id="payeeACHAccountExtractService" parent="payeeACHAccountExtractService-parentBean" />
     <bean id="payeeACHAccountExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService" />

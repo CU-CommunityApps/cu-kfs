@@ -4,17 +4,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.kuali.rice.kim.api.identity.entity.EntityDefault;
 import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.rice.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.util.ObjectUtils;
+
+import edu.cornell.kfs.pdp.CUPdpConstants;
 
 public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainableImpl {
 
@@ -54,6 +57,19 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
               }
             }
         }
+    }
+
+    @Override
+    public boolean answerSplitNodeQuestion(String nodeName) {
+        if (StringUtils.equalsIgnoreCase(CUPdpConstants.PAYEE_ACH_ACCOUNT_REQUIRES_PDP_APPROVAL_NODE, nodeName)) {
+            return payeeACHAccountMaintenanceRequiresPdpApproval();
+        }
+        
+        return super.answerSplitNodeQuestion(nodeName);
+    }
+
+    protected boolean payeeACHAccountMaintenanceRequiresPdpApproval() {
+        return StringUtils.equalsIgnoreCase(KFSConstants.MAINTENANCE_EDIT_ACTION, getMaintenanceAction());
     }
 
 }
