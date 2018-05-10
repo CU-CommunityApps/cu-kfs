@@ -8,10 +8,15 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="arModuleConfiguration" parent="arModuleConfiguration-parentBean">
+    <bean id="cur-ar" parent="arModuleConfiguration-parentBean">
         <property name="dataDictionaryPackages">
             <list merge="true">
                 <value>classpath:edu/cornell/kfs/module/ar/businessobject/datadictionary/*.xml</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list merge="true">
+                <value>edu/cornell/kfs/module/ar/cu-ojb-ar.xml</value>
             </list>
         </property>
     </bean>
