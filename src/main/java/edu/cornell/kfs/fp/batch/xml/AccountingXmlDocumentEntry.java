@@ -35,6 +35,9 @@ public class AccountingXmlDocumentEntry {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String organizationDocumentNumber;
 
+    @XmlElement(name = "PostingFiscalYear", namespace = StringUtils.EMPTY, required = false)
+    protected Integer postingFiscalYear;
+
     @XmlElementWrapper(name = "SourceAccountingLineList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentAccountingLine> sourceAccountingLines;
@@ -106,6 +109,14 @@ public class AccountingXmlDocumentEntry {
 
     public void setOrganizationDocumentNumber(String organizationDocumentNumber) {
         this.organizationDocumentNumber = organizationDocumentNumber;
+    }
+
+    public Integer getPostingFiscalYear() {
+        return postingFiscalYear;
+    }
+
+    public void setPostingFiscalYear(Integer postingFiscalYear) {
+        this.postingFiscalYear = postingFiscalYear;
     }
 
     public List<AccountingXmlDocumentAccountingLine> getSourceAccountingLines() {
