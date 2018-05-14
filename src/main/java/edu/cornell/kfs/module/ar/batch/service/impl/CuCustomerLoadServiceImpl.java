@@ -1,11 +1,9 @@
 package edu.cornell.kfs.module.ar.batch.service.impl;
 
+import edu.cornell.kfs.module.ar.document.validation.CuCustomerRule;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.module.ar.batch.report.CustomerLoadBatchErrors;
 import org.kuali.kfs.module.ar.batch.service.impl.CustomerLoadServiceImpl;
-
-
-import edu.cornell.kfs.module.ar.document.validation.CuCustomerRule;
 
 public class CuCustomerLoadServiceImpl extends CustomerLoadServiceImpl {
     
