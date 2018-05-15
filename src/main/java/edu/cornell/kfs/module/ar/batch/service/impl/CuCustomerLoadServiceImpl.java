@@ -1,9 +1,11 @@
 package edu.cornell.kfs.module.ar.batch.service.impl;
 
 import edu.cornell.kfs.module.ar.document.validation.CuCustomerRule;
+
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.module.ar.batch.report.CustomerLoadBatchErrors;
 import org.kuali.kfs.module.ar.batch.service.impl.CustomerLoadServiceImpl;
+import org.kuali.kfs.module.ar.document.validation.impl.CustomerRule;
 
 public class CuCustomerLoadServiceImpl extends CustomerLoadServiceImpl {
     
@@ -12,7 +14,7 @@ public class CuCustomerLoadServiceImpl extends CustomerLoadServiceImpl {
         boolean result = true;
 
         //  get an instance of the business rule
-        CuCustomerRule rule = new CuCustomerRule();
+        CustomerRule rule = new CuCustomerRule();
 
         //  run the business rules
         result &= rule.processRouteDocument(maintDoc);
