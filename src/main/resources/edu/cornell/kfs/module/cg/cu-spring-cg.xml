@@ -34,5 +34,15 @@
 	<bean id="cuAwardAccountService" class="edu.cornell.kfs.module.cg.service.impl.CuAwardAccountServiceImpl">
 		<property name="awardAccountDao" ref="awardAccountDao"/>
 	</bean>
+	
+	<bean id="awardLookupableHelperService-parentBean" abstract="true" class="edu.cornell.kfs.module.cg.businessobject.lookup.CuAwardLookupableHelperServiceImpl" 
+		scope="prototype" parent="cf.lookupableHelperService">
+        <property name="accountsReceivableModuleBillingService">
+            <ref bean="accountsReceivableModuleBillingService"/>
+        </property>
+        <property name="contractsAndGrantsLookupService">
+            <ref bean="contractsAndGrantsLookupService"/>
+        </property>
+    </bean>
 
 </beans>
