@@ -8,16 +8,26 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <bean id="cu-ar" parent="arModuleConfiguration-parentBean">
-        <property name="dataDictionaryPackages">
+	<bean id="cu-ar" parent="arModuleConfiguration-parentBean">
+		
+		<property name="packagePrefixes">
             <list merge="true">
-                <value>classpath:edu/cornell/kfs/module/ar/businessobject/datadictionary/*.xml</value>
+                <value>edu.cornell.kfs.module.ar</value>
             </list>
         </property>
-    </bean>
+		<property name="dataDictionaryPackages">
+			<list merge="true">
+                <value>classpath:edu/cornell/kfs/module/ar/document/datadictionary/*.xml</value>
+			</list>
+		</property>
+	</bean>
+ 	
+	<bean id="cu-arModuleService" parent="arModuleService-parentBean">
+	 	<property name="moduleConfiguration" ref="cu-ar"/>
+	</bean>
 
-    <bean id="cu-arModuleService" parent="arModuleService-parentBean">
-        <property name="moduleConfiguration" ref="cu-ar"/>
-    </bean>
+    <bean id="customerService" parent="customerService-parentBean" class="edu.cornell.kfs.module.ar.document.service.impl.CuCustomerServiceImpl" />
 
+	<bean id="customerLoadService" parent="customerLoadService-parentBean" class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
+	
 </beans>
