@@ -15,10 +15,15 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 
+import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
+import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
+import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentSourceAccountingLine;
+import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentTargetAccountingLine;
+import edu.cornell.kfs.fp.document.CuBudgetAdjustmentDocument;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.businessobject.TestSourceAccountingLine;
 import edu.cornell.kfs.sys.businessobject.TestTargetAccountingLine;
@@ -33,7 +38,10 @@ public enum AccountingDocumentMapping {
             InternalBillingDocumentGenerator::new),
     TF_DOCUMENT(KFSConstants.TRANSFER_FUNDS,
             TransferOfFundsDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
-            TransferOfFundsDocumentGenerator::new);
+            TransferOfFundsDocumentGenerator::new),
+    BA_DOCUMENT(CuFPTestConstants.BUDGET_ADJUSTMENT_DOC_TYPE,
+            CuBudgetAdjustmentDocument.class, TestBudgetAdjustmentSourceAccountingLine.class, TestBudgetAdjustmentTargetAccountingLine.class,
+            CuBudgetAdjustmentDocumentGenerator::new);
 
     public static final String MAPPING_ENUM_CONST_SUFFIX = "_DOCUMENT";
 

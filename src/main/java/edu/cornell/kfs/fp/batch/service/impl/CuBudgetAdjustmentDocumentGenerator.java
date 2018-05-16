@@ -1,9 +1,12 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
+import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
+import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -15,6 +18,8 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.document.CuBudgetAdjustmentDocument;
 
 public class CuBudgetAdjustmentDocumentGenerator extends AccountingDocumentGeneratorBase<CuBudgetAdjustmentDocument> {
+
+    protected FiscalYearFunctionControlService fiscalYearFunctionControlService;
 
     public CuBudgetAdjustmentDocumentGenerator() {
         super();
@@ -36,7 +41,6 @@ public class CuBudgetAdjustmentDocumentGenerator extends AccountingDocumentGener
         A accountingLine = super.buildAccountingLine(accountingLineClass, documentNumber, xmlLine);
         BudgetAdjustmentAccountingLine baLine = (BudgetAdjustmentAccountingLine) accountingLine;
         
-        baLine.setAmount(KualiDecimal.ZERO);
         setAmountIfNotNull(baLine::setBaseBudgetAdjustmentAmount, xmlLine.getBaseAmount());
         setAmountIfNotNull(baLine::setCurrentBudgetAdjustmentAmount, xmlLine.getAmount());
         setAmountIfNotNull(baLine::setFinancialDocumentMonth1LineAmount, xmlLine.getMonth01Amount());
@@ -69,7 +73,24 @@ public class CuBudgetAdjustmentDocumentGenerator extends AccountingDocumentGener
     }
 
     protected void validateAndSetFiscalYear(CuBudgetAdjustmentDocument document, AccountingXmlDocumentEntry documentEntry) {
+        Integer fiscalYear = documentEntry.getPostingFiscalYear();
+        if (ObjectUtils.isNull(fiscalYear)) {
+            throw new RuntimeException("Fiscal year cannot be null");
+        }
         
+        @SuppressWarnings("unchecked")
+        List<FiscalYearFunctionControl> allowedYears = fiscalYearFunctionControlService.getBudgetAdjustmentAllowedYears();
+        boolean fiscalYearAllowed = allowedYears.stream()
+                .anyMatch((fyFunctionControl) -> fiscalYear.equals(fyFunctionControl.getUniversityFiscalYear()));
+        if (!fiscalYearAllowed) {
+            throw new RuntimeException("Budget Adjustments are not allowed for fiscal year: " + fiscalYear);
+        }
+        
+        document.setPostingYear(fiscalYear);
+    }
+
+    public void setFiscalYearFunctionControlService(FiscalYearFunctionControlService fiscalYearFunctionControlService) {
+        this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
     }
 
 }

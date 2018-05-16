@@ -198,6 +198,69 @@ public enum AccountingXmlDocumentEntryFixture {
 
     SINGLE_IB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_IB_NO_ITEMS, 1),
 
+    BASE_BA_WITH_ZERO_AND_SINGLE_MONTHS(1, CuFPTestConstants.BUDGET_ADJUSTMENT_DOC_TYPE,
+            "Test BA Document", "This is a BA document for testing purposes", "WXYZ5678", CuFPTestConstants.FY_2018,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_AMOUNT_40_BASE_0_NO_MONTHS,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_5390_AMOUNT_40_BASE_0_MONTH03_40),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_4480_AMOUNT_40_BASE_0_NO_MONTHS,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_AMOUNT_40_NO_BASE_MONTH03_40),
+            notes(
+                    "Sample BA Note",
+                    "Another BA Note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    BASE_BA_NO_BASEAMOUNT_OR_MONTHS(1, CuFPTestConstants.BUDGET_ADJUSTMENT_DOC_TYPE,
+            "Test BA Document", "This BA document should have base and month amounts of zero by default",
+            "VVVV5555", CuFPTestConstants.FY_2018,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_AMOUNT_40,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_5390_AMOUNT_40),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_4480_AMOUNT_40,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_AMOUNT_40),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+    BASE_BA_NONZERO_BASEAMOUNT_AND_SINGLE_MONTHS(1, CuFPTestConstants.BUDGET_ADJUSTMENT_DOC_TYPE,
+            "Test BA Document", "This BA document should have non-zero base amounts on its accounting lines",
+            "ZWZW9595", CuFPTestConstants.FY_2016,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_AMOUNT_40_BASE_10_MONTH03_40,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_5390_AMOUNT_40_BASE_10_MONTH03_40),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_4480_AMOUNT_40_BASE_10_MONTH03_40,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_AMOUNT_40_BASE_10_MONTH03_40),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+    BASE_BA_MULTI_MONTHS(1, CuFPTestConstants.BUDGET_ADJUSTMENT_DOC_TYPE,
+            "Test BA Document", "This BA document should have multiple month amounts", "BBBB2222", CuFPTestConstants.FY_2018,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_AMOUNT_52_BASE_0_MONTH01_37_MONTH08_15,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_5390_AMOUNT_52_BASE_0_ALL_MONTHS_4_OR_5),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_4480_AMOUNT_52_BASE_0_MONTH01_37_MONTH08_15,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_AMOUNT_52_BASE_0_ALL_MONTHS_4_OR_5),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+
+    SINGLE_BA_DOCUMENT_TEST_DOC1(BASE_BA_WITH_ZERO_AND_SINGLE_MONTHS, 1),
+
+    SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST_DOC1(BASE_BA_NO_BASEAMOUNT_OR_MONTHS, 1),
+
+    SINGLE_BA_NONZERO_BASEAMOUNT_DOCUMENT_TEST_DOC1(BASE_BA_NONZERO_BASEAMOUNT_AND_SINGLE_MONTHS, 1),
+
+    SINGLE_BA_MULTI_MONTHS_DOCUMENT_TEST_DOC1(BASE_BA_MULTI_MONTHS, 1),
+
+    MULTI_BA_DOCUMENT_TEST_DOC1(BASE_BA_WITH_ZERO_AND_SINGLE_MONTHS, 1),
+    MULTI_BA_DOCUMENT_TEST_DOC2(BASE_BA_NONZERO_BASEAMOUNT_AND_SINGLE_MONTHS, 2),
+    MULTI_BA_DOCUMENT_TEST_DOC3(BASE_BA_MULTI_MONTHS, 3),
+
     MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
     MULTI_DOC_TYPE_TEST_TF1(3, KFSConstants.TRANSFER_FUNDS,
@@ -225,7 +288,8 @@ public enum AccountingXmlDocumentEntryFixture {
             notes(),
             adHocRecipients(),
             backupLinks()),
-    
+    MULTI_DOC_TYPE_TEST_BA(BASE_BA_WITH_ZERO_AND_SINGLE_MONTHS, 5),
+
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1);
 
     public final Long index;
@@ -233,6 +297,7 @@ public enum AccountingXmlDocumentEntryFixture {
     public final String description;
     public final String explanation;
     public final String organizationDocumentNumber;
+    public final Integer postingFiscalYear;
     public final List<AccountingXmlDocumentAccountingLineFixture> sourceAccountingLines;
     public final List<AccountingXmlDocumentAccountingLineFixture> targetAccountingLines;
     public final List<AccountingXmlDocumentItemFixture> items;
@@ -268,11 +333,30 @@ public enum AccountingXmlDocumentEntryFixture {
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, 0,
+                sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks);
+    }
+
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber,
+            int postingFiscalYear, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, postingFiscalYear,
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks);
+    }
+
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber,
+            int postingFiscalYear, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this.index = Long.valueOf(index);
         this.documentTypeCode = documentTypeCode;
         this.description = description;
         this.explanation = defaultToEmptyStringIfBlank(explanation);
         this.organizationDocumentNumber = defaultToEmptyStringIfBlank(organizationDocumentNumber);
+        this.postingFiscalYear = (postingFiscalYear != 0) ? Integer.valueOf(postingFiscalYear) : null;
         this.sourceAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
         this.targetAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
         this.items = AccountingXmlDocumentFixtureUtils.toImmutableList(items);
@@ -283,6 +367,7 @@ public enum AccountingXmlDocumentEntryFixture {
 
     private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index) {
         this.index = Long.valueOf(index);
+        this.postingFiscalYear = baseFixture.postingFiscalYear;
         this.documentTypeCode = baseFixture.documentTypeCode;
         this.description = baseFixture.description;
         this.explanation = baseFixture.explanation;
@@ -302,6 +387,7 @@ public enum AccountingXmlDocumentEntryFixture {
         documentEntry.setDescription(description);
         documentEntry.setExplanation(explanation);
         documentEntry.setOrganizationDocumentNumber(organizationDocumentNumber);
+        documentEntry.setPostingFiscalYear(postingFiscalYear);
         documentEntry.setSourceAccountingLines(
                 AccountingXmlDocumentFixtureUtils.convertToPojoList(sourceAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
         documentEntry.setTargetAccountingLines(
@@ -328,6 +414,10 @@ public enum AccountingXmlDocumentEntryFixture {
         addItemsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
+        
+        if (postingFiscalYear != null) {
+            accountingDocument.setPostingYear(postingFiscalYear);
+        }
         
         return accountingDocument;
     }
