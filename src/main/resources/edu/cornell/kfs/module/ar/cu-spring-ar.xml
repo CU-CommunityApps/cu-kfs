@@ -20,6 +20,9 @@
                 <value>classpath:edu/cornell/kfs/module/ar/document/datadictionary/*.xml</value>
 			</list>
 		</property>
+		<property name="scriptConfigurationFilePaths">
+			<list/>
+		</property>
 	</bean>
  	
 	<bean id="cu-arModuleService" parent="arModuleService-parentBean">
