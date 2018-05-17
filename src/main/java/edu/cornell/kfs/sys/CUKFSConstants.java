@@ -151,5 +151,6 @@ public class CUKFSConstants {
     public static final String RIGHT_PARENTHESIS = ")";
     public static final String COLON = ":";
     public static final String SLASH = "/";
+    public static final String DOUBLE_QUOTE = "\"";
 
 }

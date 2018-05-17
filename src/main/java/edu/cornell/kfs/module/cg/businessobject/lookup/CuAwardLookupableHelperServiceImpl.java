@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.lookup.HtmlData;
@@ -27,11 +25,15 @@ import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.krad.bo.BusinessObject;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+
 @SuppressWarnings("deprecation")
 public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperServiceImpl {
-    private static final String INVOICE_LINK_COLUMN_NAME = "invoiceLink";
     private static final long serialVersionUID = 1372707190594999024L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAwardLookupableHelperServiceImpl.class);
+    
+    private static final String VIEW_INVOICES_LINK_VALUE = "View Invoices";
+    private static final String INVOICE_LINK_COLUMN_NAME = "invoiceLink";
     
     protected DocumentHelperService documentHelperService;
     protected PermissionService permissionService;
@@ -61,7 +63,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
         List<Column> columns = super.getColumns();
 
         if (canInitAward() || !canViewInvoiceLink()) {
-            LOG.info("getColumns, remove invoices column");
+            LOG.debug("getColumns, remove invoices column");
             for (Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
                 Column column = it.next();
                 if (StringUtils.equalsAnyIgnoreCase(column.getPropertyName(), INVOICE_LINK_COLUMN_NAME)) {
@@ -78,24 +80,28 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
         LOG.debug("performLookup, entering");
         Collection<? extends BusinessObject> results = super.performLookup(lookupForm, resultTable, bounded);
         if (canViewInvoiceLink() && !canInitAward()) {
-            resultTable.stream().forEach(this::resetInvoiceColumn);
+            resultTable.stream().forEach(this::findAndResetInvoiceColumn);
         }
         return results;
     }
     
-    private void resetInvoiceColumn(ResultRow row) {
-        //row.getColumns().stream().filter(col -> StringUtils.equalsAnyIgnoreCase(col.getPropertyName(), "invoiceLink")).findFirst().ifPresent(consumer);
-        
-        Column invoiceColumn = row.getColumns().get(0);
+    protected void findAndResetInvoiceColumn(ResultRow row) {
+        row.getColumns().stream()
+            .filter(col -> StringUtils.equalsAnyIgnoreCase(col.getPropertyName(), INVOICE_LINK_COLUMN_NAME))
+            .findFirst()
+            .ifPresent(col -> resetInvoiceColumn(row, col));
+    }
+
+    protected void resetInvoiceColumn(ResultRow row, Column invoiceColumn) {
         String link = parseHrefLinkFromAnchorTag(row.getActionUrls());
-        AnchorHtmlData anchorHtmlData = new AnchorHtmlData(link, KFSConstants.SEARCH_METHOD, "View Invoices");
+        AnchorHtmlData anchorHtmlData = new AnchorHtmlData(link, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
         anchorHtmlData.setTarget(KFSConstants.NEW_WINDOW_URL_TARGET);
         invoiceColumn.setColumnAnchor(anchorHtmlData);
-        invoiceColumn.setPropertyValue("View Invoices");
+        invoiceColumn.setPropertyValue(VIEW_INVOICES_LINK_VALUE);
     }
     
     protected String parseHrefLinkFromAnchorTag(String anchorTag) {
-        String link = StringUtils.substringBetween(anchorTag, "href=\"", "\"");
+        String link = StringUtils.substringBetween(anchorTag, "href=\"", CUKFSConstants.DOUBLE_QUOTE);
         return link;
     }
 
