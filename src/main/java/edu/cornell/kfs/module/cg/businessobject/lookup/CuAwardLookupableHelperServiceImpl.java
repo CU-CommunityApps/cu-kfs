@@ -2,43 +2,34 @@ package edu.cornell.kfs.module.cg.businessobject.lookup;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.web.struts.form.LookupForm;
 import org.kuali.kfs.kns.web.ui.Column;
-import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.ResultRow;
-import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.UrlFactory;
-import org.kuali.kfs.module.cg.CGPropertyConstants;
-import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.cg.CGConstants;
 import org.kuali.kfs.module.cg.businessobject.lookup.AwardLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kim.api.permission.Permission;
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.rice.krad.bo.BusinessObject;
-import org.kuali.rice.krad.util.ObjectUtils;
-
-import edu.cornell.kfs.module.cg.businessobject.CuAward;
 
 @SuppressWarnings("deprecation")
 public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperServiceImpl {
+    private static final String INVOICE_LINK_COLUMN_NAME = "invoiceLink";
     private static final long serialVersionUID = 1372707190594999024L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAwardLookupableHelperServiceImpl.class);
     
@@ -47,7 +38,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     
     @Override
     public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
-        LOG.info("getCustomActionUrls, entering");
+        LOG.debug("getCustomActionUrls, entering");
         List<HtmlData> anchorHtmlDataList = new ArrayList<HtmlData>();
         
         if (canInitAward()) {
@@ -65,15 +56,26 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
         return anchorHtmlDataList;
     }
     
-    public Set<String> getConditionallyHiddenPropertyNames() {
-        LOG.info("getConditionallyHiddenPropertyNames, entering");
-        Set<String> properties = super.getConditionallyHiddenPropertyNames();
-        return properties;
+    @Override
+    public List<Column> getColumns() {
+        List<Column> columns = super.getColumns();
+
+        if (canInitAward() || !canViewInvoiceLink()) {
+            LOG.info("getColumns, remove invoices column");
+            for (Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
+                Column column = it.next();
+                if (StringUtils.equalsAnyIgnoreCase(column.getPropertyName(), INVOICE_LINK_COLUMN_NAME)) {
+                    it.remove();
+                }
+            }
+        }
+
+        return columns;
     }
     
     @Override
     public Collection<? extends BusinessObject> performLookup(LookupForm lookupForm, Collection<ResultRow> resultTable, boolean bounded) {
-        LOG.info("performLookup, entering");
+        LOG.debug("performLookup, entering");
         Collection<? extends BusinessObject> results = super.performLookup(lookupForm, resultTable, bounded);
         if (canViewInvoiceLink() && !canInitAward()) {
             resultTable.stream().forEach(this::resetInvoiceColumn);
@@ -82,6 +84,8 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     }
     
     private void resetInvoiceColumn(ResultRow row) {
+        //row.getColumns().stream().filter(col -> StringUtils.equalsAnyIgnoreCase(col.getPropertyName(), "invoiceLink")).findFirst().ifPresent(consumer);
+        
         Column invoiceColumn = row.getColumns().get(0);
         String link = parseHrefLinkFromAnchorTag(row.getActionUrls());
         AnchorHtmlData anchorHtmlData = new AnchorHtmlData(link, KFSConstants.SEARCH_METHOD, "View Invoices");
@@ -96,17 +100,17 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     }
 
     private boolean canViewInvoiceLink() {
-        Document document = null;
         Map<String, String> permissionDetails = new HashMap<String, String>();
-        permissionDetails.put("documentTypeName", "CINV");
-        boolean canOpenInvoices = permissionService.hasPermissionByTemplate(GlobalVariables.getUserSession().getPrincipalId(), "KR-NS", "Open Document", permissionDetails);
-        LOG.info("canViewInvoiceLink: " + canOpenInvoices);
+        permissionDetails.put(KFSPropertyConstants.DOCUMENT_TYPE_NAME, ArConstants.ArDocumentTypeCodes.CONTRACTS_GRANTS_INVOICE);
+        boolean canOpenInvoices = permissionService.hasPermissionByTemplate(GlobalVariables.getUserSession().getPrincipalId(), KRADConstants.KNS_NAMESPACE, 
+                KimConstants.PermissionTemplateNames.OPEN_DOCUMENT, permissionDetails);
+        LOG.debug("canViewInvoiceLink: " + canOpenInvoices);
         return canOpenInvoices;
     }
     
     private boolean canInitAward() {
-        boolean canInitAward = documentHelperService.getDocumentAuthorizer("AWRD").canInitiate("AWRD", GlobalVariables.getUserSession().getPerson());
-        LOG.info("canInitAward: " + canInitAward);
+        boolean canInitAward = documentHelperService.getDocumentAuthorizer(CGConstants.AWARD).canInitiate(CGConstants.AWARD, GlobalVariables.getUserSession().getPerson());
+        LOG.debug("canInitAward: " + canInitAward);
         return canInitAward;
     }
 
