@@ -43,7 +43,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
         LOG.debug("getCustomActionUrls, entering");
         List<HtmlData> anchorHtmlDataList = new ArrayList<HtmlData>();
         
-        if (canInitAward() && allowsMaintenanceNewOrCopyAction()) {
+        if (canInitAward() && allowsMaintenanceEditAction(businessObject)) {
             anchorHtmlDataList.add(getUrlData(businessObject, KRADConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames));
             if (allowsMaintenanceNewOrCopyAction()) {
                 anchorHtmlDataList.add(getUrlData(businessObject, KRADConstants.MAINTENANCE_COPY_METHOD_TO_CALL, pkNames));
