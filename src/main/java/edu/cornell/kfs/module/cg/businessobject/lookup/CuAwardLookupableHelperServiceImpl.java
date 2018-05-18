@@ -62,7 +62,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     public List<Column> getColumns() {
         List<Column> columns = super.getColumns();
 
-        if (canInitAward() || !canViewInvoiceLink()) {
+        if (canInitAward() || !canViewInvoiceLink() || !getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
             LOG.debug("getColumns, remove invoices column");
             for (Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
                 Column column = it.next();
@@ -79,7 +79,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     public Collection<? extends BusinessObject> performLookup(LookupForm lookupForm, Collection<ResultRow> resultTable, boolean bounded) {
         LOG.debug("performLookup, entering");
         Collection<? extends BusinessObject> results = super.performLookup(lookupForm, resultTable, bounded);
-        if ((canViewInvoiceLink() && !canInitAward()) || !getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
+        if (canViewInvoiceLink() && !canInitAward()) {
             resultTable.stream().forEach(this::findAndResetInvoiceColumn);
         }
         return results;
@@ -93,9 +93,9 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     }
 
     protected void resetInvoiceColumn(ResultRow row, Column invoiceColumn) {
-        String link = parseHrefLinkFromAnchorTag(row.getActionUrls());
-        if (StringUtils.isNotBlank(link)) {
-            AnchorHtmlData anchorHtmlData = new AnchorHtmlData(link, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
+        String hrefLink = parseHrefLinkFromAnchorTag(row.getActionUrls());
+        if (StringUtils.isNotBlank(hrefLink)) {
+            AnchorHtmlData anchorHtmlData = new AnchorHtmlData(hrefLink, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
             anchorHtmlData.setTarget(KFSConstants.NEW_WINDOW_URL_TARGET);
             invoiceColumn.setColumnAnchor(anchorHtmlData);
             invoiceColumn.setPropertyValue(VIEW_INVOICES_LINK_VALUE);
