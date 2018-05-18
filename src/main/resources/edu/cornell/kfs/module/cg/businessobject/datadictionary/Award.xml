@@ -31,6 +31,7 @@
                 <ref bean="Award-extension-budgetBeginningDate"/>
                 <ref bean="Award-extension-budgetEndingDate"/>
                 <ref bean="Award-extension-budgetTotalAmount"/>
+                <ref bean="Award-invoiceLink"/>
             </list>
         </property>
     </bean>
@@ -115,6 +116,15 @@
           parent="AwardExtendedAttribute-budgetTotalAmount">
         <property name="name" value="extension.budgetTotalAmount"/>
     </bean>
+    
+    <bean id="Award-invoiceLink" parent="Award-invoiceLink-parentBean"/>
+    <bean id="Award-invoiceLink-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="invoiceLink"/>
+        <property name="label" value="Invoices"/>
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="15"/>
+        </property>
+    </bean>
 
     <bean parent="DataDictionaryBeanOverride">
         <property name="beanName" value="Award-inquirySectionDefinition-awardDetails"/>
@@ -165,4 +175,25 @@
             </list>
         </property>
     </bean>
+    
+    <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="Award-lookupDefinition" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="resultFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="awardInquiryTitle" />
+                   </property>
+                   <property name="insertBefore">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="invoiceLink" />
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
+    
 </beans>

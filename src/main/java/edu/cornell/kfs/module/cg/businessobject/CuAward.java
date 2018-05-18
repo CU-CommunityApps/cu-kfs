@@ -23,6 +23,8 @@ public class CuAward extends Award {
     private String letterOfCreditFundGroupCode;
 
     private LetterOfCreditFundGroup letterOfCreditFundGroup;
+    
+    private transient String invoiceLink;
 
     public CuAward() {
         super();
@@ -116,6 +118,14 @@ public class CuAward extends Award {
 
     public void setLetterOfCreditFundGroup(LetterOfCreditFundGroup letterOfCreditFundGroup) {
         this.letterOfCreditFundGroup = letterOfCreditFundGroup;
+    }
+
+    public String getInvoiceLink() {
+        return invoiceLink;
+    }
+
+    public void setInvoiceLink(String invoiceLink) {
+        this.invoiceLink = invoiceLink;
     }
 
 }
