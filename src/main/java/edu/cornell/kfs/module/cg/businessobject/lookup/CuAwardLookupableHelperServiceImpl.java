@@ -43,7 +43,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
         LOG.debug("getCustomActionUrls, entering");
         List<HtmlData> anchorHtmlDataList = new ArrayList<HtmlData>();
         
-        if (canInitAward()) {
+        if (canInitAward() && allowsMaintenanceNewOrCopyAction()) {
             anchorHtmlDataList.add(getUrlData(businessObject, KRADConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames));
             if (allowsMaintenanceNewOrCopyAction()) {
                 anchorHtmlDataList.add(getUrlData(businessObject, KRADConstants.MAINTENANCE_COPY_METHOD_TO_CALL, pkNames));
@@ -66,7 +66,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
             LOG.debug("getColumns, remove invoices column");
             for (Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
                 Column column = it.next();
-                if (StringUtils.equalsAnyIgnoreCase(column.getPropertyName(), INVOICE_LINK_COLUMN_NAME)) {
+                if (StringUtils.equalsIgnoreCase(column.getPropertyName(), INVOICE_LINK_COLUMN_NAME)) {
                     it.remove();
                 }
             }
@@ -79,7 +79,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     public Collection<? extends BusinessObject> performLookup(LookupForm lookupForm, Collection<ResultRow> resultTable, boolean bounded) {
         LOG.debug("performLookup, entering");
         Collection<? extends BusinessObject> results = super.performLookup(lookupForm, resultTable, bounded);
-        if (canViewInvoiceLink() && !canInitAward()) {
+        if ((canViewInvoiceLink() && !canInitAward()) || !getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
             resultTable.stream().forEach(this::findAndResetInvoiceColumn);
         }
         return results;
@@ -87,22 +87,28 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     
     protected void findAndResetInvoiceColumn(ResultRow row) {
         row.getColumns().stream()
-            .filter(col -> StringUtils.equalsAnyIgnoreCase(col.getPropertyName(), INVOICE_LINK_COLUMN_NAME))
+            .filter(col -> StringUtils.equalsIgnoreCase(col.getPropertyName(), INVOICE_LINK_COLUMN_NAME))
             .findFirst()
             .ifPresent(col -> resetInvoiceColumn(row, col));
     }
 
     protected void resetInvoiceColumn(ResultRow row, Column invoiceColumn) {
         String link = parseHrefLinkFromAnchorTag(row.getActionUrls());
-        AnchorHtmlData anchorHtmlData = new AnchorHtmlData(link, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
-        anchorHtmlData.setTarget(KFSConstants.NEW_WINDOW_URL_TARGET);
-        invoiceColumn.setColumnAnchor(anchorHtmlData);
-        invoiceColumn.setPropertyValue(VIEW_INVOICES_LINK_VALUE);
+        if (StringUtils.isNotBlank(link)) {
+            AnchorHtmlData anchorHtmlData = new AnchorHtmlData(link, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
+            anchorHtmlData.setTarget(KFSConstants.NEW_WINDOW_URL_TARGET);
+            invoiceColumn.setColumnAnchor(anchorHtmlData);
+            invoiceColumn.setPropertyValue(VIEW_INVOICES_LINK_VALUE);
+        }
     }
     
     protected String parseHrefLinkFromAnchorTag(String anchorTag) {
-        String link = StringUtils.substringBetween(anchorTag, "href=\"", CUKFSConstants.DOUBLE_QUOTE);
-        return link;
+        if (StringUtils.isNotBlank(anchorTag)) {
+            String link = StringUtils.substringBetween(anchorTag, "href=\"", CUKFSConstants.DOUBLE_QUOTE);
+            return link;
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
 
     private boolean canViewInvoiceLink() {

@@ -1,10 +1,12 @@
 package edu.cornell.kfs.module.cg.businessobject.lookup;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.sys.KFSConstants;
 
 public class CuAwardLookupableHelperServiceImplTest {
     
@@ -28,6 +30,7 @@ public class CuAwardLookupableHelperServiceImplTest {
         assertEquals(expectedResults, actual);
     }
     
+    @Test
     public void testParseHrefGenericExample1() {
         String anchorTag = "<a href=\"https://www.google.com\">Google</a>";
         String expectedResults = "https://www.google.com";
@@ -35,9 +38,34 @@ public class CuAwardLookupableHelperServiceImplTest {
         assertEquals(expectedResults, actual);
     }
     
+    @Test
     public void testParseHrefGenericExample2() {
         String anchorTag = "<a href=\"https://www.google.com\" title=\"Google Link\">Google</a>";
         String expectedResults = "https://www.google.com";
+        String actual = lookupHelper.parseHrefLinkFromAnchorTag(anchorTag);
+        assertEquals(expectedResults, actual);
+    }
+    
+    @Test
+    public void testParseEmotyString() {
+        String anchorTag = StringUtils.EMPTY;
+        String expectedResults = StringUtils.EMPTY;
+        String actual = lookupHelper.parseHrefLinkFromAnchorTag(anchorTag);
+        assertEquals(expectedResults, actual);
+    }
+    
+    @Test
+    public void testParseSpace() {
+        String anchorTag = KFSConstants.BLANK_SPACE;
+        String expectedResults = StringUtils.EMPTY;
+        String actual = lookupHelper.parseHrefLinkFromAnchorTag(anchorTag);
+        assertEquals(expectedResults, actual);
+    }
+    
+    @Test
+    public void testParseNull() {
+        String anchorTag = null;
+        String expectedResults = StringUtils.EMPTY;
         String actual = lookupHelper.parseHrefLinkFromAnchorTag(anchorTag);
         assertEquals(expectedResults, actual);
     }
