@@ -47,7 +47,7 @@ public class CuAwardLookupableHelperServiceImplTest {
     }
     
     @Test
-    public void testParseEmotyString() {
+    public void testParseEmptyString() {
         String anchorTag = StringUtils.EMPTY;
         String expectedResults = StringUtils.EMPTY;
         String actual = lookupHelper.parseHrefLinkFromAnchorTag(anchorTag);

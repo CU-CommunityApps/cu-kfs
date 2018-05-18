@@ -20,9 +20,6 @@
 
     <bean id="Award" parent="Award-parentBean">
         <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
-        <property name="lookupDefinition">
-	      <ref bean="CuAward-lookupDefinition"/>
-	    </property>
         <property name="attributes">
             <list merge="true">
                 <ref bean="Award-letterOfCreditFundGroupCode"/>
@@ -179,32 +176,24 @@
         </property>
     </bean>
     
-    <bean id="CuAward-lookupDefinition" parent="Award-lookupDefinition">
-    	<property name="resultFields">
-            <list>
-            	<bean parent="FieldDefinition" p:attributeName="invoiceLink"/>
-                <bean parent="FieldDefinition" p:attributeName="awardInquiryTitle"/>
-                <bean parent="FieldDefinition" p:attributeName="proposalNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="awardDocumentNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="agency.fullName"/>
-                <bean parent="FieldDefinition" p:attributeName="awardTotalAmount"/>
-                <bean parent="FieldDefinition" p:attributeName="awardBeginningDate"/>
-                <bean parent="FieldDefinition" p:attributeName="awardEndingDate"/>
-                <bean parent="FieldDefinition" p:attributeName="lastBilledDate"/>
-                <bean parent="FieldDefinition" p:attributeName="awardProjectTitle"/>
-                <bean parent="FieldDefinition" p:attributeName="proposal.grantNumber"/>
-                <bean parent="FieldDefinition" p:attributeName="grantDescriptionCode"/>
-                <bean parent="FieldDefinition" p:attributeName="awardStatusCode"/>
-                <bean parent="FieldDefinition" p:attributeName="primaryAwardOrganization.organizationCode"/>
-                <bean parent="FieldDefinition" p:attributeName="awardPrimaryProjectDirector.projectDirector.name"/>
-                <bean parent="FieldDefinition" p:attributeName="awardPrimaryFundManager.fundManager.name"/>
-                <bean parent="FieldDefinition" p:attributeName="billingFrequencyCode"/>
-                <bean parent="FieldDefinition" p:attributeName="excludedFromInvoicing"/>
-                <bean parent="FieldDefinition" p:attributeName="additionalFormsRequiredIndicator"/>
-                <bean parent="FieldDefinition" p:attributeName="fundingExpirationDate"/>
-                <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-        </property>
-    </bean>
+    <bean parent="DataDictionaryBeanOverride">
+       <property name="beanName" value="Award-lookupDefinition" />
+       <property name="fieldOverrides">
+           <list>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="resultFields" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="element">
+                       <bean parent="FieldDefinition" p:attributeName="awardInquiryTitle" />
+                   </property>
+                   <property name="insertBefore">
+                       <list>
+                           <bean parent="FieldDefinition" p:attributeName="invoiceLink" />
+                       </list>
+                   </property>
+               </bean>
+           </list>
+       </property>
+   </bean>
     
 </beans>
