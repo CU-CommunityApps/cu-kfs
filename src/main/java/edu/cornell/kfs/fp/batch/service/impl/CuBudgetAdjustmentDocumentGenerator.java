@@ -9,9 +9,9 @@ import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
@@ -75,7 +75,7 @@ public class CuBudgetAdjustmentDocumentGenerator extends AccountingDocumentGener
     protected void validateAndSetFiscalYear(CuBudgetAdjustmentDocument document, AccountingXmlDocumentEntry documentEntry) {
         Integer fiscalYear = documentEntry.getPostingFiscalYear();
         if (ObjectUtils.isNull(fiscalYear)) {
-            throw new RuntimeException("Fiscal year cannot be null");
+            throw new ValidationException("Fiscal year cannot be null");
         }
         
         @SuppressWarnings("unchecked")
@@ -83,7 +83,7 @@ public class CuBudgetAdjustmentDocumentGenerator extends AccountingDocumentGener
         boolean fiscalYearAllowed = allowedYears.stream()
                 .anyMatch((fyFunctionControl) -> fiscalYear.equals(fyFunctionControl.getUniversityFiscalYear()));
         if (!fiscalYearAllowed) {
-            throw new RuntimeException("Budget Adjustments are not allowed for fiscal year: " + fiscalYear);
+            throw new ValidationException("Budget Adjustments are not allowed for fiscal year: " + fiscalYear);
         }
         
         document.setPostingYear(fiscalYear);
