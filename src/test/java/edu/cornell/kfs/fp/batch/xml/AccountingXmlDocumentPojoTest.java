@@ -85,6 +85,18 @@ public class AccountingXmlDocumentPojoTest {
     }
 
     @Test
+    public void testLoadSingleBAFromFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_DOCUMENT_TEST, "single-ba-document-test.xml");
+    }
+
+    @Test
+    public void testLoadMultipleBAsFromSameFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_TEST, "multi-ba-document-test.xml");
+    }
+
+    @Test
     public void testLoadVaryingDocTypesFromSameFile() throws Exception {
         assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST, "multi-doc-types-test.xml");
@@ -114,6 +126,7 @@ public class AccountingXmlDocumentPojoTest {
         assertEquals("Wrong document description", expectedDocument.getDescription(), actualDocument.getDescription());
         assertEquals("Wrong document explanation", expectedDocument.getExplanation(), actualDocument.getExplanation());
         assertEquals("Wrong org doc number", expectedDocument.getOrganizationDocumentNumber(), actualDocument.getOrganizationDocumentNumber());
+        assertEquals("Wrong posting fiscal year", expectedDocument.getPostingFiscalYear(), actualDocument.getPostingFiscalYear());
         assertListOfXmlPojosWasUnmarshalledCorrectly(
                 expectedDocument.getSourceAccountingLines(), actualDocument.getSourceAccountingLines(),
                 "sourceAccountingLines", this::assertAccountingLineWasUnmarshalledCorrectly);
@@ -153,6 +166,19 @@ public class AccountingXmlDocumentPojoTest {
         assertEquals("Wrong org ref id", expectedLine.getOrgRefId(), actualLine.getOrgRefId());
         assertEquals("Wrong line description", expectedLine.getLineDescription(), actualLine.getLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+        assertEquals("Wrong base amount", expectedLine.getBaseAmount(), actualLine.getBaseAmount());
+        assertEquals("Wrong month 01 amount", expectedLine.getMonth01Amount(), actualLine.getMonth01Amount());
+        assertEquals("Wrong month 02 amount", expectedLine.getMonth02Amount(), actualLine.getMonth02Amount());
+        assertEquals("Wrong month 03 amount", expectedLine.getMonth03Amount(), actualLine.getMonth03Amount());
+        assertEquals("Wrong month 04 amount", expectedLine.getMonth04Amount(), actualLine.getMonth04Amount());
+        assertEquals("Wrong month 05 amount", expectedLine.getMonth05Amount(), actualLine.getMonth05Amount());
+        assertEquals("Wrong month 06 amount", expectedLine.getMonth06Amount(), actualLine.getMonth06Amount());
+        assertEquals("Wrong month 07 amount", expectedLine.getMonth07Amount(), actualLine.getMonth07Amount());
+        assertEquals("Wrong month 08 amount", expectedLine.getMonth08Amount(), actualLine.getMonth08Amount());
+        assertEquals("Wrong month 09 amount", expectedLine.getMonth09Amount(), actualLine.getMonth09Amount());
+        assertEquals("Wrong month 10 amount", expectedLine.getMonth10Amount(), actualLine.getMonth10Amount());
+        assertEquals("Wrong month 11 amount", expectedLine.getMonth11Amount(), actualLine.getMonth11Amount());
+        assertEquals("Wrong month 12 amount", expectedLine.getMonth12Amount(), actualLine.getMonth12Amount());
     }
 
     private void assertItemWasUnmarshalledCorrectly(
