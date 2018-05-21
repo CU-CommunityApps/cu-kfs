@@ -32,16 +32,19 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -57,8 +60,11 @@ import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
+import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.impl.EmailServiceImpl;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -82,6 +88,7 @@ import edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl;
 import edu.cornell.kfs.pdp.service.CuAchService;
 import edu.cornell.kfs.pdp.service.impl.CuAchServiceImpl;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 
 @SuppressWarnings("deprecation")
@@ -93,6 +100,10 @@ public class PayeeACHAccountExtractServiceImplTest {
     private static final String FILE_PATH_FORMAT = "{0}/{1}{2}";
     private static final String LITERAL_MASK_VALUE = "********";
     private static final Integer DOCUMENT_DESCRIPTION_MAX_LENGTH = Integer.valueOf(40);
+    private static final String BANK_ACCOUNT_NUMBER_MAX_LENGTH_ERROR_MESSAGE = "Bank account number is too long";
+    private static final String BUSINESS_RULES_FAILURE_MESSAGE = "Business rule validation failed";
+    private static final String GLOBAL_ERROR_FORMAT = "{0}";
+    private static final int BANK_ACCOUNT_NUMBER_MAX_LENGTH_FOR_ROUTING_VALIDATION = 17;
     private static final int INITIAL_DOCUMENT_ID = 1000;
     private static final long INITIAL_ACH_ACCOUNT_ID = 5000L;
 
@@ -122,6 +133,7 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setSequenceAccessorService(createMockSequenceAccessorService());
         payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
+        payeeACHAccountExtractService.setConfigurationService(createMockConfigurationService());
     }
 
     @After
@@ -170,6 +182,11 @@ public class PayeeACHAccountExtractServiceImplTest {
     }
 
     @Test
+    public void testLoadFileWithValidRowsPlusOneRulesFailureRow() throws Exception {
+        assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_GOOD_LINES_AND_BAD_RULES_FAILURE_LINE);
+    }
+
+    @Test
     public void testLoadMultipleFiles() throws Exception {
         assertACHAccountExtractionHasCorrectResults(ACHFileFixture.FILE_WITH_BAD_HEADERS,
                 ACHFileFixture.FILE_WITH_SINGLE_SUCCESSFUL_LINE, ACHFileFixture.FILE_WITH_GOOD_AND_BAD_LINES,
@@ -196,10 +213,16 @@ public class PayeeACHAccountExtractServiceImplTest {
                 .toArray(String[]::new);
         
         copyInputFilesAndGenerateDoneFiles(fileNames);
-        payeeACHAccountExtractService.processACHBatchDetails();
+        processACHBatchDetailsInNewUserSession();
         
         assertFilesHaveExpectedResults(expectedResults, payeeACHAccountExtractService.getFileResults());
         assertDoneFilesWereDeleted(fileNames);
+    }
+
+    private boolean processACHBatchDetailsInNewUserSession() throws Exception {
+        Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
+        UserSession systemUserSession = MockPersonUtil.createMockUserSession(systemUser);
+        return GlobalVariables.doInNewGlobalVariables(systemUserSession, payeeACHAccountExtractService::processACHBatchDetails);
     }
 
     private void assertFilesHaveExpectedResults(List<ACHFileFixture> expectedResults, Map<String, ACHFileResult> actualResults) throws Exception {
@@ -353,16 +376,29 @@ public class PayeeACHAccountExtractServiceImplTest {
                 .then(this::createMockPAATDocument);
         
         when(mockDocumentService.routeDocument(any(Document.class), any(), any()))
-                .then(this::recordAndReturnDocument);
+                .then(this::recordAndReturnDocumentIfValid);
         
         return mockDocumentService;
     }
 
-    private Document recordAndReturnDocument(InvocationOnMock invocation) throws Exception {
+    private Document recordAndReturnDocumentIfValid(InvocationOnMock invocation) throws Exception {
         Document document = invocation.getArgument(0);
+        validateBankAccountMaxLength(document);
+        if (GlobalVariables.getMessageMap().hasErrors()) {
+            throw new ValidationException(BUSINESS_RULES_FAILURE_MESSAGE);
+        }
         setBankObjectOnPayeeACHAccountIfAbsent(document);
         payeeACHAccountExtractService.addRoutedDocument((MaintenanceDocument) document);
         return document;
+    }
+
+    private void validateBankAccountMaxLength(Document document) {
+        MaintenanceDocument paatDocument = (MaintenanceDocument) document;
+        PayeeACHAccount newAccount = (PayeeACHAccount) paatDocument.getNewMaintainableObject().getDataObject();
+        if (StringUtils.length(newAccount.getBankAccountNumber()) > BANK_ACCOUNT_NUMBER_MAX_LENGTH_FOR_ROUTING_VALIDATION) {
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.BANK_ACCOUNT_NUMBER, KFSConstants.GLOBAL_ERRORS,
+                    BANK_ACCOUNT_NUMBER_MAX_LENGTH_ERROR_MESSAGE);
+        }
     }
 
     private void setBankObjectOnPayeeACHAccountIfAbsent(Document document) {
@@ -521,6 +557,15 @@ public class PayeeACHAccountExtractServiceImplTest {
         });
         
         return achBankService;
+    }
+
+    private ConfigurationService createMockConfigurationService() throws Exception {
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        
+        when(configurationService.getPropertyValueAsString(KFSConstants.GLOBAL_ERRORS))
+                .thenReturn(GLOBAL_ERROR_FORMAT);
+        
+        return configurationService;
     }
 
     private static class TestEmailService extends EmailServiceImpl {
