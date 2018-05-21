@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.ws.rs.client.Client;
@@ -41,8 +44,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
+import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
+import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -103,9 +110,11 @@ public class CreateAccountingDocumentServiceImplTest {
     public void setUp() throws Exception {
         ConfigurationService configurationService = buildMockConfigurationService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
-                buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(), configurationService);
+                buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
+                configurationService, buildMockFiscalYearFunctionControlService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
-                AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT);
+                AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
+                AccountingDocumentMapping.BA_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -210,6 +219,48 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("di-with-ib-items-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.DI_WITH_IB_ITEMS_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleBADocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-ba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleBADocumentLackingBAAccountProperties() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-ba-no-base-or-months-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleBADocumentUsingNonZeroBaseAmounts() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-ba-nonzero-base-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_NONZERO_BASEAMOUNT_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleBADocumentUsingMultipleMonthAmounts() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-ba-multi-months-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_BA_MULTI_MONTHS_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleBADocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-ba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleBADocumentsPlusDocumentsWithRulesFailures() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-ba-plus-bad-rules-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -330,6 +381,40 @@ public class CreateAccountingDocumentServiceImplTest {
         assertEquals("Wrong org ref ID", expectedLine.getOrganizationReferenceId(), actualLine.getOrganizationReferenceId());
         assertEquals("Wrong line description", expectedLine.getFinancialDocumentLineDescription(), actualLine.getFinancialDocumentLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+        if (expectedLine instanceof BudgetAdjustmentAccountingLine) {
+            assertBudgetAdjustmentAccountingLinePropertiesAreCorrect(
+                    (BudgetAdjustmentAccountingLine) expectedLine, (BudgetAdjustmentAccountingLine) actualLine);
+        }
+    }
+
+    private void assertBudgetAdjustmentAccountingLinePropertiesAreCorrect(
+            BudgetAdjustmentAccountingLine expectedLine, BudgetAdjustmentAccountingLine actualLine) {
+        assertEquals("Wrong base amount", expectedLine.getBaseBudgetAdjustmentAmount(), actualLine.getBaseBudgetAdjustmentAmount());
+        assertEquals("Wrong current amount", expectedLine.getCurrentBudgetAdjustmentAmount(), actualLine.getCurrentBudgetAdjustmentAmount());
+        assertEquals("Wrong month 01 amount",
+                expectedLine.getFinancialDocumentMonth1LineAmount(), actualLine.getFinancialDocumentMonth1LineAmount());
+        assertEquals("Wrong month 02 amount",
+                expectedLine.getFinancialDocumentMonth2LineAmount(), actualLine.getFinancialDocumentMonth2LineAmount());
+        assertEquals("Wrong month 03 amount",
+                expectedLine.getFinancialDocumentMonth3LineAmount(), actualLine.getFinancialDocumentMonth3LineAmount());
+        assertEquals("Wrong month 04 amount",
+                expectedLine.getFinancialDocumentMonth4LineAmount(), actualLine.getFinancialDocumentMonth4LineAmount());
+        assertEquals("Wrong month 05 amount",
+                expectedLine.getFinancialDocumentMonth5LineAmount(), actualLine.getFinancialDocumentMonth5LineAmount());
+        assertEquals("Wrong month 06 amount",
+                expectedLine.getFinancialDocumentMonth6LineAmount(), actualLine.getFinancialDocumentMonth6LineAmount());
+        assertEquals("Wrong month 07 amount",
+                expectedLine.getFinancialDocumentMonth7LineAmount(), actualLine.getFinancialDocumentMonth7LineAmount());
+        assertEquals("Wrong month 08 amount",
+                expectedLine.getFinancialDocumentMonth8LineAmount(), actualLine.getFinancialDocumentMonth8LineAmount());
+        assertEquals("Wrong month 09 amount",
+                expectedLine.getFinancialDocumentMonth9LineAmount(), actualLine.getFinancialDocumentMonth9LineAmount());
+        assertEquals("Wrong month 10 amount",
+                expectedLine.getFinancialDocumentMonth10LineAmount(), actualLine.getFinancialDocumentMonth10LineAmount());
+        assertEquals("Wrong month 11 amount",
+                expectedLine.getFinancialDocumentMonth11LineAmount(), actualLine.getFinancialDocumentMonth11LineAmount());
+        assertEquals("Wrong month 12 amount",
+                expectedLine.getFinancialDocumentMonth12LineAmount(), actualLine.getFinancialDocumentMonth12LineAmount());
     }
 
     private void assertInternalBillingItemIsCorrect(InternalBillingItem expectedItem, InternalBillingItem actualItem) {
@@ -538,6 +623,26 @@ public class CreateAccountingDocumentServiceImplTest {
         });
     }
 
+    private FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
+        List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
+                .mapToObj(this::buildFunctionControlAllowingBudgetAdjustment)
+                .collect(Collectors.toCollection(ArrayList::new));
+        
+        FiscalYearFunctionControlService fyService = mock(FiscalYearFunctionControlService.class);
+        when(fyService.getBudgetAdjustmentAllowedYears())
+                .thenReturn(allowedBudgetAdjustmentYears);
+        
+        return fyService;
+    }
+
+    private FiscalYearFunctionControl buildFunctionControlAllowingBudgetAdjustment(int fiscalYear) {
+        FiscalYearFunctionControl functionControl = new FiscalYearFunctionControl();
+        functionControl.setUniversityFiscalYear(Integer.valueOf(fiscalYear));
+        functionControl.setFinancialSystemFunctionControlCode(FiscalYearFunctionControlServiceImpl.FY_FUNCTION_CONTROL_BA_ALLOWED);
+        functionControl.setFinancialSystemFunctionActiveIndicator(true);
+        return functionControl;
+    }
+
     private Client buildMockClient() {
         return MockObjectUtils.buildMockObject(Client.class, (client) -> {
             EasyMock.expect(client.target(EasyMock.isA(URI.class)))
@@ -586,15 +691,17 @@ public class CreateAccountingDocumentServiceImplTest {
         private PersonService personService;
         private AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
         private ConfigurationService configurationService;
+        private FiscalYearFunctionControlService fiscalYearFunctionControlService;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-                ConfigurationService configurationService) {
+                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService) {
             this.personService = personService;
             this.downloadAttachmentService = downloadAttachmentService;
             this.configurationService = configurationService;
+            this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
         }
@@ -614,6 +721,10 @@ public class CreateAccountingDocumentServiceImplTest {
             accountingDocumentGenerator.setPersonService(personService);
             accountingDocumentGenerator.setAccountingXmlDocumentDownloadAttachmentService(downloadAttachmentService);
             accountingDocumentGenerator.setConfigurationService(configurationService);
+            if (accountingDocumentGenerator instanceof CuBudgetAdjustmentDocumentGenerator) {
+                CuBudgetAdjustmentDocumentGenerator baGenerator = (CuBudgetAdjustmentDocumentGenerator) accountingDocumentGenerator;
+                baGenerator.setFiscalYearFunctionControlService(fiscalYearFunctionControlService);
+            }
             return accountingDocumentGenerator;
         }
 

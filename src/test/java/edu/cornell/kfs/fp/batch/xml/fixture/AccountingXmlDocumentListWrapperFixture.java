@@ -10,6 +10,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 public enum AccountingXmlDocumentListWrapperFixture {
     BASE_WRAPPER("09/28/2017", "abc123@cornell.edu", "Example XML file", documents()),
     BASE_IB_WRAPPER("02/26/2018", "xyz789@cornell.edu", "Example IB XML file", documents()),
+    BASE_BA_WRAPPER("04/20/2018", "ggg555@cornell.edu", "Example BA XML file", documents()),
 
     MULTI_DI_DOCUMENT_TEST(
             BASE_WRAPPER,
@@ -82,13 +83,42 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_IB_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
+    SINGLE_BA_DOCUMENT_TEST(
+            BASE_BA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_BA_DOCUMENT_TEST_DOC1)),
+    SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST(
+            BASE_BA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST_DOC1)),
+    SINGLE_BA_NONZERO_BASEAMOUNT_DOCUMENT_TEST(
+            BASE_BA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_BA_NONZERO_BASEAMOUNT_DOCUMENT_TEST_DOC1)),
+    SINGLE_BA_MULTI_MONTHS_DOCUMENT_TEST(
+            BASE_BA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_BA_MULTI_MONTHS_DOCUMENT_TEST_DOC1)),
+    MULTI_BA_DOCUMENT_TEST(
+            BASE_BA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_BA_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_BA_DOCUMENT_TEST_DOC2)),
+    MULTI_BA_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST(
+            BASE_BA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.MULTI_BA_DOCUMENT_TEST_DOC2,
+                    AccountingXmlDocumentEntryFixture.MULTI_BA_DOCUMENT_TEST_DOC3,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DI,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_IB,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF1,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF2)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF2,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_BA)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(

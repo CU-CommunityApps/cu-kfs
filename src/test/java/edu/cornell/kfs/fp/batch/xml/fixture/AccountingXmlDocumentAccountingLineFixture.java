@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 
 import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
+import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -31,8 +32,38 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_S343717_OBJ_7070_AMT_100_TO("IT", "S343717", null, "7070", null, null, null, "To Line", 100),
     ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_1000_FROM("IT", "S524000", "24100", "8070", "900", null, null, "From Line", 1000),
     ACCT_S343717_OBJ_7070_AMT_1000_TO("IT", "S343717", null, "7070", null, null, null, "To Line", 1000),
-    
-    
+
+    ACCT_1433000_OBJ_4480_AMOUNT_40("IT", "1433000", null, "4480", null, null, null, null, 40.00),
+    ACCT_1433000_OBJ_5390_AMOUNT_40("IT", "1433000", null, "5390", null, null, null, null, 40.00),
+    ACCT_C200222_OBJ_4480_AMOUNT_40("IT", "C200222", null, "4480", null, null, null, null, 40.00),
+    ACCT_C200222_OBJ_5390_AMOUNT_40("IT", "C200222", null, "5390", null, null, null, null, 40.00),
+
+    ACCT_1433000_OBJ_4480_AMOUNT_40_BASE_0_NO_MONTHS(ACCT_1433000_OBJ_4480_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_NO_MONTHS),
+    ACCT_1433000_OBJ_5390_AMOUNT_40_BASE_0_MONTH03_40(ACCT_1433000_OBJ_5390_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_MONTH03_40),
+    ACCT_C200222_OBJ_4480_AMOUNT_40_BASE_0_NO_MONTHS(ACCT_C200222_OBJ_4480_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_NO_MONTHS),
+    ACCT_C200222_OBJ_5390_AMOUNT_40_NO_BASE_MONTH03_40(ACCT_C200222_OBJ_5390_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.NO_BASE_MONTH03_40),
+
+    ACCT_1433000_OBJ_4480_AMOUNT_40_BASE_10_MONTH03_40(ACCT_1433000_OBJ_4480_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_10_MONTH03_40),
+    ACCT_1433000_OBJ_5390_AMOUNT_40_BASE_10_MONTH03_40(ACCT_1433000_OBJ_5390_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_10_MONTH03_40),
+    ACCT_C200222_OBJ_4480_AMOUNT_40_BASE_10_MONTH03_40(ACCT_C200222_OBJ_4480_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_10_MONTH03_40),
+    ACCT_C200222_OBJ_5390_AMOUNT_40_BASE_10_MONTH03_40(ACCT_C200222_OBJ_5390_AMOUNT_40, 40.00,
+            BudgetAdjustmentAccountDataFixture.BASE_10_MONTH03_40),
+
+    ACCT_1433000_OBJ_4480_AMOUNT_52_BASE_0_MONTH01_37_MONTH08_15(ACCT_1433000_OBJ_4480_AMOUNT_40, 52.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_MONTH01_37_MONTH08_15),
+    ACCT_1433000_OBJ_5390_AMOUNT_52_BASE_0_ALL_MONTHS_4_OR_5(ACCT_1433000_OBJ_5390_AMOUNT_40, 52.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_ALL_MONTHS_4_OR_5),
+    ACCT_C200222_OBJ_4480_AMOUNT_52_BASE_0_MONTH01_37_MONTH08_15(ACCT_C200222_OBJ_4480_AMOUNT_40, 52.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_MONTH01_37_MONTH08_15),
+    ACCT_C200222_OBJ_5390_AMOUNT_52_BASE_0_ALL_MONTHS_4_OR_5(ACCT_C200222_OBJ_5390_AMOUNT_40, 52.00,
+            BudgetAdjustmentAccountDataFixture.BASE_0_ALL_MONTHS_4_OR_5),
 
     ACCT_1658328_OBJ_6600_AMOUNT_1("IT", "1658328", null, "6600", null, null, null, null, 1.00),
     ACCT_1658328_OBJ_6600_AMOUNT_2("IT", "1658328", null, "6600", null, null, null, null, 2.00),
@@ -57,6 +88,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     public final String orgRefId;
     public final String lineDescription;
     public final KualiDecimal amount;
+    public final BudgetAdjustmentAccountDataFixture budgetAdjustmentData;
 
     private AccountingXmlDocumentAccountingLineFixture(
             AccountingXmlDocumentAccountingLineFixture baseFixture, double newAmount) {
@@ -65,9 +97,23 @@ public enum AccountingXmlDocumentAccountingLineFixture {
                 baseFixture.lineDescription, newAmount);
     }
 
+    private AccountingXmlDocumentAccountingLineFixture(AccountingXmlDocumentAccountingLineFixture baseFixture,
+            double newAmount, BudgetAdjustmentAccountDataFixture newBudgetAdjustmentData) {
+        this(baseFixture.chartCode, baseFixture.accountNumber, baseFixture.subAccountNumber,
+                baseFixture.objectCode, baseFixture.subObjectCode, baseFixture.projectCode, baseFixture.orgRefId,
+                baseFixture.lineDescription, newAmount, newBudgetAdjustmentData);
+    }
+
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
             String lineDescription, double amount) {
+        this(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId,
+                lineDescription, amount, null);
+    }
+
+    private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
+            String objectCode, String subObjectCode, String projectCode, String orgRefId,
+            String lineDescription, double amount, BudgetAdjustmentAccountDataFixture budgetAdjustmentData) {
         this.chartCode = chartCode;
         this.accountNumber = accountNumber;
         this.subAccountNumber = defaultToEmptyStringIfBlank(subAccountNumber);
@@ -77,6 +123,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
         this.orgRefId = defaultToEmptyStringIfBlank(orgRefId);
         this.lineDescription = defaultToEmptyStringIfBlank(lineDescription);
         this.amount = new KualiDecimal(amount);
+        this.budgetAdjustmentData = budgetAdjustmentData;
     }
 
     public AccountingXmlDocumentAccountingLine toAccountingLinePojo() {
@@ -90,6 +137,9 @@ public enum AccountingXmlDocumentAccountingLineFixture {
         accountingLine.setOrgRefId(orgRefId);
         accountingLine.setLineDescription(lineDescription);
         accountingLine.setAmount(amount);
+        if (budgetAdjustmentData != null) {
+            budgetAdjustmentData.configureAccountingLineXmlPojo(accountingLine);
+        }
         return accountingLine;
     }
 
@@ -106,6 +156,13 @@ public enum AccountingXmlDocumentAccountingLineFixture {
             accountingLine.setOrganizationReferenceId(orgRefId);
             accountingLine.setFinancialDocumentLineDescription(lineDescription);
             accountingLine.setAmount(amount);
+            if (accountingLine instanceof BudgetAdjustmentAccountingLine) {
+                BudgetAdjustmentAccountingLine budgetAdjustmentLine = (BudgetAdjustmentAccountingLine) accountingLine;
+                budgetAdjustmentLine.setCurrentBudgetAdjustmentAmount(amount);
+                if (budgetAdjustmentData != null) {
+                    budgetAdjustmentData.configureBudgetAdjustmentAccountingLine(budgetAdjustmentLine);
+                }
+            }
             return accountingLine;
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
