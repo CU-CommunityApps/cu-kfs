@@ -34,7 +34,11 @@ public enum ACHFileFixture {
 
     FILE_WITH_PARTIAL_AND_FULL_MATCHES("pdp_ach_test_multiMatching",
             ACHRowFixture.ROBERT_SMITH_CREATE_EMPLOYEE_ONLY, ACHRowFixture.JANE_DOE_CREATE_ENTITY_ONLY,
-            ACHRowFixture.VALID_ROW_NO_UPDATES);
+            ACHRowFixture.VALID_ROW_NO_UPDATES),
+
+    FILE_WITH_GOOD_LINES_AND_BAD_RULES_FAILURE_LINE("pdp_ach_test_mixGoodBadWithRulesFailure",
+            ACHRowFixture.JOHN_DOE_CREATE_EMPLOYEE_CREATE_ENTITY, ACHRowFixture.ROW_WITH_VALIDATION_FAILURE,
+            ACHRowFixture.MARY_SMITH_UPDATE_EMPLOYEE_UPDATE_ENTITY, ACHRowFixture.ROBERT_SMITH_CREATE_EMPLOYEE_UPDATE_ENTITY);
 
     public final String baseFileName;
     public final List<ACHRowFixture> rowResults;

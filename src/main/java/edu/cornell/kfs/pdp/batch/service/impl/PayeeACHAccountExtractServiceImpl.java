@@ -234,6 +234,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
     protected String addOrUpdateACHAccountIfNecessary(
             Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType, String payeeIdNumber) {
+        GlobalVariables.getMessageMap().clearErrorMessages();
         PayeeACHAccount achAccount = achService.getAchInformationIncludingInactive(
                 payeeType, payeeIdNumber, getDirectDepositTransactionType());
         
