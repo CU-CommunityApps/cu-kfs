@@ -23,6 +23,9 @@
 		<property name="scriptConfigurationFilePaths">
 			<list />
 		</property>
+		<property name="fiscalYearMakers">
+			<list />
+		</property>
 	</bean>
 
 	<bean id="cu-arModuleService" parent="arModuleService-parentBean">
