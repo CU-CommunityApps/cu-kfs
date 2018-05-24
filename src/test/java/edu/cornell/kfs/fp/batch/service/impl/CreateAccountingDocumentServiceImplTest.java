@@ -114,7 +114,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 configurationService, buildMockFiscalYearFunctionControlService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
-                AccountingDocumentMapping.BA_DOCUMENT);
+                AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -261,6 +261,34 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("multi-ba-plus-bad-rules-doc-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_BA_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleSBDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-sb-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_SB_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithSingleSBDocumentLackingItems() throws Exception {
+        copyTestFilesAndCreateDoneFiles("sb-without-items-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_SB_DOCUMENT_NO_ITEMS_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleSBDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-sb-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleSBDocumentsPlusDocumentWithRulesFailure() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-sb-plus-bad-rules-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
