@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:dd="http://rice.kuali.org/dd" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd         http://rice.kuali.org/dd         http://rice.kuali.org/dd/dd.xsd">
+
+	<bean id="ObjectCodeActivationGlobalMaintenanceDocument" parent="ObjectCodeActivationGlobalMaintenanceDocument-parentBean" />
+	<bean id="ObjectCodeActivationGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
+		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal" />
+		<property name="maintainableClass" value=" edu.cornell.kfs.coa.document.ObjectCodeActivatationGlobalMaintainable" />
+	
+		<property name="maintainableSections">
+			<list>
+				<ref bean="ObjectCodeActivationGlobalMaintenanceDocument-GlobalObjectCodeActivationMaintenance" />
+				<ref bean="ObjectCodeActivationGlobalMaintenanceDocument-EditListOfObjectCodes" />
+			</list>
+		</property>
+		<property name="lockingKeys">
+			<list>
+				<value>documentNumber</value>
+			</list>
+		</property>
+		<property name="documentTypeName" value="OCAG" />
+		<property name="businessRulesClass" value="org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase" />
+		<property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase" />
+		<property name="promptBeforeValidationClass" value="org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase" />
+	
+		<property name="workflowAttributes">
+			<ref bean="ObjectCodeGlobalMaintenanceDocument-workflowAttributes" />
+		</property>
+	</bean>
+	
+	<bean id="ObjectCodeActivationGlobalMaintenanceDocument-GlobalObjectCodeActivationMaintenance" parent="ObjectCodeActivationGlobalMaintenanceDocument-GlobalObjectCodeActivationMaintenance-parentBean" />
+	<bean id="ObjectCodeActivationGlobalMaintenanceDocument-GlobalObjectCodeActivationMaintenance-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+		<property name="id" value="Global Object Code Activation Maintenance" />
+		<property name="title" value="Global Object Code Activation Maintenance" />
+		<property name="maintainableItems">
+			<list>
+				<bean parent="MaintainableFieldDefinition" p:name="activate" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="ObjectCodeActivationGlobalMaintenanceDocument-EditListOfObjectCodes" parent="ObjectCodeActivationGlobalMaintenanceDocument-EditListOfObjectCodes-parentBean" />
+	<bean id="ObjectCodeActivationGlobalMaintenanceDocument-EditListOfObjectCodes-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+		<property name="id" value="Edit List of Object Codes" />
+		<property name="title" value="Edit List of Object Codes" />
+		<property name="maintainableItems">
+			<list>
+				<bean parent="MaintainableCollectionDefinition">
+					<property name="name" value="cuObjectCodeGlobalDetails" />
+					<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" />
+					<property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.ObjectCode" />
+					<property name="summaryTitle" value="Sub Account" />
+					<property name="summaryFields">
+						<list>
+							<bean parent="MaintainableFieldDefinition" p:name="universityFiscalYear" />
+							<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" />
+							<bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" />
+						</list>
+					</property>
+					<property name="maintainableFields">
+						<list>
+							<bean parent="MaintainableFieldDefinition" p:name="universityFiscalYear" p:required="true" p:readOnlyAfterAdd="true" p:template="universityFiscalYear" />
+							<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode" />
+							<bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:required="true" p:template="financialObjectCode" />
+							<!-- 
+							<bean parent="MaintainableFieldDefinition" p:name="financialObjectCodeName" p:unconditionallyReadOnly="true" p:template="financialObjectCodeName" />
+							 -->
+						</list>
+					</property>
+					<property name="duplicateIdentificationFields">
+						<list>
+							<bean parent="MaintainableFieldDefinition" p:name="universityFiscalYear" />
+							<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" />
+							<bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

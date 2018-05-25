@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="CuObjectCodeGlobalDetail" parent="CuObjectCodeGlobalDetail-parentBean" />
+	<bean id="CuObjectCodeGlobalDetail-parentBean" abstract="true" parent="ObjectCodeGlobalDetail">
+		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" />
+		<property name="objectLabel" value="Object Code Activation Global Detail" />
+		<property name="attributes">
+			<list merge="true">
+				<ref bean="CuObjectCodeGlobalDetail-financialObjectCode" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="CuObjectCodeGlobalDetail-financialObjectCode" parent="CuObjectCodeGlobalDetail-financialObjectCode-parentBean"/>
+	<bean id="CuObjectCodeGlobalDetail-financialObjectCode-parentBean" abstract="true" parent="ObjectCode-financialObjectCode" />
+	
+</beans>
+    
