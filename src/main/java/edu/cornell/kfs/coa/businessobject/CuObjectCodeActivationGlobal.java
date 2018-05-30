@@ -10,8 +10,6 @@ import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -23,20 +21,25 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
     
     protected String documentNumber;
     private Boolean activate;
-    private List<CuObjectCodeGlobalDetail> cuObjectCodeGlobalDetails;
+    private List<CuObjectCodeGlobalDetail> objectCodeGlobalDetails;
     
     public CuObjectCodeActivationGlobal() {
         super();
-        cuObjectCodeGlobalDetails = new ArrayList<CuObjectCodeGlobalDetail>();
+        objectCodeGlobalDetails = new ArrayList<CuObjectCodeGlobalDetail>();
     }
 
     @Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
         List<PersistableBusinessObject> objectsToSave = new ArrayList<PersistableBusinessObject>();
-        for (CuObjectCodeGlobalDetail detail : cuObjectCodeGlobalDetails) {
-            ObjectCode objectCode = objectCodeService.getByPrimaryId(detail.getUniversityFiscalYear(), detail.getChartOfAccountsCode(), detail.getFinancialObjectCode());
+        for (CuObjectCodeGlobalDetail detail : objectCodeGlobalDetails) {
+            ObjectCode objectCode = getObjectCodeService().getByPrimaryId(detail.getUniversityFiscalYear(), detail.getChartOfAccountsCode(), detail.getFinancialObjectCode());
             if (ObjectUtils.isNotNull(objectCode)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("generateGlobalChangesToPersist, setting active flag to " + activate.booleanValue() + " for object code " + objectCode);
+                }
                 objectCode.setActive(activate.booleanValue());
+                objectsToSave.add(objectCode);
+                
             } else {
                 LOG.error("generateGlobalChangesToPersist, unable to find object code for fiscal year " + detail.getUniversityFiscalYear() + " chart code: " 
                         + detail.getChartOfAccountsCode() + " financial object code: " + detail.getFinancialObjectCode() );
@@ -58,7 +61,7 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
             return false;
         }
         
-        for (CuObjectCodeGlobalDetail detail : cuObjectCodeGlobalDetails) {
+        for (CuObjectCodeGlobalDetail detail : objectCodeGlobalDetails) {
             if (!getPersistenceStructureService().hasPrimaryKeyFieldValues(detail)) {
                 LOG.error("isPersistable, detail doesn't have primvary keys set: " + detail.toString());
                 return false;
@@ -70,7 +73,7 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
 
     @Override
     public List<? extends GlobalBusinessObjectDetail> getAllDetailObjects() {
-        return cuObjectCodeGlobalDetails;
+        return objectCodeGlobalDetails;
     }
     
     @Override
@@ -91,12 +94,12 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
         this.activate = activate;
     }
 
-    public List<CuObjectCodeGlobalDetail> getCuObjectCodeGlobalDetails() {
-        return cuObjectCodeGlobalDetails;
+    public List<CuObjectCodeGlobalDetail> getObjectCodeGlobalDetails() {
+        return objectCodeGlobalDetails;
     }
 
-    public void setCuObjectCodeGlobalDetails(List<CuObjectCodeGlobalDetail> cuObjectCodeGlobalDetails) {
-        this.cuObjectCodeGlobalDetails = cuObjectCodeGlobalDetails;
+    public void setObjectCodeGlobalDetails(List<CuObjectCodeGlobalDetail> objectCodeGlobalDetails) {
+        this.objectCodeGlobalDetails = objectCodeGlobalDetails;
     }
 
     public ObjectCodeService getObjectCodeService() {

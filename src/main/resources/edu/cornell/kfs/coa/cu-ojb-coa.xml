@@ -2070,7 +2070,7 @@
 
 	</class-descriptor>
 	
-	<class-descriptor class="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" table="CU_OBJ_CD_DTL_T">
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" table="CU_OBJ_CD_CHG_DTL_T">
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
         <field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true"/>
         <field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
@@ -2089,7 +2089,7 @@
 		<field-descriptor name="activate" column="ACTVT" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
 
-		<collection-descriptor name="cuObjectCodeGlobalDetails" element-class-ref="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" 
+		<collection-descriptor name="objectCodeGlobalDetails" element-class-ref="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" 
 			collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
 			<orderby name="universityFiscalYear" sort="ASC" />
 			<orderby name="chartOfAccountsCode" sort="ASC" />

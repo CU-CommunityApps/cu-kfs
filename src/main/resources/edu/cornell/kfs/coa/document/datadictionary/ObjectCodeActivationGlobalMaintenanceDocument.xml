@@ -46,7 +46,7 @@
 		<property name="maintainableItems">
 			<list>
 				<bean parent="MaintainableCollectionDefinition">
-					<property name="name" value="cuObjectCodeGlobalDetails" />
+					<property name="name" value="objectCodeGlobalDetails" />
 					<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" />
 					<property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.ObjectCode" />
 					<property name="summaryTitle" value="Sub Account" />
