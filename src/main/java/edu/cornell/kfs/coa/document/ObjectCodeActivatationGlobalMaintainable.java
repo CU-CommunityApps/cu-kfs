@@ -15,13 +15,16 @@ import edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal;
 import edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail;
 
 public class ObjectCodeActivatationGlobalMaintainable extends FinancialSystemGlobalMaintainable {
-
+    private static final long serialVersionUID = 7651991084589364963L;
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ObjectCodeActivatationGlobalMaintainable.class);
+    
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
+        LOG.info("generateMaintenanceLocks, entering");
         CuObjectCodeActivationGlobal objectCodeGlobal = (CuObjectCodeActivationGlobal) getBusinessObject();
         List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
         
-        for (CuObjectCodeGlobalDetail detail : objectCodeGlobal.getCuObjectCodeGlobalDetails()) {
+        for (CuObjectCodeGlobalDetail detail : objectCodeGlobal.getObjectCodeGlobalDetails()) {
             MaintenanceLock maintenanceLock = new MaintenanceLock();
             StringBuffer lockrep = new StringBuffer();
 
@@ -43,6 +46,7 @@ public class ObjectCodeActivatationGlobalMaintainable extends FinancialSystemGlo
 
     @Override
     public Class<? extends PersistableBusinessObject> getPrimaryEditedBusinessObjectClass() {
+        LOG.info("getPrimaryEditedBusinessObjectClass, entering");
         return ObjectCode.class;
     }
 
