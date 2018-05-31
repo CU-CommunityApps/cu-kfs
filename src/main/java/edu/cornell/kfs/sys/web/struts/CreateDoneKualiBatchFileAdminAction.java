@@ -13,7 +13,6 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
-import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminAction;
 import org.kuali.kfs.sys.web.struts.KualiBatchFileAdminForm;
@@ -31,8 +30,8 @@ public class CreateDoneKualiBatchFileAdminAction extends KualiBatchFileAdminActi
         KualiBatchFileAdminForm fileAdminForm = (KualiBatchFileAdminForm) form;
         String filePath = BatchFileUtils.resolvePathToAbsolutePath(fileAdminForm.getFilePath());
         File file = new File(filePath).getAbsoluteFile();
-        BatchFile batchFile = new BatchFile();
-        batchFile.setFile(file);
+        BatchFile batchFile = new BatchFile(file);
+
         if (!SpringContext.getBean(CreateDoneBatchFileAuthorizationService.class).canCreateDoneFile(batchFile, GlobalVariables.getUserSession().getPerson())) {
             throw new RuntimeException("Error: not authorized to create a .done file");
         }

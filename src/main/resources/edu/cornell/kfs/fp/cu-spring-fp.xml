@@ -352,8 +352,7 @@
         <property name="optionsService" ref="optionsService" />   
         <property name="offsetDefinitionService" ref="offsetDefinitionService" />  
         <property name="parameterService" ref="parameterService" />  
-        <property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />
-        <property name="subFundGroupService" ref="subFundGroupService" />                 
+        <property name="flexibleOffsetAccountService" ref="flexibleOffsetAccountService" />              
     </bean>
     
     <bean id="loadAWSBillsBatchJob" parent="scheduledJobDescriptor">
