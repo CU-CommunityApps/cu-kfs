@@ -76,6 +76,16 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
         return objectCodeGlobalDetails;
     }
     
+    public void copyDetailsFromOtherCuObjectCodeActivationGlobal(CuObjectCodeActivationGlobal oldGlobal) {
+        for (CuObjectCodeGlobalDetail oldDetail : oldGlobal.getObjectCodeGlobalDetails()) {
+            CuObjectCodeGlobalDetail newDetail = (CuObjectCodeGlobalDetail) ObjectUtils.deepCopy(oldDetail);
+            newDetail.setObjectId(null);
+            newDetail.setDocumentNumber(getDocumentNumber());
+            newDetail.setVersionNumber(new Long(0));
+            getObjectCodeGlobalDetails().add(newDetail);
+        }
+    }
+    
     @Override
     public String getDocumentNumber() {
         return documentNumber;

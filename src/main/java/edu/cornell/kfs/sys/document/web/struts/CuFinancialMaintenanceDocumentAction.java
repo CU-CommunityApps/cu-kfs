@@ -12,7 +12,6 @@ import org.kuali.kfs.krad.datadictionary.DocumentEntry;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.util.WebUtils;
@@ -33,8 +32,6 @@ import org.kuali.kfs.krad.util.NoteType;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 
 import edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal;
-import edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail;
-import edu.cornell.kfs.coa.document.ObjectCodeActivatationGlobalMaintainable;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
@@ -279,38 +276,7 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
     public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOG.info("copy, entering");
         if (isObjectCodeActivationGlobalMaintenaceDocument(form)) {
-            KualiMaintenanceForm oldForm = (KualiMaintenanceForm) form;
-            FinancialSystemMaintenanceDocument oldDoc = (FinancialSystemMaintenanceDocument) oldForm.getDocument();
-            CuObjectCodeActivationGlobal oldGlobal = (CuObjectCodeActivationGlobal) oldDoc.getNewMaintainableObject().getBusinessObject();
-            
-            oldForm.setDocument(null);
-            ActionForward newForward = super.start(mapping, form, request, response);
-            
-            KualiMaintenanceForm newForm = (KualiMaintenanceForm) form;
-            FinancialSystemMaintenanceDocument newDoc = (FinancialSystemMaintenanceDocument) newForm.getDocument();
-            CuObjectCodeActivationGlobal newGlobal = (CuObjectCodeActivationGlobal) newDoc.getNewMaintainableObject().getBusinessObject();
-            
-            for (CuObjectCodeGlobalDetail oldDetail : oldGlobal.getObjectCodeGlobalDetails()) {
-                CuObjectCodeGlobalDetail newDetail = (CuObjectCodeGlobalDetail) ObjectUtils.deepCopy(oldDetail);
-                newDetail.setObjectId(null);
-                newDetail.setDocumentNumber(newDoc.getDocumentNumber());
-                newDetail.setVersionNumber(new Long(0));
-                newGlobal.getObjectCodeGlobalDetails().add(newDetail);
-            }
-            
-            
-            Note newNote = newForm.getNewNote();
-            newNote.setNotePostedTimestampToCurrent();
-            Person kualiUser = GlobalVariables.getUserSession().getPerson();
-            newNote.setNoteText("Document copied from document number " + oldDoc.getDocumentNumber());
-            if (kualiUser == null) {
-                throw new IllegalStateException("Current UserSession has a null Person.");
-            }
-            Note tmpNote = getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
-            newDoc.addNote(tmpNote);
-            
-            
-            return newForward;
+            return processObjectCodeActivationGlobalCopy(mapping, form, request, response);
         } else {
             return super.copy(mapping, form, request, response);
         }
@@ -325,6 +291,31 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
             return false;
         }
     }
-            
+
+    protected ActionForward processObjectCodeActivationGlobalCopy(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        KualiMaintenanceForm oldForm = (KualiMaintenanceForm) form;
+        FinancialSystemMaintenanceDocument oldDoc = (FinancialSystemMaintenanceDocument) oldForm.getDocument();
+        CuObjectCodeActivationGlobal oldGlobal = (CuObjectCodeActivationGlobal) oldDoc.getNewMaintainableObject().getBusinessObject();
+        
+        oldForm.setDocument(null);
+        ActionForward newForward = super.start(mapping, form, request, response);
+        
+        KualiMaintenanceForm newForm = (KualiMaintenanceForm) form;
+        FinancialSystemMaintenanceDocument newDoc = (FinancialSystemMaintenanceDocument) newForm.getDocument();
+        CuObjectCodeActivationGlobal newGlobal = (CuObjectCodeActivationGlobal) newDoc.getNewMaintainableObject().getBusinessObject();
+        
+        newGlobal.copyDetailsFromOtherCuObjectCodeActivationGlobal(oldGlobal);
+        
+        Note newNote = newForm.getNewNote();
+        newNote.setNotePostedTimestampToCurrent();
+        Person kualiUser = GlobalVariables.getUserSession().getPerson();
+        newNote.setNoteText("List of object codes copied from document number " + oldDoc.getDocumentNumber());
+        if (kualiUser == null) {
+            throw new IllegalStateException("Current UserSession has a null Person.");
+        }
+        getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
+        return newForward;
+    }
             
 }
