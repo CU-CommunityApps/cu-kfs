@@ -12,11 +12,13 @@ import org.kuali.kfs.krad.datadictionary.DocumentEntry;
 import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.krad.util.ObjectUtils;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.util.WebUtils;
 import org.kuali.kfs.kns.web.struts.action.KualiMaintenanceDocumentAction;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.kns.web.struts.form.KualiMaintenanceForm;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -28,7 +30,11 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.NoteType;
+import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 
+import edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal;
+import edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail;
+import edu.cornell.kfs.coa.document.ObjectCodeActivatationGlobalMaintainable;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
@@ -38,7 +44,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  */
 @SuppressWarnings("deprecation")
 public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocumentAction {
-
+    protected static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFinancialMaintenanceDocumentAction.class);
     /**
      * Overridden to include a Rice 2.5.x fix for persisting BO note additions,
      * and to delegate the fix's boolean logic to some new shouldSaveBoNoteAfterUpdate()
@@ -268,4 +274,57 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
         PersistableBusinessObject bo = document.getNoteTarget();
         return bo != null && StringUtils.isNotBlank(bo.getObjectId());
     }
+    
+    @Override
+    public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        LOG.info("copy, entering");
+        if (isObjectCodeActivationGlobalMaintenaceDocument(form)) {
+            KualiMaintenanceForm oldForm = (KualiMaintenanceForm) form;
+            FinancialSystemMaintenanceDocument oldDoc = (FinancialSystemMaintenanceDocument) oldForm.getDocument();
+            CuObjectCodeActivationGlobal oldGlobal = (CuObjectCodeActivationGlobal) oldDoc.getNewMaintainableObject().getBusinessObject();
+            
+            oldForm.setDocument(null);
+            ActionForward newForward = super.start(mapping, form, request, response);
+            
+            KualiMaintenanceForm newForm = (KualiMaintenanceForm) form;
+            FinancialSystemMaintenanceDocument newDoc = (FinancialSystemMaintenanceDocument) newForm.getDocument();
+            CuObjectCodeActivationGlobal newGlobal = (CuObjectCodeActivationGlobal) newDoc.getNewMaintainableObject().getBusinessObject();
+            
+            for (CuObjectCodeGlobalDetail oldDetail : oldGlobal.getObjectCodeGlobalDetails()) {
+                CuObjectCodeGlobalDetail newDetail = (CuObjectCodeGlobalDetail) ObjectUtils.deepCopy(oldDetail);
+                newDetail.setObjectId(null);
+                newDetail.setDocumentNumber(newDoc.getDocumentNumber());
+                newDetail.setVersionNumber(new Long(0));
+                newGlobal.getObjectCodeGlobalDetails().add(newDetail);
+            }
+            
+            
+            Note newNote = newForm.getNewNote();
+            newNote.setNotePostedTimestampToCurrent();
+            Person kualiUser = GlobalVariables.getUserSession().getPerson();
+            newNote.setNoteText("Document copied from document number " + oldDoc.getDocumentNumber());
+            if (kualiUser == null) {
+                throw new IllegalStateException("Current UserSession has a null Person.");
+            }
+            Note tmpNote = getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
+            newDoc.addNote(tmpNote);
+            
+            
+            return newForward;
+        } else {
+            return super.copy(mapping, form, request, response);
+        }
+    }
+    
+    protected boolean isObjectCodeActivationGlobalMaintenaceDocument(ActionForm form) {
+        try {
+            KualiMaintenanceForm kmForm = (KualiMaintenanceForm) form;
+            return StringUtils.equalsIgnoreCase("OCAG", kmForm.getDocTypeName());
+        } catch (Exception e) {
+            LOG.error("isObjectCodeActivationGlobalMaintenaceDocument, had an error.", e);
+            return false;
+        }
+    }
+            
+            
 }

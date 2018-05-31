@@ -20,7 +20,7 @@ public class ObjectCodeActivatationGlobalMaintainable extends FinancialSystemGlo
     
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
-        LOG.info("generateMaintenanceLocks, entering");
+        LOG.debug("generateMaintenanceLocks, entering");
         CuObjectCodeActivationGlobal objectCodeGlobal = (CuObjectCodeActivationGlobal) getBusinessObject();
         List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
         
@@ -46,7 +46,6 @@ public class ObjectCodeActivatationGlobalMaintainable extends FinancialSystemGlo
 
     @Override
     public Class<? extends PersistableBusinessObject> getPrimaryEditedBusinessObjectClass() {
-        LOG.info("getPrimaryEditedBusinessObjectClass, entering");
         return ObjectCode.class;
     }
 
