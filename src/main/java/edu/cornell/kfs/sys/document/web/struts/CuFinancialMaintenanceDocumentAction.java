@@ -274,7 +274,6 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
     
     @Override
     public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        LOG.info("copy, entering");
         if (isObjectCodeActivationGlobalMaintenaceDocument(form)) {
             return processObjectCodeActivationGlobalCopy(mapping, form, request, response);
         } else {
