@@ -17,7 +17,6 @@ import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.util.WebUtils;
 import org.kuali.kfs.kns.web.struts.action.KualiMaintenanceDocumentAction;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.kns.web.struts.form.KualiMaintenanceForm;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -29,9 +28,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.NoteType;
-import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 
-import edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
@@ -41,7 +38,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  */
 @SuppressWarnings("deprecation")
 public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocumentAction {
-    protected static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFinancialMaintenanceDocumentAction.class);
+
     /**
      * Overridden to include a Rice 2.5.x fix for persisting BO note additions,
      * and to delegate the fix's boolean logic to some new shouldSaveBoNoteAfterUpdate()
@@ -271,50 +268,4 @@ public class CuFinancialMaintenanceDocumentAction extends KualiMaintenanceDocume
         PersistableBusinessObject bo = document.getNoteTarget();
         return bo != null && StringUtils.isNotBlank(bo.getObjectId());
     }
-    
-    @Override
-    public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (isObjectCodeActivationGlobalMaintenaceDocument(form)) {
-            return processObjectCodeActivationGlobalCopy(mapping, form, request, response);
-        } else {
-            return super.copy(mapping, form, request, response);
-        }
-    }
-    
-    protected boolean isObjectCodeActivationGlobalMaintenaceDocument(ActionForm form) {
-        try {
-            KualiMaintenanceForm kmForm = (KualiMaintenanceForm) form;
-            return StringUtils.equalsIgnoreCase("OCAG", kmForm.getDocTypeName());
-        } catch (Exception e) {
-            LOG.error("isObjectCodeActivationGlobalMaintenaceDocument, had an error.", e);
-            return false;
-        }
-    }
-
-    protected ActionForward processObjectCodeActivationGlobalCopy(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        KualiMaintenanceForm oldForm = (KualiMaintenanceForm) form;
-        FinancialSystemMaintenanceDocument oldDoc = (FinancialSystemMaintenanceDocument) oldForm.getDocument();
-        CuObjectCodeActivationGlobal oldGlobal = (CuObjectCodeActivationGlobal) oldDoc.getNewMaintainableObject().getBusinessObject();
-        
-        oldForm.setDocument(null);
-        ActionForward newForward = super.start(mapping, form, request, response);
-        
-        KualiMaintenanceForm newForm = (KualiMaintenanceForm) form;
-        FinancialSystemMaintenanceDocument newDoc = (FinancialSystemMaintenanceDocument) newForm.getDocument();
-        CuObjectCodeActivationGlobal newGlobal = (CuObjectCodeActivationGlobal) newDoc.getNewMaintainableObject().getBusinessObject();
-        
-        newGlobal.copyDetailsFromOtherCuObjectCodeActivationGlobal(oldGlobal);
-        
-        Note newNote = newForm.getNewNote();
-        newNote.setNotePostedTimestampToCurrent();
-        Person kualiUser = GlobalVariables.getUserSession().getPerson();
-        newNote.setNoteText("List of object codes copied from document number " + oldDoc.getDocumentNumber());
-        if (kualiUser == null) {
-            throw new IllegalStateException("Current UserSession has a null Person.");
-        }
-        getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
-        return newForward;
-    }
-            
 }
