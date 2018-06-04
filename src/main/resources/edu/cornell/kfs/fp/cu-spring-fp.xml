@@ -868,4 +868,10 @@
         <property name="fiscalYearFunctionControlService" ref="fiscalYearFunctionControlService"/>
     </bean>
 
+    <bean id="AccountingDocumentGenerator_SB" class="edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator">
+        <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
+
 </beans>

@@ -11,6 +11,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
     BASE_WRAPPER("09/28/2017", "abc123@cornell.edu", "Example XML file", documents()),
     BASE_IB_WRAPPER("02/26/2018", "xyz789@cornell.edu", "Example IB XML file", documents()),
     BASE_BA_WRAPPER("04/20/2018", "ggg555@cornell.edu", "Example BA XML file", documents()),
+    BASE_SB_WRAPPER("05/24/2018", "cba001@cornell.edu", "Example SB XML file", documents()),
 
     MULTI_DI_DOCUMENT_TEST(
             BASE_WRAPPER,
@@ -111,6 +112,25 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_BA_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.MULTI_BA_DOCUMENT_TEST_DOC3,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
+    SINGLE_SB_DOCUMENT_TEST(
+            BASE_SB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_SB_DOCUMENT_TEST_DOC1)),
+    SINGLE_SB_DOCUMENT_NO_ITEMS_TEST(
+            BASE_SB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_SB_NO_ITEMS_DOCUMENT_TEST_DOC1)),
+    MULTI_SB_DOCUMENT_TEST(
+            BASE_SB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC2)),
+    MULTI_SB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST(
+            BASE_SB_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC2,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(
@@ -118,7 +138,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_IB,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF1,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF2,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_BA)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_BA,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_SB)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(
