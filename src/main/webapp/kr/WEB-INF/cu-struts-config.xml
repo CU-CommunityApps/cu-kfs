@@ -29,12 +29,6 @@
 	        <forward name="basic" path="/WEB-INF/jsp/KualiMaintenanceDocument.jsp" />
 	    </action>
 	    
-	    <action path="/objectcodeactivationglobalmaintenance" name="KualiMaintenanceForm" attribute="KualiForm" scope="request"
-                parameter="methodToCall" validate="false" input="/WEB-INF/jsp/KualiMaintenanceDocument.jsp"
-                type="edu.cornell.kfs.coa.document.web.struts.CuObjectCodeActivationGlobalMaintenanceDocumentAction">
-	        <forward name="basic" path="/WEB-INF/jsp/KualiMaintenanceDocument.jsp" />
-	    </action>
-	    
     </action-mappings>
     
 </struts-config>

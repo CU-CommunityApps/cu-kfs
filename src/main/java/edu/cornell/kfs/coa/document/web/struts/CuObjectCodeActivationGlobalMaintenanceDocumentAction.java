@@ -21,7 +21,7 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentAction extends CuFin
     
     @Override
     public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        LOG.info("copy, entering");
+        LOG.debug("copy, entering");
         KualiMaintenanceForm oldForm = (KualiMaintenanceForm) form;
         FinancialSystemMaintenanceDocument oldDoc = (FinancialSystemMaintenanceDocument) oldForm.getDocument();
         CuObjectCodeActivationGlobal oldGlobal = (CuObjectCodeActivationGlobal) oldDoc.getNewMaintainableObject().getBusinessObject();

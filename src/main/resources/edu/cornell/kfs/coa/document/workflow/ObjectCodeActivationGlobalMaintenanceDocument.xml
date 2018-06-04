@@ -6,7 +6,7 @@
       <parent>COA</parent>
       <label>Object Code Activation Global</label>
       <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
-      <docHandler>${kfs.url}/kr/objectcodeactivationglobalmaintenance.do?methodToCall=docHandler</docHandler>
+      <docHandler>${kfs.url}/objectcodeactivationglobalmaintenance.do?methodToCall=docHandler</docHandler>
       <active>true</active>
       <routingVersion>1</routingVersion>
       <routePaths>
