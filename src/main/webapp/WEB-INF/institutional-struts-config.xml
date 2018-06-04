@@ -56,6 +56,8 @@
 			type="edu.cornell.kfs.fp.document.web.struts.YearEndJournalVoucherForm" />
 		
 		<form-bean name="ConcurManageAccessTokenForm" type="edu.cornell.kfs.concur.web.struts.form.ConcurManageAccessTokenForm" />
+		
+		<form-bean name="KualiMaintenanceForm" type="org.kuali.kfs.kns.web.struts.form.KualiMaintenanceForm"/>
 
     </form-beans>
     
@@ -220,6 +222,12 @@
             <set-property property="cancellable" value="true"/>
             <forward name="basic" path="/jsp/fp/CorporateBilledCorporatePaid.jsp"/>
         </action>
+        
+        <action path="/objectcodeactivationglobalmaintenance" name="KualiMaintenanceForm" attribute="KualiForm" scope="request"
+                parameter="methodToCall" validate="false" input="/jsp/coa/CuObjectCodeActivationGlobalMaintenanceDocument.jsp"
+                type="edu.cornell.kfs.coa.document.web.struts.CuObjectCodeActivationGlobalMaintenanceDocumentAction">
+	        <forward name="basic" path="/jsp/coa/CuObjectCodeActivationGlobalMaintenanceDocument.jsp" />
+	    </action>
         
     </action-mappings>
     
