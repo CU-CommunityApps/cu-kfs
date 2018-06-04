@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.ServiceBillingDocument;
 import org.kuali.kfs.fp.document.TransferOfFundsDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
@@ -20,6 +21,7 @@ import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
 import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentTargetAccountingLine;
@@ -41,7 +43,10 @@ public enum AccountingDocumentMapping {
             TransferOfFundsDocumentGenerator::new),
     BA_DOCUMENT(CuFPTestConstants.BUDGET_ADJUSTMENT_DOC_TYPE,
             CuBudgetAdjustmentDocument.class, TestBudgetAdjustmentSourceAccountingLine.class, TestBudgetAdjustmentTargetAccountingLine.class,
-            CuBudgetAdjustmentDocumentGenerator::new);
+            CuBudgetAdjustmentDocumentGenerator::new),
+    SB_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.SERVICE_BILLING,
+            ServiceBillingDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
+            ServiceBillingDocumentGenerator::new);
 
     public static final String MAPPING_ENUM_CONST_SUFFIX = "_DOCUMENT";
 
@@ -75,7 +80,7 @@ public enum AccountingDocumentMapping {
 
     public static Optional<AccountingDocumentMapping> getMappingByDocumentClass(Class<? extends Document> documentClass) {
         return Arrays.stream(AccountingDocumentMapping.values())
-                .filter((mapping) -> mapping.documentClass.isAssignableFrom(documentClass))
+                .filter((mapping) -> mapping.documentClass.equals(documentClass))
                 .findFirst();
     }
 

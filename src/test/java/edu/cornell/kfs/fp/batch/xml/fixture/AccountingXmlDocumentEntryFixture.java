@@ -261,6 +261,47 @@ public enum AccountingXmlDocumentEntryFixture {
     MULTI_BA_DOCUMENT_TEST_DOC2(BASE_BA_NONZERO_BASEAMOUNT_AND_SINGLE_MONTHS, 2),
     MULTI_BA_DOCUMENT_TEST_DOC3(BASE_BA_MULTI_MONTHS, 3),
 
+    BASE_SB_WITH_ITEMS(1, KFSConstants.FinancialDocumentTypeCodes.SERVICE_BILLING,
+            "First SB Test Document", "This is an example SB document with multiple items", "ServBill01",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254700_OBJ_4020_AMOUNT_100_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263700_OBJ_1280_AMOUNT_50_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254710_OBJ_4020_AMOUNT_100_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263600_OBJ_1280_AMOUNT_50_EXPENSE2),
+            items(
+                    AccountingXmlDocumentItemFixture.STAPLERS_QTY_5_COST_20_00,
+                    AccountingXmlDocumentItemFixture.HEADPHONES_QTY_1_COST_50_00),
+            notes(
+                    "This is a sample note",
+                    "Another note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    BASE_SB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.SERVICE_BILLING,
+            "Another SB Test Document", "This is a sample SB document without any item lines.", "ServBill02",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254700_OBJ_4020_AMOUNT_1000_INCOME1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263700_OBJ_1280_AMOUNT_500_INCOME2),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G254710_OBJ_4020_AMOUNT_1000_EXPENSE1,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_G263600_OBJ_1280_AMOUNT_500_EXPENSE2),
+            items(),
+            notes(),
+            adHocRecipients(),
+            backupLinks()),
+
+    SINGLE_SB_DOCUMENT_TEST_DOC1(BASE_SB_WITH_ITEMS, 1),
+
+    MULTI_SB_DOCUMENT_TEST_DOC1(BASE_SB_WITH_ITEMS, 1),
+    MULTI_SB_DOCUMENT_TEST_DOC2(BASE_SB_NO_ITEMS, 2),
+
+    SINGLE_SB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_SB_NO_ITEMS, 1),
+
     MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
     MULTI_DOC_TYPE_TEST_TF1(3, KFSConstants.TRANSFER_FUNDS,
@@ -289,6 +330,7 @@ public enum AccountingXmlDocumentEntryFixture {
             adHocRecipients(),
             backupLinks()),
     MULTI_DOC_TYPE_TEST_BA(BASE_BA_WITH_ZERO_AND_SINGLE_MONTHS, 5),
+    MULTI_DOC_TYPE_TEST_SB(BASE_SB_WITH_ITEMS, 6),
 
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1);
 

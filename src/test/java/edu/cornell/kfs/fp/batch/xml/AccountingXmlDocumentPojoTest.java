@@ -97,6 +97,18 @@ public class AccountingXmlDocumentPojoTest {
     }
 
     @Test
+    public void testLoadMultipleSBsFromSameFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_TEST, "multi-sb-document-test.xml");
+    }
+
+    @Test
+    public void testLoadSingleSBFromFile() throws Exception {
+        assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_SB_DOCUMENT_TEST, "single-sb-document-test.xml");
+    }
+
+    @Test
     public void testLoadVaryingDocTypesFromSameFile() throws Exception {
         assertAccountingDocumentXmlFileCanBeUnmarshalledCorrectly(
                 AccountingXmlDocumentListWrapperFixture.MULTI_DOCUMENT_TYPES_TEST, "multi-doc-types-test.xml");

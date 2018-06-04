@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DocumentWrapper>
+    <CreateDate>05/24/2018</CreateDate>
+    <ReportEmail>cba001@cornell.edu</ReportEmail>
+    <Overview>Example SB XML file</Overview>
+    <DocumentList>
+        <Document>
+            <Index>1</Index>
+            <DocumentType>SB</DocumentType>
+            <Description>Another SB Test Document</Description>
+            <Explanation>This is a sample SB document without any item lines.</Explanation>
+            <OrganizationDocumentNumber>ServBill02</OrganizationDocumentNumber>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>G254700</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4020</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Income Line 1</line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>G263700</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>1280</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Income Line 2</line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>G254710</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4020</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Expense Line 1</line_description>
+                    <amount>1000.00</amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>G263600</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>1280</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Expense Line 2</line_description>
+                    <amount>500</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+        </Document>
+    </DocumentList>
+</DocumentWrapper>
