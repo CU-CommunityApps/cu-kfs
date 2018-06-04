@@ -11,12 +11,10 @@ public class CuObjectCodeGlobalSearch extends ObjectCode {
     private static final long serialVersionUID = 7461668856007571783L;
     
     protected List<Balance> balances;
-    //private transient KualiDecimal calculatedBalance;
     
     public CuObjectCodeGlobalSearch() {
         super();
         balances = new ArrayList<Balance>();
-        //calculatedBalance = KualiDecimal.ZERO;
     }
 
     public List<Balance> getBalances() {
@@ -34,6 +32,5 @@ public class CuObjectCodeGlobalSearch extends ObjectCode {
         }
         return calculatedBalance;
     }
-
 
 }
