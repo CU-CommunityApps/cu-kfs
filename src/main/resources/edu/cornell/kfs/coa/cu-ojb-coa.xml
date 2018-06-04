@@ -2145,8 +2145,9 @@
 		<collection-descriptor name="balances" element-class-ref="org.kuali.kfs.gl.businessobject.Balance"
 			collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="false" proxy="false">
 			<inverse-foreignkey field-id-ref="1" field-ref="universityFiscalYear" />
-			<inverse-foreignkey field-id-ref="2" field-ref="chartOfAccountsCode" />
-			<inverse-foreignkey field-id-ref="3" field-ref="objectCode" />
+			<inverse-foreignkey field-id-ref="2" field-ref="chartOfAccountsCode" />\
+			<inverse-foreignkey field-id-ref="5" field-ref="objectCode" />
+			
 		</collection-descriptor>
 
 	</class-descriptor>
