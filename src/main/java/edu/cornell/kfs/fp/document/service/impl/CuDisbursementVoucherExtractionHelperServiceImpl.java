@@ -342,8 +342,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             }
         }
 
-        // Get the original, raw form, note text from the DV document.
-        final String text = document.getDisbVchrCheckStubText();
+        final String text = filterOutIllegalXmlCharacters(document.getDisbVchrCheckStubText());
         if (!StringUtils.isBlank(text)) {
             pd.addNotes(getPaymentSourceHelperService().buildNotesForCheckStubText(text, line));
         }
@@ -360,7 +359,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal document processing; immediates for DisbursementVoucher should not be run through batch.");
         }
 
-        Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<String, List<DisbursementVoucherDocument>>();
+        Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<>();
 
         Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(KFSConstants.DocumentStatusCodes.APPROVED, false);
         for (DisbursementVoucherDocument element : docs) {
@@ -374,7 +373,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                     documents.add(element);
                 }
                 else {
-                    List<DisbursementVoucherDocument> documents = new ArrayList<DisbursementVoucherDocument>();
+                    List<DisbursementVoucherDocument> documents = new ArrayList<>();
                     documents.add(element);
                     documentsByCampus.put(dvdCampusCode, documents);
                 }
