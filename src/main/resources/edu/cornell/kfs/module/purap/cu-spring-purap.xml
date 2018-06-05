@@ -53,9 +53,6 @@
 	    <property name="digestorRulesFileName">
 	       <value>edu/cornell/kfs/module/purap/util/cxml/b2bPunchOutOrderDigesterRules.xml</value>
 	    </property>
-	    <property name="schemaLocation">
-	       <value>${externalizable.static.content.url}/xsd/purap/b2bPunchOutOrder.xsd</value> 
-	    </property>
 	</bean>
 	
 	

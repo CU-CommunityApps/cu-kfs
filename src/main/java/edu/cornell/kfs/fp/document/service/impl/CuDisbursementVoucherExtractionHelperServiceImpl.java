@@ -216,19 +216,12 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_PREPARER + document.getDisbVchrContactPersonName() + " " + document.getDisbVchrContactPhoneNumber());
         pd.addNote(pnt);
 
-        String dvSpecialHandlingPersonName = null;
-        String dvSpecialHandlingLine1Address = null;
-        String dvSpecialHandlingLine2Address = null;
-        String dvSpecialHandlingCity = null;
-        String dvSpecialHandlingState = null;
-        String dvSpecialHandlingZip = null;
-
-        dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
-        dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
-        dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
-        dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
-        dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
-        dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
+        String dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
+        String dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
+        String dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
+        String dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
+        String dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
+        String dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
 
         if (StringUtils.isNotEmpty(dvSpecialHandlingPersonName)) {
             pnt = new PaymentNoteText();
