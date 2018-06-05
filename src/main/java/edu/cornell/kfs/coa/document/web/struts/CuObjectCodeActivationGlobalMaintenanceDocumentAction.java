@@ -42,7 +42,9 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentAction extends CuFin
         if (kualiUser == null) {
             throw new IllegalStateException("Current UserSession has a null Person.");
         }
-        getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
+        Note tmpNote = getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
+        newDoc.addNote(tmpNote);
+        newForm.setNewNote(new Note());
         return newForward;
     }
     
