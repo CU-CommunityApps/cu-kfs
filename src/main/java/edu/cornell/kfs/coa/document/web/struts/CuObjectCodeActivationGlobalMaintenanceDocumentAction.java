@@ -34,7 +34,12 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentAction extends CuFin
         CuObjectCodeActivationGlobal newGlobal = (CuObjectCodeActivationGlobal) newDoc.getNewMaintainableObject().getBusinessObject();
         
         newGlobal.copyDetailsFromOtherCuObjectCodeActivationGlobal(oldGlobal);
-        
+        addCopyNote(oldDoc, newForm, newDoc);
+        return newForward;
+    }
+
+    protected void addCopyNote(FinancialSystemMaintenanceDocument oldDoc, KualiMaintenanceForm newForm,
+            FinancialSystemMaintenanceDocument newDoc) {
         Note newNote = newForm.getNewNote();
         newNote.setNotePostedTimestampToCurrent();
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
@@ -45,7 +50,6 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentAction extends CuFin
         Note tmpNote = getNoteService().createNote(newNote, newDoc.getNoteTarget(), kualiUser.getPrincipalId());
         newDoc.addNote(tmpNote);
         newForm.setNewNote(new Note());
-        return newForward;
     }
     
 }
