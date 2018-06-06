@@ -92,9 +92,6 @@
 	    <property name="objectTypeService">
 			<ref bean="objectTypeService" />
 		</property>
-	    <property name="subFundGroupService">
-			<ref bean="subFundGroupService" />
-		</property>
 	    <property name="parameterService">
 			<ref bean="parameterService" />
 		</property>	

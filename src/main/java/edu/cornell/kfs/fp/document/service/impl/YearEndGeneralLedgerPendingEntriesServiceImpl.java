@@ -15,7 +15,6 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
-import org.kuali.kfs.coa.service.SubFundGroupService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.BalanceForwardStep;
 import org.kuali.kfs.gl.batch.NominalActivityClosingStep;
@@ -52,8 +51,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 	 protected ConfigurationService configurationService;
 	 protected DateTimeService dateTimeService;
 	 protected OffsetDefinitionService offsetDefinitionService;
-	protected FlexibleOffsetAccountService flexibleOffsetAccountService;
-	protected SubFundGroupService subFundGroupService;
+	 protected FlexibleOffsetAccountService flexibleOffsetAccountService;
 
 	/**
 	 * @see edu.cornell.kfs.fp.document.service.YearEndGeneralLedgerPendingEntriesService#generateYearEndGeneralLedgerPendingEntries(org.kuali.kfs.sys.document.AccountingDocumentBase, java.lang.String, java.util.List, org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper, java.util.Collection)
@@ -327,7 +325,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
         } else if (closingCharts.contains(postable.getChartOfAccountsCode())) {
             // Accounting line contains a closing chart, check to see if line needs a CG balance forwarding entry generated.
             List<String> cumulativeForwardBalanceObjectTypes = objectTypeService.getCumulativeForwardBalanceObjectTypes(fiscalYear);
-            Collection<String> contractsAndGrantsDenotingValues = subFundGroupService.getContractsAndGrantsDenotingValues();
+            Collection<String> contractsAndGrantsDenotingValues = parameterService.getParameterValuesAsString(BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING);
             Collection<String> cumulativeBalanceForwardBalanceTypesArray = getParameterService().getParameterValuesAsString(
                     BalanceForwardStep.class, GeneralLedgerConstants.BalanceForwardRule.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE);
             Collection<String> subFundGroupsForCumulativeBalanceForwardingArray = getParameterService().getParameterValuesAsString(
@@ -933,24 +931,6 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
      */
     public void setFlexibleOffsetAccountService(FlexibleOffsetAccountService flexibleOffsetAccountService) {
         this.flexibleOffsetAccountService = flexibleOffsetAccountService;
-    }
-
-    /**
-     * Gets the subFundGroupService
-     * 
-     * @return subFundGroupService
-     */
-    public SubFundGroupService getSubFundGroupService() {
-        return subFundGroupService;
-    }
-
-    /**
-     * Sets the subFundGroupService
-     * 
-     * @param subFundGroupService
-     */
-    public void setSubFundGroupService(SubFundGroupService subFundGroupService) {
-        this.subFundGroupService = subFundGroupService;
     }
 
 }

@@ -36,6 +36,7 @@ import org.kuali.kfs.krad.service.ModuleService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kim.api.identity.Person;
@@ -424,7 +425,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
             return false;
         }
 
-        return isExpired(SpringContext.getBean(DateTimeService.class).getCurrentCalendar());
+        return isExpired(KfsDateUtils.getCurrentCalendar());
     }
 
     /**

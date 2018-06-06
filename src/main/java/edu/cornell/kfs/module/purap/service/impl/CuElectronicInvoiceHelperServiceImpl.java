@@ -203,7 +203,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 processElectronicInvoice(eInvoiceLoad, xmlFile, modifiedXML);
             } catch (Exception e) {
                 String msg = xmlFile.getName() + "\n";
-                LOG.error(msg);
+                LOG.error(msg, e);
 
                 //since getMessage() is empty we'll compose the stack trace and nicely format it.
                 StackTraceElement[] elements = e.getStackTrace();
@@ -539,7 +539,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         //Collections.reverse(documentIdList);
         LOG.info("EIRTs to Route: "+documentIdList);
 
-        DocumentService documentService = SpringContext.getBean(DocumentService.class);
         WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         
         for (String eirtDocumentId: documentIdList) {
@@ -580,7 +579,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         //Collections.reverse(documentIdList);
         LOG.info("PREQs to Route: "+documentIdList);
 
-        DocumentService documentService = SpringContext.getBean(DocumentService.class);
         WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
         
         for (String preqDocumentId: documentIdList) {
@@ -707,7 +705,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
         try{
-            SpringContext.getBean(DocumentService.class).saveDocument(rejectDoc, DocumentSystemSaveEvent.class);
+            documentService.saveDocument(rejectDoc, DocumentSystemSaveEvent.class);
         }
         catch (WorkflowException e) {
             e.printStackTrace();
@@ -736,7 +734,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         PaymentRequestDocument preqDoc = null;
         try {
-            preqDoc = (PaymentRequestDocument) SpringContext.getBean(DocumentService.class).getNewDocument("PREQ");
+            preqDoc = (PaymentRequestDocument) documentService.getNewDocument("PREQ");
         }
         catch (WorkflowException e) {
             String extraDescription = "Error=" + e.getMessage();
@@ -790,7 +788,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         } else { // default to baseline behavior - extended documents not in use
             //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
             //set bank code to default bank code in the system parameter
-            defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
+            defaultBank = bankService.getDefaultBankByDocType(preqDoc.getClass());
         }
         
         if (defaultBank != null) {
@@ -859,9 +857,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
          * Validate totals,paydate
          */
         //PaymentRequestDocumentRule.processCalculateAccountsPayableBusinessRules
-        SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
+        kualiRuleService.applyRules(new AttributedCalculateAccountsPayableEvent(preqDoc));
 
-        SpringContext.getBean(PaymentRequestService.class).calculatePaymentRequest(preqDoc,true);
+        paymentRequestService.calculatePaymentRequest(preqDoc, true);
 
         processItemsForDiscount(preqDoc,orderHolder);
 
@@ -869,12 +867,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             return null;
         }
 
-        SpringContext.getBean(PaymentRequestService.class).calculatePaymentRequest(preqDoc,false);
+        paymentRequestService.calculatePaymentRequest(preqDoc, false);
         /**
          * PaymentRequestReview
          */
         //PaymentRequestDocumentRule.processRouteDocumentBusinessRules
-        SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedPaymentRequestForEInvoiceEvent(preqDoc));
+        kualiRuleService.applyRules(new AttributedPaymentRequestForEInvoiceEvent(preqDoc));
 
         if(GlobalVariables.getMessageMap().hasErrors()) {
             if (LOG.isInfoEnabled()) {
@@ -909,9 +907,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             // KFSUPGRADE-483
             // KFSUPGRADE-490: Do save-only operations for just non-EIRT-generated PREQs.
             if (orderHolder.isRejectDocumentHolder()) {
-            	SpringContext.getBean(DocumentService.class).routeDocument(preqDoc, null, null);
+                documentService.routeDocument(preqDoc, null, null);
             } else {
-                SpringContext.getBean(DocumentService.class).saveDocument(preqDoc,DocumentSystemSaveEvent.class);
+                documentService.saveDocument(preqDoc,DocumentSystemSaveEvent.class);
             }
         }
         catch (WorkflowException e) {
@@ -1171,7 +1169,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         ElectronicInvoiceRejectDocument eInvoiceRejectDocument;
 
         try {
-            eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) SpringContext.getBean(DocumentService.class).getNewDocument("EIRT");
+            eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
             eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
             String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
@@ -1181,7 +1179,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             eInvoiceRejectDocument.setFileLevelData(eInvoice);
             eInvoiceRejectDocument.setInvoiceOrderLevelData(eInvoice, electronicInvoiceOrder);
 
-            SpringContext.getBean(DocumentService.class).saveDocument(eInvoiceRejectDocument);
+            documentService.saveDocument(eInvoiceRejectDocument);
 
             String noteText = "Invoice file";
             attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
@@ -1247,7 +1245,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         ElectronicInvoiceRejectDocument eInvoiceRejectDocument = null;
         try {
-            eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) SpringContext.getBean(DocumentService.class).getNewDocument("EIRT");
+            eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
             eInvoiceRejectDocument.setInvoiceProcessTimestamp(SpringContext.getBean(DateTimeService.class).getCurrentTimestamp());
             eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
@@ -1272,7 +1270,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription("Complete failure");
 
             // KFSCNTRB-1369: Need to Save document
-            SpringContext.getBean(DocumentService.class).saveDocument(eInvoiceRejectDocument);
+            documentService.saveDocument(eInvoiceRejectDocument);
 
             String noteText = "Invoice file";
     //        if (invoiceFile.length() > 0) {
@@ -1295,7 +1293,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         Note note = null;
         try {
-            note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(eInvoiceRejectDocument, noteText);
+            note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
             note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
         } catch (Exception e1) {
@@ -1312,8 +1310,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         Attachment attachment = null;
         try {
-            attachment = SpringContext.getBean(AttachmentService.class).createAttachment(eInvoiceRejectDocument.getNoteTarget(), attachmentFile.getName(),INVOICE_FILE_MIME_TYPE , (int)attachmentFile.length(), fileStream, attachmentType);
-        } catch (Exception e) {
+            attachment = attachmentService.createAttachment(eInvoiceRejectDocument.getNoteTarget(), attachmentFile.getName(), INVOICE_FILE_MIME_TYPE, (int) attachmentFile.length(), fileStream, attachmentType);        } catch (Exception e) {
         	// it may have more than one kind of Exception
         	// if attachment is not created for any reason, then don't include in note and proceed.
         	// otherwise it will throw runtimeexception and cause job to stop
@@ -1676,11 +1673,11 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     protected void addRejectReasonsToNote(String rejectReasons, ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
 
         try {
-            Note note = SpringContext.getBean(DocumentService.class).createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
+            Note note = documentService.createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
             note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
             PersistableBusinessObject noteParent = eInvoiceRejectDocument.getNoteTarget();
-            SpringContext.getBean(NoteService.class).save(note);
+            noteService.save(note);
         }catch (Exception e) {
             LOG.error("Error creating reject reason note - " + e.getMessage());
         }

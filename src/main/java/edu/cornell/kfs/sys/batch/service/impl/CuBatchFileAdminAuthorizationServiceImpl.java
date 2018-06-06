@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.batch.service.impl;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
-import org.kuali.kfs.sys.batch.service.impl.BatchFileAdminAuthorizationServiceImpl;
+import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
 import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -13,7 +13,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * for controlling the "Download" link on the Batch File lookup. This allows for granting users
  * permission to download files without necessarily granting permission to delete them.
  */
-public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuthorizationServiceImpl {
+public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuthorizationService {
 
     /**
      * Overridden to also check the "Download Batch File" template, as an alternative means
