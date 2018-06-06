@@ -54,8 +54,8 @@
 	       <value>edu/cornell/kfs/module/purap/util/cxml/b2bPunchOutOrderDigesterRules.xml</value>
 	    </property>
 	    <property name="schemaLocation">
-	       <value>${externalizable.static.content.url}/xsd/purap/b2bPunchOutOrder.xsd</value> 
-	    </property>
+            <value>classpath:org/kuali/kfs/module/purap/util/cxml/b2bPunchOutOrder.xsd</value>
+        </property>
 	</bean>
 	
 	
@@ -128,9 +128,11 @@
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean"/>
 	
 	<bean id="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl">
+		<property name="businessObjectService" ref="businessObjectService"/>
 		<property name="documentService" ref="documentService" />
 		<property name="purapService" ref="purapService"/>
 		<property name="purchaseOrderService" ref="purchaseOrderService"/>
+		<property name="requisitionService" ref="requisitionService"/>
 	</bean>
 	
 	<!-- Lookupables -->

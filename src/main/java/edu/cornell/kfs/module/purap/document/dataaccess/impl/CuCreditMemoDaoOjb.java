@@ -41,7 +41,11 @@ public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
         criteria.addEqualTo( "vendorHeaderGeneratedIdentifier", vendor.getVendorHeaderGeneratedIdentifier() );
         criteria.addEqualTo( "vendorDetailAssignedIdentifier", vendor.getVendorDetailAssignedIdentifier() );
         criteria.addEqualTo( "vendorCountryCode", vendor.getVendorCountry() );
-        criteria.addLike( "vendorPostalCode", vendor.getVendorPostalCode() + "%" );
+        if (vendor.getVendorPostalCode() == null) {
+            criteria.addIsNull("vendorPostalCode");
+        } else {
+            criteria.addLike("vendorPostalCode", vendor.getVendorPostalCode() + "%");
+        }
 
         return (List<VendorCreditMemoDocument>)getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(CuVendorCreditMemoDocument.class, criteria));
     }

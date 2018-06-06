@@ -216,19 +216,12 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_PREPARER + document.getDisbVchrContactPersonName() + " " + document.getDisbVchrContactPhoneNumber());
         pd.addNote(pnt);
 
-        String dvSpecialHandlingPersonName = null;
-        String dvSpecialHandlingLine1Address = null;
-        String dvSpecialHandlingLine2Address = null;
-        String dvSpecialHandlingCity = null;
-        String dvSpecialHandlingState = null;
-        String dvSpecialHandlingZip = null;
-
-        dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
-        dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
-        dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
-        dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
-        dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
-        dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
+        String dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
+        String dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
+        String dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
+        String dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
+        String dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
+        String dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
 
         if (StringUtils.isNotEmpty(dvSpecialHandlingPersonName)) {
             pnt = new PaymentNoteText();
@@ -342,8 +335,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             }
         }
 
-        // Get the original, raw form, note text from the DV document.
-        final String text = document.getDisbVchrCheckStubText();
+        final String text = filterOutIllegalXmlCharacters(document.getDisbVchrCheckStubText());
         if (!StringUtils.isBlank(text)) {
             pd.addNotes(getPaymentSourceHelperService().buildNotesForCheckStubText(text, line));
         }
@@ -360,7 +352,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal document processing; immediates for DisbursementVoucher should not be run through batch.");
         }
 
-        Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<String, List<DisbursementVoucherDocument>>();
+        Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<>();
 
         Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(KFSConstants.DocumentStatusCodes.APPROVED, false);
         for (DisbursementVoucherDocument element : docs) {
@@ -374,7 +366,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                     documents.add(element);
                 }
                 else {
-                    List<DisbursementVoucherDocument> documents = new ArrayList<DisbursementVoucherDocument>();
+                    List<DisbursementVoucherDocument> documents = new ArrayList<>();
                     documents.add(element);
                     documentsByCampus.put(dvdCampusCode, documents);
                 }

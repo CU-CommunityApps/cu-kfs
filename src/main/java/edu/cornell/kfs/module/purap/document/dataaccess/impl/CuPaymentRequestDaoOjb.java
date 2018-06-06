@@ -98,7 +98,11 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         criteria.addEqualTo("vendorHeaderGeneratedIdentifier", vendor.getVendorHeaderGeneratedIdentifier());
         criteria.addEqualTo("vendorDetailAssignedIdentifier", vendor.getVendorDetailAssignedIdentifier());
         criteria.addEqualTo("vendorCountryCode", vendor.getVendorCountry());
-        criteria.addLike("vendorPostalCode", vendor.getVendorPostalCode() + "%");
+        if (vendor.getVendorPostalCode() == null) {
+            criteria.addIsNull("vendorPostalCode");
+        } else {
+            criteria.addLike("vendorPostalCode", vendor.getVendorPostalCode() + "%");
+        }
 
         return (List<PaymentRequestDocument>) getPersistenceBrokerTemplate()
         		.getCollectionByQuery(new QueryByCriteria(CuPaymentRequestDocument.class, criteria));
