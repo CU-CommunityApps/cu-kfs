@@ -495,6 +495,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         vendorDetailExtension.setDefaultB2BPaymentMethodCode(DisbursementVoucherConstants.PAYMENT_METHOD_CHECK);
+        vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
+        vendorDetailExtension.setPaymentWorksLastActivityTimestamp(getDateTimeService().getCurrentTimestamp());
         return vendorDetailExtension;
     }
     

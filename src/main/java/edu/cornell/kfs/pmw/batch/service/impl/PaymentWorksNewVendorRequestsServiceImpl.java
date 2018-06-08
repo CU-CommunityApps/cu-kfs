@@ -71,13 +71,13 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     @Override
     public void createKfsVendorsFromPmwNewVendorRequests() {
         LOG.info("createKfsVendorsFromPmwNewVendorRequests: was invoked");
-        List<String> pmwNewVendorIdentifers = getPaymentWorksWebServiceCallsService().obtainPmwIdentifiersForPendingNewVendorRequests();
+        List<String> pmwNewVendorIdentifers = getPaymentWorksWebServiceCallsService().obtainPmwIdentifiersForApprovedNewVendorRequests();
         if (pmwNewVendorIdentifers.isEmpty()) {
-            LOG.info("createKfsVendorsFromPmwNewVendorRequests: No PENDING New Vendors found to process.");
+            LOG.info("createKfsVendorsFromPmwNewVendorRequests: No PaymentWorks APPROVED New Vendors found to process.");
             sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors();
         } 
         else {
-            LOG.info("createKfsVendorsFromPmwNewVendorRequests: Found " + pmwNewVendorIdentifers.size() + " PENDING New Vendors to process.");
+            LOG.info("createKfsVendorsFromPmwNewVendorRequests: Found " + pmwNewVendorIdentifers.size() + " PaymentWorks APPROVED New Vendors to process.");
             processEachPaymentWorksNewVendorRequestIntoKFS(pmwNewVendorIdentifers);
         }
         LOG.info("createKfsVendorsFromPmwNewVendorRequests: leaving method");
@@ -85,9 +85,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private void sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors() {
         List<String> emailBodyItems = new ArrayList<String>();
-        emailBodyItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_PENDING_VENDORS_FOUND_EMAIL_BODY);
+        emailBodyItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_APPROVED_VENDORS_FOUND_EMAIL_BODY);
         List<String> emailSubjectItems = new ArrayList<String>();
-        emailSubjectItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_PENDING_VENDORS_FOUND_EMAIL_SUBJECT);
+        emailSubjectItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_APPROVED_VENDORS_FOUND_EMAIL_SUBJECT);
         getPaymentWorksNewVendorRequestsReportService().sendEmailThatNoDataWasFoundToProcess(emailSubjectItems, emailBodyItems);
     }
     
@@ -102,7 +102,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable(stgNewVendorRequestDetailToProcess);
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
-                        getPaymentWorksWebServiceCallsService().sendApprovedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
+                        getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
                     }
                     else {
                         getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
@@ -339,7 +339,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private PaymentWorksVendor pmwPendingNewVendorRequestInitialSaveToKfsStagingTable(PaymentWorksVendor pmwVendor) {
         LOG.info("pmwPendingNewVendorRequestSavesToKfsStagingTableSuccessful: entered");
-        pmwVendor = setStatusValuesForPaymentWorksPendingNewVendorRequestedInKfs(pmwVendor);
+        pmwVendor = setStatusValuesForPaymentWorksApprovedNewVendorRequestedInKfs(pmwVendor);
         PaymentWorksVendor savedNewVendorRequestedDetail = null;
         savedNewVendorRequestedDetail = savePaymentWorksVendorToStagingTable(pmwVendor);
         return savedNewVendorRequestedDetail;
@@ -347,7 +347,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private void updatePmwNewVendorStagingTableBasedOnSuccessfulCreateVendorProcessing(PaymentWorksVendor pmwVendor) {
         LOG.info("updatePmwNewVendorStagingTableBasedOnSuccessfulCreateVendorProcessing: entered");
-        pmwVendor = setStatusValuesForPaymentWorksApprovedNewVendorKfsVendorCreatedAchPendingPven(pmwVendor);
+        pmwVendor = setStatusValuesForPaymentWorksProcessedNewVendorKfsVendorCreatedAchPendingPven(pmwVendor);
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(),
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(), 
@@ -365,15 +365,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
-    private PaymentWorksVendor setStatusValuesForPaymentWorksPendingNewVendorRequestedInKfs(PaymentWorksVendor pmwVendor) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PENDING.getText());
+    private PaymentWorksVendor setStatusValuesForPaymentWorksApprovedNewVendorRequestedInKfs(PaymentWorksVendor pmwVendor) {
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.getText());
         pmwVendor.setPmwTransactionType(PaymentWorksConstants.PaymentWorksTransactionType.NEW_VENDOR);
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_REQUESTED);
         return pmwVendor;
     }
     
-    private PaymentWorksVendor setStatusValuesForPaymentWorksApprovedNewVendorKfsVendorCreatedAchPendingPven(PaymentWorksVendor pmwVendor) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.getText());
+    private PaymentWorksVendor setStatusValuesForPaymentWorksProcessedNewVendorKfsVendorCreatedAchPendingPven(PaymentWorksVendor pmwVendor) {
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_CREATED);
         pmwVendor.setKfsAchProcessingStatus(PaymentWorksConstants.KFSAchProcessingStatus.PENDING_PVEN);
         return pmwVendor;

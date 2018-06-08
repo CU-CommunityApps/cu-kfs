@@ -60,7 +60,9 @@
     <field-descriptor name="insuranceNotes" column="INSURANCE_NOTES" jdbc-type="VARCHAR"/>
 	<field-descriptor name="merchantNotes" column="MERCHANT_NOTES" jdbc-type="VARCHAR"/>
 	<field-descriptor name="procurementMethods" column="PROC_MTHDS" jdbc-type="VARCHAR" />
-        <collection-descriptor name="vendorCreditCardMerchants" proxy="true" element-class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+    <field-descriptor name="paymentWorksOriginatingIndicator" column="PMW_ORIG_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    <field-descriptor name="paymentWorksLastActivityTimestamp" column="PMW_LAST_ACT_TS" jdbc-type="TIMESTAMP"/>
+    <collection-descriptor name="vendorCreditCardMerchants" proxy="true" element-class-ref="edu.cornell.kfs.vnd.businessobject.CuVendorCreditCardMerchant" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <inverse-foreignkey field-ref="vendorHeaderGeneratedIdentifier" />
         <inverse-foreignkey field-ref="vendorDetailAssignedIdentifier" />        
     </collection-descriptor>  
