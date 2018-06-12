@@ -38,4 +38,8 @@
 	<bean id="customerLoadService" parent="customerLoadService-parentBean"
 		class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
 
+	<bean id="contractsGrantsInvoiceCreateDocumentService"
+		  class="edu.cornell.kfs.module.ar.batch.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
+		  parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
+
 </beans>
