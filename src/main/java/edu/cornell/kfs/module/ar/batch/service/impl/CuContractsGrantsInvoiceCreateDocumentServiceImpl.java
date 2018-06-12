@@ -17,6 +17,10 @@ import java.util.Map;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
 
+    /**
+     * Fixes NullPointerException that can occur when getting the award total amount.
+     * award.getAwardTotalAmount().bigDecimalValue() causes the NullPointerException if the total amount returned null.
+     */
     @Override
     protected void storeValidationErrors(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup, Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs, String creationProcessTypeCode) {
         for (ContractsAndGrantsBillingAward award : invalidGroup.keySet()) {
