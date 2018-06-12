@@ -10,8 +10,8 @@ import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Date;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,34 +19,29 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
     @Override
     protected void storeValidationErrors(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup, Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs, String creationProcessTypeCode) {
-        Iterator var4 = invalidGroup.keySet().iterator();
-
-        while(var4.hasNext()) {
-            ContractsAndGrantsBillingAward award = (ContractsAndGrantsBillingAward)var4.next();
+        for (ContractsAndGrantsBillingAward award : invalidGroup.keySet()) {
             KualiDecimal cumulativeExpenses = KualiDecimal.ZERO;
             ContractsGrantsInvoiceDocumentErrorLog contractsGrantsInvoiceDocumentErrorLog = new ContractsGrantsInvoiceDocumentErrorLog();
+
             if (ObjectUtils.isNotNull(award)) {
-                java.sql.Date beginningDate = award.getAwardBeginningDate();
-                java.sql.Date endingDate = award.getAwardEndingDate();
-                SystemOptions systemOptions = this.optionsService.getCurrentYearOptions();
+                Date beginningDate = award.getAwardBeginningDate();
+                Date endingDate = award.getAwardEndingDate();
+                final SystemOptions systemOptions = optionsService.getCurrentYearOptions();
+
                 contractsGrantsInvoiceDocumentErrorLog.setProposalNumber(award.getProposalNumber());
                 contractsGrantsInvoiceDocumentErrorLog.setAwardBeginningDate(beginningDate);
                 contractsGrantsInvoiceDocumentErrorLog.setAwardEndingDate(endingDate);
-
-                KualiDecimal awardTotalAmount = award.getAwardTotalAmount();
-                contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(awardTotalAmount == null ? KualiDecimal.ZERO.bigDecimalValue() : awardTotalAmount.bigDecimalValue());
-
+                KualiDecimal awardTotalAmount = award.getAwardTotalAmount() == null ? KualiDecimal.ZERO : award.getAwardTotalAmount();
+                contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(awardTotalAmount.bigDecimalValue());
                 if (ObjectUtils.isNotNull(award.getAwardPrimaryFundManager())) {
                     contractsGrantsInvoiceDocumentErrorLog.setPrimaryFundManagerPrincipalId(award.getAwardPrimaryFundManager().getPrincipalId());
                 }
-
                 if (!CollectionUtils.isEmpty(award.getActiveAwardAccounts())) {
                     boolean firstLineFlag = true;
-                    Iterator var12 = award.getActiveAwardAccounts().iterator();
 
-                    while(var12.hasNext()) {
-                        ContractsAndGrantsBillingAwardAccount awardAccount = (ContractsAndGrantsBillingAwardAccount)var12.next();
-                        cumulativeExpenses = (KualiDecimal)cumulativeExpenses.add(this.contractsGrantsInvoiceDocumentService.getBudgetAndActualsForAwardAccount(awardAccount, systemOptions.getActualFinancialBalanceTypeCd(), beginningDate));
+                    for (ContractsAndGrantsBillingAwardAccount awardAccount : award.getActiveAwardAccounts()) {
+
+                        cumulativeExpenses = cumulativeExpenses.add(contractsGrantsInvoiceDocumentService.getBudgetAndActualsForAwardAccount(awardAccount, systemOptions.getActualFinancialBalanceTypeCd(), beginningDate));
                         if (firstLineFlag) {
                             firstLineFlag = false;
                             contractsGrantsInvoiceDocumentErrorLog.setAccounts(awardAccount.getAccountNumber());
@@ -55,25 +50,20 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
                         }
                     }
                 }
-
                 contractsGrantsInvoiceDocumentErrorLog.setCumulativeExpensesAmount(cumulativeExpenses.bigDecimalValue());
             }
 
-            Iterator var14 = ((List)invalidGroup.get(award)).iterator();
-
-            while(var14.hasNext()) {
-                String vCat = (String)var14.next();
+            for (String vCat : invalidGroup.get(award)) {
                 ContractsGrantsInvoiceDocumentErrorMessage contractsGrantsInvoiceDocumentErrorCategory = new ContractsGrantsInvoiceDocumentErrorMessage();
                 contractsGrantsInvoiceDocumentErrorCategory.setErrorMessageText(vCat);
                 contractsGrantsInvoiceDocumentErrorLog.getErrorMessages().add(contractsGrantsInvoiceDocumentErrorCategory);
             }
 
-            contractsGrantsInvoiceDocumentErrorLog.setErrorDate(this.dateTimeService.getCurrentTimestamp());
+            contractsGrantsInvoiceDocumentErrorLog.setErrorDate(dateTimeService.getCurrentTimestamp());
             contractsGrantsInvoiceDocumentErrorLog.setCreationProcessTypeCode(creationProcessTypeCode);
-            this.businessObjectService.save(contractsGrantsInvoiceDocumentErrorLog);
+            businessObjectService.save(contractsGrantsInvoiceDocumentErrorLog);
             contractsGrantsInvoiceDocumentErrorLogs.add(contractsGrantsInvoiceDocumentErrorLog);
         }
-
     }
 
 }
