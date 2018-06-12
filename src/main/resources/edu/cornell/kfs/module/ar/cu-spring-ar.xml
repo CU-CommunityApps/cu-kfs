@@ -38,4 +38,70 @@
 	<bean id="customerLoadService" parent="customerLoadService-parentBean"
 		class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
 
+	<bean id="contractsGrantsInvoiceCreateDocumentService" parent="contractsGrantsInvoiceCreateDocumentService-parentBean"/>
+	<bean id="contractsGrantsInvoiceCreateDocumentService-parentBean" class="edu.cornell.kfs.module.ar.batch.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl" abstract="true">
+		<property name="accountService">
+			<ref bean="accountService"/>
+		</property>
+		<property name="accountingPeriodService">
+			<ref bean="accountingPeriodService"/>
+		</property>
+		<property name="accountsReceivableDocumentHeaderService">
+			<ref bean="accountsReceivableDocumentHeaderService"/>
+		</property>
+		<property name="awardAccountObjectCodeTotalBilledDao">
+			<ref bean="awardAccountObjectCodeTotalBilledDao"/>
+		</property>
+		<property name="businessObjectService">
+			<ref bean="businessObjectService"/>
+		</property>
+		<property name="configurationService">
+			<ref bean="kualiConfigurationService"/>
+		</property>
+		<property name="contractsGrantsBillingAwardVerificationService">
+			<ref bean="contractsGrantsBillingAwardVerificationService"/>
+		</property>
+		<property name="contractsAndGrantsModuleBillingService">
+			<ref bean="contractsAndGrantsModuleBillingService"/>
+		</property>
+		<property name="contractsGrantsBillingUtilityService">
+			<ref bean="contractsGrantsBillingUtilityService"/>
+		</property>
+		<property name="contractsGrantsInvoiceDocumentService">
+			<ref bean="contractsGrantsInvoiceDocumentService"/>
+		</property>
+		<property name="costCategoryService">
+			<ref bean="costCategoryService"/>
+		</property>
+		<property name="customerService">
+			<ref bean="customerService"/>
+		</property>
+		<property name="dateTimeService">
+			<ref bean="dateTimeService"/>
+		</property>
+		<property name="documentService">
+			<ref bean="documentService"/>
+		</property>
+		<property name="financialSystemDocumentService">
+			<ref bean="financialSystemDocumentService"/>
+		</property>
+		<property name="kualiModuleService">
+			<ref bean="kualiModuleService"/>
+		</property>
+		<property name="parameterService">
+			<ref bean="parameterService"/>
+		</property>
+		<property name="verifyBillingFrequencyService">
+			<ref bean="verifyBillingFrequencyService"/>
+		</property>
+		<property name="workflowDocumentService">
+			<ref bean="workflowDocumentService"/>
+		</property>
+		<property name="universityDateService">
+			<ref bean="universityDateService"/>
+		</property>
+		<property name="optionsService" ref="optionsService"/>
+	</bean>
+
+
 </beans>
