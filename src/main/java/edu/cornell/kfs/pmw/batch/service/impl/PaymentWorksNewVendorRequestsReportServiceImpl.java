@@ -174,16 +174,16 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl extends PaymentWorks
     
     private void ensureSummaryLabelsHaveValues (PaymentWorksNewVendorRequestsBatchReportData reportData) {
         if (StringUtils.isEmpty(reportData.getRecordsFoundToProcessSummary().getItemLabel())) {
-            reportData.getRecordsFoundToProcessSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_PENDING_NEW_VENDORS_FOUND_LABEL));
+            reportData.getRecordsFoundToProcessSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPROVED_NEW_VENDORS_FOUND_LABEL));
         }
         if (StringUtils.isEmpty(reportData.getRecordsThatCouldNotBeProcessedSummary().getItemLabel())) {
-            reportData.getRecordsThatCouldNotBeProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_PENDING_NEW_VENDORS_NOT_PROCESSED_LABEL));
+            reportData.getRecordsThatCouldNotBeProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPROVED_NEW_VENDORS_NOT_PROCESSED_LABEL));
         }
         if (StringUtils.isEmpty(reportData.getRecordsProcessedSummary().getItemLabel())) {
-            reportData.getRecordsProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_PENDING_NEW_VENDORS_SUCCESSFULLY_PROCESSED_LABEL));
+            reportData.getRecordsProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPROVED_NEW_VENDORS_SUCCESSFULLY_PROCESSED_LABEL));
         }
         if (StringUtils.isEmpty(reportData.getRecordsWithProcessingErrorsSummary().getItemLabel())) {
-            reportData.getRecordsWithProcessingErrorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_PENDING_NEW_VENDORS_ERRORED_LABEL));
+            reportData.getRecordsWithProcessingErrorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPROVED_NEW_VENDORS_ERRORED_LABEL));
         }
     }
 

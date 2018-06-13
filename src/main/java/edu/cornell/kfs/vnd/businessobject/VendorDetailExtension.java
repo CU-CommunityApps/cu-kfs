@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.businessobject;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
     protected List<CuVendorCreditCardMerchant> vendorCreditCardMerchants;
     protected String procurementMethods;
 
+    protected boolean paymentWorksOriginatingIndicator;
+    protected Timestamp paymentWorksLastActivityTimestamp;
+    
     public VendorDetailExtension() {
         vendorCreditCardMerchants = new ArrayList<CuVendorCreditCardMerchant>();
 
@@ -249,4 +253,20 @@ public class VendorDetailExtension extends PersistableBusinessObjectExtensionBas
 		// Remove trailing ", " from the returned result.
 		return displayValue.substring(0, displayValue.length() - 2);
 	}
+
+    public boolean isPaymentWorksOriginatingIndicator() {
+        return paymentWorksOriginatingIndicator;
+    }
+
+    public void setPaymentWorksOriginatingIndicator(boolean paymentWorksOriginatingIndicator) {
+        this.paymentWorksOriginatingIndicator = paymentWorksOriginatingIndicator;
+    }
+
+    public Timestamp getPaymentWorksLastActivityTimestamp() {
+        return paymentWorksLastActivityTimestamp;
+    }
+
+    public void setPaymentWorksLastActivityTimestamp(Timestamp paymentWorksLastActivityTimestamp) {
+        this.paymentWorksLastActivityTimestamp = paymentWorksLastActivityTimestamp;
+    }
 }

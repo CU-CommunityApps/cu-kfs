@@ -7,11 +7,11 @@ import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReport
 
 public interface PaymentWorksWebServiceCallsService {
     
-    List<String> obtainPmwIdentifiersForPendingNewVendorRequests();
+    List<String> obtainPmwIdentifiersForApprovedNewVendorRequests();
     
     PaymentWorksVendor obtainPmwNewVendorRequestDetailForPmwIdentifier(String pmwNewVendorRequestId, PaymentWorksNewVendorRequestsBatchReportData reportData);
     
-    void sendApprovedStatusToPaymentWorksForNewVendor(String approvedVendorId);
+    void sendProcessedStatusToPaymentWorksForNewVendor(String processedVendorId);
     
     void sendRejectedStatusToPaymentWorksForNewVendor(String rejectedVendorId);
     
