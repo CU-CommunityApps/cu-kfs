@@ -53,6 +53,7 @@
     
     <bean id="paymentWorksNewVendorCreateKfsVendorStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsVendorStep">
         <property name="paymentWorksNewVendorRequestsService" ref="paymentWorksNewVendorRequestsService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
     </bean>
     
     <bean id="paymentWorksNewVendorCreateKfsAchBatchJob" parent="unscheduledJobDescriptor">
@@ -65,6 +66,7 @@
     
     <bean id="paymentWorksNewVendorCreateKfsAchStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsAchStep">
         <property name="paymentWorksNewVendorPayeeAchService" ref="paymentWorksNewVendorPayeeAchService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
     </bean>
 
     <bean id="paymentWorksRefreshAuthorizationTokenJob" parent="unscheduledJobDescriptor">

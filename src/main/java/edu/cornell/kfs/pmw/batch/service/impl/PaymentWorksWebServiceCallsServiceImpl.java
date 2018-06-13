@@ -45,25 +45,25 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     protected WebServiceCredentialService webServiceCredentialService;
     
     @Override
-    public List<String> obtainPmwIdentifiersForPendingNewVendorRequests() {
-        LOG.info("obtainPmwIdentifiersForPendingNewVendorRequests: Processing started.");
+    public List<String> obtainPmwIdentifiersForApprovedNewVendorRequests() {
+        LOG.info("obtainPmwIdentifiersForApprovedNewVendorRequests: Processing started.");
         List<String> pmwNewVendorIdentifiers = new ArrayList<String>();
-        List<PaymentWorksNewVendorRequestDTO> paymentWorksNewVendorRequestDTOs = retrieveAllPaymentWorksPendingNewVendorRequests();
+        List<PaymentWorksNewVendorRequestDTO> paymentWorksNewVendorRequestDTOs = retrieveAllPaymentWorksApprovedNewVendorRequests();
         pmwNewVendorIdentifiers = getAllPaymentWorksIdentifiersFromDTO(paymentWorksNewVendorRequestDTOs);
-        LOG.info("obtainPmwIdentifiersForPendingNewVendorRequests: Processing completed.");
+        LOG.info("obtainPmwIdentifiersForApprovedNewVendorRequests: Processing completed.");
         return pmwNewVendorIdentifiers;
     }
     
-    private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksPendingNewVendorRequests() {
+    private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksApprovedNewVendorRequests() {
         Client clientForNewVendorRequestsRootResults = null;
         Response responseForNewVendorRequestsRootResults = null;
         List<PaymentWorksNewVendorRequestDTO> pmwNewVendorIdentifiers = new ArrayList<PaymentWorksNewVendorRequestDTO>();
         
         try{
             clientForNewVendorRequestsRootResults = constructClientToUseForPagedResponses();
-            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildPaymentWorksPendingNewVendorRequestsURI());
+            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildPaymentWorksApprovedNewVendorRequestsURI());
             PaymentWorksNewVendorRequestsRootDTO newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
-            LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
+            LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
             
             while (thereAreMorePmwVendorIdsToRetrieve(newVendorsRoot)) {
                 pmwNewVendorIdentifiers.addAll(newVendorsRoot.getPmwNewVendorRequestsDTO().getPmwNewVendorRequests()); 
@@ -78,7 +78,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             }
             
             for (int i=0; i < pmwNewVendorIdentifiers.size(); i++) {
-                LOG.info("retrieveAllPaymentWorksPendingNewVendorRequests: PMW-Vendor-id=" + pmwNewVendorIdentifiers.get(i).getId());
+                LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests: PMW-Vendor-id=" + pmwNewVendorIdentifiers.get(i).getId());
             }
             
             return pmwNewVendorIdentifiers;
@@ -101,14 +101,14 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         CURestClientUtils.closeQuietly(responseForNewVendorRequestsRootResults);
     }
     
-    private URI buildPaymentWorksPendingNewVendorRequestsURI() {
+    private URI buildPaymentWorksApprovedNewVendorRequestsURI() {
         String URL = (new StringBuilder(getPaymentWorksUrl())
                 .append(PaymentWorksWebServiceConstants.NEW_VENDOR_REQUESTS)
                 .append(PaymentWorksWebServiceConstants.QUESTION_MARK)
                 .append(PaymentWorksWebServiceConstants.STATUS)
                 .append(CUKFSConstants.EQUALS_SIGN)
-                .append(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PENDING.code)).toString();
-        LOG.info("buildPaymentWorksPendingNewVendorRequestsURI: URL =" + URL);
+                .append(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.code)).toString();
+        LOG.info("buildPaymentWorksApprovedNewVendorRequestsURI: URL =" + URL);
         return buildURI(URL);
     }
     
@@ -144,11 +144,11 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
  
     @Override
-    public void sendApprovedStatusToPaymentWorksForNewVendor(String approvedVendorId) {
-        LOG.info("sendApprovedStatusToPaymentWorksForNewVendor: Processing started.");
-        String jsonString = buildPaymentWorksNewVendorUpdateStatusJson(approvedVendorId, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.getCodeAsString());
+    public void sendProcessedStatusToPaymentWorksForNewVendor(String approvedVendorId) {
+        LOG.info("sendProcessedStatusToPaymentWorksForNewVendor: Processing started.");
+        String jsonString = buildPaymentWorksNewVendorUpdateStatusJson(approvedVendorId, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getCodeAsString());
         updateNewVendorStatusInPaymentWorks(jsonString);
-        LOG.info("sendApprovedStatusToPaymentWorksForNewVendor: Processing complete.");
+        LOG.info("sendProcessedStatusToPaymentWorksForNewVendor: Processing complete.");
     }
     
     @Override

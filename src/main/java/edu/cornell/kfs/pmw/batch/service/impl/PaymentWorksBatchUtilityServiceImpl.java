@@ -72,6 +72,11 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
     
     @Override
+    public boolean isPaymentWorksIntegrationProcessingEnabled() {
+        return (retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND).equalsIgnoreCase(KFSConstants.ParameterValues.YES));
+    }
+    
+    @Override
     public String getFileContents(String fileName) {
         try {
             byte[] fileByteArray = safelyLoadFileBytes(fileName);

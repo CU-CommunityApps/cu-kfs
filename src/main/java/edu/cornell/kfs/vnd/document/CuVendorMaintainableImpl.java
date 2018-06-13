@@ -281,7 +281,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
     
     private boolean recordPvenRouteStatusChangeForPaymentWorksIsEnabled() {
-        return (getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND).equalsIgnoreCase(KFSConstants.ParameterValues.YES));
+        return getPaymentWorksBatchUtilityService().isPaymentWorksIntegrationProcessingEnabled();
     }
     
     private void processExistingPaymentWorksVendorApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
