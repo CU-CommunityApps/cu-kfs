@@ -183,7 +183,7 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl extends PaymentWorks
             reportData.getRecordsProcessedSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPROVED_NEW_VENDORS_SUCCESSFULLY_PROCESSED_LABEL));
         }
         if (StringUtils.isEmpty(reportData.getRecordsWithProcessingErrorsSummary().getItemLabel())) {
-            reportData.getRecordsWithProcessingErrorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPORVED_NEW_VENDORS_ERRORED_LABEL));
+            reportData.getRecordsWithProcessingErrorsSummary().setItemLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_APPROVED_NEW_VENDORS_ERRORED_LABEL));
         }
     }
 
