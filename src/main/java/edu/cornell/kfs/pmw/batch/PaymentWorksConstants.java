@@ -106,7 +106,6 @@ public class PaymentWorksConstants {
     }
     
     public enum PaymentWorksNewVendorRequestStatusType {
-        PENDING(0, "0", "Pending"),
         APPROVED(1, "1", "Approved"),
         PROCESSED(2, "2", "Processed"),
         REJECTED(4, "4", "Rejected");
