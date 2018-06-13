@@ -72,6 +72,10 @@ public abstract class PaymentWorksReportServiceImpl implements PaymentWorksRepor
                                                      pmwVendorWithErrors.getRequestingCompanyTinType(),
                                                      pmwVendorWithErrors.getRequestingCompanyCorporateEmail(),
                                                      pmwVendorWithErrors.getInitiatorNetId(),
+                                                     pmwVendorWithErrors.getKfsVendorHeaderGeneratedIdentifier(),
+                                                     pmwVendorWithErrors.getKfsVendorDetailAssignedIdentifier(),
+                                                     pmwVendorWithErrors.getKfsAchDocumentNumber(),
+                                                     pmwVendorWithErrors.getBankAcctNameOnAccount(),
                                                      errorMessages);
     }
     
