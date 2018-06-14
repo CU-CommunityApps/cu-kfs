@@ -59,7 +59,7 @@ public class AmazonWebServicesBillingServiceImplTest {
         ConfigurationService configService = mock(ConfigurationService.class);
         
         when(configService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_DESCRIPTION_FORMAT))
-            .thenReturn("{0}-{1} invoice for {2}");
+            .thenReturn("AWS {0}-{1} invoice for {2}");
         
         when(configService.getPropertyValueAsString(CuFPKeyConstants.AWS_BILLING_SERVICE_DOCUMENT_EXPLANATION_FORMAT))
             .thenReturn("AWS account {0}");
@@ -89,7 +89,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     public void testBuildDocumentDescription1() {
         String departmentName = "CIT";
         String results = amazonService.buildDocumentDescription(departmentName);
-        String expected = "July-2016 invoice for CIT";
+        String expected = "AWS July-2016 invoice for CIT";
         assertEquals(expected, results);
     }
     
@@ -97,7 +97,7 @@ public class AmazonWebServicesBillingServiceImplTest {
     public void testBuildDocumentDescription2() {
         String departmentName = "A REALLY LONG DEPARTMENT NAME";
         String results = amazonService.buildDocumentDescription(departmentName);
-        String expected = "July-2016 invoice for A REALLY LONG DEPA";
+        String expected = "AWS July-2016 invoice for A REALLY LONG ";
         assertEquals(expected, results);
     }
     
