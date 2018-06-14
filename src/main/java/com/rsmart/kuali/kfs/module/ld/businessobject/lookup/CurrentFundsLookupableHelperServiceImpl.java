@@ -15,7 +15,7 @@
  */
 package com.rsmart.kuali.kfs.module.ld.businessobject.lookup;
 
-import static org.apache.commons.collections.IteratorUtils.toList;
+import org.apache.commons.collections4.IteratorUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -120,8 +120,8 @@ public class CurrentFundsLookupableHelperServiceImpl extends AbstractLookupableH
         }
 
         // Parse the map and call the DAO to process the inquiry
-        Collection<AccountStatusCurrentFunds> searchResultsCollection = buildCurrentFundsCollection(toList(laborDao.getCurrentFunds(fieldValues, isConsolidated)), isConsolidated, pendingEntryOption);
-
+        Collection<AccountStatusCurrentFunds> searchResultsCollection = buildCurrentFundsCollection(IteratorUtils.toList(laborDao.getCurrentFunds(fieldValues, isConsolidated)), isConsolidated, pendingEntryOption);
+        
         // update search results according to the selected pending entry option
         laborInquiryOptionsService.updateCurrentFundsByPendingLedgerEntry(searchResultsCollection, fieldValues, pendingEntryOption, isConsolidated);
 

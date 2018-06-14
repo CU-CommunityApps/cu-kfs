@@ -453,7 +453,7 @@
     </error-page>
 
     <error-page>
-        <location>/error.html</location>
+        <location>/ErrorHandlerServlet</location>
     </error-page>
 
 </web-app>

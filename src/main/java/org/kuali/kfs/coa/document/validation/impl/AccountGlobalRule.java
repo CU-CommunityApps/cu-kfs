@@ -199,10 +199,10 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		// check if there are any accounts
 		if (details.size() == 0) {
-
-			putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "." + KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_NO_ACCOUNTS);
-
-			success = false;
+		    
+	            putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountGlobalDetails.accountNumber",
+	                    KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_NO_ACCOUNTS);
+	            success = false;
 		}
 		else {
 			// check each account
@@ -253,7 +253,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		boolean success = true;
 
-		// this set confirms that all fields which are grouped (ie, foreign keys of a referenc
+		// this set confirms that all fields which are grouped (ie, foreign keys of a reference
 		// object), must either be none filled out, or all filled out.
 		success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.CONTINUATION_ACCOUNT);
 		success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.INCOME_STREAM_ACCOUNT);
@@ -631,18 +631,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		return success;
 	}
 
-	/*
-	 * protected boolean checkAccountExpirationDateValidTodayOrEarlier(Account newAccount) { // get today's date, with no time
-	 * component Timestamp todaysDate = getDateTimeService().getCurrentTimestamp();
-	 * todaysDate.setTime(KfsDateUtils.truncate(todaysDate, Calendar.DAY_OF_MONTH).getTime()); // TODO: convert this to using Wes'
-	 * kuali KfsDateUtils once we're using Date's instead of Timestamp // get the expiration date, if any Timestamp expirationDate =
-	 * newAccount.getAccountExpirationDate(); if (ObjectUtils.isNull(expirationDate)) { putFieldError("accountExpirationDate",
-	 * KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID); return false; } // when closing an account,
-	 * the account expiration date must be the current date or earlier expirationDate.setTime(KfsDateUtils.truncate(expirationDate,
-	 * Calendar.DAY_OF_MONTH).getTime()); if (expirationDate.after(todaysDate)) { putFieldError("accountExpirationDate",
-	 * KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_CANNOT_BE_CLOSED_EXP_DATE_INVALID); return false; } return true; }
-	 */
-
 	/**
 	 * This method checks to see if the updated expiration is not a valid one Only gets checked for specific {@link SubFundGroup}s
 	 *
@@ -656,12 +644,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		Date newExpDate = newAccountGlobal.getAccountExpirationDate();
 
 		// When updating an account expiration date, the date must be today or later
-		// (except for C&G accounts). Only run this test if this maint doc
-		// is an edit doc
 		boolean expDateHasChanged = false;
 
-		// if the old version of the account had no expiration date, and the new
-		// one has a date
+		// if the old version of the account had no expiration date, and the new one has a date
 		if (ObjectUtils.isNull(oldExpDate) && ObjectUtils.isNotNull(newExpDate)) {
 			expDateHasChanged = true;
 		}
@@ -684,11 +669,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			return false;
 		}
 
-		// get the fundGroup code
 		String fundGroupCode = newAccountGlobal.getSubFundGroup().getFundGroupCode().trim();
 
-		// if the account is part of the CG fund group, then this rule does not
-		// apply, so we're done
+		// if the account is part of the CG fund group, then this rule does not apply, so we're done
 		if (SpringContext.getBean(SubFundGroupService.class).isForContractsAndGrants(newAccountGlobal.getSubFundGroup())) {
 			return false;
 		}
@@ -720,8 +703,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		String chartCode = accountGlobals.getContinuationFinChrtOfAcctCd();
 		String accountNumber = accountGlobals.getContinuationAccountNumber();
 
-		// if either chartCode or accountNumber is not entered, then we
-		// cant continue, so exit
+		// if either chartCode or accountNumber is not entered, then we cant continue, so exit
 		if (StringUtils.isBlank(chartCode) || StringUtils.isBlank(accountNumber)) {
 			return result;
 		}

@@ -83,10 +83,16 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         PaymentSourceWireTransfer dvWireTransfer = dvDocument.getWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
-        if ((StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, dvDocument.getDisbVchrPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
-            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
-
-            boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
+        if ((StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK,
+                dvDocument.getDisbVchrPaymentMethodCode()) || StringUtils.equals(
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
+                dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
+            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+                    KFSKeyConstants.QUESTION_CLEAR_UNNEEDED_TAB);
+            
+            boolean clearTab = super.askOrAnalyzeYesNoQuestion(
+                    KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID,
+                    questionText);
             if (clearTab) {
                 // NOTE: Can't replace with new instance because Foreign Draft uses same object
                 clearWireTransferValues(dvWireTransfer);

@@ -429,9 +429,11 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
      */
     @Override
     public List<String> getRequiredDirectoryNames() {
-        return new ArrayList<String>() {{
-            add(outgoingDirectoryName);
-        }};
+        return new ArrayList<String>() {
+            {
+                add(outgoingDirectoryName);
+            }
+        };
     }
 
 }
