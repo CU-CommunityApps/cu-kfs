@@ -24,13 +24,13 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
 public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorksReportServiceImpl implements PaymentWorksNewVendorPayeeAchReportService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorPayeeAchReportServiceImpl.class);
 
-    private static final String VENDOR_ID_FORMAT = "%s-%s";
+    private static final String VENDOR_NUMBER_FORMAT = "%s-%s";
 
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;
     protected PaymentWorksDataTransformationService paymentWorksDataTransformationService;
 
-    private String kfsVendorIdLabel;
+    private String kfsVendorNumberLabel;
     private String kfsAchDocumentNumberLabel;
     private String bankAcctNameOnAccountLabel;
     private String disapprovedVendorsSubTitle;
@@ -138,7 +138,7 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getTaxIdTypeLabel(), getPaymentWorksDataTransformationService().convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorSubmitterEmailLabel(), reportItem.getPmwSubmitterEmailAddress());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getInitiatorNetidLabel(), reportItem.getPmwInitiatorNetId());
-                getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsVendorIdLabel(), formatVendorIdForReport(reportItem));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsVendorNumberLabel(), formatVendorNumberForReport(reportItem));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsAchDocumentNumberLabel(), reportItem.getKfsAchDocumentNumber());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getBankAcctNameOnAccountLabel(), reportItem.getBankAcctNameOnAccount());
                 getReportWriterService().writeNewLines(1);
@@ -156,10 +156,10 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         }
     }
     
-    private String formatVendorIdForReport(PaymentWorksBatchReportVendorItem reportItem) {
+    private String formatVendorNumberForReport(PaymentWorksBatchReportVendorItem reportItem) {
         if (ObjectUtils.isNotNull(reportItem.getKfsVendorHeaderGeneratedIdentifier())
                 || ObjectUtils.isNotNull(reportItem.getKfsVendorDetailAssignedIdentifier())) {
-            return String.format(VENDOR_ID_FORMAT,
+            return String.format(VENDOR_NUMBER_FORMAT,
                     defaultToEmptyIfNull(reportItem.getKfsVendorHeaderGeneratedIdentifier()),
                     defaultToEmptyIfNull(reportItem.getKfsVendorDetailAssignedIdentifier()));
         } else {
@@ -277,16 +277,16 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         return unprocessedSubTitle;
     }
 
-    public String getKfsVendorIdLabel() {
-        if (ObjectUtils.isNull(kfsVendorIdLabel)) {
-            setKfsVendorIdLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
-                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_KFS_VENDOR_ID_LABEL));
+    public String getKfsVendorNumberLabel() {
+        if (ObjectUtils.isNull(kfsVendorNumberLabel)) {
+            setKfsVendorNumberLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_KFS_VENDOR_NUMBER_LABEL));
         }
-        return kfsVendorIdLabel;
+        return kfsVendorNumberLabel;
     }
 
-    public void setKfsVendorIdLabel(String kfsVendorIdLabel) {
-        this.kfsVendorIdLabel = kfsVendorIdLabel;
+    public void setKfsVendorNumberLabel(String kfsVendorNumberLabel) {
+        this.kfsVendorNumberLabel = kfsVendorNumberLabel;
     }
 
     public String getKfsAchDocumentNumberLabel() {
