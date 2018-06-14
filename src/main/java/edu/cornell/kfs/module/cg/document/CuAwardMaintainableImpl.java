@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.cg.document;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.document.AwardMaintainableImpl;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 public class CuAwardMaintainableImpl extends AwardMaintainableImpl {
 

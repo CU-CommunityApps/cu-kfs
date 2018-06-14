@@ -28,6 +28,7 @@ import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
