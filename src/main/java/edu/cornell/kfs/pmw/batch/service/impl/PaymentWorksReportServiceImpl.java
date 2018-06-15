@@ -41,6 +41,7 @@ public abstract class PaymentWorksReportServiceImpl implements PaymentWorksRepor
     protected String vendorSubmitterEmailLabel = null;
     protected String initiatorNetidLabel = null;
     protected String errorsLabel = null;
+    protected String kfsVendorNumberLabel = null;
     
     public void sendEmailThatNoDataWasFoundToProcess(List<String> emailSubjectItems, List<String> emailBodyItems) {
         LOG.info("sendEmailThatNoDataWasFoundToProcess: Preparing to send email that no data was found to process.");
@@ -249,6 +250,18 @@ public abstract class PaymentWorksReportServiceImpl implements PaymentWorksRepor
 
     public void setErrorsLabel(String errorsLabel) {
         this.errorsLabel = errorsLabel;
+    }
+    
+    public String getKfsVendorNumberLabel() {
+        if (ObjectUtils.isNull(kfsVendorNumberLabel)) {
+            setKfsVendorNumberLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_KFS_VENDOR_NUMBER_LABEL));
+        }
+        return kfsVendorNumberLabel;
+    }
+
+    public void setKfsVendorNumberLabel(String kfsVendorNumberLabel) {
+        this.kfsVendorNumberLabel = kfsVendorNumberLabel;
     }
     
     public abstract String getToAddress();

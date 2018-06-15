@@ -24,13 +24,10 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
 public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorksReportServiceImpl implements PaymentWorksNewVendorPayeeAchReportService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorPayeeAchReportServiceImpl.class);
 
-    private static final String VENDOR_NUMBER_FORMAT = "%s-%s";
-
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;
     protected PaymentWorksDataTransformationService paymentWorksDataTransformationService;
 
-    private String kfsVendorNumberLabel;
     private String kfsAchDocumentNumberLabel;
     private String bankAcctNameOnAccountLabel;
     private String disapprovedVendorsSubTitle;
@@ -132,13 +129,13 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
                 String vendorName = (StringUtils.isNotBlank(reportItem.getPmwVendorLegelName()) ? reportItem.getPmwVendorLegelName() : (reportItem.getPmwVendorLegelLastName() + "," + reportItem.getPmwVendorLegelFirstName()));
 
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getPaymentWorksVendorIdLabel(), reportItem.getPmwVendorId());
-                getReportWriterService().writeFormattedMessageLine(rowFormat, getSubmittedDateLabel(), formatSubmissionTimeStampForReport(reportItem.getPmwSubmissionTimeStamp()));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getSubmittedDateLabel(), getPaymentWorksDataTransformationService().formatReportSubmissionTimeStamp(reportItem.getPmwSubmissionTimeStamp()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorTypeLabel(), reportItem.getPmwVendorType());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorNameLabel(), vendorName);
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getTaxIdTypeLabel(), getPaymentWorksDataTransformationService().convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorSubmitterEmailLabel(), reportItem.getPmwSubmitterEmailAddress());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getInitiatorNetidLabel(), reportItem.getPmwInitiatorNetId());
-                getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsVendorNumberLabel(), formatVendorNumberForReport(reportItem));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsVendorNumberLabel(), getPaymentWorksDataTransformationService().formatReportVendorNumber(reportItem));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsAchDocumentNumberLabel(), reportItem.getKfsAchDocumentNumber());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getBankAcctNameOnAccountLabel(), reportItem.getBankAcctNameOnAccount());
                 getReportWriterService().writeNewLines(1);
@@ -148,29 +145,6 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         }
     }
     
-    private String formatSubmissionTimeStampForReport(Timestamp pmwSubmissionTimeStamp) {
-        if (ObjectUtils.isNotNull(pmwSubmissionTimeStamp)) {
-            return PaymentWorksDataTransformationService.PROCESSING_TIMESTAMP_REPORT_FORMATTER.format(pmwSubmissionTimeStamp);
-        } else {
-            return KFSConstants.EMPTY_STRING;
-        }
-    }
-    
-    private String formatVendorNumberForReport(PaymentWorksBatchReportVendorItem reportItem) {
-        if (ObjectUtils.isNotNull(reportItem.getKfsVendorHeaderGeneratedIdentifier())
-                || ObjectUtils.isNotNull(reportItem.getKfsVendorDetailAssignedIdentifier())) {
-            return String.format(VENDOR_NUMBER_FORMAT,
-                    defaultToEmptyIfNull(reportItem.getKfsVendorHeaderGeneratedIdentifier()),
-                    defaultToEmptyIfNull(reportItem.getKfsVendorDetailAssignedIdentifier()));
-        } else {
-            return KFSConstants.EMPTY_STRING;
-        }
-    }
-
-    private String defaultToEmptyIfNull(Integer value) {
-        return ObjectUtils.isNotNull(value) ? value.toString() : KFSConstants.EMPTY_STRING;
-    }
-
     private void writeErrorItemMessages(List<String> errorMessages) {
         LOG.debug("writeErrorItemMessages, entered");
         getReportWriterService().writeFormattedMessageLine(this.getErrorsLabel());
@@ -275,18 +249,6 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
             setUnprocessedSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_UNPROCESSED_VENDOR_ACHS_SUB_TITLE));
         }
         return unprocessedSubTitle;
-    }
-
-    public String getKfsVendorNumberLabel() {
-        if (ObjectUtils.isNull(kfsVendorNumberLabel)) {
-            setKfsVendorNumberLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
-                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_KFS_VENDOR_NUMBER_LABEL));
-        }
-        return kfsVendorNumberLabel;
-    }
-
-    public void setKfsVendorNumberLabel(String kfsVendorNumberLabel) {
-        this.kfsVendorNumberLabel = kfsVendorNumberLabel;
     }
 
     public String getKfsAchDocumentNumberLabel() {
