@@ -10,19 +10,17 @@ public class CuObjectCodeActivationGlobalAuthorizer extends FinancialSystemMaint
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobalAuthorizer.class);
     
     public boolean canCopy(Document document, Person user) {
-        boolean canCopy = super.canCopy(document, user) && isDocumentFinalized(document);
-        if (LOG.isInfoEnabled()) {
-            LOG.info("canCopy, document " + document.getDocumentNumber() + ", user: " + user.getPrincipalName() + ", can copy: " + canCopy);
+        boolean canCopy = super.canCopy(document, user);
+        boolean isFinal = isDocumentFinalized(document);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("canCopy, document " + document.getDocumentNumber() + ", user: " + user.getPrincipalName() + ", can copy: " + canCopy + ", isFinal: " + isFinal);
         }
-        return canCopy;
+        return canCopy && isFinal;
     }
     
     private boolean isDocumentFinalized(Document document) {
         WorkflowDocument wd = document.getDocumentHeader().getWorkflowDocument();
         boolean isFinalized = wd.isFinal();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("isDocumentFinalized, document: " + document.getDocumentNumber() + ", is final: " + isFinalized);
-        }
         return isFinalized;
     }
 
