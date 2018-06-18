@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.document;
 
-import static org.kuali.kfs.sys.KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE;
-
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -32,7 +30,7 @@ public class PreEncumbranceDocument extends org.kuali.kfs.fp.document.PreEncumbr
 
     @Override
     public void customizeExplicitGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
-        explicitEntry.setFinancialBalanceTypeCode(BALANCE_TYPE_PRE_ENCUMBRANCE);
+        explicitEntry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE);
         AccountingLine accountingLine = (AccountingLine) postable;
 
         // set the reversal date to what was chosen by the user in the interface

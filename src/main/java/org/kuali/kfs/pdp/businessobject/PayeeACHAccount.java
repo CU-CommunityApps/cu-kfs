@@ -485,7 +485,8 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
 
                 return super.accept(field);
             }
-        };
+        }
+        
         ReflectionToStringBuilder toStringBuilder = new PayeeACHAccountToStringBuilder(this);
         return toStringBuilder.toString();
     }
