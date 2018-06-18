@@ -1781,7 +1781,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
         //KFSMI-9746: added this for null safe checking.
         if (oldest != null) {
-            return oldest.getDocumentHeader();
+            return oldest;
         }
 
         return this;

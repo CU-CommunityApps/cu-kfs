@@ -64,7 +64,7 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
 
                 // check total cannot decrease
                 if (!persistedDocument.getDocumentHeader().getWorkflowDocument()
-                        .isCompletionRequested() && persistedDocument.getDisbVchrCheckTotalAmount().isLessThan(
+                        .isCompletionRequested() && persistedDocument.getDisbVchrCheckTotalAmount().equals(
                         dvDocument.getDisbVchrCheckTotalAmount())) {
                     GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DISB_VCHR_CHECK_TOTAL_AMOUNT, CUKFSKeyConstants.ERROR_DV_CHECK_TOTAL_NO_CHANGE);
                     return false;

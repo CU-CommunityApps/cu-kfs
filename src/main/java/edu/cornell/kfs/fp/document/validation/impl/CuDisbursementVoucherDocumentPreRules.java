@@ -89,7 +89,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
                 KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
                 dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
             String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
-                    KFSKeyConstants.QUESTION_CLEAR_UNNEEDED_TAB);
+                    CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
             
             boolean clearTab = super.askOrAnalyzeYesNoQuestion(
                     KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID,
