@@ -46,6 +46,9 @@ public class PaymentWorksKeyConstants {
     public static final String NO_VALIDATION_ERRORS_TO_OUTPUT_MESSAGE = "message.paymentworks.no.validation.errors";
     public static final String NO_RECORDS_PROCESSED_MESSAGE = "message.paymentworks.no.records.processed";
     public static final String MANUAL_DATA_ENTRY_NOT_REQUIRED_MESSAGE = "message.paymentworks.no.records.needing.manual.data.entry";
+    public static final String NO_DISAPPROVED_VENDORS_WITH_PENDING_ACH_DATA_MESSAGE = "message.paymentworks.no.disapproved.vendors.with.pending.ach.data";
+    public static final String NO_VENDORS_WITHOUT_ACH_DATA_MESSAGE = "message.paymentworks.no.vendors.without.ach.data";
+    public static final String NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE = "message.paymentworks.no.records.generating.exceptions";
     
     //PaymentWorks Business Rule Failure Messages
     public static final String ERROR_COMBINED_LEGAL_FIRST_LAST_NAME_TOO_LONG_FOR_KFS = "error.paymentworks.combined.last.first.names.too.long";

@@ -17,6 +17,10 @@ public class PaymentWorksBatchReportVendorItem {
     private String pmwTaxIdType;
     private String pmwSubmitterEmailAddress;
     private String pmwInitiatorNetId;
+    private Integer kfsVendorHeaderGeneratedIdentifier;
+    private Integer kfsVendorDetailAssignedIdentifier;
+    private String kfsAchDocumentNumber;
+    private String bankAcctNameOnAccount;
     private List<String> errorMessages;
     
     public PaymentWorksBatchReportVendorItem() {
@@ -29,6 +33,10 @@ public class PaymentWorksBatchReportVendorItem {
         this.pmwTaxIdType = KFSConstants.EMPTY_STRING;
         this.pmwSubmitterEmailAddress = KFSConstants.EMPTY_STRING;
         this.pmwInitiatorNetId = KFSConstants.EMPTY_STRING;
+        this.kfsVendorHeaderGeneratedIdentifier = null;
+        this.kfsVendorDetailAssignedIdentifier = null;
+        this.kfsAchDocumentNumber = KFSConstants.EMPTY_STRING;
+        this.bankAcctNameOnAccount = KFSConstants.EMPTY_STRING;
         this.errorMessages = new ArrayList<String>();
     }
     
@@ -40,7 +48,11 @@ public class PaymentWorksBatchReportVendorItem {
            String pmwVendorLegelLastName,
            String pmwTaxIdType,
            String pmwSubmitterEmailAddress,
-           String pmwInitiatorNetId, 
+           String pmwInitiatorNetId,
+           Integer kfsVendorHeaderGeneratedIdentifier,
+           Integer kfsVendorDetailAssignedIdentifier,
+           String kfsAchDocumentNumber,
+           String bankAcctNameOnAccount,
            List<String> errorMessages) {
        
         this.pmwVendorId = pmwVendorId;
@@ -52,6 +64,10 @@ public class PaymentWorksBatchReportVendorItem {
         this.pmwTaxIdType = pmwTaxIdType;
         this.pmwSubmitterEmailAddress = pmwSubmitterEmailAddress;
         this.pmwInitiatorNetId = pmwInitiatorNetId;
+        this.kfsVendorHeaderGeneratedIdentifier = kfsVendorHeaderGeneratedIdentifier;
+        this.kfsVendorDetailAssignedIdentifier = kfsVendorDetailAssignedIdentifier;
+        this.kfsAchDocumentNumber = kfsAchDocumentNumber;
+        this.bankAcctNameOnAccount = bankAcctNameOnAccount;
         this.errorMessages = errorMessages;
     }
 
@@ -125,6 +141,38 @@ public class PaymentWorksBatchReportVendorItem {
 
     public void setPmwInitiatorNetId(String pmwInitiatorNetId) {
         this.pmwInitiatorNetId = pmwInitiatorNetId;
+    }
+
+    public Integer getKfsVendorHeaderGeneratedIdentifier() {
+        return kfsVendorHeaderGeneratedIdentifier;
+    }
+
+    public void setKfsVendorHeaderGeneratedIdentifier(Integer kfsVendorHeaderGeneratedIdentifier) {
+        this.kfsVendorHeaderGeneratedIdentifier = kfsVendorHeaderGeneratedIdentifier;
+    }
+
+    public Integer getKfsVendorDetailAssignedIdentifier() {
+        return kfsVendorDetailAssignedIdentifier;
+    }
+
+    public void setKfsVendorDetailAssignedIdentifier(Integer kfsVendorDetailAssignedIdentifier) {
+        this.kfsVendorDetailAssignedIdentifier = kfsVendorDetailAssignedIdentifier;
+    }
+
+    public String getKfsAchDocumentNumber() {
+        return kfsAchDocumentNumber;
+    }
+
+    public void setKfsAchDocumentNumber(String kfsAchDocumentNumber) {
+        this.kfsAchDocumentNumber = kfsAchDocumentNumber;
+    }
+
+    public String getBankAcctNameOnAccount() {
+        return bankAcctNameOnAccount;
+    }
+
+    public void setBankAcctNameOnAccount(String bankAcctNameOnAccount) {
+        this.bankAcctNameOnAccount = bankAcctNameOnAccount;
     }
 
     public List<String> getErrorMessages() {
