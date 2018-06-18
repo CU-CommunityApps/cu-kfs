@@ -115,6 +115,8 @@ public class WebUtils {
      */
     public static final String FILE_UPLOAD_LIMIT_EXCEEDED_EXCEPTION_ALREADY_THROWN = "fileUploadLimitExceededExceptionAlreadyThrown";
 
+    public static String KEY_KUALI_FORM_IN_SESSION = "KualiForm";
+    
     private static ConfigurationService configurationService;
 
     private static URLCodec urlCodec = new URLCodec("UTF-8");
@@ -416,9 +418,6 @@ public class WebUtils {
         String key = "";
         if (!StringUtils.isBlank(tabTitle)) {
             key = tabTitle.replaceAll("\\W", "");
-            // if (key.length() > 25) {
-            // key = key.substring(0, 24);
-            // }
         }
 
         return key;
@@ -426,8 +425,6 @@ public class WebUtils {
 
     public static void getMultipartParameters(HttpServletRequest request, ActionServletWrapper servletWrapper,
                                               ActionForm form, ActionMapping mapping) {
-        Map params = new HashMap();
-
         // Get the ActionServletWrapper from the form bean
         // ActionServletWrapper servletWrapper = getServletWrapper();
 
@@ -546,8 +543,6 @@ public class WebUtils {
         }
         return isDocumentSession(document, form);
     }
-
-    public static String KEY_KUALI_FORM_IN_SESSION = "KualiForm";
 
     public static ActionForm getKualiForm(PageContext pageContext) {
         return getKualiForm((HttpServletRequest) pageContext.getRequest());

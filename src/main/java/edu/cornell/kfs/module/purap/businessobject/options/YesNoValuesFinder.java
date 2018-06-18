@@ -11,9 +11,6 @@ public class YesNoValuesFinder extends KeyValuesBase {
 
 	private static final long serialVersionUID = 1L;
 
-	/*
-     * @see org.kuali.keyvalues.KeyValuesFinder#getKeyValues()
-     */
     public List<KeyValue> getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();
         

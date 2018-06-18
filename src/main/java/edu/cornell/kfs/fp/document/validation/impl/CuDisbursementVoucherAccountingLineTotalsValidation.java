@@ -57,12 +57,15 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
                     return true;
                 }
                 // KFSMI- 5183
-                if (persistedDocument.getDocumentHeader().getWorkflowDocument().isSaved() && persistedDocument.getDisbVchrCheckTotalAmount().isZero()) {
+                if (persistedDocument.getDocumentHeader().getWorkflowDocument().isSaved() && persistedDocument
+                        .getDisbVchrCheckTotalAmount().isZero()) {
                     return true;
                 }
 
                 // check total cannot decrease
-                if (!persistedDocument.getDocumentHeader().getWorkflowDocument().isCompletionRequested() && (!persistedDocument.getDisbVchrCheckTotalAmount().equals(dvDocument.getDisbVchrCheckTotalAmount()))) {
+                if (!persistedDocument.getDocumentHeader().getWorkflowDocument()
+                        .isCompletionRequested() && !persistedDocument.getDisbVchrCheckTotalAmount().equals(
+                        dvDocument.getDisbVchrCheckTotalAmount())) {
                     GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DISB_VCHR_CHECK_TOTAL_AMOUNT, CUKFSKeyConstants.ERROR_DV_CHECK_TOTAL_NO_CHANGE);
                     return false;
                 }

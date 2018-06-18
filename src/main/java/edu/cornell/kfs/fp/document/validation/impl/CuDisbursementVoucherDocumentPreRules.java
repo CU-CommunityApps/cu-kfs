@@ -28,6 +28,7 @@ import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -83,10 +84,16 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         PaymentSourceWireTransfer dvWireTransfer = dvDocument.getWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
-        if ((StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, dvDocument.getDisbVchrPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
-            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
-
-            boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
+        if ((StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK,
+                dvDocument.getDisbVchrPaymentMethodCode()) || StringUtils.equals(
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
+                dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
+            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+                    CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
+            
+            boolean clearTab = super.askOrAnalyzeYesNoQuestion(
+                    KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID,
+                    questionText);
             if (clearTab) {
                 // NOTE: Can't replace with new instance because Foreign Draft uses same object
                 clearWireTransferValues(dvWireTransfer);

@@ -55,11 +55,6 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
     private String cgReportingCode;
     private String code;
     private ContractGrantReportingCode contractGrantReportingCode;
-    
-
-   
-    ;
-
 
     public void populate(ObjectCode old, ObjectCodeGlobalDetail detail) {
     	super.populate(old, detail);
@@ -75,16 +70,11 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 
     }
 
-	/**
-	 * @return the sunyObjectCode
-	 */
 	public String getSunyObjectCode() {
 		return sunyObjectCode;
 	}
 
-	/**
-	 * @param sunyObjectCode the sunyObjectCode to set
-	 */
+
 	public void setSunyObjectCode(String sunyObjectCode) {
 		this.sunyObjectCode = sunyObjectCode;
 	}
@@ -93,23 +83,14 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		return financialObjectCodeDescr;
 	}
 
-	/**
-	 * @param financialObjectCodeDescr the financialObjectCodeDescr to set
-	 */
 	public void setFinancialObjectCodeDescr(String financialObjectCodeDescr) {
 		this.financialObjectCodeDescr = financialObjectCodeDescr;
 	}
 
-	/**
-	 * @return the cgReportingCode
-	 */
 	public String getCgReportingCode() {
 		return this.cgReportingCode;
 	}
 
-	/**
-	 * @param cgReportingCode the cgReportingCode to set
-	 */
 	public void setCgReportingCode(String cgReportingCode) {
 		this.cgReportingCode = cgReportingCode;
 		this.code = cgReportingCode;
@@ -121,16 +102,10 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		contractGrantReportingCode = (ContractGrantReportingCode) bos.findByPrimaryKey(ContractGrantReportingCode.class, keys );
 	}
 	
-	/**
-	 * @return the code
-	 */
 	public String getCode() {
 		return this.code;
 	}
 
-	/**
-	 * @param code the code to set
-	 */
 	public void setCode(String code) {
 		this.code = code;
 		this.cgReportingCode = code;
@@ -142,16 +117,10 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		contractGrantReportingCode = (ContractGrantReportingCode) bos.findByPrimaryKey(ContractGrantReportingCode.class, keys );
 	}
 
-	/**
-	 * @return the contractGrantReportingCode
-	 */
 	public ContractGrantReportingCode getContractGrantReportingCode() {
 		return this.contractGrantReportingCode;
 	}	
 
-	/**
-	 * @param contractGrantReportingCode the contractGrantReportingCode to set
-	 */
 	public void setContractGrantReportingCode(ContractGrantReportingCode contractGrantReportingCode) {
 		this.contractGrantReportingCode = contractGrantReportingCode;
 	}

@@ -123,10 +123,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
-import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
-import static org.kuali.rice.core.api.util.type.KualiDecimal.ZERO;
-
 /**
  * Purchase Order Document
  */
@@ -213,19 +209,18 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public boolean isInquiryRendered() {
         String applicationDocumentStatus = getApplicationDocumentStatus();
 
-        if ( isPostingYearPrior() &&
-             ( PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED.equals(applicationDocumentStatus) ||
-               PurapConstants.PurchaseOrderStatuses.APPDOC_CANCELLED.equals(applicationDocumentStatus) ||
-               PurapConstants.PurchaseOrderStatuses.APPDOC_VOID.equals(applicationDocumentStatus) ) )  {
-               return false;
-        }
-        else {
+        if (isPostingYearPrior() &&
+            (PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED.equals(applicationDocumentStatus) ||
+                PurapConstants.PurchaseOrderStatuses.APPDOC_CANCELLED.equals(applicationDocumentStatus) ||
+                PurapConstants.PurchaseOrderStatuses.APPDOC_VOID.equals(applicationDocumentStatus))) {
+            return false;
+        } else {
             return true;
         }
     }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#getDocumentTitle()
+     * @see org.kuali.rice.krad.document.DocumentBase#getDocumentTitle()
      */
     @Override
     public String getDocumentTitle() {
@@ -262,10 +257,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             routeLevel = nodeNames.iterator().next();
         }
 
-        if ( StringUtils.equals(getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN)) {
+        if (StringUtils.equals(getApplicationDocumentStatus(), PurchaseOrderStatuses.APPDOC_OPEN)) {
             documentTitle = super.getDocumentTitle();
-        }
-            else if (routeLevel.equals(PurchaseOrderStatuses.NODE_BUDGET_OFFICE_REVIEW) || routeLevel.equals(PurchaseOrderStatuses.NODE_CONTRACTS_AND_GRANTS_REVIEW)) {
+        } else if (routeLevel.equals(PurchaseOrderStatuses.NODE_BUDGET_OFFICE_REVIEW) || routeLevel.equals(PurchaseOrderStatuses.NODE_CONTRACTS_AND_GRANTS_REVIEW)) {
             // Budget & C&G approval levels
             documentTitle = "PO: " + poNumber + " Account Number: " + chartAcctCode + "-" + accountNumber + " Dept: " + chartCode + "-" + orgCode + " Delivery Campus: " + deliveryCampus;
         }
@@ -286,7 +280,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      */
     @Override
     public Class getSourceAccountingLineClass() {
-      //NOTE: do not do anything with this method as it is used by routing etc!
+        //NOTE: do not do anything with this method as it is used by routing etc!
         return super.getSourceAccountingLineClass();
     }
 
@@ -298,8 +292,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected PurApAccountingLine getFirstAccount() {
         // loop through items, and pick the first item with non-empty accounting lines
         if (getItems() != null && !getItems().isEmpty()) {
-            for (Iterator iter = getItems().iterator(); iter.hasNext();) {
-                PurchaseOrderItem item = (PurchaseOrderItem)iter.next();
+            for (Iterator iter = getItems().iterator(); iter.hasNext(); ) {
+                PurchaseOrderItem item = (PurchaseOrderItem) iter.next();
                 if (item.isConsideredEntered() && item.getSourceAccountingLines() != null && !item.getSourceAccountingLines().isEmpty()) {
                     // accounting lines are not empty so pick the first account
                     PurApAccountingLine accountingLine = item.getSourceAccountingLine(0);
@@ -342,8 +336,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
         if (assignedUser != null) {
             assignedUserPrincipalId = assignedUser.getPrincipalId();
-        }
-        else {
+        } else {
             assignedUserPrincipalId = null;
         }
     }
@@ -427,25 +420,25 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
 
         // Set outstanding encumbered quantity/amount on items
-        for (Iterator items = this.getItems().iterator(); items.hasNext();) {
+        for (Iterator items = this.getItems().iterator(); items.hasNext(); ) {
             PurchaseOrderItem item = (PurchaseOrderItem) items.next();
 
             // Set quantities
             item.setItemOutstandingEncumberedQuantity(item.getItemQuantity());
             if (item.getItemInvoicedTotalQuantity() == null) {
-                item.setItemInvoicedTotalQuantity(ZERO);
+                item.setItemInvoicedTotalQuantity(KualiDecimal.ZERO);
             }
             if (item.getItemInvoicedTotalAmount() == null) {
-                item.setItemInvoicedTotalAmount(ZERO);
+                item.setItemInvoicedTotalAmount(KualiDecimal.ZERO);
             }
 
             // Set amount
-            item.setItemOutstandingEncumberedAmount(item.getTotalAmount() == null ? ZERO : item.getTotalAmount());
+            item.setItemOutstandingEncumberedAmount(item.getTotalAmount() == null ? KualiDecimal.ZERO : item.getTotalAmount());
 
             List accounts = item.getSourceAccountingLines();
             Collections.sort(accounts);
 
-            for (Iterator iterator = accounts.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = accounts.iterator(); iterator.hasNext(); ) {
                 PurchaseOrderAccount account = (PurchaseOrderAccount) iterator.next();
                 if (!account.isEmpty()) {
                     account.setItemAccountOutstandingEncumbranceAmount(account.getAmount());
@@ -467,7 +460,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         if ((documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_DOCUMENT)) ||
             (documentType.equals(PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT))) {
             if (workFlowDocument.isCanceled()) {
-             // if doc is FINAL or canceled, saving should not be creating GL entries
+                // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList());
             } else if (workFlowDocument.isFinal()) {
             } else {
@@ -557,7 +550,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setRequisitionIdentifier(requisitionDocument.getPurapDocumentIdentifier());
         this.setPurchaseOrderTotalLimit(requisitionDocument.getPurchaseOrderTotalLimit());
         this.setPurchaseOrderTransmissionMethodCode(requisitionDocument.getPurchaseOrderTransmissionMethodCode());
-        this.setUseTaxIndicator( requisitionDocument.isUseTaxIndicator() );
+        this.setUseTaxIndicator(requisitionDocument.isUseTaxIndicator());
 
         this.setVendorCityName(requisitionDocument.getVendorCityName());
         this.setVendorContractGeneratedIdentifier(requisitionDocument.getVendorContractGeneratedIdentifier());
@@ -589,9 +582,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setAccountDistributionMethod(requisitionDocument.getAccountDistributionMethod());
         // Copy items from requisition (which will copy the item's accounts and capital assets)
         List<PurchaseOrderItem> items = new ArrayList();
-        for (PurApItem reqItem : ((PurchasingAccountsPayableDocument)requisitionDocument).getItems()) {
-            RequisitionCapitalAssetItem reqCamsItem = (RequisitionCapitalAssetItem)requisitionDocument.getPurchasingCapitalAssetItemByItemIdentifier(reqItem.getItemIdentifier().intValue());
-            items.add(new PurchaseOrderItem((RequisitionItem)reqItem, this, reqCamsItem));
+        for (PurApItem reqItem : ((PurchasingAccountsPayableDocument) requisitionDocument).getItems()) {
+            RequisitionCapitalAssetItem reqCamsItem = (RequisitionCapitalAssetItem) requisitionDocument.getPurchasingCapitalAssetItemByItemIdentifier(reqItem.getItemIdentifier().intValue());
+            items.add(new PurchaseOrderItem((RequisitionItem) reqItem, this, reqCamsItem));
         }
         this.setItems(items);
 
@@ -669,11 +662,11 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         List<PurchaseOrderView> relatedPoViews = getRelatedViews().getRelatedPurchaseOrderViews();
         for (PurchaseOrderView poView : relatedPoViews) {
             //don't lock related PO's if this is a split PO that's in process
-            if(!( (PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus()) || PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus())) && PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(currentDocumentTypeName))){
+            if (!((PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus()) || PurapConstants.PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(this.getApplicationDocumentStatus())) && PurapConstants.PurchaseOrderDocTypes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(currentDocumentTypeName))) {
                 docIdStrings.add(poView.getDocumentNumber());
             }
         }
-        if ( LOG.isDebugEnabled() ) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("***** getWorkflowEngineDocumentIdsToLock(" + this.documentNumber + ") = '" + docIdStrings + "'");
         }
         return docIdStrings;
@@ -704,7 +697,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                     if (ObjectUtils.isNotNull(disapprovalStatus)) {
                         //update the appDocStatus and save the workflow data
                         updateAndSaveAppDocStatus(disapprovalStatus);
-                    }else{
+                    } else {
                         logAndThrowRuntimeException("No status found to set for document being disapproved in node '" + nodeName + "'");
                     }
 
@@ -713,29 +706,25 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
                     updateAndSaveAppDocStatus(PurchaseOrderStatuses.APPDOC_CANCELLED);
                 }
-            }
-            catch (WorkflowException e) {
+            } catch (WorkflowException e) {
                 logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), e);
             }
         }
-
-
 
         if (shouldAdhocFyi()) {
 
             try {
                 SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-            }
-            catch (WorkflowException ex) {
+            } catch (WorkflowException ex) {
                 logAndThrowRuntimeException("Error saving routing data while saving document with id " + getDocumentNumber(), ex);
             }
             SpringContext.getBean(PurchaseOrderService.class).sendAdhocFyi(this);
         }
     }
 
-	protected String findDisapprovalStatus(String nodeName) {
-		return PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
-	}
+    protected String findDisapprovalStatus(String nodeName) {
+        return PurapConstants.PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+    }
 
     protected boolean shouldAdhocFyi() {
         Collection<String> excludeList = new ArrayList<String>();
@@ -748,12 +737,11 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
 
         if (getDocumentHeader().getWorkflowDocument().isFinal() && !excludeList.contains(getRequisitionSourceCode()) &&
-                !PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(this.getApplicationDocumentStatus())) {
+            !PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(this.getApplicationDocumentStatus())) {
             return true;
         }
         return false;
     }
-
 
 
     /**
@@ -764,11 +752,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      * @throws WorkflowException
      */
     protected String getCurrentRouteNodeName(WorkflowDocument wd) throws WorkflowException {
-         ArrayList<String> nodeNames = new ArrayList(wd.getCurrentNodeNames());
+        ArrayList<String> nodeNames = new ArrayList(wd.getCurrentNodeNames());
         if ((nodeNames == null) || (nodeNames.size() == 0)) {
             return null;
-        }
-        else {
+        } else {
             return nodeNames.get(0);
         }
     }
@@ -778,8 +765,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      *
      * @param workflowDocument the associated workflow document.
      * @param routePrincipalId the network ID of the user to be sent to.
-     * @param annotation the annotation notes contained in this document.
-     * @param responsibility the responsibility specified in the request.
+     * @param annotation       the annotation notes contained in this document.
+     * @param responsibility   the responsibility specified in the request.
      * @throws WorkflowException
      */
     public void appSpecificRouteDocumentToUser(WorkflowDocument workflowDocument, String routePrincipalId, String annotation, String responsibility) throws WorkflowException {
@@ -799,12 +786,12 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 String annotationNote = (ObjectUtils.isNull(annotation)) ? "" : annotation;
                 String responsibilityNote = (ObjectUtils.isNull(responsibility)) ? "" : responsibility;
                 String currentNodeName = getCurrentRouteNodeName(workflowDocument);
-                workflowDocument.adHocToPrincipal( ActionRequestType.FYI, currentNodeName, annotationNote, routePrincipalId, responsibilityNote, true);
+                workflowDocument.adHocToPrincipal(ActionRequestType.FYI, currentNodeName, annotationNote, routePrincipalId, responsibilityNote, true);
             }
         }
     }
 
-    protected boolean isActiveUser(String principalId){
+    protected boolean isActiveUser(String principalId) {
         Person principal = KimApiServiceLocator.getPersonService().getPerson(principalId);
 
         return ObjectUtils.isNotNull(principal) && principal.isActive();
@@ -817,7 +804,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
         LOG.debug("handleRouteLevelChange() started");
         super.doRouteLevelChange(levelChangeEvent);
-        }
+    }
 
     /**
      * @see org.kuali.kfs.krad.document.DocumentBase#doActionTaken(ActionTakenEvent)
@@ -835,7 +822,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      */
     public List getItemsActiveOnly() {
         List returnList = new ArrayList();
-        for (Iterator iter = getItems().iterator(); iter.hasNext();) {
+        for (Iterator iter = getItems().iterator(); iter.hasNext(); ) {
             PurchaseOrderItem item = (PurchaseOrderItem) iter.next();
             if (item.isItemActiveIndicator()) {
                 returnList.add(item);
@@ -851,10 +838,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      */
     public List getItemsActiveOnlySetupAlternateAmount() {
         List returnList = new ArrayList();
-        for (Iterator iter = getItems().iterator(); iter.hasNext();) {
+        for (Iterator iter = getItems().iterator(); iter.hasNext(); ) {
             PurchaseOrderItem item = (PurchaseOrderItem) iter.next();
             if (item.isItemActiveIndicator()) {
-                for (Iterator iterator = item.getSourceAccountingLines().iterator(); iterator.hasNext();) {
+                for (Iterator iterator = item.getSourceAccountingLines().iterator(); iterator.hasNext(); ) {
                     PurchaseOrderAccount account = (PurchaseOrderAccount) iterator.next();
                     account.setAlternateAmountForGLEntryCreation(account.getItemAccountOutstandingEncumbranceAmount());
                 }
@@ -980,8 +967,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         String descript = purchaseOrderQuoteTypeCode;
         if (PurapConstants.QuoteTypes.COMPETITIVE.equals(purchaseOrderQuoteTypeCode)) {
             descript = QuoteTypeDescriptions.COMPETITIVE;
-        }
-        else if (PurapConstants.QuoteTypes.PRICE_CONFIRMATION.equals(purchaseOrderQuoteTypeCode)){
+        } else if (PurapConstants.QuoteTypes.PRICE_CONFIRMATION.equals(purchaseOrderQuoteTypeCode)) {
             descript = QuoteTypeDescriptions.PRICE_CONFIRMATION;
         }
         return descript;
@@ -1080,7 +1066,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     public ShippingTitle getVendorShippingTitle() {
 
-        if( ObjectUtils.isNull(vendorShippingTitle) ){
+        if (ObjectUtils.isNull(vendorShippingTitle)) {
             this.refreshReferenceObject("vendorShippingTitle");
         }
 
@@ -1235,8 +1221,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                     this.alternateVendorDetailAssignedIdentifier = new Integer(vndrDetailAssgnedId);
                 }
             }
-        }
-        else {
+        } else {
             this.alternateVendorNumber = vendorNumber;
         }
     }
@@ -1364,7 +1349,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     /**
      * Gets the total dollar amount for this Purchase Order.
      *
-     * @param includeInactive indicates whether inactive items shall be included.
+     * @param includeInactive     indicates whether inactive items shall be included.
      * @param includeBelowTheLine indicates whether below the line items shall be included.
      * @return the total dollar amount for this Purchase Order.
      */
@@ -1405,7 +1390,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     /**
      * Gets the pre tax total dollar amount for this Purchase Order.
      *
-     * @param includeInactive indicates whether inactive items shall be included.
+     * @param includeInactive     indicates whether inactive items shall be included.
      * @param includeBelowTheLine indicates whether below the line items shall be included.
      * @return the total dollar amount for this Purchase Order.
      */
@@ -1422,7 +1407,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return total;
     }
 
-
     @Override
     public KualiDecimal getTotalTaxAmount() {
         // return total without inactive and with below the line
@@ -1437,7 +1421,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     /**
      * Gets the tax total amount for this Purchase Order.
      *
-     * @param includeInactive indicates whether inactive items shall be included.
+     * @param includeInactive     indicates whether inactive items shall be included.
      * @param includeBelowTheLine indicates whether below the line items shall be included.
      * @return the total dollar amount for this Purchase Order.
      */
@@ -1487,7 +1471,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     public boolean getAdditionalChargesExist() {
         List<PurchaseOrderItem> items = this.getItems();
-        for( PurchaseOrderItem item : items ) {
+        for (PurchaseOrderItem item : items) {
             if ((item != null) &&
                 (item.getItemType() != null) &&
                 (item.getItemType().isAdditionalChargeIndicator()) &&
@@ -1549,25 +1533,24 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     /**
      * @see org.kuali.module.purap.rules.PurapAccountingDocumentRuleBase#customizeExplicitGeneralLedgerPendingEntry(org.kuali.kfs.sys.document.AccountingDocument,
-     *      org.kuali.kfs.sys.businessobject.AccountingLine, org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry)
+     * org.kuali.kfs.sys.businessobject.AccountingLine, org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry)
      */
     @Override
     public void customizeExplicitGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
         super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
 
-        SpringContext.getBean(PurapGeneralLedgerService.class).customizeGeneralLedgerPendingEntry(this, (AccountingLine)postable, explicitEntry, getPurapDocumentIdentifier(), GL_DEBIT_CODE, PurapDocTypeCodes.PO_DOCUMENT, true);
+        SpringContext.getBean(PurapGeneralLedgerService.class).customizeGeneralLedgerPendingEntry(this, (AccountingLine) postable, explicitEntry, getPurapDocumentIdentifier(), KFSConstants.GL_DEBIT_CODE, PurapDocTypeCodes.PO_DOCUMENT, true);
 
         KualiDecimal accountTotalGLEntryAmount = KualiDecimal.ZERO;
 
         //KFSMI-9842: if the entry's financial document type is POA (or POC or POR - KFSMI-9879) then generate GLPEs only
         //for the updated amount or new items, not for the entire items' accounts.
         if (PurapDocTypeCodes.PO_AMENDMENT_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
-                PurapDocTypeCodes.PO_CLOSE_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
-                PurapDocTypeCodes.PO_REOPEN_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode())) {
+            PurapDocTypeCodes.PO_CLOSE_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode()) ||
+            PurapDocTypeCodes.PO_REOPEN_DOCUMENT.equals(explicitEntry.getFinancialDocumentTypeCode())) {
             accountTotalGLEntryAmount = explicitEntry.getTransactionLedgerEntryAmount();
-        }
-        else {
-            accountTotalGLEntryAmount = this.getAccountTotalGLEntryAmount((AccountingLine)postable);
+        } else {
+            accountTotalGLEntryAmount = this.getAccountTotalGLEntryAmount((AccountingLine) postable);
         }
 
         explicitEntry.setTransactionLedgerEntryAmount(accountTotalGLEntryAmount);
@@ -1579,11 +1562,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     protected void handleNegativeEntryAmount(GeneralLedgerPendingEntry explicitEntry) {
         if (explicitEntry.getTransactionLedgerEntryAmount().doubleValue() < 0) {
-                explicitEntry.setTransactionDebitCreditCode(GL_CREDIT_CODE);
+            explicitEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
             explicitEntry.setTransactionLedgerEntryAmount(explicitEntry.getTransactionLedgerEntryAmount().abs());
-        }
-        else {
-            explicitEntry.setTransactionDebitCreditCode(GL_DEBIT_CODE);
+        } else {
+            explicitEntry.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
         }
     }
 
@@ -1603,8 +1585,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
      *
      * @return
      */
-    public boolean canClosePOForTradeIn () {
-        for (PurchaseOrderItem item : (List<PurchaseOrderItem>)getItems()) {
+    public boolean canClosePOForTradeIn() {
+        for (PurchaseOrderItem item : (List<PurchaseOrderItem>) getItems()) {
             if (item.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE) && item.getItemOutstandingEncumberedAmount().isLessThan(new KualiDecimal(0))) {
                 GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_TRADE_IN_OUTSTANDING_ENCUMBERED_AMOUNT_NEGATIVE, "amend the PO");
                 return false;
@@ -1701,7 +1683,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return false;
     }
 
-
     protected boolean isVendorEmployeeOrNonResidentAlien() {
         if (ObjectUtils.isNull(this.getVendorHeaderGeneratedIdentifier())) {
             // no vendor header id so can't check for proper tax routing
@@ -1737,6 +1718,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
         return accounts;
     }
+
     @Override
     public DocumentSearchCriteria convertSelections(DocumentSearchCriteria searchCriteria) {
 //        for ( Entry<String, List<String>> comp : searchCriteria.getDocumentAttributeValues().entrySet()) {
@@ -1769,12 +1751,13 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return purchaseOrderCurrentIndicator;
     }
 
-    public String getDocumentTitleForResult() throws WorkflowException{
+    public String getDocumentTitleForResult() throws WorkflowException {
         return KewApiServiceLocator.getDocumentTypeService().getDocumentTypeByName(this.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName()).getLabel();
     }
 
     /**
      * Checks whether the purchase order needs a warning to be displayed, i.e. it never has been opened.
+     *
      * @return true if the purchase order needs a warning; false otherwise.
      */
     public boolean getNeedWarning() {
@@ -1797,7 +1780,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         PurchaseOrderDocument oldest = docDao.findByDocumentHeaderId(PurchaseOrderDocument.class, purchaseOrderDao.getOldestPurchaseOrderDocumentNumber(this.getPurapDocumentIdentifier()));
 
         //KFSMI-9746: added this for null safe checking.
-        if(oldest != null){
+        if (oldest != null) {
             return oldest;
         }
 

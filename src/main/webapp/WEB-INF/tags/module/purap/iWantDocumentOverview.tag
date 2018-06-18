@@ -36,7 +36,7 @@
                         property="document.documentHeader.explanation"
                         attributeEntry="${iWantDocAttributes.explanation}"
                         readOnly="${readOnly}"
-                        readOnlyAlternateDisplay="${fn:replace(fn:escapeXml(KualiForm.document.documentHeader.explanation), Constants.NEWLINE, '<br/>')}" />
+                        readOnlyAlternateDisplay="${KualiForm.document.documentHeader.explanation}" />
             </td>
         </tr>
         <tr>
