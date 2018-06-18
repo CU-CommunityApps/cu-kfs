@@ -1,30 +1,23 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.io.File;
-import java.sql.Date;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportSummaryItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksEmailableReportData;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataTransformationService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchReportService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
@@ -34,7 +27,13 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;
     protected PaymentWorksDataTransformationService paymentWorksDataTransformationService;
-    
+
+    private String kfsAchDocumentNumberLabel;
+    private String bankAcctNameOnAccountLabel;
+    private String disapprovedVendorsSubTitle;
+    private String noAchDataProvidedVendorsSubTitle;
+    private String recordsGeneratingExceptionSubTitle;
+
     @Override
     public void generateAndEmailProcessingReport(PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
         LOG.debug("generateAndEmailReport entered");
@@ -50,6 +49,9 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
         writeProcessingSubReport(reportData.retrievePaymentWorksVendorsWithPayeeAchsProcessed(), getProcessedSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_PROCESSED_MESSAGE));
         writeProcessingSubReport(reportData.retrievePaymentWorksVendorsWithPayeeAchProcessingErrors(), getProcessingErrorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE));
         writeProcessingSubReport(reportData.retrievePaymentWorksVendorsWithUnprocessablePayeeAchs(), getUnprocessedSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.MANUAL_DATA_ENTRY_NOT_REQUIRED_MESSAGE));
+        writeProcessingSubReport(reportData.getDisapprovedVendors(), getDisapprovedVendorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_DISAPPROVED_VENDORS_WITH_PENDING_ACH_DATA_MESSAGE));
+        writeProcessingSubReport(reportData.getNoAchDataProvidedVendors(), getNoAchDataProvidedVendorsSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_VENDORS_WITHOUT_ACH_DATA_MESSAGE));
+        writeProcessingSubReport(reportData.getRecordsGeneratingException(), getRecordsGeneratingExceptionSubTitle(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE));
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
@@ -127,12 +129,15 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
                 String vendorName = (StringUtils.isNotBlank(reportItem.getPmwVendorLegelName()) ? reportItem.getPmwVendorLegelName() : (reportItem.getPmwVendorLegelLastName() + "," + reportItem.getPmwVendorLegelFirstName()));
 
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getPaymentWorksVendorIdLabel(), reportItem.getPmwVendorId());
-                getReportWriterService().writeFormattedMessageLine(rowFormat, getSubmittedDateLabel(), getPaymentWorksDataTransformationService().PROCESSING_TIMESTAMP_REPORT_FORMATTER.format(reportItem.getPmwSubmissionTimeStamp()));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getSubmittedDateLabel(), getPaymentWorksDataTransformationService().formatReportSubmissionTimeStamp(reportItem.getPmwSubmissionTimeStamp()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorTypeLabel(), reportItem.getPmwVendorType());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorNameLabel(), vendorName);
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getTaxIdTypeLabel(), getPaymentWorksDataTransformationService().convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorSubmitterEmailLabel(), reportItem.getPmwSubmitterEmailAddress());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getInitiatorNetidLabel(), reportItem.getPmwInitiatorNetId());
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsVendorNumberLabel(), getPaymentWorksDataTransformationService().formatReportVendorNumber(reportItem));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getKfsAchDocumentNumberLabel(), reportItem.getKfsAchDocumentNumber());
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getBankAcctNameOnAccountLabel(), reportItem.getBankAcctNameOnAccount());
                 getReportWriterService().writeNewLines(1);
                 writeErrorItemMessages(reportItem.getErrorMessages());
                 getReportWriterService().writeNewLines(4);
@@ -244,6 +249,66 @@ public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorks
             setUnprocessedSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_UNPROCESSED_VENDOR_ACHS_SUB_TITLE));
         }
         return unprocessedSubTitle;
+    }
+
+    public String getKfsAchDocumentNumberLabel() {
+        if (ObjectUtils.isNull(kfsAchDocumentNumberLabel)) {
+            setKfsAchDocumentNumberLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_KFS_ACH_DOCUMENT_NUMBER_LABEL));
+        }
+        return kfsAchDocumentNumberLabel;
+    }
+
+    public void setKfsAchDocumentNumberLabel(String kfsAchDocumentNumberLabel) {
+        this.kfsAchDocumentNumberLabel = kfsAchDocumentNumberLabel;
+    }
+
+    public String getBankAcctNameOnAccountLabel() {
+        if (ObjectUtils.isNull(bankAcctNameOnAccountLabel)) {
+            setBankAcctNameOnAccountLabel(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_BANK_ACCT_NAME_ON_ACCOUNT_LABEL));
+        }
+        return bankAcctNameOnAccountLabel;
+    }
+
+    public void setBankAcctNameOnAccountLabel(String bankAcctNameOnAccountLabel) {
+        this.bankAcctNameOnAccountLabel = bankAcctNameOnAccountLabel;
+    }
+
+    public String getDisapprovedVendorsSubTitle() {
+        if (ObjectUtils.isNull(disapprovedVendorsSubTitle)) {
+            setDisapprovedVendorsSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_DISAPPROVED_VENDORS_WITH_PENDING_ACH_FOUND_SUB_TITLE));
+        }
+        return disapprovedVendorsSubTitle;
+    }
+
+    public void setDisapprovedVendorsSubTitle(String disapprovedVendorsSubTitle) {
+        this.disapprovedVendorsSubTitle = disapprovedVendorsSubTitle;
+    }
+
+    public String getNoAchDataProvidedVendorsSubTitle() {
+        if (ObjectUtils.isNull(noAchDataProvidedVendorsSubTitle)) {
+            setNoAchDataProvidedVendorsSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_VENDORS_WITH_NO_PENDING_ACH_DATA_FOUND_SUB_TITLE));
+        }
+        return noAchDataProvidedVendorsSubTitle;
+    }
+
+    public void setNoAchDataProvidedVendorsSubTitle(String noAchDataProvidedVendorsSubTitle) {
+        this.noAchDataProvidedVendorsSubTitle = noAchDataProvidedVendorsSubTitle;
+    }
+
+    public String getRecordsGeneratingExceptionSubTitle() {
+        if (ObjectUtils.isNull(recordsGeneratingExceptionSubTitle)) {
+            setRecordsGeneratingExceptionSubTitle(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_PAYEE_ACH_REPORT_PENDING_ACH_GENERATING_EXCEPTIONS_SUB_TITLE));
+        }
+        return recordsGeneratingExceptionSubTitle;
+    }
+
+    public void setRecordsGeneratingExceptionSubTitle(String recordsGeneratingExceptionSubTitle) {
+        this.recordsGeneratingExceptionSubTitle = recordsGeneratingExceptionSubTitle;
     }
 
     public PaymentWorksDataTransformationService getPaymentWorksDataTransformationService() {
