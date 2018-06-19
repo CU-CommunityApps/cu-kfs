@@ -19,7 +19,7 @@
 			</list>
 		</property>
 		<property name="documentTypeName" value="OCAG" />
-		<property name="businessRulesClass" value="org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase" />
+		<property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.CuObjectCodeActivationGlobalMaintenanceDocumentRule" />
 		<property name="documentAuthorizerClass" value="edu.cornell.kfs.coa.document.authorization.CuObjectCodeActivationGlobalAuthorizer" />
 		<property name="promptBeforeValidationClass" value="org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase" />
 	
