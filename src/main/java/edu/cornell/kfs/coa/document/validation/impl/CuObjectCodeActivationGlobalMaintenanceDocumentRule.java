@@ -49,7 +49,7 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentRule extends GlobalD
     @Override
     public boolean processAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
             PersistableBusinessObject bo) {
-        LOG.info("processAddCollectionLineBusinessRules, entering");
+        LOG.debug("processAddCollectionLineBusinessRules, entering");
         boolean valid = super.processAddCollectionLineBusinessRules(document, collectionName, bo);
         
         CuObjectCodeGlobalDetail newDetail = (CuObjectCodeGlobalDetail) bo;

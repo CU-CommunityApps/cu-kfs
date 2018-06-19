@@ -14,9 +14,9 @@ import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
 import edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal;
 import edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail;
 
-public class CuObjectCodeActivatationGlobalMaintainable extends FinancialSystemGlobalMaintainable {
+public class CuObjectCodeActivationGlobalMaintainable extends FinancialSystemGlobalMaintainable {
     private static final long serialVersionUID = 7651991084589364963L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivatationGlobalMaintainable.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobalMaintainable.class);
     
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {

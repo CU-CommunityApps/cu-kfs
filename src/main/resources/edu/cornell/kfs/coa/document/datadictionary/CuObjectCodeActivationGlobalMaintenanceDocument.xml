@@ -5,7 +5,7 @@
 	<bean id="ObjectCodeActivationGlobalMaintenanceDocument" parent="ObjectCodeActivationGlobalMaintenanceDocument-parentBean" />
 	<bean id="ObjectCodeActivationGlobalMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry">
 		<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal" />
-		<property name="maintainableClass" value=" edu.cornell.kfs.coa.document.CuObjectCodeActivatationGlobalMaintainable" />
+		<property name="maintainableClass" value=" edu.cornell.kfs.coa.document.CuObjectCodeActivationGlobalMaintainable" />
 		<property name="allowsCopy" value="true"/>
 		<property name="maintainableSections">
 			<list>
@@ -51,7 +51,7 @@
 					<!-- 
 					<property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.ObjectCode" />
 					 -->
-					 <property name="sourceClassName" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalSearch" />
+					 <property name="sourceClassName" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobalSearch" />
 					<property name="summaryTitle" value="Object Code" />
 					<property name="summaryFields">
 						<list>

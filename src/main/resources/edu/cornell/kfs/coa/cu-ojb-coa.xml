@@ -2070,7 +2070,7 @@
 
 	</class-descriptor>
 
-	<class-descriptor class="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalSearch" table="CA_OBJECT_CODE_T">
+	<class-descriptor class="edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobalSearch" table="CA_OBJECT_CODE_T">
 		<field-descriptor name="universityFiscalYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER" primarykey="true" index="true" />
 		<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
 		<field-descriptor name="financialObjectCode" column="FIN_OBJECT_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />

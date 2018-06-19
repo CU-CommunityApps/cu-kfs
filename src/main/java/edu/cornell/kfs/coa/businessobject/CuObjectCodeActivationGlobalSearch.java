@@ -7,12 +7,12 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.gl.businessobject.Balance;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-public class CuObjectCodeGlobalSearch extends ObjectCode {
+public class CuObjectCodeActivationGlobalSearch extends ObjectCode {
     private static final long serialVersionUID = 7461668856007571783L;
     
     protected List<Balance> balances;
     
-    public CuObjectCodeGlobalSearch() {
+    public CuObjectCodeActivationGlobalSearch() {
         super();
         balances = new ArrayList<Balance>();
     }
