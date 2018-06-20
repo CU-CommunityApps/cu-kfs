@@ -3,7 +3,7 @@ package edu.cornell.kfs.coa.businessobject;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
@@ -63,7 +63,7 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
         
         for (CuObjectCodeGlobalDetail detail : objectCodeGlobalDetails) {
             if (!getPersistenceStructureService().hasPrimaryKeyFieldValues(detail)) {
-                LOG.error("isPersistable, detail doesn't have primvary keys set: " + detail.toString());
+                LOG.error("isPersistable, detail dosen't have primvary keys set: " + detail.toString());
                 return false;
             }
         }
@@ -81,7 +81,7 @@ public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase 
             CuObjectCodeGlobalDetail newDetail = (CuObjectCodeGlobalDetail) ObjectUtils.deepCopy(oldDetail);
             newDetail.setObjectId(null);
             newDetail.setDocumentNumber(getDocumentNumber());
-            newDetail.setVersionNumber(new Long(0));
+            newDetail.setVersionNumber(new Long(1));
             getObjectCodeGlobalDetails().add(newDetail);
         }
     }

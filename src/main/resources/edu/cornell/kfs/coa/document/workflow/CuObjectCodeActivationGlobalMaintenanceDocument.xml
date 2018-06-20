@@ -8,7 +8,6 @@
       <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
       <docHandler>${kfs.url}/objectcodeactivationglobalmaintenance.do?methodToCall=docHandler</docHandler>
       <active>true</active>
-      <routingVersion>1</routingVersion>
       <routePaths>
         <routePath>
           <start name="AdHoc" nextNode="OrganizationHierarchy" />
@@ -19,11 +18,9 @@
       <routeNodes>
         <start name="AdHoc" />
         <role name="OrganizationHierarchy">
-          <!--<ruleTemplate>KualiOrgReviewTemplate</ruleTemplate>-->
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
         </role>
         <role name="Chart">
-          <!--<ruleTemplate>KualiChartTemplate</ruleTemplate>-->
           <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
         </role>
       </routeNodes>
