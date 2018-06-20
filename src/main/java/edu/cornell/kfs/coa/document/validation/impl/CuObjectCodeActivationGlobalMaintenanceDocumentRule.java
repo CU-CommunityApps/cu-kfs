@@ -1,6 +1,6 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
 import org.kuali.kfs.coa.service.ObjectCodeService;
@@ -17,7 +17,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 @SuppressWarnings("deprecation")
 public class CuObjectCodeActivationGlobalMaintenanceDocumentRule extends GlobalDocumentRuleBase {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobalMaintenanceDocumentRule.class);
-    private static final String NEW_OBJECT_CODE_PRODPERTY_NAME = "add.objectCodeGlobalDetails.financialObjectCode";
+    private static final String NEW_OBJECT_CODE_PROPERTY_NAME = "add.objectCodeGlobalDetails.financialObjectCode";
     
     private transient ObjectCodeService objectCodeService;
     
@@ -33,13 +33,13 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentRule extends GlobalD
         if (CollectionUtils.isEmpty(objectCodeGlobal.getObjectCodeGlobalDetails())) {
             LOG.debug("validObjectCodeList, no object codes selected to be edited");
             valid = false;
-            putFieldError(NEW_OBJECT_CODE_PRODPERTY_NAME, CUKFSKeyConstants.OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_LIST_ERROR);
+            putFieldError(NEW_OBJECT_CODE_PROPERTY_NAME, CUKFSKeyConstants.OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_LIST_ERROR);
         } else {
             for (CuObjectCodeGlobalDetail detail : objectCodeGlobal.getObjectCodeGlobalDetails()) {
                 boolean thisDetailValid = validateCuObjectCodeGlobalDetail(detail);
                 valid &= thisDetailValid;
                 if (!thisDetailValid) {
-                    putFieldError(NEW_OBJECT_CODE_PRODPERTY_NAME, CUKFSKeyConstants.OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_NEW_CODE_ERROR, detail.getFinancialObjectCode());
+                    putFieldError(NEW_OBJECT_CODE_PROPERTY_NAME, CUKFSKeyConstants.OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_NEW_CODE_ERROR, detail.getFinancialObjectCode());
                 }
             }
         }
@@ -56,7 +56,7 @@ public class CuObjectCodeActivationGlobalMaintenanceDocumentRule extends GlobalD
         
         if (valid && !validateCuObjectCodeGlobalDetail(newDetail)) {
             valid = false;
-            putFieldError(NEW_OBJECT_CODE_PRODPERTY_NAME, CUKFSKeyConstants.OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_NEW_CODE_ERROR, newDetail.getFinancialObjectCode());
+            putFieldError(NEW_OBJECT_CODE_PROPERTY_NAME, CUKFSKeyConstants.OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_NEW_CODE_ERROR, newDetail.getFinancialObjectCode());
         }
         
         return valid;

@@ -48,9 +48,6 @@
 				<bean parent="MaintainableCollectionDefinition">
 					<property name="name" value="objectCodeGlobalDetails" />
 					<property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail" />
-					<!-- 
-					<property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.ObjectCode" />
-					 -->
 					 <property name="sourceClassName" value="edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobalSearch" />
 					<property name="summaryTitle" value="Object Code" />
 					<property name="summaryFields">
@@ -65,9 +62,6 @@
 							<bean parent="MaintainableFieldDefinition" p:name="universityFiscalYear" p:required="true" p:readOnlyAfterAdd="true" p:template="universityFiscalYear" />
 							<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode" />
 							<bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:required="true" p:template="financialObjectCode" />
-							<!-- 
-							<bean parent="MaintainableFieldDefinition" p:name="financialObjectCodeName" p:unconditionallyReadOnly="true" p:template="financialObjectCodeName" />
-							 -->
 						</list>
 					</property>
 					<property name="duplicateIdentificationFields">

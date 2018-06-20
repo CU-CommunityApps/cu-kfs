@@ -9,13 +9,13 @@
 		<property name="objectLabel" value="Object Code Activation Global" />
 		<property name="attributes">
 			<list>
-				<ref bean="CuObjectCodeActivationGlobal-actibation" />
+				<ref bean="CuObjectCodeActivationGlobal-activation" />
 			</list>
 		</property>
 	</bean>
 
-	<bean id="CuObjectCodeActivationGlobal-actibation" parent="CuObjectCodeActivationGlobal-actibation-parentBean" />
-	<bean id="CuObjectCodeActivationGlobal-actibation-parentBean" abstract="true" parent="ObjectCode-active">
+	<bean id="CuObjectCodeActivationGlobal-activation" parent="CuObjectCodeActivationGlobal-activation-parentBean" />
+	<bean id="CuObjectCodeActivationGlobal-activation-parentBean" abstract="true" parent="ObjectCode-active">
 		<property name="name" value="activate" />
 	</bean>
 

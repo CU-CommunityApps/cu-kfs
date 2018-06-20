@@ -9,6 +9,7 @@ public class CuObjectCodeActivationGlobalAuthorizer extends FinancialSystemMaint
     private static final long serialVersionUID = -4822839971298829022L;
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobalAuthorizer.class);
     
+    @Override
     public boolean canCopy(Document document, Person user) {
         boolean canCopy = super.canCopy(document, user);
         boolean isFinal = isDocumentFinalized(document);
