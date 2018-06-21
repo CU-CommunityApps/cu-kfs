@@ -93,7 +93,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
 
     private List<PaymentWorksVendor> findAllKfsDisapprovedPmwNewVendorsWithUnprocessedPmwAchData() {
         Map searchCriteria = new HashMap();
-        searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_REQUEST_STATUS, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.getText());
+        searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_REQUEST_STATUS, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_TRANSACTION_TYPE, PaymentWorksConstants.PaymentWorksTransactionType.NEW_VENDOR);
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_VENDOR_PROCESSING_STATUS, PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_DISAPPROVED);
         searchCriteria.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.KFS_ACH_PROCESSING_STATUS, PaymentWorksConstants.KFSAchProcessingStatus.PENDING_PVEN);
