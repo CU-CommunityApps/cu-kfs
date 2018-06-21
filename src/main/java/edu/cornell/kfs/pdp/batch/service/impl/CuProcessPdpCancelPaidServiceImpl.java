@@ -88,7 +88,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
             crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
         }
 
-        if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
+        /*if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
             ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(
                     documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
         } else {
@@ -114,7 +114,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
             }
         }
 
-        paymentGroupService.processCancelledGroup(paymentDetail.getPaymentGroup(), processDate);
+        paymentGroupService.processCancelledGroup(paymentDetail.getPaymentGroup(), processDate);*/
     }
 
     /**
@@ -127,7 +127,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
         String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
         String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
-        if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
+        /*if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
             purchasingAccountsPayableModuleService.handlePurchasingBatchPaids(documentNumber, documentTypeCode, processDate);
         } else {
             PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
@@ -144,7 +144,7 @@ public class CuProcessPdpCancelPaidServiceImpl extends ProcessPdpCancelPaidServi
             }
         }
 
-        paymentGroupService.processPaidGroup(paymentDetail.getPaymentGroup(), processDate);
+        paymentGroupService.processPaidGroup(paymentDetail.getPaymentGroup(), processDate);*/
     }
 
     protected CuProcessPdpCancelPaidService getProxiedProcessPdpCancelPaidService() {
