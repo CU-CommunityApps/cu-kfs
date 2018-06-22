@@ -143,7 +143,11 @@ public enum AccountingXmlDocumentListWrapperFixture {
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(
-                    AccountingXmlDocumentEntryFixture.DI_WITH_IB_ITEMS_TEST_DOC1));
+                    AccountingXmlDocumentEntryFixture.DI_WITH_IB_ITEMS_TEST_DOC1)),
+    SINGLE_YEDI_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_YEDI_DOCUMENT_TEST_DOC1));
 
     public final String createDate;
     public final String reportEmail;
