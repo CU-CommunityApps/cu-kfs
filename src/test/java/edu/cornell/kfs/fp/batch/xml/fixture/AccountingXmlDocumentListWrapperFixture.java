@@ -154,7 +154,13 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC1,
             AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC2,
             AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3,
-            AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC4));
+            AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC4)),
+    MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3));
 
     public final String createDate;
     public final String reportEmail;
