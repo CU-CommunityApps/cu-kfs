@@ -114,7 +114,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 configurationService, buildMockFiscalYearFunctionControlService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
-                AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT);
+                AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -290,6 +290,34 @@ public class CreateAccountingDocumentServiceImplTest {
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_SB_DOCUMENT_WITH_BAD_RULES_THIRD_DOCUMENT_TEST);
     }
+
+    @Test
+    public void testLoadSingleFileWithSingleYEDIDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YEDI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleYEDIDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadMultipleFilesWithYEDIDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YEDI_DOCUMENT_TEST,
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+
+    @Test
+    public void testLoadSingleFileWithMultipleYEDIDocumentsPlusDocumentWithInvalidDocType() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yedi-plus-invalid-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
+    }
+
+
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         createAccountingDocumentService.createAccountingDocumentsFromXml();

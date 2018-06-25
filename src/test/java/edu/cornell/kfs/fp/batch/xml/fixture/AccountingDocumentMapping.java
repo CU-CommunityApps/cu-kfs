@@ -5,9 +5,11 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import edu.cornell.kfs.fp.batch.service.impl.CuYearEndDistributionOfIncomeAndExpenseDocumentGenerator;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.fp.document.ServiceBillingDocument;
 import org.kuali.kfs.fp.document.TransferOfFundsDocument;
+import org.kuali.kfs.fp.document.YearEndDistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
@@ -46,7 +48,10 @@ public enum AccountingDocumentMapping {
             CuBudgetAdjustmentDocumentGenerator::new),
     SB_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.SERVICE_BILLING,
             ServiceBillingDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
-            ServiceBillingDocumentGenerator::new);
+            ServiceBillingDocumentGenerator::new),
+    YEDI_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
+            YearEndDistributionOfIncomeAndExpenseDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
+            CuYearEndDistributionOfIncomeAndExpenseDocumentGenerator::new);
 
     public static final String MAPPING_ENUM_CONST_SUFFIX = "_DOCUMENT";
 
