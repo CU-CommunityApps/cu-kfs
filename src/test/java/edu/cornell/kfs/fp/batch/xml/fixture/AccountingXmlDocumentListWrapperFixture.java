@@ -139,11 +139,29 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF1,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_TF2,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_BA,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_SB)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_SB,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEDI)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(
-                    AccountingXmlDocumentEntryFixture.DI_WITH_IB_ITEMS_TEST_DOC1));
+                    AccountingXmlDocumentEntryFixture.DI_WITH_IB_ITEMS_TEST_DOC1)),
+    SINGLE_YEDI_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_YEDI_DOCUMENT_TEST_DOC1)),
+    MULTI_YEDI_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC1,
+            AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC2,
+            AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3,
+            AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC4)),
+    MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3));
 
     public final String createDate;
     public final String reportEmail;
