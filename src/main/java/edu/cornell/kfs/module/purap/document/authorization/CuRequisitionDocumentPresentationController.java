@@ -33,7 +33,6 @@ public class CuRequisitionDocumentPresentationController extends RequisitionDocu
             if (SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines(reqDocument)) {
                 editModes.remove(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION);
                 editModes.remove(RequisitionEditMode.DISABLE_REMOVE_ACCTS);
-                editModes.add(RequisitionEditMode.ENABLE_COMMODITY_CODE);
             }
         }
         if (document instanceof RequisitionDocument && !editModes.contains(RequisitionEditMode.DISABLE_SETUP_ACCT_DISTRIBUTION)
