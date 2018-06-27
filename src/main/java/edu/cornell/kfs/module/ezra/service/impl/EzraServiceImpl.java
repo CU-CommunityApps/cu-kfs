@@ -456,8 +456,7 @@ public class EzraServiceImpl implements EzraService {
 		agencyDoc.setNewMaintainableObject(agencyMaintainable);
 		try {
 			documentService.saveDocument(agencyDoc);
-			GlobalVariables.getMessageMap().clearErrorMessages();
-			documentService.routeDocument(agencyDoc, "Automatically created and routed", null);
+			agencyDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
@@ -473,6 +472,7 @@ public class EzraServiceImpl implements EzraService {
 	private void routeAwardDocument(Award award, Award oldAward) {
 		GlobalVariables.clear();
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
+		// DocumentService docService = SpringContext.getBean(DocumentService.class);
 		MaintenanceDocument awardDoc  = null;
 		try {
 			awardDoc = (MaintenanceDocument) documentService.getNewDocument("AWRD");
@@ -490,8 +490,8 @@ public class EzraServiceImpl implements EzraService {
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
 		try {
 			documentService.saveDocument(awardDoc);
-			GlobalVariables.getMessageMap().clearErrorMessages();
-			documentService.routeDocument(awardDoc, "Automatically created and routed", null);
+			//documentService.routeDocument(awardDoc, "Automatically created and routed", null);
+			awardDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		} catch (RuntimeException rte) {
@@ -519,8 +519,7 @@ public class EzraServiceImpl implements EzraService {
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
 			documentService.saveDocument(proposalDoc);
-			GlobalVariables.getMessageMap().clearErrorMessages();
-			documentService.routeDocument(proposalDoc, "Automatically created and routed", null);
+			proposalDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
