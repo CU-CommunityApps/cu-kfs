@@ -636,17 +636,13 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private AttachmentService buildMockAttachmentService() throws Exception {
-        return MockObjectUtils.buildMockObjectWithExceptionProneSetup(AttachmentService.class, (attachmentService) -> {
-            Capture<String> fileNameArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    attachmentService.createAttachment(
-                            EasyMock.anyObject(), EasyMock.capture(fileNameArg), EasyMock.anyObject(),
-                            EasyMock.anyInt(), EasyMock.anyObject(), EasyMock.anyObject()))
-                    .andStubAnswer(() -> buildSimpleAttachment(fileNameArg.getValue()));
-        });
+        AttachmentService attachmentService = Mockito.mock(AttachmentService.class);
+        Mockito.when(attachmentService.createAttachment(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.any(), Mockito.any())).then(this::buildSimpleAttachment);
+        return attachmentService;
     }
-
-    private Attachment buildSimpleAttachment(String fileName) {
+    
+    private Attachment buildSimpleAttachment(InvocationOnMock invocation) {
+        String fileName = invocation.getArgument(1);
         Attachment attachment = new Attachment();
         attachment.setAttachmentFileName(fileName);
         return attachment;
