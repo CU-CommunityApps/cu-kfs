@@ -73,6 +73,8 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -554,17 +556,16 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private DateTimeService buildMockDateTimeService() throws Exception {
-        DateTimeService dateTimeService = EasyMock.createMock(DateTimeService.class);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S");
-        
-        Capture<Date> dateArg = EasyMock.newCapture();
-        EasyMock.expect(dateTimeService.toDateTimeStringForFilename(EasyMock.capture(dateArg)))
-                .andStubAnswer(() -> dateFormat.format(dateArg.getValue()));
-        EasyMock.expect(dateTimeService.getCurrentDate())
-                .andStubAnswer(Date::new);
-        
-        EasyMock.replay(dateTimeService);
+        DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
+        Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any())).then(this::formatDate);
+        Mockito.when(dateTimeService.getCurrentDate()).thenReturn(new Date());
         return dateTimeService;
+    }
+    
+    private String formatDate(InvocationOnMock invocation) {
+        Date date = invocation.getArgument(0);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S");
+        return dateFormat.format(date);
     }
 
     private FileStorageService buildFileStorageService() throws Exception {
@@ -574,62 +575,43 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private ConfigurationService buildMockConfigurationService() throws Exception {
-        ConfigurationService configurationService = EasyMock.createMock(ConfigurationService.class);
-        
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
-                .andStubReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
-        
-        EasyMock.replay(configurationService);
+        ConfigurationService configurationService = Mockito.mock(ConfigurationService.class);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
+            .thenReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
+            .thenReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
         return configurationService;
     }
 
     private PersonService buildMockPersonService() throws Exception {
-        PersonService personService = EasyMock.createMock(PersonService.class);
-        
+        PersonService personService = Mockito.mock(PersonService.class);
         Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
-        EasyMock.expect(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER))
-                .andStubReturn(systemUser);
-        
-        EasyMock.replay(personService);
+        Mockito.when(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER)).thenReturn(systemUser);
         return personService;
     }
 
     private DocumentService buildMockDocumentService() throws Exception {
-        DocumentService documentService = EasyMock.createMock(DocumentService.class);
-        
-        Capture<Document> documentArg = EasyMock.newCapture();
-        EasyMock.expect(
-                documentService.routeDocument(
-                        EasyMock.capture(documentArg), EasyMock.anyObject(), EasyMock.anyObject()))
-                .andStubAnswer(() -> recordAndReturnDocumentIfValid(documentArg.getValue()));
-        
-        EasyMock.replay(documentService);
-        return documentService;
+        DocumentService docService = Mockito.mock(DocumentService.class);
+        Mockito.when(docService.routeDocument(Mockito.any(), Mockito.any(), Mockito.any())).then(this::recordAndReturnDocumentIfValid);
+        return docService;
     }
     
-    private ParameterService buildParameterService() {
-        ParameterService parameterService = EasyMock.createMock(ParameterService.class);
-        
-        EasyMock.expect(
-                parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
-                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
-                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS))
-        .andStubAnswer(() -> "kfs-gl_fp@cornell.edu");
-        
-        EasyMock.replay(parameterService);
-        
-        return parameterService;
-    }
-
-    private Document recordAndReturnDocumentIfValid(Document document) {
+    private Document recordAndReturnDocumentIfValid(InvocationOnMock invocation) {
+        Document document = invocation.getArgument(0);
         if (!documentPassesBusinessRules(document)) {
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CuFPTestConstants.TEST_VALIDATION_ERROR_KEY);
             throw new ValidationException("Simulated business rule validation failure");
         }
         routedAccountingDocuments.add((AccountingDocument) document);
         return document;
+    }
+    
+    private ParameterService buildParameterService() {
+        ParameterService parameterService = Mockito.mock(ParameterService.class);
+        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
+        return parameterService;
     }
 
     private boolean documentPassesBusinessRules(Document document) {
