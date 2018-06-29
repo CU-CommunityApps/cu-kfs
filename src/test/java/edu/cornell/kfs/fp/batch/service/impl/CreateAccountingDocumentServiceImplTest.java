@@ -678,10 +678,14 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private Client buildMockClient() {
+        Client client = Mockito.mock(Client.class);
+        Mockito.when(client.target(Mockito.any(URI.class))).thenReturn(buildMockWebTarget());
+        return client;
+        /*
         return MockObjectUtils.buildMockObject(Client.class, (client) -> {
             EasyMock.expect(client.target(EasyMock.isA(URI.class)))
                     .andStubAnswer(this::buildMockWebTarget);
-        });
+        });*/
     }
 
     private WebTarget buildMockWebTarget() {
