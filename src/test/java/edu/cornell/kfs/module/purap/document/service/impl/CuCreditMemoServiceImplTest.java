@@ -4,10 +4,9 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
-
 import org.easymock.EasyMock;
 import org.easymock.IMockBuilder;
-import org.eclipse.persistence.jpa.jpql.parser.WhenClause;
+import org.easymock.Mock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +40,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -71,7 +70,7 @@ public class CuCreditMemoServiceImplTest {
     @Before
 	public void setUp() throws Exception {
         accountsPayableService = Mockito.mock(AccountsPayableService.class);
-        Mockito.when(accountsPayableService.getExpiredOrClosedAccountList(Mockito.any())).thenReturn(new HashMap<>());
+        Mockito.when(accountsPayableService.getExpiredOrClosedAccountList(creditMemoDocument)).thenReturn(new HashMap<>());
         
         dataDictionaryService = Mockito.mock(DataDictionaryService.class);
         Mockito.when(dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KRADPropertyConstants.DOCUMENT_DESCRIPTION)).thenReturn(200);
@@ -81,8 +80,9 @@ public class CuCreditMemoServiceImplTest {
         noteService = Mockito.mock(NoteService.class);
         purapService = Mockito.mock(PurapService.class);
         vendorService = new MockVendorServiceImpl();
+
         
-        creditMemoServiceImpl = PowerMockito.spy(new TestCuCreditMemoServiceImpl());
+        creditMemoServiceImpl = PowerMock.createPartialMock(CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, "reIndexDocument", "getCreditMemoDocumentById");
 
         creditMemoServiceImpl.setDocumentService(documentService);
         creditMemoServiceImpl.setNoteService(noteService);
@@ -126,27 +126,6 @@ public class CuCreditMemoServiceImplTest {
         }
         IMockBuilder<CuVendorCreditMemoDocument> builder = EasyMock.createMockBuilder(CuVendorCreditMemoDocument.class).addMockedMethods(methodNames.toArray(new String[0]));
         creditMemoDocument = builder.createNiceMock();
-        EasyMock.replay(creditMemoDocument);
-        
-        
-        /*
-        PowerMockito.suppress(PowerMockito.constructor(CuVendorCreditMemoDocument.class));
-        
-        creditMemoDocument = PowerMockito.spy(new CuVendorCreditMemoDocument());
-        for (Method method : VendorCreditMemoDocument.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().startsWith("is")) {
-                //methodNames.add(method.getName());
-                try {
-                    PowerMockito.doReturn("").when(creditMemoDocument, method.getName(), Mockito.any());
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-        */
-
-        
 
         creditMemoDocument.setDocumentHeader(new MockFinancialSystemDocumentHeader());
         creditMemoDocument.getDocumentHeader().setDocumentDescription("Description");
@@ -161,8 +140,9 @@ public class CuCreditMemoServiceImplTest {
 
     @Test
 	public void testAddHoldOnCreditMemo() throws Exception {
-        Mockito.when(creditMemoServiceImpl.getCreditMemoDocumentById(null)).thenReturn(setupVendorCreditMemoDocument());
-        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
+        EasyMock.expect(creditMemoServiceImpl.getCreditMemoDocumentById(null)).andReturn(setupVendorCreditMemoDocument());
+        PowerMock.expectPrivate(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument).times(2);
+        EasyMock.replay(creditMemoServiceImpl);
         creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		Assert.assertTrue(creditMemoDocument.isHoldIndicator());
@@ -171,8 +151,9 @@ public class CuCreditMemoServiceImplTest {
 
 	@Test
 	public void testRemoveHoldOnCreditMemo() throws Exception {
-	    Mockito.when(creditMemoServiceImpl.getCreditMemoDocumentById(null)).thenReturn(setupVendorCreditMemoDocument());
-	    PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
+        EasyMock.expect(creditMemoServiceImpl.getCreditMemoDocumentById(null)).andReturn(setupVendorCreditMemoDocument());
+        PowerMock.expectPrivate(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument).times(2);
+        EasyMock.replay(creditMemoServiceImpl);
 		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		Assert.assertFalse(creditMemoDocument.isHoldIndicator());
@@ -259,5 +240,5 @@ public class CuCreditMemoServiceImplTest {
         }
 
     }
-    
+
 }
