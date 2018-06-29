@@ -16,7 +16,6 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -42,8 +41,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -224,6 +221,7 @@ public class CuCreditMemoServiceImplTest {
     }
 
     private class MockFinancialSystemDocumentHeader extends FinancialSystemDocumentHeader {
+        private static final long serialVersionUID = 1L;
 
         @Override
         public void setApplicationDocumentStatus(String applicationDocumentStatus) {
@@ -233,6 +231,8 @@ public class CuCreditMemoServiceImplTest {
     }
     
     private class TestableCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
+        private static final long serialVersionUID = 1L;
+
         public TestableCuVendorCreditMemoDocument() {
             setNotes(new ArrayList<Note>());
         }

@@ -1,19 +1,24 @@
 package edu.cornell.kfs.fp.document;
 
-import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
-import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
-import edu.cornell.kfs.sys.util.MockPersonUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
-import org.easymock.EasyMock;
-import org.easymock.IMockBuilder;
-import org.easymock.Mock;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.businessobject.PaymentReasonCode;
@@ -34,6 +39,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants;
+import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.impl.DocumentHelperServiceImpl;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -45,23 +51,21 @@ import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
+import edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController;
+import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({CuDisbursementVoucherDocument.class})
 public class CuDisbursementVoucherDocumentTest {
 
     private static final String VENDOR_PAYEE_TYPE_NAME = "Vendor";
@@ -71,15 +75,10 @@ public class CuDisbursementVoucherDocumentTest {
     private static final String VENDOR_PAYEE_TYPE_SUFFIX_FOR_DISPLAY = " (" + VENDOR_PAYEE_TYPE_SUFFIX + ")";
     private static final String VENDOR_PAYEE_TYPE_NAME_WITH_SUFFIX = VENDOR_PAYEE_TYPE_NAME + VENDOR_PAYEE_TYPE_SUFFIX_FOR_DISPLAY;
 
-    @Mock
     private static CuDisbursementVoucherDocument cuDisbursementVoucherDocument;
-    @Mock
     private static Person ccs1Person;
-    @Mock
     private static Person mo14Person;
-    @Mock
     private static UserSession ccs1Session;
-    @Mock
     private static UserSession mo14Session;
     private static VendorService vendorService;
     private static DisbursementVoucherPayeeService disbursementVoucherPayeeService;
@@ -88,18 +87,9 @@ public class CuDisbursementVoucherDocumentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        ArrayList<String> methodNames = new ArrayList<>();
-        Set<String> mockingBlacklist = new HashSet<>(Arrays.asList("refreshPayeeTypeSuffixIfPaymentIsEditable", "createVendorPayeeTypeSuffix"));
-        for (Method method : CuDisbursementVoucherDocument.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().equals("toCopy")
-                    && !mockingBlacklist.contains(method.getName())) {
-                methodNames.add(method.getName());
-            }
-        }
-        methodNames.add("clearDvPayeeIdType");
-
-        IMockBuilder<CuDisbursementVoucherDocument> builder = EasyMock.createMockBuilder(CuDisbursementVoucherDocument.class).addMockedMethods(methodNames.toArray(new String[0]));
-        cuDisbursementVoucherDocument = builder.createNiceMock();
+        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
+        cuDisbursementVoucherDocument = PowerMockito.spy(new CuDisbursementVoucherDocument());
+        PowerMockito.doNothing().when(cuDisbursementVoucherDocument, "clearDvPayeeIdType");
 
         ccs1Person = MockPersonUtil.createMockPerson(UserNameFixture.ccs1);
         mo14Person = MockPersonUtil.createMockPerson(UserNameFixture.mo14);
@@ -167,9 +157,7 @@ public class CuDisbursementVoucherDocumentTest {
         cuDisbursementVoucherDocument.setDvPayeeDetail(new CuDisbursementVoucherPayeeDetail());
         cuDisbursementVoucherDocument.getDvPayeeDetail().setDisbVchrPayeeIdNumber("12345");
         cuDisbursementVoucherDocument.clearDvPayeeIdType();
-        EasyMock.replay(cuDisbursementVoucherDocument);
         cuDisbursementVoucherDocument.clearPayee(KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED);
-        EasyMock.verify(cuDisbursementVoucherDocument);
         assertTrue("Should be valid and have one error messages, but had " + KNSGlobalVariables.getMessageList().size(), KNSGlobalVariables.getMessageList().size() == 1);
         assertEquals("The error message isn't what we expected.", KFSKeyConstants.WARNING_DV_PAYEE_NONEXISTANT_CLEARED, KNSGlobalVariables.getMessageList().get(0).getErrorKey());
         assertEquals("DV Payee ID Number should be cleared", StringUtils.EMPTY, cuDisbursementVoucherDocument.getDvPayeeDetail().getDisbVchrPayeeIdNumber());
@@ -593,24 +581,21 @@ public class CuDisbursementVoucherDocumentTest {
         }
 
         private TransactionalDocumentPresentationController createMockPresentationController() {
-            TransactionalDocumentPresentationController presentationController = EasyMock.createMock(
-                    CuDisbursementVoucherDocumentPresentationController.class);
-            EasyMock.expect(presentationController.getEditModes(EasyMock.isA(CuDisbursementVoucherDocument.class)))
-                    .andStubReturn(presentationEditModes);
-            EasyMock.replay(presentationController);
-            return presentationController;
+            TransactionalDocumentPresentationController controller = Mockito.mock(CuDisbursementVoucherDocumentPresentationController.class);
+            Mockito.when(controller.getEditModes(Mockito.any())).thenReturn(presentationEditModes);
+            return controller;
         }
 
         private TransactionalDocumentAuthorizer createMockAuthorizer() {
-            TransactionalDocumentAuthorizer authorizer = EasyMock.createMock(TransactionalDocumentAuthorizer.class);
-            EasyMock.expect(authorizer.canEdit(EasyMock.isA(CuDisbursementVoucherDocument.class), EasyMock.eq(authorizedPerson)))
-                    .andStubReturn(Boolean.TRUE);
-            EasyMock.expect(authorizer.canEdit(EasyMock.isA(CuDisbursementVoucherDocument.class), EasyMock.not(EasyMock.eq(authorizedPerson))))
-                    .andStubReturn(Boolean.FALSE);
-            EasyMock.expect(authorizer.getEditModes(EasyMock.isA(CuDisbursementVoucherDocument.class), EasyMock.eq(authorizedPerson),
-                    EasyMock.eq(presentationEditModes))).andStubReturn(authorizationEditModes);
-            EasyMock.replay(authorizer);
-            return authorizer;
+            TransactionalDocumentAuthorizer auth = Mockito.mock(TransactionalDocumentAuthorizer.class);
+            Mockito.when(auth.canEdit(Mockito.any(), Mockito.any())).then(this::determineEditCall);
+            Mockito.when(auth.getEditModes(Mockito.any(), Mockito.any(),Mockito.any())).thenReturn(authorizationEditModes);
+            return auth;
+        }
+        
+        private boolean determineEditCall(InvocationOnMock invocation) {
+            Person p = invocation.getArgument(1);
+            return authorizedPerson.equals(p);
         }
 
         @Override
