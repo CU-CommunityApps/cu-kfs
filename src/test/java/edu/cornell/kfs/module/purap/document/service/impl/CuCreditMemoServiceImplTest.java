@@ -4,9 +4,6 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
 import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
-import org.easymock.EasyMock;
-import org.easymock.IMockBuilder;
-import org.easymock.Mock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +20,7 @@ import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.module.purap.document.AccountsPayableDocumentBase;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.AccountsPayableService;
 import org.kuali.kfs.module.purap.document.service.PurapService;
@@ -52,7 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class)
+@PrepareForTest({CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
 public class CuCreditMemoServiceImplTest {
 
     private AccountsPayableService accountsPayableService;
@@ -113,20 +111,14 @@ public class CuCreditMemoServiceImplTest {
         Mockito.when(note.getNotePostedTimestamp()).thenReturn(dateTimeService.getCurrentTimestamp());
         Mockito.when(note.getVersionNumber()).thenReturn(Long.valueOf(1L));
         Mockito.when(note.getNoteText()).thenReturn(noteText);
-        Mockito.when(note.getNoteTypeCode()).thenReturn(document.getNoteType().getCode());
+        Mockito.when(note.getNoteTypeCode()).thenReturn("TST");
 
         return note;
     }
 
     private CuVendorCreditMemoDocument setupVendorCreditMemoDocument() {
-        ArrayList<String> methodNames = new ArrayList<>();
-        for (Method method : VendorCreditMemoDocument.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get") && !method.getName().startsWith("is")) {
-                methodNames.add(method.getName());
-            }
-        }
-        IMockBuilder<CuVendorCreditMemoDocument> builder = EasyMock.createMockBuilder(CuVendorCreditMemoDocument.class).addMockedMethods(methodNames.toArray(new String[0]));
-        creditMemoDocument = builder.createNiceMock();
+        PowerMockito.suppress(PowerMockito.constructor(AccountsPayableDocumentBase.class));
+        creditMemoDocument = PowerMockito.spy(new TestableCuVendorCreditMemoDocument());
 
         creditMemoDocument.setDocumentHeader(new MockFinancialSystemDocumentHeader());
         creditMemoDocument.getDocumentHeader().setDocumentDescription("Description");
@@ -141,7 +133,7 @@ public class CuCreditMemoServiceImplTest {
 
     @Test
 	public void testAddHoldOnCreditMemo() throws Exception {
-        Mockito.when(creditMemoServiceImpl.getCreditMemoDocumentById(Mockito.anyInt())).thenReturn(setupVendorCreditMemoDocument());
+        PowerMockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl, "getCreditMemoDocumentById", Mockito.any());
         PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
         creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
@@ -151,7 +143,7 @@ public class CuCreditMemoServiceImplTest {
 
 	@Test
 	public void testRemoveHoldOnCreditMemo() throws Exception {
-	    Mockito.when(creditMemoServiceImpl.getCreditMemoDocumentById(Mockito.anyInt())).thenReturn(setupVendorCreditMemoDocument());
+	    PowerMockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl, "getCreditMemoDocumentById", Mockito.any());
         PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
 		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
@@ -238,6 +230,12 @@ public class CuCreditMemoServiceImplTest {
             this.applicationDocumentStatus = applicationDocumentStatus;
         }
 
+    }
+    
+    private class TestableCuVendorCreditMemoDocument extends CuVendorCreditMemoDocument {
+        public TestableCuVendorCreditMemoDocument() {
+            setNotes(new ArrayList<Note>());
+        }
     }
 
 }
