@@ -40,7 +40,7 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kim.api.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.easymock.PowerMock;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -82,7 +82,8 @@ public class CuCreditMemoServiceImplTest {
         vendorService = new MockVendorServiceImpl();
 
         
-        creditMemoServiceImpl = PowerMock.createPartialMock(CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, "reIndexDocument", "getCreditMemoDocumentById");
+        creditMemoServiceImpl = PowerMockito.spy(new TestCuCreditMemoServiceImpl());
+        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", Mockito.any());
 
         creditMemoServiceImpl.setDocumentService(documentService);
         creditMemoServiceImpl.setNoteService(noteService);
@@ -140,9 +141,8 @@ public class CuCreditMemoServiceImplTest {
 
     @Test
 	public void testAddHoldOnCreditMemo() throws Exception {
-        EasyMock.expect(creditMemoServiceImpl.getCreditMemoDocumentById(null)).andReturn(setupVendorCreditMemoDocument());
-        PowerMock.expectPrivate(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument).times(2);
-        EasyMock.replay(creditMemoServiceImpl);
+        Mockito.when(creditMemoServiceImpl.getCreditMemoDocumentById(Mockito.anyInt())).thenReturn(setupVendorCreditMemoDocument());
+        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
         creditMemoServiceImpl.addHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		Assert.assertTrue(creditMemoDocument.isHoldIndicator());
@@ -151,9 +151,8 @@ public class CuCreditMemoServiceImplTest {
 
 	@Test
 	public void testRemoveHoldOnCreditMemo() throws Exception {
-        EasyMock.expect(creditMemoServiceImpl.getCreditMemoDocumentById(null)).andReturn(setupVendorCreditMemoDocument());
-        PowerMock.expectPrivate(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument).times(2);
-        EasyMock.replay(creditMemoServiceImpl);
+	    Mockito.when(creditMemoServiceImpl.getCreditMemoDocumentById(Mockito.anyInt())).thenReturn(setupVendorCreditMemoDocument());
+        PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
 		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
 		Assert.assertFalse(creditMemoDocument.isHoldIndicator());
