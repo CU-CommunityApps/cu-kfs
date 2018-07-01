@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -93,11 +94,11 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
+import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
-import edu.cornell.kfs.sys.util.MockObjectUtils;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 public class CreateAccountingDocumentServiceImplTest {
@@ -652,13 +653,17 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private WebServiceCredentialService buildMockWebServiceCredentialService() {
-        return MockObjectUtils.buildMockObject(WebServiceCredentialService.class, (webServiceCredentialService) -> {
-            Capture<String> groupCodeArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    webServiceCredentialService.getWebServiceCredentialsByGroupCode(EasyMock.capture(groupCodeArg)))
-                    .andStubAnswer(() -> WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCodeArg.getValue()));
-        });
+        WebServiceCredentialService credService = Mockito.mock(WebServiceCredentialService.class);
+        Mockito.when(credService.getWebServiceCredentialsByGroupCode(Mockito.anyString())).then(this::findCredentialsFromFixture);
+        return credService;
     }
+    
+    private Collection<WebServiceCredential> findCredentialsFromFixture(InvocationOnMock invocation) {
+        String groupCode = invocation.getArgument(0);
+        return WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCode);
+    }
+    
+    
 
     private FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
         List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
@@ -688,7 +693,7 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private WebTarget buildMockWebTarget() {
         /*
-        WebTarget target = PowerMockito.mock(WebTarget.class);
+        final WebTarget target = PowerMockito.mock(WebTarget.class);
         try {
             PowerMockito.doReturn(buildMockInvocationBuilder()).when(target, "request");
         } catch (Exception e) {
@@ -696,7 +701,7 @@ public class CreateAccountingDocumentServiceImplTest {
         }
         return target;
         */
-        return MockObjectUtils.buildMockObject(WebTarget.class, (webTarget) -> {
+        return buildMockObject(WebTarget.class, (webTarget) -> {
             EasyMock.expect(webTarget.request())
                     .andStubAnswer(this::buildMockInvocationBuilder);
         });
@@ -704,33 +709,45 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private Invocation.Builder buildMockInvocationBuilder() {
         /*
+        Invocation.Builder builder = Mockito.mock(Invocation.Builder.class);
+        Mockito.when(builder.header(Mockito.anyString(), Mockito.any())).thenReturn(builder);
+        Mockito.when(builder.buildGet()).thenReturn(buildMockInvocation());
+        return builder;
+        */
+        /*
         Invocation.Builder builder = PowerMockito.mock(Invocation.Builder.class);
         try {
-            PowerMockito.doReturn(builder).when(builder, "header", Mockito.anyString(), Mockito.any());
+            PowerMockito.doReturn(builder).when(builder, "header", Mockito.any(), Mockito.any());
             PowerMockito.doReturn(buildMockInvocation()).when(builder, "buildSet");
         } catch (Exception e) {
             e.printStackTrace();
         }
         return builder;
         */
-        return MockObjectUtils.buildMockObject(Invocation.Builder.class, (invocationBuilder) -> {
+        return buildMockObject(Invocation.Builder.class, (invocationBuilder) -> {
             EasyMock.expect(invocationBuilder.header(EasyMock.anyObject(), EasyMock.anyObject()))
                     .andStubReturn(invocationBuilder);
             EasyMock.expect(invocationBuilder.buildGet())
                     .andStubAnswer(this::buildMockInvocation);
         });
     }
+    
+    private static <T> T buildMockObject(Class<T> mockObjectClass, Consumer<T> mockObjectConfigurer) {
+        T mockObject = EasyMock.createMock(mockObjectClass);
+        mockObjectConfigurer.accept(mockObject);
+        EasyMock.replay(mockObject);
+        return mockObject;
+    }
+    
 
     private Invocation buildMockInvocation() {
-        /*
-        Invocation invocation = Mockito.mock(Invocation.class);
-        Mockito.when(invocation.invoke()).thenReturn(buildMockResponse());
+        Invocation invocation = PowerMockito.mock(Invocation.class);
+        try {
+            PowerMockito.doReturn(buildMockResponse()).when(invocation, "invoke");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return invocation;
-        */
-        return MockObjectUtils.buildMockObject(Invocation.class, (invocation) -> {
-            EasyMock.expect(invocation.invoke())
-                    .andStubAnswer(this::buildMockResponse);
-        });
     }
 
     private Response buildMockResponse() {
