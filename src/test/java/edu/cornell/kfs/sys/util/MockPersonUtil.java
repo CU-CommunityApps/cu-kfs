@@ -12,13 +12,13 @@ public class MockPersonUtil {
     public static UserSession createMockUserSession(Person person) {
         UserSession userSession = mock(UserSession.class);
         
-        String principleId = person.getPrincipalId();
-        when(userSession.getPrincipalId()).thenReturn(principleId);
+        String principalId = person.getPrincipalId();
+        when(userSession.getPrincipalId()).thenReturn(principalId);
         
-        String principleName = person.getPrincipalName();
-        when(userSession.getPrincipalName()).thenReturn(principleName);
+        String principalName = person.getPrincipalName();
+        when(userSession.getPrincipalName()).thenReturn(principalName);
         
-        when(userSession.getLoggedInUserPrincipalName()).thenReturn(principleName);
+        when(userSession.getLoggedInUserPrincipalName()).thenReturn(principalName);
         when(userSession.getPerson()).thenReturn(person);
         when(userSession.getActualPerson()).thenReturn(person);
         
