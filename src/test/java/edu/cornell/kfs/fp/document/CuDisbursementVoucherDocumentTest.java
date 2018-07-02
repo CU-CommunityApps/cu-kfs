@@ -588,8 +588,8 @@ public class CuDisbursementVoucherDocumentTest {
 
         private TransactionalDocumentAuthorizer createMockAuthorizer() {
             TransactionalDocumentAuthorizer documentAuthorizer = Mockito.mock(TransactionalDocumentAuthorizer.class);
-            Mockito.when(documentAuthorizer.canEdit(Mockito.any(), Mockito.any())).then(this::determineEditCall);
-            Mockito.when(documentAuthorizer.getEditModes(Mockito.any(), Mockito.any(),Mockito.any())).thenReturn(authorizationEditModes);
+            Mockito.when(documentAuthorizer.canEdit(Mockito.any(CuDisbursementVoucherDocument.class), Mockito.any())).then(this::determineEditCall);
+            Mockito.when(documentAuthorizer.getEditModes(Mockito.any(CuDisbursementVoucherDocument.class), Mockito.any(),Mockito.any())).thenReturn(authorizationEditModes);
             return documentAuthorizer;
         }
         

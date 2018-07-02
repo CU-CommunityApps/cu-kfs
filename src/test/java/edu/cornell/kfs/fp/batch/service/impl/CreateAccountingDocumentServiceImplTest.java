@@ -104,6 +104,7 @@ public class CreateAccountingDocumentServiceImplTest {
     private static final String TARGET_TEST_FILE_PATH = "test/fp/accountingXmlDocument";
     private static final String FULL_FILE_PATH_FORMAT = "%s/%s%s";
     private static final int DOCUMENT_NUMBER_START = 1000;
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S");
 
     private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
@@ -559,14 +560,17 @@ public class CreateAccountingDocumentServiceImplTest {
     private DateTimeService buildMockDateTimeService() throws Exception {
         DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
         Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any())).then(this::formatDate);
-        Mockito.when(dateTimeService.getCurrentDate()).thenReturn(new Date());
+        Mockito.when(dateTimeService.getCurrentDate()).then(this::buildNewDate);
         return dateTimeService;
     }
     
     private String formatDate(InvocationOnMock invocation) {
         Date date = invocation.getArgument(0);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S");
-        return dateFormat.format(date);
+        return DATE_FORMAT.format(date);
+    }
+    
+    private Date buildNewDate(InvocationOnMock invocation) {
+        return new Date();
     }
 
     private FileStorageService buildFileStorageService() throws Exception {
@@ -684,24 +688,14 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private Client buildMockClient() {
         Client client = Mockito.mock(Client.class);
-        Mockito.when(client.target(Mockito.any(URI.class))).thenReturn(buildMockWebTarget());
+        Mockito.when(client.target(Mockito.any(URI.class))).then(this::buildMockWebTarget);
         return client;
     }
 
-    private WebTarget buildMockWebTarget() {
-        /*
-        final WebTarget target = PowerMockito.mock(WebTarget.class);
-        try {
-            PowerMockito.doReturn(buildMockInvocationBuilder()).when(target, "request");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private WebTarget buildMockWebTarget(InvocationOnMock invocation) {
+        WebTarget target = Mockito.mock(WebTarget.class);
+        Mockito.when(target.request()).thenReturn(buildMockInvocationBuilder());
         return target;
-        */
-        return buildMockObject(WebTarget.class, (webTarget) -> {
-            EasyMock.expect(webTarget.request())
-                    .andStubAnswer(this::buildMockInvocationBuilder);
-        });
     }
 
     private Invocation.Builder buildMockInvocationBuilder() {
@@ -750,11 +744,11 @@ public class CreateAccountingDocumentServiceImplTest {
     private Response buildMockResponse() {
         Response response = Mockito.mock(Response.class);
         Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
-        Mockito.when(response.readEntity(InputStream.class)).thenReturn(buildSingleByteInputStream());
+        Mockito.when(response.readEntity(InputStream.class)).then(this::buildSingleByteInputStream);
         return response;
     }
 
-    private InputStream buildSingleByteInputStream() {
+    private InputStream buildSingleByteInputStream(InvocationOnMock invocation) {
         return new ByteArrayInputStream(new byte[] {1});
     }
 

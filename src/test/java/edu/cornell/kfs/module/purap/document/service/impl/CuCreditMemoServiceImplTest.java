@@ -66,7 +66,7 @@ public class CuCreditMemoServiceImplTest {
     @Before
 	public void setUp() throws Exception {
         accountsPayableService = Mockito.mock(AccountsPayableService.class);
-        Mockito.when(accountsPayableService.getExpiredOrClosedAccountList(creditMemoDocument)).thenReturn(new HashMap<>());
+        Mockito.when(accountsPayableService.getExpiredOrClosedAccountList(Mockito.any())).thenReturn(new HashMap<>());
         
         dataDictionaryService = Mockito.mock(DataDictionaryService.class);
         Mockito.when(dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KRADPropertyConstants.DOCUMENT_DESCRIPTION)).thenReturn(200);
