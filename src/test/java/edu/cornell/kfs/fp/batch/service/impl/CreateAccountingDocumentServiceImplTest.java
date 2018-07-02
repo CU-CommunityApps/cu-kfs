@@ -39,7 +39,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +74,6 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -694,54 +692,24 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private WebTarget buildMockWebTarget(InvocationOnMock invocation) {
         WebTarget target = Mockito.mock(WebTarget.class);
-        Mockito.when(target.request()).thenReturn(buildMockInvocationBuilder());
+        Mockito.when(target.request()).then(this::buildMockInvocationBuilder);
         return target;
     }
 
-    private Invocation.Builder buildMockInvocationBuilder() {
-        /*
+    private Invocation.Builder buildMockInvocationBuilder(InvocationOnMock invocation) {
         Invocation.Builder builder = Mockito.mock(Invocation.Builder.class);
         Mockito.when(builder.header(Mockito.anyString(), Mockito.any())).thenReturn(builder);
-        Mockito.when(builder.buildGet()).thenReturn(buildMockInvocation());
+        Mockito.when(builder.buildGet()).then(this::buildMockInvocation);
         return builder;
-        */
-        /*
-        Invocation.Builder builder = PowerMockito.mock(Invocation.Builder.class);
-        try {
-            PowerMockito.doReturn(builder).when(builder, "header", Mockito.any(), Mockito.any());
-            PowerMockito.doReturn(buildMockInvocation()).when(builder, "buildSet");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return builder;
-        */
-        return buildMockObject(Invocation.Builder.class, (invocationBuilder) -> {
-            EasyMock.expect(invocationBuilder.header(EasyMock.anyObject(), EasyMock.anyObject()))
-                    .andStubReturn(invocationBuilder);
-            EasyMock.expect(invocationBuilder.buildGet())
-                    .andStubAnswer(this::buildMockInvocation);
-        });
     }
     
-    private static <T> T buildMockObject(Class<T> mockObjectClass, Consumer<T> mockObjectConfigurer) {
-        T mockObject = EasyMock.createMock(mockObjectClass);
-        mockObjectConfigurer.accept(mockObject);
-        EasyMock.replay(mockObject);
-        return mockObject;
-    }
-    
-
-    private Invocation buildMockInvocation() {
-        Invocation invocation = PowerMockito.mock(Invocation.class);
-        try {
-            PowerMockito.doReturn(buildMockResponse()).when(invocation, "invoke");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private Invocation buildMockInvocation(InvocationOnMock invocationOnMock) {
+        Invocation invocation = Mockito.mock(Invocation.class);
+        Mockito.when(invocation.invoke()).then(this::buildMockResponse);
         return invocation;
     }
 
-    private Response buildMockResponse() {
+    private Response buildMockResponse(InvocationOnMock invocation) {
         Response response = Mockito.mock(Response.class);
         Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
         Mockito.when(response.readEntity(InputStream.class)).then(this::buildSingleByteInputStream);
