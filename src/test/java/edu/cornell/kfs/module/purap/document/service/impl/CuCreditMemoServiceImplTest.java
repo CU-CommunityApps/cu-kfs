@@ -1,9 +1,10 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
-import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
-import edu.cornell.kfs.sys.util.MockPersonUtil;
-import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
-import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,10 +42,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
+import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
+import edu.cornell.kfs.sys.util.MockPersonUtil;
+import edu.cornell.kfs.vnd.fixture.VendorDetailExtensionFixture;
+import edu.cornell.kfs.vnd.fixture.VendorHeaderFixture;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuCreditMemoServiceImplTest.TestCuCreditMemoServiceImpl.class, AccountsPayableDocumentBase.class})
@@ -139,14 +140,14 @@ public class CuCreditMemoServiceImplTest {
 	}
 
 	@Test
-	public void testRemoveHoldOnCreditMemo() throws Exception {
-	    PowerMockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl, "getCreditMemoDocumentById", Mockito.any());
+    public void testRemoveHoldOnCreditMemo() throws Exception {
+        PowerMockito.doReturn(setupVendorCreditMemoDocument()).when(creditMemoServiceImpl, "getCreditMemoDocumentById", Mockito.any());
         PowerMockito.doNothing().when(creditMemoServiceImpl, "reIndexDocument", creditMemoDocument);
-		creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
+        creditMemoServiceImpl.removeHoldOnCreditMemo(creditMemoDocument, "unit test");
 
-		Assert.assertFalse(creditMemoDocument.isHoldIndicator());
-		Assert.assertNull(creditMemoDocument.getLastActionPerformedByPersonId());
-	}
+        Assert.assertFalse(creditMemoDocument.isHoldIndicator());
+        Assert.assertNull(creditMemoDocument.getLastActionPerformedByPersonId());
+    }
 
 	@Test
 	public void testrResetExtractedCreditMemo_Successful() throws Exception {
