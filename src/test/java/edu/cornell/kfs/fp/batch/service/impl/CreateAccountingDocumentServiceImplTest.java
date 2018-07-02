@@ -39,7 +39,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
-import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -77,8 +76,6 @@ import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;
-
-import com.mchange.v2.debug.ThreadNameStackTraceRecorder;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -595,9 +592,9 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private DocumentService buildMockDocumentService() throws Exception {
-        DocumentService docService = Mockito.mock(DocumentService.class);
-        Mockito.when(docService.routeDocument(Mockito.any(), Mockito.any(), Mockito.any())).then(this::recordAndReturnDocumentIfValid);
-        return docService;
+        DocumentService documentService = Mockito.mock(DocumentService.class);
+        Mockito.when(documentService.routeDocument(Mockito.any(), Mockito.any(), Mockito.any())).then(this::recordAndReturnDocumentIfValid);
+        return documentService;
     }
     
     private Document recordAndReturnDocumentIfValid(InvocationOnMock invocation) {
@@ -653,9 +650,9 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private WebServiceCredentialService buildMockWebServiceCredentialService() {
-        WebServiceCredentialService credService = Mockito.mock(WebServiceCredentialService.class);
-        Mockito.when(credService.getWebServiceCredentialsByGroupCode(Mockito.anyString())).then(this::findCredentialsFromFixture);
-        return credService;
+        WebServiceCredentialService credentialService = Mockito.mock(WebServiceCredentialService.class);
+        Mockito.when(credentialService.getWebServiceCredentialsByGroupCode(Mockito.anyString())).then(this::findCredentialsFromFixture);
+        return credentialService;
     }
     
     private Collection<WebServiceCredential> findCredentialsFromFixture(InvocationOnMock invocation) {
