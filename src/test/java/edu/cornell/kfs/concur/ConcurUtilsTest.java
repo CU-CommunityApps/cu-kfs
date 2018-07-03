@@ -27,7 +27,7 @@ public class ConcurUtilsTest {
     
     @Before
     public void setUp() throws Exception {
-        
+        COMPILER_ERROR
     }
     
     @Test
