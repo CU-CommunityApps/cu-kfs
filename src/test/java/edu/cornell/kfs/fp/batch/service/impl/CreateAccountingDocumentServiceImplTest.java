@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +39,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
-import org.easymock.Capture;
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,6 +72,8 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -88,11 +89,11 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
+import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
-import edu.cornell.kfs.sys.util.MockObjectUtils;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 public class CreateAccountingDocumentServiceImplTest {
@@ -101,6 +102,7 @@ public class CreateAccountingDocumentServiceImplTest {
     private static final String TARGET_TEST_FILE_PATH = "test/fp/accountingXmlDocument";
     private static final String FULL_FILE_PATH_FORMAT = "%s/%s%s";
     private static final int DOCUMENT_NUMBER_START = 1000;
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S");
 
     private TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
@@ -554,17 +556,19 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private DateTimeService buildMockDateTimeService() throws Exception {
-        DateTimeService dateTimeService = EasyMock.createMock(DateTimeService.class);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH-mm-ss-S");
-        
-        Capture<Date> dateArg = EasyMock.newCapture();
-        EasyMock.expect(dateTimeService.toDateTimeStringForFilename(EasyMock.capture(dateArg)))
-                .andStubAnswer(() -> dateFormat.format(dateArg.getValue()));
-        EasyMock.expect(dateTimeService.getCurrentDate())
-                .andStubAnswer(Date::new);
-        
-        EasyMock.replay(dateTimeService);
+        DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
+        Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any())).then(this::formatDate);
+        Mockito.when(dateTimeService.getCurrentDate()).then(this::buildNewDate);
         return dateTimeService;
+    }
+    
+    private String formatDate(InvocationOnMock invocation) {
+        Date date = invocation.getArgument(0);
+        return DATE_FORMAT.format(date);
+    }
+    
+    private Date buildNewDate(InvocationOnMock invocation) {
+        return new Date();
     }
 
     private FileStorageService buildFileStorageService() throws Exception {
@@ -574,62 +578,43 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private ConfigurationService buildMockConfigurationService() throws Exception {
-        ConfigurationService configurationService = EasyMock.createMock(ConfigurationService.class);
-        
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
-                .andStubReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
-        EasyMock.expect(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
-                .andStubReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
-        
-        EasyMock.replay(configurationService);
+        ConfigurationService configurationService = Mockito.mock(ConfigurationService.class);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPTestConstants.TEST_VALIDATION_ERROR_KEY))
+            .thenReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
+        Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
+            .thenReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
         return configurationService;
     }
 
     private PersonService buildMockPersonService() throws Exception {
-        PersonService personService = EasyMock.createMock(PersonService.class);
-        
+        PersonService personService = Mockito.mock(PersonService.class);
         Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
-        EasyMock.expect(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER))
-                .andStubReturn(systemUser);
-        
-        EasyMock.replay(personService);
+        Mockito.when(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER)).thenReturn(systemUser);
         return personService;
     }
 
     private DocumentService buildMockDocumentService() throws Exception {
-        DocumentService documentService = EasyMock.createMock(DocumentService.class);
-        
-        Capture<Document> documentArg = EasyMock.newCapture();
-        EasyMock.expect(
-                documentService.routeDocument(
-                        EasyMock.capture(documentArg), EasyMock.anyObject(), EasyMock.anyObject()))
-                .andStubAnswer(() -> recordAndReturnDocumentIfValid(documentArg.getValue()));
-        
-        EasyMock.replay(documentService);
+        DocumentService documentService = Mockito.mock(DocumentService.class);
+        Mockito.when(documentService.routeDocument(Mockito.any(), Mockito.any(), Mockito.any())).then(this::recordAndReturnDocumentIfValid);
         return documentService;
     }
     
-    private ParameterService buildParameterService() {
-        ParameterService parameterService = EasyMock.createMock(ParameterService.class);
-        
-        EasyMock.expect(
-                parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
-                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
-                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS))
-        .andStubAnswer(() -> "kfs-gl_fp@cornell.edu");
-        
-        EasyMock.replay(parameterService);
-        
-        return parameterService;
-    }
-
-    private Document recordAndReturnDocumentIfValid(Document document) {
+    private Document recordAndReturnDocumentIfValid(InvocationOnMock invocation) {
+        Document document = invocation.getArgument(0);
         if (!documentPassesBusinessRules(document)) {
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CuFPTestConstants.TEST_VALIDATION_ERROR_KEY);
             throw new ValidationException("Simulated business rule validation failure");
         }
         routedAccountingDocuments.add((AccountingDocument) document);
         return document;
+    }
+    
+    private ParameterService buildParameterService() {
+        ParameterService parameterService = Mockito.mock(ParameterService.class);
+        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
+        return parameterService;
     }
 
     private boolean documentPassesBusinessRules(Document document) {
@@ -654,30 +639,30 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private AttachmentService buildMockAttachmentService() throws Exception {
-        return MockObjectUtils.buildMockObjectWithExceptionProneSetup(AttachmentService.class, (attachmentService) -> {
-            Capture<String> fileNameArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    attachmentService.createAttachment(
-                            EasyMock.anyObject(), EasyMock.capture(fileNameArg), EasyMock.anyObject(),
-                            EasyMock.anyInt(), EasyMock.anyObject(), EasyMock.anyObject()))
-                    .andStubAnswer(() -> buildSimpleAttachment(fileNameArg.getValue()));
-        });
+        AttachmentService attachmentService = Mockito.mock(AttachmentService.class);
+        Mockito.when(attachmentService.createAttachment(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.any(), Mockito.any())).then(this::buildSimpleAttachment);
+        return attachmentService;
     }
-
-    private Attachment buildSimpleAttachment(String fileName) {
+    
+    private Attachment buildSimpleAttachment(InvocationOnMock invocation) {
+        String fileName = invocation.getArgument(1);
         Attachment attachment = new Attachment();
         attachment.setAttachmentFileName(fileName);
         return attachment;
     }
 
     private WebServiceCredentialService buildMockWebServiceCredentialService() {
-        return MockObjectUtils.buildMockObject(WebServiceCredentialService.class, (webServiceCredentialService) -> {
-            Capture<String> groupCodeArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    webServiceCredentialService.getWebServiceCredentialsByGroupCode(EasyMock.capture(groupCodeArg)))
-                    .andStubAnswer(() -> WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCodeArg.getValue()));
-        });
+        WebServiceCredentialService credentialService = Mockito.mock(WebServiceCredentialService.class);
+        Mockito.when(credentialService.getWebServiceCredentialsByGroupCode(Mockito.anyString())).then(this::findCredentialsFromFixture);
+        return credentialService;
     }
+    
+    private Collection<WebServiceCredential> findCredentialsFromFixture(InvocationOnMock invocation) {
+        String groupCode = invocation.getArgument(0);
+        return WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCode);
+    }
+    
+    
 
     private FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
         List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
@@ -700,45 +685,38 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private Client buildMockClient() {
-        return MockObjectUtils.buildMockObject(Client.class, (client) -> {
-            EasyMock.expect(client.target(EasyMock.isA(URI.class)))
-                    .andStubAnswer(this::buildMockWebTarget);
-        });
+        Client client = Mockito.mock(Client.class);
+        Mockito.when(client.target(Mockito.any(URI.class))).then(this::buildMockWebTarget);
+        return client;
     }
 
-    private WebTarget buildMockWebTarget() {
-        return MockObjectUtils.buildMockObject(WebTarget.class, (webTarget) -> {
-            EasyMock.expect(webTarget.request())
-                    .andStubAnswer(this::buildMockInvocationBuilder);
-        });
+    private WebTarget buildMockWebTarget(InvocationOnMock invocation) {
+        WebTarget target = Mockito.mock(WebTarget.class);
+        Mockito.when(target.request()).then(this::buildMockInvocationBuilder);
+        return target;
     }
 
-    private Invocation.Builder buildMockInvocationBuilder() {
-        return MockObjectUtils.buildMockObject(Invocation.Builder.class, (invocationBuilder) -> {
-            EasyMock.expect(invocationBuilder.header(EasyMock.anyObject(), EasyMock.anyObject()))
-                    .andStubReturn(invocationBuilder);
-            EasyMock.expect(invocationBuilder.buildGet())
-                    .andStubAnswer(this::buildMockInvocation);
-        });
+    private Invocation.Builder buildMockInvocationBuilder(InvocationOnMock invocation) {
+        Invocation.Builder builder = Mockito.mock(Invocation.Builder.class);
+        Mockito.when(builder.header(Mockito.anyString(), Mockito.any())).thenReturn(builder);
+        Mockito.when(builder.buildGet()).then(this::buildMockInvocation);
+        return builder;
+    }
+    
+    private Invocation buildMockInvocation(InvocationOnMock invocationOnMock) {
+        Invocation invocation = Mockito.mock(Invocation.class);
+        Mockito.when(invocation.invoke()).then(this::buildMockResponse);
+        return invocation;
     }
 
-    private Invocation buildMockInvocation() {
-        return MockObjectUtils.buildMockObject(Invocation.class, (invocation) -> {
-            EasyMock.expect(invocation.invoke())
-                    .andStubAnswer(this::buildMockResponse);
-        });
+    private Response buildMockResponse(InvocationOnMock invocation) {
+        Response response = Mockito.mock(Response.class);
+        Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
+        Mockito.when(response.readEntity(InputStream.class)).then(this::buildSingleByteInputStream);
+        return response;
     }
 
-    private Response buildMockResponse() {
-        return MockObjectUtils.buildMockObject(Response.class, (response) -> {
-            EasyMock.expect(response.getStatus())
-                    .andStubReturn(Response.Status.OK.getStatusCode());
-            EasyMock.expect(response.readEntity(InputStream.class))
-                    .andStubAnswer(this::buildSingleByteInputStream);
-        });
-    }
-
-    private InputStream buildSingleByteInputStream() {
+    private InputStream buildSingleByteInputStream(InvocationOnMock invocation) {
         return new ByteArrayInputStream(new byte[] {1});
     }
 
