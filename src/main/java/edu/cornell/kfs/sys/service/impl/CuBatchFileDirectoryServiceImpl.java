@@ -1,10 +1,11 @@
 package edu.cornell.kfs.sys.service.impl;
 
 import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
-import edu.cornell.kfs.sys.service.BatchFileDirectoryService;
+import edu.cornell.kfs.sys.service.CuBatchFileDirectoryService;
 import edu.cornell.kfs.sys.util.SubDirectoryWalker;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
+import org.kuali.kfs.sys.batch.service.impl.BatchFileDirectoryServiceImpl;
 import org.kuali.rice.core.api.util.KeyValue;
 
 import java.io.File;
@@ -12,9 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BatchFileDirectoryServiceImpl implements BatchFileDirectoryService {
+public class CuBatchFileDirectoryServiceImpl extends BatchFileDirectoryServiceImpl implements CuBatchFileDirectoryService {
 
-    private static final Logger LOG = Logger.getLogger(BatchFileDirectoryServiceImpl.class);
+    private static final Logger LOG = Logger.getLogger(CuBatchFileDirectoryServiceImpl.class);
 
     @Override
     public List<KeyValue> buildBatchFileStagingDirectories() {
