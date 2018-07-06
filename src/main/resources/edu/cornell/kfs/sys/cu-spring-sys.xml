@@ -244,7 +244,7 @@
 		<property name="stateService" ref="stateService" />
     </bean>
 
-	<bean id="batchFileDirectoryService" class="edu.cornell.kfs.sys.service.impl.CuBatchFileDirectoryServiceImpl" />
+	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.CuBatchFileDirectoryServiceImpl" />
 
 	<bean id="batchFileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />
 
