@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
-public interface CuBatchFileDirectoryService {
+public interface CuBatchFileDirectoryService extends BatchFileDirectoryService {
 
     @Cacheable(value= SystemOptions.CACHE_NAME, key="'buildBatchFileStagingDirectories'")
     List<KeyValue> buildBatchFileStagingDirectories();
