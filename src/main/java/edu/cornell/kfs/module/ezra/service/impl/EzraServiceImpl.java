@@ -457,10 +457,8 @@ public class EzraServiceImpl implements EzraService {
 		agencyMaintainable.setBusinessObject(agency);
 		agencyDoc.setNewMaintainableObject(agencyMaintainable);
 		try {
-//			documentService.saveDocument(agencyDoc);
-			workflowDocumentService.save(agencyDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created");
+			documentService.saveDocument(agencyDoc);
 			GlobalVariables.getMessageMap().clearErrorMessages();
-			//documentService.routeDocument(agencyDoc, "Automatically created and routed", null);
 			workflowDocumentService.route(agencyDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created and routed", null);
 		} catch (WorkflowException we) {
 			we.printStackTrace();
@@ -493,10 +491,8 @@ public class EzraServiceImpl implements EzraService {
 		} 
 		awardDoc.getNewMaintainableObject().setBusinessObject(award);
 		try {
-			//documentService.saveDocument(awardDoc);
-			workflowDocumentService.save(awardDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created");
+			documentService.saveDocument(awardDoc);
 			GlobalVariables.getMessageMap().clearErrorMessages();
-			//documentService.routeDocument(awardDoc, "Automatically created and routed", null);
 			workflowDocumentService.route(awardDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created and routed", null);
 		} catch (WorkflowException we) {
 			we.printStackTrace();
@@ -524,10 +520,8 @@ public class EzraServiceImpl implements EzraService {
 		proposalDoc.getDocumentHeader().setDocumentDescription("Auto creation of new proposal: "+ proposal.getProposalNumber());
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
-//			documentService.saveDocument(proposalDoc);
-			workflowDocumentService.save(proposalDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created");
+			documentService.saveDocument(proposalDoc);
 			GlobalVariables.getMessageMap().clearErrorMessages();
-			//documentService.routeDocument(proposalDoc, "Automatically created and routed", null);
 			workflowDocumentService.route(proposalDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created and routed", null);
 		} catch (WorkflowException we) {
 			we.printStackTrace();
