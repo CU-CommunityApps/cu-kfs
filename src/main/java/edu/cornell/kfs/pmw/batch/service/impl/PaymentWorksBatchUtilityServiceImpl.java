@@ -183,7 +183,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
                      + "' and kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "' and pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId()
                      + "' and vendor number '");
             getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED, vendorDetail.getVendorHeaderGeneratedIdentifier(),
-                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), getDateTimeService().getCurrentTimestamp());
+                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), PaymentWorksConstants.SupplierUploadStatus.PENDING_PAAT, getDateTimeService().getCurrentTimestamp());
         } else {
             LOG.error("registerKfsPvenApprovalForExistingPaymentWorksVendor: PaymentWorks staging table retrieval by KFS document number '" + kfsVendorDocumentNumber + "' failed to find vendor to set KFS Approve status values.");
         }
@@ -211,7 +211,8 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
             LOG.info("registerKfsPvenDisapprovalForExistingPaymentWorksVendor: Disapproving PaymentWorks originating Vendor with table ID '" + pmwVendor.getId()
                      + "' and kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "' and pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId() + "'");
             getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_DISAPPROVED, vendorDetail.getVendorHeaderGeneratedIdentifier(),
-                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), getDateTimeService().getCurrentTimestamp());
+                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD,
+                                                                                      getDateTimeService().getCurrentTimestamp());
         } else {
             LOG.error("registerKfsPvenDisapprovalForExistingPaymentWorksVendor: Vendor retrieval by KFS document number '" + kfsVendorDocumentNumber
                     + "' did not find vendor with pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId() + "'.");
@@ -250,6 +251,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     private PaymentWorksVendor populateKfsEnteredPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail, String kfsVendorProcessingStatus) {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.READY_FOR_UPLOAD);
         pmwVendor.setPmwTransactionType(PaymentWorksConstants.PaymentWorksTransactionType.KFS_ORIGINATING_VENDOR);
         pmwVendor.setKfsVendorProcessingStatus(kfsVendorProcessingStatus);
         pmwVendor.setKfsVendorDocumentNumber(kfsVendorDocumentNumber);

@@ -30,6 +30,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String kfsAchDocumentNumber;
     private Timestamp processTimestamp;
 
+    private String supplierUploadStatus;
+
     private String requestingCompanyId;
     private String requestingCompanyTin;
     private String requestingCompanyTinType;
@@ -569,6 +571,14 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setProcessTimestamp(Timestamp processTimestamp) {
         this.processTimestamp = processTimestamp;
+    }
+
+    public String getSupplierUploadStatus() {
+        return supplierUploadStatus;
+    }
+
+    public void setSupplierUploadStatus(String supplierUploadStatus) {
+        this.supplierUploadStatus = supplierUploadStatus;
     }
 
     public String getKfsVendorDocumentNumber() {

@@ -353,6 +353,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getKfsVendorProcessingStatus(), 
                                                                                   pmwVendor.getKfsAchProcessingStatus(), 
                                                                                   pmwVendor.getKfsVendorDocumentNumber(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
@@ -362,6 +363,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
@@ -376,12 +378,14 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_CREATED);
         pmwVendor.setKfsAchProcessingStatus(PaymentWorksConstants.KFSAchProcessingStatus.PENDING_PVEN);
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.PENDING_PAAT);
         return pmwVendor;
     }
     
     private PaymentWorksVendor setStatusValuesForPaymentWorksRejectedNewVendorRejectedKfsVendor(PaymentWorksVendor pmwVendor) {
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_REJECTED);
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
         return pmwVendor;
     }
     
