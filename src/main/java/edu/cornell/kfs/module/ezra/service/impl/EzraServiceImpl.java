@@ -17,6 +17,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.workflow.service.WorkflowDocumentService;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
@@ -57,6 +58,7 @@ public class EzraServiceImpl implements EzraService {
 
     private BusinessObjectService businessObjectService;
 	private DocumentService documentService;
+	private WorkflowDocumentService workflowDocumentService;
 	private SponsorDao sponsorDao;
 	private EzraAwardProposalDao ezraAwardProposalDao;
 	private DateTimeService dateTimeService;
@@ -456,7 +458,8 @@ public class EzraServiceImpl implements EzraService {
 		agencyDoc.setNewMaintainableObject(agencyMaintainable);
 		try {
 			documentService.saveDocument(agencyDoc);
-			agencyDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
+			GlobalVariables.getMessageMap().clearErrorMessages();
+			workflowDocumentService.route(agencyDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created and routed", null);
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
@@ -472,7 +475,6 @@ public class EzraServiceImpl implements EzraService {
 	private void routeAwardDocument(Award award, Award oldAward) {
 		GlobalVariables.clear();
 		GlobalVariables.setUserSession(new UserSession(KFSConstants.SYSTEM_USER));
-		// DocumentService docService = SpringContext.getBean(DocumentService.class);
 		MaintenanceDocument awardDoc  = null;
 		try {
 			awardDoc = (MaintenanceDocument) documentService.getNewDocument("AWRD");
@@ -487,11 +489,11 @@ public class EzraServiceImpl implements EzraService {
 			awardDoc.getDocumentHeader().setDocumentDescription(award.getProposalNumber()+" by auto edit");
 
 		} 
-		awardDoc.getNewMaintainableObject().setBusinessObject(award);;
+		awardDoc.getNewMaintainableObject().setBusinessObject(award);
 		try {
 			documentService.saveDocument(awardDoc);
-			//documentService.routeDocument(awardDoc, "Automatically created and routed", null);
-			awardDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
+			GlobalVariables.getMessageMap().clearErrorMessages();
+			workflowDocumentService.route(awardDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created and routed", null);
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		} catch (RuntimeException rte) {
@@ -519,7 +521,8 @@ public class EzraServiceImpl implements EzraService {
 		proposalDoc.getNewMaintainableObject().setBusinessObject(proposal);
 		try {
 			documentService.saveDocument(proposalDoc);
-			proposalDoc.getDocumentHeader().getWorkflowDocument().route("Automatically created and routed");
+			GlobalVariables.getMessageMap().clearErrorMessages();
+			workflowDocumentService.route(proposalDoc.getDocumentHeader().getWorkflowDocument(), "Automatically created and routed", null);
 		} catch (WorkflowException we) {
 			we.printStackTrace();
 		}
@@ -753,6 +756,14 @@ public class EzraServiceImpl implements EzraService {
 	 */
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;
+	}
+
+	public WorkflowDocumentService getWorkflowDocumentService() {
+		return workflowDocumentService;
+	}
+
+	public void setWorkflowDocumentService(WorkflowDocumentService workflowDocumentService) {
+		this.workflowDocumentService = workflowDocumentService;
 	}
 
 	/**
