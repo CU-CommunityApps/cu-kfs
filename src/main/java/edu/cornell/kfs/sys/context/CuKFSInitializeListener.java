@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.context;
 
-import edu.cornell.kfs.sys.service.BatchFileDirectoryService;
+import edu.cornell.kfs.sys.service.CuBatchFileDirectoryService;
 import org.kuali.kfs.sys.context.KFSInitializeListener;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -23,7 +23,7 @@ public class CuKFSInitializeListener extends KFSInitializeListener {
     public void contextInitialized(ServletContextEvent sce) {
         super.contextInitialized(sce);
 
-        BatchFileDirectoryService batchFileDirectoryService = SpringContext.getBean(BatchFileDirectoryService.class);
+        CuBatchFileDirectoryService batchFileDirectoryService = SpringContext.getBean(CuBatchFileDirectoryService.class);
 
         CompletableFuture.supplyAsync(batchFileDirectoryService::buildBatchFileStagingDirectories);
         CompletableFuture.supplyAsync(batchFileDirectoryService::buildBatchFileLookupDirectories);

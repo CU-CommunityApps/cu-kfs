@@ -33,7 +33,8 @@
 
 
 <kul:tab tabTitle="Payment Information" defaultOpen="true"
-         tabErrorKey="${KFSConstants.DV_PAYMENT_TAB_ERRORS},document.disbVchrPaymentMethodCode,${KFSConstants.DV_PAYEE_TAB_ERRORS},document.dvPayeeDetail.disbursementVoucherPayeeTypeCode">
+         tabErrorKey="${KFSConstants.DV_PAYMENT_TAB_ERRORS},document.disbVchrPaymentMethodCode,${KFSConstants.DV_PAYEE_TAB_ERRORS},
+            document.dvPayeeDetail.disbursementVoucherPayeeTypeCode,document.invoiceDate,document.invoiceNumber">
     <div class="tab-container">
 		<table class="datatable standard" summary="Payment Section">
             <tr>
@@ -332,9 +333,27 @@
               </td>
             </tr>
             <tr>
-              <th scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
-              <td><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}"
+              <th rowspan="4" scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
+              <td rowspan="4"><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}"
                                             property="document.disbVchrCheckStubText" readOnly="${!fullEntryMode && !paymentHandlingEntryMode}"/></td>
+            </tr>
+            <tr>
+                <th align=right valign=middle class="bord-l-b"><div align="right">
+                    <kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceNumber}" /></div></th>
+                <td align=left valign=middle class="datacell">
+                    <kul:htmlControlAttribute property="document.invoiceNumber"
+                                              attributeEntry="${dvAttributes.invoiceNumber}"
+                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
+            </tr>
+            <tr>
+                <th align=right valign=middle class="bord-l-b"><div align="right">
+                    <kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceDate}" /></div></th>
+                <td align=left valign=middle class="datacell">
+                    <kul:htmlControlAttribute property="document.invoiceDate"
+                                              attributeEntry="${dvAttributes.invoiceDate}"
+                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
+            </tr>
+            <tr>
 				<c:choose>
 					<c:when test="${achAccountInfoDisplayed}">
 						<th align=right valign=middle class="bord-l-b"><div align="right">
