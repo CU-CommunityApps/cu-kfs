@@ -3,6 +3,9 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,8 +20,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.easymock.Capture;
-import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.junit.Before;
@@ -34,6 +35,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
+import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -529,28 +531,23 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected ConcurRequestedCashAdvanceService buildMockRequestedCashAdvanceService() {
         return buildMockService(ConcurRequestedCashAdvanceService.class, (service) -> {
-            EasyMock.expect(
-                    service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_1))
-                    .andStubReturn(Collections.singletonList(
+            when(service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_1))
+                    .thenReturn(Collections.singletonList(
                             ConcurRequestedCashAdvanceFixture.CASH_ADVANCE_50.toRequestedCashAdvance()));
-            EasyMock.expect(
-                    service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_2))
-                    .andStubReturn(Collections.singletonList(
+            when(service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_2))
+                    .thenReturn(Collections.singletonList(
                             ConcurRequestedCashAdvanceFixture.CASH_ADVANCE_200.toRequestedCashAdvance()));
-            EasyMock.expect(
-                    service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_NONEXISTENT))
-                    .andStubReturn(Collections.emptyList());
+            when(service.findConcurRequestedCashAdvanceByCashAdvanceKey(ConcurTestConstants.CASH_ADVANCE_KEY_NONEXISTENT))
+                    .thenReturn(Collections.emptyList());
         });
     }
 
     protected ConfigurationService buildMockConfigurationService() {
         return buildMockService(ConfigurationService.class, (service) -> {
-            EasyMock.expect(
-                    service.getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE))
-                    .andStubReturn(PropertyTestValues.GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE);
-            EasyMock.expect(
-                    service.getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_ORPHANED_CASH_ADVANCE))
-                    .andStubReturn(PropertyTestValues.ORPHANED_CASH_ADVANCE_MESSAGE);
+            when(service.getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE))
+                    .thenReturn(PropertyTestValues.GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE);
+            when(service.getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_ORPHANED_CASH_ADVANCE))
+                    .thenReturn(PropertyTestValues.ORPHANED_CASH_ADVANCE_MESSAGE);
         });
     }
 
@@ -559,22 +556,20 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
             SystemOptions testOptions = new SystemOptions();
             testOptions.setActualFinancialBalanceTypeCd(BalanceTypeService.ACTUAL_BALANCE_TYPE);
             
-            EasyMock.expect(service.getOptions(EasyMock.anyObject()))
-                    .andStubReturn(testOptions);
+            when(service.getOptions(any()))
+                    .thenReturn(testOptions);
         });
     }
 
     protected UniversityDateService buildMockUniversityDateService() {
         return buildMockService(UniversityDateService.class, (service) -> {
-            Capture<Date> dateArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    service.getFiscalYear(
-                            EasyMock.capture(dateArg)))
-                    .andStubAnswer(() -> getFiscalYear(dateArg.getValue()));
+            when(service.getFiscalYear(any(Date.class)))
+                    .then(this::getFiscalYear);
         });
     }
 
-    protected Integer getFiscalYear(Date date) {
+    protected Integer getFiscalYear(InvocationOnMock invocation) {
+        Date date = invocation.getArgument(0);
         if (date == null) {
             throw new IllegalArgumentException("date cannot be null");
         }
@@ -610,15 +605,14 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
 
     protected ConcurStandardAccountingExtractValidationService buildMockConcurSAEValidationService() {
         return buildMockService(ConcurStandardAccountingExtractValidationService.class, (service) -> {
-            Capture<ConcurStandardAccountingExtractDetailLine> saeLineArg = EasyMock.newCapture();
-            EasyMock.expect(
-                    service.validateConcurStandardAccountingExtractDetailLineForCollector(
-                            EasyMock.capture(saeLineArg), EasyMock.anyObject()))
-                    .andStubAnswer(() -> validateLine(saeLineArg.getValue()));
+            when(service.validateConcurStandardAccountingExtractDetailLineForCollector(
+                    any(ConcurStandardAccountingExtractDetailLine.class), any(ConcurStandardAccountingExtractBatchReportData.class)))
+                    .then(this::validateLine);
         });
     }
 
-    protected boolean validateLine(ConcurStandardAccountingExtractDetailLine saeLine) {
+    protected boolean validateLine(InvocationOnMock invocation) {
+        ConcurStandardAccountingExtractDetailLine saeLine = invocation.getArgument(0);
         if (StringUtils.isBlank(saeLine.getReportId()) || StringUtils.isBlank(saeLine.getJournalAccountCode())) {
             builder.reportUnprocessedLine(saeLine, "Line failed validation");
             return false;
@@ -679,9 +673,8 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     }
 
     protected <T> T buildMockService(Class<T> serviceClass, Consumer<T> mockServiceConfigurer) {
-        T mockService = EasyMock.createMock(serviceClass);
+        T mockService = mock(serviceClass);
         mockServiceConfigurer.accept(mockService);
-        EasyMock.replay(mockService);
         return mockService;
     }
 
