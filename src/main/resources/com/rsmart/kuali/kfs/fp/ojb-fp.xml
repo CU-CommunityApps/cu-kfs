@@ -105,8 +105,6 @@
     <field-descriptor name="paidDate" column="DV_PD_DT" jdbc-type="DATE" />
     <field-descriptor name="cancelDate" column="DV_CNCL_DT" jdbc-type="DATE" />
     <field-descriptor name="disbVchrPdpBankCode" column="DV_PDP_BNK_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="invoiceDate" column="INV_DT" jdbc-type="DATE"/>
-    <field-descriptor name="invoiceNumber" column="INV_NBR" jdbc-type="VARCHAR"/>
     <field-descriptor name="tripAssociationStatusCode" column="DV_TRIP_ASSC_CD" jdbc-type="VARCHAR" />
     <field-descriptor name="tripId" column="TRIP_ID" jdbc-type="VARCHAR" />
 
