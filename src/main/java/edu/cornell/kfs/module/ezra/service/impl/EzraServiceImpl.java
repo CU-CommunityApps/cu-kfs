@@ -187,6 +187,7 @@ public class EzraServiceImpl implements EzraService {
 			awardEA.setProposalNumber(((AwardExtendedAttribute)oldAward.getExtension()).getProposalNumber());
                         awardEA.setVersionNumber(((AwardExtendedAttribute)oldAward.getExtension()).getVersionNumber());
                         awardEA.setEverify(((AwardExtendedAttribute)oldAward.getExtension()).isEverify());
+			award.setBillingFrequencyCode(oldAward.getBillingFrequencyCode());
 		}
 		
 		for (AwardProjectDirector apd : award.getAwardProjectDirectors()) {
