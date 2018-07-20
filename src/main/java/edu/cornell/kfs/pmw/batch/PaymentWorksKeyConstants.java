@@ -40,6 +40,7 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_DETAIL_WAS_NOT_FOUND_ERROR_MESSAGE = "error.paymentworks.new.vendor.detail.not.returned.by.web.service";
     public static final String DUPLICATE_NEW_VENDOR_REQUEST_ERROR_MESSAGE = "error.paymentworks.duplicate.new.vendor.request"; 
     public static final String INITIAL_SAVE_TO_PMW_STAGING_TABLE_FAILED_ERROR_MESSAGE = "error.paymentworks.intial.staging.table.save.failed";
+    public static final String INITIAL_PAYMENT_WORKS_VENOR_SAVE_ERROR_MESSAGE = "error.paymentworks.paymentworksvendor.initial.save";
     public static final String EXCEPTION_GENERATED_DURING_PROCESSING = "error.paymentworks.exception.generated";
     public static final String END_OF_REPORT_MESSAGE = "message.paymentworks.end.of.report";
     public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "message.paymentworks.no.records.with.validation.errors";

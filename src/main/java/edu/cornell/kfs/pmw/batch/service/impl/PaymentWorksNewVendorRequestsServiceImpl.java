@@ -1,52 +1,34 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-
+import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.vnd.VendorConstants;
+import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.KfsSupplierDiversityDao;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksIsoFipsCountryDao;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
-
-import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.VendorConstants;
-import org.kuali.kfs.vnd.VendorKeyConstants;
-import org.kuali.kfs.vnd.VendorPropertyConstants;
 
 public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNewVendorRequestsService {
     
@@ -99,23 +81,28 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS: Processing started for PMW-vendor-id=" + pmwNewVendorRequestId);
             PaymentWorksVendor stgNewVendorRequestDetailToProcess = getPaymentWorksWebServiceCallsService().obtainPmwNewVendorRequestDetailForPmwIdentifier(pmwNewVendorRequestId, reportData);
             if (canPaymentWorksNewVendorRequestProcessingContinueForVendor(stgNewVendorRequestDetailToProcess, reportData)) {
-                PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable(stgNewVendorRequestDetailToProcess);
+                PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = null;
+                try {
+                    savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable( stgNewVendorRequestDetailToProcess);
+                } catch (Exception e) {
+                    LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, unable to save payment works vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId, e);
+                    reportData.getRecordsGeneratingExceptionSummary().incrementRecordCount();
+                    reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestId, 
+                            getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_PAYMENT_WORKS_VENOR_SAVE_ERROR_MESSAGE)));
+                }
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                         getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
-                    }
-                    else {
+                    } else {
                         getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
                     }
-                }
-                else {
-                    //save of pmw data to staging table failed for some reason, cannot process or track request
+                } else {
+                    // save of pmw data to staging table failed for some reason, cannot process or track request
                     getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
                 }
-            }
-            else {
-              //either duplicate request or data issue exists preventing save to staging table
-              getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
+            } else {
+                // either duplicate request or data issue exists preventing save to staging table
+                getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
             }
         }
         getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
