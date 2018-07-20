@@ -85,9 +85,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private void sendEmailThatNoPmwDataWasFoundToCreateNewKfsVendors() {
         List<String> emailBodyItems = new ArrayList<String>();
-        emailBodyItems.add(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_APPROVED_VENDORS_FOUND_EMAIL_BODY));
+        emailBodyItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_APPROVED_VENDORS_FOUND_EMAIL_BODY);
         List<String> emailSubjectItems = new ArrayList<String>();
-        emailSubjectItems.add(getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_APPROVED_VENDORS_FOUND_EMAIL_SUBJECT));
+        emailSubjectItems.add(PaymentWorksParameterConstants.PAYMENTWORKS_NEW_VENDOR_REPORT_NO_APPROVED_VENDORS_FOUND_EMAIL_SUBJECT);
         getPaymentWorksNewVendorRequestsReportService().sendEmailThatNoDataWasFoundToProcess(emailSubjectItems, emailBodyItems);
     }
     
