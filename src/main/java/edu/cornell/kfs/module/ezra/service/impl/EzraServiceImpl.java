@@ -290,25 +290,25 @@ public class EzraServiceImpl implements EzraService {
 	    }
 	}
 	
-	protected void setAwardInvoicingInfo(Award award, Award oldAward) {
-	    award.setLetterOfCreditFundCode(oldAward.getLetterOfCreditFundCode());
-            ((CuAward)award).setLetterOfCreditFundGroupCode(((CuAward)oldAward).getLetterOfCreditFundGroupCode());
-	    award.setBillingFrequencyCode(oldAward.getBillingFrequencyCode());
-            award.setInvoicingOptionCode(oldAward.getInvoicingOptionCode());
-            award.setInvoicingOptionCode(oldAward.getInvoicingOptionCode());
-            award.setMinInvoiceAmount(oldAward.getMinInvoiceAmount());
-            award.setAutoApproveIndicator(oldAward.getAutoApproveIndicator());
-            award.setStateTransferIndicator(oldAward.isStateTransferIndicator());
-            award.setInstrumentTypeCode(oldAward.getInstrumentTypeCode());
-            award.setFundingExpirationDate(oldAward.getFundingExpirationDate());
-            award.setAdditionalFormsRequiredIndicator(oldAward.isAdditionalFormsRequiredIndicator());
-            award.setAdditionalFormsDescription(oldAward.getAdditionalFormsDescription());
-            award.setDunningCampaign(oldAward.getDunningCampaign());
-            award.setExcludedFromInvoicing(oldAward.isExcludedFromInvoicing());
-            award.setExcludedFromInvoicingReason(oldAward.getExcludedFromInvoicingReason());
-            award.setStopWorkIndicator(oldAward.isStopWorkIndicator());
-            award.setStopWorkReason(oldAward.getStopWorkReason());
-	}
+    protected void setAwardInvoicingInfo(Award award, Award oldAward) {
+        award.setLetterOfCreditFundCode(oldAward.getLetterOfCreditFundCode());
+        ((CuAward) award).setLetterOfCreditFundGroupCode(((CuAward) oldAward).getLetterOfCreditFundGroupCode());
+        award.setBillingFrequencyCode(oldAward.getBillingFrequencyCode());
+        award.setInvoicingOptionCode(oldAward.getInvoicingOptionCode());
+        award.setInvoicingOptionCode(oldAward.getInvoicingOptionCode());
+        award.setMinInvoiceAmount(oldAward.getMinInvoiceAmount());
+        award.setAutoApproveIndicator(oldAward.getAutoApproveIndicator());
+        award.setStateTransferIndicator(oldAward.isStateTransferIndicator());
+        award.setInstrumentTypeCode(oldAward.getInstrumentTypeCode());
+        award.setFundingExpirationDate(oldAward.getFundingExpirationDate());
+        award.setAdditionalFormsRequiredIndicator(oldAward.isAdditionalFormsRequiredIndicator());
+        award.setAdditionalFormsDescription(oldAward.getAdditionalFormsDescription());
+        award.setDunningCampaign(oldAward.getDunningCampaign());
+        award.setExcludedFromInvoicing(oldAward.isExcludedFromInvoicing());
+        award.setExcludedFromInvoicingReason(oldAward.getExcludedFromInvoicingReason());
+        award.setStopWorkIndicator(oldAward.isStopWorkIndicator());
+        award.setStopWorkReason(oldAward.getStopWorkReason());
+    }
 	
 	protected Proposal createProposal(EzraProposalAward ezraProposal) {
 		String proposalId = ezraProposal.getProjectId();
