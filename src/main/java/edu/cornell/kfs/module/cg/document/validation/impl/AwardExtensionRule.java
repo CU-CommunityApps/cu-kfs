@@ -3,7 +3,11 @@ package edu.cornell.kfs.module.cg.document.validation.impl;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
+import org.kuali.kfs.module.cg.CGConstants;
+import org.kuali.kfs.module.cg.CGKeyConstants;
+import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.AwardAccount;
 import org.kuali.kfs.module.cg.businessobject.AwardOrganization;
@@ -223,7 +227,39 @@ public class AwardExtensionRule extends AwardRule {
 
 		return success;
 	}
-	
+
+    /**
+     * Checks for null on the nullable Billing Frequency Code field. Fixes NullPointerException.
+     */
+    @Override
+    protected boolean checkBillingFrequency() {
+        boolean success = true;
+
+        String newBillingFrequencyCode = newAwardCopy.getBillingFrequencyCode();
+        String oldBillingFrequencyCode = oldAwardCopy.getBillingFrequencyCode();
+
+        if (!StringUtils.equals(newBillingFrequencyCode, oldBillingFrequencyCode)) {
+            if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.MILESTONE_BILLING_SCHEDULE_CODE) &&
+                    SpringContext.getBean(AccountsReceivableModuleBillingService.class).hasActiveMilestones(newAwardCopy.getProposalNumber())) {
+                success = false;
+                putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE, CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_MILESTONES_EXIST, getBillingFrequencyDescription(newAwardCopy));
+            } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
+                    SpringContext.getBean(AccountsReceivableModuleBillingService.class).hasActiveBills(newAwardCopy.getProposalNumber())) {
+                success = false;
+                putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE, CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_BILLS_EXIST, getBillingFrequencyDescription(newAwardCopy));
+            }
+        }
+
+        return success;
+    }
+
+    private String getBillingFrequencyDescription(Award award) {
+        if (ObjectUtils.isNull(award) || ObjectUtils.isNull(award.getBillingFrequency())) {
+            return StringUtils.EMPTY;
+        }
+        return award.getBillingFrequency().getFrequencyDescription();
+    }
+
     /**
      * Gets the parameterService
      * 
