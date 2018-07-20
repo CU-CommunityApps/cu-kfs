@@ -171,7 +171,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                         performProcessingWhenAchAccountDataNotProvidedForApprovedKfsVendor(pmwVendor);
                     }
                 } else {
-                    performProcessingWhenNoKfsVendorIdentifersFoundForKfsApprovedVendor(pmwVendor);
+                    performProcessingWhenNoKfsVendorIdentifiersFoundForKfsApprovedVendor(pmwVendor);
                 }
                 
             } catch (Exception ex) {
@@ -296,7 +296,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         //Intentionally not making web service call to PMW as it is valid for a vendor to not provide optional bank data.
     }
 
-    private void performProcessingWhenNoKfsVendorIdentifersFoundForKfsApprovedVendor(PaymentWorksVendor pmwVendor) {
+    private void performProcessingWhenNoKfsVendorIdentifiersFoundForKfsApprovedVendor(PaymentWorksVendor pmwVendor) {
         updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsApprovedVendor(pmwVendor, PaymentWorksConstants.KFSAchProcessingStatus.NO_VENDOR_IDENTIFIERS);
         getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
     }
