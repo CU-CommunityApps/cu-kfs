@@ -122,14 +122,14 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         List<String> errorMessages = new ArrayList<String>();
-        if (pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess) &&
-            pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages) &&
-            allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages) &&
-            pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)){
+        if (ObjectUtils.isNotNull(stgNewVendorRequestDetailToProcess)
+                && pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess)
+                && pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages)
+                && allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages)
+                && pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)) {
             return true;
-        }
-        else {
-            if (!errorMessages.isEmpty()){
+        } else {
+            if (!errorMessages.isEmpty()) {
                 reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
                 reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
             }
