@@ -45,13 +45,13 @@ public abstract class PaymentWorksReportServiceImpl implements PaymentWorksRepor
     
     public void sendEmailThatNoDataWasFoundToProcess(List<String> emailSubjectItems, List<String> emailBodyItems) {
         LOG.info("sendEmailThatNoDataWasFoundToProcess: Preparing to send email that no data was found to process.");
-        String body = constructStringFromListItemsDoubleSepartedByDelimitter(emailBodyItems, System.lineSeparator());
-        String subject = constructStringFromListItemsDoubleSepartedByDelimitter(emailSubjectItems, KFSConstants.BLANK_SPACE);
+        String body = constructStringFromListItemsDoubleSeparatedByDelimiter(emailBodyItems, System.lineSeparator());
+        String subject = constructStringFromListItemsDoubleSeparatedByDelimiter(emailSubjectItems, KFSConstants.BLANK_SPACE);
         getPaymentWorksReportEmailService().sendEmail(getToAddress(), getFromAddress(), subject, body);
         LOG.info("sendEmailThatNoDataWasFoundToProcess: Email was sent that no data was found to process.");
     }
     
-    private String constructStringFromListItemsDoubleSepartedByDelimitter(List<String> itemsToUse, String delimitter) {
+    private String constructStringFromListItemsDoubleSeparatedByDelimiter(List<String> itemsToUse, String delimitter) {
         StringBuilder sbText = new StringBuilder();
         for (String singleItem : itemsToUse) {
             sbText.append(singleItem).append(delimitter).append(delimitter);
