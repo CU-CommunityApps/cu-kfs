@@ -12,7 +12,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -119,8 +118,8 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         PaymentWorksVendor pmwDetailForSpecificVendor = null;
         try {
             pmwDetailForSpecificVendorDTO = retrieveAllPaymentWorksDetailsForRequestedVendor(buildPaymentWorksPendingNewVendorRequestDetailURI(pmwNewVendorRequestId));
-        } catch (ResponseProcessingException rpe) {
-            LOG.error("obtainPmwNewVendorRequestDetailForPmwIdentifier, unable to create PaymentWorksNewVendorRequestDetailDTO from payment works web service.", rpe);
+        } catch (RuntimeException rte) {
+            LOG.error("obtainPmwNewVendorRequestDetailForPmwIdentifier, unable to create PaymentWorksNewVendorRequestDetailDTO from payment works web service.", rte);
         }
         if (ObjectUtils.isNotNull(pmwDetailForSpecificVendorDTO)) {
             pmwDetailForSpecificVendor = getPaymentWorksDtoToPaymentWorksVendorConversionService().createPaymentWorksVendorFromPaymentWorksNewVendorRequestDetailDTO(

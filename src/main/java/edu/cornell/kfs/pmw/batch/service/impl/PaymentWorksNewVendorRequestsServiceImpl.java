@@ -86,9 +86,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                     savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable( stgNewVendorRequestDetailToProcess);
                 } catch (Exception e) {
                     LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, unable to save payment works vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId, e);
-                    reportData.getRecordsGeneratingExceptionSummary().incrementRecordCount();
-                    reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestId, 
-                            getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_PAYMENT_WORKS_VENOR_SAVE_ERROR_MESSAGE)));
                 }
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
