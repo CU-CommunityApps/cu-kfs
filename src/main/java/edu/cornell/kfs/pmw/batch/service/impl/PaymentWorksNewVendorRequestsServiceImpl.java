@@ -80,7 +80,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         for (String pmwNewVendorRequestId : identifiersForPendingNewVendorsToProcess) {
             LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS: Processing started for PMW-vendor-id=" + pmwNewVendorRequestId);
             PaymentWorksVendor stgNewVendorRequestDetailToProcess = getPaymentWorksWebServiceCallsService().obtainPmwNewVendorRequestDetailForPmwIdentifier(pmwNewVendorRequestId, reportData);
-            if (canPaymentWorksNewVendorRequestProcessingContinueForVendor(stgNewVendorRequestDetailToProcess, reportData)) {
+            if (canPaymentWorksNewVendorRequestProcessingContinueForVendor(stgNewVendorRequestDetailToProcess, reportData, pmwNewVendorRequestId)) {
                 PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = null;
                 try {
                     savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable( stgNewVendorRequestDetailToProcess);
@@ -117,7 +117,8 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
+    private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData, 
+            String pmwNewVendorRequestId) {
         List<String> errorMessages = new ArrayList<String>();
         if (pmwNewVendorNotNull(stgNewVendorRequestDetailToProcess, errorMessages)
                 && pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess)
@@ -128,7 +129,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         } else {
             if (!errorMessages.isEmpty()) {
                 reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
-                reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
+                String paymentWorksVendorString = ObjectUtils.isNotNull(stgNewVendorRequestDetailToProcess) ? stgNewVendorRequestDetailToProcess.toString() : 
+                    "Could not retreive details from PaymentWorks for PaymentWorks vendor request ID " + pmwNewVendorRequestId;
+                reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(paymentWorksVendorString, errorMessages));
             }
             return false;
         }
@@ -138,7 +141,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         if (ObjectUtils.isNotNull(stgNewVendorRequestDetailToProcess)) {
             return true;
         } else {
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_PAYMENT_WORKS_VENDOR_SAVE_ERROR_MESSAGE));
+            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_PAYMENT_WORKS_VENDOR_RETRIEVAL_ERROR));
             return false;
         }
     }
