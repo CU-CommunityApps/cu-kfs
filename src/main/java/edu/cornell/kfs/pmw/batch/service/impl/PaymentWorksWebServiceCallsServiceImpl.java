@@ -114,8 +114,17 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     
     @Override
     public PaymentWorksVendor obtainPmwNewVendorRequestDetailForPmwIdentifier(String pmwNewVendorRequestId, PaymentWorksNewVendorRequestsBatchReportData reportData) {
-        PaymentWorksNewVendorRequestDetailDTO pmwDetailForSpecificVendorDTO = retrieveAllPaymentWorksDetailsForRequestedVendor(buildPaymentWorksPendingNewVendorRequestDetailURI(pmwNewVendorRequestId));
-        PaymentWorksVendor pmwDetailForSpecificVendor = getPaymentWorksDtoToPaymentWorksVendorConversionService().createPaymentWorksVendorFromPaymentWorksNewVendorRequestDetailDTO(pmwDetailForSpecificVendorDTO, reportData);
+        PaymentWorksNewVendorRequestDetailDTO pmwDetailForSpecificVendorDTO = null;
+        PaymentWorksVendor pmwDetailForSpecificVendor = null;
+        try {
+            pmwDetailForSpecificVendorDTO = retrieveAllPaymentWorksDetailsForRequestedVendor(buildPaymentWorksPendingNewVendorRequestDetailURI(pmwNewVendorRequestId));
+        } catch (RuntimeException rte) {
+            LOG.error("obtainPmwNewVendorRequestDetailForPmwIdentifier, unable to create PaymentWorksNewVendorRequestDetailDTO from payment works web service.", rte);
+        }
+        if (ObjectUtils.isNotNull(pmwDetailForSpecificVendorDTO)) {
+            pmwDetailForSpecificVendor = getPaymentWorksDtoToPaymentWorksVendorConversionService().createPaymentWorksVendorFromPaymentWorksNewVendorRequestDetailDTO(
+                    pmwDetailForSpecificVendorDTO, reportData);
+        }
         return pmwDetailForSpecificVendor;
     }
     
