@@ -119,7 +119,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private boolean canPaymentWorksNewVendorRequestProcessingContinueForVendor(PaymentWorksVendor stgNewVendorRequestDetailToProcess, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         List<String> errorMessages = new ArrayList<String>();
-        if (ObjectUtils.isNotNull(stgNewVendorRequestDetailToProcess)
+        if (pmwNewVendorNotNull(stgNewVendorRequestDetailToProcess, errorMessages)
                 && pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess)
                 && pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages)
                 && allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages)
@@ -130,6 +130,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
                 reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(stgNewVendorRequestDetailToProcess.toString(), errorMessages));
             }
+            return false;
+        }
+    }
+    
+    private boolean pmwNewVendorNotNull(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
+        if (ObjectUtils.isNotNull(stgNewVendorRequestDetailToProcess)) {
+            return true;
+        } else {
+            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_PAYMENT_WORKS_VENDOR_SAVE_ERROR_MESSAGE));
             return false;
         }
     }
