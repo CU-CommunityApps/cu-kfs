@@ -183,7 +183,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
                      + "' and kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "' and pmwVendorRequestId '" + pmwVendor.getPmwVendorRequestId()
                      + "' and vendor number '");
             getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED, vendorDetail.getVendorHeaderGeneratedIdentifier(),
-                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), PaymentWorksConstants.SupplierUploadStatus.PENDING_PAAT, getDateTimeService().getCurrentTimestamp());
+                                                                                      vendorDetail.getVendorDetailAssignedIdentifier(), KFSConstants.EMPTY_STRING, getDateTimeService().getCurrentTimestamp());
         } else {
             LOG.error("registerKfsPvenApprovalForExistingPaymentWorksVendor: PaymentWorks staging table retrieval by KFS document number '" + kfsVendorDocumentNumber + "' failed to find vendor to set KFS Approve status values.");
         }
