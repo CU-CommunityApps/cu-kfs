@@ -20,8 +20,6 @@ import edu.cornell.kfs.sys.service.mock.MockParameterServiceImpl;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.easymock.EasyMock;
-import org.easymock.IMockBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.fp.document.AdvanceDepositDocument;
@@ -57,6 +55,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+
 public class AdvanceDepositServiceImplTest {
     protected AdvanceDepositServiceImpl advanceDepositService;
     protected IncomingWireAchMapping mapping;
@@ -90,14 +93,7 @@ public class AdvanceDepositServiceImplTest {
         mapping = new IncomingWireAchMapping();
         mapping.setShortDescription("ARMY");
 
-        ArrayList<String> methodNames = new ArrayList<>();
-        for (Method method : AdvanceDepositDocument.class.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !method.getName().startsWith("set") && !method.getName().startsWith("get")) {
-                methodNames.add(method.getName());
-            }
-        }
-        IMockBuilder<AdvanceDepositDocument> builder = EasyMock.createMockBuilder(AdvanceDepositDocument.class).addMockedMethods(methodNames.toArray(new String[0]));
-        advanceDepositDocument = builder.createNiceMock();
+        advanceDepositDocument = mock(AdvanceDepositDocument.class, CALLS_REAL_METHODS);
 
         GlobalVariables.getMessageMap().clearErrorMessages();
     }
@@ -385,10 +381,10 @@ public class AdvanceDepositServiceImplTest {
         fileNames.add(EMPTY_DATA_FILE);
         fileNames.add(GOOD_DATA_FILE_2);
 
-        BatchInputFileService batchInputFileService = EasyMock.createMock(CuBatchInputFileServiceImpl.class);
-        EasyMock.expect(batchInputFileService.listInputFileNamesWithDoneFile(EasyMock.isA(BatchInputFileType.class))).andReturn(fileNames);
-        EasyMock.expect(batchInputFileService.parse(EasyMock.isA(BatchInputFileType.class), EasyMock.isA(byte[].class))).andReturn(setupAchIncomeFilesGood()).andThrow(new RuntimeException()).andReturn(setupAchIncomeFilesGood());
-        EasyMock.replay(batchInputFileService);
+        BatchInputFileService batchInputFileService = mock(CuBatchInputFileServiceImpl.class);
+        when(batchInputFileService.listInputFileNamesWithDoneFile(isA(BatchInputFileType.class))).thenReturn(fileNames);
+        when(batchInputFileService.parse(isA(BatchInputFileType.class), isA(byte[].class))).thenReturn(setupAchIncomeFilesGood()).thenThrow(new RuntimeException()).thenReturn(setupAchIncomeFilesGood());
+
         advanceDepositService.setBatchInputFileService(batchInputFileService);
         advanceDepositService.setEmailService(new EmailServiceImpl());
 
