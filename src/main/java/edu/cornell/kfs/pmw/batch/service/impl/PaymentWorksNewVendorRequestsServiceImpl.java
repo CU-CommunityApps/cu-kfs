@@ -363,7 +363,6 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
-                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
