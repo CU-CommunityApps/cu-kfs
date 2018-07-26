@@ -21,6 +21,7 @@
                 <ref bean="PaymentWorksVendor-kfsAchProcessingStatus" />
                 <ref bean="PaymentWorksVendor-kfsAchDocumentNumber" />
                 <ref bean="PaymentWorksVendor-processTimestamp" />
+                <ref bean="PaymentWorksVendor-supplierUploadStatus" />
                 
                 <ref bean="PaymentWorksVendor-requestingCompanyId" />
                 <ref bean="PaymentWorksVendor-requestingCompanyTin" />
@@ -692,6 +693,17 @@
         <property name="label" value="Process Timestamp" />
         <property name="shortLabel" value="Timestamp" />
         <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter" />
+    </bean>
+
+    <bean id="PaymentWorksVendor-supplierUploadStatus" parent="PaymentWorksVendor-supplierUploadStatus-parentBean" />
+    <bean id="PaymentWorksVendor-supplierUploadStatus-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="supplierUploadStatus" />
+        <property name="label" value="Supplier Upload Status" />
+        <property name="forceUppercase" value="false" />
+        <property name="maxLength" value="50" />
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="20" />
+        </property>
     </bean>
 
     <bean id="PaymentWorksVendor-kfsVendorDocumentNumber" parent="PaymentWorksVendor-kfsVendorDocumentNumber-parentBean" />
@@ -1441,6 +1453,7 @@
                             <bean parent="FieldDefinition" p:attributeName="pmwTransactionType" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
                             <bean parent="FieldDefinition" p:attributeName="processTimestamp" />
+                            <bean parent="FieldDefinition" p:attributeName="supplierUploadStatus" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorDocumentNumber" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorHeaderGeneratedIdentifier" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorDetailAssignedIdentifier" />

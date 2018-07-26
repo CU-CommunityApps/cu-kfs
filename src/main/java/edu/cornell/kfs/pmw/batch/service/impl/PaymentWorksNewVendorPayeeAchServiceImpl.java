@@ -347,6 +347,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   pmwVendor.getKfsAchProcessingStatus(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
@@ -357,6 +358,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   pmwVendor.getKfsAchProcessingStatus(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
@@ -367,6 +369,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   pmwVendor.getKfsAchProcessingStatus(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp(),
                                                                                   pmwVendor.getKfsAchDocumentNumber());
     }
@@ -378,6 +381,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   pmwVendor.getKfsAchProcessingStatus(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
         
@@ -388,24 +392,28 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
                                                                                   pmwVendor.getKfsAchProcessingStatus(),
+                                                                                  pmwVendor.getSupplierUploadStatus(),
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
     private PaymentWorksVendor setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsApprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
         return pmwVendor;
     }
     
     private PaymentWorksVendor setKfsAchProcessingStatusRetainingPaymentWorksProcessedNewVendorForKfsApprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.READY_FOR_UPLOAD);
         return pmwVendor;
     }
     
     private PaymentWorksVendor setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsDisapprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
         return pmwVendor;
     }
 

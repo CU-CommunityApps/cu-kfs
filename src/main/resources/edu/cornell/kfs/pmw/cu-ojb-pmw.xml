@@ -34,6 +34,7 @@
     <field-descriptor name="kfsAchProcessingStatus" column="KFS_ACH_PROC_STAT" jdbc-type="VARCHAR" />
     <field-descriptor name="kfsAchDocumentNumber" column="PAAT_FDOC_NBR" jdbc-type="VARCHAR" />
     <field-descriptor name="processTimestamp" column="PROC_TS" jdbc-type="TIMESTAMP"/>
+    <field-descriptor name="supplierUploadStatus" column="SUPP_UPLD_STAT" jdbc-type="VARCHAR"/>
 
     <field-descriptor name="requestingCompanyId" column="REQ_CMP_ID" jdbc-type="VARCHAR" />
     <field-descriptor name="requestingCompanyTin" column="REQ_CMP_TIN" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>

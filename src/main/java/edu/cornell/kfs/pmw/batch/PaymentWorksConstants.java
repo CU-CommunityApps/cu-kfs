@@ -47,6 +47,14 @@ public class PaymentWorksConstants {
         public static final String EXCEPTION_GENERATED = "Exception Generated";
     }
     
+    public static final class SupplierUploadStatus {
+        public static final String PENDING_PAAT = "Pending PAAT";
+        public static final String INELIGIBLE_FOR_UPLOAD = "Ineligible for Upload";
+        public static final String READY_FOR_UPLOAD = "Ready for Upload";
+        public static final String VENDOR_UPLOADED = "Vendor Uploaded";
+        public static final String UPLOAD_FAILED = "Upload Failed";
+    }
+    
     public static final class PaymentWorksTransactionType {
         public static final String NEW_VENDOR = "NV";
         public static final String KFS_ORIGINATING_VENDOR = "KV";
