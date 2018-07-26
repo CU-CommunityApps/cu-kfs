@@ -250,6 +250,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     private PaymentWorksVendor populateKfsEnteredPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail, String kfsVendorProcessingStatus) {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
+        pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.READY_FOR_UPLOAD);
         pmwVendor.setPmwTransactionType(PaymentWorksConstants.PaymentWorksTransactionType.KFS_ORIGINATING_VENDOR);
         pmwVendor.setKfsVendorProcessingStatus(kfsVendorProcessingStatus);
         pmwVendor.setKfsVendorDocumentNumber(kfsVendorDocumentNumber);
