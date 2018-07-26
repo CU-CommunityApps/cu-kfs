@@ -23,9 +23,9 @@ import org.kuali.kfs.krad.util.MessageMap;
 public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonResidentAlienInformationValidation{
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
 
+    private String validationType;
 
-    
-    @Override
+	@Override
     public boolean validate(AttributedDocumentEvent event) {
         LOG.debug("validate start");
         boolean isValid = true;
@@ -37,7 +37,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         Person financialSystemUser = GlobalVariables.getUserSession().getPerson();
 
         List<String> taxEditMode = this.getTaxEditMode();
-        if (!payeeDetail.isDisbVchrAlienPaymentCode() || !this.hasRequiredEditMode(document, financialSystemUser, taxEditMode)) {
+        if (!payeeDetail.isDisbVchrAlienPaymentCode() || !disbursementVoucherValidationService.hasRequiredEditMode(document, financialSystemUser, taxEditMode)) {
             return true;
         }
 
@@ -320,7 +320,9 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         return isValid;
     }
     
-    
+    public void setValidationType(String validationType) {
+		this.validationType = validationType;
+	}
     
 
 }

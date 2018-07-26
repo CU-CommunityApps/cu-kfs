@@ -2,6 +2,8 @@ package edu.cornell.kfs.coa.document.validation.impl;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase;
@@ -16,7 +18,8 @@ import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class AccountGlobalPreRules extends MaintenancePreRulesBase {
-	
+	private static final Logger LOG = LogManager.getLogger(AccountGlobalPreRules.class);
+			
     protected ConfigurationService configurationService;
     protected CuAccountGlobal accountGlobal;
 	

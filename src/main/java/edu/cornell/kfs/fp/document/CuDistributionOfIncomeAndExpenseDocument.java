@@ -3,6 +3,8 @@ package edu.cornell.kfs.fp.document;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -20,7 +22,8 @@ import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DistributionOfIncomeAndExpense")
 public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfIncomeAndExpenseDocument implements CULegacyTravelIntegrationInterface{
-
+	private static final Logger LOG = LogManager.getLogger(CuDistributionOfIncomeAndExpenseDocument.class);
+	
     private static final long serialVersionUID = 1L;
 
     //TRIP INFORMATION FIELDS

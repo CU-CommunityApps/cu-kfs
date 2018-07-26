@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
@@ -41,7 +43,7 @@ import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
-	
+	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestDocument.class);
     // KFSPTS-1891
     public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";

@@ -27,7 +27,6 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -151,23 +150,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         return sourceLine;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.businessobject.AccountingLineBase#toStringMapper()
-     */
-    @Override
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-
-        m.put("chart", getChartOfAccountsCode());
-        m.put("account", getAccountNumber());
-        m.put("objectCode", getFinancialObjectCode());
-        m.put("subAccount", getSubAccountNumber());
-        m.put("subObjectCode", getFinancialSubObjectCode());
-        m.put("projectCode", getProjectCode());
-        m.put("orgRefId", getOrganizationReferenceId());
-
-        return m;
-    }
 
     @Override
     public int compareTo(Object arg0) {

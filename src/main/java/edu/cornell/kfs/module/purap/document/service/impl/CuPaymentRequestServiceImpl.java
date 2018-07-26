@@ -15,6 +15,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.businessobject.ItemType;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -32,6 +33,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.InfrastructureException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -89,7 +91,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
     @Override
     @NonTransactional
-    public PaymentRequestDocument addHoldOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception {
+    public PaymentRequestDocument addHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
@@ -109,7 +111,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      */
     @Override
     @NonTransactional
-    public PaymentRequestDocument removeHoldOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception {
+    public PaymentRequestDocument removeHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
@@ -126,7 +128,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
     @Override
     @NonTransactional
-    public void requestCancelOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception {
+    public void requestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
@@ -145,7 +147,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      */
     @Override
     @NonTransactional
-    public void removeRequestCancelOnPaymentRequest(PaymentRequestDocument document, String note) throws Exception {
+    public void removeRequestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
@@ -180,7 +182,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         // cancel extracted should not reopen PO
         paymentRequest.setReopenPurchaseOrderIndicator(false);
 
-        getAccountsPayableService().cancelAccountsPayableDocument(paymentRequest, ""); // Performs save, so
+        accountsPayableService.cancelAccountsPayableDocument(paymentRequest, ""); // Performs save, so
         // no explicit save
         // is necessary
         if (LOG.isDebugEnabled()) {
@@ -249,17 +251,38 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    protected PurApItem addTaxItem(PaymentRequestDocument preq, String itemTypeCode, BigDecimal taxableAmount) {
+    protected void addTaxItem(PaymentRequestDocument preq, String itemTypeCode, BigDecimal taxableAmount) {
 
-    	PurApItem item = super.addTaxItem(preq, itemTypeCode, taxableAmount);
-    	
-    	PurApAccountingLine taxLine = item.getSourceAccountingLines().get(0);
-    	// KFSPTS-1891.  added to fix validation required field error. especially after calculate tax
-    	if (taxLine.getAccountLinePercent() == null) {
-    		taxLine.setAccountLinePercent(BigDecimal.ZERO);
-    	}
-    	
-    	return item;
+        PurApItem taxItem;
+
+        try {
+            taxItem = (PurApItem) preq.getItemClass().newInstance();
+        } catch (IllegalAccessException e) {
+            throw new InfrastructureException("Unable to access itemClass", e);
+        } catch (InstantiationException e) {
+            throw new InfrastructureException("Unable to instantiate itemClass", e);
+        }
+
+        // add item to preq before adding the accounting line
+        taxItem.setItemTypeCode(itemTypeCode);
+        preq.addItem(taxItem);
+
+        // generate and add tax accounting line
+        PurApAccountingLine taxLine = addTaxAccountingLine(taxItem, taxableAmount);
+
+        // set extended price amount as now it's calculated when accounting line is generated
+        taxItem.setItemUnitPrice(taxLine.getAmount().bigDecimalValue());
+        taxItem.setExtendedPrice(taxLine.getAmount());
+		if (taxLine.getAccountLinePercent() == null) {
+			taxLine.setAccountLinePercent(BigDecimal.ZERO);
+		}
+
+        // use item type description as the item description
+        ItemType itemType = new ItemType();
+        itemType.setItemTypeCode(itemTypeCode);
+        itemType = (ItemType) businessObjectService.retrieve(itemType);
+        taxItem.setItemType(itemType);
+        taxItem.setItemDescription(itemType.getItemTypeDescription());
     }
     
     @Override

@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -22,6 +24,7 @@ import edu.cornell.kfs.fp.businessobject.PreEncumbranceAccountingLineUtil;
 import edu.cornell.kfs.fp.businessobject.PreEncumbranceSourceAccountingLine;
 
 public class PreEncumbranceDocument extends org.kuali.kfs.fp.document.PreEncumbranceDocument {
+	private static final Logger LOG = LogManager.getLogger(PreEncumbranceDocument.class);
     private static final long serialVersionUID = 1L;
     protected Integer nextPositionSourceLineNumber;
     protected Integer nextPositionTargetLineNumber;
