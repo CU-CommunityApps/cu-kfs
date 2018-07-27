@@ -27,6 +27,10 @@ public class PaymentInformation {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String payeeId;
     
+    @XmlElement(name = "payee_type_code", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String payeeTypeCode;
+    
     @XmlElement(name = "payee_name", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String payeeName;
@@ -89,6 +93,14 @@ public class PaymentInformation {
 
     public void setPayeeId(String payeeId) {
         this.payeeId = payeeId;
+    }
+
+    public String getPayeeTypeCode() {
+        return payeeTypeCode;
+    }
+
+    public void setPayeeTypeCode(String payeeTypeCode) {
+        this.payeeTypeCode = payeeTypeCode;
     }
 
     public String getPayeeName() {

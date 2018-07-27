@@ -883,6 +883,7 @@
         <property name="personService" ref="personService"/>
         <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
         <property name="configurationService" ref="configurationService"/>
+        <property name="universityDateService" ref="universityDateService"/>
     </bean>
 
 </beans>

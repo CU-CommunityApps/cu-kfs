@@ -62,8 +62,8 @@ public class AccountingXmlDocumentEntry {
     @XmlElement(name = "BackupLink", namespace = StringUtils.EMPTY, required = false)
     protected List<AccountingXmlDocumentBackupLink> backupLinks;
     
-    @XmlElement(name = "payment_information", namespace = StringUtils.EMPTY, required = false)
-    protected PaymentInformation paymentInformation;
+    @XmlElement(name = "dv_detail", namespace = StringUtils.EMPTY, required = false)
+    protected DisbursementVoucherDetail disbursementVoucherDetail;
 
     public AccountingXmlDocumentEntry() {
         this.sourceAccountingLines = new ArrayList<>();
@@ -170,12 +170,12 @@ public class AccountingXmlDocumentEntry {
         this.backupLinks = backupLinks;
     }
 
-    public PaymentInformation getPaymentInformation() {
-        return paymentInformation;
+    public DisbursementVoucherDetail getDisbursementVoucherDetail() {
+        return disbursementVoucherDetail;
     }
 
-    public void setPaymentInformation(PaymentInformation paymentInformation) {
-        this.paymentInformation = paymentInformation;
+    public void setDisbursementVoucherDetail(DisbursementVoucherDetail disbursementVoucherDetail) {
+        this.disbursementVoucherDetail = disbursementVoucherDetail;
     }
 
 }
