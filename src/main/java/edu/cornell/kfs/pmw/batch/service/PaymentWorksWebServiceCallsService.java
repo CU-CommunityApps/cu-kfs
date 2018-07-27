@@ -17,4 +17,5 @@ public interface PaymentWorksWebServiceCallsService {
     
     void refreshPaymentWorksAuthorizationToken();
     
+    int uploadVendorsToPaymentWorks(byte[] vendorCsvData);
 }

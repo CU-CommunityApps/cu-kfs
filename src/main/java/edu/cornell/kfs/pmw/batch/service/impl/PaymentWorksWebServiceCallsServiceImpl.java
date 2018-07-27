@@ -1,6 +1,8 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.net.URI;
@@ -15,8 +17,11 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,7 +33,9 @@ import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReport
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDtoToPaymentWorksVendorConversionService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCredentialKeys;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksSupplierUploadConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDTO;
 import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDetailDTO;
@@ -343,16 +350,109 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             throw new RuntimeException("Token refresh failed: Received failure response from PaymentWorks");
         }
         
-        JsonNode statusNode = rootNode.findValue(PaymentWorksTokenRefreshConstants.STATUS_FIELD);
+        JsonNode statusNode = rootNode.findValue(PaymentWorksCommonJsonConstants.STATUS_FIELD);
         if (ObjectUtils.isNull(statusNode)) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Did not receive a refresh status from PaymentWorks");
             throw new RuntimeException("Token refresh failed: Did not receive a refresh status from PaymentWorks");
-        } else if (!StringUtils.equalsIgnoreCase(PaymentWorksTokenRefreshConstants.STATUS_OK, statusNode.textValue())) {
+        } else if (!StringUtils.equalsIgnoreCase(PaymentWorksCommonJsonConstants.STATUS_OK, statusNode.textValue())) {
             LOG.error("checkForSuccessfulTokenRefreshStatus(): Unexpected status from PaymentWorks response: " + statusNode.textValue());
             throw new RuntimeException("Token refresh failed: Received an unexpected refresh status from PaymentWorks");
         } else {
             LOG.info("checkForSuccessfulTokenRefreshStatus(): Received a successful refresh status from PaymentWorks");
         }
+    }
+
+    @Override
+    public int uploadVendorsToPaymentWorks(byte[] vendorCsvData) {
+        Response response = null;
+        
+        try {
+            response = performSupplierUpload(vendorCsvData);
+            response.bufferEntity();
+            String responseContent = response.readEntity(String.class);
+            return getReceivedSuppliersCountIfSupplierUploadSucceeded(responseContent);
+        } finally {
+            CURestClientUtils.closeQuietly(response);
+        }
+    }
+
+    private Response performSupplierUpload(byte[] vendorCsvData) {
+        ByteArrayInputStream inputStream = null;
+        Client client = null;
+        
+        try {
+            inputStream = new ByteArrayInputStream(vendorCsvData);
+            ClientConfig clientConfig = new ClientConfig();
+            client = ClientBuilder.newClient(clientConfig);
+            
+            Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), inputStream);
+            return request.invoke();
+        } finally {
+            CURestClientUtils.closeQuietly(client);
+            IOUtils.closeQuietly(inputStream);
+        }
+    }
+
+    private URI buildSupplierUploadURI() {
+        String url = getPaymentWorksUrl() + PaymentWorksWebServiceConstants.SUPPLIERS_LOAD;
+        return buildURI(url);
+    }
+
+    private Invocation buildMultiPartRequestForSupplierUpload(Client client, URI uri, InputStream inputStream) {
+        StreamDataBodyPart csvPart = new StreamDataBodyPart(
+                PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, inputStream);
+        
+        MultiPart multiPart = new MultiPart();
+        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+        multiPart.bodyPart(csvPart);
+        
+        return client.target(uri)
+                .request()
+                .accept(MediaType.MULTIPART_FORM_DATA_TYPE)
+                .header(PaymentWorksWebServiceConstants.AUTHORIZATION_HEADER_KEY, 
+                             PaymentWorksWebServiceConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getPaymentWorksAuthorizationToken())
+                .buildPost(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA_TYPE));
+    }
+
+    private int getReceivedSuppliersCountIfSupplierUploadSucceeded(String uploadResponse) {
+        if (StringUtils.isBlank(uploadResponse)) {
+            throw new RuntimeException("Supplier upload failed: No response was received from PaymentWorks");
+        }
+        
+        JsonNode rootNode = readJsonTree(uploadResponse);
+        checkForSuccessfulSupplierUploadStatus(rootNode);
+        return getReceivedSuppliersCount(rootNode);
+    }
+
+    private void checkForSuccessfulSupplierUploadStatus(JsonNode rootNode) {
+        JsonNode errorNode = rootNode.findValue(PaymentWorksSupplierUploadConstants.ERROR_FIELD);
+        if (ObjectUtils.isNotNull(errorNode)) {
+            LOG.error("checkForSuccessfulSupplierUploadStatus: Supplier upload failed. Error message: " + errorNode.textValue());
+            throw new RuntimeException("Supplier upload failed: Received error response from PaymentWorks");
+        }
+        
+        JsonNode statusNode = rootNode.findValue(PaymentWorksCommonJsonConstants.STATUS_FIELD);
+        if (ObjectUtils.isNull(statusNode)) {
+            LOG.error("checkForSuccessfulSupplierUploadStatus: Did not receive an upload status from PaymentWorks");
+            throw new RuntimeException("Supplier upload failed: Did not receive an upload status from PaymentWorks");
+        } else if (!StringUtils.equalsIgnoreCase(statusNode.textValue(), PaymentWorksCommonJsonConstants.STATUS_OK)) {
+            LOG.error("checkForSuccessfulSupplierUploadStatus: Unexpected status from PaymentWorks response: " + statusNode.textValue());
+            throw new RuntimeException("Supplier upload failed: Received an unexpected upload status from PaymentWorks");
+        } else {
+            LOG.info("checkForSuccessfulSupplierUploadStatus(): Received a successful upload status from PaymentWorks");
+        }
+    }
+
+    private int getReceivedSuppliersCount(JsonNode rootNode) {
+        JsonNode suppliersCountNode = rootNode.findValue(PaymentWorksSupplierUploadConstants.NUM_RCVD_SUPPLIERS_FIELD);
+        if (ObjectUtils.isNull(suppliersCountNode)) {
+            LOG.error("getReceivedSuppliersCount: Did not receive a num-received-suppliers count from PaymentWorks");
+            throw new RuntimeException("Supplier upload failed: Did not receive a num-received-suppliers count from PaymentWorks");
+        } else if (!suppliersCountNode.isInt()) {
+            LOG.error("getReceivedSuppliersCount: Received a non-integer num-received-suppliers count from PaymentWorks");
+            throw new RuntimeException("Supplier upload failed: Receive a badly formatted num-received-suppliers count from PaymentWorks");
+        }
+        return suppliersCountNode.asInt();
     }
 
     protected void handleDetailMessageFromTokenRefreshFailure(String detailMessage) {
