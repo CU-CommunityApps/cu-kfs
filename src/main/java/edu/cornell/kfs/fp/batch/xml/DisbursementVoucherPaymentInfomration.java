@@ -17,7 +17,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "PaymentInformation", namespace = StringUtils.EMPTY)
-public class PaymentInformation {
+public class DisbursementVoucherPaymentInfomration {
     
     @XmlElement(name = "payment_reason_code", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -78,6 +78,24 @@ public class PaymentInformation {
     @XmlElement(name = "check_stub_text", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String checkStubText;
+    
+    @XmlElement(name = "attachment_code", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String attachmentCode;
+    
+    @XmlElement(name = "special_handling_code", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingCode;
+    
+    @XmlElement(name = "w9_complete_code", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String w9CompleteCode;
+    
+    @XmlElement(name = "exceptions_attached_code", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String exceptionAttachedCode;
+    
+    protected String checkEnclosureCode;
 
     public String getPaymentReasonCode() {
         return paymentReasonCode;
@@ -197,6 +215,38 @@ public class PaymentInformation {
 
     public void setCheckStubText(String checkStubText) {
         this.checkStubText = checkStubText;
+    }
+
+    public String getAttachmentCode() {
+        return attachmentCode;
+    }
+
+    public void setAttachmentCode(String attachmentCode) {
+        this.attachmentCode = attachmentCode;
+    }
+
+    public String getSpecialHandlingCode() {
+        return specialHandlingCode;
+    }
+
+    public void setSpecialHandlingCode(String specialHandlingCode) {
+        this.specialHandlingCode = specialHandlingCode;
+    }
+
+    public String getW9CompleteCode() {
+        return w9CompleteCode;
+    }
+
+    public void setW9CompleteCode(String w9CompleteCode) {
+        this.w9CompleteCode = w9CompleteCode;
+    }
+
+    public String getExceptionAttachedCode() {
+        return exceptionAttachedCode;
+    }
+
+    public void setExceptionAttachedCode(String exceptionAttachedCode) {
+        this.exceptionAttachedCode = exceptionAttachedCode;
     }
     
 }

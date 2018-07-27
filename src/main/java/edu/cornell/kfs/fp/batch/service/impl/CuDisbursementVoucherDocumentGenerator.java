@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -11,7 +12,7 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetail;
-import edu.cornell.kfs.fp.batch.xml.PaymentInformation;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInfomration;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
 public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGeneratorBase<CuDisbursementVoucherDocument> {
@@ -44,16 +45,24 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected void populateCustomAccountingDocumentData(CuDisbursementVoucherDocument dvDocument, AccountingXmlDocumentEntry documentEntry) {
         super.populateCustomAccountingDocumentData(dvDocument, documentEntry);
         if (ObjectUtils.isNotNull(documentEntry.getDisbursementVoucherDetail())) {
+            populateDisbursementVouchersGenericSections(dvDocument, documentEntry.getDisbursementVoucherDetail());
             populatePaymentInformation(dvDocument, documentEntry.getDisbursementVoucherDetail());
-            populateContactInformation(dvDocument, documentEntry.getDisbursementVoucherDetail());
         } else {
             LOG.error("populateCustomAccountingDocumentData, did not find Disbursement Voucher Details");
         }
     }
     
+    private void populateDisbursementVouchersGenericSections(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+        dvDocument.setDisbVchrBankCode(dvDetail.getBankCode());
+        dvDocument.setDisbVchrContactPersonName(dvDetail.getContactName());
+        dvDocument.setDisbVchrContactPhoneNumber(dvDetail.getContactPhoneNumber());
+        dvDocument.setDisbVchrContactEmailId(dvDetail.getContactEmail());
+        dvDocument.setCampusCode(dvDetail.getCampusCode());
+    }
+    
     private void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPaymentInformation())) {
-            PaymentInformation paymentInfo = dvDetail.getPaymentInformation();
+            DisbursementVoucherPaymentInfomration paymentInfo = dvDetail.getPaymentInformation();
             dvDocument.getDvPayeeDetail().setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
             dvDocument.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(paymentInfo.getPayeeTypeCode());
             dvDocument.getDvPayeeDetail().setDisbVchrPayeeIdNumber(paymentInfo.getPayeeId());
@@ -69,18 +78,19 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             dvDocument.setDisbVchrPaymentMethodCode(paymentInfo.getPaymentMethod());
             dvDocument.setDisbVchrCheckStubText(paymentInfo.getCheckStubText());
             dvDocument.setDisbursementVoucherDocumentationLocationCode(paymentInfo.getDocumentationLocationCode());
+            dvDocument.setDisbVchrAttachmentCode(convertStringToBoolean(paymentInfo.getAttachmentCode()));
+            dvDocument.setDisbVchrSpecialHandlingCode(convertStringToBoolean(paymentInfo.getSpecialHandlingCode()));
+            dvDocument.setDisbVchrPayeeW9CompleteCode(convertStringToBoolean(paymentInfo.getW9CompleteCode()));
+            dvDocument.setDisbExcptAttachedIndicator(convertStringToBoolean(paymentInfo.getExceptionAttachedCode()));
         } else {
             LOG.error("populatePaymentInformation, did NOT find payment info");
         }
     }
     
-    private void populateContactInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
-        dvDocument.setDisbVchrContactPersonName("Salino, Catherine C.");
-        dvDocument.setDisbVchrContactPhoneNumber("607-255-9466");
-        dvDocument.setDisbVchrContactEmailId("ccs1@cornell.edu");
-        dvDocument.setCampusCode("IT");
+    private boolean convertStringToBoolean(String stringBoolean) {
+        return StringUtils.equalsIgnoreCase("T", stringBoolean);
     }
-
+    
     public void setUniversityDateService(UniversityDateService universityDateService) {
         this.universityDateService = universityDateService;
     }
