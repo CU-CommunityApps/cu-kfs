@@ -36,8 +36,8 @@ public class DisbursementVoucherDetail {
     @XmlElement(name = "payment_information", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherPaymentInfomration paymentInformation;
     
-    @XmlElement(name = "wire_transfer", namespace = StringUtils.EMPTY, required = false)
-    protected DiscursementVoucherWireTransfer wireTransfer;
+    @XmlElement(name = "non_employee_travel", namespace = StringUtils.EMPTY, required = false)
+    protected DisbursementVoucherNonEmployeeTravel nonEmployeeTravel;
     
     public DisbursementVoucherPaymentInfomration getPaymentInformation() {
         return paymentInformation;
@@ -85,6 +85,14 @@ public class DisbursementVoucherDetail {
 
     public void setBankCode(String bankCode) {
         this.bankCode = bankCode;
+    }
+
+    public DisbursementVoucherNonEmployeeTravel getNonEmployeeTravel() {
+        return nonEmployeeTravel;
+    }
+
+    public void setNonEmployeeTravel(DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+        this.nonEmployeeTravel = nonEmployeeTravel;
     }
 
 }
