@@ -36,6 +36,9 @@ public class DisbursementVoucherDetail {
     @XmlElement(name = "payment_information", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherPaymentInfomration paymentInformation;
     
+    @XmlElement(name = "wire_transfer", namespace = StringUtils.EMPTY, required = false)
+    protected DiscursementVoucherWireTransfer wireTransfer;
+    
     public DisbursementVoucherPaymentInfomration getPaymentInformation() {
         return paymentInformation;
     }

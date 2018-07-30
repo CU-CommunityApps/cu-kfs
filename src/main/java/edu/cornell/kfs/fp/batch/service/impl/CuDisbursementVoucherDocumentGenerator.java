@@ -13,6 +13,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetail;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInfomration;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
 public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGeneratorBase<CuDisbursementVoucherDocument> {
@@ -63,16 +64,25 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     private void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPaymentInformation())) {
             DisbursementVoucherPaymentInfomration paymentInfo = dvDetail.getPaymentInformation();
-            dvDocument.getDvPayeeDetail().setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
-            dvDocument.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(paymentInfo.getPayeeTypeCode());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeIdNumber(paymentInfo.getPayeeId());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeePersonName(paymentInfo.getPayeeName());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(paymentInfo.getAddressLine1());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(paymentInfo.getAddressLine2());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeCityName(paymentInfo.getCity());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeStateCode(paymentInfo.getState());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeCountryCode(paymentInfo.getCountry());
-            dvDocument.getDvPayeeDetail().setDisbVchrPayeeZipCode(paymentInfo.getPostalCode());
+            CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
+            payeeDetail.setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
+            payeeDetail.setDisbursementVoucherPayeeTypeCode(paymentInfo.getPayeeTypeCode());
+            payeeDetail.setDisbVchrPayeeIdNumber(paymentInfo.getPayeeId());
+            payeeDetail.setDisbVchrPayeePersonName(paymentInfo.getPayeeName());
+            payeeDetail.setDisbVchrPayeeLine1Addr(paymentInfo.getAddressLine1());
+            payeeDetail.setDisbVchrPayeeLine2Addr(paymentInfo.getAddressLine2());
+            payeeDetail.setDisbVchrPayeeCityName(paymentInfo.getCity());
+            payeeDetail.setDisbVchrPayeeStateCode(paymentInfo.getState());
+            payeeDetail.setDisbVchrPayeeCountryCode(paymentInfo.getCountry());
+            payeeDetail.setDisbVchrPayeeZipCode(paymentInfo.getPostalCode());
+            payeeDetail.setDisbVchrSpecialHandlingPersonName(paymentInfo.getSpecialHandlingName());
+            payeeDetail.setDisbVchrSpecialHandlingLine1Addr(paymentInfo.getSpecialHandlingAddress1());
+            payeeDetail.setDisbVchrSpecialHandlingLine2Addr(paymentInfo.getSpecialHandlingAddress2());
+            payeeDetail.setDisbVchrSpecialHandlingCityName(paymentInfo.getSpecialHandlingCity());
+            payeeDetail.setDisbVchrSpecialHandlingStateCode(paymentInfo.getSpecialHandlingState());
+            payeeDetail.setDisbVchrSpecialHandlingZipCode(paymentInfo.getSpecialHandlingZip());
+            payeeDetail.setDisbVchrSpecialHandlingCountryCode(paymentInfo.getSpecialHandlingCountry());
+            
             dvDocument.setDisbVchrCheckTotalAmount(paymentInfo.getCheckAmount());
             dvDocument.setDisbursementVoucherDueDate(new java.sql.Date(paymentInfo.getDueDate().getTime()));
             dvDocument.setDisbVchrPaymentMethodCode(paymentInfo.getPaymentMethod());

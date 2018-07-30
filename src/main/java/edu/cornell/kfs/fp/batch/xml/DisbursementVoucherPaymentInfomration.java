@@ -95,7 +95,33 @@ public class DisbursementVoucherPaymentInfomration {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String exceptionAttachedCode;
     
-    protected String checkEnclosureCode;
+    @XmlElement(name = "special_handling_person_name", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingName;
+    
+    @XmlElement(name = "special_handling_address_line_1", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingAddress1;
+    
+    @XmlElement(name = "special_handling_address_line_2", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingAddress2;
+    
+    @XmlElement(name = "special_handling_city", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingCity;
+    
+    @XmlElement(name = "special_handling_state", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingState;
+    
+    @XmlElement(name = "special_handling_zip", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingZip;
+    
+    @XmlElement(name = "special_handling_country", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String specialHandlingCountry;
 
     public String getPaymentReasonCode() {
         return paymentReasonCode;
@@ -247,6 +273,62 @@ public class DisbursementVoucherPaymentInfomration {
 
     public void setExceptionAttachedCode(String exceptionAttachedCode) {
         this.exceptionAttachedCode = exceptionAttachedCode;
+    }
+
+    public String getSpecialHandlingName() {
+        return specialHandlingName;
+    }
+
+    public void setSpecialHandlingName(String specialHandlingName) {
+        this.specialHandlingName = specialHandlingName;
+    }
+
+    public String getSpecialHandlingAddress1() {
+        return specialHandlingAddress1;
+    }
+
+    public void setSpecialHandlingAddress1(String specialHandlingAddress1) {
+        this.specialHandlingAddress1 = specialHandlingAddress1;
+    }
+
+    public String getSpecialHandlingAddress2() {
+        return specialHandlingAddress2;
+    }
+
+    public void setSpecialHandlingAddress2(String specialHandlingAddress2) {
+        this.specialHandlingAddress2 = specialHandlingAddress2;
+    }
+
+    public String getSpecialHandlingCity() {
+        return specialHandlingCity;
+    }
+
+    public void setSpecialHandlingCity(String specialHandlingCity) {
+        this.specialHandlingCity = specialHandlingCity;
+    }
+
+    public String getSpecialHandlingState() {
+        return specialHandlingState;
+    }
+
+    public void setSpecialHandlingState(String specialHandlingState) {
+        this.specialHandlingState = specialHandlingState;
+    }
+
+    public String getSpecialHandlingZip() {
+        return specialHandlingZip;
+    }
+
+    public void setSpecialHandlingZip(String specialHandlingZip) {
+        this.specialHandlingZip = specialHandlingZip;
+    }
+
+    public String getSpecialHandlingCountry() {
+        return specialHandlingCountry;
+    }
+
+    public void setSpecialHandlingCountry(String specialHandlingCountry) {
+        this.specialHandlingCountry = specialHandlingCountry;
     }
     
 }
