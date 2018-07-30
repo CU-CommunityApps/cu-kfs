@@ -884,6 +884,7 @@
         <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
         <property name="configurationService" ref="configurationService"/>
         <property name="universityDateService" ref="universityDateService"/>
+        <property name="disbursementVoucherTravelService" ref="disbursementVoucherTravelService"/>
     </bean>
 
 </beans>
