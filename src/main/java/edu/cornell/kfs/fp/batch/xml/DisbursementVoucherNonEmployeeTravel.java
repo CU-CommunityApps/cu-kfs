@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalNullPossibleXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
@@ -92,7 +93,7 @@ public class DisbursementVoucherNonEmployeeTravel {
     protected KualiDecimal perdiemRate;
     
     @XmlElement(name = "perdeim_actual_amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
     protected KualiDecimal perdiemActualAmount;
     
     @XmlElement(name = "round_trip_code", namespace = StringUtils.EMPTY, required = false)
@@ -108,7 +109,7 @@ public class DisbursementVoucherNonEmployeeTravel {
     protected String perdiemChangeReasonText;
     
     @XmlElement(name = "personal_car_amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
     protected KualiDecimal personalCarAmount;
 
     public String getTravelerName() {

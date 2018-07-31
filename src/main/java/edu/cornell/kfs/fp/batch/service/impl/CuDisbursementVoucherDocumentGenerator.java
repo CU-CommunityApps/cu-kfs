@@ -9,13 +9,13 @@ import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetail;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravel;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInfomration;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
@@ -105,7 +105,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     
     private void populateNonEmployeeTravelExppense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getNonEmployeeTravel())) {
-            edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravel nonEmployeeTravel = dvDetail.getNonEmployeeTravel();
+            DisbursementVoucherNonEmployeeTravel nonEmployeeTravel = dvDetail.getNonEmployeeTravel();
             //org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel nonEmployeeTravelDoc = dvDocument.getDvNonEmployeeTravel();
             dvDocument.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(nonEmployeeTravel.getTravelerName());
             dvDocument.getDvNonEmployeeTravel().setDisbVchrServicePerformedDesc(nonEmployeeTravel.getServicePerformed());
@@ -133,7 +133,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
 
-    protected void populateMilage(CuDisbursementVoucherDocument dvDocument, edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    protected void populateMilage(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
         dvDocument.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(nonEmployeeTravel.getPersonalCarMilageAmount().intValue());
         KualiDecimal caluclatedMilageAmount = disbursementVoucherTravelService.calculateMileageAmount(dvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
                 dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp());
@@ -145,7 +145,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
 
-    protected void pupulatePerdiem(CuDisbursementVoucherDocument dvDocument, edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    protected void pupulatePerdiem(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
         KualiDecimal caluclatedPerDiemAmount = disbursementVoucherTravelService.calculatePerDiemAmount(dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp(), 
                 dvDocument.getDvNonEmployeeTravel().getDvPerdiemEndDttmStamp(), dvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
         dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemCalculatedAmt(caluclatedPerDiemAmount);
