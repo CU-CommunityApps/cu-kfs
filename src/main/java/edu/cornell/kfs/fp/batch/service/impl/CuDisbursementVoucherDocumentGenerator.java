@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.function.Supplier;
 
@@ -19,6 +20,8 @@ import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetail;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeExpense;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravel;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInfomration;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrant;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverview;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
@@ -56,12 +59,13 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             populateDisbursementVouchersGenericSections(dvDocument, documentEntry.getDisbursementVoucherDetail());
             populatePaymentInformation(dvDocument, documentEntry.getDisbursementVoucherDetail());
             populateNonEmployeeTravelExppense(dvDocument, documentEntry.getDisbursementVoucherDetail());
+            populatePreConferenceDetail(dvDocument, documentEntry.getDisbursementVoucherDetail());
         } else {
             LOG.error("populateCustomAccountingDocumentData, did not find Disbursement Voucher Details");
         }
     }
     
-    private void populateDisbursementVouchersGenericSections(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+    protected void populateDisbursementVouchersGenericSections(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
         dvDocument.setDisbVchrBankCode(dvDetail.getBankCode());
         dvDocument.setDisbVchrContactPersonName(dvDetail.getContactName());
         dvDocument.setDisbVchrContactPhoneNumber(dvDetail.getContactPhoneNumber());
@@ -69,7 +73,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         dvDocument.setCampusCode(dvDetail.getCampusCode());
     }
     
-    private void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+    protected void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPaymentInformation())) {
             DisbursementVoucherPaymentInfomration paymentInfo = dvDetail.getPaymentInformation();
             CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
@@ -92,7 +96,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             payeeDetail.setDisbVchrSpecialHandlingCountryCode(paymentInfo.getSpecialHandlingCountry());
             
             dvDocument.setDisbVchrCheckTotalAmount(paymentInfo.getCheckAmount());
-            dvDocument.setDisbursementVoucherDueDate(new java.sql.Date(paymentInfo.getDueDate().getTime()));
+            dvDocument.setDisbursementVoucherDueDate(new Date(paymentInfo.getDueDate().getTime()));
             dvDocument.setDisbVchrPaymentMethodCode(paymentInfo.getPaymentMethod());
             dvDocument.setDisbVchrCheckStubText(paymentInfo.getCheckStubText());
             dvDocument.setDisbursementVoucherDocumentationLocationCode(paymentInfo.getDocumentationLocationCode());
@@ -135,39 +139,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             LOG.info("populateNonEmployeeTravelExppense, no non employee travel information in XML");
         }
     }
-
-    protected void populateNonEmployeeTravelPrePaidExpenses(CuDisbursementVoucherDocument dvDocument,
-            DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
-        if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getPrepaidExpenses())) {
-            for (DisbursementVoucherNonEmployeeExpense expense : nonEmployeeTravel.getPrepaidExpenses()) {
-                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
-                dvExpense.setDisbVchrPrePaidExpenseCode(expense.getExpenseType());
-                dvExpense.setDisbVchrPrePaidExpenseCompanyName(expense.getCompnayName());
-                dvExpense.setDisbVchrExpenseAmount(expense.getAmount());
-                dvExpense.setDocumentNumber(dvDocument.getDocumentNumber());
-                dvExpense.setNewCollectionRecord(true);
-                dvDocument.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(dvExpense);
-            }
-        }
-    }
-
-    protected void populateNonEmployeeTravelExpenses(CuDisbursementVoucherDocument dvDocument,
-            DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
-        if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getTravelerExpenses())) {
-            for (DisbursementVoucherNonEmployeeExpense expense : nonEmployeeTravel.getTravelerExpenses()) {
-                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
-                dvExpense.setDisbVchrExpenseCode(expense.getExpenseType());
-                dvExpense.setDisbVchrExpenseCompanyName(expense.getCompnayName());
-                dvExpense.setDisbVchrExpenseAmount(expense.getAmount());
-                dvExpense.setDocumentNumber(dvDocument.getDocumentNumber());
-                dvExpense.setNewCollectionRecord(true);
-                dvDocument.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(dvExpense);
-            }
-        }
-    }
     
-    
-
     protected void pupulatePerdiem(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
         KualiDecimal caluclatedPerDiemAmount = disbursementVoucherTravelService.calculatePerDiemAmount(dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp(), 
                 dvDocument.getDvNonEmployeeTravel().getDvPerdiemEndDttmStamp(), dvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
@@ -193,7 +165,58 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    private boolean convertStringToBoolean(String stringBoolean) {
+    protected void populateNonEmployeeTravelExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+        if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getTravelerExpenses())) {
+            for (DisbursementVoucherNonEmployeeExpense expenseXml : nonEmployeeTravel.getTravelerExpenses()) {
+                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
+                dvExpense.setDisbVchrExpenseCode(expenseXml.getExpenseType());
+                dvExpense.setDisbVchrExpenseCompanyName(expenseXml.getCompnayName());
+                dvExpense.setDisbVchrExpenseAmount(expenseXml.getAmount());
+                dvExpense.setDocumentNumber(dvDocument.getDocumentNumber());
+                dvExpense.setNewCollectionRecord(true);
+                dvDocument.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(dvExpense);
+            }
+        }
+    }
+
+    protected void populateNonEmployeeTravelPrePaidExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+        if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getPrepaidExpenses())) {
+            for (DisbursementVoucherNonEmployeeExpense expenseXml : nonEmployeeTravel.getPrepaidExpenses()) {
+                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
+                dvExpense.setDisbVchrPrePaidExpenseCode(expenseXml.getExpenseType());
+                dvExpense.setDisbVchrPrePaidExpenseCompanyName(expenseXml.getCompnayName());
+                dvExpense.setDisbVchrExpenseAmount(expenseXml.getAmount());
+                dvExpense.setDocumentNumber(dvDocument.getDocumentNumber());
+                dvExpense.setNewCollectionRecord(true);
+                dvDocument.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(dvExpense);
+            }
+        }
+    }
+    
+    protected void populatePreConferenceDetail(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+        if (ObjectUtils.isNotNull(dvDetail.getPrePaidTravelOverview())) {
+            DisbursementVoucherPrePaidTravelOverview overView = dvDetail.getPrePaidTravelOverview();
+            dvDocument.getDvPreConferenceDetail().setDvConferenceDestinationName(overView.getLocation());
+            dvDocument.getDvPreConferenceDetail().setDisbVchrExpenseCode(overView.getType());
+            dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceStartDate(new Date(overView.getStartDate().getTime()));
+            dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceEndDate(new Date(overView.getEndDate().getTime()));
+            if (CollectionUtils.isNotEmpty(overView.getRegistrants())) {
+                for (DisbursementVoucherPreConferenceRegistrant registrantXml : overView.getRegistrants()) {
+                    org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant dvRegistrant = new org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant();
+                    dvRegistrant.setDocumentNumber(dvDocument.getDocumentNumber());
+                    dvRegistrant.setDvConferenceRegistrantName(registrantXml.getName());
+                    dvRegistrant.setDisbVchrPreConfDepartmentCd(registrantXml.getDepartmentCode());
+                    dvRegistrant.setDvPreConferenceRequestNumber(registrantXml.getPreConferenceRequestNuumber());
+                    dvRegistrant.setDisbVchrExpenseAmount(registrantXml.getAmount());
+                    dvDocument.addDvPrePaidRegistrantLine(dvRegistrant);
+                }
+            }
+        } else {
+           LOG.info("populatePreConferenceDetail, no pre paid expenses found"); 
+        }
+    }
+
+    protected boolean convertStringToBoolean(String stringBoolean) {
         return StringUtils.equalsIgnoreCase("T", stringBoolean);
     }
     
