@@ -111,6 +111,7 @@ public class PaymentWorksConstants {
     public static final class PaymentWorksBatchReportNames {
         public static final String NEW_VENDOR_REQUESTS_REPORT_NAME = "New Vendor Requests Create KFS Vendor";
         public static final String NEW_VENDOR_REQUESTS_PAYEE_ACH_REPORT_NAME = "New Vendor Requests Create KFS Payee ACH Account";
+        public static final String NEW_VENDOR_REQUESTS_SUPPLIER_UPLOAD_REPORT_NAME = "New Vendor Requests Upload Suppliers to PaymentWorks";
     }
     
     public enum PaymentWorksNewVendorRequestStatusType {

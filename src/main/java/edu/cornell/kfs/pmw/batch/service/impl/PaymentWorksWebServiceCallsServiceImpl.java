@@ -1,6 +1,5 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -17,7 +16,6 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPart;
@@ -43,6 +41,7 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestsRootDTO
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
+import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 
 public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
@@ -363,11 +362,11 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
 
     @Override
-    public int uploadVendorsToPaymentWorks(byte[] vendorCsvData) {
+    public int uploadVendorsToPaymentWorks(InputStream vendorCsvDataStream) {
         Response response = null;
         
         try {
-            response = performSupplierUpload(vendorCsvData);
+            response = performSupplierUpload(vendorCsvDataStream);
             response.bufferEntity();
             String responseContent = response.readEntity(String.class);
             return getReceivedSuppliersCountIfSupplierUploadSucceeded(responseContent);
@@ -376,20 +375,18 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         }
     }
 
-    private Response performSupplierUpload(byte[] vendorCsvData) {
-        ByteArrayInputStream inputStream = null;
+    private Response performSupplierUpload(InputStream vendorCsvDataStream) {
         Client client = null;
         
         try {
-            inputStream = new ByteArrayInputStream(vendorCsvData);
             ClientConfig clientConfig = new ClientConfig();
+            clientConfig.register(CuMultiPartWriter.class);
             client = ClientBuilder.newClient(clientConfig);
             
-            Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), inputStream);
+            Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), vendorCsvDataStream);
             return request.invoke();
         } finally {
             CURestClientUtils.closeQuietly(client);
-            IOUtils.closeQuietly(inputStream);
         }
     }
 
@@ -398,9 +395,9 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         return buildURI(url);
     }
 
-    private Invocation buildMultiPartRequestForSupplierUpload(Client client, URI uri, InputStream inputStream) {
+    private Invocation buildMultiPartRequestForSupplierUpload(Client client, URI uri, InputStream vendorCsvDataStream) {
         StreamDataBodyPart csvPart = new StreamDataBodyPart(
-                PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, inputStream);
+                PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, vendorCsvDataStream);
         
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
@@ -450,7 +447,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             throw new RuntimeException("Supplier upload failed: Did not receive a num-received-suppliers count from PaymentWorks");
         } else if (!suppliersCountNode.isInt()) {
             LOG.error("getReceivedSuppliersCount: Received a non-integer num-received-suppliers count from PaymentWorks");
-            throw new RuntimeException("Supplier upload failed: Receive a badly formatted num-received-suppliers count from PaymentWorks");
+            throw new RuntimeException("Supplier upload failed: Received a badly formatted num-received-suppliers count from PaymentWorks");
         }
         return suppliersCountNode.asInt();
     }

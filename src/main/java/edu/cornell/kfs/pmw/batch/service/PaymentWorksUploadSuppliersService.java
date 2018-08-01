@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pmw.batch.service;
 
-public interface PaymentWorksNewVendorUploadSuppliersService {
+public interface PaymentWorksUploadSuppliersService {
 
     void uploadPreparedVendorsToPaymentWorks();
 

@@ -1,5 +1,6 @@
 package edu.cornell.kfs.pmw.batch.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
@@ -17,5 +18,5 @@ public interface PaymentWorksWebServiceCallsService {
     
     void refreshPaymentWorksAuthorizationToken();
     
-    int uploadVendorsToPaymentWorks(byte[] vendorCsvData);
+    int uploadVendorsToPaymentWorks(InputStream vendorCsvDataStream);
 }
