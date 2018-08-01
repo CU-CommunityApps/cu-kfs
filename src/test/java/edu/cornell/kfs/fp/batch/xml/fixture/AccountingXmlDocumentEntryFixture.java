@@ -15,12 +15,13 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
 
 @SuppressWarnings("deprecation")
 public enum AccountingXmlDocumentEntryFixture {
     BASE_DOCUMENT(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Test Document", "This is only a test document!", "ABCD1234",
-            sourceAccountingLines(), targetAccountingLines(), items(), notes(), adHocRecipients(), backupLinks()),
+            sourceAccountingLines(), targetAccountingLines(), items(), notes(), adHocRecipients(), backupLinks(), CuDisbursementVoucherDocumentFixture.EMPTY),
     BAD_CONVERSION_DOCUMENT_PLACEHOLDER(1, KFSConstants.ROOT_DOCUMENT_TYPE, "Fail Conversion from XML",
             "Placeholder for documents that are expected to fail XML-to-doc conversion", "ABCD1234",
             sourceAccountingLines(), targetAccountingLines(), notes(), adHocRecipients(), backupLinks()),
@@ -177,7 +178,8 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.EMPTY),
     BASE_IB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.INTERNAL_BILLING,
             "Another IB Test Document", "This is a sample IB document without any item lines.", "IntBill02",
             sourceAccountingLines(
@@ -189,7 +191,8 @@ public enum AccountingXmlDocumentEntryFixture {
             items(),
             notes(),
             adHocRecipients(),
-            backupLinks()),
+            backupLinks(),
+            CuDisbursementVoucherDocumentFixture.EMPTY),
 
     SINGLE_IB_DOCUMENT_TEST_DOC1(BASE_IB_WITH_ITEMS, 1),
 
@@ -281,7 +284,8 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
-                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.EMPTY),
     BASE_SB_NO_ITEMS(2, KFSConstants.FinancialDocumentTypeCodes.SERVICE_BILLING,
             "Another SB Test Document", "This is a sample SB document without any item lines.", "ServBill02",
             sourceAccountingLines(
@@ -293,7 +297,8 @@ public enum AccountingXmlDocumentEntryFixture {
             items(),
             notes(),
             adHocRecipients(),
-            backupLinks()),
+            backupLinks(),
+            CuDisbursementVoucherDocumentFixture.EMPTY),
 
     SINGLE_SB_DOCUMENT_TEST_DOC1(BASE_SB_WITH_ITEMS, 1),
 
@@ -349,13 +354,15 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
-    MULTI_DOC_TYPE_TEST_DV(BASE_DOCUMENT, 8, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+    MULTI_DOC_TYPE_TEST_DV(8, CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            "Test DV Document", "This is only a test document!", "ABCD1234",
             sourceAccountingLines(
                     AccountingXmlDocumentAccountingLineFixture.ACCT_R504700_OBJ_2640_AMOUNT_100,
                     AccountingXmlDocumentAccountingLineFixture.ACCT_1000718_OBJ_4000_AMOUNT_50),
             targetAccountingLines(),
+            items(),
             notes(
-                    "A fun testing note",
+                    "This is a sample note",
                     "Another note"),
             adHocRecipients(
                     AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
@@ -364,8 +371,8 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
-                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
-
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
+            CuDisbursementVoucherDocumentFixture.BASIC),
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -457,6 +464,7 @@ public enum AccountingXmlDocumentEntryFixture {
     public final List<AccountingXmlDocumentAccountingLineFixture> sourceAccountingLines;
     public final List<AccountingXmlDocumentAccountingLineFixture> targetAccountingLines;
     public final List<AccountingXmlDocumentItemFixture> items;
+    public final CuDisbursementVoucherDocumentFixture dvDetails;
     public final List<String> notes;
     public final List<AccountingXmlDocumentAdHocRecipientFixture> adHocRecipients;
     public final List<AccountingXmlDocumentBackupLinkFixture> backupLinks;
@@ -468,29 +476,22 @@ public enum AccountingXmlDocumentEntryFixture {
         this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
                 sourceAccountingLines, targetAccountingLines, notes, adHocRecipients, backupLinks);
     }
-
-    private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index,
-            String documentTypeCode, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
-            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
-            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
-        this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
-                sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks);
-    }
-
+    
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this(index, documentTypeCode, description, explanation, organizationDocumentNumber,
-                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks);
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks, CuDisbursementVoucherDocumentFixture.EMPTY);
     }
 
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
-            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks,
+            CuDisbursementVoucherDocumentFixture dvDetails) {
         this(index, documentTypeCode, description, explanation, organizationDocumentNumber, 0,
-                sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks);
+                sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks, dvDetails);
     }
 
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
@@ -499,14 +500,15 @@ public enum AccountingXmlDocumentEntryFixture {
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this(index, documentTypeCode, description, explanation, organizationDocumentNumber, postingFiscalYear,
-                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks);
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks, CuDisbursementVoucherDocumentFixture.EMPTY);
     }
 
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber,
             int postingFiscalYear, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
-            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks,
+            CuDisbursementVoucherDocumentFixture dvDetails) {
         this.index = Long.valueOf(index);
         this.documentTypeCode = documentTypeCode;
         this.description = description;
@@ -516,6 +518,7 @@ public enum AccountingXmlDocumentEntryFixture {
         this.sourceAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
         this.targetAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
         this.items = AccountingXmlDocumentFixtureUtils.toImmutableList(items);
+        this.dvDetails = dvDetails;
         this.notes = AccountingXmlDocumentFixtureUtils.toImmutableList(notes);
         this.adHocRecipients = AccountingXmlDocumentFixtureUtils.toImmutableList(adHocRecipients);
         this.backupLinks = AccountingXmlDocumentFixtureUtils.toImmutableList(backupLinks);
@@ -532,6 +535,7 @@ public enum AccountingXmlDocumentEntryFixture {
         this.targetAccountingLines = baseFixture.targetAccountingLines;
         this.items = baseFixture.items;
         this.notes = baseFixture.notes;
+        this.dvDetails = baseFixture.dvDetails;
         this.adHocRecipients = baseFixture.adHocRecipients;
         this.backupLinks = baseFixture.backupLinks;
     }
@@ -568,6 +572,7 @@ public enum AccountingXmlDocumentEntryFixture {
         populateNumberAndHeaderOnDocument(accountingDocument, documentNumber);
         addAccountingLinesToDocument(accountingDocument);
         addItemsToDocumentIfNecessary(accountingDocument);
+        addDvDetailsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
         
@@ -622,6 +627,14 @@ public enum AccountingXmlDocumentEntryFixture {
             items.stream()
                     .map((fixture) -> fixture.toInternalBillingItem(documentNumber))
                     .forEach(internalBillingDocument::addItem);
+        }
+    }
+    
+    private void addDvDetailsToDocumentIfNecessary(AccountingDocument accountingDocument) {
+        if (accountingDocument instanceof CuDisbursementVoucherDocument) {
+            CuDisbursementVoucherDocument dvDoc = (CuDisbursementVoucherDocument) accountingDocument;
+            dvDoc.setDisbVchrBankCode(dvDetails.bankCode);
+            dvDoc.setDisbVchrContactPersonName(dvDetails.contactName);
         }
     }
 

@@ -594,7 +594,7 @@
         <Document>
         	<Index>8</Index>
             <DocumentType>DV</DocumentType>
-            <Description>Test Document</Description>
+            <Description>Test DV Document</Description>
             <Explanation>This is only a test document!</Explanation>
             <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
             <SourceAccountingLineList>
@@ -727,7 +727,7 @@
             </dv_detail>
             <NoteList>
                 <Note>
-                    <Description>A fun testing note</Description>
+                    <Description>This is a sample note</Description>
                 </Note>
                 <Note>
                     <Description>Another note</Description>

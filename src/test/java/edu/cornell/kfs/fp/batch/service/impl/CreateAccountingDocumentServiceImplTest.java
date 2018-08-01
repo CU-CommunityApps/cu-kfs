@@ -92,6 +92,8 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
@@ -415,6 +417,10 @@ public class CreateAccountingDocumentServiceImplTest {
                     ((InternalBillingDocument) expectedDocument).getItems(), ((InternalBillingDocument) actualDocument).getItems(),
                     this::assertInternalBillingItemIsCorrect);
         }
+        
+        if (actualDocument instanceof CuDisbursementVoucherDocument) {
+            assertCuDisbursementVoucherDocumentsCorrect((CuDisbursementVoucherDocument) expectedDocument, (CuDisbursementVoucherDocument) actualDocument);
+        }
     }
 
     private <T> void assertObjectListIsCorrect(String listLabel, List<? extends T> expectedObjects, List<? extends T> actualObjects,
@@ -502,6 +508,15 @@ public class CreateAccountingDocumentServiceImplTest {
             assertNotNull("Note should have had an attachment", actualAttachment);
             assertEquals("Wrong attachment file name", expectedAttachment.getAttachmentFileName(), actualAttachment.getAttachmentFileName());
         }
+    }
+    
+    private void assertCuDisbursementVoucherDocumentsCorrect(CuDisbursementVoucherDocument expectedDvDocument, CuDisbursementVoucherDocument actualDvDocument) {
+        assertEquals("Wrong bank code", expectedDvDocument.getDisbVchrBankCode(), actualDvDocument.getDisbVchrBankCode());
+        assertEquals("Wrong contact name", expectedDvDocument.getDisbVchrContactPersonName(), actualDvDocument.getDisbVchrContactPersonName());
+    }
+    
+    private void assertCuDisbursementVoucherPayeeDetailsCorrect(CuDisbursementVoucherPayeeDetail expectedDetail, CuDisbursementVoucherPayeeDetail actualDetail) {
+        
     }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {
