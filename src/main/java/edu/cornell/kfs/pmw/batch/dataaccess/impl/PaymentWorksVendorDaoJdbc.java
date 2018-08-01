@@ -31,7 +31,7 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String kfsVendorProcessingStatus, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, Timestamp processingTimeStamp) {
-        updateExistingPaymentWorksVendorInStagingTable(id, null, kfsVendorProcessingStatus, null, null, null, processingTimeStamp, null, null, null);
+        updateExistingPaymentWorksVendorInStagingTable(id, null, kfsVendorProcessingStatus, null, null, null, processingTimeStamp, vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, null);
     }
     
     @Override
@@ -45,9 +45,9 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     }
 
     private void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String supplierUploadStatus,
-                                                                Timestamp processingTimeStamp, Integer vendorHeaderAssignedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) {
+                                                                Timestamp processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) {
         try {
-            PreparedStatement preparedSqlStatement = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, supplierUploadStatus, processingTimeStamp, vendorHeaderAssignedIdentifier, vendorDetailAssignedIdentifier, kfsAchDocumentNumber);
+            PreparedStatement preparedSqlStatement = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, supplierUploadStatus, processingTimeStamp, vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, kfsAchDocumentNumber);
             preparedSqlStatement.executeUpdate();
             int updatedRowCount = preparedSqlStatement.getUpdateCount();
             LOG.info("updateExistingPaymentWorksVendorInStagingTable updated " + updatedRowCount + " record" + (updatedRowCount == 1 ? "" : "s"));
@@ -55,38 +55,6 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         catch (SQLException ex) {
             LOG.error("updateExistingPaymentWorksVendorInStagingTable", ex);
         }
-    }
-
-    private String buildUpdateExistingPaymentWorksVendorInStagingTableSql_OLD(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String supplierUploadStatus,
-                                                                          Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("update kfs.cu_pmw_vendor_t set");
-        if (StringUtils.isNotBlank(pmwRequestStatus)) {
-            sql.append(" pmw_req_stat = '" + pmwRequestStatus + "',");
-        }
-        sql.append(" kfs_vnd_proc_stat = '" + kfsVendorProcessingStatus + "',");
-        sql.append(" proc_ts = '" + PROCESSING_TIMESTAMP_SQL_FORMATTER.format(processingTimeStamp) + "'");
-        if (StringUtils.isNotBlank(kfsAchProcessingStatus)) {
-            sql.append(", kfs_ach_proc_stat = '" + kfsAchProcessingStatus + "'");
-        }
-        if (StringUtils.isNotBlank(supplierUploadStatus)) {
-            sql.append(", supp_upld_stat = '" + supplierUploadStatus + "'");
-        }
-        if (StringUtils.isNotBlank(kfsVendorDocumentNumber)) {
-            sql.append(", pven_fdoc_nbr = '" + kfsVendorDocumentNumber + "'");
-        }
-        if (ObjectUtils.isNotNull(vendorHeaderGeneratedIdentifier)) {
-            sql.append(", vndr_hdr_gnrtd_id = '" + vendorHeaderGeneratedIdentifier.intValue() + "'");
-        }
-        if (ObjectUtils.isNotNull(vendorDetailAssignedIdentifier)) {
-            sql.append(", vndr_dtl_asnd_id = '" + vendorDetailAssignedIdentifier.intValue() + "'");
-        }
-        if (ObjectUtils.isNotNull(kfsAchDocumentNumber)) {
-            sql.append(", paat_fdoc_nbr = '" + kfsAchDocumentNumber + "'");
-        }
-        sql.append(" where id = '" + id + "'");
-        
-        return sql.toString();
     }
 
     private PreparedStatement buildUpdateExistingPaymentWorksVendorInStagingTableSql(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String supplierUploadStatus, Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) throws SQLException {
@@ -119,8 +87,7 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         }
         sqlFactory.appendSql(" where id = ?", id);
 
-        PreparedStatement preparedSqlStatement = sqlFactory.getPreparedSqlStatement();
-        return preparedSqlStatement;
+        return sqlFactory.getPreparedSqlStatement();
     }
 
     private class ParameterizedSqlFactory {
