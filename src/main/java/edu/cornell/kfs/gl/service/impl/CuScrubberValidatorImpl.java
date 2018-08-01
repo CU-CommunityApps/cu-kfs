@@ -33,9 +33,9 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
                 retVal = updateFiscalAccountingPeriodToCurrent(workingEntry, universityRunDate);
             } else if (!originEntryAccountingPeriod.isActive()) {
                 retVal = MessageBuilder.buildMessage(KFSKeyConstants.ERROR_ACCOUNTING_PERIOD_NOT_ACTIVE, periodCode, Message.TYPE_FATAL);
+            } else {
+            	    workingEntry.setUniversityFiscalPeriodCode(periodCode);
             }
-
-            workingEntry.setUniversityFiscalPeriodCode(periodCode);
         }
 
         return retVal;
