@@ -112,7 +112,6 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     private void populateNonEmployeeTravelExppense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getNonEmployeeTravel())) {
             DisbursementVoucherNonEmployeeTravel nonEmployeeTravel = dvDetail.getNonEmployeeTravel();
-            //org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel nonEmployeeTravelDoc = dvDocument.getDvNonEmployeeTravel();
             dvDocument.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(nonEmployeeTravel.getTravelerName());
             dvDocument.getDvNonEmployeeTravel().setDisbVchrServicePerformedDesc(nonEmployeeTravel.getServicePerformed());
             dvDocument.getDvNonEmployeeTravel().setDvServicePerformedLocName(nonEmployeeTravel.getServicePerformedLocationName());
@@ -168,7 +167,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected void populateNonEmployeeTravelExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
         if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getTravelerExpenses())) {
             for (DisbursementVoucherNonEmployeeExpense expenseXml : nonEmployeeTravel.getTravelerExpenses()) {
-                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
+                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = buildNonEmployeeExpense();
                 dvExpense.setDisbVchrExpenseCode(expenseXml.getExpenseType());
                 dvExpense.setDisbVchrExpenseCompanyName(expenseXml.getCompnayName());
                 dvExpense.setDisbVchrExpenseAmount(expenseXml.getAmount());
@@ -182,7 +181,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected void populateNonEmployeeTravelPrePaidExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
         if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getPrepaidExpenses())) {
             for (DisbursementVoucherNonEmployeeExpense expenseXml : nonEmployeeTravel.getPrepaidExpenses()) {
-                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
+                org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = buildNonEmployeeExpense();
                 dvExpense.setDisbVchrPrePaidExpenseCode(expenseXml.getExpenseType());
                 dvExpense.setDisbVchrPrePaidExpenseCompanyName(expenseXml.getCompnayName());
                 dvExpense.setDisbVchrExpenseAmount(expenseXml.getAmount());
@@ -191,6 +190,11 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
                 dvDocument.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(dvExpense);
             }
         }
+    }
+    
+    protected org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense buildNonEmployeeExpense() {
+        org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense nonEmployeeExpense = new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
+        return nonEmployeeExpense;
     }
     
     protected void populatePreConferenceDetail(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {

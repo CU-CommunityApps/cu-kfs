@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import org.easymock.EasyMock;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
@@ -18,6 +20,8 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
+import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
 public class MockDocumentUtils {
 
@@ -84,6 +88,18 @@ public class MockDocumentUtils {
             PurchasingDocument purchasingDocument = (PurchasingDocument) document;
             purchasingDocument.setPurchasingCapitalAssetItems(new ArrayList<>());
             purchasingDocument.setPurchasingCapitalAssetSystems(new ArrayList<>());
+        }
+        
+        if (document instanceof CuDisbursementVoucherDocument) {
+            CuDisbursementVoucherDocument dvDocument = (CuDisbursementVoucherDocument) document;
+            CuDisbursementVoucherPayeeDetail dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
+            dvDocument.setDvPayeeDetail(dvPayeeDetail);
+            DisbursementVoucherNonEmployeeTravel dvNonEmployeeTravel = new DisbursementVoucherNonEmployeeTravel();
+            dvDocument.setDvNonEmployeeTravel(dvNonEmployeeTravel);
+            DisbursementVoucherPreConferenceDetail dvPreConferenceDetail = new DisbursementVoucherPreConferenceDetail();
+            dvDocument.setDvPreConferenceDetail(dvPreConferenceDetail);
+            dvDocument.setFinDocNextRegistrantLineNbr(new Integer(1));
+            
         }
     }
 

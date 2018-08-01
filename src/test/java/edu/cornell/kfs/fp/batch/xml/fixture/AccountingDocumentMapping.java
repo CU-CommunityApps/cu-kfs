@@ -21,6 +21,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
 import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.impl.CuDisbursementVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator;
@@ -28,9 +29,11 @@ import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentTargetAccountingLine;
 import edu.cornell.kfs.fp.document.CuBudgetAdjustmentDocument;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.businessobject.TestSourceAccountingLine;
 import edu.cornell.kfs.sys.businessobject.TestTargetAccountingLine;
+import edu.cornell.kfs.fp.batch.service.impl.TestableCuDisbursementVoucherDocumentGenerator;
 
 @SuppressWarnings("deprecation")
 public enum AccountingDocumentMapping {
@@ -49,6 +52,9 @@ public enum AccountingDocumentMapping {
     SB_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.SERVICE_BILLING,
             ServiceBillingDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             ServiceBillingDocumentGenerator::new),
+    DV_DOCUMENT(CuFPTestConstants.DISBURSEMENT_VOUCHER_DOC_TYPE,
+            CuDisbursementVoucherDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
+            TestableCuDisbursementVoucherDocumentGenerator::new),
     YEDI_DOCUMENT(KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
             YearEndDistributionOfIncomeAndExpenseDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
             CuYearEndDistributionOfIncomeAndExpenseDocumentGenerator::new);
