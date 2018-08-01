@@ -594,31 +594,31 @@
         <Document>
         	<Index>8</Index>
             <DocumentType>DV</DocumentType>
-            <Description>Test DV from XML</Description>
-            <Explanation>DV created via accting doc job</Explanation>
-            <OrganizationDocumentNumber>TST</OrganizationDocumentNumber>
+            <Description>Test Document</Description>
+            <Explanation>This is only a test document!</Explanation>
+            <OrganizationDocumentNumber>ABCD1234</OrganizationDocumentNumber>
             <SourceAccountingLineList>
-            	<Accounting>
+                <Accounting>
                     <coa_cd>IT</coa_cd>
-                    <account_nbr>1000710</account_nbr>
+                    <account_nbr>R504700</account_nbr>
                     <sub_account_nbr></sub_account_nbr>
-                    <object_cd>1400</object_cd>
+                    <object_cd>2640</object_cd>
                     <sub_object_cd></sub_object_cd>
                     <project></project>
                     <org_ref_id></org_ref_id>
-                    <line_description>DV Trans 1</line_description>
-                    <amount>30.00</amount>
+                    <line_description></line_description>
+                    <amount>100.00</amount>
                 </Accounting>
                 <Accounting>
                     <coa_cd>IT</coa_cd>
-                    <account_nbr>R513802</account_nbr>
+                    <account_nbr>1000718</account_nbr>
                     <sub_account_nbr></sub_account_nbr>
-                    <object_cd>1400</object_cd>
+                    <object_cd>4000</object_cd>
                     <sub_object_cd></sub_object_cd>
                     <project></project>
                     <org_ref_id></org_ref_id>
-                    <line_description>DV Trans 2</line_description>
-                    <amount>30.00</amount>
+                    <line_description></line_description>
+                    <amount>50</amount>
                 </Accounting>
             </SourceAccountingLineList>
             <dv_detail>
@@ -727,10 +727,10 @@
             </dv_detail>
             <NoteList>
                 <Note>
-                    <Description>This DV was generated from the create accounting document</Description>
+                    <Description>A fun testing note</Description>
                 </Note>
                 <Note>
-                    <Description>Please contact John Doe in department XYZ with questions about this document.</Description>
+                    <Description>Another note</Description>
                 </Note>
             </NoteList>
             <AdhocRecipientList>
