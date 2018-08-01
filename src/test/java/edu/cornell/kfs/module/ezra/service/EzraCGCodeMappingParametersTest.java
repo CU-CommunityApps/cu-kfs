@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.ezra.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.sys.KFSConstants;
@@ -36,11 +37,11 @@ public class EzraCGCodeMappingParametersTest {
     @Before
     public void setUp() throws Exception {
         ezraService = new TestEzraService();
-        ezraService.setBusinessObjectService(createMockServiceExpectingNoCalls(BusinessObjectServiceImpl.class));
-        ezraService.setDateTimeService(createMockServiceExpectingNoCalls(DateTimeServiceImpl.class));
-        ezraService.setDocumentService(createMockServiceExpectingNoCalls(DocumentServiceImpl.class));
-        ezraService.setEzraAwardProposalDao(createMockServiceExpectingNoCalls(EzraAwardProposalDaoOjb.class));
-        ezraService.setSponsorDao(createMockServiceExpectingNoCalls(SponsorDaoOjb.class));
+        ezraService.setBusinessObjectService(mock(BusinessObjectServiceImpl.class));
+        ezraService.setDateTimeService(mock(DateTimeServiceImpl.class));
+        ezraService.setDocumentService(mock(DocumentServiceImpl.class));
+        ezraService.setEzraAwardProposalDao(mock(EzraAwardProposalDaoOjb.class));
+        ezraService.setSponsorDao(mock(SponsorDaoOjb.class));
     }
 
 
@@ -127,23 +128,16 @@ public class EzraCGCodeMappingParametersTest {
     }
 
 
-
-    protected <T> T createMockServiceExpectingNoCalls(Class<T> serviceClass) {
-        T service = EasyMock.createMock(serviceClass);
-        EasyMock.replay(service);
-        return service;
-    }
-
     protected void setupMockParameterServiceWithMultiValueParms(ParameterNameAndMultiValue... parameters) {
-        ParameterService parameterService = EasyMock.createMock(ParameterServiceImpl.class);
-        
+        ParameterService parameterService = mock(ParameterServiceImpl.class);
+
         for (ParameterNameAndMultiValue parameter : parameters) {
-            EasyMock.expect(parameterService.getParameterValuesAsString(
+            List<String> expectedParameterValues = createParameterValueStrings(parameter.values);
+            when(parameterService.getParameterValuesAsString(
                     KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, KfsParameterConstants.BATCH_COMPONENT, parameter.name
-                    )).andStubReturn(createParameterValueStrings(parameter.values));
+                )).thenReturn(expectedParameterValues);
         }
         
-        EasyMock.replay(parameterService);
         ezraService.setParameterService(parameterService);
     }
 
