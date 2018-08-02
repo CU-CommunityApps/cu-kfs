@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 public enum CuDisbursementVoucherDocumentFixture {

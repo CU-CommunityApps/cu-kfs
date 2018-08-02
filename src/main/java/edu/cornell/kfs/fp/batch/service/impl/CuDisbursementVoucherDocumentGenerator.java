@@ -96,7 +96,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             payeeDetail.setDisbVchrSpecialHandlingCountryCode(paymentInfo.getSpecialHandlingCountry());
             
             dvDocument.setDisbVchrCheckTotalAmount(paymentInfo.getCheckAmount());
-            dvDocument.setDisbursementVoucherDueDate(new Date(paymentInfo.getDueDate().getTime()));
+            dvDocument.setDisbursementVoucherDueDate(buildSqlDateFromUtilDate(paymentInfo.getDueDate()));
             dvDocument.setDisbVchrPaymentMethodCode(paymentInfo.getPaymentMethod());
             dvDocument.setDisbVchrCheckStubText(paymentInfo.getCheckStubText());
             dvDocument.setDisbursementVoucherDocumentationLocationCode(paymentInfo.getDocumentationLocationCode());
@@ -122,8 +122,8 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelFromCityName(nonEmployeeTravel.getTravelFromCity());
             dvDocument.getDvNonEmployeeTravel().setDisbVchrTravelFromStateCode(nonEmployeeTravel.getTravelFromState());
             dvDocument.getDvNonEmployeeTravel().setDvTravelFromCountryCode(nonEmployeeTravel.getTravelFromCountry());
-            dvDocument.getDvNonEmployeeTravel().setDvPerdiemStartDttmStamp(new Timestamp(nonEmployeeTravel.getPerdiemStartDate().getTime()));
-            dvDocument.getDvNonEmployeeTravel().setDvPerdiemEndDttmStamp(new Timestamp(nonEmployeeTravel.getPerdiemEndDate().getTime()));
+            dvDocument.getDvNonEmployeeTravel().setDvPerdiemStartDttmStamp(buildTimestampFromUtilDate(nonEmployeeTravel.getPerdiemStartDate()));
+            dvDocument.getDvNonEmployeeTravel().setDvPerdiemEndDttmStamp(buildTimestampFromUtilDate(nonEmployeeTravel.getPerdiemEndDate()));
             dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemCategoryName(nonEmployeeTravel.getPerdiemCategory());
             dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoFromCityName(nonEmployeeTravel.getAutoFromCity());
             dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoFromStateCode(nonEmployeeTravel.getAutoFromState());
@@ -202,8 +202,8 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             DisbursementVoucherPrePaidTravelOverview overView = dvDetail.getPrePaidTravelOverview();
             dvDocument.getDvPreConferenceDetail().setDvConferenceDestinationName(overView.getLocation());
             dvDocument.getDvPreConferenceDetail().setDisbVchrExpenseCode(overView.getType());
-            dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceStartDate(new Date(overView.getStartDate().getTime()));
-            dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceEndDate(new Date(overView.getEndDate().getTime()));
+            dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceStartDate(buildSqlDateFromUtilDate(overView.getStartDate()));
+            dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceEndDate(buildSqlDateFromUtilDate(overView.getEndDate()));
             if (CollectionUtils.isNotEmpty(overView.getRegistrants())) {
                 for (DisbursementVoucherPreConferenceRegistrant registrantXml : overView.getRegistrants()) {
                     org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant dvRegistrant = new org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant();
@@ -222,6 +222,22 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 
     protected boolean convertStringToBoolean(String stringBoolean) {
         return StringUtils.equalsIgnoreCase("T", stringBoolean);
+    }
+    
+    private Date buildSqlDateFromUtilDate(java.util.Date utilDate) {
+        if (ObjectUtils.isNotNull(utilDate)) {
+            return new Date(utilDate.getTime());
+        } else {
+            return null;
+        }
+    }
+    
+    private Timestamp buildTimestampFromUtilDate(java.util.Date utilDate) {
+        if (ObjectUtils.isNotNull(utilDate)) {
+            return new Timestamp(utilDate.getTime());
+        } else {
+            return null;
+        }
     }
     
     public void setUniversityDateService(UniversityDateService universityDateService) {
