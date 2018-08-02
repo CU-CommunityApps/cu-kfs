@@ -513,10 +513,14 @@ public class CreateAccountingDocumentServiceImplTest {
     private void assertCuDisbursementVoucherDocumentsCorrect(CuDisbursementVoucherDocument expectedDvDocument, CuDisbursementVoucherDocument actualDvDocument) {
         assertEquals("Wrong bank code", expectedDvDocument.getDisbVchrBankCode(), actualDvDocument.getDisbVchrBankCode());
         assertEquals("Wrong contact name", expectedDvDocument.getDisbVchrContactPersonName(), actualDvDocument.getDisbVchrContactPersonName());
-    }
-    
-    private void assertCuDisbursementVoucherPayeeDetailsCorrect(CuDisbursementVoucherPayeeDetail expectedDetail, CuDisbursementVoucherPayeeDetail actualDetail) {
-        
+        assertEquals("payment reason code not correct", expectedDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode(), 
+                actualDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+        assertEquals("payee type code not correct", expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(), 
+                actualDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode());
+        assertEquals("non employee travel perdiem rate no correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate(),
+                actualDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
+        assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
+                actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
     }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {

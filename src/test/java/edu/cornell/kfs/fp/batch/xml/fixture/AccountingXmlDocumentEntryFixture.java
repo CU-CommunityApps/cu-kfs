@@ -372,7 +372,7 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
-            CuDisbursementVoucherDocumentFixture.BASIC),
+            CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
@@ -635,6 +635,10 @@ public enum AccountingXmlDocumentEntryFixture {
             CuDisbursementVoucherDocument dvDoc = (CuDisbursementVoucherDocument) accountingDocument;
             dvDoc.setDisbVchrBankCode(dvDetails.bankCode);
             dvDoc.setDisbVchrContactPersonName(dvDetails.contactName);
+            dvDoc.getDvPayeeDetail().setDisbVchrPaymentReasonCode(dvDetails.paymentReasonCode);
+            dvDoc.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(dvDetails.payeeTypeCode);
+            dvDoc.getDvNonEmployeeTravel().setDisbVchrPerdiemRate(dvDetails.perdiemRate);
+            dvDoc.getDvPreConferenceDetail().setDvConferenceDestinationName(dvDetails.conferenceDestination);
         }
     }
 
