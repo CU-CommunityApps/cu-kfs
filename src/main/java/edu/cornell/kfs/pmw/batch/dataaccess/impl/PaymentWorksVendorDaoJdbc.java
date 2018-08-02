@@ -1,6 +1,5 @@
 package edu.cornell.kfs.pmw.batch.dataaccess.impl;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,8 +83,7 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         sqlFactory.appendSql(" where id = ?", id);
 
         JdbcTemplate jdbcTemplate = getJdbcTemplate();
-        int rowsUpdated = jdbcTemplate.update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
-        return rowsUpdated;
+        return jdbcTemplate.update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
     }
 
     private class ParameterizedSqlFactory {
@@ -108,13 +106,9 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
 
         public String toString() {
             String effectiveSql = sqlStringBuilder.toString();
-
-            for (int i=0; i<parameters.size(); ++i) {
-                Object parameter = parameters.get(i);
-                String formatString = parameter instanceof  Integer ? ("%d") : "'%s'" ;
-                effectiveSql = effectiveSql.replaceFirst("\\?", formatString);
+            for (Object parameter : parameters) {
+                effectiveSql = effectiveSql.replaceFirst("\\?", parameter instanceof Integer ? ("%d") : "'%s'");
             }
-
             return String.format(effectiveSql, parameters.toArray());
         }
 
