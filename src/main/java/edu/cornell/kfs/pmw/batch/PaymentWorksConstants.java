@@ -282,7 +282,7 @@ public class PaymentWorksConstants {
         REQUEST_ID("RequestId", "pmwVendorRequestId"),
         VENDOR_NUM("VendorNum", "kfsVendorHeaderGeneratedIdentifier"),
         DIVISION_IND("DivisionInd", "kfsVendorDetailAssignedIdentifier"),
-        VENDOR_NAME("VendorName", "requestingCompanyName"),
+        VENDOR_NAME("VendorName", "requestingCompanyLegalName"),
         REMIT_ADDRESS1("RemitAddress1", "remittanceAddressStreet1"),
         REMIT_ADDRESS2("RemitAddress2", "remittanceAddressStreet2"),
         REMIT_CITY("RemitCity", "remittanceAddressCity"),

@@ -397,7 +397,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
 
     private Invocation buildMultiPartRequestForSupplierUpload(Client client, URI uri, InputStream vendorCsvDataStream) {
         StreamDataBodyPart csvPart = new StreamDataBodyPart(
-                PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, vendorCsvDataStream);
+                PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, vendorCsvDataStream, PaymentWorksSupplierUploadConstants.DUMMY_SUPPLIERS_FILENAME);
         
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);

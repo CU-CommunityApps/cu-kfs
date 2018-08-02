@@ -36,6 +36,7 @@ public class PaymentWorksWebServiceConstants {
     }
 
     public static final class PaymentWorksSupplierUploadConstants {
+        public static final String DUMMY_SUPPLIERS_FILENAME = "suppliers.csv";
         public static final String SUPPLIERS_FIELD = "suppliers";
         public static final String NUM_RCVD_SUPPLIERS_FIELD = "num_rcvd_suppliers";
         public static final String ERROR_FIELD = "error";
