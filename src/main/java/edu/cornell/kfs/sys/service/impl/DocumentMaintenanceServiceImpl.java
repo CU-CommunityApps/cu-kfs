@@ -11,32 +11,33 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentMaintenanceServiceImpl.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentMaintenanceServiceImpl.class);
 
-	public static final int WAIT_TIME_NO_WAIT = 0;
+    public static final int WAIT_TIME_NO_WAIT = 0;
 
-	private DocumentMaintenanceDao documentMaintenanceDao;
+    private DocumentMaintenanceDao documentMaintenanceDao;
 
-	@Transactional
-	public boolean requeueDocuments() {
-		Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
-		LOG.info("Total number of documents flagged for requeuing: " + docIds.size());
+    @Transactional
+    public boolean requeueDocuments() {
+        Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
+        LOG.info("requeueDocuments: Total number of documents flagged for requeuing: " + docIds.size());
 
-		for (String docId: docIds) {
-			DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), docId, WAIT_TIME_NO_WAIT);
-			documentRequeuer.refreshDocument(docId);
-		}
+        for (String docId : docIds) {
+            LOG.info("requeueDocuments: Requesting requeue for document: " + docId);
+            DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), docId, WAIT_TIME_NO_WAIT);
+            documentRequeuer.refreshDocument(docId);
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	public DocumentMaintenanceDao getDocumentMaintenanceDao() {
-			return documentMaintenanceDao;
-	}
+    public DocumentMaintenanceDao getDocumentMaintenanceDao() {
+        return documentMaintenanceDao;
+    }
 
-	public void setDocumentMaintenanceDao(DocumentMaintenanceDao documentMaintenanceDao) {
-			this.documentMaintenanceDao = documentMaintenanceDao;
-	}
+    public void setDocumentMaintenanceDao(DocumentMaintenanceDao documentMaintenanceDao) {
+        this.documentMaintenanceDao = documentMaintenanceDao;
+    }
 
 }
-	
+
