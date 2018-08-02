@@ -1,10 +1,10 @@
 package edu.cornell.kfs.pmw.batch.dataaccess.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +13,7 @@ import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJd
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksVendorDao {
     
@@ -47,18 +48,12 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
 
     private void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String supplierUploadStatus,
                                                                 Timestamp processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) {
-        try {
-            PreparedStatement preparedSqlStatement = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, supplierUploadStatus, processingTimeStamp, vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, kfsAchDocumentNumber);
-            preparedSqlStatement.executeUpdate();
-            int updatedRowCount = preparedSqlStatement.getUpdateCount();
-            LOG.info("updateExistingPaymentWorksVendorInStagingTable updated " + updatedRowCount + " record" + (updatedRowCount == 1 ? "" : "s"));
-        }
-        catch (SQLException ex) {
-            LOG.error("updateExistingPaymentWorksVendorInStagingTable", ex);
-        }
+
+        int updatedRowCount = buildUpdateExistingPaymentWorksVendorInStagingTableSql(id, pmwRequestStatus, kfsVendorProcessingStatus, kfsAchProcessingStatus, kfsVendorDocumentNumber, supplierUploadStatus, processingTimeStamp, vendorHeaderGeneratedIdentifier, vendorDetailAssignedIdentifier, kfsAchDocumentNumber);
+        LOG.info("updateExistingPaymentWorksVendorInStagingTable updated " + updatedRowCount + " record" + (updatedRowCount == 1 ? "" : "s"));
     }
 
-    private PreparedStatement buildUpdateExistingPaymentWorksVendorInStagingTableSql(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String supplierUploadStatus, Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) throws SQLException {
+    private int buildUpdateExistingPaymentWorksVendorInStagingTableSql(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String kfsVendorDocumentNumber, String supplierUploadStatus, Timestamp  processingTimeStamp, Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String kfsAchDocumentNumber) {
         ParameterizedSqlFactory sqlFactory = new ParameterizedSqlFactory("update kfs.cu_pmw_vendor_t set");
 
         if (StringUtils.isNotBlank(pmwRequestStatus)) {
@@ -88,16 +83,18 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         }
         sqlFactory.appendSql(" where id = ?", id);
 
-        return sqlFactory.getPreparedSqlStatement();
+        JdbcTemplate jdbcTemplate = getJdbcTemplate();
+        int rowsUpdated = jdbcTemplate.update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
+        return rowsUpdated;
     }
 
     private class ParameterizedSqlFactory {
         private StringBuilder sqlStringBuilder;
-        private ArrayList parameters;
+        private List<Object> parameters;
 
         public ParameterizedSqlFactory(String initialSql) {
             sqlStringBuilder = new StringBuilder(initialSql);
-            parameters = new ArrayList();
+            parameters = new ArrayList<>();
         }
 
         public void appendSql(String sql) {
@@ -109,37 +106,24 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
             parameters.add(parameter);
         }
 
-        public PreparedStatement getPreparedSqlStatement() throws SQLException {
-            PreparedStatement preparedSqlStatement = getConnection().prepareStatement(sqlStringBuilder.toString());
-            for (int parameterIndex=1; parameterIndex<=parameters.size(); ++parameterIndex) {
-                addParameterToPreparedStatement(preparedSqlStatement, parameterIndex, parameters.get(parameterIndex - 1));
-            }
-            return preparedSqlStatement;
-        }
-
-        private void addParameterToPreparedStatement(PreparedStatement preparedSqlStatement, int parameterIndex, Object parameterValue) throws SQLException {
-            if (parameterValue instanceof Integer) {
-                preparedSqlStatement.setInt(parameterIndex, (Integer) parameterValue);
-            }
-            else {
-                preparedSqlStatement.setString(parameterIndex, parameterValue.toString());
-            }
-        }
-
         public String toString() {
             String effectiveSql = sqlStringBuilder.toString();
-            int parameterIndex = parameters.size();
 
-            while (parameterIndex > 0) {
-                int lastQIndex = effectiveSql.lastIndexOf("?");
-                Object parameter = parameters.get(parameterIndex - 1);
-                String parameterSql = parameter instanceof String ? "'" + parameter.toString() + "'" : parameter.toString();
-                effectiveSql = effectiveSql.substring(0, lastQIndex) + parameterSql + effectiveSql.substring(lastQIndex + 1);
-
-                --parameterIndex;
+            for (int i=0; i<parameters.size(); ++i) {
+                Object parameter = parameters.get(i);
+                String formatString = parameter instanceof  Integer ? ("%d") : "'%s'" ;
+                effectiveSql = effectiveSql.replaceFirst("\\?", formatString);
             }
 
-            return effectiveSql;
+            return String.format(effectiveSql, parameters.toArray());
+        }
+
+        public String getSql() {
+            return sqlStringBuilder.toString();
+        }
+
+        public List<Object> getParameters() {
+            return parameters;
         }
     }
 }
