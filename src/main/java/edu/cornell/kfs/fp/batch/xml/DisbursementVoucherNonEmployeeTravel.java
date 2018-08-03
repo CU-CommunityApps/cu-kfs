@@ -23,7 +23,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 @XmlRootElement(name = "NonEmoployeeTravel", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherNonEmployeeTravel {
     
-    @XmlElement(name = "travler_name", namespace = StringUtils.EMPTY, required = false)
+    @XmlElement(name = "traveler_name", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String travelerName;
     
@@ -103,9 +103,9 @@ public class DisbursementVoucherNonEmployeeTravel {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String roundTripCode;
     
-    @XmlElement(name = "personal_car_milage_amount", namespace = StringUtils.EMPTY, required = false)
+    @XmlElement(name = "personal_car_mileage_amount", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
-    protected KualiDecimal personalCarMilageAmount;
+    protected KualiDecimal personalCarMileageAmount;
     
     @XmlElement(name = "perdiem_change_reason_text", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -115,7 +115,7 @@ public class DisbursementVoucherNonEmployeeTravel {
     @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
     protected KualiDecimal personalCarAmount;
     
-    @XmlElementWrapper(name = "travler_expenses", namespace = StringUtils.EMPTY, required = true)
+    @XmlElementWrapper(name = "traveler_expenses", namespace = StringUtils.EMPTY, required = true)
     @XmlElement(name = "expense", namespace = StringUtils.EMPTY, required = true)
     public List<DisbursementVoucherNonEmployeeExpense> travelerExpenses;
     
@@ -288,12 +288,12 @@ public class DisbursementVoucherNonEmployeeTravel {
         this.roundTripCode = roundTripCode;
     }
 
-    public KualiDecimal getPersonalCarMilageAmount() {
-        return personalCarMilageAmount;
+    public KualiDecimal getPersonalCarMileageAmount() {
+        return personalCarMileageAmount;
     }
 
-    public void setPersonalCarMilageAmount(KualiDecimal personalCarMilageAmount) {
-        this.personalCarMilageAmount = personalCarMilageAmount;
+    public void setPersonalCarMileageAmount(KualiDecimal personalCarMileageAmount) {
+        this.personalCarMileageAmount = personalCarMileageAmount;
     }
 
     public String getPerdiemChangeReasonText() {

@@ -656,7 +656,7 @@
             		<special_handling_country>US</special_handling_country>
             	</payment_information>
             	<non_employee_travel>
-            		<travler_name>Jane Doe</travler_name>
+            		<traveler_name>Jane Doe</traveler_name>
             		<service_performed>did cool stuff</service_performed>
             		<service_performed_location>Freeville</service_performed_location>
             		<service_performed_employee_name>jdh34</service_performed_employee_name>
@@ -676,10 +676,10 @@
             		<perdiem_rate>50</perdiem_rate>
             		<perdeim_actual_amount></perdeim_actual_amount>
             		<round_trip_code>T</round_trip_code>
-            		<personal_car_milage_amount>25</personal_car_milage_amount>
+            		<personal_car_mileage_amount>25</personal_car_mileage_amount>
             		<perdiem_change_reason_text></perdiem_change_reason_text>
             		<personal_car_amount></personal_car_amount>
-            		<travler_expenses>
+            		<traveler_expenses>
             			<expense>
             				<expense_type>A</expense_type>
             				<company_name>DELTA</company_name>
@@ -690,7 +690,7 @@
             				<company_name>Other - Lodging</company_name>
             				<amount>1555.55</amount>
             			</expense>
-            		</travler_expenses>
+            		</traveler_expenses>
             		<prepaid_expenses>
             			<expense>
             				<expense_type>PR</expense_type>

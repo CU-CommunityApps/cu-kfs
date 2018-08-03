@@ -13,7 +13,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "NonEmoployeeTravelExpense", namespace = StringUtils.EMPTY)
+@XmlRootElement(name = "NonEmployeeTravelExpense", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherNonEmployeeExpense {
     
     @XmlElement(name = "expense_type", namespace = StringUtils.EMPTY, required = false)

@@ -44,6 +44,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
@@ -521,6 +522,22 @@ public class CreateAccountingDocumentServiceImplTest {
                 actualDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
         assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
                 actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
+        assertEquals("non employee travler name not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName());
+        assertEquals("non employee mileage not correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount());
+        assertObjectListIsCorrect("non employee travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), this::assertTravelExpenseCorrect);
+        assertObjectListIsCorrect("non employee prepaid travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), this::assertTravelExpenseCorrect);
+    }
+    
+    private void assertTravelExpenseCorrect(DisbursementVoucherNonEmployeeExpense expectedExpense, DisbursementVoucherNonEmployeeExpense actualExpense) {
+        assertEquals("expense code not correct", expectedExpense.getDisbVchrExpenseCode(), actualExpense.getDisbVchrExpenseCode());
+        assertEquals("expense compnay name not correct", expectedExpense.getDisbVchrExpenseCompanyName(), actualExpense.getDisbVchrExpenseCompanyName());
+        assertEquals("expense amount not correct", expectedExpense.getDisbVchrExpenseAmount(), actualExpense.getDisbVchrExpenseAmount());
+        
+        
     }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {

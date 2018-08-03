@@ -4,6 +4,7 @@ import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureU
 
 import java.util.List;
 
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
@@ -11,6 +12,7 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.mockito.Mockito;
 
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
@@ -638,7 +640,23 @@ public enum AccountingXmlDocumentEntryFixture {
             dvDoc.getDvPayeeDetail().setDisbVchrPaymentReasonCode(dvDetails.paymentReasonCode);
             dvDoc.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(dvDetails.payeeTypeCode);
             dvDoc.getDvNonEmployeeTravel().setDisbVchrPerdiemRate(dvDetails.perdiemRate);
+            dvDoc.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(dvDetails.nonEmployeeTravelerName);
+            dvDoc.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(dvDetails.nonEmployeeCarMileage);
             dvDoc.getDvPreConferenceDetail().setDvConferenceDestinationName(dvDetails.conferenceDestination);
+            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTrevelerExpense) {
+                DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
+                expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
+                expense.setDisbVchrExpenseCompanyName(expenseFixture.compnayName);
+                expense.setDisbVchrExpenseAmount(expenseFixture.amount);
+                dvDoc.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(expense);
+            }
+            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTrevelerPrepaidExpense) {
+                DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
+                expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
+                expense.setDisbVchrExpenseCompanyName(expenseFixture.compnayName);
+                expense.setDisbVchrExpenseAmount(expenseFixture.amount);
+                dvDoc.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(expense);
+            }
         }
     }
 
@@ -666,6 +684,12 @@ public enum AccountingXmlDocumentEntryFixture {
 
     private static AccountingXmlDocumentBackupLinkFixture[] backupLinks(AccountingXmlDocumentBackupLinkFixture... fixtures) {
         return fixtures;
+    }
+    
+    private DisbursementVoucherNonEmployeeExpense getTestAbleDisbursementVoucherNonEmployeeExpense() {
+        DisbursementVoucherNonEmployeeExpense expense = Mockito.spy(new DisbursementVoucherNonEmployeeExpense());
+        Mockito.doNothing().when(expense).refreshNonUpdateableReferences();
+        return expense;
     }
 
 }
