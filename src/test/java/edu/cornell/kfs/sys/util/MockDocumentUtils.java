@@ -98,7 +98,7 @@ public class MockDocumentUtils {
             dvDocument.setDvNonEmployeeTravel(dvNonEmployeeTravel);
             DisbursementVoucherPreConferenceDetail dvPreConferenceDetail = new DisbursementVoucherPreConferenceDetail();
             dvDocument.setDvPreConferenceDetail(dvPreConferenceDetail);
-            dvDocument.setFinDocNextRegistrantLineNbr(new Integer(1));
+            dvDocument.setFinDocNextRegistrantLineNbr(1);
             
         }
     }
