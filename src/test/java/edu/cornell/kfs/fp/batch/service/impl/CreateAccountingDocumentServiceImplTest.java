@@ -49,7 +49,6 @@ import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
-import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherTravelServiceImpl;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -93,7 +92,6 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
-import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
@@ -518,7 +516,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 actualDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         assertEquals("payee type code not correct", expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(), 
                 actualDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode());
-        assertEquals("non employee travel perdiem rate no correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate(),
+        assertEquals("non employee travel perdiem rate not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate(),
                 actualDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
         assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
                 actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
