@@ -520,7 +520,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 actualDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
         assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
                 actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
-        assertEquals("non employee travler name not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName(), 
+        assertEquals("non employee traveler name not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName(), 
                 actualDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName());
         assertEquals("non employee mileage not correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
                 actualDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount());
@@ -532,7 +532,7 @@ public class CreateAccountingDocumentServiceImplTest {
     
     private void assertTravelExpenseCorrect(DisbursementVoucherNonEmployeeExpense expectedExpense, DisbursementVoucherNonEmployeeExpense actualExpense) {
         assertEquals("expense code not correct", expectedExpense.getDisbVchrExpenseCode(), actualExpense.getDisbVchrExpenseCode());
-        assertEquals("expense compnay name not correct", expectedExpense.getDisbVchrExpenseCompanyName(), actualExpense.getDisbVchrExpenseCompanyName());
+        assertEquals("expense company name not correct", expectedExpense.getDisbVchrExpenseCompanyName(), actualExpense.getDisbVchrExpenseCompanyName());
         assertEquals("expense amount not correct", expectedExpense.getDisbVchrExpenseAmount(), actualExpense.getDisbVchrExpenseAmount());
         
         

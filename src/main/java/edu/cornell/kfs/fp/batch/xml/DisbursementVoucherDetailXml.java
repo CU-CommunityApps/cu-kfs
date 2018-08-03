@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "DisbursementVoucherDetail", namespace = StringUtils.EMPTY)
+@XmlRootElement(name = "dv_detail", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherDetailXml {
     
     @XmlElement(name = "contact_name", namespace = StringUtils.EMPTY, required = false)
@@ -34,7 +34,7 @@ public class DisbursementVoucherDetailXml {
     protected String bankCode;
     
     @XmlElement(name = "payment_information", namespace = StringUtils.EMPTY, required = false)
-    protected DisbursementVoucherPaymentInfomrationXml paymentInformation;
+    protected DisbursementVoucherPaymentInformationXml paymentInformation;
     
     @XmlElement(name = "non_employee_travel", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel;
@@ -42,11 +42,11 @@ public class DisbursementVoucherDetailXml {
     @XmlElement(name = "pre_paid_travel", namespace = StringUtils.EMPTY, required = false)
     protected DisbursementVoucherPrePaidTravelOverviewXml prePaidTravelOverview;
     
-    public DisbursementVoucherPaymentInfomrationXml getPaymentInformation() {
+    public DisbursementVoucherPaymentInformationXml getPaymentInformation() {
         return paymentInformation;
     }
 
-    public void setPaymentInformation(DisbursementVoucherPaymentInfomrationXml paymentInformation) {
+    public void setPaymentInformation(DisbursementVoucherPaymentInformationXml paymentInformation) {
         this.paymentInformation = paymentInformation;
     }
 

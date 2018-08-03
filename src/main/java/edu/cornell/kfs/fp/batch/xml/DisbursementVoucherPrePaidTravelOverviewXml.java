@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "DisbursementVoucherPrePaidTravelOverview", namespace = StringUtils.EMPTY)
+@XmlRootElement(name = "pre_paid_travel", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherPrePaidTravelOverviewXml {
     
     @XmlElement(name = "location", namespace = StringUtils.EMPTY, required = false)

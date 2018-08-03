@@ -13,7 +13,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "DisbursementVoucherPreConferenceRegistrant", namespace = StringUtils.EMPTY)
+@XmlRootElement(name = "registrant", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherPreConferenceRegistrantXml {
     
     @XmlElement(name = "name", namespace = StringUtils.EMPTY, required = false)
@@ -26,7 +26,7 @@ public class DisbursementVoucherPreConferenceRegistrantXml {
     
     @XmlElement(name = "pre_conference_request_number", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String preConferenceRequestNuumber;
+    protected String preConferenceRequestNumber;
     
     @XmlElement(name = "amount", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
@@ -48,12 +48,12 @@ public class DisbursementVoucherPreConferenceRegistrantXml {
         this.departmentCode = departmentCode;
     }
 
-    public String getPreConferenceRequestNuumber() {
-        return preConferenceRequestNuumber;
+    public String getPreConferenceRequestNumber() {
+        return preConferenceRequestNumber;
     }
 
-    public void setPreConferenceRequestNuumber(String preConferenceRequestNuumber) {
-        this.preConferenceRequestNuumber = preConferenceRequestNuumber;
+    public void setPreConferenceRequestNumber(String preConferenceRequestNumber) {
+        this.preConferenceRequestNumber = preConferenceRequestNumber;
     }
 
     public KualiDecimal getAmount() {

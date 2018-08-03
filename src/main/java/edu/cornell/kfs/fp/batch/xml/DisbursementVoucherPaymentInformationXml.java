@@ -16,8 +16,8 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "PaymentInformation", namespace = StringUtils.EMPTY)
-public class DisbursementVoucherPaymentInfomrationXml {
+@XmlRootElement(name = "payment_information", namespace = StringUtils.EMPTY)
+public class DisbursementVoucherPaymentInformationXml {
     
     @XmlElement(name = "payment_reason_code", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

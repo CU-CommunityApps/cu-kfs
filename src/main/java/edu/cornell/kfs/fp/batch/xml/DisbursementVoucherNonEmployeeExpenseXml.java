@@ -13,7 +13,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "NonEmployeeTravelExpense", namespace = StringUtils.EMPTY)
+@XmlRootElement(name = "expense", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherNonEmployeeExpenseXml {
     
     @XmlElement(name = "expense_type", namespace = StringUtils.EMPTY, required = false)
@@ -22,7 +22,7 @@ public class DisbursementVoucherNonEmployeeExpenseXml {
     
     @XmlElement(name = "company_name", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String compnayName;
+    protected String companyName;
     
     @XmlElement(name = "amount", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
@@ -36,12 +36,12 @@ public class DisbursementVoucherNonEmployeeExpenseXml {
         this.expenseType = expenseType;
     }
 
-    public String getCompnayName() {
-        return compnayName;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCompnayName(String compnayName) {
-        this.compnayName = compnayName;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public KualiDecimal getAmount() {

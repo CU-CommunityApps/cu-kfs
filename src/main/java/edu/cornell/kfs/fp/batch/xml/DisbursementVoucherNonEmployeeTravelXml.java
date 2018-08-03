@@ -20,7 +20,7 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "NonEmoployeeTravel", namespace = StringUtils.EMPTY)
+@XmlRootElement(name = "non_employee_travel", namespace = StringUtils.EMPTY)
 public class DisbursementVoucherNonEmployeeTravelXml {
     
     @XmlElement(name = "traveler_name", namespace = StringUtils.EMPTY, required = false)

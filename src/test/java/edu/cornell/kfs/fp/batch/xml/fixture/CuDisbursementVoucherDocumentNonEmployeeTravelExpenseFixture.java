@@ -10,12 +10,12 @@ public enum CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture {
     
     
     public final String expenseType;
-    public final String compnayName;
+    public final String companyName;
     public final KualiDecimal amount;
     
     private CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture(String expenseType, String companyName, double amount) {
         this.expenseType = expenseType;
-        this.compnayName = companyName;
+        this.companyName = companyName;
         this.amount = new KualiDecimal(amount);
     }
 }

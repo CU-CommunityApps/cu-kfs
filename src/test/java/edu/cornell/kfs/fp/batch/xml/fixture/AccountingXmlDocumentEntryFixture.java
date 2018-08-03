@@ -643,17 +643,17 @@ public enum AccountingXmlDocumentEntryFixture {
             dvDoc.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(dvDetails.nonEmployeeTravelerName);
             dvDoc.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(dvDetails.nonEmployeeCarMileage);
             dvDoc.getDvPreConferenceDetail().setDvConferenceDestinationName(dvDetails.conferenceDestination);
-            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTrevelerExpense) {
+            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerExpense) {
                 DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
                 expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
-                expense.setDisbVchrExpenseCompanyName(expenseFixture.compnayName);
+                expense.setDisbVchrExpenseCompanyName(expenseFixture.companyName);
                 expense.setDisbVchrExpenseAmount(expenseFixture.amount);
                 dvDoc.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(expense);
             }
-            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTrevelerPrepaidExpense) {
+            for (CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture expenseFixture : dvDetails.nonEmployeeTravelerPrepaidExpense) {
                 DisbursementVoucherNonEmployeeExpense expense = getTestAbleDisbursementVoucherNonEmployeeExpense();
                 expense.setDisbVchrExpenseCode(expenseFixture.expenseType);
-                expense.setDisbVchrExpenseCompanyName(expenseFixture.compnayName);
+                expense.setDisbVchrExpenseCompanyName(expenseFixture.companyName);
                 expense.setDisbVchrExpenseAmount(expenseFixture.amount);
                 dvDoc.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(expense);
             }

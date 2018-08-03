@@ -22,8 +22,8 @@ public enum CuDisbursementVoucherDocumentFixture {
     public final String conferenceDestination;
     public final String nonEmployeeTravelerName;
     public final Integer nonEmployeeCarMileage;
-    public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTrevelerExpense;
-    public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTrevelerPrepaidExpense;
+    public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerExpense;
+    public final List<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture> nonEmployeeTravelerPrepaidExpense;
     
     private CuDisbursementVoucherDocumentFixture() {
         this.bankCode = StringUtils.EMPTY;
@@ -34,13 +34,13 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.conferenceDestination = StringUtils.EMPTY;
         this.nonEmployeeTravelerName = StringUtils.EMPTY;
         this.nonEmployeeCarMileage = new Integer(0);
-        this.nonEmployeeTrevelerExpense = new ArrayList<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture>();
-        this.nonEmployeeTrevelerPrepaidExpense = new ArrayList<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture>();
+        this.nonEmployeeTravelerExpense = new ArrayList<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture>();
+        this.nonEmployeeTravelerPrepaidExpense = new ArrayList<CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture>();
     }
     
     private CuDisbursementVoucherDocumentFixture(String bankCode, String contactName, String paymentReasonCode, String payeeTypeCode, double perdiemRate, String conferenceDestination, 
-            String nonEmployeeTravelerName, Integer nonEmployeeCarMileage, CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTrevelerExpenseArray,
-            CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTrevelerPrepaidExpenseArray) {
+            String nonEmployeeTravelerName, Integer nonEmployeeCarMileage, CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTravelerExpenseArray,
+            CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] nonEmployeeTravelerPrepaidExpenseArray) {
         this.bankCode = bankCode;
         this.contactName = contactName;
         this.paymentReasonCode = paymentReasonCode;
@@ -49,8 +49,8 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.conferenceDestination = conferenceDestination;
         this.nonEmployeeTravelerName = nonEmployeeTravelerName;
         this.nonEmployeeCarMileage = nonEmployeeCarMileage;
-        this.nonEmployeeTrevelerExpense = AccountingXmlDocumentFixtureUtils.toImmutableList(nonEmployeeTrevelerExpenseArray);
-        this.nonEmployeeTrevelerPrepaidExpense = AccountingXmlDocumentFixtureUtils.toImmutableList(nonEmployeeTrevelerPrepaidExpenseArray);
+        this.nonEmployeeTravelerExpense = AccountingXmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerExpenseArray);
+        this.nonEmployeeTravelerPrepaidExpense = AccountingXmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerPrepaidExpenseArray);
     }
     
     private static CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture... fixtures) {
