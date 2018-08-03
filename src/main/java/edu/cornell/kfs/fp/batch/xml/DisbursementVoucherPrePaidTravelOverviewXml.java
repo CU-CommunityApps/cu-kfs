@@ -18,7 +18,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "DisbursementVoucherPrePaidTravelOverview", namespace = StringUtils.EMPTY)
-public class DisbursementVoucherPrePaidTravelOverview {
+public class DisbursementVoucherPrePaidTravelOverviewXml {
     
     @XmlElement(name = "location", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -38,10 +38,10 @@ public class DisbursementVoucherPrePaidTravelOverview {
     
     @XmlElementWrapper(name = "prepaid_registrants", namespace = StringUtils.EMPTY, required = true)
     @XmlElement(name = "registrant", namespace = StringUtils.EMPTY, required = true)
-    protected List<DisbursementVoucherPreConferenceRegistrant> registrants;
+    protected List<DisbursementVoucherPreConferenceRegistrantXml> registrants;
     
-    public DisbursementVoucherPrePaidTravelOverview() {
-        registrants = new ArrayList<DisbursementVoucherPreConferenceRegistrant>();
+    public DisbursementVoucherPrePaidTravelOverviewXml() {
+        registrants = new ArrayList<DisbursementVoucherPreConferenceRegistrantXml>();
     }
 
     public String getLocation() {
@@ -76,11 +76,11 @@ public class DisbursementVoucherPrePaidTravelOverview {
         this.endDate = endDate;
     }
 
-    public List<DisbursementVoucherPreConferenceRegistrant> getRegistrants() {
+    public List<DisbursementVoucherPreConferenceRegistrantXml> getRegistrants() {
         return registrants;
     }
 
-    public void setRegistrants(List<DisbursementVoucherPreConferenceRegistrant> registrants) {
+    public void setRegistrants(List<DisbursementVoucherPreConferenceRegistrantXml> registrants) {
         this.registrants = registrants;
     }
 

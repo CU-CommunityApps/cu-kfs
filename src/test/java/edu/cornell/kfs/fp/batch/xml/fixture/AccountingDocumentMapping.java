@@ -21,7 +21,6 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
 import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
-import edu.cornell.kfs.fp.batch.service.impl.CuDisbursementVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator;

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "DisbursementVoucherDetail", namespace = StringUtils.EMPTY)
-public class DisbursementVoucherDetail {
+public class DisbursementVoucherDetailXml {
     
     @XmlElement(name = "contact_name", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -34,19 +34,19 @@ public class DisbursementVoucherDetail {
     protected String bankCode;
     
     @XmlElement(name = "payment_information", namespace = StringUtils.EMPTY, required = false)
-    protected DisbursementVoucherPaymentInfomration paymentInformation;
+    protected DisbursementVoucherPaymentInfomrationXml paymentInformation;
     
     @XmlElement(name = "non_employee_travel", namespace = StringUtils.EMPTY, required = false)
-    protected DisbursementVoucherNonEmployeeTravel nonEmployeeTravel;
+    protected DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel;
     
     @XmlElement(name = "pre_paid_travel", namespace = StringUtils.EMPTY, required = false)
-    protected DisbursementVoucherPrePaidTravelOverview prePaidTravelOverview;
+    protected DisbursementVoucherPrePaidTravelOverviewXml prePaidTravelOverview;
     
-    public DisbursementVoucherPaymentInfomration getPaymentInformation() {
+    public DisbursementVoucherPaymentInfomrationXml getPaymentInformation() {
         return paymentInformation;
     }
 
-    public void setPaymentInformation(DisbursementVoucherPaymentInfomration paymentInformation) {
+    public void setPaymentInformation(DisbursementVoucherPaymentInfomrationXml paymentInformation) {
         this.paymentInformation = paymentInformation;
     }
 
@@ -90,19 +90,19 @@ public class DisbursementVoucherDetail {
         this.bankCode = bankCode;
     }
 
-    public DisbursementVoucherNonEmployeeTravel getNonEmployeeTravel() {
+    public DisbursementVoucherNonEmployeeTravelXml getNonEmployeeTravel() {
         return nonEmployeeTravel;
     }
 
-    public void setNonEmployeeTravel(DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    public void setNonEmployeeTravel(DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
         this.nonEmployeeTravel = nonEmployeeTravel;
     }
 
-    public DisbursementVoucherPrePaidTravelOverview getPrePaidTravelOverview() {
+    public DisbursementVoucherPrePaidTravelOverviewXml getPrePaidTravelOverview() {
         return prePaidTravelOverview;
     }
 
-    public void setPrePaidTravelOverview(DisbursementVoucherPrePaidTravelOverview prePaidTravelOverview) {
+    public void setPrePaidTravelOverview(DisbursementVoucherPrePaidTravelOverviewXml prePaidTravelOverview) {
         this.prePaidTravelOverview = prePaidTravelOverview;
     }
 

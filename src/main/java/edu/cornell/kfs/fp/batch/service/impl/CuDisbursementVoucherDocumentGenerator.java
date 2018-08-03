@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
@@ -16,12 +17,12 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetail;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeExpense;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravel;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInfomration;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrant;
-import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverview;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetailXml;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeExpenseXml;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherNonEmployeeTravelXml;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPaymentInfomrationXml;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrantXml;
+import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverviewXml;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
@@ -65,7 +66,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    protected void populateDisbursementVouchersGenericSections(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+    protected void populateDisbursementVouchersGenericSections(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         dvDocument.setDisbVchrBankCode(dvDetail.getBankCode());
         dvDocument.setDisbVchrContactPersonName(dvDetail.getContactName());
         dvDocument.setDisbVchrContactPhoneNumber(dvDetail.getContactPhoneNumber());
@@ -73,9 +74,9 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         dvDocument.setCampusCode(dvDetail.getCampusCode());
     }
     
-    protected void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+    protected void populatePaymentInformation(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPaymentInformation())) {
-            DisbursementVoucherPaymentInfomration paymentInfo = dvDetail.getPaymentInformation();
+            DisbursementVoucherPaymentInfomrationXml paymentInfo = dvDetail.getPaymentInformation();
             CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
             payeeDetail.setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
             payeeDetail.setDisbursementVoucherPayeeTypeCode(paymentInfo.getPayeeTypeCode());
@@ -109,9 +110,9 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    private void populateNonEmployeeTravelExpense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+    private void populateNonEmployeeTravelExpense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getNonEmployeeTravel())) {
-            DisbursementVoucherNonEmployeeTravel nonEmployeeTravel = dvDetail.getNonEmployeeTravel();
+            DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel = dvDetail.getNonEmployeeTravel();
             dvDocument.getDvNonEmployeeTravel().setDisbVchrNonEmpTravelerName(nonEmployeeTravel.getTravelerName());
             dvDocument.getDvNonEmployeeTravel().setDisbVchrServicePerformedDesc(nonEmployeeTravel.getServicePerformed());
             dvDocument.getDvNonEmployeeTravel().setDvServicePerformedLocName(nonEmployeeTravel.getServicePerformedLocationName());
@@ -139,7 +140,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    protected void populatePerdiem(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    protected void populatePerdiem(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
         KualiDecimal calculatedPerDiemAmount = disbursementVoucherTravelService.calculatePerDiemAmount(dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp(), 
                 dvDocument.getDvNonEmployeeTravel().getDvPerdiemEndDttmStamp(), dvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
         dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemCalculatedAmt(calculatedPerDiemAmount);
@@ -151,7 +152,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         dvDocument.getDvNonEmployeeTravel().setDvPerdiemChangeReasonText(nonEmployeeTravel.getPerdiemChangeReasonText());
     }
     
-    protected void populateMileage(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    protected void populateMileage(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
         dvDocument.getDvNonEmployeeTravel().setDisbVchrAutoRoundTripCode(convertStringToBoolean(nonEmployeeTravel.getRoundTripCode()));
         dvDocument.getDvNonEmployeeTravel().setDvPersonalCarMileageAmount(nonEmployeeTravel.getPersonalCarMileageAmount().intValue());
         KualiDecimal caluclatedMilageAmount = disbursementVoucherTravelService.calculateMileageAmount(dvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
@@ -164,9 +165,9 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    protected void populateNonEmployeeTravelExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    protected void populateNonEmployeeTravelExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
         if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getTravelerExpenses())) {
-            for (DisbursementVoucherNonEmployeeExpense expenseXml : nonEmployeeTravel.getTravelerExpenses()) {
+            for (DisbursementVoucherNonEmployeeExpenseXml expenseXml : nonEmployeeTravel.getTravelerExpenses()) {
                 org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = buildNonEmployeeExpense();
                 dvExpense.setDisbVchrExpenseCode(expenseXml.getExpenseType());
                 dvExpense.setDisbVchrExpenseCompanyName(expenseXml.getCompnayName());
@@ -178,9 +179,9 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
 
-    protected void populateNonEmployeeTravelPrePaidExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravel nonEmployeeTravel) {
+    protected void populateNonEmployeeTravelPrePaidExpenses(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherNonEmployeeTravelXml nonEmployeeTravel) {
         if (CollectionUtils.isNotEmpty(nonEmployeeTravel.getPrepaidExpenses())) {
-            for (DisbursementVoucherNonEmployeeExpense expenseXml : nonEmployeeTravel.getPrepaidExpenses()) {
+            for (DisbursementVoucherNonEmployeeExpenseXml expenseXml : nonEmployeeTravel.getPrepaidExpenses()) {
                 org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense dvExpense = buildNonEmployeeExpense();
                 dvExpense.setDisbVchrPrePaidExpenseCode(expenseXml.getExpenseType());
                 dvExpense.setDisbVchrPrePaidExpenseCompanyName(expenseXml.getCompnayName());
@@ -192,19 +193,19 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         }
     }
     
-    protected org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense buildNonEmployeeExpense() {
-        return new org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense();
+    protected DisbursementVoucherNonEmployeeExpense buildNonEmployeeExpense() {
+        return new DisbursementVoucherNonEmployeeExpense();
     }
     
-    protected void populatePreConferenceDetail(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetail dvDetail) {
+    protected void populatePreConferenceDetail(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
         if (ObjectUtils.isNotNull(dvDetail.getPrePaidTravelOverview())) {
-            DisbursementVoucherPrePaidTravelOverview overView = dvDetail.getPrePaidTravelOverview();
+            DisbursementVoucherPrePaidTravelOverviewXml overView = dvDetail.getPrePaidTravelOverview();
             dvDocument.getDvPreConferenceDetail().setDvConferenceDestinationName(overView.getLocation());
             dvDocument.getDvPreConferenceDetail().setDisbVchrExpenseCode(overView.getType());
             dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceStartDate(buildSqlDateFromUtilDate(overView.getStartDate()));
             dvDocument.getDvPreConferenceDetail().setDisbVchrConferenceEndDate(buildSqlDateFromUtilDate(overView.getEndDate()));
             if (CollectionUtils.isNotEmpty(overView.getRegistrants())) {
-                for (DisbursementVoucherPreConferenceRegistrant registrantXml : overView.getRegistrants()) {
+                for (DisbursementVoucherPreConferenceRegistrantXml registrantXml : overView.getRegistrants()) {
                     org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant dvRegistrant = new org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistrant();
                     dvRegistrant.setDocumentNumber(dvDocument.getDocumentNumber());
                     dvRegistrant.setDvConferenceRegistrantName(registrantXml.getName());

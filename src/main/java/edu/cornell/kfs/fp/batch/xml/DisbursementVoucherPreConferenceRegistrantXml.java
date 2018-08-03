@@ -14,7 +14,7 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "DisbursementVoucherPreConferenceRegistrant", namespace = StringUtils.EMPTY)
-public class DisbursementVoucherPreConferenceRegistrant {
+public class DisbursementVoucherPreConferenceRegistrantXml {
     
     @XmlElement(name = "name", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

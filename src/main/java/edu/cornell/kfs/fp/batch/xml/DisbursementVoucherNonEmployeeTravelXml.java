@@ -21,7 +21,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "NonEmoployeeTravel", namespace = StringUtils.EMPTY)
-public class DisbursementVoucherNonEmployeeTravel {
+public class DisbursementVoucherNonEmployeeTravelXml {
     
     @XmlElement(name = "traveler_name", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -117,15 +117,15 @@ public class DisbursementVoucherNonEmployeeTravel {
     
     @XmlElementWrapper(name = "traveler_expenses", namespace = StringUtils.EMPTY, required = true)
     @XmlElement(name = "expense", namespace = StringUtils.EMPTY, required = true)
-    public List<DisbursementVoucherNonEmployeeExpense> travelerExpenses;
+    public List<DisbursementVoucherNonEmployeeExpenseXml> travelerExpenses;
     
     @XmlElementWrapper(name = "prepaid_expenses", namespace = StringUtils.EMPTY, required = true)
     @XmlElement(name = "expense", namespace = StringUtils.EMPTY, required = true)
-    public List<DisbursementVoucherNonEmployeeExpense> prepaidExpenses;
+    public List<DisbursementVoucherNonEmployeeExpenseXml> prepaidExpenses;
     
-    public DisbursementVoucherNonEmployeeTravel() {
-        travelerExpenses = new ArrayList<DisbursementVoucherNonEmployeeExpense>();
-        prepaidExpenses = new ArrayList<DisbursementVoucherNonEmployeeExpense>();
+    public DisbursementVoucherNonEmployeeTravelXml() {
+        travelerExpenses = new ArrayList<DisbursementVoucherNonEmployeeExpenseXml>();
+        prepaidExpenses = new ArrayList<DisbursementVoucherNonEmployeeExpenseXml>();
     }
 
     public String getTravelerName() {
@@ -312,19 +312,19 @@ public class DisbursementVoucherNonEmployeeTravel {
         this.personalCarAmount = personalCarAmount;
     }
 
-    public List<DisbursementVoucherNonEmployeeExpense> getTravelerExpenses() {
+    public List<DisbursementVoucherNonEmployeeExpenseXml> getTravelerExpenses() {
         return travelerExpenses;
     }
 
-    public void setTravelerExpenses(List<DisbursementVoucherNonEmployeeExpense> travelerExpenses) {
+    public void setTravelerExpenses(List<DisbursementVoucherNonEmployeeExpenseXml> travelerExpenses) {
         this.travelerExpenses = travelerExpenses;
     }
 
-    public List<DisbursementVoucherNonEmployeeExpense> getPrepaidExpenses() {
+    public List<DisbursementVoucherNonEmployeeExpenseXml> getPrepaidExpenses() {
         return prepaidExpenses;
     }
 
-    public void setPrepaidExpenses(List<DisbursementVoucherNonEmployeeExpense> prepaidExpenses) {
+    public void setPrepaidExpenses(List<DisbursementVoucherNonEmployeeExpenseXml> prepaidExpenses) {
         this.prepaidExpenses = prepaidExpenses;
     }
 
