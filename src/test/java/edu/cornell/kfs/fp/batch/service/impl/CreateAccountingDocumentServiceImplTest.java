@@ -44,9 +44,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
+import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -67,9 +69,11 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.FileStorageService;
+import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
@@ -88,6 +92,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
@@ -113,10 +118,11 @@ public class CreateAccountingDocumentServiceImplTest {
         ConfigurationService configurationService = buildMockConfigurationService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
-                configurationService, buildMockFiscalYearFunctionControlService());
+                configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
-                AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT);
+                AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
+                AccountingDocumentMapping.DV_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -410,6 +416,10 @@ public class CreateAccountingDocumentServiceImplTest {
                     ((InternalBillingDocument) expectedDocument).getItems(), ((InternalBillingDocument) actualDocument).getItems(),
                     this::assertInternalBillingItemIsCorrect);
         }
+        
+        if (actualDocument instanceof CuDisbursementVoucherDocument) {
+            assertCuDisbursementVoucherDocumentsCorrect((CuDisbursementVoucherDocument) expectedDocument, (CuDisbursementVoucherDocument) actualDocument);
+        }
     }
 
     private <T> void assertObjectListIsCorrect(String listLabel, List<? extends T> expectedObjects, List<? extends T> actualObjects,
@@ -497,6 +507,35 @@ public class CreateAccountingDocumentServiceImplTest {
             assertNotNull("Note should have had an attachment", actualAttachment);
             assertEquals("Wrong attachment file name", expectedAttachment.getAttachmentFileName(), actualAttachment.getAttachmentFileName());
         }
+    }
+    
+    private void assertCuDisbursementVoucherDocumentsCorrect(CuDisbursementVoucherDocument expectedDvDocument, CuDisbursementVoucherDocument actualDvDocument) {
+        assertEquals("Wrong bank code", expectedDvDocument.getDisbVchrBankCode(), actualDvDocument.getDisbVchrBankCode());
+        assertEquals("Wrong contact name", expectedDvDocument.getDisbVchrContactPersonName(), actualDvDocument.getDisbVchrContactPersonName());
+        assertEquals("payment reason code not correct", expectedDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode(), 
+                actualDvDocument.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+        assertEquals("payee type code not correct", expectedDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode(), 
+                actualDvDocument.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode());
+        assertEquals("non employee travel perdiem rate not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate(),
+                actualDvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
+        assertEquals("conference destination not correct", expectedDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName(),
+                actualDvDocument.getDvPreConferenceDetail().getDvConferenceDestinationName());
+        assertEquals("non employee traveler name not correct", expectedDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDisbVchrNonEmpTravelerName());
+        assertEquals("non employee mileage not correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount());
+        assertObjectListIsCorrect("non employee travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses(), this::assertTravelExpenseCorrect);
+        assertObjectListIsCorrect("non employee prepaid travel expenses aren't correct", expectedDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), 
+                actualDvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses(), this::assertTravelExpenseCorrect);
+    }
+    
+    private void assertTravelExpenseCorrect(DisbursementVoucherNonEmployeeExpense expectedExpense, DisbursementVoucherNonEmployeeExpense actualExpense) {
+        assertEquals("expense code not correct", expectedExpense.getDisbVchrExpenseCode(), actualExpense.getDisbVchrExpenseCode());
+        assertEquals("expense company name not correct", expectedExpense.getDisbVchrExpenseCompanyName(), actualExpense.getDisbVchrExpenseCompanyName());
+        assertEquals("expense amount not correct", expectedExpense.getDisbVchrExpenseAmount(), actualExpense.getDisbVchrExpenseAmount());
+        
+        
     }
 
     private void assertAdHocPersonIsCorrect(AdHocRoutePerson expectedAdHocPerson, AdHocRoutePerson actualAdHocPerson) {
@@ -683,6 +722,18 @@ public class CreateAccountingDocumentServiceImplTest {
         functionControl.setFinancialSystemFunctionActiveIndicator(true);
         return functionControl;
     }
+    
+    private DisbursementVoucherTravelService buildMockDisbursementVoucherTravelService() {
+        DisbursementVoucherTravelService travelService = Mockito.mock(DisbursementVoucherTravelService.class);
+        Mockito.when(travelService.calculateMileageAmount(Mockito.anyInt(), Mockito.any())).thenReturn(new KualiDecimal(50));
+        return travelService;
+    }
+    
+    private UniversityDateService buildMockUniversityDateService() {
+        UniversityDateService dateService = Mockito.mock(UniversityDateService.class);
+        Mockito.when(dateService.getCurrentFiscalYear()).thenReturn(2019);
+        return dateService;
+    }
 
     private Client buildMockClient() {
         Client client = Mockito.mock(Client.class);
@@ -725,17 +776,22 @@ public class CreateAccountingDocumentServiceImplTest {
         private PersonService personService;
         private AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService;
         private ConfigurationService configurationService;
+        private DisbursementVoucherTravelService disbursementVoucherTravelService;
         private FiscalYearFunctionControlService fiscalYearFunctionControlService;
+        private UniversityDateService universityDateService;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
-                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService) {
+                ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
+                DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService) {
             this.personService = personService;
             this.downloadAttachmentService = downloadAttachmentService;
+            this.disbursementVoucherTravelService = disbursementVoucherTravelService;
             this.configurationService = configurationService;
             this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
+            this.universityDateService = universityDateService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
         }
@@ -758,6 +814,11 @@ public class CreateAccountingDocumentServiceImplTest {
             if (accountingDocumentGenerator instanceof CuBudgetAdjustmentDocumentGenerator) {
                 CuBudgetAdjustmentDocumentGenerator baGenerator = (CuBudgetAdjustmentDocumentGenerator) accountingDocumentGenerator;
                 baGenerator.setFiscalYearFunctionControlService(fiscalYearFunctionControlService);
+            }
+            if (accountingDocumentGenerator instanceof CuDisbursementVoucherDocumentGenerator) {
+                CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) accountingDocumentGenerator;
+                dvGenerator.setUniversityDateService(universityDateService);
+                dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
             }
             return accountingDocumentGenerator;
         }
