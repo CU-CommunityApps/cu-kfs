@@ -41,4 +41,9 @@ public class CUPdpConstants extends PdpConstants {
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_CHECKING_ACCOUNT_TYPE = "Checking";
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_SAVINGS_ACCOUNT_TYPE = "Savings";
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_BANK_NAME_PROPERTY = "bankRouting.bankName";
+    
+    public static final String PAYEE_TYPE_CODE_VENDOR = "V";
+    public static final String PAYEE_TYPE_CODE_EMPLOYEE = "E";
+    public static final String PAYEE_TYPE_CODE_ALUMNI = "A";
+    public static final String PAYEE_TYPE_CODE_STUDENT = "S";
 }
