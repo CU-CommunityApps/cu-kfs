@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 
@@ -38,7 +39,7 @@ import com.opencsv.CSVReader;
  * and parse using CSV comma delimited
  */
 public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> extends BatchInputFileTypeBase {
-    private static final Logger LOG = Logger.getLogger(CsvBatchInputFileTypeBase.class);
+	private static final Logger LOG = LogManager.getLogger(CsvBatchInputFileTypeBase.class);
 
     private Class<?> csvEnumClass;
     
