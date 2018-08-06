@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.function.Supplier;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -10,11 +11,14 @@ import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherDetailXml;
@@ -25,12 +29,14 @@ import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrantXm
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverviewXml;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.pdp.CUPdpConstants;
 
 public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGeneratorBase<CuDisbursementVoucherDocument> {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuDisbursementVoucherDocumentGenerator.class);
     
     protected UniversityDateService universityDateService;
     protected DisbursementVoucherTravelService disbursementVoucherTravelService;
+    protected VendorService vendorService;
     
     public CuDisbursementVoucherDocumentGenerator() {
         super();
@@ -79,8 +85,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             DisbursementVoucherPaymentInformationXml paymentInfo = dvDetail.getPaymentInformation();
             CuDisbursementVoucherPayeeDetail payeeDetail = dvDocument.getDvPayeeDetail();
             payeeDetail.setDisbVchrPaymentReasonCode(paymentInfo.getPaymentReasonCode());
-            payeeDetail.setDisbursementVoucherPayeeTypeCode(paymentInfo.getPayeeTypeCode());
-            payeeDetail.setDisbVchrPayeeIdNumber(paymentInfo.getPayeeId());
+            validateAndPopulatePayeeTypeCodeAndPayeeNumber(paymentInfo, payeeDetail);
             payeeDetail.setDisbVchrPayeePersonName(paymentInfo.getPayeeName());
             payeeDetail.setDisbVchrPayeeLine1Addr(paymentInfo.getAddressLine1());
             payeeDetail.setDisbVchrPayeeLine2Addr(paymentInfo.getAddressLine2());
@@ -108,6 +113,36 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         } else {
             LOG.error("populatePaymentInformation, did NOT find payment info");
         }
+    }
+
+    protected void validateAndPopulatePayeeTypeCodeAndPayeeNumber(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherPayeeDetail payeeDetail) throws ValidationException {
+        String payeeTypeCode = paymentInfo.getPayeeTypeCode();
+        String payeeId = paymentInfo.getPayeeId();
+        boolean isEmployee = false;
+        if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_VENDOR)) {
+            if (ObjectUtils.isNull(vendorService.getByVendorNumber(payeeId))) {
+                String vendorErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD);
+                throw new ValidationException(MessageFormat.format(vendorErrorMessage,  payeeId));
+            }
+        } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_EMPLOYEE)) {
+            if (ObjectUtils.isNull(personService.getPersonByEmployeeId(payeeId))) {
+                String employeeErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_EMPLOYEE_ID_BAD);
+                throw new ValidationException(MessageFormat.format(employeeErrorMessage, payeeId));
+            } else {
+                isEmployee = true;
+            }
+        } else if (StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_ALUMNI) || StringUtils.equalsAnyIgnoreCase(payeeTypeCode, CUPdpConstants.PAYEE_TYPE_CODE_STUDENT)) {
+            if (ObjectUtils.isNull(personService.getPerson(payeeId))) {
+                String personError = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD);
+                throw new ValidationException(MessageFormat.format(personError, payeeId));
+            }
+        } else {
+            String payeeTypeCodeErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_TYPE_CODE_BAD);
+            throw new ValidationException(MessageFormat.format(payeeTypeCodeErrorMessage, payeeTypeCode));
+        }
+        payeeDetail.setDisbVchrPayeeEmployeeCode(isEmployee);
+        payeeDetail.setDisbursementVoucherPayeeTypeCode(payeeTypeCode);
+        payeeDetail.setDisbVchrPayeeIdNumber(payeeId);
     }
     
     private void populateNonEmployeeTravelExpense(CuDisbursementVoucherDocument dvDocument, DisbursementVoucherDetailXml dvDetail) {
@@ -246,6 +281,10 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 
     public void setDisbursementVoucherTravelService(DisbursementVoucherTravelService disbursementVoucherTravelService) {
         this.disbursementVoucherTravelService = disbursementVoucherTravelService;
+    }
+
+    public void setvendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
 
 }

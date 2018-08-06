@@ -885,6 +885,7 @@
         <property name="configurationService" ref="configurationService"/>
         <property name="universityDateService" ref="universityDateService"/>
         <property name="disbursementVoucherTravelService" ref="disbursementVoucherTravelService"/>
+        <property name="vendorService" ref="vendorService"/>
     </bean>
 
 </beans>

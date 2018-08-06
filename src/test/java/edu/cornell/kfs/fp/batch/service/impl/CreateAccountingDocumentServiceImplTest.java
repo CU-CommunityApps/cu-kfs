@@ -100,6 +100,7 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
+import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 
 public class CreateAccountingDocumentServiceImplTest {
 
@@ -629,6 +630,8 @@ public class CreateAccountingDocumentServiceImplTest {
         PersonService personService = Mockito.mock(PersonService.class);
         Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
         Mockito.when(personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER)).thenReturn(systemUser);
+        Person testUser = MockPersonUtil.createMockPerson(TestUserFixture.TEST_USER);
+        Mockito.when(personService.getPersonByEmployeeId(TestUserFixture.TEST_USER.employeeId)).thenReturn(testUser);
         return personService;
     }
 
