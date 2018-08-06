@@ -4,6 +4,9 @@ import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
+
+import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.spy;
@@ -30,6 +33,15 @@ public class MockPersonUtil {
         when(person.getPrincipalName()).thenReturn(userNameFixture.toString());
         when(person.getPrincipalId()).thenReturn(userNameFixture.toString());
         when(person.getCampusCode()).thenReturn(userNameFixture.toString());
+        return person;
+    }
+    
+    public static Person createMockPerson(TestUserFixture userFixture) {
+        Person person = spy(PersonImpl.class);
+        when(person.getPrincipalName()).thenReturn(userFixture.principleName);
+        when(person.getPrincipalId()).thenReturn(userFixture.principleId);
+        when(person.getCampusCode()).thenReturn(userFixture.campusCode);
+        when(person.getEmployeeId()).thenReturn(userFixture.employeeId);
         return person;
     }
 }
