@@ -26,20 +26,30 @@ import org.springframework.http.HttpMethod;
 
 import com.opencsv.CSVReader;
 
+import edu.cornell.kfs.pmw.PaymentWorksTestConstants.SupplierUploadErrorMessages;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
 import edu.cornell.kfs.pmw.batch.businessobject.fixture.PaymentWorksVendorFixture;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksSupplierUploadConstants;
 import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
+/**
+ * Utility class that mocks the endpoint for uploading vendors back to PaymentWorks.
+ * 
+ * Note that the returned error messages and status codes do not necessarily line up
+ * with what PaymentWorks would return under similar circumstances.
+ */
 public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpointBase {
 
     private static final String UPLOAD_SUPPLIERS_ENDPOINT_HANDLER_PATTERN = "/suppliers/load/";
 
+    private String expectedAuthorizationToken;
     private PaymentWorksVendorFixture[] expectedVendorsForNextUpload;
 
-    public MockPaymentWorksUploadSuppliersEndpoint(String multiPartContentDirectory) {
+    public MockPaymentWorksUploadSuppliersEndpoint(String multiPartContentDirectory, String expectedAuthorizationToken) {
         this.multiPartContentDirectory = multiPartContentDirectory;
+        this.expectedAuthorizationToken = expectedAuthorizationToken;
     }
 
     @Override
@@ -56,6 +66,10 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
         assertRequestHasCorrectHttpMethod(request, HttpMethod.POST);
         assertRequestHasCorrectContentType(request, ContentType.MULTIPART_FORM_DATA);
         
+        String authorizationHeader = getNonBlankHeaderValue(request, PaymentWorksWebServiceConstants.AUTHORIZATION_HEADER_KEY);
+        assertEquals("Wrong authorization token value",
+                PaymentWorksWebServiceConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + expectedAuthorizationToken, authorizationHeader);
+        
         Pair<Boolean, Object> processingResult = processMultiPartRequestContent(request, this::validateAndProcessMultiPartContent);
         boolean processingSucceeded = processingResult.getKey().booleanValue();
         if (processingSucceeded) {
@@ -68,6 +82,8 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
     private Pair<Boolean, Object> validateAndProcessMultiPartContent(HttpRequest request, List<FileItem> fileItems) {
         assertEquals("Wrong number of multipart sections in upload-suppliers request", 1, fileItems.size());
         FileItem csvSection = fileItems.get(0);
+        assertEquals("Wrong field name for multipart section", PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, csvSection.getFieldName());
+        assertEquals("Wrong filename for multipart section", PaymentWorksSupplierUploadConstants.DUMMY_SUPPLIERS_FILENAME, csvSection.getName());
         
         try {
             List<String[]> csvContent = readCsvContentFromSection(csvSection);
@@ -102,11 +118,11 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
 
     private void validateCsvContent(List<String[]> csvContent) {
         if (csvContent.size() == 0) {
-            throw new ValidationException("File contained zero rows");
+            throw new ValidationException(SupplierUploadErrorMessages.FILE_CONTAINED_ZERO_ROWS);
         }
         validateCsvHeader(csvContent.get(0));
         if (csvContent.size() == 1) {
-            throw new ValidationException("File contained a header row but no data rows");
+            throw new ValidationException(SupplierUploadErrorMessages.FILE_ONLY_CONTAINED_HEADER_ROW);
         }
         validateUploadedVendorsIfPresent(csvContent);
     }
@@ -117,7 +133,7 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
                 .toArray(String[]::new);
         
         if (!Arrays.equals(expectedHeader, firstCsvRow)) {
-            throw new ValidationException("File did not contain the correct headers");
+            throw new ValidationException(SupplierUploadErrorMessages.FILE_CONTAINED_INVALID_HEADERS);
         }
     }
 
@@ -130,7 +146,7 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
             String[] expectedData = expectedVendorsForNextUpload[i].toParsedCsvFieldArray();
             String[] actualData = csvContent.get(i + 1);
             if (!Arrays.equals(expectedData, actualData)) {
-                throw new ValidationException("Unexpected data values detected on vendor at index " + i);
+                throw new ValidationException(SupplierUploadErrorMessages.VENDOR_DATA_MISMATCH_ERROR_PREFIX + i);
             }
         }
     }
@@ -153,6 +169,11 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
         
         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         response.setEntity(new StringEntity(jsonText, ContentType.TEXT_HTML));
+    }
+
+    @Override
+    protected void prepareResponseForFailedAssertion(HttpResponse response, AssertionError assertionError) throws HttpException, IOException {
+        setupErrorResponse(response, assertionError.getMessage());
     }
 
 }

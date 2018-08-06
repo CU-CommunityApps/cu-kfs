@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 
 public class PaymentWorksBatchReportVendorItem {
     
@@ -117,6 +119,14 @@ public class PaymentWorksBatchReportVendorItem {
 
     public void setPmwVendorLegelLastName(String pmwVendorLegelLastName) {
         this.pmwVendorLegelLastName = pmwVendorLegelLastName;
+    }
+
+    public String getPmwVendorLegalNameForDisplay() {
+        if (StringUtils.isNotBlank(pmwVendorLegelName)) {
+            return pmwVendorLegelName;
+        } else {
+            return pmwVendorLegelLastName + VendorConstants.NAME_DELIM + pmwVendorLegelFirstName;
+        }
     }
 
     public String getPmwTaxIdType() {

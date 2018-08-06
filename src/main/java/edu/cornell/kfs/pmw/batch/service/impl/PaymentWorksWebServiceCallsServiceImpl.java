@@ -425,6 +425,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         JsonNode errorNode = rootNode.findValue(PaymentWorksSupplierUploadConstants.ERROR_FIELD);
         if (ObjectUtils.isNotNull(errorNode)) {
             LOG.error("checkForSuccessfulSupplierUploadStatus: Supplier upload failed. Error message: " + errorNode.textValue());
+            handleErrorMessageFromSupplierUploadFailure(errorNode.textValue());
             throw new RuntimeException("Supplier upload failed: Received error response from PaymentWorks");
         }
         
@@ -453,6 +454,10 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
 
     protected void handleDetailMessageFromTokenRefreshFailure(String detailMessage) {
+        // This is just a hook for unit testing convenience.
+    }
+
+    protected void handleErrorMessageFromSupplierUploadFailure(String errorMessage) {
         // This is just a hook for unit testing convenience.
     }
 

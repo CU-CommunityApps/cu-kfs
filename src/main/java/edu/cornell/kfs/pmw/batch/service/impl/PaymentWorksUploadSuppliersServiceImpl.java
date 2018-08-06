@@ -9,8 +9,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +26,13 @@ import com.opencsv.exceptions.CsvException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
+import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksUploadSuppliersBatchReportData;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksUploadSuppliersReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksUploadSuppliersService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
@@ -41,6 +43,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersServiceImpl.class);
 
     private PaymentWorksUploadSuppliersReportService paymentWorksUploadSuppliersReportService;
+    private PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     private PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
     private BusinessObjectService businessObjectService;
     private PaymentWorksVendorDao paymentWorksVendorDao;
@@ -48,8 +51,10 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
     @Override
     public void uploadPreparedVendorsToPaymentWorks() {
         Collection<PaymentWorksVendor> vendorsToUpload = findPaymentWorksVendorsReadyForUpload();
+        
         if (CollectionUtils.isEmpty(vendorsToUpload)) {
             LOG.info("uploadPreparedVendorsToPaymentWorks, did not find any vendors to upload back to PaymentWorks");
+            sendEmailThatNoPreparedKfsVendorsWereFoundToUpload();
         } else {
             LOG.info("uploadPreparedVendorsToPaymentWorks, found " + vendorsToUpload.size() + " vendors to upload to PaymentWorks");
             performSupplierUploadProcessing(vendorsToUpload);
@@ -64,8 +69,17 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
         return businessObjectService.findMatching(PaymentWorksVendor.class, criteria);
     }
 
+    private void sendEmailThatNoPreparedKfsVendorsWereFoundToUpload() {
+        List<String> emailBodyItems = Collections.singletonList(paymentWorksBatchUtilityService.retrievePaymentWorksParameterValue(
+                PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_NO_PREPARED_VENDORS_FOUND_EMAIL_BODY));
+        List<String> emailSubjectItems = Collections.singletonList(paymentWorksBatchUtilityService.retrievePaymentWorksParameterValue(
+                PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_NO_PREPARED_VENDORS_FOUND_EMAIL_SUBJECT));
+        paymentWorksUploadSuppliersReportService.sendEmailThatNoDataWasFoundToProcess(emailSubjectItems, emailBodyItems);
+    }
+
     private void performSupplierUploadProcessing(Collection<PaymentWorksVendor> vendors) {
         PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
+        reportData.getRecordsFoundToProcessSummary().setRecordCount(vendors.size());
         boolean uploadSucceeded = uploadVendorsToPaymentWorks(vendors, reportData);
         updateVendorStatusesInKfs(vendors, uploadSucceeded, reportData);
         paymentWorksUploadSuppliersReportService.generateAndEmailProcessingReport(reportData);
@@ -83,11 +97,14 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
                 LOG.warn("uploadVendorsToPaymentWorks, " + vendors.size()
                         + " vendors were sent to PaymentWorks, but PaymentWorks reported that it received "
                         + receivedVendorCount + " vendors instead");
+                reportData.getGlobalMessages().add(paymentWorksBatchUtilityService.retrievePaymentWorksParameterValue(
+                        PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE));
             }
             return true;
         } catch (RuntimeException e) {
             LOG.error("uploadVendorsToPaymentWorks, error encountered when uploading vendors to PaymentWorks", e);
-            reportData.getSharedErrorMessages().add("An error occurred when uploading the vendors to PaymentWorks; see report logs for details.");
+            reportData.getGlobalMessages().add(paymentWorksBatchUtilityService.retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE));
             return false;
         } finally {
             IOUtils.closeQuietly(vendorCsvDataStream);
@@ -138,17 +155,21 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
                         PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.CONNECTED.getCodeAsString(),
                         PaymentWorksConstants.SupplierUploadStatus.VENDOR_UPLOADED);
                 generateAndAddVendorReportItems(reportData.getRecordsProcessed(), vendors);
+                reportData.setUpdatedKfsAndPaymentWorksSuccessfully(true);
             } else {
                 paymentWorksVendorDao.updateSupplierUploadStatusesForVendorsInStagingTable(ids,
                         PaymentWorksConstants.SupplierUploadStatus.UPLOAD_FAILED);
                 generateAndAddVendorReportItems(reportData.getRecordsWithProcessingErrors(), vendors);
+                reportData.setUpdatedKfsAndPaymentWorksSuccessfully(false);
             }
         } catch (RuntimeException e) {
             LOG.error("updateVendorStatusesInKfs, failed to update vendor statuses in KFS", e);
-            reportData.getSharedErrorMessages().add("An error occurred when updating the KFS-side statuses for the vendors; see report logs for details.");
+            reportData.getGlobalMessages().add(paymentWorksBatchUtilityService.retrievePaymentWorksParameterValue(
+                    PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_KFS_UPDATE_FAILURE_MESSAGE));
             reportData.getRecordsProcessed().clear();
             reportData.getRecordsWithProcessingErrors().clear();
             generateAndAddVendorReportItems(reportData.getRecordsWithProcessingErrors(), vendors);
+            reportData.setUpdatedKfsAndPaymentWorksSuccessfully(false);
         }
     }
 
@@ -162,6 +183,10 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
         vendors.stream()
                 .map(paymentWorksUploadSuppliersReportService::createBatchReportVendorItem)
                 .forEach(itemsList::add);
+    }
+
+    public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
+        this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
     }
 
     public void setPaymentWorksUploadSuppliersReportService(PaymentWorksUploadSuppliersReportService paymentWorksUploadSuppliersReportService) {

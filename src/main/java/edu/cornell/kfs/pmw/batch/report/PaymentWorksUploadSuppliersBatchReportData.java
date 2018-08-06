@@ -8,12 +8,16 @@ import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 public class PaymentWorksUploadSuppliersBatchReportData extends PaymentWorksEmailableReportData {
 
     private PaymentWorksBatchReportSummaryItem recordsProcessedByPaymentWorksSummary;
-    private List<String> sharedErrorMessages;
+    private PaymentWorksBatchReportSummaryItem globalMessagesSummary;
+    private List<String> globalMessages;
+    private boolean updatedKfsAndPaymentWorksSuccessfully;
 
     public PaymentWorksUploadSuppliersBatchReportData() {
         super();
         this.recordsProcessedByPaymentWorksSummary = new PaymentWorksBatchReportSummaryItem();
-        this.sharedErrorMessages = new ArrayList<>();
+        this.globalMessagesSummary = new PaymentWorksBatchReportSummaryItem();
+        this.globalMessages = new ArrayList<>();
+        this.updatedKfsAndPaymentWorksSuccessfully = false;
     }
 
     public PaymentWorksUploadSuppliersBatchReportData(
@@ -23,14 +27,17 @@ public class PaymentWorksUploadSuppliersBatchReportData extends PaymentWorksEmai
             PaymentWorksBatchReportSummaryItem recordsWithProcessingErrorsSummary,
             PaymentWorksBatchReportSummaryItem recordsGeneratingExceptionSummary,
             PaymentWorksBatchReportSummaryItem recordsProcessedByPaymentWorksSummary,
+            PaymentWorksBatchReportSummaryItem globalMessagesSummary,
             List<PaymentWorksBatchReportVendorItem> recordsProcessed,
             List<PaymentWorksBatchReportVendorItem> recordsWithProcessingErrors,
-            List<String> sharedErrorMessages) {
+            List<String> globalMessages,
+            boolean updatedKfsAndPaymentWorksSuccessfully) {
         super(recordsFoundToProcessSummary, recordsThatCouldNotBeProcessedSummary,
                 recordsProcessedSummary, recordsWithProcessingErrorsSummary,
                 recordsGeneratingExceptionSummary, recordsProcessed, recordsWithProcessingErrors);
         this.recordsProcessedByPaymentWorksSummary = recordsProcessedByPaymentWorksSummary;
-        this.sharedErrorMessages = sharedErrorMessages;
+        this.globalMessages = globalMessages;
+        this.updatedKfsAndPaymentWorksSuccessfully = updatedKfsAndPaymentWorksSuccessfully;
     }
 
     public PaymentWorksBatchReportSummaryItem getRecordsProcessedByPaymentWorksSummary() {
@@ -41,12 +48,28 @@ public class PaymentWorksUploadSuppliersBatchReportData extends PaymentWorksEmai
         this.recordsProcessedByPaymentWorksSummary = recordsProcessedByPaymentWorksSummary;
     }
 
-    public List<String> getSharedErrorMessages() {
-        return sharedErrorMessages;
+    public PaymentWorksBatchReportSummaryItem getGlobalMessagesSummary() {
+        return globalMessagesSummary;
     }
 
-    public void setSharedErrorMessages(List<String> sharedErrorMessages) {
-        this.sharedErrorMessages = sharedErrorMessages;
+    public void setGlobalMessagesSummary(PaymentWorksBatchReportSummaryItem globalMessagesSummary) {
+        this.globalMessagesSummary = globalMessagesSummary;
+    }
+
+    public List<String> getGlobalMessages() {
+        return globalMessages;
+    }
+
+    public void setGlobalMessages(List<String> globalMessages) {
+        this.globalMessages = globalMessages;
+    }
+
+    public boolean isUpdatedKfsAndPaymentWorksSuccessfully() {
+        return updatedKfsAndPaymentWorksSuccessfully;
+    }
+
+    public void setUpdatedKfsAndPaymentWorksSuccessfully(boolean updatedKfsAndPaymentWorksSuccessfully) {
+        this.updatedKfsAndPaymentWorksSuccessfully = updatedKfsAndPaymentWorksSuccessfully;
     }
 
     @Override

@@ -1,16 +1,14 @@
 package edu.cornell.kfs.pmw.batch.businessobject;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
-
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestDetailDTO;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
 
@@ -219,6 +217,14 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public void setRequestingCompanyLegalLastName(String requestingCompanyLegalLastName) {
         this.requestingCompanyLegalLastName = requestingCompanyLegalLastName;
+    }
+
+    public String getRequestingCompanyLegalNameForProcessing() {
+        if (StringUtils.isNotBlank(requestingCompanyLegalName)) {
+            return requestingCompanyLegalName;
+        } else {
+            return requestingCompanyLegalLastName + VendorConstants.NAME_DELIM + requestingCompanyLegalFirstName;
+        }
     }
 
     public String getRequestingCompanyName() {

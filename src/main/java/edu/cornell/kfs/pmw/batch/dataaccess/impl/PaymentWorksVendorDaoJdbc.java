@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksVendorDao {
     
@@ -84,6 +85,39 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
 
         JdbcTemplate jdbcTemplate = getJdbcTemplate();
         return jdbcTemplate.update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
+    }
+
+    @Override
+    public void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String supplierUploadStatus) {
+        updateSupplierUploadStatusesForVendorsInStagingTable(ids, KFSConstants.EMPTY_STRING, supplierUploadStatus);
+    }
+
+    @Override
+    public void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String pmwRequestStatus, String supplierUploadStatus) {
+        ParameterizedSqlFactory sqlFactory = new ParameterizedSqlFactory("update kfs.cu_pmw_vendor_t set ");
+        
+        if (StringUtils.isNotBlank(pmwRequestStatus)) {
+            sqlFactory.appendSql("pmw_req_stat = ?, ", pmwRequestStatus);
+        }
+        sqlFactory.appendSql("supp_upld_stat = ? ", supplierUploadStatus);
+        
+        sqlFactory.appendSql("where id in (");
+        appendParameterList(sqlFactory, ids);
+        sqlFactory.appendSql(")");
+        
+        int updateRowCount = getJdbcTemplate().update(sqlFactory.getSql(), sqlFactory.getParameters());
+        LOG.info("updateSupplierUploadStatusForVendorsInStagingTable, updated the following number of records: " + updateRowCount);
+    }
+
+    private void appendParameterList(ParameterizedSqlFactory sqlFactory, List<?> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return;
+        }
+        
+        sqlFactory.appendSql("?", values.get(0));
+        values.stream()
+                .skip(1L)
+                .forEach((value) -> sqlFactory.appendSql(", ?", value));
     }
 
     private class ParameterizedSqlFactory {

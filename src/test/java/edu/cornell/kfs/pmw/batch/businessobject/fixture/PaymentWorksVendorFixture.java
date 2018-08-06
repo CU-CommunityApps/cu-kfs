@@ -5,22 +5,26 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public enum PaymentWorksVendorFixture {
-    JOHN_DOE("13579999", 1050, 0, "Doe, John", "102 Main St.", KFSConstants.EMPTY_STRING,
+    JOHN_DOE("13579999", 1050, 0, "Doe, John", "John", "Doe", "102 Main St.", KFSConstants.EMPTY_STRING,
             "SomeTown", "NY", "US", "11111", "111223333", "johndoe@somewhere.com"),
-    MARY_SMITH("12345678", 2333, 0, "Smith, Mary", "333 Rocky Rd.", KFSConstants.EMPTY_STRING,
+    MARY_SMITH("12345678", 2333, 0, KFSConstants.EMPTY_STRING, "Mary", "Smith", "333 Rocky Rd.", KFSConstants.EMPTY_STRING,
             "Ithaca", "NY", "US", "24680", "666666666", "marysmith@unknownsite.net"),
-    WIDGET_MAKERS("55555555", 4160, 0, "Widget Makers", "Division of Financial Affairs", "1200 Long Dr.",
-            "Miami", "FL", "US", "17171", "123443211", "findept@widgetmakers.org");
+    WIDGET_MAKERS("55555555", 4160, 0, "Widget Makers", KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING,
+            "Division of Financial Affairs", "1200 Long Dr.", "Miami", "FL", "US", "17171", "123443211", "findept@widgetmakers.org");
 
     public final String pmwVendorRequestId;
     public final Integer kfsVendorHeaderGeneratedIdentifier;
     public final Integer kfsVendorDetailAssignedIdentifier;
     public final String requestingCompanyLegalName;
+    public final String requestingCompanyLegalFirstName;
+    public final String requestingCompanyLegalLastName;
+    public final String requestingCompanyLegalNameForProcessing;
     public final String remittanceAddressStreet1;
     public final String remittanceAddressStreet2;
     public final String remittanceAddressCity;
@@ -31,13 +35,18 @@ public enum PaymentWorksVendorFixture {
     public final String vendorInformationEmail;
 
     private PaymentWorksVendorFixture(String pmwVendorRequestId, int kfsVendorHeaderGeneratedIdentifier, int kfsVendorDetailAssignedIdentifier,
-            String requestingCompanyLegalName, String remittanceAddressStreet1, String remittanceAddressStreet2,
+            String requestingCompanyLegalName, String requestingCompanyLegalFirstName, String requestingCompanyLegalLastName,
+            String remittanceAddressStreet1, String remittanceAddressStreet2,
             String remittanceAddressCity, String remittanceAddressState, String remittanceAddressCountry,
             String remittanceAddressZipCode, String requestingCompanyTin, String vendorInformationEmail) {
         this.pmwVendorRequestId = pmwVendorRequestId;
         this.kfsVendorHeaderGeneratedIdentifier = Integer.valueOf(kfsVendorHeaderGeneratedIdentifier);
         this.kfsVendorDetailAssignedIdentifier = Integer.valueOf(kfsVendorDetailAssignedIdentifier);
         this.requestingCompanyLegalName = requestingCompanyLegalName;
+        this.requestingCompanyLegalFirstName = requestingCompanyLegalFirstName;
+        this.requestingCompanyLegalLastName = requestingCompanyLegalLastName;
+        this.requestingCompanyLegalNameForProcessing = StringUtils.isNotBlank(requestingCompanyLegalName)
+                ? requestingCompanyLegalName : requestingCompanyLegalLastName + VendorConstants.NAME_DELIM + requestingCompanyLegalFirstName;
         this.remittanceAddressStreet1 = remittanceAddressStreet1;
         this.remittanceAddressStreet2 = remittanceAddressStreet2;
         this.remittanceAddressCity = remittanceAddressCity;
@@ -54,6 +63,8 @@ public enum PaymentWorksVendorFixture {
         vendor.setKfsVendorHeaderGeneratedIdentifier(kfsVendorHeaderGeneratedIdentifier);
         vendor.setKfsVendorDetailAssignedIdentifier(kfsVendorDetailAssignedIdentifier);
         vendor.setRequestingCompanyLegalName(requestingCompanyLegalName);
+        vendor.setRequestingCompanyLegalFirstName(requestingCompanyLegalFirstName);
+        vendor.setRequestingCompanyLegalLastName(requestingCompanyLegalLastName);
         vendor.setRemittanceAddressStreet1(remittanceAddressStreet1);
         vendor.setRemittanceAddressStreet2(remittanceAddressStreet2);
         vendor.setRemittanceAddressCity(remittanceAddressCity);
