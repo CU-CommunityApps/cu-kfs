@@ -8,7 +8,6 @@ public enum CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture {
     PREPAID_AVIS("PR", "AVIS", 23.55),
     PREPAID_OTHER("PO", "PREPAID OTHER", 230.55);
     
-    
     public final String expenseType;
     public final String companyName;
     public final KualiDecimal amount;

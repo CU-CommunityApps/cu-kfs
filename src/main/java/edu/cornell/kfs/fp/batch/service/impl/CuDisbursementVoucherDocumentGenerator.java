@@ -283,7 +283,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         this.disbursementVoucherTravelService = disbursementVoucherTravelService;
     }
 
-    public void setvendorService(VendorService vendorService) {
+    public void setVendorService(VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
