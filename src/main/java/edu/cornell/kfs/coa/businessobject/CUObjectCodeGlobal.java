@@ -18,6 +18,9 @@ package edu.cornell.kfs.coa.businessobject;
 
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ObjectCodeGlobal;
 import org.kuali.kfs.coa.businessobject.ObjectCodeGlobalDetail;
@@ -25,16 +28,10 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
-/**
- * 
- */
 public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusinessObject {
-
-
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ObjectCodeGlobal.class);
-
-   
-    
+	
+	private static final Logger LOG = LogManager.getLogger(ObjectCodeGlobal.class);
+ 
     //added for SUNY Object Code and CG Reporting Code extended attributes
     private String sunyObjectCode;
     

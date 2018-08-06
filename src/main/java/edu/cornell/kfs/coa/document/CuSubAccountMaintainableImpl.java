@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -25,7 +27,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 @SuppressWarnings("deprecation")
 public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuSubAccountMaintainableImpl.class);
+	private static final Logger LOG = LogManager.getLogger(SubAccountMaintainableImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String REQUIRES_CG_APPROVAL_NODE = "RequiresCGResponsibilityApproval";
     private AccountService accountService;          

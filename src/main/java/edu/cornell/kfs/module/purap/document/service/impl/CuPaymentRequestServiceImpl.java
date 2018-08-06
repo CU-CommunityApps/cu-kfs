@@ -273,9 +273,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         // set extended price amount as now it's calculated when accounting line is generated
         taxItem.setItemUnitPrice(taxLine.getAmount().bigDecimalValue());
         taxItem.setExtendedPrice(taxLine.getAmount());
-		if (taxLine.getAccountLinePercent() == null) {
-			taxLine.setAccountLinePercent(BigDecimal.ZERO);
-		}
+        // KFSPTS-1891.  added to fix validation required field error. especially after calculate tax
+        if (taxLine.getAccountLinePercent() == null) {
+        		taxLine.setAccountLinePercent(BigDecimal.ZERO);
+        	}
 
         // use item type description as the item description
         ItemType itemType = new ItemType();

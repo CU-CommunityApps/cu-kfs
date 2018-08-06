@@ -56,7 +56,6 @@ import java.util.Properties;
  * This class provides actions for the format process
  */
 public class FormatAction extends KualiAction {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FormatAction.class);
     protected FormatService formatService;
 
     /**

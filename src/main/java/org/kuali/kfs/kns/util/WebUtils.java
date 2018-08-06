@@ -23,8 +23,9 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -95,7 +96,7 @@ import java.util.regex.Pattern;
  * General helper methods for handling requests.
  */
 public class WebUtils {
-    private static final Logger LOG = Logger.getLogger(WebUtils.class);
+    private static final Logger LOG = LogManager.getLogger(WebUtils.class);
 
     private static final String IMAGE_COORDINATE_CLICKED_X_EXTENSION = ".x";
     private static final String IMAGE_COORDINATE_CLICKED_Y_EXTENSION = ".y";
@@ -116,9 +117,8 @@ public class WebUtils {
     public static final String FILE_UPLOAD_LIMIT_EXCEEDED_EXCEPTION_ALREADY_THROWN = "fileUploadLimitExceededExceptionAlreadyThrown";
 
     public static String KEY_KUALI_FORM_IN_SESSION = "KualiForm";
-    
-    private static ConfigurationService configurationService;
 
+    private static ConfigurationService configurationService;
     private static URLCodec urlCodec = new URLCodec("UTF-8");
 
     /**
@@ -134,16 +134,16 @@ public class WebUtils {
         // check if is specified cleanly
         if (StringUtils.isNotBlank(request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER))) {
             if (form instanceof KualiForm
-                    && !((KualiForm) form).shouldMethodToCallParameterBeUsed(KRADConstants.DISPATCH_REQUEST_PARAMETER,
-                    request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER), request)) {
+                && !((KualiForm) form).shouldMethodToCallParameterBeUsed(KRADConstants.DISPATCH_REQUEST_PARAMETER,
+                request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER), request)) {
                 throw new RuntimeException("Cannot verify that the methodToCall should be "
-                        + request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER));
+                    + request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER));
             }
             methodToCall = request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER);
             // include .x at the end of the parameter to make it consistent w/
             // other parameters
             request.setAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE, KRADConstants.DISPATCH_REQUEST_PARAMETER + "."
-                    + methodToCall + IMAGE_COORDINATE_CLICKED_X_EXTENSION);
+                + methodToCall + IMAGE_COORDINATE_CLICKED_X_EXTENSION);
         }
 
         /**
@@ -204,16 +204,15 @@ public class WebUtils {
      * @return the methodToCall command
      */
     private static String getMethodToCallSettingAttribute(ActionForm form, HttpServletRequest request, String string) {
-
         if (form instanceof KualiForm
-                && !((KualiForm) form).shouldMethodToCallParameterBeUsed(string, request.getParameter(string), request)) {
+            && !((KualiForm) form).shouldMethodToCallParameterBeUsed(string, request.getParameter(string), request)) {
             throw new RuntimeException("Cannot verify that the methodToCall should be " + string);
         }
         // always adding a coordinate even if not an image
         final String attributeValue = endsWithCoordinates(string) ? string : string
-                + IMAGE_COORDINATE_CLICKED_X_EXTENSION;
+            + IMAGE_COORDINATE_CLICKED_X_EXTENSION;
         final String methodToCall = StringUtils.substringBetween(attributeValue,
-                KRADConstants.DISPATCH_REQUEST_PARAMETER + ".", ".");
+            KRADConstants.DISPATCH_REQUEST_PARAMETER + ".", ".");
         request.setAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE, attributeValue);
         return methodToCall;
     }
@@ -226,7 +225,7 @@ public class WebUtils {
      * @param logger
      */
     public static void logRequestContents(Logger logger, Level level, HttpServletRequest request) {
-        if (logger.isEnabledFor(level)) {
+        if (logger.isEnabled(level)) {
             logger.log(level, "--------------------");
             logger.log(level, "HttpRequest attributes:");
             for (Enumeration e = request.getAttributeNames(); e.hasMoreElements(); ) {
@@ -313,7 +312,6 @@ public class WebUtils {
      */
     public static void saveMimeOutputStreamAsFile(HttpServletResponse response, String contentType,
                                                   ByteArrayOutputStream byteArrayOutputStream, String fileName) throws IOException {
-
         // If there are quotes in the name, we should replace them to avoid issues.
         // The filename will be wrapped with quotes below when it is set in the header
         String updateFileName;
@@ -349,7 +347,6 @@ public class WebUtils {
      */
     public static void saveMimeInputStreamAsFile(HttpServletResponse response, String contentType,
                                                  InputStream inStream, String fileName, int fileSize) throws IOException {
-
         // If there are quotes in the name, we should replace them to avoid issues.
         // The filename will be wrapped with quotes below when it is set in the header
         String updateFileName;
@@ -454,8 +451,8 @@ public class WebUtils {
                     if (maxSize > 0 && Long.parseLong(file.getFileSize() + "") > maxSize) {
 
                         GlobalVariables.getMessageMap().putError(key.toString(),
-                                RiceKeyConstants.ERROR_UPLOADFILE_SIZE,
-                                new String[]{file.getFileName(), Long.toString(maxSize)});
+                            RiceKeyConstants.ERROR_UPLOADFILE_SIZE,
+                            new String[]{file.getFileName(), Long.toString(maxSize)});
 
                     }
                 }
@@ -463,7 +460,7 @@ public class WebUtils {
                 // get file elements for kualirequestprocessor
                 if (servletWrapper == null) {
                     request.setAttribute(KRADConstants.UPLOADED_FILE_REQUEST_ATTRIBUTE_KEY,
-                            getFileParametersForMultipartRequest(request, multipartHandler));
+                        getFileParametersForMultipartRequest(request, multipartHandler));
                 }
             }
         } catch (ServletException e) {
@@ -505,8 +502,6 @@ public class WebUtils {
         }
         return parameters;
     }
-
-    // end multipart
 
     public static void registerEditableProperty(PojoFormBase form, String editablePropertyName) {
         form.registerEditableProperty(editablePropertyName);
@@ -563,13 +558,13 @@ public class WebUtils {
         }
 
         boolean returnVal = editableProperties == null
-                || editableProperties.contains(propertyName)
-                || (getIndexOfCoordinateExtension(propertyName) == -1 ? false : editableProperties
-                .contains(propertyName.substring(0, getIndexOfCoordinateExtension(propertyName))));
+            || editableProperties.contains(propertyName)
+            || (getIndexOfCoordinateExtension(propertyName) == -1 ? false : editableProperties
+            .contains(propertyName.substring(0, getIndexOfCoordinateExtension(propertyName))));
         if (!returnVal) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("isPropertyEditable(" + propertyName + ") == false / editableProperties: "
-                        + editableProperties);
+                    + editableProperties);
             }
         }
         return returnVal;
@@ -577,7 +572,7 @@ public class WebUtils {
 
     public static boolean endsWithCoordinates(String parameter) {
         return parameter.endsWith(WebUtils.IMAGE_COORDINATE_CLICKED_X_EXTENSION)
-                || parameter.endsWith(WebUtils.IMAGE_COORDINATE_CLICKED_Y_EXTENSION);
+            || parameter.endsWith(WebUtils.IMAGE_COORDINATE_CLICKED_Y_EXTENSION);
     }
 
     public static int getIndexOfCoordinateExtension(String parameter) {
@@ -619,7 +614,7 @@ public class WebUtils {
         Object propertyValue = ObjectUtils.getPropertyValue(formObject, propertyName);
 
         DataDictionaryEntryBase entry = (DataDictionaryEntryBase) KRADServiceLocatorWeb.getDataDictionaryService()
-                .getDataDictionary().getDictionaryObjectEntry(className);
+            .getDataDictionary().getDictionaryObjectEntry(className);
         AttributeDefinition a = entry.getAttributeDefinition(fieldName);
 
         AttributeSecurity attributeSecurity = a.getAttributeSecurity();
@@ -637,7 +632,7 @@ public class WebUtils {
         Object propertyValue = ObjectUtils.getPropertyValue(formObject, propertyName);
 
         DataDictionaryEntryBase entry = (DataDictionaryEntryBase) KRADServiceLocatorWeb.getDataDictionaryService()
-                .getDataDictionary().getDictionaryObjectEntry(className);
+            .getDataDictionary().getDictionaryObjectEntry(className);
         AttributeDefinition a = entry.getAttributeDefinition(fieldName);
 
         AttributeSecurity attributeSecurity = a.getAttributeSecurity();
@@ -658,11 +653,11 @@ public class WebUtils {
         }
         if (form instanceof KualiDocumentFormBase) {
             return KNSServiceLocator.getBusinessObjectAuthorizationService().canFullyUnmaskField(
-                    GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName,
-                    ((KualiDocumentFormBase) form).getDocument());
+                GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName,
+                ((KualiDocumentFormBase) form).getDocument());
         } else {
             return KNSServiceLocator.getBusinessObjectAuthorizationService().canFullyUnmaskField(
-                    GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName, null);
+                GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName, null);
         }
     }
 
@@ -675,29 +670,29 @@ public class WebUtils {
         }
         if (form instanceof KualiDocumentFormBase) {
             return KNSServiceLocator.getBusinessObjectAuthorizationService().canPartiallyUnmaskField(
-                    GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName,
-                    ((KualiDocumentFormBase) form).getDocument());
+                GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName,
+                ((KualiDocumentFormBase) form).getDocument());
         } else {
             return KNSServiceLocator.getBusinessObjectAuthorizationService().canPartiallyUnmaskField(
-                    GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName, null);
+                GlobalVariables.getUserSession().getPerson(), businessObjClass, fieldName, null);
         }
     }
 
     public static boolean canAddNoteAttachment(Document document) {
         boolean canViewNoteAttachment = false;
         DocumentAuthorizer documentAuthorizer = KNSServiceLocator.getDocumentHelperService().getDocumentAuthorizer(
-                document);
+            document);
         canViewNoteAttachment = documentAuthorizer.canAddNoteAttachment(document, null, GlobalVariables
-                .getUserSession().getPerson());
+            .getUserSession().getPerson());
         return canViewNoteAttachment;
     }
 
     public static boolean canViewNoteAttachment(Document document, String attachmentTypeCode) {
         boolean canViewNoteAttachment = false;
         DocumentAuthorizer documentAuthorizer = KNSServiceLocator.getDocumentHelperService().getDocumentAuthorizer(
-                document);
+            document);
         canViewNoteAttachment = documentAuthorizer.canViewNoteAttachment(document, attachmentTypeCode, GlobalVariables
-                .getUserSession().getPerson());
+            .getUserSession().getPerson());
         return canViewNoteAttachment;
     }
 
@@ -705,16 +700,16 @@ public class WebUtils {
                                                   String authorUniversalIdentifier) {
         boolean canDeleteNoteAttachment = false;
         DocumentAuthorizer documentAuthorizer = KNSServiceLocator.getDocumentHelperService().getDocumentAuthorizer(
-                document);
+            document);
         canDeleteNoteAttachment = documentAuthorizer.canDeleteNoteAttachment(document, attachmentTypeCode, "false",
-                GlobalVariables.getUserSession().getPerson());
+            GlobalVariables.getUserSession().getPerson());
         if (canDeleteNoteAttachment) {
             return canDeleteNoteAttachment;
         } else {
             canDeleteNoteAttachment = documentAuthorizer.canDeleteNoteAttachment(document, attachmentTypeCode, "true",
-                    GlobalVariables.getUserSession().getPerson());
+                GlobalVariables.getUserSession().getPerson());
             if (canDeleteNoteAttachment
-                    && !authorUniversalIdentifier.equals(GlobalVariables.getUserSession().getPerson().getPrincipalId())) {
+                && !authorUniversalIdentifier.equals(GlobalVariables.getUserSession().getPerson().getPrincipalId())) {
                 canDeleteNoteAttachment = false;
             }
         }
@@ -809,7 +804,7 @@ public class WebUtils {
      */
     public static String getButtonImageUrl(String imageName) {
         String buttonImageUrl = getKualiConfigurationService().getPropertyValueAsString(
-                WebUtils.APPLICATION_IMAGE_URL_PROPERTY_PREFIX + "." + imageName);
+            WebUtils.APPLICATION_IMAGE_URL_PROPERTY_PREFIX + "." + imageName);
         if (StringUtils.isBlank(buttonImageUrl)) {
             buttonImageUrl = getDefaultButtonImageUrl(imageName);
         }
@@ -833,7 +828,7 @@ public class WebUtils {
      */
     public static String getDefaultButtonImageUrl(String imageName) {
         return getKualiConfigurationService().getPropertyValueAsString(WebUtils.DEFAULT_IMAGE_URL_PROPERTY_NAME)
-                + "buttonsmall_" + imageName + ".gif";
+            + "buttonsmall_" + imageName + ".gif";
     }
 
     /**

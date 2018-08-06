@@ -37,8 +37,6 @@ public class CUCheckingSavingsValuesFinder extends KeyValuesBase {
 
     /**
      * Creates a simple list of static values for either checking or savings
-     * 
-     * @see org.kuali.kfs.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
     public List<KeyValue> getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();

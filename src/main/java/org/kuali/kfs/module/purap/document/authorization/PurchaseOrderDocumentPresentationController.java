@@ -202,7 +202,6 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
 
         // PRE_ROUTE_CHANGEABLE mode is used for fields that are editable only before PO is routed
         // for ex, contract manager, manual status change, and APPDOC_QUOTE etc
-        //if (workflowDocument.isInitiated() || workflowDocument.isSaved()) {
         if (PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(statusCode) || 
                 PurchaseOrderStatuses.APPDOC_WAITING_FOR_VENDOR.equals(statusCode) ||
                 PurchaseOrderStatuses.APPDOC_WAITING_FOR_DEPARTMENT.equals(statusCode) ||
@@ -214,16 +213,6 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
         if (poDocument.isDocumentStoppedInRouteNode(PurapConstants.PurchaseOrderStatuses.NODE_CONTRACT_MANAGEMENT)) {
             editModes.add(PurchaseOrderEditMode.LOCK_INTERNAL_PURCHASING_ENTRY);
         }
-
-        //FIXME figure out how to get this to work
-//      /**
-//      * CONTRACTS & GRANTS ROUTE LEVEL, BUDGET OFFICE ROUTE LEVEL, VENDOR TAX ROUTE LEVEL, DOCUMENT TRANSMISSION ROUTE LEVEL,
-//      * and Adhoc - Approvers in these route levels cannot edit any detail on PO.
-//      */
-//      else {
-//      // VIEW_ENTRY that is already being set is sufficient, but need to remove FULL_ENTRY
-//      editModeMap.remove(AuthorizationConstants.EditMode.FULL_ENTRY);
-//      }
 
         // Set display mode for Split PO.
         if (poDocument.isPendingSplit()) {

@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.gl.batch.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.gl.batch.dataaccess.ReversionUnitOfWorkDao;
@@ -28,7 +30,7 @@ import edu.cornell.kfs.gl.batch.service.impl.ReversionUnitOfWorkServiceImpl;
  */
 @Transactional
 public class OrganizationReversionUnitOfWorkServiceImpl extends ReversionUnitOfWorkServiceImpl  {
-    static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(OrganizationReversionUnitOfWorkServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(OrganizationReversionUnitOfWorkServiceImpl.class);
     private ReversionUnitOfWorkDao orgReversionUnitOfWorkDao;
 
     /**

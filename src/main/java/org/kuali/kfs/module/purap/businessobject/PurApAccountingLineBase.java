@@ -33,7 +33,6 @@ import java.util.Map;
  * Purap Accounting Line Base Business Object.
  */
 public abstract class PurApAccountingLineBase extends SourceAccountingLine implements PurApAccountingLine, Comparable {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurApAccountingLineBase.class);
     protected Integer accountIdentifier;
     private Integer itemIdentifier;
     private BigDecimal accountLinePercent;
