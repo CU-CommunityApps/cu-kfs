@@ -48,7 +48,8 @@ import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) form;
 
         ActionForward actionAfterPayeeLookup = this.refreshAfterPayeeSelection(mapping, dvForm, request);
@@ -58,7 +59,8 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         return super.refresh(mapping, form, request, response);
     }
     
-    protected ActionForward refreshAfterPayeeSelection(ActionMapping mapping, CuDisbursementVoucherForm dvForm, HttpServletRequest request) {
+    protected ActionForward refreshAfterPayeeSelection(ActionMapping mapping, DisbursementVoucherForm dvForm,
+            HttpServletRequest request) {
         String refreshCaller = dvForm.getRefreshCaller();
         
         CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) dvForm.getDocument();
@@ -67,7 +69,8 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         boolean isAddressLookupable = KFSConstants.KUALI_VENDOR_ADDRESS_LOOKUPABLE_IMPL.equals(refreshCaller);
         boolean isKualiLookupable = KFSConstants.KUALI_LOOKUPABLE_IMPL.equals(refreshCaller);
         
-        // if a cancel occurred on address lookup we need to reset the payee id and type, rest of fields will still have correct information
+        // if a cancel occurred on address lookup we need to reset the payee id and type, rest of fields will still have
+        // correct information
         if (refreshCaller == null && hasFullEdit(document)) {
             dvForm.setPayeeIdNumber(dvForm.getTempPayeeIdNumber());
             dvForm.setHasMultipleAddresses(false);
@@ -142,7 +145,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
             if (customer != null) {
                 defaultCustomerAddress = customer.getPrimaryAddress();
 
-                Map<String, String> addressSearch = new HashMap<String, String>();
+                Map<String, String> addressSearch = new HashMap<>();
                 addressSearch.put(KFSPropertyConstants.CUSTOMER_NUMBER, payeeIdNumber);
 
                 List<AccountsReceivableCustomerAddress> customerAddresses = (List<AccountsReceivableCustomerAddress>)
@@ -226,8 +229,10 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     
     protected boolean hasFullEdit(CuDisbursementVoucherDocument document) {
         final Person user = GlobalVariables.getUserSession().getPerson();
-        final TransactionalDocumentPresentationController documentPresentationController = (TransactionalDocumentPresentationController)getDocumentHelperService().getDocumentPresentationController(document);
-        final TransactionalDocumentAuthorizer documentAuthorizer = (TransactionalDocumentAuthorizer)getDocumentHelperService().getDocumentAuthorizer(document);
+        final TransactionalDocumentPresentationController documentPresentationController = (TransactionalDocumentPresentationController) getDocumentHelperService()
+                .getDocumentPresentationController(document);
+        final TransactionalDocumentAuthorizer documentAuthorizer = (TransactionalDocumentAuthorizer) getDocumentHelperService()
+                .getDocumentAuthorizer(document);
         Set<String> documentActions =  documentPresentationController.getDocumentActions(document);
         documentActions = documentAuthorizer.getDocumentActions(document, user, documentActions);
 

@@ -1,5 +1,10 @@
 package edu.cornell.kfs.module.purap.dataaccess.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.module.purap.dataaccess.impl.B2BDaoImpl;
+import org.kuali.kfs.module.purap.exception.B2BConnectionException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,13 +15,10 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import org.kuali.kfs.module.purap.dataaccess.impl.B2BDaoImpl;
-import org.kuali.kfs.module.purap.exception.B2BConnectionException;
-
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuB2BDaoImpl extends B2BDaoImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuB2BDaoImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuB2BDaoImpl.class);
 
     /**
      * @see org.kuali.kfs.module.purap.dataaccess.impl.B2BDaoImpl#sendPunchOutRequest(java.lang.String, java.lang.String)

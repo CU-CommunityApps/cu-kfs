@@ -1,8 +1,6 @@
 package edu.cornell.kfs.fp.document.web.struts;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -13,7 +11,6 @@ import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 
 public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
-	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherForm.class);
 
     /**
      * determine whether the selected payee is a student

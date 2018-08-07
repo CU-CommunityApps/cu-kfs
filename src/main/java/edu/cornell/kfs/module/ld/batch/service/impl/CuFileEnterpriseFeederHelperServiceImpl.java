@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.service.impl.ExceptionCaughtStatus;
 import org.kuali.kfs.gl.batch.service.impl.FileReconBadLoadAbortedStatus;
 import org.kuali.kfs.gl.batch.service.impl.FileReconOkLoadOkStatus;
@@ -40,8 +42,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeederHelperServiceImpl {
-    
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederHelperServiceImpl.class); 
     
     @Override
     public void feedOnFile(File doneFile, File dataFile, File reconFile, PrintStream enterpriseFeedPs,

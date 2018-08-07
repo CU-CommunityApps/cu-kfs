@@ -30,15 +30,13 @@ import java.io.InputStream;
 @Transactional
 public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAttachmentServiceImpl.class);
+    private static Logger LOG = LogManager.getLogger(AttachmentServiceImpl.class);
 
     private AntiVirusService antiVirusService;
     private NoteService noteService;
 
     /**
      * Overridden to get attachment by attachment ID if necessary.
-     *
-     * @see org.kuali.kfs.krad.service.impl.AttachmentServiceImpl#retrieveAttachmentContents(Attachment)
      */
     @Override
     public InputStream retrieveAttachmentContents(Attachment attachment) throws IOException {

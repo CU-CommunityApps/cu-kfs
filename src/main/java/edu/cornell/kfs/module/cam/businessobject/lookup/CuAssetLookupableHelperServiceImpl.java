@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetLocation;
@@ -17,7 +19,7 @@ import org.kuali.rice.krad.bo.BusinessObject;
 import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 
 public class CuAssetLookupableHelperServiceImpl extends AssetLookupableHelperServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAssetLookupableHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuAssetLookupableHelperServiceImpl.class);
 
     @Override
     protected List<? extends BusinessObject> getSearchResultsHelper(Map<String, String> fieldValues, boolean unbounded) {
