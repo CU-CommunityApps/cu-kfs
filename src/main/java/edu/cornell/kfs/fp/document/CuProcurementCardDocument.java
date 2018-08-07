@@ -50,8 +50,8 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
 
         line.setSequenceNumber(this.getNextSourceLineNumber());
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (Object transactionEntryObj : transactionEntries) {
+            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
             transactionEntry.getSourceAccountingLines().add(line);
         }
 
@@ -64,8 +64,8 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
 
         line.setSequenceNumber(this.getNextTargetLineNumber());
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (Object transactionEntryObj : transactionEntries) {
+            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
             transactionEntry.getTargetAccountingLines().add(line);
         }
 

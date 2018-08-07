@@ -3,6 +3,8 @@ package edu.cornell.kfs.fp.document.validation.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonResidentAlienTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.businessobject.NonResidentAlienTaxPercent;
@@ -21,14 +23,14 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
 public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonResidentAlienInformationValidation{
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
+    
+	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
 
     private String validationType;
 
 	@Override
     public boolean validate(AttributedDocumentEvent event) {
         LOG.debug("validate start");
-        boolean isValid = true;
 
         DisbursementVoucherDocument document = (DisbursementVoucherDocument) accountingDocumentForValidation;
         DisbursementVoucherNonResidentAlienTax nonResidentAlienTax = document.getDvNonResidentAlienTax();
@@ -37,7 +39,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         Person financialSystemUser = GlobalVariables.getUserSession().getPerson();
 
         List<String> taxEditMode = this.getTaxEditMode();
-        if (!payeeDetail.isDisbVchrAlienPaymentCode() || !disbursementVoucherValidationService.hasRequiredEditMode(document, financialSystemUser, taxEditMode)) {
+        if (!payeeDetail.isDisbVchrAlienPaymentCode()
+                || !disbursementVoucherValidationService.hasRequiredEditMode(document, financialSystemUser, taxEditMode)) {
             return true;
         }
 
@@ -45,11 +48,12 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
         errors.addToErrorPath(KFSPropertyConstants.DV_NON_RESIDENT_ALIEN_TAX);
 
-// ICC SECTION
+        // ICC SECTION
 
         /* income class code required */
         if (StringUtils.isBlank(nonResidentAlienTax.getIncomeClassCode())) {
-            errors.putErrorWithoutFullErrorPath("DVNRATaxErrors", KFSKeyConstants.ERROR_REQUIRED, "Income class code");
+            errors.putErrorWithoutFullErrorPath("DVNRATaxErrors", KFSKeyConstants.ERROR_REQUIRED,
+                    "Income class code");
             return false;
         }
 

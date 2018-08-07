@@ -48,7 +48,9 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         String payeeTypeCode = getVendorPayeeTypeCodeMapping().get(vendorTypeCode);
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
 
-        String vendorAddress = MessageFormat.format(addressPattern, vendorDetail.getDefaultAddressLine1(), vendorDetail.getDefaultAddressCity(), vendorDetail.getDefaultAddressStateCode(), vendorDetail.getDefaultAddressCountryCode());
+        String vendorAddress = MessageFormat.format(addressPattern, vendorDetail.getDefaultAddressLine1(),
+                vendorDetail.getDefaultAddressCity(), vendorDetail.getDefaultAddressStateCode(),
+                vendorDetail.getDefaultAddressCountryCode());
         disbursementPayee.setAddress(vendorAddress);
 
         return disbursementPayee;
@@ -157,10 +159,10 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
             String payeeTypeCode = disbursementVoucherPayeeDetail.getDisbursementVoucherPayeeTypeCode();
             String payeeIdNumber = disbursementVoucherPayeeDetail.getDisbVchrPayeeIdNumber();
 
-            result |= payeeACHService.isPayeeSignedUpForACH(payeeTypeCode, payeeIdNumber);
+            result = payeeACHService.isPayeeSignedUpForACH(payeeTypeCode, payeeIdNumber);
 
             if (!result) {
-                result |= payeeACHService.isPayeeSignedUpForACH(PdpConstants.PayeeIdTypeCodes.ENTITY, getPayeeEntityId(payeeIdNumber));
+                result = payeeACHService.isPayeeSignedUpForACH(PdpConstants.PayeeIdTypeCodes.ENTITY, getPayeeEntityId(payeeIdNumber));
             }
         }
 

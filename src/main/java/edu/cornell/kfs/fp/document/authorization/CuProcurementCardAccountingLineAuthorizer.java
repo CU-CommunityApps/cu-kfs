@@ -17,7 +17,8 @@ import org.kuali.rice.kim.api.identity.Person;
 public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAccountingLineAuthorizer {
 
     @Override
-    protected boolean determineEditPermissionByFieldName(AccountingDocument accountingDocument, AccountingLine accountingLine, String fieldName, Person currentUser, Set<String> currentNodes) {
+    protected boolean determineEditPermissionByFieldName(AccountingDocument accountingDocument,
+            AccountingLine accountingLine, String fieldName, Person currentUser, Set<String> currentNodes) {
         WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
 
         List<ActionRequest> actionRequests = workflowDocument.getRootActionRequests();
@@ -40,10 +41,11 @@ public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAc
         if (accountingDocument.getDocumentHeader() != null &&
                 accountingDocument.getDocumentHeader().getWorkflowDocument() != null) {
             if (currentNodes != null && currentNodes.contains(RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT)) {
-                // 3. Check that the current user has the permission to edit the document, which means in this case he can edit the accounting line
+                // 3. Check that the current user has the permission to edit the document, which means in this case he
+                // can edit the accounting line
                 if (getDocumentAuthorizer(accountingDocument).canEdit(accountingDocument, currentUser)) {
-                    // if above conditions satisfy, then we can skip further validation on permission checking,
-                    // since any user that can edit the accounting lines will be able to add/change it to any other account
+                    // if above conditions satisfy, then we can skip further validation on permission checking, since
+                    // any user that can edit the accounting lines will be able to add/change it to any other account
                     return true;
                 }
             }
