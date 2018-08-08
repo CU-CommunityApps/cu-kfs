@@ -103,8 +103,8 @@ public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksRe
 
     protected void writeGlobalMessagesSubReport(PaymentWorksUploadSuppliersBatchReportData reportData) {
         String subTitle = getGlobalMessagesSubTitle();
-        String noElementsMessage = getPaymentWorksBatchUtilityService().retrievePaymentWorksParameterValue(
-                PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_NO_GLOBAL_MESSAGES_MESSAGE);
+        String noElementsMessage = getConfigurationService().getPropertyValueAsString(
+                PaymentWorksKeyConstants.NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE);
         writeSubReport(reportData.getGlobalMessages(), subTitle, noElementsMessage, this::writeGlobalMessagesList);
     }
 
@@ -173,9 +173,7 @@ public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksRe
         ensureSummaryLabelHasValue(reportData.getRecordsWithProcessingErrorsSummary(),
                 PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_ERRORED_LABEL);
         ensureSummaryLabelHasValue(reportData.getRecordsProcessedByPaymentWorksSummary(),
-                PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDORS_RECORDED_LABEL);
-        ensureSummaryLabelHasValue(reportData.getGlobalMessagesSummary(),
-                PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_GLOBAL_MESSAGES_LABEL);
+                PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDORS_RECEIVED_LABEL);
     }
 
     protected void ensureSummaryLabelHasValue(PaymentWorksBatchReportSummaryItem summary, String parameterName) {

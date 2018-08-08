@@ -25,6 +25,7 @@ public class PaymentWorksWebServiceConstants {
     }
 
     public static final class PaymentWorksCommonJsonConstants {
+        public static final String DETAIL_FIELD = "detail";
         public static final String STATUS_FIELD = "status";
         public static final String STATUS_OK = "ok";
     }
@@ -32,7 +33,6 @@ public class PaymentWorksWebServiceConstants {
     public static final class PaymentWorksTokenRefreshConstants {
         public static final String REFRESH_TOKEN_URL_FORMAT = "%susers/%s/refresh_auth_token/";
         public static final String AUTH_TOKEN_FIELD = "auth_token";
-        public static final String DETAIL_FIELD = "detail";
     }
 
     public static final class PaymentWorksSupplierUploadConstants {

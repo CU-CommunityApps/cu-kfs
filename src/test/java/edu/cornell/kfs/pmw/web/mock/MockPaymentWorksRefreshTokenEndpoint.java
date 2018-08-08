@@ -110,7 +110,7 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
 
     private void setupRefreshFailureResponse(HttpResponse response, String message) {
         String jsonText = buildJsonTextFromNode((rootNode) -> {
-            rootNode.put(PaymentWorksTokenRefreshConstants.DETAIL_FIELD, message);
+            rootNode.put(PaymentWorksCommonJsonConstants.DETAIL_FIELD, message);
         });
         
         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);

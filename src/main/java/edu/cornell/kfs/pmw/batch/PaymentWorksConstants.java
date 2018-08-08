@@ -22,6 +22,7 @@ public class PaymentWorksConstants {
     public final static Pattern PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = Pattern.compile(REGEX_FOR_MM_SLASH_DD_SLASH_YYYY);
     
     public static final String NULL_STRING = "NULL";
+    public static final String SUPPLIER_UPLOAD_DELETE_INDICATOR = "DEL";
     
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";

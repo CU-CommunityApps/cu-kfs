@@ -8,14 +8,12 @@ import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 public class PaymentWorksUploadSuppliersBatchReportData extends PaymentWorksEmailableReportData {
 
     private PaymentWorksBatchReportSummaryItem recordsProcessedByPaymentWorksSummary;
-    private PaymentWorksBatchReportSummaryItem globalMessagesSummary;
     private List<String> globalMessages;
     private boolean updatedKfsAndPaymentWorksSuccessfully;
 
     public PaymentWorksUploadSuppliersBatchReportData() {
         super();
         this.recordsProcessedByPaymentWorksSummary = new PaymentWorksBatchReportSummaryItem();
-        this.globalMessagesSummary = new PaymentWorksBatchReportSummaryItem();
         this.globalMessages = new ArrayList<>();
         this.updatedKfsAndPaymentWorksSuccessfully = false;
     }
@@ -27,7 +25,6 @@ public class PaymentWorksUploadSuppliersBatchReportData extends PaymentWorksEmai
             PaymentWorksBatchReportSummaryItem recordsWithProcessingErrorsSummary,
             PaymentWorksBatchReportSummaryItem recordsGeneratingExceptionSummary,
             PaymentWorksBatchReportSummaryItem recordsProcessedByPaymentWorksSummary,
-            PaymentWorksBatchReportSummaryItem globalMessagesSummary,
             List<PaymentWorksBatchReportVendorItem> recordsProcessed,
             List<PaymentWorksBatchReportVendorItem> recordsWithProcessingErrors,
             List<String> globalMessages,
@@ -46,14 +43,6 @@ public class PaymentWorksUploadSuppliersBatchReportData extends PaymentWorksEmai
 
     public void setRecordsProcessedByPaymentWorksSummary(PaymentWorksBatchReportSummaryItem recordsProcessedByPaymentWorksSummary) {
         this.recordsProcessedByPaymentWorksSummary = recordsProcessedByPaymentWorksSummary;
-    }
-
-    public PaymentWorksBatchReportSummaryItem getGlobalMessagesSummary() {
-        return globalMessagesSummary;
-    }
-
-    public void setGlobalMessagesSummary(PaymentWorksBatchReportSummaryItem globalMessagesSummary) {
-        this.globalMessagesSummary = globalMessagesSummary;
     }
 
     public List<String> getGlobalMessages() {

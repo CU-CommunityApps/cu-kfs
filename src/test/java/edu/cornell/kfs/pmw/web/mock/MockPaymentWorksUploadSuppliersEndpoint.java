@@ -46,6 +46,7 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
 
     private String expectedAuthorizationToken;
     private PaymentWorksVendorFixture[] expectedVendorsForNextUpload;
+    private boolean calledUploadSuppliersService;
 
     public MockPaymentWorksUploadSuppliersEndpoint(String multiPartContentDirectory, String expectedAuthorizationToken) {
         this.multiPartContentDirectory = multiPartContentDirectory;
@@ -61,8 +62,13 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
         this.expectedVendorsForNextUpload = expectedVendorsForNextUpload;
     }
 
+    public boolean isCalledUploadSuppliersService() {
+        return calledUploadSuppliersService;
+    }
+
     @Override
     protected void processRequest(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+        this.calledUploadSuppliersService = true;
         assertRequestHasCorrectHttpMethod(request, HttpMethod.POST);
         assertRequestHasCorrectContentType(request, ContentType.MULTIPART_FORM_DATA);
         

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
@@ -15,6 +16,8 @@ public enum PaymentWorksVendorFixture {
             "SomeTown", "NY", "US", "11111", "111223333", "johndoe@somewhere.com"),
     MARY_SMITH("12345678", 2333, 0, KFSConstants.EMPTY_STRING, "Mary", "Smith", "333 Rocky Rd.", KFSConstants.EMPTY_STRING,
             "Ithaca", "NY", "US", "24680", "666666666", "marysmith@unknownsite.net"),
+    MARY_SMITH_DELETE("12345678", 2333, 0, PaymentWorksConstants.SUPPLIER_UPLOAD_DELETE_INDICATOR, "Mary", "Smith",
+            "333 Rocky Rd.", KFSConstants.EMPTY_STRING, "Ithaca", "NY", "US", "24680", "666666666", "marysmith@unknownsite.net"),
     WIDGET_MAKERS("55555555", 4160, 0, "Widget Makers", KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING,
             "Division of Financial Affairs", "1200 Long Dr.", "Miami", "FL", "US", "17171", "123443211", "findept@widgetmakers.org");
 

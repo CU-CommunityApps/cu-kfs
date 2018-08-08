@@ -3,8 +3,10 @@ package edu.cornell.kfs.pmw.batch.dataaccess.impl;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +16,7 @@ import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJd
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksVendorDao {
     
@@ -21,6 +24,8 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     
     protected static final SimpleDateFormat PROCESSING_TIMESTAMP_SQL_FORMATTER = new SimpleDateFormat("dd-MMM-yy", Locale.US);
     
+    private static final int MAX_LIST_CHUNK_SIZE = 1000;
+
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, Timestamp processingTimeStamp) {
         updateExistingPaymentWorksVendorInStagingTable(id, pmwRequestStatus, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null, null);
@@ -101,23 +106,56 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         }
         sqlFactory.appendSql("supp_upld_stat = ? ", supplierUploadStatus);
         
-        sqlFactory.appendSql("where id in (");
-        appendParameterList(sqlFactory, ids);
-        sqlFactory.appendSql(")");
+        sqlFactory.appendSql("where ");
+        appendInCondition(sqlFactory, "id", ids);
         
-        int updateRowCount = getJdbcTemplate().update(sqlFactory.getSql(), sqlFactory.getParameters());
+        int updateRowCount = getJdbcTemplate().update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
         LOG.info("updateSupplierUploadStatusForVendorsInStagingTable, updated the following number of records: " + updateRowCount);
     }
 
-    private void appendParameterList(ParameterizedSqlFactory sqlFactory, List<?> values) {
+    private void appendInCondition(ParameterizedSqlFactory sqlFactory, String columnName, List<?> values) {
         if (CollectionUtils.isEmpty(values)) {
-            return;
+            throw new IllegalArgumentException("Cannot create an IN condition from an empty values list");
         }
         
-        sqlFactory.appendSql("?", values.get(0));
-        values.stream()
+        int[] chunkSizes = computeInConditionChunkSizes(values);
+        int chunkStartIndex = 0;
+        
+        sqlFactory.appendSql(CUKFSConstants.LEFT_PARENTHESIS);
+        for (int chunkSize : chunkSizes) {
+            if (chunkStartIndex != 0) {
+                sqlFactory.appendSql(" or ");
+            }
+            List<?> valuesChunk = values.subList(chunkStartIndex, chunkStartIndex + chunkSize);
+            appendInConditionChunk(sqlFactory, columnName, valuesChunk);
+            chunkStartIndex += chunkSize;
+        }
+        sqlFactory.appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
+    }
+
+    private int[] computeInConditionChunkSizes(List<?> values) {
+        int listSizeRemainder = values.size() % MAX_LIST_CHUNK_SIZE;
+        int chunkCount = (int) Math.ceil(values.size() / (double) MAX_LIST_CHUNK_SIZE);
+        
+        int[] chunkSizes = new int[chunkCount];
+        Arrays.fill(chunkSizes, MAX_LIST_CHUNK_SIZE);
+        if (listSizeRemainder > 0) {
+            chunkSizes[chunkSizes.length - 1] = listSizeRemainder;
+        }
+        return chunkSizes;
+    }
+
+    private void appendInConditionChunk(ParameterizedSqlFactory sqlFactory, String columnName, List<?> valuesChunk) {
+        sqlFactory.appendSql(columnName);
+        sqlFactory.appendSql(" in ");
+        sqlFactory.appendSql(CUKFSConstants.LEFT_PARENTHESIS);
+        
+        sqlFactory.appendSql("?", valuesChunk.get(0));
+        valuesChunk.stream()
                 .skip(1L)
                 .forEach((value) -> sqlFactory.appendSql(", ?", value));
+        
+        sqlFactory.appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
     }
 
     private class ParameterizedSqlFactory {

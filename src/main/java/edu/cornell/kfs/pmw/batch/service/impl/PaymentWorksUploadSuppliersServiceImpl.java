@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -89,6 +90,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
         InputStream vendorCsvDataStream = null;
         
         try {
+            checkForPotentialVendorDeletionAttempts(vendors);
             byte[] vendorCsvData = generateVendorCsvDataForUpload(vendors);
             vendorCsvDataStream = new ByteArrayInputStream(vendorCsvData);
             int receivedVendorCount = paymentWorksWebServiceCallsService.uploadVendorsToPaymentWorks(vendorCsvDataStream);
@@ -108,6 +110,16 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
             return false;
         } finally {
             IOUtils.closeQuietly(vendorCsvDataStream);
+        }
+    }
+
+    private void checkForPotentialVendorDeletionAttempts(Collection<PaymentWorksVendor> vendors) {
+        boolean vendorDeletionAttemptExists = vendors.stream()
+                .anyMatch((vendor) -> StringUtils.equalsIgnoreCase(
+                        PaymentWorksConstants.SUPPLIER_UPLOAD_DELETE_INDICATOR, vendor.getRequestingCompanyLegalNameForProcessing()));
+        if (vendorDeletionAttemptExists) {
+            LOG.error("checkForPotentialVendorDeletionAttempts, discovered a potential attempt to delete a vendor via the supplier upload");
+            throw new RuntimeException("Detected a potential attempt to delete a vendor via the supplier upload");
         }
     }
 
@@ -152,7 +164,7 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
             List<Integer> ids = getVendorStagingIds(vendors);
             if (uploadSucceeded) {
                 paymentWorksVendorDao.updateSupplierUploadStatusesForVendorsInStagingTable(ids,
-                        PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.CONNECTED.getCodeAsString(),
+                        PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.CONNECTED.getText(),
                         PaymentWorksConstants.SupplierUploadStatus.VENDOR_UPLOADED);
                 generateAndAddVendorReportItems(reportData.getRecordsProcessed(), vendors);
                 reportData.setUpdatedKfsAndPaymentWorksSuccessfully(true);

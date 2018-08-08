@@ -35,6 +35,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.fixture.PaymentWorksVendorFixtur
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksUploadSuppliersBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCredentialKeys;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksSupplierUploadConstants;
 import edu.cornell.kfs.pmw.web.mock.MockPaymentWorksUploadSuppliersEndpoint;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
@@ -43,8 +44,6 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
 
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/pmw/suppliers/";
     private static final String DUMMY_AUTHORIZATION_TOKEN = "111122223333444455556666777788889999AAAA";
-
-    
 
     private TestPaymentWorksUploadSuppliersService uploadSuppliersService;
     private TestPaymentWorksWebServiceCallsService webServiceCallsService;
@@ -144,6 +143,22 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
         assertUploadSucceeds(PaymentWorksVendorFixture.JOHN_DOE, PaymentWorksVendorFixture.MARY_SMITH, PaymentWorksVendorFixture.WIDGET_MAKERS);
     }
 
+    private void assertUploadSucceeds(PaymentWorksVendorFixture... fixtures) {
+        List<PaymentWorksVendor> vendors = buildVendorsFromFixtures(fixtures);
+        PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
+        uploadSuppliersEndpoint.setExpectedVendorsForNextUpload(fixtures);
+        
+        boolean result = uploadSuppliersService.uploadVendorsToPaymentWorks(vendors, reportData);
+        assertTrue("Supplier upload should have succeeded", result);
+        assertTrue("The Supplier Upload endpoint should have been invoked", uploadSuppliersEndpoint.isCalledUploadSuppliersService());
+        assertTrue("The server should not have sent an error message field",
+                StringUtils.isBlank(webServiceCallsService.getLastSupplierUploadErrorFieldName()));
+        assertTrue("The server should not have sent an error message",
+                StringUtils.isBlank(webServiceCallsService.getLastSupplierUploadErrorMessage()));
+        assertEquals("Wrong vendor count received from server's response",
+                fixtures.length, reportData.getRecordsProcessedByPaymentWorksSummary().getRecordCount());
+    }
+
     @Test
     public void testHandleErrorResponseFromEndpoint() throws Exception {
         PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
@@ -153,23 +168,31 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
         assertEquals("Wrong number of global messages recorded", 1, reportData.getGlobalMessages().size());
         assertEquals("Wrong global message recorded in report",
                 ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE, reportData.getGlobalMessages().get(0));
+        assertTrue("The Supplier Upload endpoint should have been invoked", uploadSuppliersEndpoint.isCalledUploadSuppliersService());
+        assertEquals("Wrong error message field returned by endpoint",
+                PaymentWorksSupplierUploadConstants.ERROR_FIELD, webServiceCallsService.getLastSupplierUploadErrorFieldName());
         assertEquals("Wrong error message returned by endpoint",
                 SupplierUploadErrorMessages.FILE_CONTAINED_ZERO_ROWS, webServiceCallsService.getLastSupplierUploadErrorMessage());
     }
 
-    private void assertUploadSucceeds(PaymentWorksVendorFixture... fixtures) {
-        List<PaymentWorksVendor> vendors = Arrays.stream(fixtures)
-                .map(PaymentWorksVendorFixture::toPaymentWorksVendor)
-                .collect(Collectors.toCollection(ArrayList::new));
+    @Test
+    public void testHandleDetectionOfVendorDeletionAttempts() throws Exception {
+        List<PaymentWorksVendor> vendors = buildVendorsFromFixtures(
+                PaymentWorksVendorFixture.JOHN_DOE, PaymentWorksVendorFixture.MARY_SMITH_DELETE, PaymentWorksVendorFixture.WIDGET_MAKERS);
         PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
-        uploadSuppliersEndpoint.setExpectedVendorsForNextUpload(fixtures);
         
         boolean result = uploadSuppliersService.uploadVendorsToPaymentWorks(vendors, reportData);
-        assertTrue("Supplier upload should have succeeded", result);
-        assertTrue("The server should not have sent an error message",
-                StringUtils.isBlank(webServiceCallsService.getLastSupplierUploadErrorMessage()));
-        assertEquals("Wrong vendor count received from server's response",
-                fixtures.length, reportData.getRecordsProcessedByPaymentWorksSummary().getRecordCount());
+        assertFalse("The processing should have failed", result);
+        assertEquals("Wrong number of global messages recorded", 1, reportData.getGlobalMessages().size());
+        assertEquals("Wrong global message recorded in report",
+                ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE, reportData.getGlobalMessages().get(0));
+        assertFalse("The Supplier Upload endpoint should not have been invoked", uploadSuppliersEndpoint.isCalledUploadSuppliersService());
+    }
+
+    private List<PaymentWorksVendor> buildVendorsFromFixtures(PaymentWorksVendorFixture... fixtures) {
+        return Arrays.stream(fixtures)
+                .map(PaymentWorksVendorFixture::toPaymentWorksVendor)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static class TestPaymentWorksUploadSuppliersService extends PaymentWorksUploadSuppliersServiceImpl {
@@ -182,11 +205,17 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
     private static class TestPaymentWorksWebServiceCallsService extends PaymentWorksWebServiceCallsServiceImpl {
         private static final long serialVersionUID = 1L;
         
+        private String lastSupplierUploadErrorFieldName = null;
         private String lastSupplierUploadErrorMessage = null;
         
         @Override
-        protected void handleErrorMessageFromSupplierUploadFailure(String errorMessage) {
+        protected void handleErrorMessageFromSupplierUploadFailure(String errorFieldName, String errorMessage) {
+            this.lastSupplierUploadErrorFieldName = errorFieldName;
             this.lastSupplierUploadErrorMessage = errorMessage;
+        }
+        
+        public String getLastSupplierUploadErrorFieldName() {
+            return lastSupplierUploadErrorFieldName;
         }
         
         public String getLastSupplierUploadErrorMessage() {
