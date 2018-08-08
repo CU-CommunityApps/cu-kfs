@@ -27,7 +27,7 @@ import edu.cornell.kfs.pdp.dataaccess.CuFormatPaymentDao;
 import edu.cornell.kfs.pdp.service.CuFormatService;
 
 public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFormatServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuFormatServiceImpl.class);
     
     @Override
     public FormatProcessSummary startFormatProcess(Person user, String campus,

@@ -41,6 +41,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.service.impl.StringHelper;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -123,7 +125,7 @@ import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelperServiceImpl implements CuElectronicInvoiceHelperService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuElectronicInvoiceHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceHelperServiceImpl.class);
     private StringBuffer emailTextErrorList;
     private HashMap<String, Integer> loadCounts = new HashMap<String, Integer>();
     private static final String EXTRACT_FAILURES = "Extract Failures";
@@ -404,7 +406,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	}
 
     protected void removeEmptyItems(List<PurApItem> preqItems) {
-
         for(int i=preqItems.size()-1; i >= 0; i--) {
             PurApItem item = preqItems.get(i);
 
@@ -490,7 +491,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected void setProcessingCampus(PaymentRequestDocument preqDoc, String initiatorCampusCode) {
-        String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
+        String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
+                PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
         if(!StringHelper.isNullOrEmpty(campusCode)) {
             preqDoc.setProcessingCampusCode(campusCode);
         }
@@ -508,11 +510,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 preqDoc.setProcessingCampusCode(campusCode);
              //   preqDoc.setProcessingCampusCode(CUPurapConstants.PaymentRequestDefaults.DEFAULT_PROCESSING_CAMPUS_CODE);
             } else {
-
                 preqDoc.setProcessingCampusCode(initiatorCampusCode);
             }
         }
-
      }
 
     // KFSUPGRADE-483 : refactor to 2 steps
@@ -1290,7 +1290,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected void attachInvoiceXMLWithRejectDoc(ElectronicInvoiceRejectDocument eInvoiceRejectDocument, File attachmentFile, String noteText) {
-
         Note note = null;
         try {
             note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
@@ -1310,7 +1309,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         Attachment attachment = null;
         try {
-            attachment = attachmentService.createAttachment(eInvoiceRejectDocument.getNoteTarget(), attachmentFile.getName(), INVOICE_FILE_MIME_TYPE, (int) attachmentFile.length(), fileStream, attachmentType);        } catch (Exception e) {
+            attachment = attachmentService.createAttachment(eInvoiceRejectDocument.getNoteTarget(),
+                    attachmentFile.getName(), INVOICE_FILE_MIME_TYPE, (int) attachmentFile.length(), fileStream,
+                    attachmentType);
+        } catch (Exception e) {
         	// it may have more than one kind of Exception
         	// if attachment is not created for any reason, then don't include in note and proceed.
         	// otherwise it will throw runtimeexception and cause job to stop
@@ -1394,8 +1396,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     @Override
     @NonTransactional
     public boolean doMatchingProcess(ElectronicInvoiceRejectDocument rejectDocument){
-
-        /**
+        /*
          * This is needed here since if the user changes the DUNS number.
          */
         validateVendorDetails(rejectDocument);
@@ -1410,7 +1411,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         // KFSPTS-1719 : save the nomatchingitems found during match process.
         ((CuElectronicInvoiceRejectDocument)rejectDocument).setNonMatchItems(((CuElectronicInvoiceOrderHolder)rejectDocHolder).getNonMatchItems());
 
-        /**
+        /*
          * Once we're through with the matching process, it's needed to check whether it's possible
          * to create PREQ for the reject doc
          */
@@ -1419,7 +1420,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
         //  determine which of the reject reasons we should suppress based on the parameter
-        List<String> ignoreRejectTypes = new ArrayList<String>( parameterService.getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE, "ElectronicInvoiceReject", "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL") );
+        List<String> ignoreRejectTypes = new ArrayList<String>(parameterService
+                .getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE, "ElectronicInvoiceReject",
+                        "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL"));
         List<ElectronicInvoiceRejectReason> rejectReasonsToDelete = new ArrayList<ElectronicInvoiceRejectReason>();
         for (ElectronicInvoiceRejectReason rejectReason : rejectDocument.getInvoiceRejectReasons()) {
             String rejectedReasonTypeCode = rejectReason.getInvoiceRejectReasonTypeCode();
@@ -1592,7 +1595,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     protected void processInvoiceItem(PaymentRequestItem preqItem, ElectronicInvoiceOrderHolder orderHolder){
-
     	// TODO : 'no qty' po line item may have 'qty inv item'
     	// force it to match like qty item.
     	CuPaymentRequestItemExtension preqItemExt = (CuPaymentRequestItemExtension)preqItem.getExtension() ;
@@ -1645,7 +1647,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }else if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_EXMT, orderHolder)) {
             processAboveTheLineItem(preqItem, orderHolder);
         }
-
     }
 
     protected void processTaxItem (PaymentRequestItem preqItem, ElectronicInvoiceOrderHolder orderHolder){

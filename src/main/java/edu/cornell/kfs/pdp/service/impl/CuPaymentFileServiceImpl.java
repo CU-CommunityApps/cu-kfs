@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.LoadPaymentStatus;
@@ -37,7 +39,7 @@ import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 
 public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentFileServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuPaymentFileServiceImpl.class);
     
     protected VendorService vendorService;
     protected EmailService emailService;

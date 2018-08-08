@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -40,7 +42,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 
 public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorMaintainableImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuVendorMaintainableImpl.class);
     private static final String HEADER_ID_SEQ = "VNDR_HDR_GNRTD_ID";
     private static final String ADDRESS_HEADER_ID_SEQ = "VNDR_ADDR_GNRTD_ID";
     private static final String VENDOR_SECTION_ID = "Vendor";

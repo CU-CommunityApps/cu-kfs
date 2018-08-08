@@ -28,9 +28,7 @@ import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.service.CuFormatService;
 
 public class CuFormatAction extends FormatAction {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFormatAction.class);
 
-    
     public CuFormatAction() {
     	formatService = SpringContext.getBean(CuFormatService.class);
     }

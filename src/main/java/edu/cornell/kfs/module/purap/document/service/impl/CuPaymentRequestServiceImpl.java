@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
@@ -47,7 +49,7 @@ import edu.cornell.kfs.sys.service.CUBankService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentRequestServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuPaymentRequestServiceImpl.class);
     
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
@@ -55,11 +57,9 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     @Override
     @NonTransactional
     public void removeIneligibleAdditionalCharges(PaymentRequestDocument document) {
-
-        List<PaymentRequestItem> itemsToRemove = new ArrayList<PaymentRequestItem>();
+        List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
 
         for (PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
-
         	// KFSUPGRADE-473
             //if no extended price or purchase order item unit price, and its an order discount or trade in, remove
             if ((ObjectUtils.isNull(item.getPurchaseOrderItemUnitPrice()) && ObjectUtils.isNull(item.getExtendedPrice())) &&
@@ -78,9 +78,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                     // remove discount
                     itemsToRemove.add(item);
                 }
-                continue;
             }
-
         }
 
         // remove items marked for removal
@@ -359,7 +357,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      */
     @Override
     public Map <String, String> getPaymentRequestsByStatusAndPurchaseOrderId(String applicationDocumentStatus, Integer purchaseOrderId) {
-    	Map <String, String> paymentRequestResults = new HashMap<String, String>();
+    	Map<String, String> paymentRequestResults = new HashMap<>();
     	paymentRequestResults.put("hasInProcess", "N");
     	paymentRequestResults.put("checkInProcess", "N");
 

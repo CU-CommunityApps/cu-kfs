@@ -3,7 +3,8 @@ package edu.cornell.kfs.sys.batch;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.JobListener;
 import org.kuali.kfs.sys.batch.service.SchedulerService;
@@ -13,8 +14,7 @@ import org.quartz.JobExecutionContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 public class CuJobListener extends JobListener  {
-
-	private static final Logger LOG = Logger.getLogger(CuJobListener.class);
+    private static final Logger LOG = LogManager.getLogger(CuJobListener.class);
 	
 	protected void notify(JobExecutionContext jobExecutionContext, String jobStatus) {		
 		try {
