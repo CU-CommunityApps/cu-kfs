@@ -795,7 +795,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		// make sure both coaCode and accountNumber are filled out
 		String error_message_prefix =  WHEN_FUND_PREFIX + fundGroupCode + AND_SUB_FUND + subFundGroupCode;
-		result &= checkEmptyBOField(KFSPropertyConstants.INCOME_STREAM_ACCOUNT_NUMBER, accountGlobals.getIncomeStreamAccountNumber(), error_message_prefix + ", Income Stream Account Number");
+		boolean result = checkEmptyBOField(KFSPropertyConstants.INCOME_STREAM_ACCOUNT_NUMBER, accountGlobals.getIncomeStreamAccountNumber(), error_message_prefix + ", Income Stream Account Number");
 		result &= checkEmptyBOField(KFSPropertyConstants.INCOME_STREAM_CHART_OF_ACCOUNTS_CODE, accountGlobals.getIncomeStreamFinancialCoaCode(), error_message_prefix + ", Income Stream Chart Of Accounts Code");
 
 		// if both fields aren't present, then we're done

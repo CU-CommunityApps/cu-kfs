@@ -185,7 +185,6 @@ public class FormatAction extends KualiAction {
 
         try {
             formatService.performFormat(processId.intValue());
-            LOG.info("Formatting done.."); //remove this
         }
         catch (FormatException e) {
             // errors added to global message map
@@ -193,7 +192,6 @@ public class FormatAction extends KualiAction {
         }
 
         String lookupUrl = buildUrl(String.valueOf(processId.intValue()));
-        LOG.info("Forwarding to lookup"); //remove this
         return new ActionForward(lookupUrl, true);
     }
 

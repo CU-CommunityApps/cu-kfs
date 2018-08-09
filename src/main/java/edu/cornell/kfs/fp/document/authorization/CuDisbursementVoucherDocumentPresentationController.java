@@ -15,8 +15,6 @@ import org.kuali.kfs.krad.document.Document;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
-import edu.cornell.kfs.module.receiptProcessing.batch.CsvBatchInputFileTypeBase;
-import edu.cornell.kfs.module.receiptProcessing.batch.Logger;
 import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
 
 public class CuDisbursementVoucherDocumentPresentationController extends DisbursementVoucherDocumentPresentationController{

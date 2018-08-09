@@ -123,6 +123,8 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     public String getDocumentLabel() throws WorkflowException{
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName(getDocumentTypeName());
     }
+    
+    public abstract String getDocumentTypeName();
 
     /**
      * Gets the poNumberMasked attribute.

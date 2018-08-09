@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -46,7 +48,8 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
-    
+	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherAction.class);
+	
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -59,7 +62,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         return super.refresh(mapping, form, request, response);
     }
     
-    protected ActionForward refreshAfterPayeeSelection(ActionMapping mapping, DisbursementVoucherForm dvForm,
+    protected ActionForward refreshAfterPayeeSelection(ActionMapping mapping, CuDisbursementVoucherForm dvForm,
             HttpServletRequest request) {
         String refreshCaller = dvForm.getRefreshCaller();
         

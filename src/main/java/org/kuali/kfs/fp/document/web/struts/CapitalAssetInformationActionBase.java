@@ -1221,6 +1221,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) calfb.getFinancialDocument();
 
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();
+        List<CapitalAssetInformation> currentCapitalAssetInformation = this.getCurrentCapitalAssetInformationObject(
+                calfb);
 
         String documentNumber = calfb.getDocument().getDocumentNumber();
         calfb.setSystemControlAmount(KualiDecimal.ZERO);
