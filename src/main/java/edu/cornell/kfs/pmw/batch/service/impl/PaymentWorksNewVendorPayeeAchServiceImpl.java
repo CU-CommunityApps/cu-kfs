@@ -2,26 +2,19 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 
-import org.kuali.kfs.krad.service.BusinessObjectService;
-
-import org.kuali.kfs.pdp.service.AchBankService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksBankAccountType;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTinType;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
@@ -29,8 +22,8 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchReportService;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorAchDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 
@@ -400,6 +393,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
+        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
         return pmwVendor;
     }
     
@@ -414,6 +408,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
+        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
         return pmwVendor;
     }
 
