@@ -31,7 +31,7 @@ public class CuSubAccountRule extends SubAccountRule {
             if (ObjectUtils.isNull(a21.getCostShareAccount())) {
                 putFieldError("a21SubAccount.costShareSourceAccountNumber", KFSKeyConstants.ERROR_EXISTENCE,
                         getDisplayName("a21SubAccount.costShareSourceAccountNumber"));
-                    success = false;
+                success = false;
             }
         }
 

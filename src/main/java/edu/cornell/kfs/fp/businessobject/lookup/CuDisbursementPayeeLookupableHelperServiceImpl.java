@@ -29,8 +29,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementPayeeLookupableHelperServiceImpl extends DisbursementPayeeLookupableHelperServiceImpl {
-    
-    
+        
     private static final String ACTIVE = "A";
     private static final String RETIRED = "R";
     
@@ -39,7 +38,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
      */
     @Override
     public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
-    	List<DisbursementPayee> searchResults = new ArrayList<>();
+    		List<DisbursementPayee> searchResults = new ArrayList<>();
 
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER)) 
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
