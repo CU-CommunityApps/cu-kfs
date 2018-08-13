@@ -262,8 +262,8 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
-		    if (LOG.isInfoEnabled()) {
-		        LOG.info("updateAccountBasicFields, setting accountRestrictedStatusCode to: " + accountRestrictedStatusCode);
+		    if (LOG.isDebugEnabled()) {
+		        LOG.debug("updateAccountBasicFields, setting accountRestrictedStatusCode to: " + accountRestrictedStatusCode);
 		    }
 		    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
 		}
