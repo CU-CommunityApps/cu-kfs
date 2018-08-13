@@ -17,13 +17,13 @@ import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryType;
 import org.kuali.kfs.coa.businessobject.RestrictedStatus;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.location.framework.campus.CampusEbo;
 
 import edu.cornell.kfs.coa.service.GlobalObjectWithIndirectCostRecoveryAccountsService;
@@ -31,7 +31,7 @@ import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
 
 public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIndirectCostRecoveryAccounts{
-    
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAccountGlobal.class);
     private static final long serialVersionUID = 1L;
 
     protected transient DateTimeService dateTimeService;
@@ -135,34 +135,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	/**
-	 * The business rules for the accountRestrictedStatusCode is as follows:
-	 *
-	 * If the sub-fund of the account listed in the edit list of accounts on
-	 * the global maintenance edoc is one that has a default accountRestrictedStatusCode
-	 * listed, then any change entered in the global account maintenance edoc is ignored.
-	 *
-	 * If the sub-fund of the account listed in the edit list of accounts on
-	 * the global maintenance edoc is one that does NOT have a default accountRestrictedStatusCode
-	 * listed, then any change entered in the global account maintenance edoc overwrites
-	 * the accountRestrictedStatusCode value on that particular account from the edit list.
-	 *
-	 * @param globalAccountMaintenanceDocSubFundGroup User entered Sub-Fund Group for the Sub-Fund Group Code.
-	 * @param globalAccountMaintenanceDocRestrictedStatusCode User entered Account Restricted Status Code value.
-	 * @param accountBeingEdited The Single Account to apply the business rules to.
-	 */
-	private void updateAccountRestrictedStatusCodeForAccountBeingEdited(SubFundGroup globalAccountMaintenanceDocSubFundGroup, String globalAccountMaintenanceDocRestrictedStatusCode, Account accountBeingEdited)
-	{
-	    if (ObjectUtils.isNull(globalAccountMaintenanceDocSubFundGroup)) {
-	        if ( !isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(accountBeingEdited.getSubFundGroup()) ) {
-	            accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
-	        }
-	    }
-	    else if ( !isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(globalAccountMaintenanceDocSubFundGroup) ) {
-	            accountBeingEdited.setAccountRestrictedStatusCode(globalAccountMaintenanceDocRestrictedStatusCode);
-	    }
-	}
-
-	/**
 	 *
 	 * @param subFundGroup
 	 * @return true when a default account restricted status code set on the sub-fund; false otherwise
@@ -172,7 +144,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	private void updateAccountBasicFields(Account account) {
-
+	    LOG.debug("updateAccountBasicFields, entering for account: " + account.toString());
 		if (StringUtils.isNotBlank(accountFiscalOfficerSystemIdentifier)) {
 		    account.setAccountFiscalOfficerSystemIdentifier(accountFiscalOfficerSystemIdentifier);
 		}
@@ -290,7 +262,10 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
-			updateAccountRestrictedStatusCodeForAccountBeingEdited(subFundGroup, accountRestrictedStatusCode, account);
+		    if (LOG.isDebugEnabled()) {
+		        LOG.debug("updateAccountBasicFields, setting accountRestrictedStatusCode to: " + accountRestrictedStatusCode);
+		    }
+		    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
 		}
 
 		if (ObjectUtils.isNotNull(accountRestrictedStatusDate)) {
