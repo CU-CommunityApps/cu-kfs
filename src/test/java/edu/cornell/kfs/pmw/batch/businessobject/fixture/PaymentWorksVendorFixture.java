@@ -5,10 +5,10 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.vnd.VendorConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
+import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public enum PaymentWorksVendorFixture {
@@ -48,8 +48,8 @@ public enum PaymentWorksVendorFixture {
         this.requestingCompanyLegalName = requestingCompanyLegalName;
         this.requestingCompanyLegalFirstName = requestingCompanyLegalFirstName;
         this.requestingCompanyLegalLastName = requestingCompanyLegalLastName;
-        this.requestingCompanyLegalNameForProcessing = StringUtils.isNotBlank(requestingCompanyLegalName)
-                ? requestingCompanyLegalName : requestingCompanyLegalLastName + VendorConstants.NAME_DELIM + requestingCompanyLegalFirstName;
+        this.requestingCompanyLegalNameForProcessing = PaymentWorksUtils.formatVendorName(
+                requestingCompanyLegalName, requestingCompanyLegalFirstName, requestingCompanyLegalLastName);
         this.remittanceAddressStreet1 = remittanceAddressStreet1;
         this.remittanceAddressStreet2 = remittanceAddressStreet2;
         this.remittanceAddressCity = remittanceAddressCity;
