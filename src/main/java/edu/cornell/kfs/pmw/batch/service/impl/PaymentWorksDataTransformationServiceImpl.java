@@ -10,6 +10,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTinType;
+import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataTransformationService;
 
@@ -38,18 +39,14 @@ public class PaymentWorksDataTransformationServiceImpl implements PaymentWorksDa
 
     @Override
     public String formatReportVendorNumber(PaymentWorksBatchReportVendorItem reportItem) {
-        if (ObjectUtils.isNotNull(reportItem.getKfsVendorHeaderGeneratedIdentifier())
-                || ObjectUtils.isNotNull(reportItem.getKfsVendorDetailAssignedIdentifier())) {
-            return String.format(VENDOR_NUMBER_FORMAT,
-                    defaultToEmptyIfNull(reportItem.getKfsVendorHeaderGeneratedIdentifier()),
-                    defaultToEmptyIfNull(reportItem.getKfsVendorDetailAssignedIdentifier()));
-        } else {
-            return KFSConstants.EMPTY_STRING;
-        }
+        return PaymentWorksUtils.formatVendorNumber(
+                reportItem.getKfsVendorHeaderGeneratedIdentifier(), reportItem.getKfsVendorDetailAssignedIdentifier());
     }
 
-    private String defaultToEmptyIfNull(Integer value) {
-        return ObjectUtils.isNotNull(value) ? value.toString() : KFSConstants.EMPTY_STRING;
+    @Override
+    public String formatReportVendorLegalName(PaymentWorksBatchReportVendorItem reportItem) {
+        return PaymentWorksUtils.formatVendorName(
+                reportItem.getPmwVendorLegelName(), reportItem.getPmwVendorLegelFirstName(), reportItem.getPmwVendorLegelLastName());
     }
 
 }

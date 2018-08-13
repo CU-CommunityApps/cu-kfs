@@ -2,6 +2,7 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -100,10 +101,10 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
         }
         
         switch (parameterKey) {
-            case PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE :
-                return ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE;
-            case PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE :
-                return ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE;
+            case PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE_PREFIX :
+                return ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE_PREFIX;
+            case PaymentWorksParameterConstants.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE_PREFIX :
+                return ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE_PREFIX;
             default :
                 return KFSConstants.EMPTY_STRING;
         }
@@ -135,17 +136,26 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
 
     @Test
     public void testUploadSingleVendor() throws Exception {
-        assertUploadSucceeds(PaymentWorksVendorFixture.JOHN_DOE);
+        assertUploadSucceedsCompletely(PaymentWorksVendorFixture.JOHN_DOE);
     }
 
     @Test
     public void testUploadMultipleVendors() throws Exception {
-        assertUploadSucceeds(PaymentWorksVendorFixture.JOHN_DOE, PaymentWorksVendorFixture.MARY_SMITH, PaymentWorksVendorFixture.WIDGET_MAKERS);
+        assertUploadSucceedsCompletely(
+                PaymentWorksVendorFixture.JOHN_DOE, PaymentWorksVendorFixture.MARY_SMITH, PaymentWorksVendorFixture.WIDGET_MAKERS);
     }
 
-    private void assertUploadSucceeds(PaymentWorksVendorFixture... fixtures) {
-        List<PaymentWorksVendor> vendors = buildVendorsFromFixtures(fixtures);
+    private void assertUploadSucceedsCompletely(PaymentWorksVendorFixture... fixtures) {
         PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
+        assertUploadSucceeds(reportData, fixtures);
+        assertEquals("Wrong vendor count received from server's response",
+                fixtures.length, reportData.getRecordsProcessedByPaymentWorksSummary().getRecordCount());
+        assertEquals("No global messages should have been recorded", 0, reportData.getGlobalMessages().size());
+    }
+
+    private void assertUploadSucceeds(
+            PaymentWorksUploadSuppliersBatchReportData reportData, PaymentWorksVendorFixture... fixtures) {
+        List<PaymentWorksVendor> vendors = buildVendorsFromFixtures(fixtures);
         uploadSuppliersEndpoint.setExpectedVendorsForNextUpload(fixtures);
         
         boolean result = uploadSuppliersService.uploadVendorsToPaymentWorks(vendors, reportData);
@@ -155,8 +165,6 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
                 StringUtils.isBlank(webServiceCallsService.getLastSupplierUploadErrorFieldName()));
         assertTrue("The server should not have sent an error message",
                 StringUtils.isBlank(webServiceCallsService.getLastSupplierUploadErrorMessage()));
-        assertEquals("Wrong vendor count received from server's response",
-                fixtures.length, reportData.getRecordsProcessedByPaymentWorksSummary().getRecordCount());
     }
 
     @Test
@@ -166,8 +174,8 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
         boolean result = uploadSuppliersService.uploadVendorsToPaymentWorks(Collections.emptyList(), reportData);
         assertFalse("The web service call should have failed", result);
         assertEquals("Wrong number of global messages recorded", 1, reportData.getGlobalMessages().size());
-        assertEquals("Wrong global message recorded in report",
-                ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE, reportData.getGlobalMessages().get(0));
+        assertTrue("Wrong global message prefix recorded in report", StringUtils.startsWith(
+                reportData.getGlobalMessages().get(0), ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE_PREFIX));
         assertTrue("The Supplier Upload endpoint should have been invoked", uploadSuppliersEndpoint.isCalledUploadSuppliersService());
         assertEquals("Wrong error message field returned by endpoint",
                 PaymentWorksSupplierUploadConstants.ERROR_FIELD, webServiceCallsService.getLastSupplierUploadErrorFieldName());
@@ -184,9 +192,23 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
         boolean result = uploadSuppliersService.uploadVendorsToPaymentWorks(vendors, reportData);
         assertFalse("The processing should have failed", result);
         assertEquals("Wrong number of global messages recorded", 1, reportData.getGlobalMessages().size());
-        assertEquals("Wrong global message recorded in report",
-                ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE, reportData.getGlobalMessages().get(0));
+        assertTrue("Wrong global message prefix recorded in report", StringUtils.startsWith(
+                reportData.getGlobalMessages().get(0), ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE_PREFIX));
         assertFalse("The Supplier Upload endpoint should not have been invoked", uploadSuppliersEndpoint.isCalledUploadSuppliersService());
+    }
+
+    @Test
+    public void testHandleDetectionOfVendorCountMismatch() throws Exception {
+        PaymentWorksVendorFixture[] fixtures = { PaymentWorksVendorFixture.JOHN_DOE, PaymentWorksVendorFixture.WIDGET_MAKERS };
+        PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
+        uploadSuppliersEndpoint.setForceVendorCountMismatch(true);
+        assertUploadSucceeds(reportData, fixtures);
+        
+        assertNotEquals("There should have been a mismatch between the number of vendors uploaded and the server's number of received vendors",
+                fixtures.length, reportData.getRecordsProcessedByPaymentWorksSummary().getRecordCount());
+        assertEquals("Wrong number of global messages recorded", 1, reportData.getGlobalMessages().size());
+        assertTrue("Wrong global message prefix recorded in report", StringUtils.startsWith(
+                reportData.getGlobalMessages().get(0), ParameterTestValues.PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE_PREFIX));
     }
 
     private List<PaymentWorksVendor> buildVendorsFromFixtures(PaymentWorksVendorFixture... fixtures) {

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +14,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTransactionType;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -93,20 +93,24 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     }
 
     @Override
-    public void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String supplierUploadStatus) {
-        updateSupplierUploadStatusesForVendorsInStagingTable(ids, KFSConstants.EMPTY_STRING, supplierUploadStatus);
+    public void updateSupplierUploadStatusesForVendorsInStagingTable(
+            List<Integer> ids, String supplierUploadStatus, Timestamp processingTimeStamp) {
+        updateSupplierUploadStatusesForVendorsInStagingTable(ids, KFSConstants.EMPTY_STRING, supplierUploadStatus, processingTimeStamp);
     }
 
     @Override
-    public void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String pmwRequestStatus, String supplierUploadStatus) {
+    public void updateSupplierUploadStatusesForVendorsInStagingTable(
+            List<Integer> ids, String pmwRequestStatus, String supplierUploadStatus, Timestamp processingTimeStamp) {
         ParameterizedSqlFactory sqlFactory = new ParameterizedSqlFactory("update kfs.cu_pmw_vendor_t set ");
         
         if (StringUtils.isNotBlank(pmwRequestStatus)) {
-            sqlFactory.appendSql("pmw_req_stat = ?, ", pmwRequestStatus);
+            sqlFactory.appendSql("pmw_req_stat = (case pmw_trans_cd when ? then null else ? end), ",
+                    PaymentWorksTransactionType.KFS_ORIGINATING_VENDOR, pmwRequestStatus);
         }
-        sqlFactory.appendSql("supp_upld_stat = ? ", supplierUploadStatus);
+        sqlFactory.appendSql("supp_upld_stat = ?", supplierUploadStatus);
+        sqlFactory.appendSql(", proc_ts = ?", PROCESSING_TIMESTAMP_SQL_FORMATTER.format(processingTimeStamp));
         
-        sqlFactory.appendSql("where ");
+        sqlFactory.appendSql(" where ");
         appendInCondition(sqlFactory, "id", ids);
         
         int updateRowCount = getJdbcTemplate().update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
@@ -174,6 +178,13 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         public void appendSql(String sql, Object parameter) {
             appendSql(sql);
             parameters.add(parameter);
+        }
+
+        public void appendSql(String sql, Object... parameterArgs) {
+            appendSql(sql);
+            for (Object parameter : parameterArgs) {
+                parameters.add(parameter);
+            }
         }
 
         public String toString() {

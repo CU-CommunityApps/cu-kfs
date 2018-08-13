@@ -136,7 +136,8 @@ public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksRe
             writeFormattedLineForProcessingSubReport(getSubmittedDateLabel(),
                     getPaymentWorksDataTransformationService().formatReportSubmissionTimeStamp(reportItem.getPmwSubmissionTimeStamp()));
             writeFormattedLineForProcessingSubReport(getVendorTypeLabel(), reportItem.getPmwVendorType());
-            writeFormattedLineForProcessingSubReport(getVendorNameLabel(), reportItem.getPmwVendorLegalNameForDisplay());
+            writeFormattedLineForProcessingSubReport(getVendorNameLabel(),
+                    getPaymentWorksDataTransformationService().formatReportVendorLegalName(reportItem));
             writeFormattedLineForProcessingSubReport(getTaxIdTypeLabel(),
                     getPaymentWorksDataTransformationService().convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
             writeFormattedLineForProcessingSubReport(getVendorSubmitterEmailLabel(), reportItem.getPmwSubmitterEmailAddress());

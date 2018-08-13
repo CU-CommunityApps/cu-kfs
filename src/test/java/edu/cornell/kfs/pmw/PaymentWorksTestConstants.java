@@ -15,8 +15,9 @@ public class PaymentWorksTestConstants {
     }
 
     public static final class ParameterTestValues {
-        public static final String PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE = "Mismatched vendor upload counts between KFS and PMW";
-        public static final String PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE = "Vendor upload failed";
+        public static final String PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_COUNT_MISMATCH_MESSAGE_PREFIX = "Mismatched vendor upload counts "
+                + "between KFS and PMW for these vendors: ";
+        public static final String PAYMENTWORKS_UPLOAD_SUPPLIERS_REPORT_VENDOR_UPLOAD_FAILURE_MESSAGE_PREFIX = "Vendor upload failed for these vendors: ";
     }
 
 }

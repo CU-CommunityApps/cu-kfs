@@ -15,8 +15,8 @@ public interface PaymentWorksVendorDao {
     
     void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, String kfsAchProcessingStatus, String supplierUploadStatus, Timestamp processingTimeStamp, String kfsAchDocumentNumber);
 
-    void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String pmwRequestStatus, String supplierUploadStatus);
+    void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String pmwRequestStatus, String supplierUploadStatus, Timestamp processingTimeStamp);
 
-    void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String supplierUploadStatus);
+    void updateSupplierUploadStatusesForVendorsInStagingTable(List<Integer> ids, String supplierUploadStatus, Timestamp processingTimeStamp);
 
 }

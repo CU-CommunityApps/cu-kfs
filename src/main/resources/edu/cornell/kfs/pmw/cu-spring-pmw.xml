@@ -228,6 +228,7 @@
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
         <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="dateTimeService" ref="dateTimeService" />
         <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
     </bean>
     

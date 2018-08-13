@@ -6,9 +6,9 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.vnd.VendorConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
 
@@ -220,11 +220,8 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     }
 
     public String getRequestingCompanyLegalNameForProcessing() {
-        if (StringUtils.isNotBlank(requestingCompanyLegalName)) {
-            return requestingCompanyLegalName;
-        } else {
-            return requestingCompanyLegalLastName + VendorConstants.NAME_DELIM + requestingCompanyLegalFirstName;
-        }
+        return PaymentWorksUtils.formatVendorName(
+                requestingCompanyLegalName, requestingCompanyLegalFirstName, requestingCompanyLegalLastName);
     }
 
     public String getRequestingCompanyName() {

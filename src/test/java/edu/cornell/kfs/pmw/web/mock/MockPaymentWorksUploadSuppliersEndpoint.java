@@ -47,6 +47,7 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
     private String expectedAuthorizationToken;
     private PaymentWorksVendorFixture[] expectedVendorsForNextUpload;
     private boolean calledUploadSuppliersService;
+    private boolean forceVendorCountMismatch;
 
     public MockPaymentWorksUploadSuppliersEndpoint(String multiPartContentDirectory, String expectedAuthorizationToken) {
         this.multiPartContentDirectory = multiPartContentDirectory;
@@ -60,6 +61,10 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
 
     public void setExpectedVendorsForNextUpload(PaymentWorksVendorFixture[] expectedVendorsForNextUpload) {
         this.expectedVendorsForNextUpload = expectedVendorsForNextUpload;
+    }
+
+    public void setForceVendorCountMismatch(boolean forceVendorCountMismatch) {
+        this.forceVendorCountMismatch = forceVendorCountMismatch;
     }
 
     public boolean isCalledUploadSuppliersService() {
@@ -158,9 +163,12 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
     }
 
     private void setupSuccessResponse(HttpResponse response, Integer numReceivedSuppliers) {
+        Integer numReceivedSuppliersToReturn = forceVendorCountMismatch
+                ? Integer.valueOf(numReceivedSuppliers.intValue() - 1) : numReceivedSuppliers;
+        
         String jsonText = buildJsonTextFromNode((rootNode) -> {
             rootNode.put(PaymentWorksCommonJsonConstants.STATUS_FIELD, PaymentWorksCommonJsonConstants.STATUS_OK);
-            rootNode.put(PaymentWorksSupplierUploadConstants.NUM_RCVD_SUPPLIERS_FIELD, numReceivedSuppliers);
+            rootNode.put(PaymentWorksSupplierUploadConstants.NUM_RCVD_SUPPLIERS_FIELD, numReceivedSuppliersToReturn);
         });
         
         response.setStatusCode(HttpStatus.SC_OK);

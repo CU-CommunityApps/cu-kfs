@@ -430,7 +430,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             throw new RuntimeException("Supplier upload failed: Did not receive an upload status from PaymentWorks");
         } else if (!StringUtils.equalsIgnoreCase(statusNode.textValue(), PaymentWorksCommonJsonConstants.STATUS_OK)) {
             LOG.error("checkForSuccessfulSupplierUploadStatus: Unexpected status from PaymentWorks response: " + statusNode.textValue());
-            throw new RuntimeException("Supplier upload failed: Received an unexpected upload status from PaymentWorks");
+            throw new RuntimeException("Supplier upload failed: Received an unexpected upload status from PaymentWorks: " + statusNode.textValue());
         } else {
             LOG.info("checkForSuccessfulSupplierUploadStatus: Received a successful upload status from PaymentWorks");
         }
@@ -443,7 +443,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                 LOG.error("checkForSupplierUploadErrors: Supplier upload failed. Error message from \""
                         + errorFieldName + "\" field: " + errorNode.textValue());
                 handleErrorMessageFromSupplierUploadFailure(errorFieldName, errorNode.textValue());
-                throw new RuntimeException("Supplier upload failed: Received error response from PaymentWorks");
+                throw new RuntimeException("Supplier upload failed: Received the following error message from PaymentWorks: " + errorNode.textValue());
             }
         }
     }
