@@ -8,7 +8,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
-import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public enum PaymentWorksVendorFixture {
@@ -48,7 +48,7 @@ public enum PaymentWorksVendorFixture {
         this.requestingCompanyLegalName = requestingCompanyLegalName;
         this.requestingCompanyLegalFirstName = requestingCompanyLegalFirstName;
         this.requestingCompanyLegalLastName = requestingCompanyLegalLastName;
-        this.requestingCompanyLegalNameForProcessing = PaymentWorksUtils.formatVendorName(
+        this.requestingCompanyLegalNameForProcessing = PaymentWorksDataTransformation.formatVendorName(
                 requestingCompanyLegalName, requestingCompanyLegalFirstName, requestingCompanyLegalLastName);
         this.remittanceAddressStreet1 = remittanceAddressStreet1;
         this.remittanceAddressStreet2 = remittanceAddressStreet2;

@@ -8,7 +8,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable{
 
@@ -220,7 +220,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     }
 
     public String getRequestingCompanyLegalNameForProcessing() {
-        return PaymentWorksUtils.formatVendorName(
+        return PaymentWorksDataTransformation.formatVendorName(
                 requestingCompanyLegalName, requestingCompanyLegalFirstName, requestingCompanyLegalLastName);
     }
 

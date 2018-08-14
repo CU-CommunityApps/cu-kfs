@@ -8,12 +8,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportSummaryItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksUploadSuppliersBatchReportData;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataTransformationService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksUploadSuppliersReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
@@ -27,8 +27,6 @@ public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksRe
     private static final String SUMMARY_ROW_FORMAT = "%58s %20s";
     private static final String PROCESSING_ROW_FORMAT = "%30s %-70s";
     private static final String RECORD_COUNT_HEADER = "Record Count";
-
-    protected PaymentWorksDataTransformationService paymentWorksDataTransformationService;
 
     private String globalMessagesSubTitle;
 
@@ -134,16 +132,16 @@ public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksRe
         for (PaymentWorksBatchReportVendorItem reportItem : reportItems) {
             writeFormattedLineForProcessingSubReport(getPaymentWorksVendorIdLabel(), reportItem.getPmwVendorId());
             writeFormattedLineForProcessingSubReport(getSubmittedDateLabel(),
-                    getPaymentWorksDataTransformationService().formatReportSubmissionTimeStamp(reportItem.getPmwSubmissionTimeStamp()));
+                    PaymentWorksDataTransformation.formatReportSubmissionTimeStamp(reportItem.getPmwSubmissionTimeStamp()));
             writeFormattedLineForProcessingSubReport(getVendorTypeLabel(), reportItem.getPmwVendorType());
             writeFormattedLineForProcessingSubReport(getVendorNameLabel(),
-                    getPaymentWorksDataTransformationService().formatReportVendorLegalName(reportItem));
+                    PaymentWorksDataTransformation.formatReportVendorLegalName(reportItem));
             writeFormattedLineForProcessingSubReport(getTaxIdTypeLabel(),
-                    getPaymentWorksDataTransformationService().convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
+                    PaymentWorksDataTransformation.convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
             writeFormattedLineForProcessingSubReport(getVendorSubmitterEmailLabel(), reportItem.getPmwSubmitterEmailAddress());
             writeFormattedLineForProcessingSubReport(getInitiatorNetidLabel(), reportItem.getPmwInitiatorNetId());
             writeFormattedLineForProcessingSubReport(getKfsVendorNumberLabel(),
-                    getPaymentWorksDataTransformationService().formatReportVendorNumber(reportItem));
+                    PaymentWorksDataTransformation.formatReportVendorNumber(reportItem));
             getReportWriterService().writeNewLines(POST_SECTION_NEWLINES_COUNT);
         }
     }
@@ -189,14 +187,6 @@ public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksRe
 
     protected String buildDashString(int length) {
         return StringUtils.repeat(KFSConstants.DASH, length);
-    }
-
-    public PaymentWorksDataTransformationService getPaymentWorksDataTransformationService() {
-        return paymentWorksDataTransformationService;
-    }
-
-    public void setPaymentWorksDataTransformationService(PaymentWorksDataTransformationService paymentWorksDataTransformationService) {
-        this.paymentWorksDataTransformationService = paymentWorksDataTransformationService;
     }
 
     @Override

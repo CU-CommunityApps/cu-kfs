@@ -29,9 +29,9 @@ import com.opencsv.exceptions.CsvException;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
@@ -216,13 +216,8 @@ public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploa
 
     private String buildVendorNumberList(Collection<PaymentWorksVendor> vendors) {
         return vendors.stream()
-                .map(this::formatVendorNumber)
+                .map(PaymentWorksDataTransformation::formatVendorNumber)
                 .collect(Collectors.joining(KFSConstants.COMMA));
-    }
-
-    private String formatVendorNumber(PaymentWorksVendor vendor) {
-        return PaymentWorksUtils.formatVendorNumber(
-                vendor.getKfsVendorHeaderGeneratedIdentifier(), vendor.getKfsVendorDetailAssignedIdentifier());
     }
 
     private String formatGlobalErrorMessage(String messagePrefix, String vendorNumberList, String errorMessage) {

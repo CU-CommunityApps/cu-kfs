@@ -34,9 +34,9 @@ import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksBankAccountType;
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksUtils;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsAchDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoCountryToFipsCountryAssociation;
@@ -259,7 +259,8 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     
     private void populateVendorLegalName(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
         pmwVendor.setRequestingCompanyLegalName(
-                PaymentWorksUtils.formatVendorName(vendorDetail.getVendorName(), vendorDetail.getVendorFirstName(), vendorDetail.getVendorLastName()));
+                PaymentWorksDataTransformation.formatVendorName(
+                        vendorDetail.getVendorName(), vendorDetail.getVendorFirstName(), vendorDetail.getVendorLastName()));
     }
 
     private void populateRemitAddress(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {

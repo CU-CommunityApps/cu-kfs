@@ -1,27 +1,20 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.io.File;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportRawDataItem;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksBatchReportVendorItem;
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksEmailableReportData;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksDataTransformationService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -31,7 +24,6 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl extends PaymentWorks
 
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;
-    protected PaymentWorksDataTransformationService paymentWorksDataTransformationService;
     
     @Override
     public void generateAndEmailProcessingReport(PaymentWorksNewVendorRequestsBatchReportData reportData) {
@@ -122,10 +114,10 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl extends PaymentWorks
                 String vendorName = (StringUtils.isNotBlank(reportItem.getPmwVendorLegelName()) ? reportItem.getPmwVendorLegelName() : (reportItem.getPmwVendorLegelLastName() + "," + reportItem.getPmwVendorLegelFirstName()));
 
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getPaymentWorksVendorIdLabel(), reportItem.getPmwVendorId());
-                getReportWriterService().writeFormattedMessageLine(rowFormat, getSubmittedDateLabel(), getPaymentWorksDataTransformationService().PROCESSING_TIMESTAMP_REPORT_FORMATTER.format(reportItem.getPmwSubmissionTimeStamp()));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getSubmittedDateLabel(), PaymentWorksDataTransformation.formatReportSubmissionTimeStamp(reportItem.getPmwSubmissionTimeStamp()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorTypeLabel(), reportItem.getPmwVendorType());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorNameLabel(), vendorName);
-                getReportWriterService().writeFormattedMessageLine(rowFormat, getTaxIdTypeLabel(), getPaymentWorksDataTransformationService().convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
+                getReportWriterService().writeFormattedMessageLine(rowFormat, getTaxIdTypeLabel(), PaymentWorksDataTransformation.convertPmwTinTypeCodeToPmwTinTypeText(reportItem.getPmwTaxIdType()));
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getVendorSubmitterEmailLabel(), reportItem.getPmwSubmitterEmailAddress());
                 getReportWriterService().writeFormattedMessageLine(rowFormat, getInitiatorNetidLabel(), reportItem.getPmwInitiatorNetId());
                 getReportWriterService().writeNewLines(1);
@@ -264,14 +256,6 @@ public class PaymentWorksNewVendorRequestsReportServiceImpl extends PaymentWorks
         return unprocessedSubTitle;
     }
 
-     public PaymentWorksDataTransformationService getPaymentWorksDataTransformationService() {
-        return paymentWorksDataTransformationService;
-    }
-
-    public void setPaymentWorksDataTransformationService(PaymentWorksDataTransformationService paymentWorksDataTransformationService) {
-        this.paymentWorksDataTransformationService = paymentWorksDataTransformationService;
-    }
-    
     public ReportWriterService getReportWriterService() {
         return super.reportWriterService;
     }

@@ -128,10 +128,6 @@
         <property name="emailService" ref="emailService" />
     </bean>
     
-    <bean id="paymentWorksDataTransformationService" parent="paymentWorksDataTransformationService-parentBean" />
-    <bean id="paymentWorksDataTransformationService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDataTransformationServiceImpl" abstract="true">
-    </bean>
-    
     <bean id="paymentWorksBatchUtilityService" parent="paymentWorksBatchUtilityService-parentBean" />
     <bean id="paymentWorksBatchUtilityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksBatchUtilityServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
@@ -164,7 +160,6 @@
     <bean id="paymentWorksNewVendorRequestsReportService" parent="paymentWorksNewVendorRequestsReportService-parentBean" />
     <bean id="paymentWorksNewVendorRequestsReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsReportServiceImpl" abstract="true">
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
         <property name="configurationService" ref="configurationService" />
@@ -195,7 +190,6 @@
     <bean id="paymentWorksNewVendorPayeeAchReportService" parent="paymentWorksNewVendorPayeeAchReportService-parentBean" />
     <bean id="paymentWorksNewVendorPayeeAchReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorPayeeAchReportServiceImpl" abstract="true">
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
         <property name="configurationService" ref="configurationService" />
@@ -235,7 +229,6 @@
     <bean id="paymentWorksUploadSuppliersReportService" parent="paymentWorksUploadSuppliersReportService-parentBean" />
     <bean id="paymentWorksUploadSuppliersReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksUploadSuppliersReportServiceImpl" abstract="true">
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
         <property name="configurationService" ref="configurationService" />
