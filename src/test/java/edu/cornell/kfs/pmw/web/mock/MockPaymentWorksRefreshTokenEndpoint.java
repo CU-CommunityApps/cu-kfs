@@ -2,13 +2,11 @@ package edu.cornell.kfs.pmw.web.mock;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -22,14 +20,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.http.HttpMethod;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.cornell.kfs.pmw.PaymentWorksTestConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
@@ -105,7 +100,7 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
 
     private void setupRefreshSuccessResponse(HttpResponse response, String authorizationToken) {
         String jsonText = buildJsonTextFromNode((rootNode) -> {
-            rootNode.put(PaymentWorksTokenRefreshConstants.STATUS_FIELD, PaymentWorksTokenRefreshConstants.STATUS_OK);
+            rootNode.put(PaymentWorksCommonJsonConstants.STATUS_FIELD, PaymentWorksCommonJsonConstants.STATUS_OK);
             rootNode.put(PaymentWorksTokenRefreshConstants.AUTH_TOKEN_FIELD, authorizationToken);
         });
         
@@ -115,27 +110,11 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
 
     private void setupRefreshFailureResponse(HttpResponse response, String message) {
         String jsonText = buildJsonTextFromNode((rootNode) -> {
-            rootNode.put(PaymentWorksTokenRefreshConstants.DETAIL_FIELD, message);
+            rootNode.put(PaymentWorksCommonJsonConstants.DETAIL_FIELD, message);
         });
         
         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         response.setEntity(new StringEntity(jsonText, ContentType.APPLICATION_JSON));
-    }
-
-    private String buildJsonTextFromNode(Consumer<ObjectNode> jsonNodeConfigurer) {
-        String jsonResponse = null;
-        
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
-            ObjectNode rootNode = nodeFactory.objectNode();
-            jsonNodeConfigurer.accept(rootNode);
-            jsonResponse = objectMapper.writeValueAsString(rootNode);
-        } catch (JsonProcessingException e) {
-            fail("Unexpected error when preparing JSON output: " + e.getMessage());
-        }
-        
-        return jsonResponse;
     }
 
 }

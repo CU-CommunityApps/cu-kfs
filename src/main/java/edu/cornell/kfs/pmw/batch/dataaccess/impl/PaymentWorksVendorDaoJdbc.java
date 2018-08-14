@@ -3,16 +3,20 @@ package edu.cornell.kfs.pmw.batch.dataaccess.impl;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.kuali.kfs.krad.util.ObjectUtils;
-
-import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTransactionType;
+import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksVendorDao {
     
@@ -20,6 +24,8 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
     
     protected static final SimpleDateFormat PROCESSING_TIMESTAMP_SQL_FORMATTER = new SimpleDateFormat("dd-MMM-yy", Locale.US);
     
+    private static final int MAX_LIST_CHUNK_SIZE = 1000;
+
     @Override
     public void updateExistingPaymentWorksVendorInStagingTable(Integer id, String pmwRequestStatus, String kfsVendorProcessingStatus, Timestamp processingTimeStamp) {
         updateExistingPaymentWorksVendorInStagingTable(id, pmwRequestStatus, kfsVendorProcessingStatus, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, processingTimeStamp, null, null, null);
@@ -86,6 +92,76 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         return jdbcTemplate.update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
     }
 
+    @Override
+    public void updateSupplierUploadStatusesForVendorsInStagingTable(
+            List<Integer> ids, String supplierUploadStatus, Timestamp processingTimeStamp) {
+        updateSupplierUploadStatusesForVendorsInStagingTable(ids, KFSConstants.EMPTY_STRING, supplierUploadStatus, processingTimeStamp);
+    }
+
+    @Override
+    public void updateSupplierUploadStatusesForVendorsInStagingTable(
+            List<Integer> ids, String pmwRequestStatus, String supplierUploadStatus, Timestamp processingTimeStamp) {
+        ParameterizedSqlFactory sqlFactory = new ParameterizedSqlFactory("update kfs.cu_pmw_vendor_t set ");
+        
+        if (StringUtils.isNotBlank(pmwRequestStatus)) {
+            sqlFactory.appendSql("pmw_req_stat = (case pmw_trans_cd when ? then null else ? end), ",
+                    PaymentWorksTransactionType.KFS_ORIGINATING_VENDOR, pmwRequestStatus);
+        }
+        sqlFactory.appendSql("supp_upld_stat = ?", supplierUploadStatus);
+        sqlFactory.appendSql(", proc_ts = ?", PROCESSING_TIMESTAMP_SQL_FORMATTER.format(processingTimeStamp));
+        
+        sqlFactory.appendSql(" where ");
+        appendInCondition(sqlFactory, "id", ids);
+        
+        int updateRowCount = getJdbcTemplate().update(sqlFactory.getSql(), sqlFactory.getParameters().toArray());
+        LOG.info("updateSupplierUploadStatusForVendorsInStagingTable, updated the following number of records: " + updateRowCount);
+    }
+
+    private void appendInCondition(ParameterizedSqlFactory sqlFactory, String columnName, List<?> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            throw new IllegalArgumentException("Cannot create an IN condition from an empty values list");
+        }
+        
+        int[] chunkSizes = computeInConditionChunkSizes(values);
+        int chunkStartIndex = 0;
+        
+        sqlFactory.appendSql(CUKFSConstants.LEFT_PARENTHESIS);
+        for (int chunkSize : chunkSizes) {
+            if (chunkStartIndex != 0) {
+                sqlFactory.appendSql(" or ");
+            }
+            List<?> valuesChunk = values.subList(chunkStartIndex, chunkStartIndex + chunkSize);
+            appendInConditionChunk(sqlFactory, columnName, valuesChunk);
+            chunkStartIndex += chunkSize;
+        }
+        sqlFactory.appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
+    }
+
+    private int[] computeInConditionChunkSizes(List<?> values) {
+        int listSizeRemainder = values.size() % MAX_LIST_CHUNK_SIZE;
+        int chunkCount = (int) Math.ceil(values.size() / (double) MAX_LIST_CHUNK_SIZE);
+        
+        int[] chunkSizes = new int[chunkCount];
+        Arrays.fill(chunkSizes, MAX_LIST_CHUNK_SIZE);
+        if (listSizeRemainder > 0) {
+            chunkSizes[chunkSizes.length - 1] = listSizeRemainder;
+        }
+        return chunkSizes;
+    }
+
+    private void appendInConditionChunk(ParameterizedSqlFactory sqlFactory, String columnName, List<?> valuesChunk) {
+        sqlFactory.appendSql(columnName);
+        sqlFactory.appendSql(" in ");
+        sqlFactory.appendSql(CUKFSConstants.LEFT_PARENTHESIS);
+        
+        sqlFactory.appendSql("?", valuesChunk.get(0));
+        valuesChunk.stream()
+                .skip(1L)
+                .forEach((value) -> sqlFactory.appendSql(", ?", value));
+        
+        sqlFactory.appendSql(CUKFSConstants.RIGHT_PARENTHESIS);
+    }
+
     private class ParameterizedSqlFactory {
         private StringBuilder sqlStringBuilder;
         private List<Object> parameters;
@@ -102,6 +178,13 @@ public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implemen
         public void appendSql(String sql, Object parameter) {
             appendSql(sql);
             parameters.add(parameter);
+        }
+
+        public void appendSql(String sql, Object... parameterArgs) {
+            appendSql(sql);
+            for (Object parameter : parameterArgs) {
+                parameters.add(parameter);
+            }
         }
 
         public String toString() {

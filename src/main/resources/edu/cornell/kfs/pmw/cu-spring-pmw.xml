@@ -28,6 +28,7 @@
             <list>
                 <value>paymentWorksNewVendorCreateKfsVendorBatchJob</value>
                 <value>paymentWorksNewVendorCreateKfsAchBatchJob</value>
+                <value>paymentWorksUploadSuppliersBatchJob</value>
                 <value>paymentWorksRefreshAuthorizationTokenJob</value>
             </list>
         </property>
@@ -67,6 +68,19 @@
     <bean id="paymentWorksNewVendorCreateKfsAchStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksNewVendorCreateKfsAchStep">
         <property name="paymentWorksNewVendorPayeeAchService" ref="paymentWorksNewVendorPayeeAchService" />
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+    </bean>
+
+    <bean id="paymentWorksUploadSuppliersBatchJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="paymentWorksUploadSuppliersStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentWorksUploadSuppliersStep" parent="step" class="edu.cornell.kfs.pmw.batch.PaymentWorksUploadSuppliersStep">
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksUploadSuppliersService" ref="paymentWorksUploadSuppliersService" />
     </bean>
 
     <bean id="paymentWorksRefreshAuthorizationTokenJob" parent="unscheduledJobDescriptor">
@@ -114,10 +128,6 @@
         <property name="emailService" ref="emailService" />
     </bean>
     
-    <bean id="paymentWorksDataTransformationService" parent="paymentWorksDataTransformationService-parentBean" />
-    <bean id="paymentWorksDataTransformationService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksDataTransformationServiceImpl" abstract="true">
-    </bean>
-    
     <bean id="paymentWorksBatchUtilityService" parent="paymentWorksBatchUtilityService-parentBean" />
     <bean id="paymentWorksBatchUtilityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksBatchUtilityServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
@@ -150,7 +160,6 @@
     <bean id="paymentWorksNewVendorRequestsReportService" parent="paymentWorksNewVendorRequestsReportService-parentBean" />
     <bean id="paymentWorksNewVendorRequestsReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorRequestsReportServiceImpl" abstract="true">
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
         <property name="configurationService" ref="configurationService" />
@@ -181,7 +190,6 @@
     <bean id="paymentWorksNewVendorPayeeAchReportService" parent="paymentWorksNewVendorPayeeAchReportService-parentBean" />
     <bean id="paymentWorksNewVendorPayeeAchReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksNewVendorPayeeAchReportServiceImpl" abstract="true">
         <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
-        <property name="paymentWorksDataTransformationService" ref="paymentWorksDataTransformationService" />
         <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
         <property name="reportWriterService" ref="paymentWorksReportWriterService" />
         <property name="configurationService" ref="configurationService" />
@@ -206,6 +214,24 @@
         <property name="paymentWorksVendorAchDataProcessingIntoKfsService" ref="paymentWorksVendorAchDataProcessingIntoKfsService" />
         <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
         <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
+    </bean>
+    
+    <bean id="paymentWorksUploadSuppliersService" parent="paymentWorksUploadSuppliersService-parentBean" />
+    <bean id="paymentWorksUploadSuppliersService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksUploadSuppliersServiceImpl" abstract="true">
+        <property name="paymentWorksUploadSuppliersReportService" ref="paymentWorksUploadSuppliersReportService" />
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksWebServiceCallsService" ref="paymentWorksWebServiceCallsService" />
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="paymentWorksVendorDao" ref="paymentWorksVendorDao" />
+    </bean>
+    
+    <bean id="paymentWorksUploadSuppliersReportService" parent="paymentWorksUploadSuppliersReportService-parentBean" />
+    <bean id="paymentWorksUploadSuppliersReportService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksUploadSuppliersReportServiceImpl" abstract="true">
+        <property name="paymentWorksBatchUtilityService" ref="paymentWorksBatchUtilityService" />
+        <property name="paymentWorksReportEmailService" ref="paymentWorksReportEmailService" />
+        <property name="reportWriterService" ref="paymentWorksReportWriterService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
     
 </beans>
