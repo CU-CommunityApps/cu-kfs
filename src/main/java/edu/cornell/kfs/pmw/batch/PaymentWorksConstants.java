@@ -22,6 +22,7 @@ public class PaymentWorksConstants {
     public final static Pattern PATTERN_COMPILED_REGEX_FOR_MM_SLASH_DD_SLASH_YYYY = Pattern.compile(REGEX_FOR_MM_SLASH_DD_SLASH_YYYY);
     
     public static final String NULL_STRING = "NULL";
+    public static final String SUPPLIER_UPLOAD_DELETE_INDICATOR = "DEL";
     
     public static final class PaymentWorksCustomFieldBooleanPrimitive {
         public static final String YES = "YES";
@@ -111,11 +112,13 @@ public class PaymentWorksConstants {
     public static final class PaymentWorksBatchReportNames {
         public static final String NEW_VENDOR_REQUESTS_REPORT_NAME = "New Vendor Requests Create KFS Vendor";
         public static final String NEW_VENDOR_REQUESTS_PAYEE_ACH_REPORT_NAME = "New Vendor Requests Create KFS Payee ACH Account";
+        public static final String NEW_VENDOR_REQUESTS_SUPPLIER_UPLOAD_REPORT_NAME = "New Vendor Requests Upload Suppliers to PaymentWorks";
     }
     
     public enum PaymentWorksNewVendorRequestStatusType {
         APPROVED(1, "1", "Approved"),
         PROCESSED(2, "2", "Processed"),
+        CONNECTED(3, "3", "Connected"),
         REJECTED(4, "4", "Rejected");
         
         public final int code;
@@ -273,6 +276,37 @@ public class PaymentWorksConstants {
         
         public String getTranslationToKfsBankAccountTypeCode() {
             return translationToKfsBankAccountTypeCode;
+        }
+    }
+
+    public enum PaymentWorksUploadFileColumn {
+        REQUEST_ID("RequestId", "pmwVendorRequestId"),
+        VENDOR_NUM("VendorNum", "kfsVendorHeaderGeneratedIdentifier"),
+        DIVISION_IND("DivisionInd", "kfsVendorDetailAssignedIdentifier"),
+        VENDOR_NAME("VendorName", "requestingCompanyLegalNameForProcessing"),
+        REMIT_ADDRESS1("RemitAddress1", "remittanceAddressStreet1"),
+        REMIT_ADDRESS2("RemitAddress2", "remittanceAddressStreet2"),
+        REMIT_CITY("RemitCity", "remittanceAddressCity"),
+        REMIT_STATE("RemitState", "remittanceAddressState"),
+        REMIT_COUNTRY("RemitCountry", "remittanceAddressCountry"),
+        REMIT_POSTAL_CODE("RemitPostalCode", "remittanceAddressZipCode"),
+        US_TAX_NUMBER("USTaxNumber", "requestingCompanyTin"),
+        VI_CONTACT_EMAIL("VIContactEmail", "vendorInformationEmail");
+        
+        public final String headerLabel;
+        public final String pmwVendorPropertyName;
+        
+        private PaymentWorksUploadFileColumn(String headerLabel, String pmwVendorPropertyName) {
+            this.headerLabel = headerLabel;
+            this.pmwVendorPropertyName = pmwVendorPropertyName;
+        }
+        
+        public String getHeaderLabel() {
+            return headerLabel;
+        }
+        
+        public String getPmwVendorPropertyName() {
+            return pmwVendorPropertyName;
         }
     }
 

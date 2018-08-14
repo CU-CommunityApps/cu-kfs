@@ -1,15 +1,9 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import org.springframework.util.AutoPopulatingList;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,38 +14,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.vnd.businessobject.VendorHeader;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksBankAccountType;
-import edu.cornell.kfs.pmw.batch.businessobject.KfsAchDataWrapper;
-import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoCountryToFipsCountryAssociation;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
-import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
-
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ErrorMessage;
-import org.kuali.kfs.krad.util.ObjectUtils;
+import org.springframework.util.AutoPopulatingList;
+
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksBankAccountType;
+import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
+import edu.cornell.kfs.pmw.batch.PaymentWorksParameterConstants;
+import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
+import edu.cornell.kfs.pmw.batch.businessobject.KfsAchDataWrapper;
+import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
+import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoCountryToFipsCountryAssociation;
+import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
+import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
+import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUtilityService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
@@ -266,24 +258,9 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
     
     private void populateVendorLegalName(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
-        if (vendorNameIsBlank(vendorDetail)) {
-            pmwVendor.setRequestingCompanyLegalName(formatVendorName(vendorDetail));
-        }
-        else {
-            pmwVendor.setRequestingCompanyLegalName(vendorDetail.getVendorName());
-        }
-    }
-
-    // Concatenates the vendorLastName and a delimiter and the vendorFirstName fields in a similar manner to the
-    // KualiCo base code PRIVATE method org.kuali.kfs.vnd.document.VendorMaintainableImpl.setVendorName which 
-    // formats the business object name values just prior to saving the data to the database.
-    private String formatVendorName(VendorDetail vendorDetail) {
-        StringBuilder sb = new StringBuilder(vendorDetail.getVendorLastName() + VendorConstants.NAME_DELIM + vendorDetail.getVendorFirstName());
-        return sb.toString();
-    }
-    
-    private boolean vendorNameIsBlank(VendorDetail vendorDetail) {
-        return (StringUtils.isBlank(vendorDetail.getVendorName()));
+        pmwVendor.setRequestingCompanyLegalName(
+                PaymentWorksDataTransformation.formatVendorName(
+                        vendorDetail.getVendorName(), vendorDetail.getVendorFirstName(), vendorDetail.getVendorLastName()));
     }
 
     private void populateRemitAddress(PaymentWorksVendor pmwVendor, VendorDetail vendorDetail) {
