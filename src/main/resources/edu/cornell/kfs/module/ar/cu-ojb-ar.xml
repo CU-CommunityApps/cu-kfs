@@ -1,0 +1,138 @@
+<descriptor-repository version="1.0">
+<class-descriptor class="edu.cornell.kfs.module.ar.document.ContractsGrantsInvoiceDocument" table="AR_INV_DOC_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="postingYear" column="UNIV_FISCAL_YR" jdbc-type="INTEGER"/>
+        <field-descriptor name="postingPeriodCode" column="UNIV_FISCAL_PRD_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="invoiceHeaderText" column="AR_INV_HDR_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="invoiceAttentionLineText" column="AR_INV_ATTN_LN_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="invoiceDueDate" column="AR_INV_DUE_DT" jdbc-type="DATE"/>
+        <field-descriptor name="closedDate" column="AR_INV_CLOSE_DT" jdbc-type="DATE"/>
+        <field-descriptor name="billingDate" column="AR_BILLING_DT" jdbc-type="DATE"/>
+        <field-descriptor name="invoiceTermsText" column="AR_INV_TERMS_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationInvoiceNumber" column="ORG_INV_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerPurchaseOrderNumber" column="CUST_PO_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="printInvoiceIndicator" column="AR_PRN_INV_IND" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerPurchaseOrderDate" column="CUST_PO_DT" jdbc-type="DATE"/>
+        <field-descriptor name="billByChartOfAccountCode" column="AR_BILL_BY_COA_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billedByOrganizationCode" column="AR_BILL_BY_ORG_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerShipToAddressIdentifier" column="CUST_SHIP_ADDR_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="customerBillToAddressIdentifier" column="CUST_BILL_ADDR_ID" jdbc-type="INTEGER"/>
+        <field-descriptor name="customerSpecialProcessingCode" column="CUST_SPCL_PRCS_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerRecordAttachmentIndicator" column="CUST_REC_ATT_IND" jdbc-type="CHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="openInvoiceIndicator" column="AR_OPEN_INV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="printDate" column="AR_PRNT_DT" jdbc-type="DATE"/>
+        <field-descriptor name="nextSourceLineNumber" column="NXT_INV_ITEM_NBR" jdbc-type="INTEGER"/>
+        <field-descriptor name="customerName" column="CUST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingAddressName" column="BILL_ADDR_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingLine1StreetAddress" column="BILL_LINE_1_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingLine2StreetAddress" column="BILL_LINE_2_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingCityName" column="BILL_CITY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingStateCode" column="BILL_STATE_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingZipCode" column="BILL_ZIP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingCountryCode" column="BILL_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingAddressInternationalProvinceName" column="BILL_ADDR_INTL_PROV_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingInternationalMailCode" column="BILL_INTL_MAIL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingEmailAddress" column="BILL_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="billingAddressTypeCode" column="BILL_ADDR_TYPE_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingAddressName" column="SHIP_ADDR_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingLine1StreetAddress" column="SHIP_LINE_1_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingLine2StreetAddress" column="SHIP_LINE_2_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingCityName" column="SHIP_CITY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingStateCode" column="SHIP_STATE_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingZipCode" column="SHIP_ZIP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingCountryCode" column="SHIP_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingAddressInternationalProvinceName" column="SHIP_ADDR_INTL_PROV_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingInternationalMailCode" column="SHIP_INTL_MAIL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingEmailAddress" column="SHIP_EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="shippingAddressTypeCode" column="SHIP_ADDR_TYPE_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="recurredInvoiceIndicator" column="RECURRED_INV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="agingReportSentTime" column="AGING_RPT_SENT_TM" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="reportedDate" column="REPORTED_DT" jdbc-type="DATE"/>
+        <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountsReceivableDocumentHeader" class-ref="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountingPeriod" class-ref="org.kuali.kfs.coa.businessobject.AccountingPeriod" auto-retrieve="true"
+                              auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="postingYear"/>
+            <foreignkey field-ref="postingPeriodCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="billByChartOfAccount" class-ref="org.kuali.kfs.coa.businessobject.Chart" auto-retrieve="true"
+                              auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="billByChartOfAccountCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="billedByOrganization" class-ref="org.kuali.kfs.coa.businessobject.Organization" auto-retrieve="true"
+                              auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="billByChartOfAccountCode"/>
+            <foreignkey field-ref="billedByOrganizationCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="customerSpecialProcessing" class-ref="org.kuali.kfs.module.ar.businessobject.CustomerProcessingType"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="customerSpecialProcessingCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="printInvoiceOption" class-ref="org.kuali.kfs.module.ar.businessobject.PrintInvoiceOptions"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="false">
+            <foreignkey field-ref="printInvoiceIndicator"/>
+        </reference-descriptor>
+        <reference-descriptor name="customerInvoiceRecurrenceDetails" class-ref="org.kuali.kfs.module.ar.businessobject.CustomerInvoiceRecurrenceDetails"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+        <collection-descriptor name="sourceAccountingLines" element-class-ref="org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <orderby name="sequenceNumber" sort="ASC"/>
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="generalLedgerPendingEntries" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <orderby name="transactionLedgerEntrySequenceNumber" sort="ASC"/>
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="invoiceAddressDetails" proxy="true" element-class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceAddressDetail"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <orderby name="customerAddressIdentifier" sort="ASC"/>
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="invoiceDetails" proxy="false" element-class-ref="org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="collectionEvents" proxy="false" element-class-ref="org.kuali.kfs.module.ar.businessobject.CollectionEvent"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="invoiceNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="invoiceDetailAccountObjectCodes" proxy="true"
+                               element-class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+                               auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="accountDetails" proxy="true" element-class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <reference-descriptor name="invoiceGeneralDetail" class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+        <collection-descriptor name="invoiceBills" element-class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceBill"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="invoiceMilestones" element-class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceMilestone"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="invoiceSuspensionCategories" element-class-ref="org.kuali.kfs.module.ar.businessobject.InvoiceSuspensionCategory"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+    </class-descriptor>
+
+</descriptor-repository>
