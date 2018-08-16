@@ -2,13 +2,15 @@ package edu.cornell.kfs.module.purap.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
 
 public class IWantDocumentFeedStep extends AbstractStep {
 
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(IWantDocumentFeedStep.class);
+	private static final Logger LOG = LogManager.getLogger(IWantDocumentFeedStep.class);
 
 	protected IWantDocumentFeedService iWantDocumentFeedService;
 

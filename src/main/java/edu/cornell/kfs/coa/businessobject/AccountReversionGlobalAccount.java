@@ -19,17 +19,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+
+import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
+
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**
  * An organization which is related to a Global Organization Reversion Detail.
  */
 public class AccountReversionGlobalAccount extends GlobalBusinessObjectDetailBase {
-	protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalAccount.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionGlobalAccount.class);
 	
 	private String documentNumber;
 	private String chartOfAccountsCode;

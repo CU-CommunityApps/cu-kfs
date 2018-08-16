@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -47,7 +49,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
  * </ul>
  */
 abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> extends TransactionRowProcessor<T> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowPrintProcessor.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRowPrintProcessor.class);
 
     private static final int NUM_PRINT_CHAR_BUFFERS = 2;
     private static final int NUM_PRINT_WRITERS = 1;

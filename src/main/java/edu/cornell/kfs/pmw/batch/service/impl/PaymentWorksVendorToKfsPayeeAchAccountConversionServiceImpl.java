@@ -3,6 +3,8 @@ package edu.cornell.kfs.pmw.batch.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.kfs.krad.bo.Note;
@@ -21,7 +23,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsPayeeAchAccountConversionService;
 
 public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl implements PaymentWorksVendorToKfsPayeeAchAccountConversionService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl.class);
     
     protected ConfigurationService configurationService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;

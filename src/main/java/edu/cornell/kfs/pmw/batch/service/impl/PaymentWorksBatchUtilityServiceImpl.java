@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -46,7 +48,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUtilityService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
 
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;

@@ -5,6 +5,8 @@ import edu.cornell.kfs.sys.batch.AutoCancelBatchStep;
 import edu.cornell.kfs.sys.dataaccess.AutoCancelBatchDao;
 import edu.cornell.kfs.sys.dataaccess.DbmsOutput;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -31,7 +33,7 @@ import java.util.Set;
 
 public class AutoCancelBatchDaoJdbc extends PlatformAwareDaoBaseJdbc implements AutoCancelBatchDao {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AutoCancelBatchDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(AutoCancelBatchDaoJdbc.class);
 
     private BusinessObjectService businessObjectService;
     private DocumentService documentService;

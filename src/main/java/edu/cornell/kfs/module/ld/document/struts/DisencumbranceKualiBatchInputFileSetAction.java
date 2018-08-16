@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -33,7 +35,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class DisencumbranceKualiBatchInputFileSetAction extends KualiBatchInputFileSetAction {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisencumbranceKualiBatchInputFileSetAction.class);
+	private static final Logger LOG = LogManager.getLogger(DisencumbranceKualiBatchInputFileSetAction.class);
 
     /**
      * Override method to create a disencumbrance file for upload

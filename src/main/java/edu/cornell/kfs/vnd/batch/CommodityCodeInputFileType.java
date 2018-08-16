@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.CollectorFlatFileInputType;
 import org.kuali.kfs.sys.batch.BatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
@@ -28,7 +29,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  */
 public class CommodityCodeInputFileType extends BatchInputFileTypeBase {
 
-    protected static Logger LOG = Logger.getLogger(CollectorFlatFileInputType.class);
+	private static final Logger LOG = LogManager.getLogger(CollectorFlatFileInputType.class);
     protected DateTimeService dateTimeService;
     protected static final String FILE_NAME_PREFIX = "pur_unspsc_";
 

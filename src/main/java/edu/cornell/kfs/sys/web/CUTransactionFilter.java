@@ -12,14 +12,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 public class CUTransactionFilter implements Filter {
-    private static final Logger LOG = Logger.getLogger(CUTransactionFilter.class);
+	private static final Logger LOG = LogManager.getLogger(CUTransactionFilter.class);
  
     public void doFilter(ServletRequest req, ServletResponse res,	           
     		FilterChain chain) throws IOException, ServletException {

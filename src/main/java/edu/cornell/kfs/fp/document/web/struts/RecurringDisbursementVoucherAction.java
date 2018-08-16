@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 public class RecurringDisbursementVoucherAction extends CuDisbursementVoucherAction implements Serializable {
 
     private static final long serialVersionUID = -6417266354906825200L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherAction.class);
+    private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherAction.class);
     
     private transient RecurringDisbursementVoucherDocumentService recurringDisbursementVoucherDocumentService;
     private transient DocumentService documentService;

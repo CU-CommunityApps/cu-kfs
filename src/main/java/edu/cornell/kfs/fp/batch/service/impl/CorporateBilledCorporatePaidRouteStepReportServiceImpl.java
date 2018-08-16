@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -23,7 +25,7 @@ import edu.cornell.kfs.fp.batch.service.CorporateBilledCorporatePaidRouteStepRep
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class CorporateBilledCorporatePaidRouteStepReportServiceImpl implements CorporateBilledCorporatePaidRouteStepReportService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidRouteStepReportServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CorporateBilledCorporatePaidRouteStepReportServiceImpl.class);
     
     protected ConfigurationService configurationService;
     protected ReportWriterService reportWriterService;

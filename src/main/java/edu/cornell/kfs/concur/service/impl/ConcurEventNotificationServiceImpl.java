@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -22,7 +24,7 @@ import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 import edu.cornell.kfs.concur.service.ConcurReportsService;
 
 public class ConcurEventNotificationServiceImpl implements ConcurEventNotificationService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurEventNotificationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurEventNotificationServiceImpl.class);
     
     protected BusinessObjectService businessObjectService;
     protected ConcurReportsService concurReportsService;

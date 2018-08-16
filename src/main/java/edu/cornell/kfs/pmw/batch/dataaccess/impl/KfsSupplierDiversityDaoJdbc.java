@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,7 +21,7 @@ import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 
 public class KfsSupplierDiversityDaoJdbc extends PlatformAwareDaoBaseJdbc implements KfsSupplierDiversityDao {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KfsSupplierDiversityDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(KfsSupplierDiversityDaoJdbc.class);
     private static final String KFS_SUPP_DVRST_CD_COL = "kfs_supp_dvrst_cd";
     private static final String KFS_SUPP_DVRST_DESC_COL = "kfs_supp_dvrst_desc";
     private static final String PMW_SUPP_DVRST_DESC_COL = "pmw_supp_dvrst_desc";

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KfsAuthorizationConstants.DisbursementVoucherEditMode;
@@ -23,7 +25,7 @@ import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherPaymentMaintenance
 public class RecurringDisbursementVoucherForm extends CuDisbursementVoucherForm {
 
     private static final long serialVersionUID = 7035540080454973823L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherForm.class);
+    private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherForm.class);
 
     private transient List<RecurringDisbursementVoucherPDPStatus> pdpStatuses;
     private transient RecurringDisbursementVoucherDocumentService recurringDisbursementVoucherDocumentService;

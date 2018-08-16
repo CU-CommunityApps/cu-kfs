@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -47,7 +49,7 @@ public class LaborLedgerEnterpriseFeedServiceImpl implements LaborLedgerEnterpri
     public static final int TRN_ENCUM_UPDT_CD_END_INDEX = 195;
     public static final int LD_ENTERPRISE_FEED_LINE_LENGTH = 296;
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LaborLedgerEnterpriseFeedServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(LaborLedgerEnterpriseFeedServiceImpl.class);
 
     private static final String TRANSACTION_SIGN = "+";
     private static final String DATE_FORMAT = "yyyy-MM-dd";

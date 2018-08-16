@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.service.AchBankService;
@@ -28,7 +30,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorAchDataProcessingInto
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 
 public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNewVendorPayeeAchService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorPayeeAchServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksNewVendorPayeeAchServiceImpl.class);
     
     protected AchBankService achBankService;
     protected BusinessObjectService businessObjectService;

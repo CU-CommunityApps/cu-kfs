@@ -15,6 +15,8 @@
  */
 package edu.cornell.kfs.gl.batch.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 
 import edu.cornell.kfs.gl.batch.service.ReversionCategoryLogic;
@@ -24,7 +26,7 @@ import edu.cornell.kfs.gl.batch.service.ReversionCategoryLogic;
  * @see org.kuali.kfs.gl.batch.service.OrganizationReversionCategoryLogic
  */
 public class CashReversionCategoryLogic implements ReversionCategoryLogic {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CashReversionCategoryLogic.class);
+	private static final Logger LOG = LogManager.getLogger(CashReversionCategoryLogic.class);
 
     static final public String NAME = "Cash";
     static final public String CODE = "CASH";

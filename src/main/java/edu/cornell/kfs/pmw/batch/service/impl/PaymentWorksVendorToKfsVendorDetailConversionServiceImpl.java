@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -43,7 +45,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements PaymentWorksVendorToKfsVendorDetailConversionService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class);
     
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;

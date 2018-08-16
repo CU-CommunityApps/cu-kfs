@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -34,6 +36,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
+import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 /**
@@ -41,7 +44,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
  */
 @NonTransactional
 public class AchBundlerHelperServiceImpl implements AchBundlerHelperService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AchBundlerHelperServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AchBundlerHelperServiceImpl.class);
     
     /**
      * KFSPTS-1460: Changes made to code we originally received

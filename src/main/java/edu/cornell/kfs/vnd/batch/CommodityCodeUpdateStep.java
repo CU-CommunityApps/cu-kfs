@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -13,7 +15,7 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import edu.cornell.kfs.vnd.batch.service.CommodityCodeUpdateService;
 
 public class CommodityCodeUpdateStep extends AbstractStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CommodityCodeUpdateStep.class);
+	private static final Logger LOG = LogManager.getLogger(CommodityCodeUpdateStep.class);
     private CommodityCodeUpdateService commodityCodeUpdateService;
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType commodityCodeInputFileType;

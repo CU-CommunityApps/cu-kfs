@@ -2,13 +2,15 @@ package edu.cornell.kfs.sys.batch;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.exception.ParseException;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class AccountReversionInputFileType extends CuBatchInputFileTypeBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionInputFileType.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionInputFileType.class);
 
     private static final String FILE_NAME_PREFIX = "AccountReversion";
 

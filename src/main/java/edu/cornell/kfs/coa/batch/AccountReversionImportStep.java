@@ -18,7 +18,8 @@ package edu.cornell.kfs.coa.batch;
 import java.io.File;
 import java.util.Date;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.util.StopWatch;
 
@@ -31,7 +32,7 @@ import edu.cornell.kfs.sys.batch.CuAbstractStep;
  */
 public class AccountReversionImportStep extends CuAbstractStep {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionImportStep.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionImportStep.class);
 
     private String batchFileDirectoryName;
 

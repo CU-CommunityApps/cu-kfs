@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
@@ -24,7 +26,7 @@ public class GlobalIndirectCostRecoveryAccountsRuleTest {
 
 	private GlobalIndirectCostRecoveryAccountsRule globalIndirectCostRecoveryAccountsRule;
 
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GlobalIndirectCostRecoveryAccountsRuleTest.class);
+	private static final Logger LOG = LogManager.getLogger(GlobalIndirectCostRecoveryAccountsRuleTest.class);
 
 	@Before
 	public void setUp() {

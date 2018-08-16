@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
@@ -45,7 +47,7 @@ import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 
 public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
 
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
     protected WebServiceCredentialService webServiceCredentialService;

@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.datadictionary.InquirySectionDefinition;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
@@ -72,7 +74,7 @@ public class DataObjectRestServiceController {
     private static final String MAX_OBJECTS_TO_RETURN = "maxObjectsToReturn";
     private static final String LIMIT_BY_PARAMETER = "limitByParameter";
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DataObjectRestServiceController.class);
+    private static final Logger LOG = LogManager.getLogger(DataObjectRestServiceController.class);
 
     private DataDictionaryService dataDictionaryService;
     private PersistenceStructureService persistenceStructureService;

@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -13,7 +15,7 @@ import edu.cornell.kfs.module.purap.dataaccess.LevelOrganizationDao;
 
 public class LevelOrganizationDaoJdbc extends PlatformAwareDaoBaseJdbc implements LevelOrganizationDao {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LevelOrganizationDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(LevelOrganizationDaoJdbc.class);
 
     /**
      * Constructs a new LevelOrganizationDaoJdbc

@@ -2,11 +2,13 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransaction;
 import edu.cornell.kfs.fp.businessobject.CorporateBilledCorporatePaidTransactionExtendedAttribute;
 
 public class CorporateBilledCorporatePaidLoadFlatFileServiceImpl extends ProcurementCardLoadFlatTransactionsServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidLoadFlatFileServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CorporateBilledCorporatePaidLoadFlatFileServiceImpl.class);
     
     @Override
     public void cleanTransactionsTable() {

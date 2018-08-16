@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.rice.core.api.util.type.TypeUtils;
@@ -34,7 +36,7 @@ import com.thoughtworks.xstream.XStream;
 
 public class RestXmlUtil {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RestXmlUtil.class);
+	private static final Logger LOG = LogManager.getLogger(RestXmlUtil.class);
 
     private DataDictionaryService dataDictionaryService;
 

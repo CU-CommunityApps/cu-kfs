@@ -8,6 +8,8 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -39,7 +41,7 @@ import java.util.regex.Pattern;
  * See the static nested classes for default implementations.
  */
 abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> extends TransactionRowBuilder<T> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowDvBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRowDvBuilder.class);
 
     private static final int GETTER_BUILDER_SIZE = 2000;
     private static final int DEFAULT_PRE_SPLIT_PARM_COUNT = 3;

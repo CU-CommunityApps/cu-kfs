@@ -5,6 +5,8 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.kfs;
 import java.io.File;
 import java.io.FileWriter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.batch.ElectronicInvoiceInputFileType;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad;
 import org.kuali.kfs.module.purap.document.ElectronicInvoiceRejectDocument;
@@ -25,7 +27,7 @@ import edu.cornell.kfs.module.purap.fixture.RequisitionFixture;
 @ConfigureContext(session = UserNameFixture.kfs)
 public class CuElectronicInvoiceHelperServiceImplTest extends KualiTestBase {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuElectronicInvoiceHelperServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceHelperServiceImplTest.class);
 
     private CuElectronicInvoiceHelperServiceImpl cuElectronicInvoiceHelperService;
     private DocumentService documentService;

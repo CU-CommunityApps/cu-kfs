@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
@@ -16,7 +18,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  */
 public class DisbursementVoucherInitiatorPrimaryDepartmentValidation extends GenericValidation {
 
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherInitiatorPrimaryDepartmentValidation.class);
+	private static final Logger LOG = LogManager.getLogger(DisbursementVoucherInitiatorPrimaryDepartmentValidation.class);
     private AccountingDocument accountingDocumentForValidation;
 
     /**

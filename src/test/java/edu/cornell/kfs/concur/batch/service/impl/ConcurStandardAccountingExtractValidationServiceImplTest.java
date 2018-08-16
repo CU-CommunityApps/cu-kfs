@@ -8,8 +8,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class).setLevel(Level.DEBUG);
+    		Configurator.setLevel(ConcurStandardAccountingExtractValidationServiceImpl.class.getName(), Level.DEBUG);
         concurBatchUtilityService = new TestableConcurBatchUtilityServiceImpl();
         concurEmployeeInfoValidationService = new TestableConcurEmployeeInfoValidationServiceImpl();
         concurStandardAccountingValidationService = new ConcurStandardAccountingExtractValidationServiceImpl();

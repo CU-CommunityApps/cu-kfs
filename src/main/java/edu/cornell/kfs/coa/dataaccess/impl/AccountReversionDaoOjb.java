@@ -17,6 +17,8 @@ package edu.cornell.kfs.coa.dataaccess.impl;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -32,7 +34,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
  * This class implements the {@link OrganizationReversionDao} data access methods using Ojb
  */
 public class AccountReversionDaoOjb extends PlatformAwareDaoBaseOjb implements AccountReversionDao {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionDaoOjb.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionDaoOjb.class);
 
     /**
      * @see org.kuali.kfs.coa.dataaccess.OrganizationReversionDao#getByPrimaryId(java.lang.Integer, java.lang.String,

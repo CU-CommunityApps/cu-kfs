@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.ezra.batch;
 
 import java.text.ParseException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -19,7 +21,7 @@ public class AwardStep extends AbstractStep {
 	private static final String PARAMETER_NAMESPACE_CODE = "KFS-EZRA";
     private static final String PARAMETER_NAMESPACE_STEP = "AwardStep";
 	
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwardStep.class);
+    private static final Logger LOG = LogManager.getLogger(AwardStep.class);
 
     
 	public boolean execute(String arg0, java.util.Date arg1) throws InterruptedException {

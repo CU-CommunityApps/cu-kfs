@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
@@ -17,7 +19,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 @ConfigureContext(session = ccs1)
 public class ezraUpdateProposalImplTest extends KualiTestBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraService.class);
+	private static final Logger LOG = LogManager.getLogger(EzraService.class);
 	private EzraService ezraService;	
 	private BusinessObjectService businessObjectService;
 	private UnitTestSqlDao unitTestSqlDao;

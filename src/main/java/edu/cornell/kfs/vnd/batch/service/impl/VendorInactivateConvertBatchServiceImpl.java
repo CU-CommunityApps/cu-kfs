@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -37,7 +39,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 public class VendorInactivateConvertBatchServiceImpl implements VendorInactivateConvertBatchService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorInactivateConvertBatchServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(VendorInactivateConvertBatchServiceImpl.class);
     
     private BatchInputFileService batchInputFileService;    
     private List<BatchInputFileType> batchInputFileTypes;

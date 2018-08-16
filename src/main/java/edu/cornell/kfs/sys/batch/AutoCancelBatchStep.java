@@ -17,6 +17,8 @@ package edu.cornell.kfs.sys.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,7 @@ import edu.cornell.kfs.sys.dataaccess.AutoCancelBatchDao;
  * @author Cornell - Dennis Friends
  */
 public class AutoCancelBatchStep extends AbstractStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AutoCancelBatchStep.class);
+	private static final Logger LOG = LogManager.getLogger(AutoCancelBatchStep.class);
 
     private AutoCancelBatchDao autoCancelBatchDao;
     

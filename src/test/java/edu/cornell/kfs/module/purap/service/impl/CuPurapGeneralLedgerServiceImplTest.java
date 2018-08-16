@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.purap.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
@@ -30,7 +32,7 @@ import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
 @ConfigureContext(session = UserNameFixture.mo14)
 public class CuPurapGeneralLedgerServiceImplTest extends KualiTestBase {
 	
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurapGeneralLedgerServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuPurapGeneralLedgerServiceImplTest.class);
 
 	private CuPurapGeneralLedgerServiceImpl cuPurapGeneralLedgerServiceImpl;
 	private PurapAccountingService purapAccountingService;

@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -34,7 +35,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 @Transactional
 public class AccountReversionTrickleDownInactivationServiceImpl implements AccountReversionTrickleDownInactivationService {
     
-    private static final Logger LOG = Logger.getLogger(AccountReversionTrickleDownInactivationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionTrickleDownInactivationServiceImpl.class);
 
     protected AccountReversionService accountReversionService;
     protected MaintenanceDocumentDictionaryService maintenanceDocumentDictionaryService;

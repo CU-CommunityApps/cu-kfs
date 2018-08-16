@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.document.Document;
@@ -42,7 +44,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocumentService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentServiceImpl.class);
 
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType accountingDocumentBatchInputFileType;

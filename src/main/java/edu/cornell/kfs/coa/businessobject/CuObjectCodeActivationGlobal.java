@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
@@ -15,7 +17,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 public class CuObjectCodeActivationGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
     private static final long serialVersionUID = -3772910396694995779L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobal.class);
+    private static final Logger LOG = LogManager.getLogger(CuObjectCodeActivationGlobal.class);
     
     private transient ObjectCodeService objectCodeService;
     

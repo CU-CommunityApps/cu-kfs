@@ -3,6 +3,8 @@ package edu.cornell.kfs.fp.batch;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -10,7 +12,7 @@ import edu.cornell.kfs.fp.service.AmazonWebServicesBillingService;
 
 public class LoadAWSBillsStep extends AbstractStep {
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LoadAWSBillsStep.class);
+	private static final Logger LOG = LogManager.getLogger(LoadAWSBillsStep.class);
     
     private AmazonWebServicesBillingService amazonWebServicesBillingService;
 

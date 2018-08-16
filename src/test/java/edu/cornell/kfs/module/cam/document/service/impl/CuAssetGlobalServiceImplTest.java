@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.cam.document.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobal;
 import org.kuali.kfs.module.cam.businessobject.AssetGlobalDetail;
@@ -15,7 +17,7 @@ public class CuAssetGlobalServiceImplTest extends KualiTestBase {
 	
 	private CuAssetGlobalServiceImpl assetGlobalService;
 	
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAssetGlobalServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuAssetGlobalServiceImpl.class);
 	
 	
 	@Override

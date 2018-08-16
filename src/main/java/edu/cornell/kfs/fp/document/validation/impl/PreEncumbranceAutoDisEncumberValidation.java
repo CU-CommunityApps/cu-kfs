@@ -8,7 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
@@ -29,7 +30,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class PreEncumbranceAutoDisEncumberValidation extends GenericValidation {
 	
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PreEncumbranceAutoDisEncumberValidation.class);
+	private static final Logger LOG = LogManager.getLogger(PreEncumbranceAutoDisEncumberValidation.class);
     private AccountingDocumentRuleHelperService accountingDocumentRuleHelperService;
     private PreEncumbranceDocument accountingDocumentForValidation;
     public static final String TRANSACTION_DATE_FORMAT_STRING = "yyyy-MM-dd";

@@ -3,6 +3,8 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.exception.FileStorageException;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
@@ -11,7 +13,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
 
 public class ConcurRequestExtractCreatePdpFeedServiceImpl implements ConcurRequestExtractCreatePdpFeedService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractCreatePdpFeedServiceImpl.class);
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurRequestExtractFileService concurRequestExtractFileService;
     protected ConcurRequestExtractReportService concurRequestExtractReportService;

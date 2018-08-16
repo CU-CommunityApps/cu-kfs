@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.CsvBatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
@@ -14,7 +16,7 @@ import edu.cornell.kfs.pdp.CUPdpConstants;
  * File type denoting a Payee ACH Account Extract .csv file for adding or updating Payee ACH Accounts.
  */
 public class PayeeACHAccountExtractCsvInputFileType extends CsvBatchInputFileTypeBase<PayeeACHAccountExtractCsv> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PayeeACHAccountExtractCsvInputFileType.class);
+	private static final Logger LOG = LogManager.getLogger(PayeeACHAccountExtractCsvInputFileType.class);
 
     /**
      * This implementation just returns an empty string, since the returned value is not needed in this case.

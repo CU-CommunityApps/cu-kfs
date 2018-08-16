@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,7 +19,7 @@ import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksIsoFipsCountryDao;
 
 public class PaymentWorksIsoFipsCountryDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksIsoFipsCountryDao {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksIsoFipsCountryDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksIsoFipsCountryDaoJdbc.class);
     private static final String ISO_CNTRY_CD_COL = "iso_cntry_cd";
     private static final String ISO_CNTRY_NM_COL = "iso_cntry_nm";
     private static final String FIPS_CNTRY_CD_COL = "fips_cntry_cd";

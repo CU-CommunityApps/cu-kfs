@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -15,7 +17,7 @@ import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
 public class PaymentRequestForeignDraftValidation extends GenericValidation {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentRequestForeignDraftValidation.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentRequestForeignDraftValidation.class);
 
     private AccountingDocument accountingDocumentForValidation;
 

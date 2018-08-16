@@ -2,13 +2,15 @@ package edu.cornell.kfs.pmw.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 
 public class PaymentWorksRefreshAuthorizationTokenStep extends AbstractStep {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksRefreshAuthorizationTokenStep.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksRefreshAuthorizationTokenStep.class);
 
     private PaymentWorksWebServiceCallsService paymentWorksWebServiceCallsService;
 

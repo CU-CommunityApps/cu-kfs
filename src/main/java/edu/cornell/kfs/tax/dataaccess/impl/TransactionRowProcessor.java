@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
@@ -60,7 +62,7 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
  * processor and its nested/inner classes at a given time.</p>
  */
 abstract class TransactionRowProcessor<T extends TransactionDetailSummary> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowProcessor.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRowProcessor.class);
 
     // Constants pertaining to constructing the tax ID in NNN-NN-NNNN format.
     private static final int TAXID_SRC_CHUNK1_2_SPLIT = 3;

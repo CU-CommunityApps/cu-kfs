@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.purap.batch;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.service.ElectronicInvoiceHelperService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
@@ -8,7 +10,7 @@ import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
 
 public class CuElectronicInvoiceRouteStep extends AbstractStep {
     
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuElectronicInvoiceRouteStep.class);
+	private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceRouteStep.class);
 
     private ElectronicInvoiceHelperService electronicInvoiceHelperService;
 

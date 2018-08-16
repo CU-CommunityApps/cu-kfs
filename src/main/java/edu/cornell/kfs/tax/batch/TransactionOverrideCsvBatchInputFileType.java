@@ -17,6 +17,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -43,7 +45,7 @@ import edu.cornell.kfs.tax.businessobject.TransactionOverride;
  * Custom KFS file type that reads Transaction Override objects from a tab-delimited file instead of a comma-delimited one.
  */
 public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileTypeBase<TransactionOverrideCsv> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionOverrideCsvBatchInputFileType.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionOverrideCsvBatchInputFileType.class);
 
     private static final String UPLOAD_FILE_PREFIX = "taxoverride";
     private static final String NULL_STRING = "null";

@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.gl.batch.service.ReversionUnitOfWorkService;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.gl.businessobject.ReversionUnitOfWorkCategoryAmount;
 
 public abstract class ReversionUnitOfWorkServiceImpl implements ReversionUnitOfWorkService {
 
-    static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReversionUnitOfWorkServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ReversionUnitOfWorkServiceImpl.class);
 
     
     BusinessObjectService businessObjectService;

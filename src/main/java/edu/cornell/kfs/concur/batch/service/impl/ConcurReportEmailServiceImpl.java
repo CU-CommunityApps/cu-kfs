@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -15,7 +17,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurReportEmailService;
 
 public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurReportEmailServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurReportEmailServiceImpl.class);
     
     protected EmailService emailService;
     protected ConcurBatchUtilityService concurBatchUtilityService;

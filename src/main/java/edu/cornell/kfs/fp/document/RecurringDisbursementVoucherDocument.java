@@ -3,6 +3,8 @@ package edu.cornell.kfs.fp.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
@@ -22,7 +24,7 @@ import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
 public class RecurringDisbursementVoucherDocument extends CuDisbursementVoucherDocument {
 
 	private static final long serialVersionUID = 5578411133159987973L;
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherDocument.class);
+	private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherDocument.class);
 	
 	private List<RecurringDisbursementVoucherDetail> recurringDisbursementVoucherDetails;
 	private transient String paymentCancelReason;

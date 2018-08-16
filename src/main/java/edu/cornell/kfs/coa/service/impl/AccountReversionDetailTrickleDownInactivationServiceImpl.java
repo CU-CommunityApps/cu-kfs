@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
@@ -46,7 +47,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  * The default implementation of the OrganizationReversionDetailTrickleDownService
  */
 public class AccountReversionDetailTrickleDownInactivationServiceImpl implements AccountReversionDetailTrickleDownInactivationService {
-    private static final Logger LOG = Logger.getLogger(AccountReversionDetailTrickleDownInactivationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionDetailTrickleDownInactivationServiceImpl.class);
     protected NoteService noteService;
     protected ConfigurationService kualiConfigurationService;
     protected BusinessObjectService businessObjectService;

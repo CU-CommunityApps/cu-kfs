@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -54,7 +56,7 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 
 public class EzraServiceImpl implements EzraService {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(EzraServiceImpl.class);
 
     private BusinessObjectService businessObjectService;
 	private DocumentService documentService;

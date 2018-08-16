@@ -12,13 +12,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.service.ConcurAuthenticationService;
 
 public class ConcurAuthenticationFilter implements Filter {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAuthenticationFilter.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurAuthenticationFilter.class);
 
     @Override
     public void destroy() {

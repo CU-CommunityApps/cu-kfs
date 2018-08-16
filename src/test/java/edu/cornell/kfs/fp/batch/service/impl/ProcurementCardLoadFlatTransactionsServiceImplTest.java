@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -21,7 +23,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     private ProcurementCardLoadFlatTransactionsServiceImpl procurementCardLoadFlatTransactionsService;
     private ConfigurationService  kualiConfigurationService;
     
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardSummaryFeedService.class);
+    private static final Logger LOG = LogManager.getLogger(ProcurementCardSummaryFeedService.class);
     
     private UnitTestSqlDao unitTestSqlDao;
 	

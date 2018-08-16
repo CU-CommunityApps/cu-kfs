@@ -5,6 +5,8 @@ import edu.cornell.kfs.module.receiptProcessing.batch.ReceiptProcessingCSVInputF
 import edu.cornell.kfs.module.receiptProcessing.service.impl.ReceiptProcessingServiceImpl;
 import edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CuReceiptProcessingServiceImplNegativeTest {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingService.class);
+	private static final Logger LOG = LogManager.getLogger(ReceiptProcessingService.class);
 
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_bad_test.csv";
     private static final String TEST_PATH = "test";

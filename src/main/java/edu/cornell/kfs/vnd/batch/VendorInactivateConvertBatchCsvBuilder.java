@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
 
 
@@ -27,7 +29,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
  * @author cab379
  */
 public class VendorInactivateConvertBatchCsvBuilder {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorInactivateConvertBatchCsvBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(VendorInactivateConvertBatchCsvBuilder.class);
 
     /**
      * Convert the parseData object into ReceiptProcessing BO 
