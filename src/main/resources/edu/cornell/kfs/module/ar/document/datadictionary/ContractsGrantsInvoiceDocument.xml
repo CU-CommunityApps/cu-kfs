@@ -16,13 +16,7 @@
 -->
 
 	<bean id="ContractsGrantsInvoiceDocument" parent="ContractsGrantsInvoiceDocument-parentBean">
-		<property name="documentClass" value="edu.cornell.kfs.module.ar.document.ContractsGrantsInvoiceDocument" />
-	<!-- 
-		<property name="documentTypeName" value="CINV" />
-		<property name="documentClass" value="org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument"/>
-		
-		
-		<property name="baseDocumentClass" value="edu.cornell.kfs.module.ar.document.CuContractsGrantsInvoiceDocument" />
-		 -->
+		<property name="documentClass" value="edu.cornell.kfs.module.ar.document.CuContractsGrantsInvoiceDocument" />
+		<property name="baseDocumentClass" value="org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument" />
 	</bean>
 </beans>
