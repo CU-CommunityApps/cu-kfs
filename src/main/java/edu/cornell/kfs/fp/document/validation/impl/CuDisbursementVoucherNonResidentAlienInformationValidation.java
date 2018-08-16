@@ -21,7 +21,9 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
+import org.kuali.kfs.sys.service.NonTransactional;
 
+@NonTransactional
 public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonResidentAlienInformationValidation{
     
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
