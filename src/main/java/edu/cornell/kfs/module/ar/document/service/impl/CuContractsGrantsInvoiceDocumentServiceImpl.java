@@ -11,6 +11,7 @@ import org.kuali.kfs.module.ar.businessobject.SystemInformation;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
 import org.kuali.kfs.module.ar.report.PdfFormattingMap;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.util.FallbackMap;
 import org.kuali.kfs.sys.util.ReflectionMap;
@@ -38,12 +39,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateCreated())) {
             parameterMap.put(KFSPropertyConstants.DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateCreated().toDate()));
         }
-        if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateFinalized())) {
-            parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateFinalized().toDate()));
-        }
-        else if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateLastModified())) {
-            parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateLastModified().toDate()));
-        }
+        setFinalStatusDate(document, parameterMap);
 
         parameterMap.put(KFSPropertyConstants.PROPOSAL_NUMBER, document.getInvoiceGeneralDetail().getProposalNumber());
         parameterMap.put(KFSPropertyConstants.PAYEE + "." + KFSPropertyConstants.NAME, document.getBillingAddressName());
@@ -207,6 +203,14 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             }
         }
         return new PdfFormattingMap(parameterMap);
+    }
+
+    private void setFinalStatusDate(ContractsGrantsInvoiceDocument document, Map<String, Object> parameterMap) {
+        if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateFinalized())) {
+            parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateFinalized().toDate()));
+        } else if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateLastModified())) {
+            parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateLastModified().toDate()));
+        }
     }
 
 }
