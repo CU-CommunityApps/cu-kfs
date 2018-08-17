@@ -27,7 +27,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 @SuppressWarnings("deprecation")
 public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
 
-	private static final Logger LOG = LogManager.getLogger(SubAccountMaintainableImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuSubAccountMaintainableImpl.class);
     private static final long serialVersionUID = 1L;
     private static final String REQUIRES_CG_APPROVAL_NODE = "RequiresCGResponsibilityApproval";
     private AccountService accountService;          

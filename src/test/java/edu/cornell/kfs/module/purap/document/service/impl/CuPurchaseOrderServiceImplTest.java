@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.io.ByteArrayOutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.PurchaseOrderDao;
@@ -19,8 +21,7 @@ import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuPurchaseOrderServiceImplTest extends KualiTestBase {
 
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(CuPurchaseOrderServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuPurchaseOrderServiceImplTest.class);
 
 	private PurchaseOrderService purchaseOrderService;
 	protected PurchaseOrderDao purchaseOrderDao;

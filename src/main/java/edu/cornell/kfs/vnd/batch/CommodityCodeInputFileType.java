@@ -29,7 +29,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  */
 public class CommodityCodeInputFileType extends BatchInputFileTypeBase {
 
-	private static final Logger LOG = LogManager.getLogger(CollectorFlatFileInputType.class);
+	private static final Logger LOG = LogManager.getLogger(CommodityCodeInputFileType.class);
     protected DateTimeService dateTimeService;
     protected static final String FILE_NAME_PREFIX = "pur_unspsc_";
 

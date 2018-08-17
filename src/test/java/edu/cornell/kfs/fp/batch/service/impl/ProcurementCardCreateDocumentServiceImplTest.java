@@ -25,7 +25,7 @@ public class ProcurementCardCreateDocumentServiceImplTest  extends KualiTestBase
     private ProcurementCardCreateDocumentService procurementCardCreateDocumentService;
     private ConfigurationService  kualiConfigurationService;
     
-    private static final Logger LOG = LogManager.getLogger(ProcurementCardSummaryFeedService.class);
+    private static final Logger LOG = LogManager.getLogger(ProcurementCardCreateDocumentServiceImplTest.class);
     
     private UnitTestSqlDao unitTestSqlDao;
 	

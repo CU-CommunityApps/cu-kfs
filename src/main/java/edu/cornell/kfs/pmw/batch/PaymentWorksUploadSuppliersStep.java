@@ -2,6 +2,8 @@ package edu.cornell.kfs.pmw.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
@@ -9,7 +11,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksUploadSuppliersService;
 
 public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersStep.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksUploadSuppliersStep.class);
 
     private PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     private PaymentWorksUploadSuppliersService paymentWorksUploadSuppliersService;

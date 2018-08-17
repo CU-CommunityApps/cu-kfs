@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -18,7 +19,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuUniversityDateFiscalYearMakerImpl extends UniversityDateFiscalYearMakerImpl {
 
-    private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(CuUniversityDateFiscalYearMakerImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuUniversityDateFiscalYearMakerImpl.class);
     protected ParameterService parameterService;
 
     /**

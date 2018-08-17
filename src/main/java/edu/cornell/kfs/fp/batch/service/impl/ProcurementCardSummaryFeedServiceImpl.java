@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -28,8 +30,7 @@ import edu.cornell.kfs.fp.businessobject.ProcurementCardSummaryEntry;
 public class ProcurementCardSummaryFeedServiceImpl implements ProcurementCardSummaryFeedService {
 
 
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-	.getLogger(ProcurementCardSummaryFeedServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ProcurementCardSummaryFeedServiceImpl.class);
 
 	
 	protected BatchInputFileService batchInputFileService;

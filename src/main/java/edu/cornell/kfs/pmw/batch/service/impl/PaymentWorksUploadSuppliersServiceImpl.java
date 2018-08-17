@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -44,7 +46,7 @@ import edu.cornell.kfs.sys.util.EnumConfiguredMappingStrategy;
 
 public class PaymentWorksUploadSuppliersServiceImpl implements PaymentWorksUploadSuppliersService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksUploadSuppliersServiceImpl.class);
     private static final String ERROR_MESSAGE_FORMAT = "%s%s.  Error Message: %s";
 
     private PaymentWorksUploadSuppliersReportService paymentWorksUploadSuppliersReportService;

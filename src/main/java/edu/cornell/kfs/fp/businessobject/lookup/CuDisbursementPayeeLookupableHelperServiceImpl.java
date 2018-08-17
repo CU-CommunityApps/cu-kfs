@@ -86,7 +86,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
 
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER,
                     KFSKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD, vendorNumberLabel, employeeIdLabel,
-                    vendorNameLabel, firstNameLabel, lastNameLabel);
+                    vendorNameLabel, firstNameLabel, lastNameLabel, principalNameLabel);
             return false;
         }
         return true;
