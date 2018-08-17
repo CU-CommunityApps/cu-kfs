@@ -13,7 +13,7 @@ import edu.cornell.kfs.module.ar.CuArParameterConstants;
 
 public class CuContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocument {
     private static final long serialVersionUID = 6257106079211623394L;
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuContractsGrantsInvoiceDocument.class);
+    protected static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuContractsGrantsInvoiceDocument.class);
     
     protected transient ConfigurationService configurationService;
 
@@ -44,7 +44,7 @@ public class CuContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocu
                 return detail.getContractControlAccountNumber();
             }
         }
-        LOG.error("findConntractControllAccountNumber, could not find contract controll account number");
+        LOG.error("findContractControlAccountNumber, could not find contract control account number");
         return StringUtils.EMPTY;
     }
     
