@@ -3,8 +3,6 @@ package edu.cornell.kfs.vnd.batch.service.impl;
 import java.io.File;
 import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
@@ -20,8 +18,6 @@ public class CuCommodityCodeUpdateServiceImplTest extends KualiTestBase {
 	private CommodityCodeUpdateService commodityCodeUpdateService;
     private ConfigurationService  kualiConfigurationService;
 
-    
-    private static final Logger LOG = LogManager.getLogger(CommodityCodeUpdateService.class);
 	private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/vnd/fixture/commodityCodeFlatFile.txt";
     
 	@Override

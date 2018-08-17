@@ -23,7 +23,7 @@ public class CuReceiptProcessingServiceImplPositiveTest extends KualiTestBase {
     private ReceiptProcessingService receiptProcessingService;
     private ConfigurationService  kualiConfigurationService;
     
-    private static final Logger LOG = LogManager.getLogger(ReceiptProcessingService.class);
+    private static final Logger LOG = LogManager.getLogger(CuReceiptProcessingServiceImplPositiveTest.class);
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_test.csv";
     private static final String IMG_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/attachments/testUnit.pdf";
     private String batchDirectory;  

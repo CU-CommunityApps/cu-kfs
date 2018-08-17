@@ -26,7 +26,7 @@ public class CuVendorBatchServiceImplTest extends KualiTestBase {
     private VendorBatchService vendorBatchService;
     private ConfigurationService  kualiConfigurationService;
     
-    private static final Logger LOG = LogManager.getLogger(VendorBatchService.class);
+    private static final Logger LOG = LogManager.getLogger(CuVendorBatchServiceImplTest.class);
     private static final String DATA_FILE_PATH = "src/test/java/edu/cornell/kfs/vnd/batch/service/impl/fixture/";
     private static final String HEADER_MISMATCH_FILE_NAME = "vendorBatch_column_header_mismatch";
     private static final String ADD_REQUIRED_FIELD_MISSING_FILE_NAME = "vendorBatch_add_required_field_missing";

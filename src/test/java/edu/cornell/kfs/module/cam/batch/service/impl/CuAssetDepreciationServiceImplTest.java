@@ -17,7 +17,7 @@ import edu.cornell.kfs.module.cam.businessobject.lookup.CuAssetLookupableHelperS
 @ConfigureContext
 public class CuAssetDepreciationServiceImplTest extends TestCase {
 
-	private static final Logger LOG = LogManager.getLogger(CuAssetDepreciationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuAssetDepreciationServiceImplTest.class);
 	private CuAssetDepreciationServiceImpl cuAssetDepreciationServiceImpl;
 	
 	@Override

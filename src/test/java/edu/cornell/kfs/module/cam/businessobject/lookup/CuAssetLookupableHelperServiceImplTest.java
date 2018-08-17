@@ -22,7 +22,7 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 @ConfigureContext
 public class CuAssetLookupableHelperServiceImplTest extends KualiTestBase {
 
-	private static final Logger LOG = LogManager.getLogger(CuAssetLookupableHelperServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuAssetLookupableHelperServiceImplTest.class);
 	private CuAssetLookupableHelperServiceImpl cuAssetLookupableHelperServiceImpl;
 	private Class cuAssetLookupableHelperServiceImplClass;
 	

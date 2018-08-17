@@ -23,7 +23,7 @@ public class ProcurementCardSummaryFeedServiceImplTest  extends KualiTestBase {
     private ProcurementCardSummaryFeedService procurementCardSummaryFeedService;
     private ConfigurationService  kualiConfigurationService;
     
-    private static final Logger LOG = LogManager.getLogger(ProcurementCardSummaryFeedService.class);
+    private static final Logger LOG = LogManager.getLogger(ProcurementCardSummaryFeedServiceImplTest.class);
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/service/fixture/fp_pcard_summary_20140924.data";
     private String batchDirectory;  
 

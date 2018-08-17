@@ -27,7 +27,7 @@ import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 @ConfigureContext(session = ccs1)
 public class ezraUpdateAwardImplTest extends KualiTestBase {
 
-	private static final Logger LOG = LogManager.getLogger(EzraService.class);
+	private static final Logger LOG = LogManager.getLogger(ezraUpdateAwardImplTest.class);
     private EzraService ezraService;    
     private BusinessObjectService businessObjectService;
     private EzraAwardProposalDao ezraAwardProposalDao;

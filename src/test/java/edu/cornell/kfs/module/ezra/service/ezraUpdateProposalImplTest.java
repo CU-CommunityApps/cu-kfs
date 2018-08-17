@@ -19,7 +19,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 @ConfigureContext(session = ccs1)
 public class ezraUpdateProposalImplTest extends KualiTestBase {
 
-	private static final Logger LOG = LogManager.getLogger(EzraService.class);
+	private static final Logger LOG = LogManager.getLogger(ezraUpdateProposalImplTest.class);
 	private EzraService ezraService;	
 	private BusinessObjectService businessObjectService;
 	private UnitTestSqlDao unitTestSqlDao;

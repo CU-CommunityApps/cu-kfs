@@ -17,7 +17,7 @@ public class CuAssetGlobalServiceImplTest extends KualiTestBase {
 	
 	private CuAssetGlobalServiceImpl assetGlobalService;
 	
-	private static final Logger LOG = LogManager.getLogger(CuAssetGlobalServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuAssetGlobalServiceImplTest.class);
 	
 	
 	@Override

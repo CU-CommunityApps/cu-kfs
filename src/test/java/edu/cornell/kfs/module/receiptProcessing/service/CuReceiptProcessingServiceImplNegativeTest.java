@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CuReceiptProcessingServiceImplNegativeTest {
-	private static final Logger LOG = LogManager.getLogger(ReceiptProcessingService.class);
+	private static final Logger LOG = LogManager.getLogger(CuReceiptProcessingServiceImplNegativeTest.class);
 
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/receiptProcessing/service/fixture/receiptProcessing_bad_test.csv";
     private static final String TEST_PATH = "test";

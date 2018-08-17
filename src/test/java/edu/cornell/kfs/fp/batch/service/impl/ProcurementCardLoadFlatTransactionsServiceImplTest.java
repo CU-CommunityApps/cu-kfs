@@ -23,7 +23,7 @@ public class ProcurementCardLoadFlatTransactionsServiceImplTest  extends KualiTe
     private ProcurementCardLoadFlatTransactionsServiceImpl procurementCardLoadFlatTransactionsService;
     private ConfigurationService  kualiConfigurationService;
     
-    private static final Logger LOG = LogManager.getLogger(ProcurementCardSummaryFeedService.class);
+    private static final Logger LOG = LogManager.getLogger(ProcurementCardLoadFlatTransactionsServiceImplTest.class);
     
     private UnitTestSqlDao unitTestSqlDao;
 	

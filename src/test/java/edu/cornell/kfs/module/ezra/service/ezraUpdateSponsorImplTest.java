@@ -27,7 +27,7 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 @ConfigureContext(session = ccs1)
 public class ezraUpdateSponsorImplTest extends KualiTestBase {
 
-	private static final Logger LOG = LogManager.getLogger(EzraService.class);
+	private static final Logger LOG = LogManager.getLogger(ezraUpdateSponsorImplTest.class);
     private EzraService ezraService;    
     private BusinessObjectService businessObjectService;
     private SponsorDao sponsorDao;
