@@ -31,7 +31,6 @@ import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
 
 public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIndirectCostRecoveryAccounts{
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAccountGlobal.class);
     private static final long serialVersionUID = 1L;
 
     protected transient DateTimeService dateTimeService;
@@ -144,7 +143,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	private void updateAccountBasicFields(Account account) {
-	    LOG.debug("updateAccountBasicFields, entering for account: " + account.toString());
 		if (StringUtils.isNotBlank(accountFiscalOfficerSystemIdentifier)) {
 		    account.setAccountFiscalOfficerSystemIdentifier(accountFiscalOfficerSystemIdentifier);
 		}
@@ -262,9 +260,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 
 		if (StringUtils.isNotBlank(accountRestrictedStatusCode)) {
-		    if (LOG.isDebugEnabled()) {
-		        LOG.debug("updateAccountBasicFields, setting accountRestrictedStatusCode to: " + accountRestrictedStatusCode);
-		    }
 		    account.setAccountRestrictedStatusCode(accountRestrictedStatusCode);
 		}
 
