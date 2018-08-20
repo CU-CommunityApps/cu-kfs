@@ -205,4 +205,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     
     public static final String OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_LIST_ERROR = "object.code.activation.global.object.code.list.empty.error";
     public static final String OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_NEW_CODE_ERROR = "object.code.activation.global.object.code.list.new.code.error";
+    
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE = "error.document.subAccountGlobalDetails.invalidResttrictionCodeChange";
 }
