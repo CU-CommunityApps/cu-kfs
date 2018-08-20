@@ -3,7 +3,8 @@ package edu.cornell.kfs.pdp.service.impl;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeType;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -26,7 +27,7 @@ import edu.cornell.kfs.pdp.service.CuPdpEmployeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationServiceImpl {
-    private static final Logger LOG = Logger.getLogger(CuPaymentFileValidationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuPaymentFileValidationServiceImpl.class);
     
     protected PersonService personService;
     protected CuPdpEmployeeService cuPdpEmployeeService;

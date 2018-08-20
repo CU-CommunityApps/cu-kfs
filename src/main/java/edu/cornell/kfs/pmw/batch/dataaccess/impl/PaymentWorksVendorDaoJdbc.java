@@ -9,6 +9,8 @@ import java.util.Locale;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
@@ -20,7 +22,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class PaymentWorksVendorDaoJdbc extends PlatformAwareDaoBaseJdbc implements PaymentWorksVendorDao {
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorDaoJdbc.class);
     
     protected static final SimpleDateFormat PROCESSING_TIMESTAMP_SQL_FORMATTER = new SimpleDateFormat("dd-MMM-yy", Locale.US);
     

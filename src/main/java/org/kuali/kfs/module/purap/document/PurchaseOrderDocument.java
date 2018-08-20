@@ -20,6 +20,8 @@ package org.kuali.kfs.module.purap.document;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.service.SufficientFundsService;
@@ -82,7 +84,6 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.SufficientFundsItem;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.MultiselectableDocSearchConversion;
-import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
@@ -127,7 +128,7 @@ import java.util.Set;
  * Purchase Order Document
  */
 public class PurchaseOrderDocument extends PurchasingDocumentBase implements MultiselectableDocSearchConversion {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchaseOrderDocument.class);
+    private static final Logger LOG = LogManager.getLogger(PurchaseOrderDocument.class);
 
     protected Timestamp purchaseOrderCreateTimestamp;
     protected Integer requisitionIdentifier;
@@ -443,11 +444,11 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 if (!account.isEmpty()) {
                     account.setItemAccountOutstandingEncumbranceAmount(account.getAmount());
                 }
-            }// endfor accounts
-        }// endfor items
+            }
+        }
 
         this.setSourceAccountingLines(SpringContext.getBean(PurapAccountingService.class).generateSummaryWithNoZeroTotals(this.getItems()));
-    }// end customPrepareForSave(KualiDocumentEvent)
+    }
 
     /**
      * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#prepareForSave()
@@ -798,7 +799,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
+     * @see org.kuali.rice.krad.document.DocumentBase#handleRouteLevelChange(org.kuali.rice.kew.clientapp.vo.DocumentRouteLevelChangeDTO)
      */
     @Override
     public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
@@ -807,7 +808,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     }
 
     /**
-     * @see org.kuali.kfs.krad.document.DocumentBase#doActionTaken(ActionTakenEvent)
+     * @see org.kuali.rice.krad.document.DocumentBase#doActionTaken(ActionTakenEvent)
      */
     @Override
     public void doActionTaken(ActionTakenEvent event) {
@@ -1239,19 +1240,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setAlternateVendorName(vendorDetail.getVendorName());
     }
 
-
-//    public void refreshDocumentBusinessObject() {
-//        // RICE20 documentBusinessObject removed from super class - functionality no longer supported
-//        SpringContext.getBean(PurchaseOrderService.class).getOldestPurchaseOrder(this, (PurchaseOrderDocument) this.documentBusinessObject);
-//    }
-//
-//    public void setDocumentBusinessObject(PurchaseOrderDocument po) {
-//        documentBusinessObject = po;
-//    }
-
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getItemClass()
-     */
     @Override
     public Class getItemClass() {
         return PurchaseOrderItem.class;
@@ -1262,9 +1250,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return PurchaseOrderItemUseTax.class;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getPurApSourceDocumentIfPossible()
-     */
     @Override
     public RequisitionDocument getPurApSourceDocumentIfPossible() {
         RequisitionDocument sourceDoc = null;
@@ -1274,9 +1259,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return sourceDoc;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getPurApSourceDocumentLabelIfPossible()
-     */
     @Override
     public String getPurApSourceDocumentLabelIfPossible() {
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName(KFSConstants.FinancialDocumentTypeCodes.REQUISITION);
@@ -1329,18 +1311,12 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return null;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#getTotalDollarAmount()
-     */
     @Override
     public KualiDecimal getTotalDollarAmount() {
         // return total without inactive and with below the line
         return getTotalDollarAmount(false, true);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getTotalDollarAmountAboveLineItems()
-     */
     @Override
     public KualiDecimal getTotalDollarAmountAboveLineItems() {
         return getTotalDollarAmount(false, false);
@@ -1370,18 +1346,12 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return total;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getTotalPreTaxDollarAmount()
-     */
     @Override
     public KualiDecimal getTotalPreTaxDollarAmount() {
         // return total without inactive and with below the line
         return getTotalPreTaxDollarAmount(false, true);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getTotalPreTaxDollarAmountAboveLineItems()
-     */
     @Override
     public KualiDecimal getTotalPreTaxDollarAmountAboveLineItems() {
         return getTotalPreTaxDollarAmount(false, false);
@@ -1453,7 +1423,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                         return true;
                     }
                 }
-            }// endfor
+            }
         }
         if (getRelatedViews().getRelatedCreditMemoViews() != null) {
             for (CreditMemoView element : getRelatedViews().getRelatedCreditMemoViews()) {
@@ -1464,7 +1434,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                         return true;
                     }
                 }
-            }// endfor
+            }
         }
         return false;
     }
@@ -1531,10 +1501,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.copyingNotesWhenSplitting = copyingNotesWhenSplitting;
     }
 
-    /**
-     * @see org.kuali.module.purap.rules.PurapAccountingDocumentRuleBase#customizeExplicitGeneralLedgerPendingEntry(org.kuali.kfs.sys.document.AccountingDocument,
-     * org.kuali.kfs.sys.businessobject.AccountingLine, org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry)
-     */
     @Override
     public void customizeExplicitGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
         super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
@@ -1658,12 +1624,19 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
         String chartCode = accountingLine.getChartOfAccountsCode();
         // check object level is in permitted list for award routing
-        boolean objectCodeAllowed = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(PurchaseOrderDocument.class, PurapParameterConstants.CG_ROUTE_OBJECT_LEVELS_BY_CHART, PurapParameterConstants.NO_CG_ROUTE_OBJECT_LEVELS_BY_CHART, chartCode, accountingLine.getObjectCode().getFinancialObjectLevelCode()).evaluationSucceeds();
+        boolean objectCodeAllowed = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class)
+                .getParameterEvaluator(PurchaseOrderDocument.class,
+                        PurapParameterConstants.CG_ROUTE_OBJECT_LEVELS_BY_CHART,
+                        PurapParameterConstants.NO_CG_ROUTE_OBJECT_LEVELS_BY_CHART, chartCode,
+                        accountingLine.getObjectCode().getFinancialObjectLevelCode()).evaluationSucceeds();
 
         if (!objectCodeAllowed) {
             // If the object level is not permitting for award routing, then we need to also
             // check object code is in permitted list for award routing
-            objectCodeAllowed = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(PurchaseOrderDocument.class, PurapParameterConstants.CG_ROUTE_OBJECT_CODES_BY_CHART, PurapParameterConstants.NO_CG_ROUTE_OBJECT_CODES_BY_CHART, chartCode, accountingLine.getFinancialObjectCode()).evaluationSucceeds();
+            objectCodeAllowed = /*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
+                    PurchaseOrderDocument.class, PurapParameterConstants.CG_ROUTE_OBJECT_CODES_BY_CHART,
+                    PurapParameterConstants.NO_CG_ROUTE_OBJECT_CODES_BY_CHART, chartCode,
+                    accountingLine.getFinancialObjectCode()).evaluationSucceeds();
         }
         return objectCodeAllowed;
     }
@@ -1721,26 +1694,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     @Override
     public DocumentSearchCriteria convertSelections(DocumentSearchCriteria searchCriteria) {
-//        for ( Entry<String, List<String>> comp : searchCriteria.getDocumentAttributeValues().entrySet()) {
-//            //RICE20  - cannot figure out this
-//            if (comp.getLookupableFieldType().equals(Field.MULTISELECT)) {
-//                List<String> values = comp.getValue();
-//                List<String> newVals = new ArrayList<String>();
-//                if (values.contains("INCOMPLETE")) {
-//                    for (String str : PurchaseOrderStatuses.INCOMPLETE_STATUSES)
-//                        newVals.add(str);
-//                } if (values.contains("COMPLETE")) {
-//                    for (String str : PurchaseOrderStatuses.COMPLETE_STATUSES)
-//                        newVals.add(str);
-//                }
-//
-//                for (String str : values) {
-//                    newVals.add(str);
-//                }
-//
-//                comp.setValue(newVals);
-//            }
-//        }
         return searchCriteria;
     }
 

@@ -9,6 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotification;
@@ -18,7 +20,7 @@ import edu.cornell.kfs.concur.service.ConcurEventNotificationService;
 
 @Path("/validate")
 public class ConcurAccountValidationResource {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccountValidationResource.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurAccountValidationResource.class);
     protected static volatile ConcurEventNotificationConversionService concurEventNotificationConversionService;
     protected static volatile ConcurEventNotificationService concurEventNotificationService;
     

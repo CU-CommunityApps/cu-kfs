@@ -8,33 +8,20 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 
 
 public class CuDisbursementPayee extends DisbursementPayee {
-
-    public CuDisbursementPayee () {
-        super();
-    }
     
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String principalName;
     
-    /**
-     * Gets the principalName attribute. 
-     * @return Returns the principalName.
-     */
+    public CuDisbursementPayee () {
+        super();
+    }
+
     public String getPrincipalName() {
         return principalName;
     }
 
-    /**
-     * Sets the principalName attribute value.
-     * @param principalName The principalId to set.
-     */
     public void setPrincipalName(String principalName) {
         this.principalName = principalName;
     }
     
-   
-
 }

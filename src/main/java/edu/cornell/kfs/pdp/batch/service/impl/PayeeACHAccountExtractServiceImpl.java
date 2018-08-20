@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -63,7 +65,7 @@ import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 import edu.cornell.kfs.pdp.service.CuAchService;
 
 public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtractService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PayeeACHAccountExtractServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PayeeACHAccountExtractServiceImpl.class);
 
     private BatchInputFileService batchInputFileService;
     private List<BatchInputFileType> batchInputFileTypes;

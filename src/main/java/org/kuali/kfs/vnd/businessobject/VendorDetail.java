@@ -20,7 +20,8 @@ package org.kuali.kfs.vnd.businessobject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.LookupService;
@@ -36,7 +37,6 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ import java.util.Map;
  * @see org.kuali.kfs.vnd.businessobject.VendorHeader
  */
 public class VendorDetail extends PersistableBusinessObjectBase implements VendorRoutingComparable {
-    private static Logger LOG = Logger.getLogger(VendorDetail.class);
+    private static Logger LOG = LogManager.getLogger(VendorDetail.class);
 
     private Integer vendorHeaderGeneratedIdentifier;
     private Integer vendorDetailAssignedIdentifier;
@@ -788,7 +788,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         this.vendorParentName = vendorParentName;
     }
 
-
     public String getVendorAliasesAsString() {
         StringBuilder sb = new StringBuilder("[");
 
@@ -805,21 +804,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         }
         sb.append(']');
         return sb.toString();
-    }
-
-    /**
-     * @see org.kuali.kfs.krad.bo.BusinessObjectBase#toString()
-     */
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-        if (this.vendorHeaderGeneratedIdentifier != null) {
-            m.put("vendorHeaderGeneratedIdentifier", this.vendorHeaderGeneratedIdentifier.toString());
-        }
-        if (this.vendorDetailAssignedIdentifier != null) {
-            m.put("vendorDetailAssignedIdentifier", this.vendorDetailAssignedIdentifier.toString());
-        }
-
-        return m;
     }
 
     /**

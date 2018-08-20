@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.krad.bo.BusinessObject;
@@ -27,7 +29,7 @@ import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerServ
 @SuppressWarnings("deprecation")
 public abstract class BusinessObjectFlatFileSerializerServiceBase implements BusinessObjectFlatFileSerializerService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BusinessObjectFlatFileSerializerServiceBase.class);
+	private static final Logger LOG = LogManager.getLogger(BusinessObjectFlatFileSerializerServiceBase.class);
 
     protected BusinessObjectFlatFileSerializerFieldUtils headerSerializerUtils;
     protected BusinessObjectFlatFileSerializerFieldUtils lineItemSerializerUtils;

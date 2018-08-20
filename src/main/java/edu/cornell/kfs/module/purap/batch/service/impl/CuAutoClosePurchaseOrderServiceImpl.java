@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.batch.service.impl;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.batch.service.impl.AutoClosePurchaseOrderServiceImpl;
@@ -13,7 +14,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import java.util.List;
 
 public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAutoClosePurchaseOrderServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuAutoClosePurchaseOrderServiceImpl.class);
 
     @Override
     public boolean autoCloseFullyDisencumberedOrders() {

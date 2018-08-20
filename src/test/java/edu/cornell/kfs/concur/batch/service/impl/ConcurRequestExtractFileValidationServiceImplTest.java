@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +35,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurRequestExtractFileValidationServiceImplTest {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractFileValidationServiceImplTest.class);
     
     private static final String PARAM_VALUES_SPLIT_CHAR = ";";
 
@@ -46,7 +48,7 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
     
     @Before
     public void setUp() throws Exception {
-        Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class).setLevel(Level.DEBUG);
+    		Configurator.setLevel(ConcurRequestExtractFileValidationServiceImpl.class.getName(), Level.DEBUG);
         concurRequestExtractFileValidationService = new ConcurRequestExtractFileValidationServiceImpl();
         concurBatchUtilityService = new TestableConcurBatchUtilityServiceImpl();
         concurEmployeeInfoValidationService = new TestableConcurEmployeeInfoValidationServiceImpl();

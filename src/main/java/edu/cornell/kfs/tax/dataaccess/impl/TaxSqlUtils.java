@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
@@ -37,7 +39,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
 final class TaxSqlUtils {
     static final String YES_STRING_CONST = "'Y'";
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TaxSqlUtils.class);
+    private static final Logger LOG = LogManager.getLogger(TaxSqlUtils.class);
 
     private static final int MAX_IN_LIST_SIZE = 1000;
     private static final int MED_BUILDER_SIZE = 100;

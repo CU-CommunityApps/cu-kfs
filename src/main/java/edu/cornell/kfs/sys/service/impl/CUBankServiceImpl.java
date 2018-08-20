@@ -15,8 +15,6 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import edu.cornell.kfs.sys.service.CUBankService;
 
 public class CUBankServiceImpl implements CUBankService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CUBankServiceImpl.class);
-    
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
 

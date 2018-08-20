@@ -11,7 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -25,7 +26,7 @@ import edu.cornell.kfs.fp.dataaccess.RecurringDisbursementVoucherSearchDao;
 
 public class RecurringDisbursementVoucherSearchDaoJdbc extends PlatformAwareDaoBaseJdbc implements RecurringDisbursementVoucherSearchDao {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherSearchDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherSearchDaoJdbc.class);
 
     protected DateTimeService dateTimeService;
 

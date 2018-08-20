@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
@@ -19,8 +21,7 @@ import edu.cornell.kfs.module.purap.fixture.IWantDocumentFixture;
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class IWantDocumentServiceImplTest extends KualiTestBase {
 
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-			.getLogger(IWantDocumentServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(IWantDocumentServiceImpl.class);
 	
 	private static final String I_WANT_DOC_NBR_THAT_CREATED_DV = "5252439";
 	private static final String DV_DOC_NBR_FROM_I_WANT_DOC = "5266453";

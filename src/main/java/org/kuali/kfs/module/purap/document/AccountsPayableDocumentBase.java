@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.module.purap.document;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -46,7 +48,7 @@ import java.util.List;
  * Accounts Payable Document Base
  */
 public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPayableDocumentBase implements AccountsPayableDocument {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountsPayableDocumentBase.class);
+    private static final Logger LOG = LogManager.getLogger(AccountsPayableDocumentBase.class);
 
     // SHARED FIELDS BETWEEN PAYMENT REQUEST AND CREDIT MEMO
     protected Timestamp accountsPayableApprovalTimestamp;

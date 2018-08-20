@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountIntf;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.PriorYearAccountService;
@@ -59,7 +61,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public abstract class ReversionProcessBase implements ReversionProcess {
 
-    static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReversionProcessBase.class);
+	private static final Logger LOG = LogManager.getLogger(ReversionProcessBase.class);
 
     
     private OriginEntryService originEntryService;

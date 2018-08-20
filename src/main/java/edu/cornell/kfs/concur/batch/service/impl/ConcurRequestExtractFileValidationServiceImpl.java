@@ -7,6 +7,8 @@ import java.util.ListIterator;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -27,7 +29,7 @@ import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 
 public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequestExtractFileValidationService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;

@@ -22,7 +22,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -39,7 +40,7 @@ import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 @Transactional
 public class CUVendorServiceImpl extends VendorServiceImpl implements CUVendorService {
-    private static Logger LOG = Logger.getLogger(CUVendorServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CUVendorServiceImpl.class);
 
     private BusinessObjectService businessObjectService;
     private VendorLookupableHelperServiceImpl vendorLookupableHelperServiceImpl;

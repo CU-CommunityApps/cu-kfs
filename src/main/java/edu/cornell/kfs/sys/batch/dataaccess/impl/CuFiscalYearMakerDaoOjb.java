@@ -2,7 +2,8 @@ package edu.cornell.kfs.sys.batch.dataaccess.impl;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.dataaccess.FiscalYearMaker;
@@ -11,7 +12,7 @@ import org.kuali.kfs.krad.bo.DataObjectRelationship;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 
 public class CuFiscalYearMakerDaoOjb extends FiscalYearMakersDaoOjb {
-    private static final Logger LOG = org.apache.log4j.Logger.getLogger(CuFiscalYearMakerDaoOjb.class);
+	private static final Logger LOG = LogManager.getLogger(CuFiscalYearMakerDaoOjb.class);
 
     protected PersistenceStructureService persistenceStructureService;
 

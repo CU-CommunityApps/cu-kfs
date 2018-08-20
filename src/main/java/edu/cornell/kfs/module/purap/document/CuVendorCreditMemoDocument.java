@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.purap.document;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -20,6 +22,7 @@ import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
+	private static final Logger LOG = LogManager.getLogger(CuVendorCreditMemoDocument.class);
 	
     public static String DOCUMENT_TYPE_NON_CHECK = "CMNC";
 

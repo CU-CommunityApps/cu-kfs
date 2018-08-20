@@ -3,6 +3,8 @@ package edu.cornell.kfs.fp.document.authorization;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.authorization.DisbursementVoucherDocumentPresentationController;
 import org.kuali.kfs.sys.KFSConstants;
@@ -18,8 +20,7 @@ import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
 public class CuDisbursementVoucherDocumentPresentationController extends DisbursementVoucherDocumentPresentationController{
 
     private static final long serialVersionUID = 1L;
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherDocumentPresentationController.class);
-
+	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDocumentPresentationController.class);
     
     @Override
     public Set<String> getEditModes(Document document) {

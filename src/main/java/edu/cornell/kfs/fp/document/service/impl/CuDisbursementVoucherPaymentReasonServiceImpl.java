@@ -11,7 +11,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 public class CuDisbursementVoucherPaymentReasonServiceImpl extends DisbursementVoucherPaymentReasonServiceImpl {
 
     protected String getDescriptivePayeeTypesAsString(Collection<String> payeeTypeCodes) {
-        List<String> payeeTypeDescriptions = new ArrayList<String>();
+        List<String> payeeTypeDescriptions = new ArrayList<>();
 
         for (String payeeTypeCode : payeeTypeCodes) {
             String description = SpringContext.getBean(DisbursementVoucherPayeeService.class).getPayeeTypeDescription(payeeTypeCode);

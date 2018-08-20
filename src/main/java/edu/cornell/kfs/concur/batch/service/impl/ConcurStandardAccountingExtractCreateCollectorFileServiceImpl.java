@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.CollectorBatch;
@@ -34,7 +36,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         implements ConcurStandardAccountingExtractCreateCollectorFileService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(
+	private static final Logger LOG = LogManager.getLogger(
             ConcurStandardAccountingExtractCreateCollectorFileServiceImpl.class);
 
     protected static final String DATE_RANGE_FORMAT = "%s..%s";

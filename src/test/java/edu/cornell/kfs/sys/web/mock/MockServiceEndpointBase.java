@@ -24,6 +24,8 @@ import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -55,7 +57,7 @@ import edu.cornell.kfs.sys.util.IOExceptionProneFunction;
  */
 public abstract class MockServiceEndpointBase implements HttpRequestHandler {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(MockServiceEndpointBase.class);
+	private static final Logger LOG = LogManager.getLogger(MockServiceEndpointBase.class);
 
     protected String baseUrl;
     protected String multiPartContentDirectory;

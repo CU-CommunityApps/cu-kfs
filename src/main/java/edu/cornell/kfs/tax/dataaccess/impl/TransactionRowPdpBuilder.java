@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.rice.kew.api.document.Document;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -25,7 +27,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
  * See the static nested classes for default implementations.
  */
 abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> extends TransactionRowBuilder<T> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowPdpBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRowPdpBuilder.class);
 
     private static final int GETTER_BUILDER_SIZE = 2000;
 

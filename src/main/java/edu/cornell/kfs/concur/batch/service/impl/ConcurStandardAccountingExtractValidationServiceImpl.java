@@ -3,7 +3,8 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.sql.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -23,7 +24,7 @@ import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 
 public class ConcurStandardAccountingExtractValidationServiceImpl implements ConcurStandardAccountingExtractValidationService {
-    private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractValidationServiceImpl.class);
     
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;

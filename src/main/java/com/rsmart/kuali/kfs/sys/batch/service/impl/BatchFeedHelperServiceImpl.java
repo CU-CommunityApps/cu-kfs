@@ -30,6 +30,8 @@ import net.sf.jasperreports.engine.JRParameter;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.ReportGeneration;
@@ -67,7 +69,7 @@ import com.rsmart.kuali.kfs.sys.businessobject.BatchFeedStatusBase;
  * @see com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService
  */
 public class BatchFeedHelperServiceImpl implements BatchFeedHelperService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(BatchFeedHelperServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(BatchFeedHelperServiceImpl.class);
 
     private BatchInputFileService batchInputFileService;
     private DataDictionaryService dataDictionaryService;

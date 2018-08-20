@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherPaymentMaintenance
 
 public class RecurringDisbursementVoucherPaymentMaintenanceServiceImpl implements RecurringDisbursementVoucherPaymentMaintenanceService {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherPaymentMaintenanceServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherPaymentMaintenanceServiceImpl.class);
     
     protected PermissionService permissionService;
     protected BusinessObjectService businessObjectService;

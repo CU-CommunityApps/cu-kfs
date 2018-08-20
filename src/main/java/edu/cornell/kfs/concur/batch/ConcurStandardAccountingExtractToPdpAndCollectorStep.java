@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.FileStorageService;
 
@@ -18,7 +20,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractServi
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends AbstractStep {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractToPdpAndCollectorStep.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractToPdpAndCollectorStep.class);
     protected ConcurStandardAccountingExtractService concurStandardAccountingExtractService;
     protected ConcurStandardAccountingExtractValidationService concurStandardAccountingExtractValidationService;
     protected ConcurStandardAccountingExtractReportService concurStandardAccountingExtractReportService;

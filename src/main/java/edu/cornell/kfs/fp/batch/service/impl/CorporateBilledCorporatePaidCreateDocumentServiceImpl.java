@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.ProcurementCardDefault;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
@@ -45,7 +47,7 @@ import edu.cornell.kfs.fp.document.CorporateBilledCorporatePaidDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CorporateBilledCorporatePaidCreateDocumentServiceImpl extends ProcurementCardCreateDocumentServiceImpl implements CorporateBilledCorporatePaidCreateDocumentService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CorporateBilledCorporatePaidCreateDocumentServiceImpl.class);
     
     protected DataDictionaryService cbcpDatadictionaryServce;
     protected SimpleDateFormat dateFormat;

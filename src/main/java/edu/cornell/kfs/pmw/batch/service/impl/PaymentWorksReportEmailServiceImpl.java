@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.kuali.rice.core.api.config.property.ConfigContext;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
@@ -13,7 +15,7 @@ import org.kuali.kfs.sys.service.EmailService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
 
 public class PaymentWorksReportEmailServiceImpl implements PaymentWorksReportEmailService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksReportEmailServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksReportEmailServiceImpl.class);
 
     protected EmailService emailService;
 

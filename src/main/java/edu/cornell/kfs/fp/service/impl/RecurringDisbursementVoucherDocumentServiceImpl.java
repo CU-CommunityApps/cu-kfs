@@ -16,6 +16,8 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
@@ -64,7 +66,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class RecurringDisbursementVoucherDocumentServiceImpl implements RecurringDisbursementVoucherDocumentService, Serializable {
 
     private static final long serialVersionUID = -1775346783004136197L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RecurringDisbursementVoucherDocumentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherDocumentServiceImpl.class);
     protected DataDictionaryService dataDictionaryService;
     protected DocumentService documentService;
     protected ScheduledAccountingLineService scheduledAccountingLineService;

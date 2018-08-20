@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.math.BigDecimal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
@@ -31,8 +33,7 @@ import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;
 @ConfigureContext(session = UserNameFixture.mo14)
 public class CuPaymentRequestServiceImplTest extends KualiTestBase {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger
-            .getLogger(CuPaymentRequestServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestServiceImplTest.class);
 
     private PaymentRequestService paymentRequestService;
 

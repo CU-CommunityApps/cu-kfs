@@ -10,11 +10,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class CUMarshalServiceImpl implements CUMarshalService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CUMarshalServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CUMarshalServiceImpl.class);
 
     @Override
     public File marshalObjectToXML(Object objectToMarshal, String outputFilePath) throws JAXBException, IOException {

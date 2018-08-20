@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -27,7 +29,7 @@ import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuVendorDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger(CuVendorDaoOjb.class);
 
     private static final String ACTIVE_INDICATOR = "activeIndicator";
     

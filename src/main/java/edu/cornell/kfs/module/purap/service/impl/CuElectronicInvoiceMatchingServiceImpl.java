@@ -27,7 +27,6 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMatchingServiceImpl {
 
     protected void validateInvoiceItems(ElectronicInvoiceOrderHolder orderHolder){
-
         Set poLineNumbers = new HashSet();
         Set invLineNumbers = new HashSet();
 
@@ -131,14 +130,13 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     }
 
     protected void validateCatalogNumber(ElectronicInvoiceItemHolder itemHolder){
-
         PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();
         ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();
 
         String invoiceCatalogNumberStripped = itemHolder.getCatalogNumberStripped();
         String poCatalogNumberStripped = ElectronicInvoiceUtils.stripSplChars(poItem.getItemCatalogNumber());
 
-        /**
+        /*
          * If Catalog number in invoice and po are not empty, create reject reason if it doesn't match
          */
         if (StringUtils.isNotBlank(invoiceCatalogNumberStripped) &&
@@ -153,7 +151,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
 
         }else{
 
-            /**
+            /*
              * If catalog number is empty in PO/&Invoice, check whether the catalog check is required for the requisition source.
              * If exists in param, create reject reason.
              * If not exists, continue with UOM and unit price match.
@@ -173,7 +171,6 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     }
 
     protected void validateNonQtyBasedItem(ElectronicInvoiceItemHolder itemHolder){
-
         PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();
 
         String fileName = itemHolder.getInvoiceOrderHolder().getFileName();
@@ -204,7 +201,6 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
                 orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.INVOICE_ITEM_LINE_NUMBER,PurapKeyConstants.ERROR_REJECT_POITEM_LESS_OUTSTANDING_EMCUMBERED_AMOUNT);
                 return;
             }
-
         }
     }
 
@@ -224,7 +220,6 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     }
     
     protected void validateUnitPrice(ElectronicInvoiceItemHolder itemHolder){
-
         PurchaseOrderCostSource costSource = itemHolder.getInvoiceOrderHolder().getPurchaseOrderDocument().getPurchaseOrderCostSource();
         PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();
         ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();
@@ -239,8 +234,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             lowerPercentage = costSource.getItemUnitPriceLowerVariancePercent();
         }
         else {
-            //If the cost source itemUnitPriceLowerVariancePercent is null then
-            //we'll use the exact match (100%).
+            //If the cost source itemUnitPriceLowerVariancePercent is null then we'll use the exact match (100%).
             lowerPercentage = new BigDecimal(100);
         }
 
@@ -259,8 +253,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             upperPercentage = costSource.getItemUnitPriceUpperVariancePercent();
         }
         else {
-            //If the cost source itemUnitPriceLowerVariancePercent is null then
-            //we'll use the exact match (100%).
+            //If the cost source itemUnitPriceLowerVariancePercent is null then we'll use the exact match (100%).
             upperPercentage = new BigDecimal(100);
         }
         BigDecimal upperAcceptableVariance = (upperPercentage.divide(new BigDecimal(100))).multiply(poItem.getItemUnitPrice());

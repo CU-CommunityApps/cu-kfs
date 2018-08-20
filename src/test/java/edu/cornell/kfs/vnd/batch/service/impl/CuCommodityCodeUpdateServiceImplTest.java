@@ -18,8 +18,6 @@ public class CuCommodityCodeUpdateServiceImplTest extends KualiTestBase {
 	private CommodityCodeUpdateService commodityCodeUpdateService;
     private ConfigurationService  kualiConfigurationService;
 
-    
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CommodityCodeUpdateService.class);
 	private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/vnd/fixture/commodityCodeFlatFile.txt";
     
 	@Override

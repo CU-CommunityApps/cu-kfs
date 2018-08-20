@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -41,7 +43,7 @@ import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing
 import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
 
 public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ReceiptProcessingServiceImpl.class);
     
     public static final String RESULT_FILE_HEADER_LINE_WITH_EXTRA_FIELDS = "\"cardHolder\",\"amount\",\"purchasedate\",\"filePath\",\"filename\",\"cardHolderNetID\",\"sourceUniqueID\",\"eDocNumber\",\"Success\"\n";  
     public static final String RESULT_FILE_HEADER_LINE = "\"cardHolder\",\"amount\",\"purchasedate\",\"filePath\",\"filename\",\"Success\"\n";  

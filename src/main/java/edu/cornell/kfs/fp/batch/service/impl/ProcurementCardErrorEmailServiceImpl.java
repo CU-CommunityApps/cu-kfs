@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
@@ -12,7 +14,7 @@ import edu.cornell.kfs.fp.batch.service.ProcurementCardErrorEmailService;
 
 public class ProcurementCardErrorEmailServiceImpl implements ProcurementCardErrorEmailService {
 
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardErrorEmailServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ProcurementCardErrorEmailServiceImpl.class);
 	
 	protected EmailService emailService;
 	protected ParameterService parameterService;

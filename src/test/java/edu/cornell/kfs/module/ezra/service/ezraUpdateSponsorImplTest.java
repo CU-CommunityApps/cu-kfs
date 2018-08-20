@@ -9,7 +9,8 @@ import java.sql.Date;
 import java.util.Calendar;
 
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -26,7 +27,7 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 @ConfigureContext(session = ccs1)
 public class ezraUpdateSponsorImplTest extends KualiTestBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraService.class);
+	private static final Logger LOG = LogManager.getLogger(ezraUpdateSponsorImplTest.class);
     private EzraService ezraService;    
     private BusinessObjectService businessObjectService;
     private SponsorDao sponsorDao;

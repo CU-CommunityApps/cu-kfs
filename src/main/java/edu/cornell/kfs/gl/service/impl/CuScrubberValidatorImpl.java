@@ -1,5 +1,7 @@
 package edu.cornell.kfs.gl.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.gl.batch.service.AccountingCycleCachingService;
 import org.kuali.kfs.gl.businessobject.OriginEntryInformation;
@@ -12,7 +14,7 @@ import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.springframework.util.StringUtils;
 
 public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuScrubberValidatorImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuScrubberValidatorImpl.class);
 
     @Override
     protected Message validateUniversityFiscalPeriodCode(OriginEntryInformation originEntry, OriginEntryInformation workingEntry, 

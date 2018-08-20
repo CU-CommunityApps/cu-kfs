@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.CollectorBatch;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.sys.KFSConstants;
@@ -44,7 +46,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValid
  */
 public class ConcurStandardAccountingExtractCollectorBatchBuilder {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractCollectorBatchBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractCollectorBatchBuilder.class);
 
     protected static final int MIN_BATCH_SEQUENCE_NUMBER = 0;
     protected static final int MAX_BATCH_SEQUENCE_NUMBER = 9;

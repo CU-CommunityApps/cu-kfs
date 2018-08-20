@@ -23,6 +23,8 @@
 package org.kuali.kfs.pdp.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
@@ -66,7 +68,7 @@ import java.util.List;
  */
 @Transactional
 public class PendingTransactionServiceImpl implements PendingTransactionService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PendingTransactionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(PendingTransactionServiceImpl.class);
 
     protected static String FDOC_TYP_CD_PROCESS_ACH = "ACHD";
     protected static String FDOC_TYP_CD_PROCESS_CHECK = "CHKD";
@@ -117,10 +119,10 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     /**
      * Populates and stores a new GLPE for each account detail in the payment group.
      *
-     * @param paymentGroup payment group to generate entries for
-     * @param achFdocTypeCode doc type for ach disbursements
+     * @param paymentGroup     payment group to generate entries for
+     * @param achFdocTypeCode  doc type for ach disbursements
      * @param checkFdocTypeCod doc type for check disbursements
-     * @param reversal boolean indicating if this is a reversal
+     * @param reversal         boolean indicating if this is a reversal
      */
     protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode, String checkFdocTypeCod, boolean reversal) {
         List<PaymentAccountDetail> accountListings = new ArrayList<PaymentAccountDetail>();
@@ -141,8 +143,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
             if (StringUtils.isNotBlank(paymentAccountDetail.getPaymentDetail().getFinancialSystemOriginCode()) && StringUtils.isNotBlank(paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode())) {
                 glPendingTransaction.setFdocRefTypCd(paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode());
                 glPendingTransaction.setFsRefOriginCd(paymentAccountDetail.getPaymentDetail().getFinancialSystemOriginCode());
-            }
-            else {
+            } else {
                 glPendingTransaction.setFdocRefTypCd(PdpConstants.PDP_FDOC_TYPE_CODE);
                 glPendingTransaction.setFsRefOriginCd(PdpConstants.PDP_FDOC_ORIGIN_CODE);
             }
@@ -161,8 +162,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
             if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.ACH)) {
                 glPendingTransaction.setFinancialDocumentTypeCode(achFdocTypeCode);
-            }
-            else if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
+            } else if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
                 glPendingTransaction.setFinancialDocumentTypeCode(checkFdocTypeCod);
             }
 
@@ -174,8 +174,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                 OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode());
                 glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ? offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
                 glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
-            }
-            else {
+            } else {
                 glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());
                 glPendingTransaction.setFinancialSubObjectCode(paymentAccountDetail.getFinSubObjectCode());
             }
@@ -236,9 +235,9 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     /**
      * Generates the bank offset for an entry (when enabled in the system)
      *
-     * @param paymentGroup PaymentGroup for which entries are being generated, contains the Bank
+     * @param paymentGroup         PaymentGroup for which entries are being generated, contains the Bank
      * @param glPendingTransaction PDP entry created for payment detail
-     * @param sequenceHelper holds current entry sequence value
+     * @param sequenceHelper       holds current entry sequence value
      */
     public void populateBankOffsetEntry(PaymentGroup paymentGroup, GlPendingTransaction glPendingTransaction, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         GlPendingTransaction bankPendingTransaction = new GlPendingTransaction();
@@ -259,24 +258,21 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         bankPendingTransaction.setAccountNumber(bank.getCashOffsetAccountNumber());
         if (StringUtils.isBlank(bank.getCashOffsetSubAccountNumber())) {
             bankPendingTransaction.setSubAccountNumber(KFSConstants.getDashSubAccountNumber());
-        }
-        else {
+        } else {
             bankPendingTransaction.setSubAccountNumber(bank.getCashOffsetSubAccountNumber());
         }
 
         bankPendingTransaction.setFinancialObjectCode(bank.getCashOffsetObjectCode());
         if (StringUtils.isBlank(bank.getCashOffsetSubObjectCode())) {
             bankPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
-        }
-        else {
+        } else {
             bankPendingTransaction.setFinancialSubObjectCode(bank.getCashOffsetSubObjectCode());
         }
         bankPendingTransaction.setProjectCd(KFSConstants.getDashProjectCode());
 
         if (KFSConstants.GL_CREDIT_CODE.equals(glPendingTransaction.getDebitCrdtCd())) {
             bankPendingTransaction.setDebitCrdtCd(KFSConstants.GL_DEBIT_CODE);
-        }
-        else {
+        } else {
             bankPendingTransaction.setDebitCrdtCd(KFSConstants.GL_CREDIT_CODE);
         }
         bankPendingTransaction.setAmount(glPendingTransaction.getAmount());

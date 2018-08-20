@@ -18,14 +18,9 @@
  */
 package org.kuali.kfs.sys.document.workflow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
@@ -70,11 +65,18 @@ import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.api.extension.ExtensionDefinition;
 import org.kuali.rice.krad.bo.BusinessObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 //RICE20 This class needs to be fixed to support pre-rice2.0 features
 public class FinancialSystemSearchableAttribute extends DataDictionarySearchableAttribute {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FinancialSystemSearchableAttribute.class);
+    private static final Logger LOG = LogManager.getLogger(FinancialSystemSearchableAttribute.class);
 
     protected static final String DISPLAY_TYPE_SEARCH_ATTRIBUTE_LABEL = "Search Result Type";
     protected static final String WORKFLOW_DISPLAY_TYPE_LABEL = "Workflow Data";
@@ -281,8 +283,6 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         return errors;
     }
 
-    ;
-
     /**
      * Harvest chart of accounts code, account number, and organization code as searchable attributes from an accounting document
      *
@@ -305,7 +305,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     /**
      * Harvest GLPE document type as searchable attributes from a GL posting document
      *
-     * @param GLPDoc the GLP document to pull values from
+     * @param doc the GLP document to pull values from
      * @return a List of searchable values
      */
     protected List<DocumentAttribute> harvestGLPDocumentSearchableAttributes(GeneralLedgerPostingDocument doc) {
@@ -332,7 +332,6 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         }
         return searchAttrValues;
     }
-
 
     /**
      * Pulls the default searchable attributes - chart code, account number, and account organization code - from a given accounting line and populates
@@ -410,24 +409,4 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         return new Row(Collections.singletonList(searchField));
     }
 
-
-    // RICE20: fixes to allow document search to function until Rice 2.0.1
-//    @Override
-//    public List<RemotableAttributeField> getSearchFields(ExtensionDefinition extensionDefinition, String documentTypeName) {
-//        if (LOG.isDebugEnabled()) {
-//            LOG.debug("getSearchFields( " + extensionDefinition + ", " + documentTypeName + " )");
-//        }
-//        List<Row> searchRows = getSearchingRows(documentTypeName);
-//        for ( Row row : searchRows ) {
-//            for ( Field field : row.getFields() ) {
-//                if ( field.getFieldType().equals(Field.CURRENCY) ) {
-//                    field.setFieldType(Field.TEXT);
-//                }
-//                if ( field.getMaxLength() < 1 ) {
-//                    field.setMaxLength(100);
-//                }
-//            }
-//        }
-//        return FieldUtils.convertRowsToAttributeFields(searchRows);
-//    }
 }

@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapRuleConstants;
@@ -22,7 +24,8 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 
 public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuRequisitionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuRequisitionServiceImpl.class);
+    
     /**
      * Checks the rule for Automatic Purchase Order eligibility of the requisition and return a String containing the reason why the
      * requisition was not eligible to become an APO if it was not eligible, or return an empty String if the requisition is

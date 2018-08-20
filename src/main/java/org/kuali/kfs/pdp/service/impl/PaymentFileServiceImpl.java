@@ -20,6 +20,8 @@ package org.kuali.kfs.pdp.service.impl;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -60,7 +62,7 @@ import java.util.List;
 
 @Transactional
 public class PaymentFileServiceImpl extends InitiateDirectoryBase implements PaymentFileService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentFileServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(PaymentFileServiceImpl.class);
 
     protected String outgoingDirectoryName;
 

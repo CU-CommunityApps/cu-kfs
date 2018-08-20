@@ -2,6 +2,8 @@ package edu.cornell.kfs.fp.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.fp.batch.service.AdvanceDepositService;
@@ -39,7 +41,7 @@ import edu.cornell.kfs.fp.batch.service.AdvanceDepositService;
  */
 public class RouteAdvanceDepositDocumentsStep extends AbstractStep {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(RouteAdvanceDepositDocumentsStep.class);
+	private static final Logger LOG = LogManager.getLogger(RouteAdvanceDepositDocumentsStep.class);
     private AdvanceDepositService advanceDepositService;
 
     /**

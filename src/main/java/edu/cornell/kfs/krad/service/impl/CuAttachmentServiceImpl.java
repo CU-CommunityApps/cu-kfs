@@ -5,6 +5,8 @@ import edu.cornell.cynergy.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.dao.CuAttachmentDao;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -30,15 +32,13 @@ import java.io.InputStream;
 @Transactional
 public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAttachmentServiceImpl.class);
+    private static Logger LOG = LogManager.getLogger(CuAttachmentServiceImpl.class);
 
     private AntiVirusService antiVirusService;
     private NoteService noteService;
 
     /**
      * Overridden to get attachment by attachment ID if necessary.
-     *
-     * @see org.kuali.kfs.krad.service.impl.AttachmentServiceImpl#retrieveAttachmentContents(Attachment)
      */
     @Override
     public InputStream retrieveAttachmentContents(Attachment attachment) throws IOException {

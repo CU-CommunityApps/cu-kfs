@@ -1,5 +1,7 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherEmployeeInformationValidation;
@@ -21,7 +23,8 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
 public class CuDisbursementVoucherEmployeeInformationValidation extends DisbursementVoucherEmployeeInformationValidation {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherEmployeeInformationValidation.class);
+	
+    private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherEmployeeInformationValidation.class);
 
     
     

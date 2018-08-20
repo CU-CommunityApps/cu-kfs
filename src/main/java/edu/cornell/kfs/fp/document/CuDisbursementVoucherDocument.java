@@ -194,10 +194,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
         boolean w9AndW8Checked = false;
         if ((ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
-                && vendor.getVendorHeader().getVendorW9ReceivedIndicator() == true)
+                && vendor.getVendorHeader().getVendorW9ReceivedIndicator())
                 || (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())
-                        && vendor.getVendorHeader().getVendorW8BenReceivedIndicator() == true)) {
-
+                && vendor.getVendorHeader().getVendorW8BenReceivedIndicator())) {
             w9AndW8Checked = true;
         }
 
@@ -276,7 +275,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
             }
         }
 
-        //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the message "Is this payee an employee" = No
+        //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the message
+        // "Is this payee an employee" = No
         if (employee.isActive()) {
             this.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(true);
         } else {
@@ -474,16 +474,23 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
 
     @Override
     public void prepareForSave() {
-        if (this instanceof AmountTotaling) {
-            if (getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode().equals(KFSConstants.DocumentStatusCodes.ENROUTE) && !getFinancialSystemDocumentHeader().getWorkflowDocument().isCompletionRequested()) {
-                if (getParameterService().parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class, UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)
-                        && getParameterService().getParameterValueAsBoolean(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class, UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)) {
-                    getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
-                }
-            } else {
-                getFinancialSystemDocumentHeader().setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
-            }
-        }
+
+		if (getFinancialSystemDocumentHeader().getFinancialDocumentStatusCode()
+				.equals(KFSConstants.DocumentStatusCodes.ENROUTE)
+				&& !getFinancialSystemDocumentHeader().getWorkflowDocument().isCompletionRequested()) {
+			if (getParameterService().parameterExists(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
+					UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)
+					&& getParameterService().getParameterValueAsBoolean(
+							KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
+							UPDATE_TOTAL_AMOUNT_IN_POST_PROCESSING_PARAMETER_NAME)) {
+				getFinancialSystemDocumentHeader()
+						.setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
+			}
+		} else {
+			getFinancialSystemDocumentHeader()
+					.setFinancialDocumentTotalAmount(((AmountTotaling) this).getTotalDollarAmount());
+		}
+
         captureWorkflowHeaderInformation();
 
         if (wireTransfer != null) {
@@ -660,7 +667,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
      */
     @Override
     protected void clearInvalidPayee() {
-        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current dvPayeeDetail as is
+        // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current
+        // dvPayeeDetail as is
         if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
             VendorDetail vendorDetail = getVendorService().getVendorDetail(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger(), getDvPayeeDetail().getDisbVchrVendorDetailAssignedIdNumberAsInteger());
             if (vendorDetail == null) {

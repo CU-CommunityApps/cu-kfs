@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.module.purap.businessobject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.bo.Note;
@@ -42,7 +44,7 @@ import java.util.List;
  * Base class for Related View Business Objects.
  */
 public abstract class AbstractRelatedView extends PersistableBusinessObjectBase {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AbstractRelatedView.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractRelatedView.class);
 
     private Integer accountsPayablePurchasingDocumentLinkIdentifier;
     private Integer purapDocumentIdentifier;
@@ -121,22 +123,8 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     public String getDocumentLabel() throws WorkflowException{
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName(getDocumentTypeName());
     }
-
-    /**
-     * @see org.kuali.kfs.kns.bo.BusinessObjectBase#toStringMapper()
-     */
+    
     public abstract String getDocumentTypeName();
-
-    /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-        if (this.accountsPayablePurchasingDocumentLinkIdentifier != null) {
-            m.put("accountsPayablePurchasingDocumentLinkIdentifier", this.accountsPayablePurchasingDocumentLinkIdentifier.toString());
-        }
-        return m;
-    }
 
     /**
      * Gets the poNumberMasked attribute.
@@ -182,12 +170,11 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        }
-        catch (WorkflowException ex) {
-            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex );
-        } catch ( UnknownDocumentTypeException ex ) {
+        } catch (WorkflowException ex) {
+            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
+        } catch (UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
-            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex );
+            LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         }
 
         return document;

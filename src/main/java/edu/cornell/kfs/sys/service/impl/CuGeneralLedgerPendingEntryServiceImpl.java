@@ -1,5 +1,7 @@
 package edu.cornell.kfs.sys.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -10,8 +12,8 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.GeneralLedgerPendingEntryServiceImpl;
 
 public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPendingEntryServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuGeneralLedgerPendingEntryServiceImpl.class);
-
+    private static final Logger LOG = LogManager.getLogger(CuGeneralLedgerPendingEntryServiceImpl.class);
+    
     /**
      * This method takes a GLPE and updates the fiscal year and fiscal accounting period to the current open values if either or both of them are not currently
      * assigned to the provided GLPE.

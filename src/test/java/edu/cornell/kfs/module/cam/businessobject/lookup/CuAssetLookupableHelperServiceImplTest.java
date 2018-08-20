@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.businessobject.lookup.LookupableSpringContext;
@@ -20,7 +22,7 @@ import edu.cornell.kfs.module.ezra.service.EzraService;
 @ConfigureContext
 public class CuAssetLookupableHelperServiceImplTest extends KualiTestBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAssetLookupableHelperServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuAssetLookupableHelperServiceImplTest.class);
 	private CuAssetLookupableHelperServiceImpl cuAssetLookupableHelperServiceImpl;
 	private Class cuAssetLookupableHelperServiceImplClass;
 	

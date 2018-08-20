@@ -12,7 +12,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.batch.service.WrappingBatchService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -31,7 +32,7 @@ import edu.cornell.kfs.vnd.batch.CommodityCodeInputFileType;
 import edu.cornell.kfs.vnd.batch.service.CommodityCodeUpdateService;
 
 public class CommodityCodeUpdateServiceImpl implements CommodityCodeUpdateService {
-    private static Logger LOG = Logger.getLogger(CommodityCodeUpdateServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CommodityCodeUpdateServiceImpl.class);
 
     private BatchInputFileService batchInputFileService;
     private CommodityCodeInputFileType commodityCodeInputFileType;

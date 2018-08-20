@@ -1,6 +1,8 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
@@ -27,7 +29,7 @@ import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
 
 public class AwsAccountingXmlDocumentAccountingLineServiceImpl implements AwsAccountingXmlDocumentAccountingLineService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwsAccountingXmlDocumentAccountingLineServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AwsAccountingXmlDocumentAccountingLineServiceImpl.class);
 
     protected ParameterService parameterService;
     protected ChartService chartService;

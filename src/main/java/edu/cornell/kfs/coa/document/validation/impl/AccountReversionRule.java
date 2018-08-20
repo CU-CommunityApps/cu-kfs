@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.FundGroup;
 import org.kuali.kfs.coa.businessobject.OrganizationReversion;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
@@ -45,7 +47,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
  */
 public class AccountReversionRule extends MaintenanceDocumentRuleBase {
 
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionRule.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionRule.class);
 
     protected AccountReversion oldAcctReversion;
     protected AccountReversion newAcctReversion;

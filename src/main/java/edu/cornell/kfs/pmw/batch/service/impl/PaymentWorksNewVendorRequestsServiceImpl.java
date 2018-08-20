@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -32,7 +34,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 
 public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNewVendorRequestsService {
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorRequestsServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksNewVendorRequestsServiceImpl.class);
 
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;

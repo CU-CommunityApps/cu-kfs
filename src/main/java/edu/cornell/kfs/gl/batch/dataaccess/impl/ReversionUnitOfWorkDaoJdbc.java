@@ -15,6 +15,8 @@
  */
 package edu.cornell.kfs.gl.batch.dataaccess.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 
 import edu.cornell.kfs.gl.batch.dataaccess.ReversionUnitOfWorkDao;
@@ -24,7 +26,7 @@ import edu.cornell.kfs.gl.batch.dataaccess.ReversionUnitOfWorkDao;
  * truncated tables, which is something you can't do on tables with primary keys.
  */
 public class ReversionUnitOfWorkDaoJdbc extends PlatformAwareDaoBaseJdbc implements ReversionUnitOfWorkDao {
-    org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(getClass());
+	private static final Logger LOG = LogManager.getLogger(ReversionUnitOfWorkDaoJdbc.class);
 
     /**
      * Deletes all existing records in gl_rvrsn_ctgry_amt_t and gl_rvrsn_unit_wrk_t

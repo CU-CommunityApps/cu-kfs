@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -21,7 +23,7 @@ import org.springframework.util.StringUtils;
 import edu.cornell.kfs.module.purap.document.service.PurchaseOrderTransmissionMethodDataRulesService;
 
 public class PurchaseOrderTransmissionMethodDataRulesServiceImplTest {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurchaseOrderTransmissionMethodDataRulesServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(PurchaseOrderTransmissionMethodDataRulesServiceImplTest.class);
 	private static final String PHONE_NUMBER_GOOD = "607-220-3712";
 	private static final String PHONE_NUMBER_BAD = "ab258h c23";
 	private static final String ADDRESS = "line 1 address";

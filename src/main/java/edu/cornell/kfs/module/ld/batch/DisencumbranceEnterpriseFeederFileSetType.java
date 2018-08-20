@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.ld.batch;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.EnterpriseFeederFileSetType;
 import org.kuali.kfs.module.ld.batch.service.EnterpriseFeederService;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -12,7 +14,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class DisencumbranceEnterpriseFeederFileSetType extends EnterpriseFeederFileSetType {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisencumbranceEnterpriseFeederFileSetType.class);
+	private static final Logger LOG = LogManager.getLogger(DisencumbranceEnterpriseFeederFileSetType.class);
 
     private static final String FILE_NAME_PREFIX = "disencFile";
     private static final String FILE_NAME_PART_DELIMITER = "_";

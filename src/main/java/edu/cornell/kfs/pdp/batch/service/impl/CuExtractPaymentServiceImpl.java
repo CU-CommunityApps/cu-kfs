@@ -19,7 +19,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
@@ -47,6 +48,7 @@ import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
+    private static final Logger LOG = LogManager.getLogger(CuExtractPaymentServiceImpl.class);
     public static final String DV_EXTRACT_SUB_UNIT_CODE = "DV";
     public static final String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
     
@@ -56,8 +58,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private static final String PAYER_CITY = "Ithaca";
     private static final String PAYER_STATE = "NY";
     private static final String PAYER_ZIP_CODE = "148502826";
-
-    private static final  Logger LOG = org.apache.log4j.Logger.getLogger(CuExtractPaymentServiceImpl.class);
     
     protected AchBundlerHelperService achBundlerHelperService;
     

@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.sys.batch.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -54,7 +56,7 @@ import java.util.Set;
  */
 @Transactional
 public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtractionService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentSourceExtractionServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(PaymentSourceExtractionServiceImpl.class);
 
     protected DateTimeService dateTimeService;
     protected CustomerProfileService customerProfileService;
@@ -91,7 +93,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         }
 
         // Get a list of campuses that have documents with an 'A' (approved) status.
-        Map<String, List<PaymentSource>>  campusListMap = paymentSourceToExtractService.retrievePaymentSourcesByCampus(false);
+        Map<String, List<PaymentSource>> campusListMap = paymentSourceToExtractService.retrievePaymentSourcesByCampus(false);
 
         if (campusListMap != null && !campusListMap.isEmpty()) {
             // Process each campus one at a time
@@ -132,8 +134,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      * This method extracts all outstanding payments from all the disbursement vouchers in approved status for a given campus and
      * adds these payments to a batch file that is uploaded for processing.
      *
-     * @param campusCode The id code of the campus the payments will be retrieved for.
-     * @param user The user object used when creating the batch file to upload with outstanding payments.
+     * @param campusCode     The id code of the campus the payments will be retrieved for.
+     * @param user           The user object used when creating the batch file to upload with outstanding payments.
      * @param processRunDate This is the date that the batch file is created, often this value will be today's date.
      */
     protected void extractPaymentsForCampus(String campusCode, String principalId, Date processRunDate, List<? extends PaymentSource> documents) {
@@ -163,8 +165,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     /**
      * Builds payment batch for Disbursement Vouchers marked as immediate
      *
-     * @param campusCode the campus code the disbursement vouchers should be associated with
-     * @param user the user responsible building the payment batch (typically the System User, kfs)
+     * @param campusCode     the campus code the disbursement vouchers should be associated with
+     * @param user           the user responsible building the payment batch (typically the System User, kfs)
      * @param processRunDate the time that the job to build immediate payments is run
      */
     protected void extractImmediatePaymentsForCampus(String campusCode, String principalId, Date processRunDate, List<? extends PaymentSource> documents) {
@@ -172,7 +174,6 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
         if (!documents.isEmpty()) {
             final PaymentSource firstPaymentSource = documents.get(0);
-
 
             Batch batch = createBatch(campusCode, principalId, processRunDate);
             Integer count = 0;
@@ -197,8 +198,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     /**
      * This method creates a payment group from the disbursement voucher and batch provided and persists that group to the database.
      *
-     * @param document The document used to build a payment group detail.
-     * @param batch The batch file used to build a payment group and detail.
+     * @param document       The document used to build a payment group detail.
+     * @param batch          The batch file used to build a payment group and detail.
      * @param processRunDate The date the batch file is to post.
      */
     protected void addPayment(PaymentSource document, Batch batch, Date processRunDate, boolean immediate) {
@@ -235,10 +236,10 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     /**
      * This method creates a Batch instance and populates it with the information provided.
      *
-     * @param campusCode The campus code used to retrieve a customer profile to be set on the batch.
-     * @param orgCode the organization code used to retrieve a customer profile to be set on the batch.
-     * @param subUnitCode the sub-unit code used to retrieve a customer profile to be set on the batch.
-     * @param user The user who submitted the batch.
+     * @param campusCode     The campus code used to retrieve a customer profile to be set on the batch.
+     * @param orgCode        the organization code used to retrieve a customer profile to be set on the batch.
+     * @param subUnitCode    the sub-unit code used to retrieve a customer profile to be set on the batch.
+     * @param user           The user who submitted the batch.
      * @param processRunDate The date the batch was submitted and the date the customer profile was generated.
      * @return A fully populated batch instance.
      */
@@ -270,8 +271,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     /**
      * This method retrieves a list of disbursement voucher documents that are in the status provided for the campus code given.
      *
-     * @param statusCode The status of the disbursement vouchers to be retrieved.
-     * @param campusCode The campus code that the disbursement vouchers will be associated with.
+     * @param statusCode     The status of the disbursement vouchers to be retrieved.
+     * @param campusCode     The campus code that the disbursement vouchers will be associated with.
      * @param immediatesOnly only retrieve Disbursement Vouchers marked for immediate payment
      * @return A collection of disbursement voucher objects that meet the search criteria given.
      */
@@ -291,8 +292,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
                     }
                 }
             }
-        }
-        catch (WorkflowException we) {
+        } catch (WorkflowException we) {
             LOG.error("Could not load Disbursement Voucher Documents with status code = " + statusCode + ": " + we);
             throw new RuntimeException(we);
         }

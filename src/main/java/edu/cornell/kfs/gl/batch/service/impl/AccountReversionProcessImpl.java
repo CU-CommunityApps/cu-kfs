@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 
 import org.kuali.kfs.gl.batch.service.impl.exception.FatalErrorException;
@@ -50,7 +52,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.BrokenBarrierException;
  */
 @Transactional
 public class AccountReversionProcessImpl extends ReversionProcessBase implements  InitializingBean {
-    static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionProcessImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionProcessImpl.class);
 
     // Services
     private AccountReversionService accountReversionService;

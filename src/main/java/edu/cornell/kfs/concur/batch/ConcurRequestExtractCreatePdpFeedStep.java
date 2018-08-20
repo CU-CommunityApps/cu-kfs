@@ -1,12 +1,14 @@
 package edu.cornell.kfs.concur.batch;
 
 import java.util.Date;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractCreatePdpFeedService;
 
 public class ConcurRequestExtractCreatePdpFeedStep extends AbstractStep {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractCreatePdpFeedStep.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractCreatePdpFeedStep.class);
     protected ConcurRequestExtractCreatePdpFeedService concurRequestExtractCreatePdpFeedService;
 
     @Override

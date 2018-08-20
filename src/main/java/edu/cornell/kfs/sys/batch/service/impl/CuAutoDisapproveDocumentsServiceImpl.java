@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.joda.time.DateTime;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
@@ -45,7 +48,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 @Transactional
 public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocumentsServiceImpl {
-
+	private static final Logger LOG = LogManager.getLogger(CuAutoDisapproveDocumentsServiceImpl.class);
     private static final String TAB = "\t";
 
     private RouteHeaderService routeHeaderService;

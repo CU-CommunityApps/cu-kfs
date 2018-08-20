@@ -17,6 +17,8 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.kns.service.DataDictionaryService;
@@ -54,7 +56,7 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 public class AmazonWebServicesBillingServiceImpl implements AmazonWebServicesBillingService, Serializable {
 
     private static final long serialVersionUID = 7430710204404759511L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AmazonWebServicesBillingServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(AmazonWebServicesBillingServiceImpl.class);
     
     private String directoryPath;
     

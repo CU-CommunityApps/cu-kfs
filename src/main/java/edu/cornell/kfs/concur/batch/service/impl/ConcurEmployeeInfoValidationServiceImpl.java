@@ -5,7 +5,8 @@ import java.util.Collections;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.service.PayeeACHService;
@@ -21,7 +22,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeInfoValidationService {
-    private static final Logger LOG = Logger.getLogger(ConcurEmployeeInfoValidationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurEmployeeInfoValidationServiceImpl.class);
     
     protected PersonService personService;
     protected PayeeACHService payeeACHService;

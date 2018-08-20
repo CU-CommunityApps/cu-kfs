@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.purap.document.dataaccess.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
@@ -13,8 +15,7 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 
 @SuppressWarnings("unchecked")
 public class CuCreditMemoDaoOjb extends CreditMemoDaoOjb {
-	
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuCreditMemoDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger(CuCreditMemoDaoOjb.class);
 
     @Override
 	public List<VendorCreditMemoDocument> getCreditMemosToExtract(String chartCode) {

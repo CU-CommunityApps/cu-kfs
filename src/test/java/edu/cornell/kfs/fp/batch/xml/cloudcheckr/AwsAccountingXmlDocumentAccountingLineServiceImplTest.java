@@ -16,6 +16,8 @@ import edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture.GroupLevelFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentAccountingLineFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.DefaultKfsAccountForAwsFixture;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +41,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class AwsAccountingXmlDocumentAccountingLineServiceImplTest {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AwsAccountingXmlDocumentAccountingLineServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(AwsAccountingXmlDocumentAccountingLineServiceImplTest.class);
 
     private AwsAccountingXmlDocumentAccountingLineServiceImpl awsAccountingXmlDocumentAccountingLineService;
 

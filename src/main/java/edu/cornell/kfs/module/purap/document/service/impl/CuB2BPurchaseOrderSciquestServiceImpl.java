@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
@@ -45,7 +47,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuB2BPurchaseOrderService;
 
 public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciquestServiceImpl implements CuB2BPurchaseOrderService{
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuB2BPurchaseOrderSciquestServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuB2BPurchaseOrderSciquestServiceImpl.class);
     
     private static final String NEWLINE = "\r\n";
     private static final String PREFIX = "--";

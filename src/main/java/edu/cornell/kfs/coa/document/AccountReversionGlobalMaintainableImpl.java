@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
@@ -47,7 +49,7 @@ import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
  * processGlobalsAfterRetrieve - provides special handling for the details (which aren't a true collection)
  */
 public class AccountReversionGlobalMaintainableImpl extends FinancialSystemGlobalMaintainable {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalMaintainableImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionGlobalMaintainableImpl.class);
     
     private static transient AccountReversionService accountReversionService;
 

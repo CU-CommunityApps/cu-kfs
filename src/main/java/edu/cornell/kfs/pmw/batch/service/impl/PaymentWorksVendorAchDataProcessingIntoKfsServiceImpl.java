@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 
 import org.kuali.kfs.krad.bo.DocumentHeader;
@@ -36,7 +38,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsPayeeAchAccountC
 import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements PaymentWorksVendorAchDataProcessingIntoKfsService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl.class);
     
     protected DocumentService documentService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;

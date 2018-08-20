@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
@@ -25,7 +27,7 @@ import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 @ConfigureContext(session = ccs1)
 public class ezraUpdateAwardImplTest extends KualiTestBase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(EzraService.class);
+	private static final Logger LOG = LogManager.getLogger(ezraUpdateAwardImplTest.class);
     private EzraService ezraService;    
     private BusinessObjectService businessObjectService;
     private EzraAwardProposalDao ezraAwardProposalDao;

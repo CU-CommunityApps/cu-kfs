@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.ConfigureContext;
@@ -13,7 +15,7 @@ import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 @ConfigureContext(session = UserNameFixture.mo14)
 public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiTestBase {
 
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);
 
 	private CuPurchasingAccountsPayableModuleServiceImpl accountsPayableModuleServiceImpl;
 

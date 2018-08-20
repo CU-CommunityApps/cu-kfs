@@ -3,9 +3,12 @@ package edu.cornell.kfs.sys.util;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class CURestClientUtils {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CURestClientUtils.class);
+	private static final Logger LOG = LogManager.getLogger(CURestClientUtils.class);
 
     public static void closeQuietly(Client client) {
         try {

@@ -3,6 +3,8 @@ package edu.cornell.kfs.concur.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -20,7 +22,7 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 @SuppressWarnings("deprecation")
 public class ConcurManageAccessTokenAction extends KualiAction {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurManageAccessTokenAction.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurManageAccessTokenAction.class);
     
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         LOG.debug("start, entering");

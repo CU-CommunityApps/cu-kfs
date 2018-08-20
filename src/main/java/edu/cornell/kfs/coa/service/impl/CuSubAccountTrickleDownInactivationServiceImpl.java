@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl;
@@ -18,15 +19,15 @@ import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTrickleDownInactivationServiceImpl {
-	private static final Logger LOG = Logger.getLogger(CuSubAccountTrickleDownInactivationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuSubAccountTrickleDownInactivationServiceImpl.class);
 	
     /**
      * @see org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl#trickleDownInactivateSubAccounts(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
      */
     public void trickleDownInactivateSubAccounts(Account inactivatedAccount, String documentNumber) {
-        List<SubAccount> inactivatedSubAccounts = new ArrayList<SubAccount>();
-        Map<SubAccount, String> alreadyLockedSubAccounts = new HashMap<SubAccount, String>();
-        List<SubAccount> errorPersistingSubAccounts = new ArrayList<SubAccount>();
+        List<SubAccount> inactivatedSubAccounts = new ArrayList<>();
+        Map<SubAccount, String> alreadyLockedSubAccounts = new HashMap<>();
+        List<SubAccount> errorPersistingSubAccounts = new ArrayList<>();
         
         Maintainable subAccountMaintainable;
         try {

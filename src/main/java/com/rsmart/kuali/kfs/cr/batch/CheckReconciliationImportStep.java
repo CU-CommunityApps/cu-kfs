@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.comparator.NameFileComparator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants.PaymentStatusCodes;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
@@ -64,7 +66,7 @@ import edu.cornell.kfs.sys.batch.CuAbstractStep;
  */
 public class CheckReconciliationImportStep extends CuAbstractStep {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CheckReconciliationImportStep.class);
+	private static final Logger LOG = LogManager.getLogger(CheckReconciliationImportStep.class);
 
     private String delimeter = null;
 
