@@ -1,5 +1,7 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
+import java.text.MessageFormat;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.validation.impl.AccountGlobalRule;
@@ -7,6 +9,7 @@ import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
@@ -27,17 +30,20 @@ public class CuAccountGlobalRule extends AccountGlobalRule {
     
     protected boolean isTheNewRestrictionCodeValidForEachAccount() {
         boolean valid = true;
+        int accountDetailIndex = 0;
         for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
             String accountSubFundGroupRestrictionCode = detail.getAccount().getSubFundGroup().getAccountRestrictedStatusCode();
             String accountGlobalRestrictionCode = newAccountGlobal.getAccountRestrictedStatusCode();
             if (StringUtils.isNotBlank(accountSubFundGroupRestrictionCode) && 
                     !StringUtils.equalsAnyIgnoreCase(accountSubFundGroupRestrictionCode, accountGlobalRestrictionCode)) {
                 valid = false;
-                GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(MAINTAINABLE_ERROR_PREFIX + KFSConstants.MAINTENANCE_ADD_PREFIX + "accountGlobalDetails.accountNumber", 
-                        CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE, 
-                        detail.getAccountNumber(), detail.getAccount().getSubFundGroupCode(), accountGlobalRestrictionCode);
+                //document.newMaintainableObject.accountGlobalDetails[0].accountNumber.div
+                //putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + "accountGlobalDetails.accountNumber", CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE);
+                String fieldNameFormat = "accountGlobalDetails[{0}].accountNumber";
+                putFieldError(MessageFormat.format(fieldNameFormat, String.valueOf(accountDetailIndex)), 
+                        CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE, detail.getAccountNumber());
             }
-            
+            accountDetailIndex++;
         }
         return valid;
     }
