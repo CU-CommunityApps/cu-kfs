@@ -11,7 +11,6 @@ import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
-import edu.cornell.kfs.fp.document.authorization.Logger;
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
 
 public class CuContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocument {
