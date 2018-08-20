@@ -30,12 +30,14 @@ public class CuAccountGlobalRule extends AccountGlobalRule {
         for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
             String accountSubFundGroupRestrictionCode = detail.getAccount().getSubFundGroup().getAccountRestrictedStatusCode();
             String accountGlobalRestrictionCode = newAccountGlobal.getAccountRestrictedStatusCode();
-            if (!StringUtils.equalsAnyIgnoreCase(accountSubFundGroupRestrictionCode, accountGlobalRestrictionCode)) {
+            if (StringUtils.isNotBlank(accountSubFundGroupRestrictionCode) && 
+                    !StringUtils.equalsAnyIgnoreCase(accountSubFundGroupRestrictionCode, accountGlobalRestrictionCode)) {
                 valid = false;
                 GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(MAINTAINABLE_ERROR_PREFIX + KFSConstants.MAINTENANCE_ADD_PREFIX + "accountGlobalDetails.accountNumber", 
                         CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE, 
                         detail.getAccountNumber(), detail.getAccount().getSubFundGroupCode(), accountGlobalRestrictionCode);
             }
+            
         }
         return valid;
     }
