@@ -33,7 +33,8 @@ public class CuSubAccountPreRules extends SubAccountPreRules {
         Person user = GlobalVariables.getUserSession().getPerson();
 
         // get a new instance of MaintenanceDocumentAuthorizations for this context
-        MaintenanceDocumentRestrictions auths = SpringContext.getBean(BusinessObjectAuthorizationService.class).getMaintenanceDocumentRestrictions(document, user);
+        MaintenanceDocumentRestrictions auths = SpringContext.getBean(BusinessObjectAuthorizationService.class)
+                .getMaintenanceDocumentRestrictions(document, user);
 
         // don't need to copy if the user does not have the authority to edit the fields
         if (!auths.getFieldRestriction("a21SubAccount.financialIcrSeriesIdentifier").isReadOnly()) {

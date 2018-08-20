@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
@@ -48,7 +50,7 @@ import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
  */
 public class GlTransactionStep extends AbstractStep {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GlTransactionStep.class);
+	private static final Logger LOG = LogManager.getLogger(GlTransactionStep.class);
     
     private GlTransactionService glTransactionService;
     

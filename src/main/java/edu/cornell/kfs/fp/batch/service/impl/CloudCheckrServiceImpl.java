@@ -11,6 +11,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.CloudCheckrService;
@@ -22,7 +24,7 @@ import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class CloudCheckrServiceImpl extends DisposableClientServiceImplBase implements CloudCheckrService  {
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CloudCheckrServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CloudCheckrServiceImpl.class);
     
     protected WebServiceCredentialService webServiceCredentialService;
 

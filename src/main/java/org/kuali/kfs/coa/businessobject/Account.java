@@ -21,6 +21,8 @@ package org.kuali.kfs.coa.businessobject;
 import edu.cornell.kfs.coa.service.CuAccountService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.service.SubFundGroupService;
 import org.kuali.kfs.gl.businessobject.SufficientFundRebuild;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsAccountAwardInformation;
@@ -37,7 +39,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.location.api.LocationConstants;
@@ -55,7 +56,7 @@ import java.util.Map;
 
 public class Account extends PersistableBusinessObjectBase implements AccountIntf, MutableInactivatable {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(Account.class);
+	private static final Logger LOG = LogManager.getLogger(Account.class);
 
     public static final String CACHE_NAME = KFSConstants.APPLICATION_NAMESPACE_CODE + "/" + "Account";
 
@@ -732,8 +733,6 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     /**
      * This fix is temporary until Jonathan's fix is reflected to Rice
-     *
-     * @see org.kuali.kfs.kns.bo.PersistableBusinessObjectBase#refreshReferenceObject(java.lang.String)
      */
     @Override
     public void refreshReferenceObject(String referenceObjectName) {
@@ -1085,7 +1084,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * Implementing equals since I need contains to behave reasonably in a hashed datastructure.
+     * Implementing equals since I need contains to behave reasonably in a hashed data structure.
      */
     @Override
     public boolean equals(Object obj) {
@@ -1107,9 +1106,9 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * Calcluates hashCode based on current values of chartOfAccountsCode and accountNumber fields. Somewhat dangerous, since both
+     * Calculates hashCode based on current values of chartOfAccountsCode and accountNumber fields. Somewhat dangerous, since both
      * of those fields are mutable, but I don't expect people to be editing those values directly for Accounts stored in hashed
-     * datastructures.
+     * data structures.
      */
     @Override
     public int hashCode() {
@@ -1126,8 +1125,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     @Override
     public String getAccountKey() {
-        String key = getChartOfAccountsCode() + ":" + getAccountNumber();
-        return key;
+        return getChartOfAccountsCode() + ":" + getAccountNumber();
     }
 
     @Override

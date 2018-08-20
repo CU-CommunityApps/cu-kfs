@@ -4,19 +4,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+
+import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
+
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class SubAccountGlobalDetail extends GlobalBusinessObjectDetailBase {
 	
-	private static final Logger LOG = Logger.getLogger(SubAccountGlobalDetail.class);
+	private static final Logger LOG = LogManager.getLogger(SubAccountGlobalDetail.class);
 	
     private String chartOfAccountsCode;
     private String accountNumber;

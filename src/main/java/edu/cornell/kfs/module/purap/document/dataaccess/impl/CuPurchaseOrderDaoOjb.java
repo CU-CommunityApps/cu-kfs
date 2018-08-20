@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.purap.document.dataaccess.impl;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryByCriteria;
@@ -19,7 +21,7 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuAutoClosePurchaseOrderView;
 
 public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchaseOrderDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger(CuPurchaseOrderDaoOjb.class);
 
     public List<AutoClosePurchaseOrderView> getAllOpenPurchaseOrders(List<String> excludedVendorChoiceCodes) {
         LOG.info("getAllOpenPurchaseOrders() started");

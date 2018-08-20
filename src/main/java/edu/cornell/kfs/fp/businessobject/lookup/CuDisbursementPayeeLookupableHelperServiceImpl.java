@@ -29,8 +29,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuDisbursementPayeeLookupableHelperServiceImpl extends DisbursementPayeeLookupableHelperServiceImpl {
-    
-    
+        
     private static final String ACTIVE = "A";
     private static final String RETIRED = "R";
     
@@ -39,7 +38,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
      */
     @Override
     public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
-        List<DisbursementPayee> searchResults = new ArrayList<DisbursementPayee>();
+    		List<DisbursementPayee> searchResults = new ArrayList<>();
 
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER)) 
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
@@ -85,8 +84,9 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
             final String employeeIdLabel = this.getAttributeLabel(KIMPropertyConstants.Person.EMPLOYEE_ID);
             final String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.PRINCIPAL_NAME);
 
-            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER, KFSKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD,
-                    new String[] {vendorNumberLabel, employeeIdLabel, vendorNameLabel, firstNameLabel, lastNameLabel, principalNameLabel});
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NUMBER,
+                    KFSKeyConstants.ERROR_DV_LOOKUP_NEEDS_SOME_FIELD, vendorNumberLabel, employeeIdLabel,
+                    vendorNameLabel, firstNameLabel, lastNameLabel, principalNameLabel);
             return false;
         }
         return true;
@@ -118,8 +118,9 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
 
         if (StringUtils.isBlank(vendorNumber) && !StringUtils.isBlank(vendorName) && !filledEnough(vendorName)) {
             final String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
-            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, 
-                    new String[] {vendorNameLabel, Integer.toString(getNameLengthWithWildcardRequirement())});
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME,
+                    KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, vendorNameLabel,
+                    Integer.toString(getNameLengthWithWildcardRequirement()));
         }
     }
     
@@ -141,18 +142,21 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
             String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
             String firstNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
             String lastNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
-            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME, messageKey, vendorNameLabel, firstNameLabel, lastNameLabel);
+            GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME, messageKey, vendorNameLabel,
+                    firstNameLabel, lastNameLabel);
         }
         if (StringUtils.isBlank(employeeId)) {  
             if (StringUtils.isBlank(principalName)) {
                 if (StringUtils.isBlank(firstName) && !StringUtils.isBlank(lastName) && !filledEnough(lastName)) {
                     final String label = getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
-                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.LAST_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, 
-                            new String[] { label, Integer.toString(getNameLengthWithWildcardRequirement())});
+                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.LAST_NAME,
+                            KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, label,
+                            Integer.toString(getNameLengthWithWildcardRequirement()));
                 } else if (StringUtils.isBlank(lastName) && !StringUtils.isBlank(firstName) && !filledEnough(firstName)) {
                     final String label = getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
-                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.FIRST_NAME, KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH,
-                            new String[] { label, Integer.toString(getNameLengthWithWildcardRequirement())});
+                    GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.FIRST_NAME,
+                            KFSKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, label,
+                            Integer.toString(getNameLengthWithWildcardRequirement()));
                 }
             }
         }
@@ -224,7 +228,7 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
 
     @Override
     protected Map<String, String> getPersonFieldValues(Map<String, String> fieldValues) {
-        Map<String, String> personFieldValues = new HashMap<String, String>();
+        Map<String, String> personFieldValues = new HashMap<>();
         personFieldValues.put(KFSPropertyConstants.PERSON_FIRST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_FIRST_NAME));
         personFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
         personFieldValues.put(KFSPropertyConstants.EMPLOYEE_ID, fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID));
@@ -252,7 +256,7 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
 
     
     protected Map<String, String> getVendorFieldValues(Map<String, String> fieldValues) {
-        Map<String, String> vendorFieldValues = new HashMap<String, String>();
+        Map<String, String> vendorFieldValues = new HashMap<>();
         vendorFieldValues.put(KFSPropertyConstants.TAX_NUMBER, fieldValues.get(KFSPropertyConstants.TAX_NUMBER));
         vendorFieldValues.put(KFSPropertyConstants.VENDOR_NAME, fieldValues.get(KFSPropertyConstants.VENDOR_NAME));
         vendorFieldValues.put(KFSPropertyConstants.VENDOR_NUMBER, fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER));

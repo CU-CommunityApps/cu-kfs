@@ -20,6 +20,8 @@ package org.kuali.kfs.sys.web.struts;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -79,7 +81,7 @@ import java.util.Set;
  * This class handles UI actions for all shared methods of financial documents.
  */
 public class KualiAccountingDocumentActionBase extends FinancialSystemTransactionalDocumentActionBase {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KualiAccountingDocumentActionBase.class);
+    private static final Logger LOG = LogManager.getLogger(KualiAccountingDocumentActionBase.class);
 
     // Set of actions for which updateEvents should be generated
     protected static final Set UPDATE_EVENT_ACTIONS;
@@ -572,7 +574,7 @@ public class KualiAccountingDocumentActionBase extends FinancialSystemTransactio
     /**
      * Takes care of storing the action form in the User session and forwarding to the balance inquiry report menu action for a
      * source accounting line.
-     * 
+     *
      * @param mapping
      * @param form
      * @param request

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -18,7 +20,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtractReportService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractReportServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractReportServiceImpl.class);
 
     protected ReportWriterService reportWriterService;
     protected ConfigurationService configurationService;

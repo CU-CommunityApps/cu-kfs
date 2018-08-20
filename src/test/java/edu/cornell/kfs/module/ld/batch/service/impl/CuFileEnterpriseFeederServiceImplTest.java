@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.ld.batch.service.EnterpriseFeederService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
@@ -19,7 +21,7 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 @ConfigureContext
 public class CuFileEnterpriseFeederServiceImplTest extends KualiTestBase  {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederServiceImplTest.class);
     private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.data";
     private static final String RECON_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/ld/fixture/SMGROS.recon";
     private static final String LD_REPORTS_FOLDER = "/ld";

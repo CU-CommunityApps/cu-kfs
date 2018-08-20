@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -22,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPaymentMaintenanceServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuPaymentMaintenanceServiceImpl.class);
     
     @Override
     public boolean cancelDisbursement(Integer paymentGroupId, Integer paymentDetailId, String note, Person user) {

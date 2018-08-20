@@ -2,6 +2,8 @@ package edu.cornell.kfs.sys.service.impl;
 
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.config.CoreConfigHelper;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.DocumentRefreshQueue;
@@ -11,7 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentMaintenanceServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceServiceImpl.class);
 
     public static final int WAIT_TIME_NO_WAIT = 0;
 

@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.KFSConstants;
@@ -15,7 +17,7 @@ import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuRequisitionServiceImplTest extends KualiTestBase {
 	
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuRequisitionServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuRequisitionServiceImplTest.class);
 
 	private CuRequisitionServiceImpl cuRequisitionServiceImpl;
 

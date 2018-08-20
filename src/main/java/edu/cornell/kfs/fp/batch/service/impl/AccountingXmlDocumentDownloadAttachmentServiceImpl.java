@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 
 public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends DisposableClientServiceImplBase implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;

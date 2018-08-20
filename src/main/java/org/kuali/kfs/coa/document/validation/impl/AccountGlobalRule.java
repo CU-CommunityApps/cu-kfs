@@ -28,6 +28,8 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
@@ -81,7 +83,7 @@ import java.util.Map;
  * This class represents the business rules for the maintenance of {@link AccountGlobal} business objects
  */
 public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
-	protected static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountGlobalRule.class);
+	private static final Logger LOG = LogManager.getLogger(AccountGlobalRule.class);
 
 	protected static final BigDecimal BD100 = new BigDecimal(100);
 
@@ -123,8 +125,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
      * This method checks the following rules: checkEmptyValues checkGeneralRules checkContractsAndGrants checkExpirationDate
      * checkOnlyOneChartErrorWrapper checkFiscalOfficerIsValidKualiUser but does not fail if any of them fail (this only happens on
      * routing)
-     *
-     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomSaveDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {
@@ -156,8 +156,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
     /**
      * This method checks the following rules: checkEmptyValues checkGeneralRules checkContractsAndGrants checkExpirationDate
      * checkOnlyOneChartErrorWrapper checkFiscalOfficerIsValidKualiUser but does fail if any of these rule checks fail
-     *
-     * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomRouteDocumentBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
@@ -228,7 +226,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @return true if the detail object contains a valid account
 	 */
 	public boolean checkAccountDetails(AccountGlobalDetail dtl) {
-		boolean success = true;
 		int originalErrorCount = GlobalVariables.getMessageMap().getErrorCount();
 		getDictionaryValidationService().validateBusinessObject(dtl);
 		if (StringUtils.isNotBlank(dtl.getAccountNumber()) && StringUtils.isNotBlank(dtl.getChartOfAccountsCode())) {
@@ -237,9 +234,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 				GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, new String[] { dtl.getChartOfAccountsCode(), dtl.getAccountNumber() });
 			}
 		}
-		success &= GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;
-
-		return success;
+		return GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;
 	}
 
 	/**
@@ -251,11 +246,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		LOG.info("checkEmptyValues called");
 
-		boolean success = true;
-
 		// this set confirms that all fields which are grouped (ie, foreign keys of a reference
 		// object), must either be none filled out, or all filled out.
-		success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.CONTINUATION_ACCOUNT);
+		boolean success = checkForPartiallyFilledOutReferenceForeignKeys("continuationAccount");
 		success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.INCOME_STREAM_ACCOUNT);
 		success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.ENDOWMENT_INCOME_ACCOUNT);
 		success &= checkForPartiallyFilledOutReferenceForeignKeys(KFSPropertyConstants.REPORTS_TO_ACCOUNT);
@@ -272,7 +265,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @return false on rules violation
 	 */
 	protected boolean checkGeneralRules(MaintenanceDocument maintenanceDocument) {
-
 		LOG.info("checkGeneralRules called");
 		Person fiscalOfficer = newAccountGlobal.getAccountFiscalOfficerUser();
 		Person accountManager = newAccountGlobal.getAccountManagerUser();
@@ -357,18 +349,18 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 	private boolean checkCfda(String accountCfdaNumber) {
 		boolean success = true;
-		ContractsAndGrantsCfda cfda = null;
+		ContractsAndGrantsCfda cfda;
 		if (! StringUtils.isEmpty(accountCfdaNumber)) {
 			ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(ContractsAndGrantsCfda.class);
 			if ( moduleService != null ) {
-				Map<String,Object> keys = new HashMap<String, Object>(1);
+				Map<String, Object> keys = new HashMap<>(1);
 				keys.put(KFSPropertyConstants.CFDA_NUMBER, accountCfdaNumber);
 				cfda = moduleService.getExternalizableBusinessObject(ContractsAndGrantsCfda.class, keys);
 			} else {
 				throw new RuntimeException( "CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed." );
 			}
 
-			success = (ObjectUtils.isNull(cfda)) ? false : true;
+			success = !ObjectUtils.isNull(cfda);
 			if (!success) {
 				putFieldError(KFSPropertyConstants.CATALOG_OF_DOMESTIC_ASSISTANCE_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
 			}
@@ -394,8 +386,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			LOG.debug("newFiscalOfficer: " + newFiscalOfficer);
 			LOG.debug("newManager: " + newManager);
 		}
-		// only need to do this check if at least one of the user fields is
-		// non null
+		// only need to do this check if at least one of the user fields is non null
 		if (newSupervisor != null || newFiscalOfficer != null || newManager != null) {
 			// loop over all AccountGlobalDetail records
 			int index = 0;
@@ -412,14 +403,15 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * This method checks that the new users (fiscal officer, supervisor, manager) are not the same individual for the
 	 * {@link Account} being changed (contained in the {@link AccountGlobalDetail})
 	 *
-	 * @param detail - where the Account information is stored
+	 * @param detail           where the Account information is stored
 	 * @param newFiscalOfficer
 	 * @param newManager
 	 * @param newSupervisor
-	 * @param index - for storing the error line
+	 * @param index            for storing the error line
 	 * @return true if the new users pass this sub-rule
 	 */
-	protected boolean checkAccountUsers(AccountGlobalDetail detail, Person newFiscalOfficer, Person newManager, Person newSupervisor, int index) {
+	protected boolean checkAccountUsers(AccountGlobalDetail detail, Person newFiscalOfficer, Person newManager,
+	        Person newSupervisor, int index) {
 		boolean success = true;
 
 		// only need to do this check if at least one of the user fields is non null
@@ -427,41 +419,57 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			// loop over all AccountGlobalDetail records
 			detail.refreshReferenceObject("account");
 			Account account = detail.getAccount();
-			if (ObjectUtils.isNotNull(account)){
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("old-Supervisor: " + account.getAccountSupervisoryUser());
-					LOG.debug("old-FiscalOfficer: " + account.getAccountFiscalOfficerUser());
-					LOG.debug("old-Manager: " + account.getAccountManagerUser());
-				}
-				// only need to check if they are not being overridden by the change document
-				if (newSupervisor != null && newSupervisor.getPrincipalId() != null) {
-					if (areTwoUsersTheSame(newSupervisor, account.getAccountFiscalOfficerUser())) {
-						success = false;
-						putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + index + "]." + KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_FISCAL_OFFICER, new String[] { account.getAccountFiscalOfficerUser().getPrincipalName(), "Fiscal Officer", detail.getAccountNumber() });
-					}
-					if (areTwoUsersTheSame(newSupervisor, account.getAccountManagerUser())) {
-						success = false;
-						putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + index + "]." + KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_ACCT_MGR, new String[] { account.getAccountManagerUser().getPrincipalName(), "Account Manager", detail.getAccountNumber() });
-					}
-				}
-				if (newManager != null && newManager.getPrincipalId() != null) {
-					if (areTwoUsersTheSame(newManager, account.getAccountSupervisoryUser())) {
-						success = false;
-						putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + index + "]." + KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_MGR_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR, new String[] { account.getAccountSupervisoryUser().getPrincipalName(), "Account Supervisor", detail.getAccountNumber() });
-					}
-				}
-				if (newFiscalOfficer != null && newFiscalOfficer.getPrincipalId() != null) {
-					if (areTwoUsersTheSame(newFiscalOfficer, account.getAccountSupervisoryUser())) {
-						success = false;
-						putFieldError(KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + index + "]." + KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_FISCAL_OFFICER_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR, new String[] { account.getAccountSupervisoryUser().getPrincipalName(), "Account Supervisor", detail.getAccountNumber() });
-					}
-				}
-			}
-			else {
-				LOG.warn("AccountGlobalDetail object has null account object:" + detail.getChartOfAccountsCode() + "-" + detail.getAccountNumber());
-			}
-		}
-
+            if (ObjectUtils.isNotNull(account)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("old-Supervisor: " + account.getAccountSupervisoryUser());
+                    LOG.debug("old-FiscalOfficer: " + account.getAccountFiscalOfficerUser());
+                    LOG.debug("old-Manager: " + account.getAccountManagerUser());
+                }
+                // only need to check if they are not being overridden by the change document
+                if (newSupervisor != null && newSupervisor.getPrincipalId() != null) {
+                    if (areTwoUsersTheSame(newSupervisor, account.getAccountFiscalOfficerUser())) {
+                        success = false;
+                        putFieldError("accountGlobalDetails[" + index + "].accountNumber",
+                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_FISCAL_OFFICER,
+                                new String[]{
+                                    account.getAccountFiscalOfficerUser().getPrincipalName(),
+                                    "Fiscal Officer", detail.getAccountNumber()});
+                    }
+                    if (areTwoUsersTheSame(newSupervisor, account.getAccountManagerUser())) {
+                        success = false;
+                        putFieldError("accountGlobalDetails[" + index + "].accountNumber",
+                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_SUPER_CANNOT_EQUAL_EXISTING_ACCT_MGR,
+                                new String[]{
+                                    account.getAccountManagerUser().getPrincipalName(),
+                                    "Account Manager", detail.getAccountNumber()});
+                    }
+                }
+                if (newManager != null && newManager.getPrincipalId() != null) {
+                    if (areTwoUsersTheSame(newManager, account.getAccountSupervisoryUser())) {
+                        success = false;
+                        putFieldError("accountGlobalDetails[" + index + "].accountNumber",
+                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_ACCT_MGR_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR,
+                                new String[]{
+                                    account.getAccountSupervisoryUser().getPrincipalName(),
+                                    "Account Supervisor", detail.getAccountNumber()});
+                    }
+                }
+                if (newFiscalOfficer != null && newFiscalOfficer.getPrincipalId() != null) {
+                    if (areTwoUsersTheSame(newFiscalOfficer, account.getAccountSupervisoryUser())) {
+                        success = false;
+                        putFieldError("accountGlobalDetails[" + index + "].accountNumber",
+                                KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_FISCAL_OFFICER_CANNOT_EQUAL_EXISTING_ACCT_SUPERVISOR,
+                                new String[]{
+                                    account.getAccountSupervisoryUser().getPrincipalName(),
+                                    "Account Supervisor", detail.getAccountNumber()});
+                    }
+                }
+            } else {
+                LOG.warn("AccountGlobalDetail object has null account object:" + detail.getChartOfAccountsCode() +
+                        "-" + detail.getAccountNumber());
+            }
+        }
+		
 		return success;
 	}
 
@@ -526,14 +534,16 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 			if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
 				try {
-					MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
+					MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+                            .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
 					AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
 					if (ObjectUtils.isNotNull(oldAccountGlobal)) {
 						oldExpDate = oldAccountGlobal.getAccountExpirationDate();
 					}
 				}
 				catch (WorkflowException ex) {
-					LOG.warn( "Error retrieving maintenance doc for doc #" + maintenanceDocument.getDocumentNumber()+ ". This shouldn't happen.", ex );
+					LOG.warn("Error retrieving maintenance doc for doc #" + maintenanceDocument.getDocumentNumber() +
+                            ". This shouldn't happen.", ex);
 				}
 			}
 
@@ -543,12 +553,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                 if (fundGroups == null || (ObjectUtils.isNotNull(newAccountGlobal.getSubFundGroup()) && !fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode()))) {
                 	if (!newExpDate.after(today) && !newExpDate.equals(today)) {
                 		putFieldError("accountExpirationDate", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
-                		success &= false;
+                		success = false;
                 	}
                 }
             }
         }
-
 
 		// a continuation account is required if the expiration date is completed.
 		success &= checkContinuationAccount(maintenanceDocument, newExpDate);
@@ -563,7 +572,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * This method checks to see if any expiration date field rules were violated in relation to the given detail record
 	 *
 	 * @param maintenanceDocument
-	 * @param detail - the account detail we are investigating
+	 * @param detail              the account detail we are investigating
 	 * @return false on rules violation
 	 */
 	protected boolean checkExpirationDate(MaintenanceDocument maintenanceDocument, AccountGlobalDetail detail) {
@@ -575,7 +584,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		// get previous expiration date for possible check later
 		if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
 			try {
-				MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
+				MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+                        .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
 				AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
 				if (ObjectUtils.isNotNull(oldAccountGlobal)) {
 					prevExpDate = oldAccountGlobal.getAccountExpirationDate();
@@ -593,8 +603,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			Date oldExpDate = account.getAccountExpirationDate();
 
 			// When updating an account expiration date, the date must be today or later
-			// (except for C&G accounts). Only run this test if this maint doc
-			// is an edit doc
+			// (except for C&G accounts). Only run this test if this maint doc is an edit doc
 			if (isUpdatedExpirationDateInvalid(account, newAccountGlobal)) {
 				// if the date was valid upon submission, and this is an approval,
 				// we're not interested unless the approver changed the value
@@ -607,7 +616,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 						/*If the Account is not being closed and the date is before today's date, the EXP date can only be today or at a later date*/
 						putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
 					}
-					success &= false;
+					success = false;
 				}
 
 			}
@@ -623,7 +632,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			if (ObjectUtils.isNotNull(effectiveDate) && ObjectUtils.isNotNull(newExpDate)) {
 				if (newExpDate.before(effectiveDate)) {
 					putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE, new String[] { detail.getAccountNumber() });
-					success &= false;
+					success = false;
 				}
 			}
 		}
@@ -658,12 +667,12 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			}
 		}
 
-		// if the expiration date hasnt changed, we're not interested
+		// if the expiration date hasn't changed, we're not interested
 		if (!expDateHasChanged) {
 			return false;
 		}
 
-		// if a subFundGroup isnt present, we cannot continue the testing
+		// if a subFundGroup isn't present, we cannot continue the testing
 		SubFundGroup subFundGroup = newAccountGlobal.getSubFundGroup();
 		if (ObjectUtils.isNull(subFundGroup)) {
 			return false;
@@ -697,34 +706,28 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @return true if the continuation account has expired
 	 */
 	protected boolean isContinuationAccountExpired(AccountGlobal accountGlobals) {
-
-		boolean result = false;
-
 		String chartCode = accountGlobals.getContinuationFinChrtOfAcctCd();
 		String accountNumber = accountGlobals.getContinuationAccountNumber();
 
 		// if either chartCode or accountNumber is not entered, then we cant continue, so exit
 		if (StringUtils.isBlank(chartCode) || StringUtils.isBlank(accountNumber)) {
-			return result;
+			return false;
 		}
 
 		// attempt to retrieve the continuation account from the DB
-		Account continuation = null;
-		Map<String,String> pkMap = new HashMap<String,String>();
+		Account continuation;
+		Map<String, String> pkMap = new HashMap<>();
 		pkMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode);
 		pkMap.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
 		continuation = super.getBoService().findByPrimaryKey(Account.class, pkMap);
 
-		// if the object doesnt exist, then we cant continue, so exit
+		// if the object doesn't exist, then we cant continue, so exit
 		if (ObjectUtils.isNull(continuation)) {
-			return result;
+			return false;
 		}
 
-		// at this point, we have a valid continuation account, so we just need to
-		// know whether its expired or not
-		result = continuation.isExpired();
-
-		return result;
+		// at this point, we have a valid continuation account, so we just need to know whether its expired or not
+		return continuation.isExpired();
 	}
 
 	/**
@@ -765,13 +768,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @return false if it is required (and not entered) or invalid/inactive
 	 */
 	protected boolean checkCgIncomeStreamRequired(AccountGlobal accountGlobals) {
-
-		boolean result = true;
 		boolean required = false;
 
 		// if the subFundGroup object is null, we cant test, so exit
 		if (ObjectUtils.isNull(accountGlobals.getSubFundGroup())) {
-			return result;
+			return true;
 		}
 
 		// retrieve the subfundcode and fundgroupcode
@@ -785,7 +786,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		// if the income stream account is not required, then we're done
 		if (!required) {
-			return result;
+			return true;
 		}
 
 		if(newAccountGlobal.isRemoveIncomeStreamChartAndAccount()){
@@ -794,20 +795,21 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		// make sure both coaCode and accountNumber are filled out
 		String error_message_prefix =  WHEN_FUND_PREFIX + fundGroupCode + AND_SUB_FUND + subFundGroupCode;
-		result &= checkEmptyBOField(KFSPropertyConstants.INCOME_STREAM_ACCOUNT_NUMBER, accountGlobals.getIncomeStreamAccountNumber(), error_message_prefix + ", Income Stream Account Number");
+		boolean result = checkEmptyBOField(KFSPropertyConstants.INCOME_STREAM_ACCOUNT_NUMBER, accountGlobals.getIncomeStreamAccountNumber(), error_message_prefix + ", Income Stream Account Number");
 		result &= checkEmptyBOField(KFSPropertyConstants.INCOME_STREAM_CHART_OF_ACCOUNTS_CODE, accountGlobals.getIncomeStreamFinancialCoaCode(), error_message_prefix + ", Income Stream Chart Of Accounts Code");
 
-		// if both fields arent present, then we're done
+		// if both fields aren't present, then we're done
 		if (!result) {
-			return result;
+			return false;
 		}
 
 		// do an existence/active test
 		DictionaryValidationService dvService = super.getDictionaryValidationService();
 		boolean referenceExists = dvService.validateReferenceExists(accountGlobals, KFSPropertyConstants.INCOME_STREAM_ACCOUNT);
 		if (!referenceExists) {
-			putFieldError(KFSPropertyConstants.INCOME_STREAM_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, "Income Stream Account: " + accountGlobals.getIncomeStreamFinancialCoaCode() + "-" + accountGlobals.getIncomeStreamAccountNumber());
-			result &= false;
+			putFieldError("incomeStreamAccount", KFSKeyConstants.ERROR_EXISTENCE, "Income Stream Account: " +
+			        accountGlobals.getIncomeStreamFinancialCoaCode() + "-" + accountGlobals.getIncomeStreamAccountNumber());
+			result = false;
 		}
 
 		return result;
@@ -816,12 +818,10 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	/**
 	 * This method calls checkAccountDetails checkExpirationDate checkOnlyOneChartAddLineErrorWrapper whenever a new
 	 * {@link AccountGlobalDetail} is added to this global
-	 *
-	 * @see org.kuali.kfs.kns.maintenance.rules.MaintenanceDocumentRuleBase#processCustomAddCollectionLineBusinessRules(org.kuali.kfs.kns.document.MaintenanceDocument,
-	 *      java.lang.String, org.kuali.kfs.krad.bo.PersistableBusinessObject)
 	 */
 	@Override
-	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName, PersistableBusinessObject bo) {
+	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
+	        PersistableBusinessObject bo) {
 		boolean success = super.processCustomAddCollectionLineBusinessRules(document, collectionName, bo);
 
 		// this incoming bo needs to be refreshed because it doesn't have its subobjects setup
@@ -848,36 +848,38 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	protected boolean checkContinuationAccount(MaintenanceDocument document, Date newExpDate) {
 		LOG.info("checkContinuationAccount called");
 
-		boolean result = true;
 		boolean continuationAccountIsValid = true;
 
 		// make sure both coaCode and accountNumber are filled out
 		if (ObjectUtils.isNotNull(newExpDate)) {
 			if (!checkEmptyValue(newAccountGlobal.getContinuationAccountNumber())) {
-				putFieldError("continuationAccountNumber", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_ACCT_REQD_IF_EXP_DATE_COMPLETED);
+				putFieldError("continuationAccountNumber",
+				        KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_ACCT_REQD_IF_EXP_DATE_COMPLETED);
 				continuationAccountIsValid = false;
 			}
 			if (!checkEmptyValue(newAccountGlobal.getContinuationFinChrtOfAcctCd())) {
-				putFieldError("continuationFinChrtOfAcctCd", KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_FINCODE_REQD_IF_EXP_DATE_COMPLETED);
+				putFieldError("continuationFinChrtOfAcctCd",
+				        KFSKeyConstants.ERROR_DOCUMENT_ACCMAINT_CONTINUATION_FINCODE_REQD_IF_EXP_DATE_COMPLETED);
 				continuationAccountIsValid = false;
 			}
 		}
 
 		// if both fields aren't present, then we're done
-		if (continuationAccountIsValid && ObjectUtils.isNotNull(newAccountGlobal.getContinuationAccountNumber()) && ObjectUtils.isNotNull(newAccountGlobal.getContinuationFinChrtOfAcctCd())) {
+		if (continuationAccountIsValid && ObjectUtils.isNotNull(newAccountGlobal.getContinuationAccountNumber())
+		        && ObjectUtils.isNotNull(newAccountGlobal.getContinuationFinChrtOfAcctCd())) {
 			// do an existence/active test
 			DictionaryValidationService dvService = super.getDictionaryValidationService();
 			boolean referenceExists = dvService.validateReferenceExists(newAccountGlobal, "continuationAccount");
 			if (!referenceExists) {
-				putFieldError("continuationAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, "Continuation Account: " + newAccountGlobal.getContinuationFinChrtOfAcctCd() + "-" + newAccountGlobal.getContinuationAccountNumber());
+				putFieldError("continuationAccountNumber", KFSKeyConstants.ERROR_EXISTENCE,
+				        "Continuation Account: " + newAccountGlobal.getContinuationFinChrtOfAcctCd() + "-" +
+				                newAccountGlobal.getContinuationAccountNumber());
 				continuationAccountIsValid = false;
 			}
 		}
 
-		if (continuationAccountIsValid) {
-			result = true;
-		}
-		else {
+		boolean result = true;
+		if (!continuationAccountIsValid) {
 			List<AccountGlobalDetail> gAcctDetails = newAccountGlobal.getAccountGlobalDetails();
 			for (AccountGlobalDetail detail : gAcctDetails) {
 				if (null != detail.getAccountNumber() && null != newAccountGlobal.getContinuationAccountNumber()) {
@@ -902,7 +904,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		// check that an org has been entered
 		if ( StringUtils.isNotBlank( acctGlobal.getOrganizationCode() ) ) {
 			// get all distinct charts
-			HashSet<String> charts = new HashSet<String>(10);
+			HashSet<String> charts = new HashSet<>(10);
 			for ( AccountGlobalDetail acct : acctGlobal.getAccountGlobalDetails() ) {
 				charts.add( acct.getChartOfAccountsCode() );
 			}
@@ -912,7 +914,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 				if ( StringUtils.isNotBlank(chartCode) ) {
 					if ( null == orgService.getByPrimaryIdWithCaching( chartCode, acctGlobal.getOrganizationCode() ) ) {
 						result = false;
-						putFieldError("organizationCode", KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ORG, new String[] { chartCode, acctGlobal.getOrganizationCode() } );
+						putFieldError("organizationCode",
+						        KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ORG,
+						        new String[]{chartCode, acctGlobal.getOrganizationCode()});
 						break;
 					}
 				}

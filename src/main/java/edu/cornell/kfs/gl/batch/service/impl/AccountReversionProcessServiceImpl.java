@@ -20,7 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.OrganizationReversion;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -44,7 +45,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  */
 @Transactional
 public class AccountReversionProcessServiceImpl implements ReversionProcessService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionProcessServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionProcessServiceImpl.class);
     
     private static final String ACCOUNT_REVERSION_PRIOR_YEAR_ACCOUNT_PROCESS_BEAN_NAME = "glAccountReversionPriorYearAccountProcess";
     private static final String ACCOUNT_REVERSION_CURRENT_YEAR_ACCOUNT_PROCESS_BEAN_NAME = "glAccountReversionCurrentYearAccountProcess";

@@ -2,6 +2,8 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.Collection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.krad.util.ObjectUtils;
 
@@ -19,7 +21,7 @@ import edu.cornell.kfs.concur.service.ConcurReportsService;
 
 public class ConcurEventNotificationProcessingServiceImpl implements ConcurEventNotificationProcessingService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurEventNotificationProcessingServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurEventNotificationProcessingServiceImpl.class);
     protected ConcurEventNotificationService concurEventNotificationService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConcurReportsService concurReportsService;

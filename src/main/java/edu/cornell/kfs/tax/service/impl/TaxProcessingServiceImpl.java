@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
@@ -39,7 +41,7 @@ import edu.cornell.kfs.tax.service.TaxProcessingService;
  * Default implementation of TaxProcessingService.
  */
 public class TaxProcessingServiceImpl implements TaxProcessingService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TaxProcessingServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(TaxProcessingServiceImpl.class);
 
     private static final String TAX_TYPE_FIELD = "taxType";
     private static final String BOX_NUMBER_FIELD = "boxNumber";

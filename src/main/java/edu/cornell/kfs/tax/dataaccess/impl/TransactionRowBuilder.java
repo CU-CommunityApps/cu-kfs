@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.OrganizationService;
@@ -49,7 +51,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     static final int INSERTION_BATCH_SIZE = 500;
     private static final int DOC_ID_CRITERIA_SIZE = 5000;
     private static final int MAX_AUTO_TAXNUM_DIGITS = 8;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowBuilder.class);
+    private static final Logger LOG = LogManager.getLogger(TransactionRowBuilder.class);
 
     // Convenience map for associating payee IDs with auto-generated tax ID, in the event of encountering a vendor with a blank tax ID.
     private Map<String,String> nullTaxNumberReplacementsByPayeeId;

@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.text.ParseException;
 
 import junit.framework.TestCase;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cam.batch.service.AssetDepreciationService;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
@@ -15,7 +17,7 @@ import edu.cornell.kfs.module.cam.businessobject.lookup.CuAssetLookupableHelperS
 @ConfigureContext
 public class CuAssetDepreciationServiceImplTest extends TestCase {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAssetDepreciationServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CuAssetDepreciationServiceImplTest.class);
 	private CuAssetDepreciationServiceImpl cuAssetDepreciationServiceImpl;
 	
 	@Override

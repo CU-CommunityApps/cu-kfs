@@ -104,10 +104,5 @@ public class CuAccountDelegateGlobal extends AccountDelegateGlobal implements Gl
 
         return new ArrayList<PersistableBusinessObject>(persistables);
     }
-
-    /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    
     
 }

@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
@@ -48,7 +50,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPosterServiceImpl extends PosterServiceImpl implements PosterService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPosterServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuPosterServiceImpl.class);
 
     
     /**

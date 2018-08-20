@@ -828,7 +828,6 @@ public class PurapConstants {
     }
 
     public static class PREQDocumentsStrings {
-        public static final String DUPLICATE_INVOICE_QUESTION = "PREQDuplicateInvoice";
         public static final String HOLD_PREQ_QUESTION = "HoldPREQ";
         public static final String CONFIRM_HOLD_QUESTION = "ConfirmHold";
         public static final String HOLD_NOTE_PREFIX = "Note entered while placing Payment Request on hold : ";
@@ -853,6 +852,8 @@ public class PurapConstants {
         public static final String VENDOR_INVOICE_AMOUNT = "Vendor Invoice Amount";
         public static final String VENDOR_STATE = "State";
         public static final String VENDOR_POSTAL_CODE = "Postal Code";
+        public static final String PAYEE_TOKEN = "vendor ID";
+        public static final String SPECIFIED_TOKEN = "on the specified PO";
     }
 
     public static final String BELOW_THE_LINES_PARAMETER = "ADDITIONAL_CHARGES_ITEM_TYPES";

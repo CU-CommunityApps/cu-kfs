@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.fp.batch.ProcurementCardCreateDocumentsStep;
@@ -34,7 +36,7 @@ import edu.cornell.kfs.fp.businessobject.PurchasingDataRecord;
 
 
 public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ProcurementCardCreateDocumentServiceImpl.class);
     private static final int CARD_HOLDER_MAX_LENGTH = 15;
     private static int VENDOR_NAME_MAX_LENGTH = 19;
     private static final int CC_LAST_FOUR = 4;
@@ -74,8 +76,8 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             int transactionLineNumber = 1;
             KualiDecimal documentTotalAmount = KualiDecimal.ZERO;
             ProcurementCardTransaction transaction = null;
-            for (Iterator iter = transactions.iterator(); iter.hasNext();) {
-                /*ProcurementCardTransaction*/ transaction = (ProcurementCardTransaction) iter.next();
+            for (Object transactionObj : transactions) {
+                transaction = (ProcurementCardTransaction) transactionObj;
                 
                 // create transaction detail record with accounting lines
                 errorText += createTransactionDetailRecord(pcardDocument, transaction, transactionLineNumber);
@@ -144,13 +146,13 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             
             // Remove duplicate messages from errorText
             String[] messages = StringUtils.split(errorText, ".");
-            for (int i = 0; i < messages.length; i++) {
-                int countMatches = StringUtils.countMatches(errorText, messages[i]) - 1;
-                errorText = StringUtils.replace(errorText, messages[i] + ".", "", countMatches);
+            for (String message : messages) {
+                int countMatches = StringUtils.countMatches(errorText, message) - 1;
+                errorText = StringUtils.replace(errorText, message + ".", "", countMatches);
             }
             // In case errorText is still too long, truncate it and indicate so.
-            Integer documentExplanationMaxLength = dataDictionaryService
-                    .getAttributeMaxLength(DocumentHeader.class.getName(), KFSPropertyConstants.EXPLANATION);
+            Integer documentExplanationMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class.getName(),
+                    KFSPropertyConstants.EXPLANATION);
             if (documentExplanationMaxLength != null && errorText.length() > documentExplanationMaxLength.intValue()) {
                 String truncatedMessage = " ... TRUNCATED.";
                 errorText = errorText.substring(0, documentExplanationMaxLength - truncatedMessage.length()) + truncatedMessage;

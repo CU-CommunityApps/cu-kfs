@@ -22,7 +22,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2018-06-14</kfs.version>
+        <kfs.version>2018-07-19</kfs.version>
         <rice.version>2.6.2</rice.version>
         <cynergy.version>2.6.2</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
@@ -39,7 +39,6 @@
         <jsp-api.version>2.2</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>4.12</junit.version>
-        <log4j.version>1.2.17</log4j.version>
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
@@ -371,6 +370,10 @@
                     <groupId>xapool</groupId>
                     <artifactId>xapool</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -659,6 +662,10 @@
                     <artifactId>commons-collections</artifactId>
                     <groupId>commons-collections</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -673,11 +680,7 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>

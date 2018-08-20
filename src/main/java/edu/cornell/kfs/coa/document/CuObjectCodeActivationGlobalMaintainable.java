@@ -3,6 +3,8 @@ package edu.cornell.kfs.coa.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ObjectCodeGlobal;
@@ -21,7 +23,7 @@ import edu.cornell.kfs.coa.businessobject.CuObjectCodeGlobalDetail;
 
 public class CuObjectCodeActivationGlobalMaintainable extends FinancialSystemGlobalMaintainable {
     private static final long serialVersionUID = 7651991084589364963L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobalMaintainable.class);
+    private static final Logger LOG = LogManager.getLogger(CuObjectCodeActivationGlobalMaintainable.class);
     
     protected transient SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService;
     protected transient ObjectCodeService objectCodeService;

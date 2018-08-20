@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -37,6 +39,7 @@ import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
+import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 
@@ -48,7 +51,7 @@ import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
  */
 public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implements CheckReconciliationDao {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CheckReconciliationDaoOjb.class);
+	private static final Logger LOG = LogManager.getLogger(CheckReconciliationDaoOjb.class);
     
     /**
      * Get All

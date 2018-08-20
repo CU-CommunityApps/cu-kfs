@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFieldSource;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
@@ -50,7 +52,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TransactionRowProcessor.StaticStringR
  * </ul>
  */
 final class TransactionRowProcessorBuilder {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowProcessorBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRowProcessorBuilder.class);
 
     private static final String AUTO_GEN_NAME_PREFIX = "autoGen";
 

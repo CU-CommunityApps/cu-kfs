@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -43,7 +45,7 @@ import edu.cornell.kfs.coa.service.AccountReversionService;
  * 2. A list of the appropriate Object Reversion Details 3. A list of Accounts to apply the Account Reversion to
  */
 public class AccountReversionGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobal.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionGlobal.class);
 
     private String documentNumber;
 

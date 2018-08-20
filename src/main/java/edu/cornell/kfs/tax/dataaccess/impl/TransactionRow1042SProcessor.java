@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
@@ -81,7 +83,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
  * </ul>
  */
 class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction1042SSummary> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRow1042SProcessor.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRow1042SProcessor.class);
 
     private static final int HEADER_BUFFER_INDEX = 0;
     private static final int BIO_BUFFER_INDEX = 1;

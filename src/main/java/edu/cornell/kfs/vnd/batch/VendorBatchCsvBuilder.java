@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.vnd.businessobject.VendorBatchDetail;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorBatchDetail;
  *
  */
 public class VendorBatchCsvBuilder {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorBatchCsvBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(VendorBatchCsvBuilder.class);
 
     private static final String DOUBLE_QUOTE = "\"";
     /**

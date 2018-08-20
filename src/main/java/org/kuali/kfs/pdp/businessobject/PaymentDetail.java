@@ -23,6 +23,8 @@
 package org.kuali.kfs.pdp.businessobject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -31,7 +33,6 @@ import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -44,11 +45,10 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class PaymentDetail extends PersistableBusinessObjectBase {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentDetail.class);
+    private static final Logger LOG = LogManager.getLogger(PaymentDetail.class);
     private static KualiDecimal zero = KualiDecimal.ZERO;
 
     private KualiInteger id;
@@ -541,17 +541,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             notes.append(KFSConstants.NEWLINE);
         }
         return notes.toString();
-    }
-
-    /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-
-        m.put(KFSPropertyConstants.ID, this.id);
-
-        return m;
     }
 
     /**

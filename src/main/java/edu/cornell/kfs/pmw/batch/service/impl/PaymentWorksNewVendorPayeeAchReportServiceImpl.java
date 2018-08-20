@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
@@ -20,7 +22,7 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksReportEmailService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class PaymentWorksNewVendorPayeeAchReportServiceImpl extends PaymentWorksReportServiceImpl implements PaymentWorksNewVendorPayeeAchReportService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksNewVendorPayeeAchReportServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksNewVendorPayeeAchReportServiceImpl.class);
 
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
     protected PaymentWorksReportEmailService paymentWorksReportEmailService;

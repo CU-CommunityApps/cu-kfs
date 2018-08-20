@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.businessobject.ACHBank;
@@ -27,9 +29,8 @@ import edu.cornell.kfs.pdp.service.CuPdpEmailService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpEmailService{
-	
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPdpEmailServiceImpl.class);
-	
+    private static final Logger LOG = LogManager.getLogger(CuPdpEmailServiceImpl.class);
+    
     private AchBundlerHelperService achBundlerHelperService;
     
 	/**

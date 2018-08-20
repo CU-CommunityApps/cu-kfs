@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -29,7 +32,7 @@ import edu.cornell.kfs.coa.service.AccountReversionImportService;
  */
 public class AccountReversionImportServiceImpl implements AccountReversionImportService {
 	
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionImportServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionImportServiceImpl.class);
 
 	
 	ParameterService parameterService;

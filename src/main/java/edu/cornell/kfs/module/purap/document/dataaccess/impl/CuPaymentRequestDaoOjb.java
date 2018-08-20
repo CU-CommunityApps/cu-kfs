@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -22,7 +23,7 @@ import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 
 @SuppressWarnings("unchecked")
 public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPaymentRequestDao {
-    private static final Logger LOG = Logger.getLogger(CuPaymentRequestDaoOjb.class);
+	private static final Logger LOG = LogManager.getLogger(CuPaymentRequestDaoOjb.class);
 
     @Override
     public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String chartCode, Date onOrBeforePaymentRequestPayDate) {

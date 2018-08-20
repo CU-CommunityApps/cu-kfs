@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectItem;
 import org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceRejectReason;
@@ -16,9 +19,12 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.util.NoteType;
 
+import edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAccountsRule;
 import edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceItemHolder;
 
 public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDocument {
+    private static final Logger LOG = LogManager.getLogger(CuElectronicInvoiceRejectDocument.class);
+
     // KFSPTS-1719
     private List<CuElectronicInvoiceItemHolder> nonMatchItems;
 

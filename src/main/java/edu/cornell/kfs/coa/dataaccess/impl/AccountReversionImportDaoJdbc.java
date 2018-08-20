@@ -1,13 +1,15 @@
 package edu.cornell.kfs.coa.dataaccess.impl;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 
 import edu.cornell.kfs.coa.dataaccess.AccountReversionImportDao;
+import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
 
 public class AccountReversionImportDaoJdbc extends PlatformAwareDaoBaseJdbc implements AccountReversionImportDao {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionImportDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionImportDaoJdbc.class);
 
 	/**
      * Deletes all existing records in gl_rvrsn_ctgry_amt_t and gl_rvrsn_unit_wrk_t

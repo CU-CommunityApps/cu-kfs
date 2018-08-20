@@ -5,6 +5,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 
 public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocument> implements AccountingDocumentGenerator<T> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountingDocumentGeneratorBase.class);
+	private static final Logger LOG = LogManager.getLogger(AccountingDocumentGeneratorBase.class);
     
     protected PersonService personService;
     protected Supplier<Note> emptyNoteGenerator;

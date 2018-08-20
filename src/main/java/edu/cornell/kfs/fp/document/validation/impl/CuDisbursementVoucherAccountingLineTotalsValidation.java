@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherAccountingLineTotalsValidation;
@@ -29,7 +31,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class CuDisbursementVoucherAccountingLineTotalsValidation extends DisbursementVoucherAccountingLineTotalsValidation {
-	
+	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherAccountingLineTotalsValidation.class);
 	protected transient ScheduledAccountingLineService scheduledAccountingLineService;
 
     @Override

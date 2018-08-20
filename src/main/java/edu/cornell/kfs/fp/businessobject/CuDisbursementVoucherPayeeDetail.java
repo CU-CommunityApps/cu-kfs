@@ -8,9 +8,6 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 
 public class CuDisbursementVoucherPayeeDetail extends org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     /**

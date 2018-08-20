@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.exception.ParseException;
 
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
@@ -30,7 +32,7 @@ import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService
  * @author cab379
  */
 public class ReceiptProcessingCSVInputFileType extends CsvBatchInputFileTypeBase<ReceiptProcessingCSV> {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ReceiptProcessingCSVInputFileType.class);
+	private static final Logger LOG = LogManager.getLogger(ReceiptProcessingCSVInputFileType.class);
 
     private static final String FILE_NAME_DELIM = "_";
         

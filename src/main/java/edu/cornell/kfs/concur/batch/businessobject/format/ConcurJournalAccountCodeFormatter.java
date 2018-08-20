@@ -1,7 +1,8 @@
 package edu.cornell.kfs.concur.batch.businessobject.format;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.web.format.Formatter;
@@ -13,7 +14,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class ConcurJournalAccountCodeFormatter extends Formatter {
     private static final long serialVersionUID = -2058566831766280380L;
-    private static Logger LOG = Logger.getLogger(ConcurJournalAccountCodeFormatter.class);
+    private static final Logger LOG = LogManager.getLogger(ConcurJournalAccountCodeFormatter.class);
     
     protected ParameterService parameterService;
 

@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
@@ -30,7 +32,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedPayeeIdEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedTrailerEntry;
 
 public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvancePdpFeedFileService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurCashAdvancePdpFeedFileServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurCashAdvancePdpFeedFileServiceImpl.class);
     protected String paymentImportDirectory;
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurBatchUtilityService concurBatchUtilityService;

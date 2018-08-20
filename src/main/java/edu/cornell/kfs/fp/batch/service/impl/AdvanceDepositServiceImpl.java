@@ -21,7 +21,8 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.ObjectType;
 import org.kuali.kfs.fp.businessobject.AdvanceDepositDetail;
@@ -119,7 +120,7 @@ import java.util.Map;
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class AdvanceDepositServiceImpl implements AdvanceDepositService {
-    private static final Logger LOG = Logger.getLogger(AdvanceDepositServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AdvanceDepositServiceImpl.class);
     private static final String ACH_TRANSACTION_SEQUENCE_NUMBER = "sequenceNumber";
     private static final int MAX_NOTE_SIZE = 800;
     private static final int MIN_NOTE_SIZE = 80;

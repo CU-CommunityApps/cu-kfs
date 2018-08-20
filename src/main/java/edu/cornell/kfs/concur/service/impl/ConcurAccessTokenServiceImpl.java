@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -39,7 +41,7 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
 public class ConcurAccessTokenServiceImpl implements ConcurAccessTokenService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurAccessTokenServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurAccessTokenServiceImpl.class);
 
     private String concurRequestAccessTokenURL;
     private String concurRefreshAccessTokenURL;

@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
@@ -19,7 +21,7 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class PaymentWorksUploadSuppliersReportServiceImpl extends PaymentWorksReportServiceImpl implements PaymentWorksUploadSuppliersReportService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PaymentWorksUploadSuppliersServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(PaymentWorksUploadSuppliersServiceImpl.class);
 
     private static final int SUMMARY_ROW_COL1_LENGTH = 58;
     private static final int SUMMARY_ROW_COL2_LENGTH = 20;

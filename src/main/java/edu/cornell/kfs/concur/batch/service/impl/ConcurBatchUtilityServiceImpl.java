@@ -11,6 +11,8 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -32,7 +34,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurBatchUtilityServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurBatchUtilityServiceImpl.class);
     protected BatchInputFileService batchInputFileService;
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;

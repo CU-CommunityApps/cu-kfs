@@ -21,7 +21,8 @@ import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryServic
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectCodeService;
@@ -64,7 +65,7 @@ import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
 @NonTransactional
 public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPaymentMethodGeneralLedgerPendingEntryService {
-    private static Logger LOG = Logger.getLogger(CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.class);
     protected static final String DEFAULT_PAYMENT_METHOD_IF_MISSING = "A"; // check/ACH
 
     // not sure why these are not injected ?

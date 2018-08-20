@@ -2,6 +2,8 @@ package edu.cornell.kfs.fp.document.web.struts;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
@@ -14,7 +16,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 public class YearEndJournalVoucherForm extends JournalVoucherForm {
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(YearEndJournalVoucherForm.class);
+	private static final Logger LOG = LogManager.getLogger(YearEndJournalVoucherForm.class);
 
 	/**
 	 * Constructs a YearEndJournalVoucherForm instance and sets up the

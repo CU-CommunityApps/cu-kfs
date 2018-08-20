@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.document.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
@@ -13,8 +15,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleService;
 
 public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAccountsPayableModuleServiceImpl implements CuPurchasingAccountsPayableModuleService {
-
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPurchasingAccountsPayableModuleServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImpl.class);
     
    /**
     * @see org.kuali.kfs.integration.pdp.service.PurchasingAccountsPayableModuleService#handlePurchasingBatchCancels(java.lang.String)

@@ -3,6 +3,8 @@ package edu.cornell.kfs.coa.document.validation.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
@@ -21,7 +23,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  */
 @SuppressWarnings("deprecation")
 public class OrganizationGlobalRule extends GlobalDocumentRuleBase {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(OrganizationGlobalRule.class);
+	private static final Logger LOG = LogManager.getLogger(OrganizationGlobalRule.class);
 
     private static final String ORG_MANAGER_PRINCIPAL_NAME = "organizationManagerUniversal.principalName";
 

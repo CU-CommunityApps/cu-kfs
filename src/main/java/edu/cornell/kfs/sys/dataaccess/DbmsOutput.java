@@ -5,9 +5,12 @@ package edu.cornell.kfs.sys.dataaccess;
 
 import java.sql.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DbmsOutput {
 
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DbmsOutput.class);
+	private static final Logger LOG = LogManager.getLogger(DbmsOutput.class);
 
     /**
 	 * our instance variables. It is always best to 

@@ -6,12 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurUtils {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurUtils.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurUtils.class);
     
     private static final String CODE_PATTERN = "\\((.*?)\\)";
     private static final String CODE_AND_DESCRIPTION_PATTERN = CODE_PATTERN + "(.*?)";

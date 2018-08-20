@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
@@ -16,7 +18,7 @@ import edu.cornell.kfs.module.purap.fixture.CuB2BShoppingCartFixture;
 
 @ConfigureContext(session = UserNameFixture.ccs1)
 public class CuB2BShoppingServiceImplTest extends KualiTestBase {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuB2BShoppingServiceImplTest.class);
+	private static final Logger LOG = LogManager.getLogger(CuB2BShoppingServiceImplTest.class);
 
 	private CuB2BShoppingServiceImpl b2bShoppingService;
 

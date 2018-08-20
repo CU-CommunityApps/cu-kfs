@@ -30,7 +30,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -63,9 +62,6 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     private PurchasingAccountsPayableDocument purapDocument;
 
-    /**
-     * Default constructor.
-     */
     public PurApItemBase() {
         itemTypeCode = PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE;
         sourceAccountingLines = new ArrayList();
@@ -422,17 +418,6 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         managedLists.add(getSourceAccountingLines());
 
         return managedLists;
-    }
-
-    /**
-     * @see org.kuali.rice.krad.bo.BusinessObjectBase#toStringMapper()
-     */
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-        if (this.itemIdentifier != null) {
-            m.put("requisitionItemIdentifier", this.itemIdentifier.toString());
-        }
-        return m;
     }
 
     @Override

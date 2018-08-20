@@ -12,7 +12,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.exception.ValidationException;
@@ -42,7 +43,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
-    private static final Logger LOG = Logger.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
 
     protected String paymentImportDirectory;
     protected String collectorImportDirectory;

@@ -26,8 +26,6 @@ public class CUSimpleChartValuesFinder extends KeyValuesBase {
 	
     /**
      * Creates a list of {@link Chart}s using their code as their key, and their code as the display value
-     * 
-     * @see org.kuali.kfs.kns.lookup.keyvalues.KeyValuesFinder#getKeyValues()
      */
     public List<KeyValue> getKeyValues() {
         parameterService = SpringContext.getBean(ParameterService.class);

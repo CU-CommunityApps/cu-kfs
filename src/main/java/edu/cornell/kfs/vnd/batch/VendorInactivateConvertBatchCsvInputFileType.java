@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.CsvBatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -32,7 +34,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
 
 public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInputFileTypeBase<VendorBatchCsv> {
 
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorInactivateConvertBatchCsvInputFileType.class);
+	private static final Logger LOG = LogManager.getLogger(VendorInactivateConvertBatchCsvInputFileType.class);
 
     private static final String FILE_NAME_DELIM = "_";
     protected static final String FILE_NAME_PREFIX = "vendorInactivateConvertBatch_";

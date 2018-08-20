@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -39,7 +41,7 @@ import edu.cornell.kfs.gl.batch.service.impl.GenericReversionCategory;
 
 @NonTransactional
 public class AccountReversionServiceImpl implements AccountReversionService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionServiceImpl.class);
 
     private AccountReversionDao accountReversionDao;
     private BusinessObjectService businessObjectService;

@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -18,7 +20,7 @@ import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 
 public class CreditMemoWireTransferValidation extends GenericValidation  {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreditMemoWireTransferValidation.class);
+	private static final Logger LOG = LogManager.getLogger(CreditMemoWireTransferValidation.class);
 
     private AccountingDocument accountingDocumentForValidation;
 

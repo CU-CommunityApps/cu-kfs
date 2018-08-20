@@ -1,6 +1,8 @@
 package edu.cornell.kfs.coa.document.validation.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
 import org.kuali.kfs.coa.service.ObjectCodeService;
@@ -16,7 +18,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 @SuppressWarnings("deprecation")
 public class CuObjectCodeActivationGlobalMaintenanceDocumentRule extends GlobalDocumentRuleBase {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuObjectCodeActivationGlobalMaintenanceDocumentRule.class);
+	private static final Logger LOG = LogManager.getLogger(CuObjectCodeActivationGlobalMaintenanceDocumentRule.class);
     private static final String NEW_OBJECT_CODE_PROPERTY_NAME = "add.objectCodeGlobalDetails.financialObjectCode";
     
     private transient ObjectCodeService objectCodeService;

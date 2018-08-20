@@ -22,6 +22,8 @@ import edu.cornell.kfs.fp.businessobject.CapitalAssetInformationDetailExtendedAt
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.CapitalAccountingLines;
@@ -71,7 +73,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GlLineServiceImpl implements GlLineService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GlLineServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(GlLineServiceImpl.class);
     private static final String CAB_DESC_PREFIX = "CAB created for FP ";
 
     protected BusinessObjectService businessObjectService;

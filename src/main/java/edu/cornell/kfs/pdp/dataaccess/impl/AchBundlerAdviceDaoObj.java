@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -18,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.cornell.kfs.pdp.dataaccess.AchBundlerAdviceDao;
 
 public class AchBundlerAdviceDaoObj extends PlatformAwareDaoBaseOjb implements AchBundlerAdviceDao {
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AchBundlerAdviceDaoObj.class);	
+	private static final Logger LOG = LogManager.getLogger(AchBundlerAdviceDaoObj.class);	
 	
     //KFSPTS-1460
     /**

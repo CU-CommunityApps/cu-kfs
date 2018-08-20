@@ -12,10 +12,10 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcessItemValidation {
 
-    protected boolean validateAboveTheLineItems(PaymentRequestItem item, String identifierString, boolean isReceivingDocumentRequiredIndicator, PaymentRequestDocument paymentRequestDocument) {
+    protected boolean validateAboveTheLineItems(PaymentRequestItem item, String identifierString,
+            boolean isReceivingDocumentRequiredIndicator, PaymentRequestDocument paymentRequestDocument) {
         boolean valid = true;
-        // Currently Quantity is allowed to be NULL on screen;
-        // must be either a positive number or NULL for DB
+        // Currently Quantity is allowed to be NULL on screen; must be either a positive number or NULL for DB
         MessageMap errorMap = GlobalVariables.getMessageMap();
         errorMap.clearErrorPath();
         
@@ -47,7 +47,6 @@ public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcess
         //Modified to use the payment request document to not cause unnecessary refetch
         // check that non-quantity based items are not trying to pay on a zero encumbrance amount (check only prior to ap approval)
         if ((ObjectUtils.isNull(paymentRequestDocument.getPurapDocumentIdentifier())) || (PurapConstants.PaymentRequestStatuses.APPDOC_IN_PROCESS.equals(paymentRequestDocument.getApplicationDocumentStatus()))) {
-// RICE20 : needed? :  !purapService.isFullDocumentEntryCompleted(item.getPaymentRequest())) {
             if ((item.getItemType().isAmountBasedGeneralLedgerIndicator()) && ((item.getExtendedPrice() != null) && item.getExtendedPrice().isNonZero())) {
                 if (item.getPoOutstandingAmount() == null || item.getPoOutstandingAmount().isZero()) {
                     valid = false;

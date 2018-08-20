@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
@@ -25,7 +27,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractRepor
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurStandardAccountingExtractReportService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractReportServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractReportServiceImpl.class);
 
     protected static final String REPORT_ID_HEADER = "Report ID";
     protected static final String REPORT_ID_HEADER_BREAK = "---------";

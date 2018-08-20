@@ -7,7 +7,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.kfs.pdp.businessobject.AchAccountNumber;
@@ -47,7 +48,7 @@ public class CuExtractPaymentServiceImplTest {
     private static final String[] NOTIFICATION_EMAIL_ADDRESSES = {"abc@xyz.edu", "def@xyz.edu", "ghi@xyz.edu"};
     private static final int HEADER_LINE_IN_OUTPUT_FILE = 1;
     private static final int FIRST_PAYEE_LINE_IN_OUTPUT_FILE = HEADER_LINE_IN_OUTPUT_FILE + NOTIFICATION_EMAIL_ADDRESSES.length + 1;
-    private static final  Logger LOG = org.apache.log4j.Logger.getLogger(CuExtractPaymentServiceImplTest.class);
+    private static final Logger LOG = LogManager.getLogger(CuExtractPaymentServiceImplTest.class);
     
     private CuExtractPaymentServiceImpl cuExtractPaymentServiceImpl;
 

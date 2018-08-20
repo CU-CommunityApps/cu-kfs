@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.batch.DvToPdpExtractStep;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
@@ -20,6 +22,7 @@ import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceRegistran
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherExtractionHelperServiceImpl;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpParameterConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
@@ -46,7 +49,8 @@ import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryServic
 
 
 public class CuDisbursementVoucherExtractionHelperServiceImpl extends DisbursementVoucherExtractionHelperServiceImpl implements CuDisbursementVoucherExtractionHelperService {
-    static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuDisbursementVoucherExtractionHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherExtractionHelperServiceImpl.class);
+    
     protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     @Override
@@ -73,9 +77,13 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pg.setEmployeeIndicator(Boolean.TRUE);
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.EMPLOYEE);
             pg.setTaxablePayment(
-                    !/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
-                        && !getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PAYMENT_REASON_CODE_RENTAL_PAYMENT_PARM_NM).equals(rc)
-                        && !getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PAYMENT_REASON_CODE_ROYALTIES_PARM_NM).equals(rc));
+                    !/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(
+                            DisbursementVoucherDocument.class,
+                            DisbursementVoucherConstants.RESEARCH_PAYMENT_REASONS_PARM_NM, rc).evaluationSucceeds()
+                        && !getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
+                            DisbursementVoucherConstants.PAYMENT_REASON_CODE_RENTAL_PAYMENT_PARM_NM).equals(rc)
+                        && !getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
+                            DisbursementVoucherConstants.PAYMENT_REASON_CODE_ROYALTIES_PARM_NM).equals(rc));
         }
         // KFSUPGRADE-973 : Cu mods
         // If the payee is an alumni or student, set these flags accordingly
@@ -92,7 +100,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         else {
 
             // These are taxable
-            VendorDetail vendDetail = getVendorService().getVendorDetail(pd.getDisbVchrVendorHeaderIdNumberAsInteger(), pd.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
+            VendorDetail vendDetail = getVendorService().getVendorDetail(pd.getDisbVchrVendorHeaderIdNumberAsInteger(),
+                    pd.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
             String vendorOwnerCode = vendDetail.getVendorHeader().getVendorOwnershipCode();
             String vendorOwnerCategoryCode = vendDetail.getVendorHeader().getVendorOwnershipCategoryCode();
             String payReasonCode = pd.getDisbVchrPaymentReasonCode();
@@ -103,20 +112,30 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pg.setTaxablePayment(Boolean.FALSE);
             pg.setPayeeOwnerCd(vendorOwnerCode);
 
-            ParameterEvaluator parameterEvaluator1 = /*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME, PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME, vendorOwnerCode, payReasonCode);
-            ParameterEvaluator parameterEvaluator2 = /*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME, PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME, vendorOwnerCategoryCode, payReasonCode);
-
+            ParameterEvaluator parameterEvaluator1 = /*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(
+                    DvToPdpExtractStep.class,
+                    PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME,
+                    PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES_PARAMETER_NAME,
+                    vendorOwnerCode, payReasonCode);
+            ParameterEvaluator parameterEvaluator2 = /*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(
+                    DvToPdpExtractStep.class,
+                    PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME,
+                    PdpParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY_PARAMETER_NAME,
+                    vendorOwnerCategoryCode, payReasonCode);
+            
             if ( parameterEvaluator1.evaluationSucceeds() ) {
                 pg.setTaxablePayment(Boolean.TRUE);
-            }
-            else if (getParameterService().getParameterValueAsString(DvToPdpExtractStep.class, PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP") &&
-                      StringUtils.isEmpty(vendorOwnerCategoryCode) &&
-                      /*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DvToPdpExtractStep.class, PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_FOR_BLANK_CORPORATION_OWNERSHIP_TYPE_CATEGORIES_PARAMETER_NAME, payReasonCode).evaluationSucceeds()) {
+            } else if (getParameterService().getParameterValueAsString(DvToPdpExtractStep.class,
+                    PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP") &&
+                StringUtils.isEmpty(vendorOwnerCategoryCode) &&
+                      /*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DvToPdpExtractStep.class,
+                    PdpParameterConstants.TAXABLE_PAYMENT_REASON_CODES_FOR_BLANK_CORPORATION_OWNERSHIP_TYPE_CATEGORIES_PARAMETER_NAME,
+                    payReasonCode).evaluationSucceeds()) {
                 pg.setTaxablePayment(Boolean.TRUE);
-            }
-            else if (getParameterService().getParameterValueAsString(DvToPdpExtractStep.class, PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP")
-                        && !StringUtils.isEmpty(vendorOwnerCategoryCode)
-                        && parameterEvaluator2.evaluationSucceeds() ) {
+            } else if (getParameterService().getParameterValueAsString(DvToPdpExtractStep.class,
+                    PdpParameterConstants.CORPORATION_OWNERSHIP_TYPE_PARAMETER_NAME).equals("CP")
+                && !StringUtils.isEmpty(vendorOwnerCategoryCode)
+                && parameterEvaluator2.evaluationSucceeds()) {
                 pg.setTaxablePayment(Boolean.TRUE);
             }
         }
@@ -150,14 +169,16 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         if (LOG.isDebugEnabled()) {
             LOG.debug("buildPaymentDetail() started");
         }
-        final String maxNoteLinesParam = getParameterService().getParameterValueAsString(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
+        final String maxNoteLinesParam = getParameterService().getParameterValueAsString(
+                KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
 
         int maxNoteLines;
         try {
             maxNoteLines = Integer.parseInt(maxNoteLinesParam);
         }
         catch (NumberFormatException nfe) {
-            throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: "+maxNoteLinesParam+" cannot be converted to an integer");
+            throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: " + maxNoteLinesParam +
+                    " cannot be converted to an integer");
         }
 
         PaymentDetail pd = new PaymentDetail();
@@ -165,7 +186,12 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pd.setOrganizationDocNbr(document.getDocumentHeader().getOrganizationDocumentNumber());
         }
         pd.setCustPaymentDocNbr(document.getDocumentNumber());
-        pd.setInvoiceDate(new java.sql.Date(processRunDate.getTime()));
+        pd.setInvoiceNbr(filterOutIllegalXmlCharacters(document.getInvoiceNumber()));
+        if(ObjectUtils.isNull(document.getInvoiceDate())) {
+            pd.setInvoiceDate(new java.sql.Date(processRunDate.getTime()));
+        } else {
+            pd.setInvoiceDate(document.getInvoiceDate());
+        }
         pd.setOrigInvoiceAmount(document.getDisbVchrCheckTotalAmount());
         pd.setInvTotDiscountAmount(KualiDecimal.ZERO);
         pd.setInvTotOtherCreditAmount(KualiDecimal.ZERO);
@@ -213,7 +239,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         int line = 0;
         PaymentNoteText pnt = new PaymentNoteText();
         pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-        pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_PREPARER + document.getDisbVchrContactPersonName() + " " + document.getDisbVchrContactPhoneNumber());
+        pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_PREPARER + document.getDisbVchrContactPersonName() + " " + 
+                document.getDisbVchrContactPhoneNumber());
         pd.addNote(pnt);
 
         String dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
@@ -270,7 +297,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         }
 
         String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
-        if (/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+        if (/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class,
+                DisbursementVoucherConstants.NONEMPLOYEE_TRAVEL_PAY_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
             DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
 
             pnt = new PaymentNoteText();
@@ -283,7 +311,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-            pnt.setCustomerNoteText("The total per diem amount for your daily expenses is " + dvnet.getDisbVchrPerdiemActualAmount());
+            pnt.setCustomerNoteText("The total per diem amount for your daily expenses is " +
+                    dvnet.getDisbVchrPerdiemActualAmount());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating non employee travel notes: "+pnt.getCustomerNoteText());
             }
@@ -292,7 +321,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             if (dvnet.getDisbVchrPersonalCarAmount() != null && dvnet.getDisbVchrPersonalCarAmount().compareTo(KualiDecimal.ZERO) != 0) {
                 pnt = new PaymentNoteText();
                 pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-                pnt.setCustomerNoteText("The total dollar amount for your vehicle mileage is " + dvnet.getDisbVchrPersonalCarAmount());
+                pnt.setCustomerNoteText("The total dollar amount for your vehicle mileage is " +
+                        dvnet.getDisbVchrPersonalCarAmount());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Creating non employee travel vehicle note: "+pnt.getCustomerNoteText());
                 }
@@ -310,8 +340,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                     }
                 }
             }
-        }
-        else if (/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
+        } else if (/*REFACTORME*/getParameterEvaluatorService().getParameterEvaluator(DisbursementVoucherDocument.class,
+                DisbursementVoucherConstants.PREPAID_TRAVEL_PAYMENT_REASONS_PARM_NM, paymentReasonCode).evaluationSucceeds()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
@@ -349,12 +379,14 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         }
 
         if (immediatesOnly) {
-            throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal document processing; immediates for DisbursementVoucher should not be run through batch.");
+            throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal " +
+                    "document processing; immediates for DisbursementVoucher should not be run through batch.");
         }
 
         Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<>();
 
-        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(KFSConstants.DocumentStatusCodes.APPROVED, false);
+        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(
+                KFSConstants.DocumentStatusCodes.APPROVED, false);
         for (DisbursementVoucherDocument element : docs) {
             String dvdCampusCode = element.getCampusCode();
             if (StringUtils.isNotBlank(dvdCampusCode)) {

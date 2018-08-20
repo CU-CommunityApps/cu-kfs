@@ -2,6 +2,8 @@ package edu.cornell.kfs.gl.dataaccess.impl;
 
 import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -18,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuBalanceDaoOjb.class);
+    private static final Logger LOG = LogManager.getLogger(CuBalanceDaoOjb.class);
 
     /**
      * Returns a list of balances to return for the Organization Reversion year end job to process

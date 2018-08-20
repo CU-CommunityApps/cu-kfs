@@ -5,6 +5,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.kuali.kfs.fp.batch.ProcurementCardLoadStep;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
 import org.kuali.kfs.module.purap.PurapRuleConstants;
@@ -24,9 +27,11 @@ import org.kuali.kfs.fp.businessobject.ProcurementCardTransactionDetail;
 
 import edu.cornell.kfs.fp.batch.ProcurementCardParameterConstants;
 
+
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "ProcurementCard")
 public class CuProcurementCardDocument extends ProcurementCardDocument {
+	private static final Logger LOG = LogManager.getLogger(CuProcurementCardDocument.class);
 
     private static final long serialVersionUID = 1L;
     private static final String FINAL_ACCOUNTING_PERIOD = "13";
@@ -45,8 +50,8 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
 
         line.setSequenceNumber(this.getNextSourceLineNumber());
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (Object transactionEntryObj : transactionEntries) {
+            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
             transactionEntry.getSourceAccountingLines().add(line);
         }
 
@@ -59,8 +64,8 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
 
         line.setSequenceNumber(this.getNextTargetLineNumber());
 
-        for (Iterator iter = transactionEntries.iterator(); iter.hasNext();) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) iter.next();
+        for (Object transactionEntryObj : transactionEntries) {
+            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
             transactionEntry.getTargetAccountingLines().add(line);
         }
 

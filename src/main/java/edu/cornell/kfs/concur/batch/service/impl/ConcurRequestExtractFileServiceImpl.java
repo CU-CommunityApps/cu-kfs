@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -28,7 +30,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractFileValidationSe
 import edu.cornell.kfs.concur.batch.service.ConcurRequestExtractReportService;
 
 public class ConcurRequestExtractFileServiceImpl implements ConcurRequestExtractFileService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurRequestExtractFileServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractFileServiceImpl.class);
     protected BatchInputFileType batchInputFileType;
     protected BatchInputFileService batchInputFileService;
     protected ConcurBatchUtilityService concurBatchUtilityService;

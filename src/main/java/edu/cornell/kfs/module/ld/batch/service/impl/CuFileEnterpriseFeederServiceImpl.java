@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.service.impl.RequiredFilesMissingStatus;
 import org.kuali.kfs.gl.report.LedgerSummaryReport;
 import org.kuali.kfs.gl.service.impl.EnterpriseFeederStatusAndErrorMessagesWrapper;
@@ -19,8 +21,8 @@ import org.kuali.kfs.module.ld.report.EnterpriseFeederReportData;
 import org.kuali.kfs.sys.Message;
 
 public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuFileEnterpriseFeederServiceImpl.class);
-
+    private static final Logger LOG = LogManager.getLogger(CuFileEnterpriseFeederServiceImpl.class);
+    
     @Override
     public void feed(String processName, boolean performNotifications) {
         // ensure that this feeder implementation may not be run concurrently on this JVM

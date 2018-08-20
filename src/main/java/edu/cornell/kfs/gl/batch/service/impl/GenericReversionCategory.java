@@ -15,6 +15,8 @@
  */
 package edu.cornell.kfs.gl.batch.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 
@@ -27,7 +29,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * @see org.kuali.kfs.gl.batch.service.ReversionCategoryLogic
  */
 public class GenericReversionCategory implements ReversionCategoryLogic {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericReversionCategory.class);
+	private static final Logger LOG = LogManager.getLogger(GenericReversionCategory.class);
 
     private String categoryCode;
     private String categoryName;

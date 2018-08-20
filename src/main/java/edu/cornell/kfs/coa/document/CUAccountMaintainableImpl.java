@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.KualiAccountMaintainableImpl;
@@ -47,7 +48,7 @@ public class CUAccountMaintainableImpl extends KualiAccountMaintainableImpl {
     private static final String SUB_FUND_GROUP_CODE = "subFundGroupCode";
     protected static final String INITIATOR_ACCOUNT_FYI_SPLIT_NODE = "InitiatorAccountFYISplit";
     
-    private static final Logger LOG = Logger.getLogger(CUAccountMaintainableImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CUAccountMaintainableImpl.class);
     
     protected transient NoteService noteService;
     

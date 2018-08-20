@@ -32,13 +32,11 @@ public class CuAccountDelegateGlobalMaintainableImpl extends AccountDelegateGlob
     
     /**
      * This creates the particular locking representation for this global document.
-     * 
-     * @see org.kuali.kfs.kns.maintenance.Maintainable#generateMaintenanceLocks()
      */
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
         // create locking rep for each combination of account and object code
-        List<MaintenanceLock> maintenanceLocks = new ArrayList();
+        List<MaintenanceLock> maintenanceLocks = new ArrayList<>();
         
         return maintenanceLocks;
     }    

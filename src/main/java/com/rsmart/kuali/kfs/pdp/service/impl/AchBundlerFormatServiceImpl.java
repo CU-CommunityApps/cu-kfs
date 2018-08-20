@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -40,7 +42,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
-
 import edu.cornell.kfs.pdp.service.impl.CuFormatServiceImpl;
 
 /**
@@ -50,7 +51,7 @@ import edu.cornell.kfs.pdp.service.impl.CuFormatServiceImpl;
  */
 @Transactional
 public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AchBundlerFormatServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(AchBundlerFormatServiceImpl.class);
     
     
     /**

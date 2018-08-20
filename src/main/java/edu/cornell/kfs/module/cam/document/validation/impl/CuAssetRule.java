@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.cam.CamsConstants;
 import org.kuali.kfs.module.cam.CamsKeyConstants;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
@@ -15,6 +17,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 
 public class CuAssetRule extends AssetRule {
+	private static final Logger LOG = LogManager.getLogger(CuAssetRule.class);
 
     protected boolean validateTagNumber() {
         boolean valid = true;

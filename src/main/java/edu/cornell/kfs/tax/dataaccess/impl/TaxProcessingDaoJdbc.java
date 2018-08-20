@@ -15,6 +15,8 @@ import java.util.EnumMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -32,7 +34,7 @@ import edu.cornell.kfs.tax.service.TaxProcessingService;
  * Default JDBC implementation of TaxProcessingDao.
  */
 public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements TaxProcessingDao {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TaxProcessingDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(TaxProcessingDaoJdbc.class);
 
     private static final int DOCID_MAX_BATCH_SIZE = 5000;
 

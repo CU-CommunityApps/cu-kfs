@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -52,7 +54,7 @@ import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
 public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuB2BShoppingServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuB2BShoppingServiceImpl.class);
     
     private static final String TRUE = "true";
     private BusinessObjectService businessObjectService;

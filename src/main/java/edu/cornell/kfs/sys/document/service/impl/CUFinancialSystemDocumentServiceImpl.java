@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -30,8 +32,7 @@ import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumentServiceImpl
 		implements CUFinancialSystemDocumentService {
     
-	private org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl.class);
-
+    private static final Logger LOG = LogManager.getLogger(CUFinancialSystemDocumentServiceImpl.class);
 	
 	/**
 	 *  new == null, old == null : no change; line deleted previously.

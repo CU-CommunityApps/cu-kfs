@@ -3,6 +3,8 @@ package edu.cornell.kfs.sys.dataaccess.impl;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.DocumentRequeueStep;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
@@ -29,7 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc implements DocumentMaintenanceDao {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentMaintenanceDaoJdbc.class);
+	private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceDaoJdbc.class);
 
 	public static final String WORKFLOW_DOCUMENT_HEADER_ID_SEARCH_RESULT_KEY = "documentId";
 

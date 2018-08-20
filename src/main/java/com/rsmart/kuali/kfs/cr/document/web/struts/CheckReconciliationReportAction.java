@@ -18,6 +18,10 @@ package com.rsmart.kuali.kfs.cr.document.web.struts;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliationReport;
 import com.rsmart.kuali.kfs.cr.document.service.CheckReconciliationReportService;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl;
 import net.sf.jasperreports.engine.JRParameter;
 
 import org.apache.log4j.Level;
@@ -53,7 +57,7 @@ import java.util.ResourceBundle;
  */
 @SuppressWarnings("deprecation")
 public class CheckReconciliationReportAction extends KualiAction {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CheckReconciliationReportAction.class);
+	private static final Logger LOG = LogManager.getLogger(CheckReconciliationReportAction.class);
 
     private static String COMMA = ",";
     

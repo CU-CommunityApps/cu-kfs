@@ -18,6 +18,8 @@ package edu.cornell.kfs.gl.batch;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.gl.batch.service.YearEndService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.AbstractWrappedBatchStep;
@@ -31,7 +33,7 @@ import edu.cornell.kfs.gl.batch.service.ReversionProcessService;
  * the beginning of a fiscal year, and therefore, it uses prior year accounts instead of current year accounts.
  */
 public class AccountReversionCurrentYearAccountStep extends AbstractWrappedBatchStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionCurrentYearAccountStep.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionCurrentYearAccountStep.class);
     private ReversionProcessService accountReversionProcessService;
     private YearEndService yearEndService;
 

@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
@@ -76,7 +78,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 
 public class IWantDocumentServiceImpl implements IWantDocumentService {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(IWantDocumentServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(IWantDocumentServiceImpl.class);
 
     private static final String CMP_ADDRESS_TYPE = "CMP";
 

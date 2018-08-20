@@ -17,6 +17,8 @@ package com.rsmart.kuali.kfs.fp.batch;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
 import com.rsmart.kuali.kfs.fp.batch.service.DisbursementVoucherDocumentBatchService;
@@ -25,7 +27,7 @@ import com.rsmart.kuali.kfs.fp.batch.service.DisbursementVoucherDocumentBatchSer
  * Calls the <code>DisbursementVoucherDocumentBatchService</code> to pick up incoming DV files and process
  */
 public class LoadDisbursementVouchersStep extends AbstractStep {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LoadDisbursementVouchersStep.class);
+	private static final Logger LOG = LogManager.getLogger(LoadDisbursementVouchersStep.class);
 
     private DisbursementVoucherDocumentBatchService disbursementVoucherDocumentBatchService;
 

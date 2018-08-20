@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
 import org.kuali.kfs.kns.service.DocumentHelperService;
@@ -30,7 +34,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 @SuppressWarnings("deprecation")
 public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperServiceImpl {
     private static final long serialVersionUID = 1372707190594999024L;
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAwardLookupableHelperServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuAwardLookupableHelperServiceImpl.class);
     
     private static final String VIEW_INVOICES_LINK_VALUE = "View Invoices";
     private static final String INVOICE_LINK_COLUMN_NAME = "invoiceLink";

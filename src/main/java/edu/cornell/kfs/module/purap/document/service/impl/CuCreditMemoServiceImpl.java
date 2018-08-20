@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -25,7 +27,7 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuCreditMemoServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuCreditMemoServiceImpl.class);
 
     // KFSPTS-1891
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -72,7 +74,7 @@ import com.rsmart.kuali.kfs.sys.batch.service.BatchFeedHelperService;
  * @see com.rsmart.kuali.kfs.fp.batch.service.DisbursementVoucherDocumentBatchService
  */
 public class DisbursementVoucherDocumentBatchServiceImpl implements DisbursementVoucherDocumentBatchService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisbursementVoucherDocumentBatchServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(DisbursementVoucherDocumentBatchServiceImpl.class);
 
     private String attachmentsPath;
 

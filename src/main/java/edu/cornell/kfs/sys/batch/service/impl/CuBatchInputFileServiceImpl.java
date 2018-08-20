@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.exception.FileStorageException;
@@ -15,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.cornell.kfs.sys.batch.CuBatchInputFileType;
 
 public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuBatchInputFileServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuBatchInputFileServiceImpl.class);
     private static final String INVALID_ARGUEMENT = "an invalid(null) argument was given";
     private static final String NOT_PROPERLY_FORMATTED  = "The following file user identifer was not properly formatted: ";
     

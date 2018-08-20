@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.Chart;
@@ -26,9 +28,11 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.coa.businessobject.GlobalObjectWithIndirectCostRecoveryAccounts;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
+import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBase {
+	private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(GlobalIndirectCostRecoveryAccountsRule.class);
 
 	protected static final BigDecimal ONE_HUNDRED_PERCENT = new BigDecimal(100);
 

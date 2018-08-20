@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -16,7 +18,7 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class CreateAccountingDocumentReportServiceImpl implements CreateAccountingDocumentReportService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CreateAccountingDocumentReportServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentReportServiceImpl.class);
     
     protected ConfigurationService configurationService;
     protected ReportWriterService reportWriterService;

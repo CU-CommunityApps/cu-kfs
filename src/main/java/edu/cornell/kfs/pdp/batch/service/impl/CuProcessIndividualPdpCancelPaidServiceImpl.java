@@ -2,6 +2,8 @@ package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.sql.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ProcessIndividualPdpCancelPaidServiceImpl;
@@ -16,8 +18,7 @@ import edu.cornell.kfs.integration.purap.CuPurchasingAccountsPayableModuleServic
 import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 
 public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividualPdpCancelPaidServiceImpl {
-
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuProcessIndividualPdpCancelPaidServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuProcessIndividualPdpCancelPaidServiceImpl.class);
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)

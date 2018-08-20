@@ -21,7 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.FundGroup;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.SubFundGroup;
@@ -56,7 +57,7 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
  * This class implements the business rules for {@link AccountReversionGlobal}
  */
 public class AccountReversionGlobalRule extends GlobalDocumentRuleBase {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalRule.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionGlobalRule.class);
 
     private static final String GLOBAL_ACCOUNT_FIELDS_SECTION = "Edit Global Account Reversion";
     private static final String GLOBAL_DETAIL_FIELDS_SECTION = "Edit Global Account Reversion Details";

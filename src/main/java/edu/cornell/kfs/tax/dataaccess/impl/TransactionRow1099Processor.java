@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
@@ -89,7 +91,7 @@ import edu.cornell.kfs.tax.service.PaymentReason1099BoxService;
  * </ul>
  */
 public class TransactionRow1099Processor extends TransactionRowProcessor<Transaction1099Summary> {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRow1099Processor.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRow1099Processor.class);
 
     private static final String BOX_PREFIX = "box";
 

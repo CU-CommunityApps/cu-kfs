@@ -27,14 +27,12 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Purap Accounting Line Base Business Object.
  */
 public abstract class PurApAccountingLineBase extends SourceAccountingLine implements PurApAccountingLine, Comparable {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PurApAccountingLineBase.class);
     protected Integer accountIdentifier;
     private Integer itemIdentifier;
     private BigDecimal accountLinePercent;
@@ -151,23 +149,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         return sourceLine;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.businessobject.AccountingLineBase#toStringMapper()
-     */
-    @Override
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-
-        m.put("chart", getChartOfAccountsCode());
-        m.put("account", getAccountNumber());
-        m.put("objectCode", getFinancialObjectCode());
-        m.put("subAccount", getSubAccountNumber());
-        m.put("subObjectCode", getFinancialSubObjectCode());
-        m.put("projectCode", getProjectCode());
-        m.put("orgRefId", getOrganizationReferenceId());
-
-        return m;
-    }
 
     @Override
     public int compareTo(Object arg0) {

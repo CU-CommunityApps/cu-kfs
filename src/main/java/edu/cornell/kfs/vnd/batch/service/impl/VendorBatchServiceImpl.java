@@ -20,6 +20,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -63,7 +65,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 public class VendorBatchServiceImpl implements VendorBatchService{
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VendorBatchServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(VendorBatchServiceImpl.class);
     private static final String NEW_LINE = "\n";
     private static final String YES = "Y";
     private static final String VENDOR_DOCUMENT_TYPE_NAME = "PVEN";

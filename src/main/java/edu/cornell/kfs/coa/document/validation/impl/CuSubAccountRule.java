@@ -10,34 +10,37 @@ public class CuSubAccountRule extends SubAccountRule {
 	
     @Override
     protected boolean checkCgCostSharingRules() {
-
-        boolean success = true;
         boolean allFieldsSet = false;
 
         A21SubAccount a21 = newSubAccount.getA21SubAccount();
 
         // check to see if all required fields are set
-        if (StringUtils.isNotEmpty(a21.getCostShareChartOfAccountCode()) && StringUtils.isNotEmpty(a21.getCostShareSourceAccountNumber())) {
+        if (StringUtils.isNotEmpty(a21.getCostShareChartOfAccountCode())
+                && StringUtils.isNotEmpty(a21.getCostShareSourceAccountNumber())) {
             allFieldsSet = true;
         }
 
         // Cost Sharing COA Code and Cost Sharing Account Number are required
-        success &= checkEmptyBOField("a21SubAccount.costShareChartOfAccountCode", a21.getCostShareChartOfAccountCode(), "Cost Share Chart of Accounts Code");
-        success &= checkEmptyBOField("a21SubAccount.costShareSourceAccountNumber", a21.getCostShareSourceAccountNumber(), "Cost Share AccountNumber");
-
+        boolean success = checkEmptyBOField("a21SubAccount.costShareChartOfAccountCode",
+                a21.getCostShareChartOfAccountCode(), "Cost Share Chart of Accounts Code");
+        success &= checkEmptyBOField("a21SubAccount.costShareSourceAccountNumber",
+                a21.getCostShareSourceAccountNumber(), "Cost Share AccountNumber");
+            
         // existence test on Cost Share Account
         if (allFieldsSet) {
             if (ObjectUtils.isNull(a21.getCostShareAccount())) {
-                putFieldError("a21SubAccount.costShareSourceAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, getDisplayName("a21SubAccount.costShareSourceAccountNumber"));
-                success &= false;
+                putFieldError("a21SubAccount.costShareSourceAccountNumber", KFSKeyConstants.ERROR_EXISTENCE,
+                        getDisplayName("a21SubAccount.costShareSourceAccountNumber"));
+                success = false;
             }
         }
 
         // existence test on Cost Share SubAccount
         if (allFieldsSet && StringUtils.isNotBlank(a21.getCostShareSourceSubAccountNumber())) {
             if (ObjectUtils.isNull(a21.getCostShareSourceSubAccount())) {
-                putFieldError("a21SubAccount.costShareSourceSubAccountNumber", KFSKeyConstants.ERROR_EXISTENCE, getDisplayName("a21SubAccount.costShareSourceSubAccountNumber"));
-                success &= false;
+                putFieldError("a21SubAccount.costShareSourceSubAccountNumber", KFSKeyConstants.ERROR_EXISTENCE,
+                    getDisplayName("a21SubAccount.costShareSourceSubAccountNumber"));
+                success = false;
             }
         }
 
@@ -55,7 +58,7 @@ public class CuSubAccountRule extends SubAccountRule {
 
         A21SubAccount newA21SubAccount = newSubAccount.getA21SubAccount();
         if (ObjectUtils.isNotNull(newA21SubAccount)) {
-            success &= StringUtils.isEmpty(newA21SubAccount.getFinancialIcrSeriesIdentifier());
+            success = StringUtils.isEmpty(newA21SubAccount.getFinancialIcrSeriesIdentifier());
 
             success &= checkICRCollectionExist(false);
             success &= StringUtils.isEmpty(newA21SubAccount.getIndirectCostRecoveryTypeCode());

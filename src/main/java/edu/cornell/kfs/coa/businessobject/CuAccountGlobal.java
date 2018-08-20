@@ -31,7 +31,6 @@ import edu.cornell.kfs.module.cg.businessobject.InvoiceFrequency;
 import edu.cornell.kfs.module.cg.businessobject.InvoiceType;
 
 public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIndirectCostRecoveryAccounts{
-    
     private static final long serialVersionUID = 1L;
 
     protected transient DateTimeService dateTimeService;

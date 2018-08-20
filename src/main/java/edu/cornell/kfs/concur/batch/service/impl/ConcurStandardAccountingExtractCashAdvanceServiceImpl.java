@@ -3,7 +3,8 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashAdvanceService;
@@ -11,7 +12,7 @@ import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 
 public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements ConcurStandardAccountingExtractCashAdvanceService {
     
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ConcurStandardAccountingExtractCashAdvanceServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractCashAdvanceServiceImpl.class);
 
     @Override
     public boolean isCashAdvanceLine(ConcurStandardAccountingExtractDetailLine line) {

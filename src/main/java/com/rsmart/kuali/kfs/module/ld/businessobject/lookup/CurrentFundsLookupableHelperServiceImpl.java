@@ -16,6 +16,9 @@
 package com.rsmart.kuali.kfs.module.ld.businessobject.lookup;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.gl.Constant;
 import org.kuali.kfs.gl.businessobject.TransientBalanceInquiryAttributes;
 import org.kuali.kfs.integration.ld.LaborLedgerObject;
@@ -56,7 +58,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import com.rsmart.kuali.kfs.module.ld.businessobject.inquiry.CurrentFundsInquirableImpl;
 
 public class CurrentFundsLookupableHelperServiceImpl extends AbstractLookupableHelperServiceImpl {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CurrentFundsLookupableHelperServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(CurrentFundsLookupableHelperServiceImpl.class);
     private LaborDao laborDao;
     private LaborLedgerBalanceService balanceService;
     private LaborInquiryOptionsService laborInquiryOptionsService;

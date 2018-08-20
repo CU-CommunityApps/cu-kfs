@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
@@ -78,8 +80,8 @@ import edu.cornell.kfs.pdp.service.CuPendingTransactionService;
 
 @Transactional
 public class CuPendingTransactionServiceImpl extends PendingTransactionServiceImpl implements CuPendingTransactionService{
-	private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuPendingTransactionServiceImpl.class);
-	
+    private static final Logger LOG = LogManager.getLogger(CuPendingTransactionServiceImpl.class);
+    
     protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
     protected static String FDOC_TYP_CD_STALE_CHECK = "CHKL";
     

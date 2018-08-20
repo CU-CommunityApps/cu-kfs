@@ -18,16 +18,6 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -40,7 +30,6 @@ import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.service.AchService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -49,6 +38,15 @@ import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
@@ -142,7 +140,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     public String getPaymentStatusCode() {
         return paymentStatusCode;
     }
-    
+
     /**
      * @return String containing the payment status code and indication or cancel/reissued payments or stale payments.
      */
@@ -183,7 +181,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     /**
      * WIDTH MUST BE LESS THAN THE # OF SPACES
-     * 
+     *
      * @param width
      * @param val
      * @return
@@ -211,7 +209,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public int getNoteLines() {
         int count = 0;
-        for (Iterator iter = this.getPaymentDetails().iterator(); iter.hasNext();) {
+        for (Iterator iter = this.getPaymentDetails().iterator(); iter.hasNext(); ) {
             PaymentDetail element = (PaymentDetail) iter.next();
             count++; // Add a line for the invoice #
             count = count + element.getNotes().size();
@@ -224,7 +222,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public KualiDecimal getNetPaymentAmount() {
         KualiDecimal amt = KualiDecimal.ZERO;
-        for (Iterator iter = this.getPaymentDetails().iterator(); iter.hasNext();) {
+        for (Iterator iter = this.getPaymentDetails().iterator(); iter.hasNext(); ) {
             PaymentDetail element = (PaymentDetail) iter.next();
             amt = amt.add(element.getNetPaymentAmount());
         }
@@ -473,7 +471,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 	}
 
 	/**
-     * @return
      * @hibernate.property column="CMP_ADDR_IND" type="yes_no"
      */
     public Boolean getCampusAddress() {
@@ -831,7 +828,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     /**
      * Takes a {@link String} and attempt to format as {@link Timestamp} for setting the paymentDate field.
-     * 
+     *
      * @param paymentDate Timestamp as string
      */
     public void setPaymentDate(String paymentDate) throws ParseException {
@@ -858,8 +855,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     public void setProcess(PaymentProcess p) {
         if (p != null) {
             processId = p.getId();
-        }
-        else {
+        } else {
             processId = null;
         }
         this.process = p;
@@ -974,14 +970,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public void setBatchId(KualiInteger batchId) {
         this.batchId = batchId;
-    }
-    
-    protected LinkedHashMap toStringMapper_RICE20_REFACTORME() {
-        LinkedHashMap m = new LinkedHashMap();
-
-        m.put(KFSPropertyConstants.ID, this.id);
-
-        return m;
     }
 
     public String getDisbursementTypeCode() {

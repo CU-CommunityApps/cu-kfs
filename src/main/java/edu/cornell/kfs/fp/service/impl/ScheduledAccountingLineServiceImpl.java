@@ -7,6 +7,8 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
@@ -24,7 +26,7 @@ public class ScheduledAccountingLineServiceImpl implements ScheduledAccountingLi
     private static final long serialVersionUID = -5700446522442741269L;
     private transient ParameterService parameterService;
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ScheduledAccountingLineServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ScheduledAccountingLineServiceImpl.class);
 
     public TreeMap<Date, KualiDecimal> generateDatesAndAmounts(ScheduledSourceAccountingLine scheduledAccountingLine, int rowId) {
         TreeMap<Date, KualiDecimal> datesAndAmounts = new TreeMap<Date, KualiDecimal>();

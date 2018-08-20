@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.CoreApiServiceLocator;
@@ -31,7 +33,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.PRNCSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 
 abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> extends TransactionRowBuilder<T> {
-	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TransactionRowPRNCBuilder.class);
+	private static final Logger LOG = LogManager.getLogger(TransactionRowPRNCBuilder.class);
 	
 	private static final int GETTER_BUILDER_SIZE = 2000;
 	private static final int DEFAULT_PRE_SPLIT_PARM_COUNT = 1;

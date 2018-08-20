@@ -34,10 +34,13 @@ public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustme
 
         // check base amounts are equal
         //KFSMI-3036
-        KualiInteger sourceBaseBudgetTotal = getAccountingDocumentForValidation().getSourceBaseBudgetIncomeTotal().subtract( getAccountingDocumentForValidation().getSourceBaseBudgetExpenseTotal());
-        KualiInteger targetBaseBudgetTotal = getAccountingDocumentForValidation().getTargetBaseBudgetIncomeTotal().subtract( getAccountingDocumentForValidation().getTargetBaseBudgetExpenseTotal());
+        KualiInteger sourceBaseBudgetTotal = getAccountingDocumentForValidation().getSourceBaseBudgetIncomeTotal()
+                .subtract(getAccountingDocumentForValidation().getSourceBaseBudgetExpenseTotal());
+        KualiInteger targetBaseBudgetTotal = getAccountingDocumentForValidation().getTargetBaseBudgetIncomeTotal()
+                .subtract(getAccountingDocumentForValidation().getTargetBaseBudgetExpenseTotal());
         if (sourceBaseBudgetTotal.compareTo(targetBaseBudgetTotal) != 0) {
-            GlobalVariables.getMessageMap().putError(KFSConstants.ACCOUNTING_LINE_ERRORS, KFSKeyConstants.ERROR_DOCUMENT_BA_BASE_AMOUNTS_BALANCED);
+            GlobalVariables.getMessageMap().putError(KFSConstants.ACCOUNTING_LINE_ERRORS,
+                    KFSKeyConstants.ERROR_DOCUMENT_BA_BASE_AMOUNTS_BALANCED);
             balanced = false;
         }
         // check document is balanced within the accounts
@@ -54,8 +57,8 @@ public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustme
         // check current amounts balance, income stream balance Map should add to 0
         Map incomeStreamMap = getAccountingDocumentForValidation().buildIncomeStreamBalanceMapForDocumentBalance();
         KualiDecimal totalCurrentAmount = new KualiDecimal(0);
-        for (Iterator iter = incomeStreamMap.values().iterator(); iter.hasNext();) {
-            KualiDecimal streamAmount = (KualiDecimal) iter.next();
+        for (Object o : incomeStreamMap.values()) {
+            KualiDecimal streamAmount = (KualiDecimal) o;
             totalCurrentAmount = totalCurrentAmount.add(streamAmount);
         }
 

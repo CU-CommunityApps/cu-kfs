@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
@@ -42,7 +44,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.fp.document.service.YearEndGeneralLedgerPendingEntriesService;
 
 public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGeneralLedgerPendingEntriesService{
-	 protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(YearEndGeneralLedgerPendingEntriesServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(YearEndGeneralLedgerPendingEntriesServiceImpl.class);
 	 
 	 protected ParameterService parameterService;
 	 protected ObjectTypeService objectTypeService;

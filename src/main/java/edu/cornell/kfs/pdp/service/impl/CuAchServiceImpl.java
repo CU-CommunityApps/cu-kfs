@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
@@ -12,7 +14,7 @@ import org.kuali.kfs.pdp.service.impl.AchServiceImpl;
 import edu.cornell.kfs.pdp.service.CuAchService;
 
 public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuAchServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuAchServiceImpl.class);
 
     private BusinessObjectService businessObjectService;
 

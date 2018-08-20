@@ -22,7 +22,8 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.rice.kim.api.role.RoleService;
 
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -37,7 +38,7 @@ import edu.cornell.kfs.sys.service.ReportWriterService;
  */
 public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.ReportWriterTextServiceImpl
 		implements ReportWriterService {
-	private static Logger LOG = Logger.getLogger(ReportWriterTextServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger(ReportWriterTextServiceImpl.class);
 
 	protected String fullFilePath;
 	protected String fromAddress;

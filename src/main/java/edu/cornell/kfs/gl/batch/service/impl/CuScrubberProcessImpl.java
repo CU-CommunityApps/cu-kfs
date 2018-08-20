@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
@@ -41,7 +43,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
  * this subclass into a more appropriate package.
  */
 public class CuScrubberProcessImpl extends ScrubberProcessImpl {
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuScrubberProcessImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuScrubberProcessImpl.class);
 
     private static final int CONTINUATION_ACCOUNT_DEPTH_LIMIT = 10;
 

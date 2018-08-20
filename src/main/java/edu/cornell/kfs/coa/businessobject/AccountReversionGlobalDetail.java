@@ -22,11 +22,14 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 /**
@@ -35,7 +38,7 @@ import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
  * Accounts, that class could not be re-used for Globals.
  */
 public class AccountReversionGlobalDetail extends GlobalBusinessObjectDetailBase {
-    protected static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AccountReversionGlobalDetail.class);
+	private static final Logger LOG = LogManager.getLogger(AccountReversionGlobalDetail.class);
 
     private String documentNumber;
     private String accountReversionCategoryCode;
