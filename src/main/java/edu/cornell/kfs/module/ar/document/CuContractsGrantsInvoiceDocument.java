@@ -4,16 +4,19 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
+import edu.cornell.kfs.fp.document.authorization.Logger;
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
 
 public class CuContractsGrantsInvoiceDocument extends ContractsGrantsInvoiceDocument {
     private static final long serialVersionUID = 6257106079211623394L;
-    protected static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CuContractsGrantsInvoiceDocument.class);
+    private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocument.class);
     
     protected transient ConfigurationService configurationService;
 
