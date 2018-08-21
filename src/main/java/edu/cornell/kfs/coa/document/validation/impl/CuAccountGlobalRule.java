@@ -8,7 +8,6 @@ import org.kuali.kfs.coa.document.validation.impl.AccountGlobalRule;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 @SuppressWarnings("deprecation")
@@ -17,13 +16,13 @@ public class CuAccountGlobalRule extends AccountGlobalRule {
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
         boolean valid = super.processCustomRouteDocumentBusinessRules(document);
-        if (doesAccountGlobalHaveAccountRestrictionCodeAndNoSubFUndGroupCode()) {
+        if (doesAccountGlobalHaveAccountRestrictionCodeAndNoSubFundGroupCode()) {
             valid = isTheNewRestrictionCodeValidForEachAccount() && valid;
         }
         return valid;
     }
 
-    protected boolean doesAccountGlobalHaveAccountRestrictionCodeAndNoSubFUndGroupCode() {
+    protected boolean doesAccountGlobalHaveAccountRestrictionCodeAndNoSubFundGroupCode() {
         return StringUtils.isNotBlank(newAccountGlobal.getAccountRestrictedStatusCode()) && StringUtils.isBlank(newAccountGlobal.getSubFundGroupCode());
     }
     
@@ -31,9 +30,9 @@ public class CuAccountGlobalRule extends AccountGlobalRule {
         boolean valid = true;
         int accountDetailIndex = 0;
         for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
-            String subFundDefaultRestriictionCode = detail.getAccount().getSubFundGroup().getAccountRestrictedStatusCode();
+            String subFundDefaultRestrictionCode = detail.getAccount().getSubFundGroup().getAccountRestrictedStatusCode();
             String accountGlobalRestrictionCode = newAccountGlobal.getAccountRestrictedStatusCode();
-            if (ifSubFundDefaultRestrictionCodeExistsDoesItDifferFromAccountGlobalRestrictionCode(subFundDefaultRestriictionCode, accountGlobalRestrictionCode)) {
+            if (ifSubFundDefaultRestrictionCodeExistsDoesItDifferFromAccountGlobalRestrictionCode(subFundDefaultRestrictionCode, accountGlobalRestrictionCode)) {
                 valid = false;
                 String accountSectionFieldName = MessageFormat.format(CUKFSPropertyConstants.ACCOUNT_GLOBAL_ACCOUNT_SECTION_FIELD_NAME_FORMAT, String.valueOf(accountDetailIndex));
                 putFieldError(accountSectionFieldName, CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE, detail.getAccountNumber());
@@ -44,8 +43,8 @@ public class CuAccountGlobalRule extends AccountGlobalRule {
     }
 
     protected boolean ifSubFundDefaultRestrictionCodeExistsDoesItDifferFromAccountGlobalRestrictionCode(
-            String subFundDefaultRestriictionCode, String accountGlobalRestrictionCode) {
-        return StringUtils.isNotBlank(subFundDefaultRestriictionCode) && 
-                !StringUtils.equalsIgnoreCase(subFundDefaultRestriictionCode, accountGlobalRestrictionCode);
+            String subFundDefaultRestrictionCode, String accountGlobalRestrictionCode) {
+        return StringUtils.isNotBlank(subFundDefaultRestrictionCode) && 
+                !StringUtils.equalsIgnoreCase(subFundDefaultRestrictionCode, accountGlobalRestrictionCode);
     }
 }
