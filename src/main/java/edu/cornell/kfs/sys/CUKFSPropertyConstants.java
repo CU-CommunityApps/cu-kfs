@@ -56,4 +56,6 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
 
     public static final String PATH = "path";
     public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    
+    public static final String ACCOUNT_GLOBAL_ACCOUNT_SECTION_FIELD_NAME_FORMAT = "accountGlobalDetails[{0}]";
 }
