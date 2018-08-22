@@ -48,6 +48,7 @@ public class PaymentWorksDtoToPaymentWorksVendorConversionServiceImpl implements
         PaymentWorksVendor stgVendor = new PaymentWorksVendor();
         if (newVendorDetailExists(pmwNewVendorRequestDetailDTO)) {
             stgVendor.setPmwVendorRequestId(pmwNewVendorRequestDetailDTO.getId());
+            stgVendor.setLastSubmittedTimestamp(pmwNewVendorRequestDetailDTO.getLast_submitted_ts());
             populateNewVendorRequestingCompanyAttributes(stgVendor, pmwNewVendorRequestDetailDTO);
             extractCustomFields(stgVendor, pmwNewVendorRequestDetailDTO, reportData);
         }

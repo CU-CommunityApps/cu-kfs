@@ -10,6 +10,7 @@ public class PaymentWorksPropertiesConstants {
         public static final String KFS_ACH_PROCESSING_STATUS = "kfsAchProcessingStatus";
         public static final String PMW_TRANSACTION_TYPE = "pmwTransactionType";
         public static final String SUPPLIER_UPLOAD_STATUS = "supplierUploadStatus";
+        public static final String LAST_SUBMITTED_TIMESTAMP = "lastSubmittedTimestamp";
     }
 
     public static final class PaymentWorksFieldMapping {

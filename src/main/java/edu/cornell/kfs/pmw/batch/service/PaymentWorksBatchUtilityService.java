@@ -1,14 +1,13 @@
 package edu.cornell.kfs.pmw.batch.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.AutoPopulatingList;
-
-import org.kuali.rice.kim.api.identity.Person;
-
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.rice.kim.api.identity.Person;
+import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksBankAccountType;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsAchDataWrapper;
@@ -28,7 +27,7 @@ public interface PaymentWorksBatchUtilityService {
     
     boolean foundExistingPaymentWorksVendorByKfsDocumentNumber(String kfsDocumentNumber);
     
-    boolean foundExistingPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId);
+    boolean foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId, Timestamp lastSubmittedTimestamp);
     
     void registerKfsPvenApprovalForExistingPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail);
     
