@@ -91,7 +91,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 }
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
-                        getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
+                        LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS, successfully routed PVEN document for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                     }
                 }
             }
