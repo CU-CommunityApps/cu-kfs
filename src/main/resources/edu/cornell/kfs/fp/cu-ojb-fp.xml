@@ -209,6 +209,9 @@
     <field-descriptor name="tripId" column="TRIP_ID" jdbc-type="VARCHAR" />   
     <field-descriptor name="disbExcptAttachedIndicator" column="DV_EXCPT_IND" jdbc-type="CHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	<field-descriptor name="immediatePaymentIndicator" column="IMD_PMT_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+	<field-descriptor name="invoiceDate" column="INV_DT" jdbc-type="DATE"/>
+    <field-descriptor name="invoiceNumber" column="INV_NBR" jdbc-type="VARCHAR"/>
+    
     <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
