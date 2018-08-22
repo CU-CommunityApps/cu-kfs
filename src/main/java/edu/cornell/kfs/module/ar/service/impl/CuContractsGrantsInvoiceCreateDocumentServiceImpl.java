@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.ar.batch.service.impl;
+package edu.cornell.kfs.module.ar.service.impl;
 
 import java.sql.Date;
 import java.text.MessageFormat;
