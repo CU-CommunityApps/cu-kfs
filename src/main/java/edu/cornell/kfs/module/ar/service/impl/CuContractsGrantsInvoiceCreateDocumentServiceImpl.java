@@ -87,7 +87,6 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
         if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
             populateDocumentDescription(cgInvoiceDocument);
         }
-        
         return cgInvoiceDocument;
     }
 
