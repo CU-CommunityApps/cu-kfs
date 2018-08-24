@@ -30,6 +30,7 @@
 <c:set var="achAccountInfoDisplayed" value="${(not empty KualiForm.editingMode['achAccountInfoDisplayed'])}" />
 <c:set var="travelEntryMode" value="${(not empty KualiForm.editingMode['travelEntry'])}" />
 <c:set var="travelSystemGeneratedEntryMode" value="${(not empty KualiForm.editingMode['travelSystemGeneratedEntry'])}" />
+<c:set var="displayInvoiceFields" value="${KualiForm.editingMode['displayInvoiceFields']}" scope="request"/>
 
 
 <kul:tab tabTitle="Payment Information" defaultOpen="true"
@@ -332,27 +333,41 @@
               	</c:if>
               </td>
             </tr>
-            <tr>
-              <th rowspan="4" scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
-              <td rowspan="4"><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}"
+            
+            <c:choose>
+            		<c:when test="${displayInvoiceFields}">
+            			<tr>
+              			<th rowspan="4" scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
+              			<td rowspan="4"><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}"
                                             property="document.disbVchrCheckStubText" readOnly="${!fullEntryMode && !paymentHandlingEntryMode}"/></td>
-            </tr>
-            <tr>
-                <th align=right valign=middle class="bord-l-b"><div align="right">
-                    <kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceNumber}" /></div></th>
-                <td align=left valign=middle class="datacell">
-                    <kul:htmlControlAttribute property="document.invoiceNumber"
-                                              attributeEntry="${dvAttributes.invoiceNumber}"
-                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
-            </tr>
-            <tr>
-                <th align=right valign=middle class="bord-l-b"><div align="right">
-                    <kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceDate}" /></div></th>
-                <td align=left valign=middle class="datacell">
-                    <kul:htmlControlAttribute property="document.invoiceDate"
-                                              attributeEntry="${dvAttributes.invoiceDate}"
-                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
-            </tr>
+            			</tr>
+
+	            		<tr>
+	                		<th align=right valign=middle class="bord-l-b"><div align="right">
+	                    		<kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceNumber}" /></div></th>
+	                		<td align=left valign=middle class="datacell">
+	                    		<kul:htmlControlAttribute property="document.invoiceNumber"
+	                                              attributeEntry="${dvAttributes.invoiceNumber}"
+	                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
+	            		</tr>
+	            		<tr>
+	                		<th align=right valign=middle class="bord-l-b"><div align="right">
+	                    		<kul:htmlAttributeLabel attributeEntry="${dvAttributes.invoiceDate}" /></div></th>
+	                		<td align=left valign=middle class="datacell">
+	                    		<kul:htmlControlAttribute property="document.invoiceDate"
+	                                              attributeEntry="${dvAttributes.invoiceDate}"
+	                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
+	            		</tr>
+            		</c:when>
+            		<c:otherwise>
+	        			<tr>
+-              			<th scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
+-              			<td><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}" 
+							property="document.disbVchrCheckStubText" readOnly="${!fullEntryMode && !paymentHandlingEntryMode}"/></td>
+            			</tr>
+            		</c:otherwise>
+            </c:choose>
+            
             <tr>
 				<c:choose>
 					<c:when test="${achAccountInfoDisplayed}">
