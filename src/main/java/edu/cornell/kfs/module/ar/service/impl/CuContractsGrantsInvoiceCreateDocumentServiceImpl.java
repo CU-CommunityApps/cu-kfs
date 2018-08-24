@@ -21,7 +21,7 @@ import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.util.CollectionUtils;
 
-import edu.cornell.kfs.module.arl.CuArParameterConstants;
+import edu.cornell.kfs.module.ar.CuArParameterConstants;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
 
