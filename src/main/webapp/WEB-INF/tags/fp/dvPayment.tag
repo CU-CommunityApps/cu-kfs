@@ -358,17 +358,17 @@
 	                                              attributeEntry="${dvAttributes.invoiceDate}"
 	                                              readOnly="${!fullEntryMode && !paymentHandlingEntryMode}" /></td>
 	            		</tr>
+	            		 <tr>
             		</c:when>
             		<c:otherwise>
 	        			<tr>
 -              			<th scope="row"><div align="right"><kul:htmlAttributeLabel attributeEntry="${dvAttributes.disbVchrCheckStubText}"/></div></th>
 -              			<td><kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrCheckStubText}" 
 							property="document.disbVchrCheckStubText" readOnly="${!fullEntryMode && !paymentHandlingEntryMode}"/></td>
-            			</tr>
             		</c:otherwise>
             </c:choose>
             
-            <tr>
+           
 				<c:choose>
 					<c:when test="${achAccountInfoDisplayed}">
 						<th align=right valign=middle class="bord-l-b"><div align="right">
