@@ -168,14 +168,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         LOG.info("sendProcessedStatusToPaymentWorksForNewVendor: Processing complete.");
     }
     
-    @Override
-    public void sendRejectedStatusToPaymentWorksForNewVendor(String rejectedVendorId) {
-        LOG.info("sendRejectedStatusToPaymentWorksForNewVendor: Processing started.");
-        String jsonString = buildPaymentWorksNewVendorUpdateStatusJson(rejectedVendorId, PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getCodeAsString());
-        updateNewVendorStatusInPaymentWorks(jsonString);
-        LOG.info("sendRejectedStatusToPaymentWorksForNewVendor: Processing complete.");
-    }
-    
     private void updateNewVendorStatusInPaymentWorks(String jsonString) {
         URI statusUpdateURI = buildPaymentWorksNewVendorUpdateStatusURI();
         Response updateResponse = null;

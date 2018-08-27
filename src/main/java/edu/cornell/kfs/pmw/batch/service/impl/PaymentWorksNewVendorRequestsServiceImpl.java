@@ -91,18 +91,11 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 }
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
-                        getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
-                    } else {
-                        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
+                        LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS, successfully processed vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                     }
-                } else {
-                    // save of pmw data to staging table failed for some reason, cannot process or track request
-                    getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
                 }
-            } else {
-                // either duplicate request or data issue exists preventing save to staging table
-                getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
             }
+            getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
         }
         getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
     }
@@ -357,7 +350,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private void updatePmwNewVendorStagingTableBasedOnCreateVendorFailing(PaymentWorksVendor pmwVendor) {
         LOG.info("updatePmwNewVendorStagingTableBasedOnCreateVendorFailing: entered");
-        pmwVendor = setStatusValuesForPaymentWorksRejectedNewVendorRejectedKfsVendor(pmwVendor);
+        pmwVendor = setStatusValuesForPaymentWorksProcessedNewVendorRejectedKfsVendor(pmwVendor);
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
@@ -379,8 +372,8 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         return pmwVendor;
     }
     
-    private PaymentWorksVendor setStatusValuesForPaymentWorksRejectedNewVendorRejectedKfsVendor(PaymentWorksVendor pmwVendor) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
+    private PaymentWorksVendor setStatusValuesForPaymentWorksProcessedNewVendorRejectedKfsVendor(PaymentWorksVendor pmwVendor) {
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_REJECTED);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
         return pmwVendor;

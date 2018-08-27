@@ -293,7 +293,6 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
 
     private void performProcessingWhenNoKfsVendorIdentifiersFoundForKfsApprovedVendor(PaymentWorksVendor pmwVendor) {
         updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsApprovedVendor(pmwVendor, PaymentWorksConstants.KFSAchProcessingStatus.NO_VENDOR_IDENTIFIERS);
-        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
     }
     
     private void performProcessingWhenExceptionGeneratedForKfsApprovedVendorDuringAchCreation(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
@@ -301,7 +300,6 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         reportData.addRecordGeneratingException(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
                 MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.EXCEPTION_GENERATED_DURING_PROCESSING), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED)));
         updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsApprovedVendor(pmwVendor, PaymentWorksConstants.KFSAchProcessingStatus.EXCEPTION_GENERATED);
-        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
     }
     
     private void performProcessingWhenExceptionGeneratedForKfsDisapprovedVendorDuringAchCreation(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
@@ -309,7 +307,6 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         reportData.addRecordGeneratingException(getPaymentWorksNewVendorPayeeAchReportService().createBatchReportVendorItem(pmwVendor, 
                 MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.EXCEPTION_GENERATED_DURING_PROCESSING), PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_DISAPPROVED)));
         updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsDisapprovedVendor(pmwVendor, PaymentWorksConstants.KFSAchProcessingStatus.EXCEPTION_GENERATED);
-        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
     }
     
     private void performProcessingForSuccessfulKfsPaatDocumentCreation(PaymentWorksVendor pmwVendor, PaymentWorksNewVendorPayeeAchBatchReportData reportData) {
@@ -337,7 +334,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     
     private void updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsApprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
         LOG.info("updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsApprovedVendor: entered for pmwVendorId = " + pmwVendor.getPmwVendorRequestId() + " with kfsAchProcessingStatus = " + kfsAchProcessingStatus);
-        pmwVendor = setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsApprovedVendor(pmwVendor, kfsAchProcessingStatus);
+        pmwVendor = setKfsAchProcessingStatusMakingUploadIneligibleNewVendorForKfsApprovedVendor(pmwVendor, kfsAchProcessingStatus);
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
@@ -371,7 +368,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
     
     private void updatePmwNewVendorStagingTableKfsAchProcessingStatusBasedOnKfsDisapprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
         LOG.info("updatePmwNewVendorStagingTableKfsAchProcessingStatusBasedOnKfsDisapprovedVendor: entered for pmwVendorId = " + pmwVendor.getPmwVendorRequestId() + " with kfsAchProcessingStatus = " + kfsAchProcessingStatus);
-        pmwVendor = setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsDisapprovedVendor(pmwVendor, kfsAchProcessingStatus);
+        pmwVendor = setKfsAchProcessingStatusMakingUploadIneligibleNewVendorForKfsDisapprovedVendor(pmwVendor, kfsAchProcessingStatus);
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
@@ -382,7 +379,7 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         
     private void updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsDisapprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
         LOG.info("updatePmwStagingTableWithKfsAchProcessingStatusForPmwRejectedKfsDisapprovedVendor: entered for pmwVendorId = " + pmwVendor.getPmwVendorRequestId() + " with kfsAchProcessingStatus = " + kfsAchProcessingStatus);
-        pmwVendor = setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsDisapprovedVendor(pmwVendor, kfsAchProcessingStatus);
+        pmwVendor = setKfsAchProcessingStatusMakingUploadIneligibleNewVendorForKfsDisapprovedVendor(pmwVendor, kfsAchProcessingStatus);
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(),
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
@@ -391,11 +388,10 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
                                                                                   getDateTimeService().getCurrentTimestamp());
     }
     
-    private PaymentWorksVendor setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsApprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
+    private PaymentWorksVendor setKfsAchProcessingStatusMakingUploadIneligibleNewVendorForKfsApprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
-        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
         return pmwVendor;
     }
     
@@ -406,11 +402,10 @@ public class PaymentWorksNewVendorPayeeAchServiceImpl implements PaymentWorksNew
         return pmwVendor;
     }
     
-    private PaymentWorksVendor setKfsAchProcessingStatusMakingPaymentWorksRejectedNewVendorForKfsDisapprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
+    private PaymentWorksVendor setKfsAchProcessingStatusMakingUploadIneligibleNewVendorForKfsDisapprovedVendor(PaymentWorksVendor pmwVendor, String kfsAchProcessingStatus) {
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
         pmwVendor.setKfsAchProcessingStatus(kfsAchProcessingStatus);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
-        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(pmwVendor.getPmwVendorRequestId());
         return pmwVendor;
     }
 
