@@ -131,6 +131,7 @@
     <bean id="paymentWorksBatchUtilityService" parent="paymentWorksBatchUtilityService-parentBean" />
     <bean id="paymentWorksBatchUtilityService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksBatchUtilityServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="criteriaLookupService" ref="criteriaLookupService" />
         <property name="configurationService" ref="configurationService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="parameterService" ref="parameterService" />

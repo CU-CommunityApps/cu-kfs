@@ -91,17 +91,9 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 }
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
-                        getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
-                    } else {
-                        getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
+                        LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS, successfully routed PVEN document for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                     }
-                } else {
-                    // save of pmw data to staging table failed for some reason, cannot process or track request
-                    getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(savedStgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
                 }
-            } else {
-                // either duplicate request or data issue exists preventing save to staging table
-                getPaymentWorksWebServiceCallsService().sendRejectedStatusToPaymentWorksForNewVendor(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
             }
         }
         getPaymentWorksNewVendorRequestsReportService().generateAndEmailProcessingReport(reportData);
@@ -126,7 +118,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 && pmwDtosCouldConvertCustomAttributesToPmwJavaClassAttributes(stgNewVendorRequestDetailToProcess)
                 && pmwNewVendorAttributesConformToKfsLengthsOrFormats(stgNewVendorRequestDetailToProcess, errorMessages)
                 && allPmwNewVendorIsoCountriesMapToSingleFipsCountry(stgNewVendorRequestDetailToProcess, errorMessages)
-                && pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)) {
+                && latestVersionOfPmwNewVendorRecordDoesNotExistInKfsStagingTable(stgNewVendorRequestDetailToProcess, errorMessages)) {
             return true;
         } else {
             if (!errorMessages.isEmpty()) {
@@ -319,12 +311,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         }
     }
     
-    private boolean pmwNewVendorIdentifierDoesNotExistInKfsStagingTable(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        if (getPaymentWorksBatchUtilityService().foundExistingPaymentWorksVendorByPaymentWorksVendorId(stgNewVendorRequestDetailToProcess.getPmwVendorRequestId())) {
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.DUPLICATE_NEW_VENDOR_REQUEST_ERROR_MESSAGE));
+    private boolean latestVersionOfPmwNewVendorRecordDoesNotExistInKfsStagingTable(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
+        if (getPaymentWorksBatchUtilityService().foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(
+                stgNewVendorRequestDetailToProcess.getPmwVendorRequestId(), stgNewVendorRequestDetailToProcess.getPmwLastSubmittedTimestamp())) {
+            String duplicateVendorMessage = MessageFormat.format(
+                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.DUPLICATE_NEW_VENDOR_REQUEST_ERROR_MESSAGE),
+                    stgNewVendorRequestDetailToProcess.getPmwVendorRequestId());
+            errorMessages.add(duplicateVendorMessage);
             return false;
-        } 
-        else {
+        } else {
             return true;
         }
     }
@@ -357,7 +352,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private void updatePmwNewVendorStagingTableBasedOnCreateVendorFailing(PaymentWorksVendor pmwVendor) {
         LOG.info("updatePmwNewVendorStagingTableBasedOnCreateVendorFailing: entered");
-        pmwVendor = setStatusValuesForPaymentWorksRejectedNewVendorRejectedKfsVendor(pmwVendor);
+        pmwVendor = setStatusValuesForPaymentWorksApprovedNewVendorRejectedKfsVendor(pmwVendor);
         getPaymentWorksVendorDao().updateExistingPaymentWorksVendorInStagingTable(pmwVendor.getId(), 
                                                                                   pmwVendor.getPmwRequestStatus(), 
                                                                                   pmwVendor.getKfsVendorProcessingStatus(),
@@ -372,15 +367,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     }
     
     private PaymentWorksVendor setStatusValuesForPaymentWorksProcessedNewVendorKfsVendorCreatedAchPendingPven(PaymentWorksVendor pmwVendor) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.PROCESSED.getText());
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.getText());
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_CREATED);
         pmwVendor.setKfsAchProcessingStatus(PaymentWorksConstants.KFSAchProcessingStatus.PENDING_PVEN);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.PENDING_PAAT);
         return pmwVendor;
     }
     
-    private PaymentWorksVendor setStatusValuesForPaymentWorksRejectedNewVendorRejectedKfsVendor(PaymentWorksVendor pmwVendor) {
-        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.REJECTED.getText());
+    private PaymentWorksVendor setStatusValuesForPaymentWorksApprovedNewVendorRejectedKfsVendor(PaymentWorksVendor pmwVendor) {
+        pmwVendor.setPmwRequestStatus(PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.getText());
         pmwVendor.setKfsVendorProcessingStatus(PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_REJECTED);
         pmwVendor.setSupplierUploadStatus(PaymentWorksConstants.SupplierUploadStatus.INELIGIBLE_FOR_UPLOAD);
         return pmwVendor;

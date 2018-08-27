@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,11 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.criteria.CountFlag;
+import org.kuali.rice.core.api.criteria.CriteriaLookupService;
+import org.kuali.rice.core.api.criteria.GenericQueryResults;
+import org.kuali.rice.core.api.criteria.PredicateFactory;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -47,10 +53,12 @@ import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
+@SuppressWarnings("deprecation")
 public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUtilityService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
 
     protected BusinessObjectService businessObjectService;
+    protected CriteriaLookupService criteriaLookupService;
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
@@ -163,10 +171,16 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
 
     @Override
-    public boolean foundExistingPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId) {
-        Map<String, String> fieldValues = new HashMap<String, String>();
-        fieldValues.put(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_VENDOR_REQUEST_ID, pmwVendorId);
-        return(getBusinessObjectService().countMatching(PaymentWorksVendor.class, fieldValues) == 1);
+    public boolean foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId, Timestamp pmwLastSubmittedTimestamp) {
+        QueryByCriteria.Builder query = QueryByCriteria.Builder.create();
+        query.setCountFlag(CountFlag.ONLY);
+        query.setPredicates(
+                PredicateFactory.equal(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_VENDOR_REQUEST_ID, pmwVendorId),
+                PredicateFactory.greaterThanOrEqual(
+                        PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_LAST_SUBMITTED_TIMESTAMP, pmwLastSubmittedTimestamp));
+        
+        GenericQueryResults<PaymentWorksVendor> results = getCriteriaLookupService().lookup(PaymentWorksVendor.class, query.build());
+        return results.getTotalRowCount().intValue() > 0;
     }
 
     @Override
@@ -367,6 +381,14 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public CriteriaLookupService getCriteriaLookupService() {
+        return criteriaLookupService;
+    }
+
+    public void setCriteriaLookupService(CriteriaLookupService criteriaLookupService) {
+        this.criteriaLookupService = criteriaLookupService;
     }
 
     public ConfigurationService getConfigurationService() {
