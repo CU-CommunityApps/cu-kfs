@@ -313,7 +313,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     
     private boolean latestVersionOfPmwNewVendorRecordDoesNotExistInKfsStagingTable(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
         if (getPaymentWorksBatchUtilityService().foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(
-                stgNewVendorRequestDetailToProcess.getPmwVendorRequestId(), stgNewVendorRequestDetailToProcess.getLastSubmittedTimestamp())) {
+                stgNewVendorRequestDetailToProcess.getPmwVendorRequestId(), stgNewVendorRequestDetailToProcess.getPmwLastSubmittedTimestamp())) {
             String duplicateVendorMessage = MessageFormat.format(
                     getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.DUPLICATE_NEW_VENDOR_REQUEST_ERROR_MESSAGE),
                     stgNewVendorRequestDetailToProcess.getPmwVendorRequestId());

@@ -27,7 +27,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String kfsAchProcessingStatus;
     private String kfsAchDocumentNumber;
     private Timestamp processTimestamp;
-    private Timestamp lastSubmittedTimestamp;
+    private Timestamp pmwLastSubmittedTimestamp;
 
     private String supplierUploadStatus;
 
@@ -577,12 +577,12 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.processTimestamp = processTimestamp;
     }
 
-    public Timestamp getLastSubmittedTimestamp() {
-        return lastSubmittedTimestamp;
+    public Timestamp getPmwLastSubmittedTimestamp() {
+        return pmwLastSubmittedTimestamp;
     }
 
-    public void setLastSubmittedTimestamp(Timestamp lastSubmittedTimestamp) {
-        this.lastSubmittedTimestamp = lastSubmittedTimestamp;
+    public void setPmwLastSubmittedTimestamp(Timestamp pmwLastSubmittedTimestamp) {
+        this.pmwLastSubmittedTimestamp = pmwLastSubmittedTimestamp;
     }
 
     public String getSupplierUploadStatus() {
@@ -1116,7 +1116,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
 
     public String toString() {
         StringBuilder sb = new StringBuilder("PaymentWorksVendor::  pmwVendorRequestId:  ").append(pmwVendorRequestId).append(System.lineSeparator());
-        sb.append("lastSubmittedTimestamp: ").append(lastSubmittedTimestamp).append(System.lineSeparator());
+        sb.append("pmwLastSubmittedTimestamp: ").append(pmwLastSubmittedTimestamp).append(System.lineSeparator());
         sb.append("requestingCompanyId: ").append(requestingCompanyId).append(System.lineSeparator());
         sb.append("requestingCompanyTin: ").append((StringUtils.isNotBlank(requestingCompanyTin) ? PaymentWorksConstants.OUTPUT_RESTRICTED_DATA_PRESENT : KFSConstants.EMPTY_STRING)).append(System.lineSeparator());
         sb.append("requestingCompanyTinType: ").append(requestingCompanyTinType).append(System.lineSeparator());

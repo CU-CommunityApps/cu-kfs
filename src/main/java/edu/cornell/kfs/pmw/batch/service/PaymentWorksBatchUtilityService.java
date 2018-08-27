@@ -27,7 +27,7 @@ public interface PaymentWorksBatchUtilityService {
     
     boolean foundExistingPaymentWorksVendorByKfsDocumentNumber(String kfsDocumentNumber);
     
-    boolean foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId, Timestamp lastSubmittedTimestamp);
+    boolean foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId, Timestamp pmwLastSubmittedTimestamp);
     
     void registerKfsPvenApprovalForExistingPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail);
     

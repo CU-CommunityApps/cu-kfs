@@ -21,7 +21,7 @@
                 <ref bean="PaymentWorksVendor-kfsAchProcessingStatus" />
                 <ref bean="PaymentWorksVendor-kfsAchDocumentNumber" />
                 <ref bean="PaymentWorksVendor-processTimestamp" />
-                <ref bean="PaymentWorksVendor-lastSubmittedTimestamp" />
+                <ref bean="PaymentWorksVendor-pmwLastSubmittedTimestamp" />
                 <ref bean="PaymentWorksVendor-supplierUploadStatus" />
                 
                 <ref bean="PaymentWorksVendor-requestingCompanyId" />
@@ -696,11 +696,11 @@
         <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter" />
     </bean>
 
-    <bean id="PaymentWorksVendor-lastSubmittedTimestamp" parent="PaymentWorksVendor-lastSubmittedTimestamp-parentBean" />
-    <bean id="PaymentWorksVendor-lastSubmittedTimestamp-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
-        <property name="name" value="lastSubmittedTimestamp" />
-        <property name="label" value="Last Submitted Timestamp" />
-        <property name="shortLabel" value="Last Submit TS" />
+    <bean id="PaymentWorksVendor-pmwLastSubmittedTimestamp" parent="PaymentWorksVendor-pmwLastSubmittedTimestamp-parentBean" />
+    <bean id="PaymentWorksVendor-pmwLastSubmittedTimestamp-parentBean" abstract="true" parent="GenericAttributes-genericTimestamp">
+        <property name="name" value="pmwLastSubmittedTimestamp" />
+        <property name="label" value="PMW Last Submitted Timestamp" />
+        <property name="shortLabel" value="PMW Last Submit TS" />
         <property name="formatterClass" value="org.kuali.rice.core.web.format.DateViewTimestampObjectFormatter" />
     </bean>
 
@@ -1462,7 +1462,7 @@
                             <bean parent="FieldDefinition" p:attributeName="pmwTransactionType" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
                             <bean parent="FieldDefinition" p:attributeName="processTimestamp" />
-                            <bean parent="FieldDefinition" p:attributeName="lastSubmittedTimestamp" />
+                            <bean parent="FieldDefinition" p:attributeName="pmwLastSubmittedTimestamp" />
                             <bean parent="FieldDefinition" p:attributeName="supplierUploadStatus" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorDocumentNumber" />
                             <bean parent="FieldDefinition" p:attributeName="kfsVendorHeaderGeneratedIdentifier" />

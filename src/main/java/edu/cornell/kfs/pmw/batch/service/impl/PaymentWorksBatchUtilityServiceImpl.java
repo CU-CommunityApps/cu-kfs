@@ -171,13 +171,13 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
 
     @Override
-    public boolean foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId, Timestamp lastSubmittedTimestamp) {
+    public boolean foundExistingUpToDateVersionOfPaymentWorksVendorByPaymentWorksVendorId(String pmwVendorId, Timestamp pmwLastSubmittedTimestamp) {
         QueryByCriteria.Builder query = QueryByCriteria.Builder.create();
         query.setCountFlag(CountFlag.ONLY);
         query.setPredicates(
                 PredicateFactory.equal(PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_VENDOR_REQUEST_ID, pmwVendorId),
                 PredicateFactory.greaterThanOrEqual(
-                        PaymentWorksPropertiesConstants.PaymentWorksVendor.LAST_SUBMITTED_TIMESTAMP, lastSubmittedTimestamp));
+                        PaymentWorksPropertiesConstants.PaymentWorksVendor.PMW_LAST_SUBMITTED_TIMESTAMP, pmwLastSubmittedTimestamp));
         
         GenericQueryResults<PaymentWorksVendor> results = getCriteriaLookupService().lookup(PaymentWorksVendor.class, query.build());
         return results.getTotalRowCount().intValue() > 0;
