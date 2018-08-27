@@ -39,7 +39,7 @@
 		class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
 
 	<bean id="contractsGrantsInvoiceCreateDocumentService"
-		  class="edu.cornell.kfs.module.ar.batch.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
+		  class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
 		  parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
 
 	<bean id="milestoneDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ar.dataaccess.impl.CuMilestoneDaoOjb"/>
