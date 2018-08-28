@@ -26,7 +26,12 @@
 	<bean id="DisbursementVoucher-payeeInitiatorValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeInitiatorValidation" abstract="true" />
     <bean id="DisbursementVoucher-initiatorPrimaryDepartmentValidation" class="edu.cornell.kfs.fp.document.validation.impl.DisbursementVoucherInitiatorPrimaryDepartmentValidation" abstract="true" />
 	<bean id="DisbursementVoucher-accountingLineTotalsValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherAccountingLineTotalsValidation" abstract="true" />
-	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true" />
+	<bean id="DisbursementVoucher-nonResidentAlienInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherNonResidentAlienInformationValidation" abstract="true">
+		<property name="businessObjectService" ref="businessObjectService"/>
+		<property name="disbursementVoucherValidationService" ref="disbursementVoucherValidationService"/>
+		<property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
+		<property name="parameterService" ref="parameterService"/>
+	</bean>
 	<bean id="DisbursementVoucher-bankCodeValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherBankCodeValidation" abstract="true" />
 	<bean id="DisbursementVoucher-payeeStateAndCountryValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeStateAndCountryValidation" abstract="true">
 		<property name="cuDisbursementVoucherTaxService" ref="disbursementVoucherTaxService" />
