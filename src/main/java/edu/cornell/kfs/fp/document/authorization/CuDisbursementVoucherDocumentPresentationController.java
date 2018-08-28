@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.sys.CUKFSAuthorizationConstants;
@@ -28,6 +29,7 @@ public class CuDisbursementVoucherDocumentPresentationController extends Disburs
         Set<String> editModes = super.getEditModes(document);
         addTravelEntryMode(document, editModes);
         addTravelSystemGeneratedEntryMode(document, editModes);
+        editModes.add(CUKFSAuthorizationConstants.DisbursementVoucherEditMode.DISPLAY_INVOICE_FIELDS); 
 
         return editModes;
     }
