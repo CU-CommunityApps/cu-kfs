@@ -92,8 +92,14 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
                 if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                         LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS, successfully processed vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
+                    } else {
+                        LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, failed to create and route PVEN for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                     }
+                } else {
+                    LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, could not save vendor staging data for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                 }
+            } else {
+                LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, vendor data cannot be processed for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
             }
             getPaymentWorksWebServiceCallsService().sendProcessedStatusToPaymentWorksForNewVendor(pmwNewVendorRequestId);
         }
