@@ -14,8 +14,6 @@ public interface PaymentWorksWebServiceCallsService {
     
     void sendProcessedStatusToPaymentWorksForNewVendor(String processedVendorId);
     
-    void sendRejectedStatusToPaymentWorksForNewVendor(String rejectedVendorId);
-    
     void refreshPaymentWorksAuthorizationToken();
     
     int uploadVendorsToPaymentWorks(InputStream vendorCsvDataStream);
