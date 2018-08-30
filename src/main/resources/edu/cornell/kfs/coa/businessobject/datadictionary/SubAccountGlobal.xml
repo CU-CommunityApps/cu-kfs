@@ -41,6 +41,12 @@
 				<ref bean="SubAccountGlobal-a21SubAccount.costShareChartOfAccountCode" />
 				<ref bean="SubAccountGlobal-a21SubAccount.costShareSourceAccountNumber" />
 				<ref bean="SubAccountGlobal-a21SubAccount.costShareSourceSubAccountNumber" />
+				
+				<ref bean="SubAccountGlobal-newSubAccountName" />
+				<ref bean="SubAccountGlobal-newSubAccountNumber" />
+				<ref bean="SubAccountGlobal-newSubAccountTypeCode" />
+				<ref bean="SubAccountGlobal-newSubAccountOffCampusCode" />
+				<ref bean="SubAccountGlobal-applyToAllNewSubAccounts" />
 			</list>
 		</property>
 
@@ -126,6 +132,36 @@
 		<property name="shortLabel" value="CostShareSubAcctNbr" />
 		<property name="required" value="false" />
 		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
+    </bean>
+    
+    <bean id="SubAccountGlobal-newSubAccountName" parent="SubAccountGlobal-newSubAccountName-parentBean"/>
+    <bean id="SubAccountGlobal-newSubAccountName-parentBean" abstract="true" parent="SubAccount-subAccountName">
+        <property name="name" value="newSubAccountName" />
+    	<property name="required" value="false" />
+    </bean>
+    
+    <bean id="SubAccountGlobal-newSubAccountNumber" parent="SubAccountGlobal-newSubAccountNumber-parentBean"/>
+    <bean id="SubAccountGlobal-newSubAccountNumber-parentBean" abstract="true" parent="SubAccount-subAccountNumber">
+        <property name="name" value="newSubAccountNumber" />
+    	<property name="required" value="false" />
+    </bean>
+    
+    <bean id="SubAccountGlobal-newSubAccountTypeCode" parent="SubAccountGlobal-newSubAccountTypeCode-parentBean"/>
+    <bean id="SubAccountGlobal-newSubAccountTypeCode-parentBean" abstract="true" parent="A21SubAccount-subAccountTypeCode">
+        <property name="name" value="newSubAccountTypeCode" />
+        <property name="required" value="false" />
+    </bean>
+    
+    <bean id="SubAccountGlobal-newSubAccountOffCampusCode" parent="SubAccountGlobal-newSubAccountOffCampusCode-parentBean"/>
+    <bean id="SubAccountGlobal-newSubAccountOffCampusCode-parentBean" abstract="true" parent="A21SubAccount-offCampusCode">
+        <property name="name" value="newSubAccountOffCampusCode" />
+    </bean>
+    
+    <bean id="SubAccountGlobal-applyToAllNewSubAccounts" parent="SubAccountGlobal-applyToAllNewSubAccounts-parentBean"/>
+    <bean id="SubAccountGlobal-applyToAllNewSubAccounts-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+        <property name="name" value="applyToAllNewSubAccounts" />
+        <property name="label" value="Apply to All New Sub Accounts" />
+        <property name="shortLabel" value="Apply to New SubAccts" />
     </bean>
     
 </beans>

@@ -35,6 +35,12 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
     protected String finReportOrganizationCode;
     protected String financialReportingCode;
 
+    protected String newSubAccountName;
+    protected String newSubAccountNumber;
+    protected String newSubAccountTypeCode;
+    protected boolean newSubAccountOffCampusCode;
+    protected boolean applyToAllNewSubAccounts;
+
     protected A21SubAccountChange a21SubAccount;
 
     protected ReportingCode reportingCode;
@@ -43,6 +49,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 
     protected List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts;
     protected List<SubAccountGlobalDetail> subAccountGlobalDetails;
+    protected List<SubAccountGlobalNewAccountDetail> subAccountGlobalNewAccountDetails;
     
     protected transient GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService;
 
@@ -460,7 +467,56 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
 	}
 
-	public GlobalObjectWithIndirectCostRecoveryAccountsService getGlobalObjectWithIndirectCostRecoveryAccountsService() {
+	public String getNewSubAccountName() {
+        return newSubAccountName;
+    }
+
+    public void setNewSubAccountName(String newSubAccountName) {
+        this.newSubAccountName = newSubAccountName;
+    }
+
+    public String getNewSubAccountNumber() {
+        return newSubAccountNumber;
+    }
+
+    public void setNewSubAccountNumber(String newSubAccountNumber) {
+        this.newSubAccountNumber = newSubAccountNumber;
+    }
+
+    public String getNewSubAccountTypeCode() {
+        return newSubAccountTypeCode;
+    }
+
+    public void setNewSubAccountTypeCode(String newSubAccountTypeCode) {
+        this.newSubAccountTypeCode = newSubAccountTypeCode;
+    }
+
+    public boolean isNewSubAccountOffCampusCode() {
+        return newSubAccountOffCampusCode;
+    }
+
+    public void setNewSubAccountOffCampusCode(boolean newSubAccountOffCampusCode) {
+        this.newSubAccountOffCampusCode = newSubAccountOffCampusCode;
+    }
+
+    public boolean isApplyToAllNewSubAccounts() {
+        return applyToAllNewSubAccounts;
+    }
+
+    public void setApplyToAllNewSubAccounts(boolean applyToAllNewSubAccounts) {
+        this.applyToAllNewSubAccounts = applyToAllNewSubAccounts;
+    }
+
+    public List<SubAccountGlobalNewAccountDetail> getSubAccountGlobalNewAccountDetails() {
+        return subAccountGlobalNewAccountDetails;
+    }
+
+    public void setSubAccountGlobalNewAccountDetails(
+            List<SubAccountGlobalNewAccountDetail> subAccountGlobalNewAccountDetails) {
+        this.subAccountGlobalNewAccountDetails = subAccountGlobalNewAccountDetails;
+    }
+
+    public GlobalObjectWithIndirectCostRecoveryAccountsService getGlobalObjectWithIndirectCostRecoveryAccountsService() {
 	    if (this.globalObjectWithIndirectCostRecoveryAccountsService == null) {
 	        this.setGlobalObjectWithIndirectCostRecoveryAccountsService(SpringContext.getBean(GlobalObjectWithIndirectCostRecoveryAccountsService.class));
 	    }
