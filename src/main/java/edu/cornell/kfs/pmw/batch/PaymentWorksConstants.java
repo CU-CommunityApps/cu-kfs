@@ -320,12 +320,12 @@ public class PaymentWorksConstants {
     //
     //Conversion routine "convertFipsCountryStringToFipsCountryCode" will need to be written when Foreign PO
     //vendors are implemented to deal with converting this mixed case string to a FIPS country code.
-    public static final String COUNTRY_CODE_CANADA = "CA";
-    public static final String COUNTRY_CODE_AUSTRALIA = "AU";
+    public static final String FIPS_COUNTRY_CODE_CANADA = "CA";
+    public static final String FIPS_COUNTRY_CODE_AUSTRALIA = "AS";
     public enum PaymentWorksPurchaseOrderCountryFipsOption {
         UNITED_STATES("US", "US"),
         CANADA("Canada", "CA"),
-        AUSTRALIA("Australia", "AU"),
+        AUSTRALIA("Australia", "AS"),
         OTHER("Other", "");
 
         public final String pmwCountryOptionAsString;
@@ -358,7 +358,7 @@ public class PaymentWorksConstants {
             this.kfsPoTransmissionMethodCode = kfsPoTransmissionMethodCode;
         }
 
-        public String getPmwPoTransmissionMethosAsText() {
+        public String getPmwPoTransmissionMethodAsText() {
             return pmwPoTransmissionMethosAsText;
         }
 
