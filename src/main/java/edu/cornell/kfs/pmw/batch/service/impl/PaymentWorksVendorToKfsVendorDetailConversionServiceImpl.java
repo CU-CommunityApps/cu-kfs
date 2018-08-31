@@ -209,8 +209,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return (paymentWorksIsoToFipsCountryMap.get(isoCountryCode).get(0)).getFipsCountryCode();
     }
 
-    //Tax and Remit addresses use standard PMW product address fields which are ISO based.
-    //PO address is comprised of custom fields that return FISP values for countries as well as string names and not codes.
     private List<VendorAddress> buildVendorAddresses(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         List<VendorAddress> allVendorAddresses = new ArrayList<VendorAddress>();
         allVendorAddresses.add(buildTaxAddressFromIsoCountryData(pmwVendor, paymentWorksIsoToFipsCountryMap));
