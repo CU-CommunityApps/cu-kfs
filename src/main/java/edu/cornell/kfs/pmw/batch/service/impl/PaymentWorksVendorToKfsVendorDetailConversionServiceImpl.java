@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.location.api.state.State;
+import org.kuali.rice.location.api.state.StateService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.bo.Note;
 
@@ -30,6 +32,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTaxClassification;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
@@ -50,6 +53,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
     protected PaymentWorksBatchUtilityService paymentWorksBatchUtilityService;
+    protected StateService stateService;
             
     @Override
     public KfsVendorDataWrapper createKfsVendorDetailFromPmwVendor(PaymentWorksVendor pmwVendor,
@@ -62,13 +66,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     protected KfsVendorDataWrapper createVendorDetail(PaymentWorksVendor pmwVendor, 
                                                       Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap, 
                                                       Map<String, SupplierDiversity> paymentWorksToKfsDiversityMap) {
-
-        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
-            KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-            kfsVendorDataWrapper.getErrorMessages().add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.PO_VENDOR_PROCESSING_NOT_AUTOMATIC_YET));
-            kfsVendorDataWrapper.setVendorDetail(null);
-            return kfsVendorDataWrapper;
-        }
         
         KfsVendorDataWrapper kfsVendorDataWrapper = populateTaxRuleDependentAttributes(pmwVendor, paymentWorksIsoToFipsCountryMap);
         if (ObjectUtils.isNotNull(kfsVendorDataWrapper.getVendorDetail())) {
@@ -95,57 +92,64 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private KfsVendorDataWrapper populateTaxRuleDependentAttributes(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
 
-        switch (determineTaxRuleToUseForDataPopulation(pmwVendor, convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap))) {
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_US_SSN: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleIndividualUsSsn(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
+        //Foreign PO Vendors could have US tax but a Foreign PO address could have been entered, thus if-statement needed.
+        //Foreign Vendors would have foreign tax (either for vendor type of DV or PO) with all of those cases being dealt with in case-statement.
+        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)
+            && isPurchaseOrderCountryNotUnitedStatesFipsCountryCodeOption(pmwVendor)) {
+            kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+        } else {
+            switch (determineTaxRuleToUseForDataPopulation(pmwVendor, convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap))) {
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_US_SSN:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleIndividualUsSsn(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_US_EIN:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleIndividualUsEin(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.NOT_INDIVIDUAL_US:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleNotIndividualUs(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_SSN_OR_ITIN_TAX_CLASS_INDIVIDUAL:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_SSN_OR_ITIN_TAX_CLASS_OTHER:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_FOREIGN_TAX_CLASS_INDIVIDUAL:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_FOREIGN_TAX_CLASS_OTHER:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.NOT_INDIVIDUAL_NOT_US_EIN:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.NOT_INDIVIDUAL_NOT_US_FOREIGN:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
+                }
+                break;
+
+                case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.COULD_NOT_DETERMINE_TAX_RULE_TO_USE:
+                default:
+                {    kfsVendorDataWrapper = populateDataForTaxRuleCouldNotDetermineTaxRuleToUse(kfsVendorDataWrapper);
+                }
+                break;
             }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_US_EIN: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleIndividualUsEin(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.NOT_INDIVIDUAL_US: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleNotIndividualUs(kfsVendorDataWrapper, pmwVendor, paymentWorksIsoToFipsCountryMap);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_SSN_OR_ITIN_TAX_CLASS_INDIVIDUAL: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_SSN_OR_ITIN_TAX_CLASS_OTHER: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_FOREIGN_TAX_CLASS_INDIVIDUAL: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.INDIVIDUAL_NOT_US_FOREIGN_TAX_CLASS_OTHER: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.NOT_INDIVIDUAL_NOT_US_EIN: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.NOT_INDIVIDUAL_NOT_US_FOREIGN: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleForeignVendorProcessingNotAutomaticYet(kfsVendorDataWrapper);
-            }
-            break;
-            
-            case PaymentWorksConstants.PaymentWorksNewVendorTaxBusinessRule.COULD_NOT_DETERMINE_TAX_RULE_TO_USE:
-            default: 
-            {    kfsVendorDataWrapper = populateDataForTaxRuleCouldNotDetermineTaxRuleToUse(kfsVendorDataWrapper);
-            }
-            break;
         }
         return kfsVendorDataWrapper;
     }
@@ -205,10 +209,15 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return (paymentWorksIsoToFipsCountryMap.get(isoCountryCode).get(0)).getFipsCountryCode();
     }
 
+    //Tax and Remit addresses use standard PMW product address fields which are ISO based.
+    //PO address is comprised of custom fields that return FISP values for countries as well as string names and not codes.
     private List<VendorAddress> buildVendorAddresses(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         List<VendorAddress> allVendorAddresses = new ArrayList<VendorAddress>();
         allVendorAddresses.add(buildTaxAddress(pmwVendor, paymentWorksIsoToFipsCountryMap));
         allVendorAddresses.add(buildRemitAddress(pmwVendor, paymentWorksIsoToFipsCountryMap));
+        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
+            allVendorAddresses.add(buildPurchaseOrderAddress(pmwVendor));
+        }
         return allVendorAddresses;
     }
 
@@ -216,8 +225,8 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         VendorAddress taxAddress = buildBaseAddress(CUVendorConstants.CUAddressTypes.TAX, 
                                                     pmwVendor.getCorpAddressStreet1(),pmwVendor.getCorpAddressStreet2(),
                                                     pmwVendor.getCorpAddressCity(), pmwVendor.getCorpAddressZipCode(), 
-                                                    pmwVendor.getCorpAddressCountry(), paymentWorksIsoToFipsCountryMap);
-        taxAddress = assignStateOrProvinceBasedOnCountryCode(taxAddress, pmwVendor.getCorpAddressState());
+                                                    convertIsoCountryCodeToFipsCountryCode(pmwVendor.getCorpAddressCountry(), paymentWorksIsoToFipsCountryMap));
+        taxAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(taxAddress, pmwVendor.getCorpAddressState());
         return taxAddress;
     }
 
@@ -225,16 +234,66 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         VendorAddress remitAddress = buildBaseAddress(VendorConstants.AddressTypes.REMIT,
                                                       pmwVendor.getRemittanceAddressStreet1(), pmwVendor.getRemittanceAddressStreet2(), 
                                                       pmwVendor.getRemittanceAddressCity(), pmwVendor.getRemittanceAddressZipCode(), 
-                                                      pmwVendor.getRemittanceAddressCountry(), paymentWorksIsoToFipsCountryMap);
+                                                      convertIsoCountryCodeToFipsCountryCode(pmwVendor.getRemittanceAddressCountry(), paymentWorksIsoToFipsCountryMap));
         remitAddress.setVendorDefaultAddressIndicator(true);
-        remitAddress = assignStateOrProvinceBasedOnCountryCode(remitAddress, pmwVendor.getRemittanceAddressState());
+        remitAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(remitAddress, pmwVendor.getRemittanceAddressState());
         return (remitAddress);
     }
 
-    private VendorAddress buildBaseAddress(String addressType, String line1, String line2, String city, String zip, String isoCountryCode, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+    private String convertFipsPoCountryOptionToFipsCountryCode(String poCountryOption) {
+        if (StringUtils.isNotBlank(poCountryOption)
+            && StringUtils.equalsIgnoreCase(poCountryOption, PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString())) {
+            return PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getFipsCountryCode();
+        }
+        else if (StringUtils.isNotBlank(poCountryOption)
+                 && StringUtils.equalsIgnoreCase(poCountryOption, PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getPmwCountryOptionAsString())) {
+            return PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.CANADA.getFipsCountryCode();
+        }
+        else if (StringUtils.isNotBlank(poCountryOption)
+                 && StringUtils.equalsIgnoreCase(poCountryOption, PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.AUSTRALIA.getPmwCountryOptionAsString())) {
+            return PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.AUSTRALIA.getFipsCountryCode();
+        }
+        else if (StringUtils.isNotBlank(poCountryOption)
+                 && StringUtils.equalsIgnoreCase(poCountryOption, PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.OTHER.getPmwCountryOptionAsString())) {
+            return PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.OTHER.getFipsCountryCode();
+        }
+        return KFSConstants.EMPTY_STRING;
+    }
+
+    private VendorAddress buildPurchaseOrderAddress(PaymentWorksVendor pmwVendor) {
+        VendorAddress poAddress = buildBaseAddress(VendorConstants.AddressTypes.PURCHASE_ORDER,
+                                                   pmwVendor.getPoAddress1(), pmwVendor.getPoAddress2(),
+                                                   pmwVendor.getPoCity(), pmwVendor.getPoPostalCode(),
+                                                   convertFipsPoCountryOptionToFipsCountryCode(pmwVendor.getPoCountry()));
+        poAddress = assignPoStateOrProvinceBasedOnCountryCode(poAddress, pmwVendor);  //fips country from fips string, state is string
+        poAddress = assignMethodOfPoTransmission(poAddress, pmwVendor);
+        poAddress.setVendorAttentionName(pmwVendor.getPoAttention());
+        poAddress.setVendorDefaultAddressIndicator(true);
+        return (poAddress);
+    }
+
+    private VendorAddress assignMethodOfPoTransmission(VendorAddress poAddress, PaymentWorksVendor pmwVendor){
+        CuVendorAddressExtension poAddressExtension = new CuVendorAddressExtension();
+
+        if (StringUtils.equalsIgnoreCase(pmwVendor.getPoTransmissionMethod(), PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.EMAIL.getPmwPoTransmissionMethosAsText())) {
+            poAddressExtension.setPurchaseOrderTransmissionMethodCode(PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.EMAIL.getKfsPoTransmissionMethodCode());
+            poAddress.setVendorAddressEmailAddress(pmwVendor.getPoEmailAddress());
+        }
+        else if (StringUtils.equalsIgnoreCase(pmwVendor.getPoTransmissionMethod(), PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.FAX.getPmwPoTransmissionMethosAsText())) {
+            poAddressExtension.setPurchaseOrderTransmissionMethodCode(PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.FAX.getKfsPoTransmissionMethodCode());
+            poAddress.setVendorFaxNumber(pmwVendor.getPoFaxNumber());
+        }
+        else if (StringUtils.equalsIgnoreCase(pmwVendor.getPoTransmissionMethod(), PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.US_MAIL.getPmwPoTransmissionMethosAsText())) {
+            poAddressExtension.setPurchaseOrderTransmissionMethodCode(PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.US_MAIL.getKfsPoTransmissionMethodCode());
+        }
+        poAddress.setExtension(poAddressExtension);
+        return poAddress;
+    }
+
+    private VendorAddress buildBaseAddress(String addressType, String line1, String line2, String city, String zip, String fipsCountryCode) {
         VendorAddress baseAddress = new VendorAddress();
         baseAddress.setVendorAddressTypeCode(addressType);
-        baseAddress.setVendorCountryCode(convertIsoCountryCodeToFipsCountryCode(isoCountryCode, paymentWorksIsoToFipsCountryMap));
+        baseAddress.setVendorCountryCode(fipsCountryCode);
         baseAddress.setVendorLine1Address(line1);
         baseAddress.setVendorLine2Address(line2);
         baseAddress.setVendorCityName(city);
@@ -242,8 +301,24 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         baseAddress.setActive(true);
         return baseAddress;
     }
+
+    private VendorAddress assignPoStateOrProvinceBasedOnCountryCode(VendorAddress baseAddress, PaymentWorksVendor pmwVendor) {
+        if (isUnitedStatesFipsCountryCode(baseAddress.getVendorCountryCode())){
+            baseAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(baseAddress, convertFipsUsStateNameToFipsUsStateCode(pmwVendor.getPoUsState()));
+        }
+        else if (isCanadaFipsCountryCode(baseAddress.getVendorCountryCode())){
+            baseAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(baseAddress, pmwVendor.getPoCanadianProvince());
+        }
+        else if (isAustraliaFipsCountryCode(baseAddress.getVendorCountryCode())){
+            baseAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(baseAddress, pmwVendor.getPoAustralianProvince());
+        }
+        else {
+            baseAddress = assignStateCodeOrProvinceBasedOnFipsCountryCode(baseAddress, pmwVendor.getPoStateProvince());
+        }
+        return baseAddress;
+    }
     
-    private VendorAddress assignStateOrProvinceBasedOnCountryCode(VendorAddress baseAddress, String stateProvince) {
+    private VendorAddress assignStateCodeOrProvinceBasedOnFipsCountryCode(VendorAddress baseAddress, String stateProvince) {
         if (isUnitedStatesFipsCountryCode(baseAddress.getVendorCountryCode())){
             baseAddress.setVendorStateCode(stateProvince);
         }
@@ -253,22 +328,82 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return baseAddress;
     }
     
+    private String convertFipsUsStateNameToFipsUsStateCode(String fipsStateName) {
+        List<org.kuali.rice.location.api.state.State> allStatesForUsFipsCountryCode =  new ArrayList<org.kuali.rice.location.api.state.State>();
+        allStatesForUsFipsCountryCode = getStateService().findAllStatesInCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
+        List<org.kuali.rice.location.api.state.State> matchingStates = allStatesForUsFipsCountryCode.stream()
+                                                               .filter(stateItem -> stateItem.getName().equalsIgnoreCase(fipsStateName))
+                                                               .filter(stateItem -> stateItem.isActive())
+                                                               .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        LOG.info("convertFipsUsStateNameToFipsUsStateCode: matchingStates = " + matchingStates.toString());
+        if (matchingStates.size() == 1) {
+            LOG.info("convertFipsUsStateNameToFipsUsStateCode: stateCode being returned = " + matchingStates.get(0).getCode());
+            return matchingStates.get(0).getCode();
+        }
+        else {
+            LOG.info("convertFipsUsStateNameToFipsUsStateCode: fipsStateName being returned, could not find stateCode in Rice table = " + fipsStateName);
+            return fipsStateName;
+        }
+    }
+
     private List<VendorContact> buildVendorContacts(PaymentWorksVendor pmwVendor) {
         List<VendorContact> vendorContacts = new ArrayList<VendorContact>();
+
+        vendorContacts.add(buildVendorInformationFormContact(pmwVendor));
         
-        vendorContacts.add(buildContact(PaymentWorksConstants.KFSVendorContactTypes.VENDOR_INFORMATION_FORM, 
-                                        PaymentWorksConstants.KFSVendorContactPhoneTypes.VENDOR_INFORMATION,
-                                        pmwVendor.getVendorInformationContactName(), pmwVendor.getVendorInformationEmail(), 
-                                        pmwVendor.getVendorInformationPhoneNumber(), pmwVendor.getVendorInformationPhoneExtension()));
+        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
+            vendorContacts.add(buildInsuranceContact(pmwVendor));
+            vendorContacts.add(buildSalesContact(pmwVendor));
+            vendorContacts.add(buildAccountsReceivableContact(pmwVendor));
+
+            if (pmwVendor.isInvoicing()) {
+                vendorContacts.add(buildEinvoicingContact(pmwVendor));
+            }
+        }
         return vendorContacts;
     }
     
+    private VendorContact buildVendorInformationFormContact(PaymentWorksVendor pmwVendor) {
+        return buildContact(PaymentWorksConstants.KFSVendorContactTypes.VENDOR_INFORMATION_FORM,
+                            PaymentWorksConstants.KFSVendorContactPhoneTypes.VENDOR_INFORMATION,
+                            pmwVendor.getVendorInformationContactName(), pmwVendor.getVendorInformationEmail(),
+                            pmwVendor.getVendorInformationPhoneNumber(), pmwVendor.getVendorInformationPhoneExtension());
+    }
+
+    private VendorContact buildInsuranceContact(PaymentWorksVendor pmwVendor) {
+        return buildContact(PaymentWorksConstants.KFSVendorContactTypes.INSURANCE,
+                            PaymentWorksConstants.KFSVendorContactPhoneTypes.INSURANCE,
+                            pmwVendor.getInsuranceContactName(), pmwVendor.getInsuranceContactEmail(),
+                            pmwVendor.getInsuranceContactPhoneNumber(), pmwVendor.getInsuranceContactPhoneExtension());
+    }
+
+    private VendorContact buildSalesContact(PaymentWorksVendor pmwVendor) {
+        return buildContact(PaymentWorksConstants.KFSVendorContactTypes.SALES,
+                            PaymentWorksConstants.KFSVendorContactPhoneTypes.SALES,
+                            pmwVendor.getSalesContactName(), pmwVendor.getSalesContactEmail(),
+                            pmwVendor.getSalesContactPhoneNumber(), pmwVendor.getSalesContactPhoneExtension());
+    }
+
+    private VendorContact buildAccountsReceivableContact(PaymentWorksVendor pmwVendor) {
+        return buildContact(PaymentWorksConstants.KFSVendorContactTypes.ACCOUNTS_RECEIVABLE,
+                            PaymentWorksConstants.KFSVendorContactPhoneTypes.ACCOUNTS_RECEIVABLE_PHONE,
+                            pmwVendor.getAccountsReceivableContactName(), pmwVendor.getAccountsReceivableContactEmail(),
+                            pmwVendor.getAccountsReceivableContactPhone(), pmwVendor.getAccountsReceivableContactPhoneExtension());
+    }
+
+    private VendorContact buildEinvoicingContact(PaymentWorksVendor pmwVendor) {
+        return buildContact(PaymentWorksConstants.KFSVendorContactTypes.E_INVOICING,
+                            PaymentWorksConstants.KFSVendorContactPhoneTypes.E_INVOICING,
+                            pmwVendor.geteInvoiceContactName(), pmwVendor.geteInvoiceEmail(),
+                            pmwVendor.geteInvoiceContactPhoneNumber(), pmwVendor.geteInvoicePhoneExtension());
+    }
+
     private VendorContact buildContact(String contactType, String contactPhoneType, String contactName, String contactEmailAddress, String contactPhoneNumber, String contactPhoneExtension) {
         List<VendorContactPhoneNumber> vendorContactPhoneNumbers = new ArrayList<VendorContactPhoneNumber>();
         vendorContactPhoneNumbers.add(buildContactPhoneNumber(contactPhoneType, contactPhoneNumber, contactPhoneExtension));
         VendorContact contact = new VendorContact();
         contact.setVendorContactPhoneNumbers(vendorContactPhoneNumbers);
-        contact.setVendorContactTypeCode(contactPhoneType);
+        contact.setVendorContactTypeCode(contactType);
         contact.setVendorContactName(contactName);
         contact.setVendorContactEmailAddress(contactEmailAddress);
         contact.setActive(true);
@@ -390,6 +525,16 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                !(pmwVendor.getRequestingCompanyTaxClassificationCode().intValue() == PaymentWorksConstants.INDIVIDUAL_SOLE_PROPRIETOR_TAX_CLASSIFICATION_INDICATOR)) ? true : false;
     }
     
+    private boolean isCanadaFipsCountryCode (String countryCode) {
+        return (StringUtils.isNotBlank(countryCode) &&
+                StringUtils.equalsIgnoreCase(countryCode, PaymentWorksConstants.COUNTRY_CODE_CANADA));
+    }
+
+    private boolean isAustraliaFipsCountryCode (String countryCode) {
+        return (StringUtils.isNotBlank(countryCode) &&
+                StringUtils.equalsIgnoreCase(countryCode, PaymentWorksConstants.COUNTRY_CODE_AUSTRALIA));
+    }
+
     private boolean isUnitedStatesFipsCountryCode (String countryCode) {
         return (StringUtils.isNotBlank(countryCode) &&
                 StringUtils.equalsIgnoreCase(countryCode, KFSConstants.COUNTRY_CODE_UNITED_STATES));
@@ -400,6 +545,11 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
                 !StringUtils.equalsIgnoreCase(countryCode, KFSConstants.COUNTRY_CODE_UNITED_STATES));
     }
     
+    private boolean isPurchaseOrderCountryNotUnitedStatesFipsCountryCodeOption(PaymentWorksVendor pmwVendor) {
+        return (StringUtils.isNotBlank(pmwVendor.getPoCountry())
+                && !StringUtils.equalsIgnoreCase(pmwVendor.getPoCountry(), PaymentWorksConstants.PaymentWorksPurchaseOrderCountryFipsOption.UNITED_STATES.getPmwCountryOptionAsString()));
+    }
+
     private boolean isTinTypeSsn(String tinTypeCode) {
         return (StringUtils.isNotBlank(tinTypeCode) &&
                 StringUtils.equalsIgnoreCase(tinTypeCode, PaymentWorksConstants.PaymentWorksTinType.SSN.getPmwCodeAsString()));
@@ -497,6 +647,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         vendorDetailExtension.setDefaultB2BPaymentMethodCode(DisbursementVoucherConstants.PAYMENT_METHOD_CHECK);
+        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
+            vendorDetailExtension.setEinvoiceVendorIndicator(pmwVendor.isInvoicing());
+        }
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(getDateTimeService().getCurrentTimestamp());
         return vendorDetailExtension;
@@ -605,6 +758,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         kfsVendorDataWrapper = createInitiatorNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createVendorTypeBusinessPurposeNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createConflictOfInterestNote(pmwVendor, kfsVendorDataWrapper);
+        kfsVendorDataWrapper = createInsuranceCertificateNote(pmwVendor, kfsVendorDataWrapper);
         return kfsVendorDataWrapper;
     }
     
@@ -660,6 +814,14 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return kfsVendorDataWrapper;
     }
 
+    private KfsVendorDataWrapper createInsuranceCertificateNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
+        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor) && StringUtils.isNotBlank(pmwVendor.getInsuranceCertificate())) {
+            StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_INSURANCE_CERTIFICATE_URL_EXISTS_MESSAGE));
+            kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.INSURANCE_CERTIFICATE.getNoteDescriptionString());
+        }
+        return kfsVendorDataWrapper;
+    }
+
     public DateTimeService getDateTimeService() {
         return dateTimeService;
     }
@@ -682,5 +844,13 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public StateService getStateService() {
+        return stateService;
+    }
+
+    public void setStateService(StateService stateService) {
+        this.stateService = stateService;
     }
 }
