@@ -350,16 +350,16 @@ public class PaymentWorksConstants {
         FAX("FAX", CUPurapConstants.POTransmissionMethods.FAX),
         US_MAIL("US Mail", CUPurapConstants.POTransmissionMethods.MANUAL);
 
-        public final String pmwPoTransmissionMethosAsText;
+        public final String pmwPoTransmissionMethodAsText;
         public final String kfsPoTransmissionMethodCode;
 
-        private PaymentWorksMethodOfPoTransmission(String pmwPoTransmissionMethosAsText, String kfsPoTransmissionMethodCode) {
-            this.pmwPoTransmissionMethosAsText = pmwPoTransmissionMethosAsText;
+        private PaymentWorksMethodOfPoTransmission(String pmwPoTransmissionMethodAsText, String kfsPoTransmissionMethodCode) {
+            this.pmwPoTransmissionMethodAsText = pmwPoTransmissionMethodAsText;
             this.kfsPoTransmissionMethodCode = kfsPoTransmissionMethodCode;
         }
 
         public String getPmwPoTransmissionMethodAsText() {
-            return pmwPoTransmissionMethosAsText;
+            return pmwPoTransmissionMethodAsText;
         }
 
         public String getKfsPoTransmissionMethodCode() {
