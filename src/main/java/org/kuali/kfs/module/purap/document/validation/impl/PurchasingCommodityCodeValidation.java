@@ -135,7 +135,8 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         if (shouldCheckCommodityCodeIsActive(item)) {
 	        if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
 	            //This is the case where the commodity code on the item is not active.
-	            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
+	            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE,
+	                    PurapKeyConstants.PUR_COMMODITY_CODE_INACTIVE, " in " + item.getItemIdentifierString());
 	            return false;
 	        }
         }
