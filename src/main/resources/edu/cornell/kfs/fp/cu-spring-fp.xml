@@ -495,7 +495,7 @@
                                 <list>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="2" p:propertyName="transactionAmount"
-                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter"/>
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="3" p:propertyName="creditDebitIndicator"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
@@ -618,10 +618,10 @@
                                           p:lineSegmentIndex="2" p:propertyName="invoiceNumber"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="4" p:propertyName="netAmount"
-                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter"/>
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification"
                                           p:lineSegmentIndex="5" p:propertyName="invoiceAmount"
-                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter"/>
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
                                 </list>
                             </property>
                         </bean>

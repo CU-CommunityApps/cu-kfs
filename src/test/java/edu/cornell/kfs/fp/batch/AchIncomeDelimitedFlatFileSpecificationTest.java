@@ -22,7 +22,7 @@ import org.kuali.kfs.sys.batch.DelimitedFlatFilePropertySpecification;
 import org.kuali.kfs.sys.batch.FlatFilePrefixObjectSpecification;
 import org.kuali.kfs.sys.batch.FlatFilePropertySpecification;
 import org.kuali.kfs.sys.businessobject.format.BatchDateFormatter;
-import org.kuali.kfs.sys.businessobject.format.KualiDecimalFormatter;
+import org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.web.format.Formatter;
 import org.kuali.rice.core.web.format.IntegerFormatter;
@@ -118,7 +118,7 @@ public class AchIncomeDelimitedFlatFileSpecificationTest {
     public void testParseLineIntoObjectAchIncomeFileTransaction() throws Exception {
         AbstractFlatFileObjectSpecification flatFileObjectSpecification = new FlatFilePrefixObjectSpecification();
         List<FlatFilePropertySpecification> parseProperties = new ArrayList<>();
-        setFlatFileProperty(parseProperties, 2, "transactionAmount", KualiDecimalFormatter.class);
+        setFlatFileProperty(parseProperties, 2, "transactionAmount", ExplicitKualiDecimalFormatter.class);
         setFlatFileProperty(parseProperties, 3, "creditDebitIndicator");
         setFlatFileProperty(parseProperties, 4, "paymentMethodCode");
         setFlatFileProperty(parseProperties, 16, "effectiveDate");
@@ -139,7 +139,7 @@ public class AchIncomeDelimitedFlatFileSpecificationTest {
     public void testParseLineIntoObjectAchIncomeFileTransactionWithDate() throws Exception {
         AbstractFlatFileObjectSpecification flatFileObjectSpecification = new FlatFilePrefixObjectSpecification();
         List<FlatFilePropertySpecification> parseProperties = new ArrayList<>();
-        setFlatFileProperty(parseProperties, 2, "transactionAmount", KualiDecimalFormatter.class);
+        setFlatFileProperty(parseProperties, 2, "transactionAmount", ExplicitKualiDecimalFormatter.class);
         setFlatFileProperty(parseProperties, 3, "creditDebitIndicator");
         setFlatFileProperty(parseProperties, 4, "paymentMethodCode");
         setFlatFileProperty(parseProperties, 16, "effectiveDate", BatchDateFormatter.class, DATE_FORMAT);
@@ -276,8 +276,8 @@ public class AchIncomeDelimitedFlatFileSpecificationTest {
         List<FlatFilePropertySpecification> parseProperties = new ArrayList<>();
         setFlatFileProperty(parseProperties, 1, "type");
         setFlatFileProperty(parseProperties, 2, "invoiceNumber");
-        setFlatFileProperty(parseProperties, 4, "netAmount", KualiDecimalFormatter.class);
-        setFlatFileProperty(parseProperties, 5, "invoiceAmount", KualiDecimalFormatter.class);
+        setFlatFileProperty(parseProperties, 4, "netAmount", ExplicitKualiDecimalFormatter.class);
+        setFlatFileProperty(parseProperties, 5, "invoiceAmount", ExplicitKualiDecimalFormatter.class);
         flatFileObjectSpecification.setParseProperties(parseProperties);
 
         AchIncomeFileTransactionOpenItemReference achIncomeFileTransactionOpenItemReference = new AchIncomeFileTransactionOpenItemReference();
