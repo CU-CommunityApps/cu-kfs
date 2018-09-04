@@ -239,6 +239,7 @@ public class PaymentWorksConstants {
         INITIATOR("Initiator"),
         BUSINESS_PURPOSE("Business Purpose"),
         CONFLICT_OF_INTEREST("Conflict of Interest"),
+        INSURANCE_CERTIFICATE("Insurance Certificate"),
         PAAT_PMW_VENDOR_ID("PAAT Created From PMW Vendor ID");
         
         public final String noteDescriptionString;
@@ -307,6 +308,62 @@ public class PaymentWorksConstants {
         
         public String getPmwVendorPropertyName() {
             return pmwVendorPropertyName;
+        }
+    }
+
+    //Enum just deals with performing conversion from mixed case KFS-FIPS country name to KFS-FIPS
+    //country code for items in the drop down associated with vendor answers to PMW form question:
+    //"Is PO Address Country the United States, Canada, Australia, or Other?"
+    //
+    //Custom field "PO Country" is a mixed case KFS-FIPS country name tied to the selection of "Other" in the
+    //previsouly described drop down and returns the user selected value for all of the foreign countries.
+    //
+    //Conversion routine "convertFipsCountryStringToFipsCountryCode" will need to be written when Foreign PO
+    //vendors are implemented to deal with converting this mixed case string to a FIPS country code.
+    public static final String FIPS_COUNTRY_CODE_CANADA = "CA";
+    public static final String FIPS_COUNTRY_CODE_AUSTRALIA = "AS";
+    public enum PaymentWorksPurchaseOrderCountryFipsOption {
+        UNITED_STATES("US", "US"),
+        CANADA("Canada", "CA"),
+        AUSTRALIA("Australia", "AS"),
+        OTHER("Other", "");
+
+        public final String pmwCountryOptionAsString;
+        public final String fipsCountryCode;
+
+        private PaymentWorksPurchaseOrderCountryFipsOption(String pmwCountryOptionAsString, String fipsCountryCode) {
+            this.pmwCountryOptionAsString = pmwCountryOptionAsString;
+            this.fipsCountryCode = fipsCountryCode;
+        }
+
+        public String getPmwCountryOptionAsString() {
+            return pmwCountryOptionAsString;
+        }
+
+        public String getFipsCountryCode() {
+            return fipsCountryCode;
+        }
+    }
+
+    public enum PaymentWorksMethodOfPoTransmission {
+        EMAIL("Email", CUPurapConstants.POTransmissionMethods.EMAIL),
+        FAX("FAX", CUPurapConstants.POTransmissionMethods.FAX),
+        US_MAIL("US Mail", CUPurapConstants.POTransmissionMethods.MANUAL);
+
+        public final String pmwPoTransmissionMethodAsText;
+        public final String kfsPoTransmissionMethodCode;
+
+        private PaymentWorksMethodOfPoTransmission(String pmwPoTransmissionMethodAsText, String kfsPoTransmissionMethodCode) {
+            this.pmwPoTransmissionMethodAsText = pmwPoTransmissionMethodAsText;
+            this.kfsPoTransmissionMethodCode = kfsPoTransmissionMethodCode;
+        }
+
+        public String getPmwPoTransmissionMethodAsText() {
+            return pmwPoTransmissionMethodAsText;
+        }
+
+        public String getKfsPoTransmissionMethodCode() {
+            return kfsPoTransmissionMethodCode;
         }
     }
 
