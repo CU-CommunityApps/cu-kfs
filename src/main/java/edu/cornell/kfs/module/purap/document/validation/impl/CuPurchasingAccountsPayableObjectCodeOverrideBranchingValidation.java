@@ -28,8 +28,8 @@ public class CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation ex
             PurApItem item = purapAccountingLine.getPurapItem();
             
             if (StringUtils.equals(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW,
-                    preq.getApplicationDocumentStatus())) {               
-                isTaxApproval = true;
+                    preq.getApplicationDocumentStatus())) {
+            		isTaxApproval = true;
             }
             else if(StringUtils.equals(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, preq.getApplicationDocumentStatus())) {
             		isTreasuryApproval = true;
