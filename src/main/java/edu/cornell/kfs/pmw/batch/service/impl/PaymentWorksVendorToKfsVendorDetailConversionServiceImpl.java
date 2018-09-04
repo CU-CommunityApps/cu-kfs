@@ -269,7 +269,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         return (poAddress);
     }
 
-    private VendorAddress assignMethodOfPoTransmission(VendorAddress poAddress, PaymentWorksVendor pmwVendor){
+    private VendorAddress assignMethodOfPoTransmission(VendorAddress poAddress, PaymentWorksVendor pmwVendor) {
         CuVendorAddressExtension poAddressExtension = new CuVendorAddressExtension();
 
         if (StringUtils.equalsIgnoreCase(pmwVendor.getPoTransmissionMethod(), PaymentWorksConstants.PaymentWorksMethodOfPoTransmission.EMAIL.getPmwPoTransmissionMethodAsText())) {
@@ -811,8 +811,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     private KfsVendorDataWrapper createInsuranceCertificateNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor) && StringUtils.isNotBlank(pmwVendor.getInsuranceCertificate())) {
-            StringBuilder sbText = new StringBuilder(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_INSURANCE_CERTIFICATE_URL_EXISTS_MESSAGE));
-            kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.INSURANCE_CERTIFICATE.getNoteDescriptionString());
+            kfsVendorDataWrapper = getPaymentWorksBatchUtilityService().createNoteRecordingAnyErrors(kfsVendorDataWrapper,
+                    getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_INSURANCE_CERTIFICATE_URL_EXISTS_MESSAGE),
+                    PaymentWorksConstants.ErrorDescriptorForBadKfsNote.INSURANCE_CERTIFICATE.getNoteDescriptionString());
         }
         return kfsVendorDataWrapper;
     }
