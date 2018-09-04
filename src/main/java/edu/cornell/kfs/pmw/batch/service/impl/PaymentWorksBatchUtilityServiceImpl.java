@@ -185,7 +185,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
 
     @Override
     public void registerKfsPvenApprovalForKfsEnteredVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail) {
-        if (isDomesticVendor(vendorDetail) && isDisbursementVoucherVendor(vendorDetail)) {
+        if (isDomesticVendor(vendorDetail) && (isDisbursementVoucherVendor(vendorDetail) || isPurchaseOrderVendor(vendorDetail))) {
             PaymentWorksVendor pmwVendor = populateKfsEnteredPaymentWorksVendor(kfsVendorDocumentNumber, vendorDetail, PaymentWorksConstants.KFSVendorProcessingStatus.VENDOR_APPROVED);
             LOG.info("registerKfsPvenApprovalForKfsEnteredVendor: Approving KFS originating vendor '"
                      + vendorDetail.getVendorHeaderGeneratedIdentifier() + "-" + vendorDetail.getVendorDetailAssignedIdentifier() + "' with kfsVendorDocumentNumber '" + kfsVendorDocumentNumber + "'");
@@ -232,6 +232,10 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         return (StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorTypeCode(), VendorConstants.VendorTypes.DISBURSEMENT_VOUCHER));
     }
     
+    private boolean isPurchaseOrderVendor(VendorDetail vendorDetail) {
+        return (StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorTypeCode(), VendorConstants.VendorTypes.PURCHASE_ORDER));
+    }
+
     private boolean isDomesticVendor(VendorDetail vendorDetail) {
         LOG.info("isDomesticVendor: Country Code used in comparison was " + vendorDetail.getVendorHeader().getVendorCorpCitizenCode());
         //Returning true for null here is valid. 
