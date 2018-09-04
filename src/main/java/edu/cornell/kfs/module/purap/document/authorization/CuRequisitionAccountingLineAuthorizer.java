@@ -19,10 +19,11 @@ public class CuRequisitionAccountingLineAuthorizer extends RequisitionAccounting
 
     @Override
     public boolean renderNewLine(AccountingDocument accountingDocument, String accountingGroupProperty) {
-        WorkflowDocument workflowDocument = ((PurchasingAccountsPayableDocument) accountingDocument).getFinancialSystemDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = accountingDocument.getFinancialSystemDocumentHeader().getWorkflowDocument();
 
         Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
-        if (CollectionUtils.isNotEmpty(currentNodes) && (currentNodes.contains(RequisitionAccountingLineAuthorizer.INITIATOR_NODE)
+        if (CollectionUtils.isNotEmpty(currentNodes) 
+        			&& (currentNodes.contains(RequisitionAccountingLineAuthorizer.INITIATOR_NODE)
                 || currentNodes.contains(RequisitionAccountingLineAuthorizer.CONTENT_REVIEW_NODE))
                 || (currentNodes.contains(RequisitionStatuses.NODE_ACCOUNT)                 
                 && SpringContext.getBean(CuPurapAccountingService.class).isFiscalOfficersForAllAcctLines((RequisitionDocument) accountingDocument))) {

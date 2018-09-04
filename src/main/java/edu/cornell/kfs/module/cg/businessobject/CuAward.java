@@ -93,7 +93,8 @@ public class CuAward extends Award {
                     // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal
                     awardDirector.setNewCollectionRecord(true);
                     awardDirector.setProposalNumber(pDirector.getProposalNumber());
-                    awardDirector.setAwardPrimaryProjectDirectorIndicator(pDirector.isProposalPrimaryProjectDirectorIndicator());
+                    awardDirector.setAwardPrimaryProjectDirectorIndicator(pDirector.
+                    		isProposalPrimaryProjectDirectorIndicator());
                     awardDirector.setAwardProjectDirectorProjectTitle(pDirector.getProposalProjectDirectorProjectTitle());
                     awardDirector.setPrincipalId(pDirector.getPrincipalId());
                     awardDirector.setActive(pDirector.isActive());

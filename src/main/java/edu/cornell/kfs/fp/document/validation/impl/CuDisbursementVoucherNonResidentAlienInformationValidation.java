@@ -28,6 +28,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
     
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
 
+	protected BusinessObjectService businessObjectService;
+	
     private String validationType;
 
 	@Override
@@ -127,7 +129,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 {
                     boxCode = "Country Code";
                 }
-                errors.putErrorWithoutFullErrorPath("DVNRATaxErrors", KFSKeyConstants.ERROR_DV_NON_REPORTABLE_ONLY, boxCode);
+                errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
+                        KFSKeyConstants.ERROR_DV_NON_REPORTABLE_ONLY, boxCode);
                 return false;
             }
         }
@@ -153,7 +156,8 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 taxPercent.setIncomeTaxTypeCode(FEDERAL_TAX_TYPE_CODE);
                 taxPercent.setIncomeTaxPercent(nonResidentAlienTax.getFederalIncomeTaxPercent());
 
-                NonResidentAlienTaxPercent retrievedPercent = (NonResidentAlienTaxPercent) SpringContext.getBean(BusinessObjectService.class).retrieve(taxPercent);
+                NonResidentAlienTaxPercent retrievedPercent = (NonResidentAlienTaxPercent) businessObjectService
+                        .retrieve(taxPercent);
                 if (retrievedPercent == null) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
                             KFSKeyConstants.ERROR_DV_INVALID_FED_TAX_PERCENT,
@@ -179,7 +183,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
                 taxPercent.setIncomeTaxTypeCode(STATE_TAX_TYPE_CODE);
                 taxPercent.setIncomeTaxPercent(nonResidentAlienTax.getStateIncomeTaxPercent());
 
-                PersistableBusinessObject retrievedPercent = SpringContext.getBean(BusinessObjectService.class).retrieve(taxPercent);
+                PersistableBusinessObject retrievedPercent = businessObjectService.retrieve(taxPercent);
                 if (retrievedPercent == null) {
                     errors.putErrorWithoutFullErrorPath("DVNRATaxErrors",
                             KFSKeyConstants.ERROR_DV_INVALID_STATE_TAX_PERCENT,
@@ -377,6 +381,10 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
 
         return true;
+    }
+	
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
     
     public void setValidationType(String validationType) {

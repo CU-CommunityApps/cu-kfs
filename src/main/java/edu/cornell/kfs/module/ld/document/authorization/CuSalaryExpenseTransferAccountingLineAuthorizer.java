@@ -33,7 +33,7 @@ public class CuSalaryExpenseTransferAccountingLineAuthorizer extends
     SalaryExpenseTransferAccountingLineAuthorizer {
   @Override
   public boolean determineEditPermissionOnField(AccountingDocument accountingDocument, AccountingLine accountingLine,
-                                                String accountingLineCollectionProperty, String fieldName, boolean editablePage) {
+          String accountingLineCollectionProperty, String fieldName, boolean editablePage) {
 
     // No matter what, we can't edit the line when the doc is FINAL. Duh.
     if (accountingDocument.isDocumentFinalOrProcessed()) {

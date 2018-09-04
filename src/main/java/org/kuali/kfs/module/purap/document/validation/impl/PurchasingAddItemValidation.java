@@ -144,8 +144,8 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
                 if (businessObjectService.countMatching(UnitOfMeasure.class, fieldValues) != 1) {
                     //This is the case where the unit of measure code on the item does not exist in the database.
                     valid = false;
-                    GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE,
-                            PurapKeyConstants.ERROR_ITEM_UOM_INACTIVE, attributeLabel + " in " + item.getItemIdentifierString());
+                    GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE,
+                            PurapKeyConstants.PUR_ITEM_UNIT_OF_MEASURE_CODE_INVALID, " in " + item.getItemIdentifierString());
                 }
             }
         }

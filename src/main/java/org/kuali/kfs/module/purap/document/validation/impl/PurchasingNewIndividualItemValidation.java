@@ -95,7 +95,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
                 PurapKeyConstants.ERROR_ITEM_REQUIRED, documentType);
 
-        return valid;
+        return false;
     }
         
     /**
