@@ -17,6 +17,7 @@ public class PaymentWorksKeyConstants {
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_PHONE_NUMBER_LABEL = "note.label.paymentworks.pven.conflict.of.interest.phone.number";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_RELATIONSHIP_LABEL = "note.label.paymentworks.pven.conflict.of.interest.relationship";
+    public static final String NEW_VENDOR_PVEN_NOTES_INSURANCE_CERTIFICATE_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.insurance.certificate.exists";
     public static final String NEW_VENDOR_PAAT_NOTES_PMW_VENDOR_NUMBER_LABEL = "note.label.paymentworks.vendor.number.paat.created.from";
     
     //Boiler plate for PaymentWorks generated KFS Payee ACH Account Explanation
@@ -70,7 +71,6 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_TAX_NUMBER_IS_NULL_OR_BLANK = "error.paymentworks.tax.number.null.or.blank";
     public static final String ERROR_TAX_NUMBER_TYPE_IS_NULL_OR_BLANK = "error.paymentworks.tax.number.type.null.or.blank";
     public static final String FOREIGN_VENDOR_PROCESSING_NOT_AUTOMATIC_YET = "error.paymentworks.foreign.vendor.not.implemented.yet"; //REMOVE THIS MESSAGE AFTER FOREIGN VENDORS HAVE BEEN IMPLEMENTED
-    public static final String PO_VENDOR_PROCESSING_NOT_AUTOMATIC_YET = "error.paymentworks.po.vendor.not.implemented.yet"; //REMOVE THIS MESSAGE AFTER PO VENDORS HAVE BEEN IMPLEMENTED
     public static final String COULD_NOT_DETERMINE_TAX_BUSINESS_RULE_TO_USE = "error.paymentworks.unknown.tax.business.rule";
     public static final String ERROR_PAYMENTWORKS_VENDOR_TYPE_EMPTY = "error.paymentworks.empty.vendor.type";
     public static final String ERROR_VENDOR_HEADER_GENERATED_IDENTIFIER_MISSING = "error.paymentworks.vendor.header.generated.identifier.missing";
