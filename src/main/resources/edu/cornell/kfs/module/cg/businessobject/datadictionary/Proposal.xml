@@ -15,8 +15,15 @@
  limitations under the License.
 -->
 
-  <bean id="Proposal-proposalProjectTitle" parent="Proposal-proposalProjectTitle-parentBean">
-  	    <property name="maxLength" value="255"/>
-  </bean>
+	<bean id="Proposal-proposalProjectTitle" parent="Proposal-proposalProjectTitle-parentBean">
+		<property name="maxLength" value="255" />
+	</bean>
+
+	<bean id="Proposal-cfdaNumber" parent="Proposal-cfdaNumber-parentBean">
+		<property name="maxLength" value="7" />
+		<property name="control">
+			<bean parent="TextControlDefinition" p:size="9" />
+		</property>
+	</bean>
   
 </beans>
