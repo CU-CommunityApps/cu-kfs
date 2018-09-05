@@ -35,6 +35,7 @@ public class CUPdpConstants extends PdpConstants {
     }
     
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_FILE_TYPE_ID = "payeeACHAccountExtract_kfs";
+    public static final String STALE_CHECK_EXTRACT_FILE_TYPE_ID = "staleCheckExtract_kfs";
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_MAINT_DOC_TYPE = "PAAT";
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_DIRECT_DEPOSIT_PAYMENT_TYPE = "Direct Deposit";
     public static final String PAYEE_ACH_ACCOUNT_EXTRACT_BALANCE_ACCOUNT_YES_INDICATOR = "1";
