@@ -27,8 +27,6 @@ import org.kuali.kfs.sys.service.NonTransactional;
 public class CuDisbursementVoucherNonResidentAlienInformationValidation extends DisbursementVoucherNonResidentAlienInformationValidation{
     
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherNonResidentAlienInformationValidation.class);
-
-	protected BusinessObjectService businessObjectService;
 	
     private String validationType;
 
@@ -381,10 +379,6 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
 
         return true;
-    }
-	
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
     }
     
     public void setValidationType(String validationType) {
