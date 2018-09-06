@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -24,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,6 +35,7 @@ import java.util.Map;
 public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 	private static final Logger LOG = LogManager.getLogger(StaleCheckExtractServiceImpl.class);
 
+    private BusinessObjectService businessObjectService;
     private BatchInputFileService batchInputFileService;
     private List<BatchInputFileType> batchInputFileTypes;
     private CheckReconciliationDao checkReconciliationDao;
@@ -175,6 +178,18 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
             return processingError;
         }
         checkReconciliation.setStatus(CRConstants.STALE);
+        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
+        checkReconciliation.setStatusChangeDate(java.sql.Date.valueOf(currentTimestamp.toLocalDateTime().toLocalDate()));
+        checkReconciliation.setLastUpdatedTimestamp(new java.sql.Timestamp(System.currentTimeMillis()));
+
+        checkReconciliation = businessObjectService.save(checkReconciliation);
+
+        if (checkReconciliation.getStatus().equalsIgnoreCase(CRConstants.STALE)) {
+            LOG.info("processStaleCheckBatchDetail: Updated status to Stale for check ID: " + checkReconciliation.getId().toString());
+        }
+        else {
+            LOG.warn("processStaleCheckBatchDetail: status is " + checkReconciliation.getStatus() + " for: " + checkReconciliation.getId().toString());
+        }
 
         //todo: need to save or begin/commit?
         return processingError;
@@ -184,7 +199,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         String failureMessage = KFSConstants.EMPTY_STRING;
         int listIndex = 1;
 
-        if (ObjectUtils.isNull(staleCheckDetail.getBankCode()) || StringUtils.isBlank(bank.getBankCode())) {
+        if (ObjectUtils.isNull(staleCheckDetail.getBankCode()) || ObjectUtils.isNull(bank) || StringUtils.isBlank(bank.getBankCode())) {
             failureMessage = appendFailureMessage(failureMessage, staleCheckDetail, listIndex++, " Bank does not exist in KFS. ");
         }
 
@@ -264,6 +279,10 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     public void setBankService(BankService bankService) {
         this.bankService = bankService;
+    }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
     }
 
 }

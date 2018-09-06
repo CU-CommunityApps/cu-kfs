@@ -59,6 +59,8 @@ public class CRConstants {
     
     public static final String CHECK_FILE_FOOTER_COLUMNS = "CR_FILE_FOOTER_COL_LENGTHS";
     
+    public static final String CHECK_NBR_COL = "CHECK_NBR";
+
     public static final String CHECK_NUM_COL = "CR_CHECK_NUM_COL";
     
     public static final String CHECK_DATE_COL = "CR_CHECK_DATE_COL";

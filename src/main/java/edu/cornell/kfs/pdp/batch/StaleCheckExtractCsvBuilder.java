@@ -29,7 +29,7 @@ public class StaleCheckExtractCsvBuilder {
         
         // Use toString() instead of name() to get the column values, due to column naming customizations for this case.
         staleCheckExtractDetail.setCheckIssuedDate(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_ISSUED_DATE.toString()));
-        staleCheckExtractDetail.setBankCode(rowDataMap.get(StaleCheckExtractCsvFields.ACCOUNT_NUMBER.toString()));
+        staleCheckExtractDetail.setBankCode(rowDataMap.get(StaleCheckExtractCsvFields.BANK_CODE.toString()));
         staleCheckExtractDetail.setCheckStatus(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_STATUS.toString()));
         staleCheckExtractDetail.setCheckNumber(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_NUMBER.toString()));
         staleCheckExtractDetail.setCheckTotalAmount(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_TOTAL_AMOUNT.toString()));
