@@ -104,7 +104,8 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
             String attributeLabel = dataDictionaryService.
                                     getDataDictionary().getBusinessObjectEntry(CommodityCode.class.getName()).
                                     getAttributeDefinition(PurapPropertyConstants.ITEM_COMMODITY_CODE).getLabel();
-            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + identifierString);
+            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE,
+                    KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + identifierString);
         }
         else if (StringUtils.isNotBlank(purItem.getPurchasingCommodityCode())) {
             //Find out whether the commodity code has existed in the database
@@ -113,7 +114,8 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
             if (businessObjectService.countMatching(CommodityCode.class, fieldValues) != 1) {
                 //This is the case where the commodity code on the item does not exist in the database.
                 valid = false;
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE, PurapKeyConstants.PUR_COMMODITY_CODE_INVALID,  " in " + identifierString);
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE,
+                        PurapKeyConstants.PUR_COMMODITY_CODE_INVALID, " in " + identifierString);
             }
             else {
                 valid &= validateThatCommodityCodeIsActive(item);
