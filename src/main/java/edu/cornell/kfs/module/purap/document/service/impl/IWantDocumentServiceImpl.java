@@ -212,8 +212,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         try {
             emailService.sendMessage(message, false);
         } catch (Exception e) {
-            String errorMessage = new String("sendDocumentFinalizedMessage, Email could not be sent for IWNT edoc# " + iWantDocument.getDocumentNumber());
-            LOG.error(errorMessage, e);
+            LOG.error(("sendDocumentFinalizedMessage, Email could not be sent for IWNT edoc# " + iWantDocument.getDocumentNumber()), e);
         }
     }
 
