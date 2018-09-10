@@ -209,7 +209,11 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     public void sendDocumentFinalizedMessage(IWantDocument iWantDocument) {
         BodyMailMessage message = buildDocumentFinalizedMessage(iWantDocument);
 
-        emailService.sendMessage(message, false);
+        try {
+            emailService.sendMessage(message, false);
+        } catch (Exception e) {
+            LOG.error(("sendDocumentFinalizedMessage, Email could not be sent for IWNT edoc# " + iWantDocument.getDocumentNumber()), e);
+        }
     }
 
     /**
