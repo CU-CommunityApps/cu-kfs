@@ -21,8 +21,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
      */
     @Override
     public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
-        return fileUserIdentifier;
-//        return KFSConstants.EMPTY_STRING;
+        return KFSConstants.EMPTY_STRING;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
     protected Object convertParsedObjectToVO(Object parsedContent) {
         // Convert from List<Map<String,String>> to a list of DTOs, and catch errors appropriately as in similar parsing methods.
         try {
-            return StaleCheckExtractCsvBuilder.buildStaleCheckExtract((List<Map<String,String>>) parsedContent, getDirectoryPath());
+            return StaleCheckExtractCsvBuilder.buildStaleCheckExtract((List<Map<String,String>>) parsedContent);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);

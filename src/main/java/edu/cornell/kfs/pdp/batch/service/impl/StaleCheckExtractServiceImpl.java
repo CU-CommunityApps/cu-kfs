@@ -4,7 +4,7 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 import edu.cornell.kfs.pdp.batch.service.StaleCheckExtractService;
-import edu.cornell.kfs.pdp.businessobject.StaleCheckExtractDetail;
+import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -12,11 +12,10 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.kfs.sys.service.BankService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -24,10 +23,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,77 +38,68 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
     private BatchInputFileService batchInputFileService;
     private List<BatchInputFileType> batchInputFileTypes;
     private CheckReconciliationDao checkReconciliationDao;
-    private BankService bankService;
 
-    private Map<String, List<String>> partialProcessingSummary;
-
-    // Portions of this method are based on code and logic from CustomerLoadServiceImpl.
     @Transactional
     @Override
-    public boolean processStaleCheckBatchDetails() {
-        LOG.info("processStaleCheckBatchDetails: Beginning processing of ACH input files");
+    public boolean processStaleCheckBatchFiles() {
+        LOG.info("processStaleCheckBatchFiles: Beginning processing of Stale Check Batch input files");
         
         int numSuccess = 0;
         int numPartial = 0;
         int numFail = 0;
-        partialProcessingSummary = new HashMap<String, List<String>>();
+        Map<String, List<String>> partialProcessingSummary = new HashMap<>();
 
         Map<String,BatchInputFileType> fileNamesToLoad = getListOfFilesToProcess();
-        LOG.info("processStaleCheckBatchDetails: Found " + fileNamesToLoad.size() + " file(s) to process.");
+        LOG.info("processStaleCheckBatchFiles: Found " + fileNamesToLoad.size() + " file(s) to process.");
 
-        List<String> processedFiles = new ArrayList<String>();
+        List<String> processedFiles = new ArrayList<>();
         for (String inputFileName : fileNamesToLoad.keySet()) {
-            
-            LOG.info("processStaleCheckBatchDetails: Beginning processing of filename: " + inputFileName);
+
+            String filename = Paths.get(inputFileName).getFileName().toString();
+            LOG.info("processStaleCheckBatchFiles: Beginning processing of file: " + filename);
             processedFiles.add(inputFileName);
             
             try {
-                List<String> errorList = loadStaleCheckDetailFile(inputFileName, fileNamesToLoad.get(inputFileName));
+                List<String> errorList = loadStaleCheckBatchFile(inputFileName, fileNamesToLoad.get(inputFileName));
                 if (errorList.isEmpty()) {
-                    LOG.info("processStaleCheckBatchDetails: Successfully loaded Stale Check CSV input file");
+                    LOG.info("processStaleCheckBatchFiles: Successfully loaded Stale Check Batch input file");
                     numSuccess++;
                 } else {
-                    LOG.warn("processStaleCheckBatchDetails:  Stale Check CSV input file contained "+ errorList.size() + " rows that could not be processed.");
+                    LOG.warn("processStaleCheckBatchFiles: Stale Check Batch input file contained "+ errorList.size() + " rows that could not be processed.");
                     partialProcessingSummary.put(inputFileName, errorList);
                     numPartial++;
                 }
             } catch (Exception e) {
-                LOG.error("processStaleCheckBatchDetails: Failed to load  Stale Check CSV input file due to this Exception:", e);
+                LOG.error("processStaleCheckBatchFiles: Failed to load  Stale Check Batch input file due to this Exception:", e);
                 numFail++;
             }
         }
-
         removeDoneFiles(processedFiles);
 
-        LOG.info("processStaleCheckBatchDetails: ==============================================");
-        LOG.info("processStaleCheckBatchDetails: ==== Summary of Payee ACH Account Extract ====");
-        LOG.info("processStaleCheckBatchDetails: ==============================================");
-        LOG.info("processStaleCheckBatchDetails: Files loaded successfully: " + numSuccess);
-        LOG.info("processStaleCheckBatchDetails: Files loaded with one or more failed rows: " + numPartial);
+        LOG.info("processStaleCheckBatchFiles: ==============================================");
+        LOG.info("processStaleCheckBatchFiles: ==== Summary of Stale Check Batch ====");
+        LOG.info("processStaleCheckBatchFiles: ==============================================");
+        LOG.info("processStaleCheckBatchFiles: Files loaded successfully: " + numSuccess);
+        LOG.info("processStaleCheckBatchFiles: Files loaded with one or more failed rows: " + numPartial);
         if (!partialProcessingSummary.isEmpty()) {
             for (String failingFileName : partialProcessingSummary.keySet()) {
                 List<String> errorsEncountered = partialProcessingSummary.get(failingFileName);
-                LOG.error("processStaleCheckBatchDetails:  Stale Check CSV input file contained "+ errorsEncountered.size() + " rows that could not be processed.");
-                for (Iterator iterator = errorsEncountered.iterator(); iterator.hasNext();) {
-                    String dataError = (String) iterator.next();
-                    LOG.error("processStaleCheckBatchDetails: " + dataError);
+                LOG.error("processStaleCheckBatchFiles:  Stale Check Batch input file contained "+ errorsEncountered.size() + " rows that could not be processed.");
+                for (String dataError : errorsEncountered) {
+                    LOG.error("processStaleCheckBatchFiles: " + dataError);
                 }
             }
         }
-        LOG.info("processStaleCheckBatchDetails: Files with errors: " + numFail);
-        LOG.info("processStaleCheckBatchDetails: =====================");
-        LOG.info("processStaleCheckBatchDetails: ==== End Summary ====");
-        LOG.info("processStaleCheckBatchDetails: =====================");
+        LOG.info("processStaleCheckBatchFiles: Files with errors: " + numFail);
+        LOG.info("processStaleCheckBatchFiles: =====================");
+        LOG.info("processStaleCheckBatchFiles: ==== End Summary ====");
+        LOG.info("processStaleCheckBatchFiles: =====================");
 
-        // For now, return true even if files or rows did not load successfully. Functionals will address the failed rows/files accordingly.
         return true;
     }
 
-    /**
-     * Create a collection of the files to process with the mapped value of the BatchInputFileType
-     */
     protected Map<String,BatchInputFileType> getListOfFilesToProcess() {
-        Map<String,BatchInputFileType> inputFileTypeMap = new LinkedHashMap<String, BatchInputFileType>();
+        Map<String,BatchInputFileType> inputFileTypeMap = new LinkedHashMap<>();
 
         for (BatchInputFileType batchInputFileType : batchInputFileTypes) {
 
@@ -118,10 +108,8 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
                 criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer()
                         + ") returned NULL which should never happen.");
             } else {
-                // update the file name mapping
                 for (String inputFileName : inputFileNames) {
 
-                    // filenames returned should never be blank/empty/null
                     if (StringUtils.isBlank(inputFileName)) {
                         criticalError("One of the file names returned as ready to process [" + inputFileName
                                 + "] was blank.  This should not happen, so throwing an error to investigate.");
@@ -135,31 +123,28 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         return inputFileTypeMap;
     }
 
-    protected List<String> loadStaleCheckDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
-        List<String>failedRowsErrors = new ArrayList();
-        
+    protected List<String> loadStaleCheckBatchFile(String inputFileName, BatchInputFileType batchInputFileType) {
+        List<String> failedRowsErrors = new ArrayList<>();
         byte[] fileByteContent = safelyLoadFileBytes(inputFileName);
-        
-        LOG.info("loadStaleCheckBatchDetailFile: Attempting to parse the file.");
+        LOG.info("loadStaleCheckBatchFile: Attempting to parse the file.");
         
         Object parsedObject = null;
         try {
             parsedObject = batchInputFileService.parse(batchInputFileType, fileByteContent);
         } catch (ParseException e) {
-            String errorMessage = "loadStaleCheckDetailFile: Error parsing batch file: " + e.getMessage();
+            String errorMessage = "loadStaleCheckBatchFile: Error parsing batch file: " + e.getMessage();
             LOG.error(errorMessage, e);
             throw new RuntimeException(errorMessage);
         }
         
         if (!(parsedObject instanceof List)) {
-            String errorMessage = "loadStaleCheckDetailFile: Parsed file was not of the expected type.  Expected [" + List.class + "] but got [" + parsedObject.getClass() + "].";
+            String errorMessage = "loadStaleCheckBatchFile: Parsed file was not of the expected type.  Expected [" + List.class + "] but got [" + parsedObject.getClass() + "].";
             criticalError(errorMessage);
         }
 
-        List<StaleCheckExtractDetail> staleChecks = (List<StaleCheckExtractDetail>) parsedObject;
-        
-        for (StaleCheckExtractDetail staleCheck : staleChecks) {
-            String error = processStaleCheckBatchDetail(staleCheck);
+        List<StaleCheckBatchRow> staleChecks = (List<StaleCheckBatchRow>) parsedObject;
+        for (StaleCheckBatchRow staleCheck : staleChecks) {
+            String error = processStaleCheckBatchRow(staleCheck);
             if (StringUtils.isNotBlank(error)) {
                 failedRowsErrors.add(error);
             }
@@ -168,56 +153,75 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         return failedRowsErrors;
     }
 
-    protected String processStaleCheckBatchDetail(StaleCheckExtractDetail staleCheckDetail) {
-        LOG.info("processStaleCheckBatchDetail: Starting processStaleCheckBatchDetail for: " + staleCheckDetail.getLogData());
-        Bank bank = bankService.getByPrimaryId(staleCheckDetail.getBankCode());
-        CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(staleCheckDetail.getCheckNumber());
+    protected String processStaleCheckBatchRow(StaleCheckBatchRow staleCheckRow) {
+        LOG.info("processStaleCheckBatchRow: Starting processStaleCheckBatchRow for: " + staleCheckRow.getLogData());
+        CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(staleCheckRow.getCheckNumber());
 
-        String processingError = validateStaleCheckBatchDetail(staleCheckDetail, bank, checkReconciliation);
+        String processingError = validateStaleCheckBatchRow(staleCheckRow, checkReconciliation);
         if (StringUtils.isNotBlank(processingError)) {
             return processingError;
         }
         checkReconciliation.setStatus(CRConstants.STALE);
         java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
         checkReconciliation.setStatusChangeDate(java.sql.Date.valueOf(currentTimestamp.toLocalDateTime().toLocalDate()));
-        checkReconciliation.setLastUpdatedTimestamp(new java.sql.Timestamp(System.currentTimeMillis()));
+        businessObjectService.save(checkReconciliation);
 
-        checkReconciliation = businessObjectService.save(checkReconciliation);
-
-        if (checkReconciliation.getStatus().equalsIgnoreCase(CRConstants.STALE)) {
-            LOG.info("processStaleCheckBatchDetail: Updated status to Stale for check ID: " + checkReconciliation.getId().toString());
-        }
-        else {
-            LOG.warn("processStaleCheckBatchDetail: status is " + checkReconciliation.getStatus() + " for: " + checkReconciliation.getId().toString());
-        }
-
-        //todo: need to save or begin/commit?
         return processingError;
     }
 
-    protected String validateStaleCheckBatchDetail(StaleCheckExtractDetail staleCheckDetail, Bank bank, CheckReconciliation checkReconciliation) {
+    protected String validateStaleCheckBatchRow(StaleCheckBatchRow staleCheckRow, CheckReconciliation checkReconciliation) {
         String failureMessage = KFSConstants.EMPTY_STRING;
         int listIndex = 1;
 
-        if (ObjectUtils.isNull(staleCheckDetail.getBankCode()) || ObjectUtils.isNull(bank) || StringUtils.isBlank(bank.getBankCode())) {
-            failureMessage = appendFailureMessage(failureMessage, staleCheckDetail, listIndex++, " Bank does not exist in KFS. ");
+        if (StringUtils.isBlank(staleCheckRow.getBankCode())) {
+            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Bank is blank. ");
         }
 
-        if (ObjectUtils.isNull(staleCheckDetail.getCheckNumber()) || StringUtils.isBlank(checkReconciliation.getBankAccountNumber())) {
-            failureMessage = appendFailureMessage(failureMessage, staleCheckDetail, listIndex++, " Check Reconciliation does not exist in KFS. ");
+        if (StringUtils.isBlank(staleCheckRow.getCheckNumber())) {
+            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Number is blank. ");
+        }
+
+        if (StringUtils.isBlank(staleCheckRow.getCheckTotalAmount())) {
+            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Total Amount is blank. ");
+        }
+
+        if (ObjectUtils.isNull(checkReconciliation) || ObjectUtils.isNull(checkReconciliation.getCheckNumber())) {
+            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Reconciliation does not exist in KFS. ");
+        } else {
+            if (!StringUtils.equalsIgnoreCase(staleCheckRow.getBankCode(), checkReconciliation.getBankCode())) {
+                String message = " The Bank Code in the file (" + staleCheckRow.getBankCode() + ") row does not match the bank on the Check (" +
+                        checkReconciliation.getBankCode() + "). ";
+                failureMessage = appendFailureMessage(failureMessage, listIndex++, message);
+            }
+
+            try {
+                Double checkTotalAmountParsed = NumberFormat.getNumberInstance(java.util.Locale.US).parse(staleCheckRow.getCheckTotalAmount()).doubleValue();
+                KualiDecimal checkTotalAmount = new KualiDecimal(checkTotalAmountParsed);
+                if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
+                    String message = " The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
+                            checkReconciliation.getAmount().toString() + "). ";
+                    failureMessage = appendFailureMessage(failureMessage, listIndex++, message);
+                }
+            } catch (java.text.ParseException ex) {
+                String message = " Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString();
+                failureMessage = appendFailureMessage(failureMessage, listIndex++, message);
+            }
+
+            if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {
+                failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Status is already STALE.");
+            }
         }
 
         if (failureMessage.length() > 0) {
-            LOG.warn("validateStaleCheckBatchDetail:" + failureMessage);
-            return failureMessage.toString();
+            LOG.warn("validateStaleCheckBatchRow:" + failureMessage);
+            return failureMessage;
         }
         return StringUtils.EMPTY;
     }
 
-    protected String appendFailureMessage(String failureMessage, StaleCheckExtractDetail staleCheckExtractDetail, int listIndex, String errorMessage) {
+    protected String appendFailureMessage(String failureMessage, int listIndex, String errorMessage) {
         if (failureMessage.length() == 0) {
-            failureMessage += "Stale Check Detail in filename " + staleCheckExtractDetail.getFilename() + " for line " +
-                    staleCheckExtractDetail.getLineNumber() + " could not be processed for the following reasons: ";
+            failureMessage += "Stale Check Row " + listIndex + " could not be processed for the following reasons: ";
         }
         failureMessage += "[" + Integer.toString(listIndex) + "] " + errorMessage;
         return failureMessage;
@@ -255,11 +259,6 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         }
     }
 
-    /**
-     * LOG error and throw RuntimeException
-     * 
-     * @param errorMessage
-     */
     private void criticalError(String errorMessage) {
         LOG.error("criticalError: " + errorMessage);
         throw new RuntimeException(errorMessage);
@@ -275,10 +274,6 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
         this.checkReconciliationDao = checkReconciliationDao;
-    }
-
-    public void setBankService(BankService bankService) {
-        this.bankService = bankService;
     }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {

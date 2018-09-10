@@ -1,6 +1,6 @@
 package edu.cornell.kfs.pdp.batch;
 
-import edu.cornell.kfs.pdp.businessobject.StaleCheckExtractDetail;
+import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,31 +10,27 @@ public class StaleCheckExtractCsvBuilder {
 
     protected StaleCheckExtractCsvBuilder() {}
 
-    public static List<StaleCheckExtractDetail> buildStaleCheckExtract(List<Map<String,String>> parseDataList, String filename) {
-        List<StaleCheckExtractDetail> staleCheckDetails = new ArrayList<StaleCheckExtractDetail>();
+    public static List<StaleCheckBatchRow> buildStaleCheckExtract(List<Map<String,String>> parseDataList) {
+        List<StaleCheckBatchRow> staleCheckDetails = new ArrayList<>();
 
-        int lineNumber = 2;
         for (Map<String,String> rowDataMap : parseDataList) {
-            StaleCheckExtractDetail staleCheckExtractDetail = buildACHDetailFromDataMap(rowDataMap);
-            staleCheckExtractDetail.setFilename(filename);
-            staleCheckExtractDetail.setLineNumber(Integer.toString(lineNumber++));
-            staleCheckDetails.add(staleCheckExtractDetail);
+            StaleCheckBatchRow staleCheckBatchRow = buildStaleCheckExtractDetailFromDataMap(rowDataMap);
+            staleCheckDetails.add(staleCheckBatchRow);
         }
         
         return staleCheckDetails;
     }
 
-    private static StaleCheckExtractDetail buildACHDetailFromDataMap(Map<String,String> rowDataMap) {
-        StaleCheckExtractDetail staleCheckExtractDetail = new StaleCheckExtractDetail();
-        
-        // Use toString() instead of name() to get the column values, due to column naming customizations for this case.
-        staleCheckExtractDetail.setCheckIssuedDate(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_ISSUED_DATE.toString()));
-        staleCheckExtractDetail.setBankCode(rowDataMap.get(StaleCheckExtractCsvFields.BANK_CODE.toString()));
-        staleCheckExtractDetail.setCheckStatus(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_STATUS.toString()));
-        staleCheckExtractDetail.setCheckNumber(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_NUMBER.toString()));
-        staleCheckExtractDetail.setCheckTotalAmount(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_TOTAL_AMOUNT.toString()));
+    private static StaleCheckBatchRow buildStaleCheckExtractDetailFromDataMap(Map<String,String> rowDataMap) {
+        StaleCheckBatchRow staleCheckBatchRow = new StaleCheckBatchRow();
 
-        return staleCheckExtractDetail;
+        staleCheckBatchRow.setCheckIssuedDate(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_ISSUED_DATE.toString()));
+        staleCheckBatchRow.setBankCode(rowDataMap.get(StaleCheckExtractCsvFields.BANK_CODE.toString()));
+        staleCheckBatchRow.setCheckStatus(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_STATUS.toString()));
+        staleCheckBatchRow.setCheckNumber(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_NUMBER.toString()));
+        staleCheckBatchRow.setCheckTotalAmount(rowDataMap.get(StaleCheckExtractCsvFields.CHECK_TOTAL_AMOUNT.toString()));
+
+        return staleCheckBatchRow;
     }
 
 }

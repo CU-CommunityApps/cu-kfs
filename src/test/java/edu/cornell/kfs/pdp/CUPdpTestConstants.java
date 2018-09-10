@@ -26,4 +26,5 @@ public class CUPdpTestConstants {
         public static final String OTHER = "Other";
     }
 
+    public static final String MELLON_BANK_CODE = "DISB";
 }

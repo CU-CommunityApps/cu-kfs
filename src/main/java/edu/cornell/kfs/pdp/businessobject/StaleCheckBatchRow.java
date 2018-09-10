@@ -2,7 +2,7 @@ package edu.cornell.kfs.pdp.businessobject;
 
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
-public class StaleCheckExtractDetail extends TransientBusinessObjectBase {
+public class StaleCheckBatchRow extends TransientBusinessObjectBase {
     private static final long serialVersionUID = -2282621440553926073L;
     private static final String DATA_DELIMITER = ",";
 
@@ -11,8 +11,6 @@ public class StaleCheckExtractDetail extends TransientBusinessObjectBase {
     private String checkStatus;
     private String checkNumber;
     private String checkTotalAmount;
-    private String filename;
-    private String lineNumber;
 
     public String getCheckIssuedDate() {
         return checkIssuedDate;
@@ -54,28 +52,10 @@ public class StaleCheckExtractDetail extends TransientBusinessObjectBase {
         this.checkTotalAmount = checkTotalAmount;
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public String getLineNumber() {
-        return lineNumber;
-    }
-
-    public void setLineNumber(String lineNumber) {
-        this.lineNumber = lineNumber;
-    }
-
     public String getLogData() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getCheckIssuedDate()).append(DATA_DELIMITER).append(getCheckTotalAmount()).append(DATA_DELIMITER);
+        sb.append(getCheckNumber()).append(DATA_DELIMITER).append(getCheckTotalAmount());
         return sb.toString();
     }
-
-
 
 }

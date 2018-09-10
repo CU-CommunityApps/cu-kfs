@@ -11,7 +11,7 @@ public class StaleCheckExtractStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        return staleCheckExtractService.processStaleCheckBatchDetails();
+        return staleCheckExtractService.processStaleCheckBatchFiles();
     }
 
     public void setStaleCheckExtractService(StaleCheckExtractService staleCheckExtractService) {

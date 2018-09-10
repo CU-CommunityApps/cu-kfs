@@ -176,7 +176,6 @@
     <bean id="staleCheckExtractService" parent="staleCheckExtractService-parentBean" />
     <bean id="staleCheckExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.StaleCheckExtractServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService" />
-        <property name="bankService" ref="bankService" />
         <property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="batchInputFileTypes">
