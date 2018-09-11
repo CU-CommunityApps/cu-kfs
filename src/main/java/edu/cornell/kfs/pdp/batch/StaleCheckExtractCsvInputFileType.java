@@ -41,7 +41,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     @Override
     public String getTitleKey() {
-        return "Stale Check CSV Batch Upload";
+        return CUPdpConstants.MESSAGE_BATCH_UPLOAD_TITLE_STALE_CHECK;
     }
 
     /**
