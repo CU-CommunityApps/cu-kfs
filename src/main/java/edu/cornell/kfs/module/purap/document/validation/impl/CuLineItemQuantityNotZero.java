@@ -27,7 +27,8 @@ public class CuLineItemQuantityNotZero extends LineItemQuantityNotZero {
             KualiDecimal itemQuantity = item.getItemQuantity();
             if (!((PaymentRequestItem)item).isNoQtyItem() && itemQuantity != null) {
                 if (!itemQuantity.isNonZero()) {
-                    GlobalVariables.getMessageMap().putError("item[" + i + "].itemQuantity", PurapKeyConstants.ERROR_PAYMENT_REQUEST_LINE_ITEM_QUANTITY_ZERO);
+                    GlobalVariables.getMessageMap().putError("item[" + i + "].itemQuantity",
+                            PurapKeyConstants.ERROR_PAYMENT_REQUEST_LINE_ITEM_QUANTITY_ZERO);
                     GlobalVariables.getMessageMap().clearErrorPath();
                     
                     valid = false;

@@ -65,19 +65,11 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
         
         return isValid;
     }
-    
-    /**
-     * Sets the accountingDocumentForValidation attribute value.
-     * @param accountingDocumentForValidation The accountingDocumentForValidation to set.
-     */
+
     public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
     }
 
-    /**
-     * Gets the accountingDocumentForValidation attribute. 
-     * @return Returns the accountingDocumentForValidation.
-     */
     public AccountingDocument getAccountingDocumentForValidation() {
         return accountingDocumentForValidation;
     }

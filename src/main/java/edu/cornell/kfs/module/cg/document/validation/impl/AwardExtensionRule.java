@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleBillingService;
+import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.module.cg.CGConstants;
 import org.kuali.kfs.module.cg.CGKeyConstants;
 import org.kuali.kfs.module.cg.CGPropertyConstants;
@@ -239,14 +240,25 @@ public class AwardExtensionRule extends AwardRule {
         String oldBillingFrequencyCode = oldAwardCopy.getBillingFrequencyCode();
 
         if (!StringUtils.equals(newBillingFrequencyCode, oldBillingFrequencyCode)) {
-            if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.MILESTONE_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class).hasActiveMilestones(newAwardCopy.getProposalNumber())) {
-                success = false;
-                putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE, CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_MILESTONES_EXIST, getBillingFrequencyDescription(newAwardCopy));
-            } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class).hasActiveBills(newAwardCopy.getProposalNumber())) {
-                success = false;
-                putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE, CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_BILLS_EXIST, getBillingFrequencyDescription(newAwardCopy));
+            final String proposalNumber = newAwardCopy.getProposalNumber();
+            for(ContractsAndGrantsBillingAwardAccount awardAccount: newAwardCopy.getActiveAwardAccounts()) {
+                if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.MILESTONE_BILLING_SCHEDULE_CODE) &&
+                    SpringContext.getBean(AccountsReceivableModuleBillingService.class)
+                        .hasActiveMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                            awardAccount.getAccountNumber())) {
+                    success = false;
+                    putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
+                        CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_MILESTONES_EXIST,
+                        getBillingFrequencyDescription(newAwardCopy));
+                    break;
+                } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
+                    SpringContext.getBean(AccountsReceivableModuleBillingService.class).hasActiveBills(proposalNumber)) {
+                    success = false;
+                    putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
+                        CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_BILLS_EXIST,
+                        getBillingFrequencyDescription(newAwardCopy));
+                    break;
+                }
             }
         }
 

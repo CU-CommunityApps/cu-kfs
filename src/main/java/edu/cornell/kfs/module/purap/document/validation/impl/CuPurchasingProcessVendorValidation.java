@@ -69,7 +69,8 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
                }            
         }
 
-        VendorDetail vendorDetail = getVendorService().getVendorDetail(purDocument.getVendorHeaderGeneratedIdentifier(), purDocument.getVendorDetailAssignedIdentifier());
+        VendorDetail vendorDetail = vendorService.getVendorDetail(purDocument.getVendorHeaderGeneratedIdentifier(),
+                purDocument.getVendorDetailAssignedIdentifier());
         if (ObjectUtils.isNull(vendorDetail)) {
             return valid;
         }
@@ -77,22 +78,27 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 
         // make sure that the vendor is not debarred
         if (vendorDetail.isVendorDebarred()) {
-            if (getParameterService().getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, "Requisition", PurapParameterConstants.SHOW_DEBARRED_VENDOR_WARNING_IND)) {
-                if (StringUtils.isEmpty(((PurchasingDocumentBase)purDocument).getJustification())) {
-                    errorMap.putWarning(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.WARNING_DEBARRED_VENDOR, vendorDetail.getVendorName());
-                    valid &= false;
+            if (parameterService.getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
+                    "Requisition", PurapParameterConstants.SHOW_DEBARRED_VENDOR_WARNING_IND)) {
+                if (StringUtils.isEmpty(((PurchasingDocumentBase) purDocument).getJustification())) {
+                    errorMap.putWarning(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.WARNING_DEBARRED_VENDOR,
+                            vendorDetail.getVendorName());
+                    valid = false;
                 }
             } else {
                 errorMap.putError(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.ERROR_DEBARRED_VENDOR);
-                valid &= false;
+                valid = false;
             }
         }
 
         // make sure that the vendor is of allowed type
-        List<String> allowedVendorTypes = new ArrayList<String>( getParameterService().getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapRuleConstants.PURAP_VENDOR_TYPE_ALLOWED_ON_REQ_AND_PO) );
+        List<String> allowedVendorTypes = new ArrayList<>(parameterService
+                .getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                        PurapRuleConstants.PURAP_VENDOR_TYPE_ALLOWED_ON_REQ_AND_PO));
         if (allowedVendorTypes != null && !allowedVendorTypes.isEmpty()){
-           if (ObjectUtils.isNotNull(vendorHeader) && ObjectUtils.isNotNull(vendorHeader.getVendorTypeCode()) && ! allowedVendorTypes.contains(vendorHeader.getVendorTypeCode())) {
-                    valid &= false;
+            if (ObjectUtils.isNotNull(vendorHeader) && ObjectUtils.isNotNull(vendorHeader.getVendorTypeCode())
+                    && !allowedVendorTypes.contains(vendorHeader.getVendorTypeCode())) {
+                    valid = false;
                     errorMap.putError(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.ERROR_INVALID_VENDOR_TYPE);
             }
         }
@@ -102,21 +108,11 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
             valid &= false;
             errorMap.putError(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.ERROR_INACTIVE_VENDOR);
         }
-
-        //make sure that the vendor contract is active and not expired.
-        // KFSUPGRADE-266 remove kfsmi-8690/kfscntrb-929
-//        if (ObjectUtils.isNotNull(purDocument.getVendorContractGeneratedIdentifier())) {
-//            VendorContract vendorContract = SpringContext.getBean(BusinessObjectService.class).findBySinglePrimaryKey(VendorContract.class, purDocument.getVendorContractGeneratedIdentifier());
-//            Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
-//
-//            if (currentDate.compareTo(vendorContract.getVendorContractEndDate()) > 0 || !vendorContract.isActive()) {
-//                valid &= false;
-//                errorMap.putError(VendorPropertyConstants.VENDOR_CONTRACT_NAME, PurapKeyConstants.ERROR_INACTIVE_OR_EXPIRED_VENDOR_CONTRACT);
-//            }
-//        }
         
         // validate vendor address
-        getPostalCodeValidationService().validateAddress(purDocument.getVendorCountryCode(), purDocument.getVendorStateCode(), purDocument.getVendorPostalCode(), PurapPropertyConstants.VENDOR_STATE_CODE, PurapPropertyConstants.VENDOR_POSTAL_CODE);
+        postalCodeValidationService.validateAddress(purDocument.getVendorCountryCode(), purDocument.getVendorStateCode(),
+                purDocument.getVendorPostalCode(), PurapPropertyConstants.VENDOR_STATE_CODE,
+                PurapPropertyConstants.VENDOR_POSTAL_CODE);
 
         errorMap.clearErrorPath();
         return valid;

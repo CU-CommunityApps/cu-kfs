@@ -20,16 +20,13 @@ public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToT
 
     public boolean validate(AttributedDocumentEvent event) {
         
-        // Initialize the valid and true, and get the requisition document.
         boolean foundTradeIn = false;
         boolean valid        = true;
         
-        PurchasingAccountsPayableDocumentBase purapDoc = 
-            (PurchasingAccountsPayableDocumentBase) event.getDocument();
+        PurchasingAccountsPayableDocumentBase purapDoc = (PurchasingAccountsPayableDocumentBase) event.getDocument();
         
-        // First, get all the items from the requisition document.  For each of
-        // the items, look for the ones that are assigned to a trade-in value.
-        // For these trade-in items, validate that the trade-in line has a valid
+        // First, get all the items from the requisition document. For each of the items, look for the ones that are
+        // assigned to a trade-in value. For these trade-in items, validate that the trade-in line has a valid
         // description and amount.
         List<PurApItem> items = (List<PurApItem>)purapDoc.getItems();
         for (PurApItem item : items) {
@@ -42,13 +39,9 @@ public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToT
         
         // Was a trade-in found for any of the above items?
         if (foundTradeIn) {
-
-            // Get the trade-in item.
             PurApItem tradeInItem = purapDoc.getTradeInItem();
             if (tradeInItem != null) {
                 if (StringUtils.isEmpty(tradeInItem.getItemDescription())) {
-                    
-                    String attributeLabel = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(tradeInItem.getClass().getName()).getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
                     tradeInItem.getItemLineNumber();
                     GlobalVariables.getMessageMap().putError(
                             "document.item[" + getTradeInItemLineIndex(items) + "]." + PurapPropertyConstants.ITEM_DESCRIPTION, 
@@ -59,8 +52,6 @@ public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToT
                     valid = false;
                 }
                 else if (ObjectUtils.isNull(tradeInItem.getItemUnitPrice())) {
-                    
-                    String attributeLabel = dataDictionaryService.getDataDictionary().getBusinessObjectEntry(tradeInItem.getClass().getName()).getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
                     GlobalVariables.getMessageMap().putError(
                             "document.item[" + getTradeInItemLineIndex(items) + "]." + PurapPropertyConstants.ITEM_UNIT_PRICE,
                             PurapKeyConstants.ERROR_ITEM_BELOW_THE_LINE,
