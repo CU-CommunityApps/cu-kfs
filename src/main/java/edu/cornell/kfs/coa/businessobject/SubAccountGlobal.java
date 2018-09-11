@@ -1,25 +1,28 @@
 package edu.cornell.kfs.coa.businessobject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
+import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coa.businessobject.ReportingCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.service.GlobalObjectWithIndirectCostRecoveryAccountsService;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
@@ -61,6 +64,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
     	super();
     	a21SubAccount = new A21SubAccountChange();
     	subAccountGlobalDetails = new ArrayList<SubAccountGlobalDetail>();
+    	subAccountGlobalNewAccountDetails = new ArrayList<>();
     	indirectCostRecoveryAccounts = new ArrayList<IndirectCostRecoveryAccountChange>();
 	}
 
@@ -147,8 +151,80 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 			changesToPersist.add(subAccount);
 		}
 		
+		if (!subAccountGlobalNewAccountDetails.isEmpty()) {
+		    createAndAddGlobalNewSubAccountChangesToPersist(changesToPersist::add);
+		}
+		
 		return changesToPersist;
 	}
+
+    protected void createAndAddGlobalNewSubAccountChangesToPersist(Consumer<PersistableBusinessObject> changeConsumer) {
+        subAccountGlobalNewAccountDetails.stream()
+                .map(this::createSubAccount)
+                .forEach(changeConsumer);
+    }
+
+    protected SubAccount createSubAccount(SubAccountGlobalNewAccountDetail newAccountDetail) {
+        if (applyToAllNewSubAccounts) {
+            return createSubAccount(newAccountDetail, newSubAccountNumber, newSubAccountName, newSubAccountOffCampusCode);
+        } else {
+            return createSubAccount(newAccountDetail, newAccountDetail.getSubAccountNumber(),
+                    newAccountDetail.getSubAccountName(), newAccountDetail.isOffCampusCode());
+        }
+    }
+
+    protected SubAccount createSubAccount(SubAccountGlobalNewAccountDetail newAccountDetail,
+            String subAccountNumberToUse, String subAccountNameToUse, boolean offCampusCode) {
+        SubAccount subAccount = new SubAccount();
+        subAccount.setSubAccountName(subAccountNameToUse);
+        subAccount.setChartOfAccountsCode(newAccountDetail.getChartOfAccountsCode());
+        subAccount.setAccountNumber(newAccountDetail.getAccountNumber());
+        subAccount.setSubAccountNumber(subAccountNumberToUse);
+        subAccount.setA21SubAccount(createA21SubAccount(newAccountDetail, subAccountNumberToUse, offCampusCode));
+        
+        if (StringUtils.isNotBlank(financialReportChartCode)) {
+            subAccount.setFinancialReportChartCode(financialReportChartCode);
+        }
+        if (StringUtils.isNotBlank(finReportOrganizationCode)) {
+            subAccount.setFinReportOrganizationCode(finReportOrganizationCode);
+        }
+        if (StringUtils.isNotBlank(financialReportingCode)) {
+            subAccount.setFinancialReportingCode(financialReportingCode);
+        }
+        
+        newAccountDetail.setSubAccount(subAccount);
+        updateIcrAccounts(newAccountDetail, Collections.emptyList());
+        
+        return subAccount;
+    }
+
+    protected A21SubAccount createA21SubAccount(SubAccountGlobalNewAccountDetail newAccountDetail,
+            String subAccountNumberToUse, boolean offCampusCode) {
+        A21SubAccount newA21SubAccount = new A21SubAccount();
+        newA21SubAccount.setChartOfAccountsCode(newAccountDetail.getChartOfAccountsCode());
+        newA21SubAccount.setAccountNumber(newAccountDetail.getAccountNumber());
+        newA21SubAccount.setSubAccountNumber(subAccountNumberToUse);
+        newA21SubAccount.setOffCampusCode(offCampusCode);
+        newA21SubAccount.setSubAccountTypeCode(newSubAccountTypeCode);
+        
+        if (StringUtils.isNotBlank(a21SubAccount.indirectCostRecoveryTypeCode)) {
+            newA21SubAccount.setIndirectCostRecoveryTypeCode(a21SubAccount.indirectCostRecoveryTypeCode);
+        }
+        if (StringUtils.isNotBlank(a21SubAccount.financialIcrSeriesIdentifier)) {
+            newA21SubAccount.setFinancialIcrSeriesIdentifier(a21SubAccount.financialIcrSeriesIdentifier);
+        }
+        if (StringUtils.isNotBlank(a21SubAccount.costShareChartOfAccountCode)) {
+            newA21SubAccount.setCostShareChartOfAccountCode(a21SubAccount.costShareChartOfAccountCode);
+        }
+        if (StringUtils.isNotBlank(a21SubAccount.costShareSourceAccountNumber)) {
+            newA21SubAccount.setCostShareSourceAccountNumber(a21SubAccount.costShareSourceAccountNumber);
+        }
+        if (StringUtils.isNotBlank(a21SubAccount.costShareSourceSubAccountNumber)) {
+            newA21SubAccount.setCostShareSourceSubAccountNumber(a21SubAccount.costShareSourceSubAccountNumber);
+        }
+        
+        return newA21SubAccount;
+    }
 
 	public List<IndirectCostRecoveryAccountChange> getActiveIndirectCostRecoveryAccounts() {
 	    return getGlobalObjectWithIndirectCostRecoveryAccountsService().getActiveIndirectCostRecoveryAccounts(this);
@@ -192,9 +268,19 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 
 	@Override
 	public IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(GlobalBusinessObjectDetailBase globalDetail, IndirectCostRecoveryAccountChange newICR) {
-		SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
-		String chart = subAccountGlobalDetail.getChartOfAccountsCode();
-		String account = subAccountGlobalDetail.getAccountNumber();
+		String chart;
+		String account;
+		if (globalDetail instanceof SubAccountGlobalDetail) {
+		    SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
+	        chart = subAccountGlobalDetail.getChartOfAccountsCode();
+	        account = subAccountGlobalDetail.getAccountNumber();
+		} else if (globalDetail instanceof SubAccountGlobalNewAccountDetail) {
+		    SubAccountGlobalNewAccountDetail newAccountDetail = (SubAccountGlobalNewAccountDetail) globalDetail;
+            chart = newAccountDetail.getChartOfAccountsCode();
+            account = newAccountDetail.getAccountNumber();
+		} else {
+		    throw new IllegalArgumentException("Unexpected globalDetail implementation for creating ICR Account: " + globalDetail.getClass());
+		}
 
 		A21IndirectCostRecoveryAccount icrAccount = new A21IndirectCostRecoveryAccount();
 		icrAccount.setAccountNumber(account);
@@ -211,12 +297,19 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	public void updateGlobalDetailICRAccountCollection(
 			GlobalBusinessObjectDetailBase globalDetail,
 			List<IndirectCostRecoveryAccount> updatedIcrAccounts) {
-		SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail)globalDetail;
 		List<A21IndirectCostRecoveryAccount> updatedA21IcrAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
 		for(IndirectCostRecoveryAccount icrAccount : updatedIcrAccounts){
 			updatedA21IcrAccounts.add(A21IndirectCostRecoveryAccount.copyICRAccount(icrAccount));
 		}
-		subAccountGlobalDetail.getSubAccount().getA21SubAccount().setA21IndirectCostRecoveryAccounts(updatedA21IcrAccounts);
+		if (globalDetail instanceof SubAccountGlobalDetail) {
+		    SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
+		    subAccountGlobalDetail.getSubAccount().getA21SubAccount().setA21IndirectCostRecoveryAccounts(updatedA21IcrAccounts);
+		} else if (globalDetail instanceof SubAccountGlobalNewAccountDetail) {
+		    SubAccountGlobalNewAccountDetail newAccountDetail = (SubAccountGlobalNewAccountDetail) globalDetail;
+		    newAccountDetail.getSubAccount().getA21SubAccount().setA21IndirectCostRecoveryAccounts(updatedA21IcrAccounts);
+		} else {
+		    throw new IllegalArgumentException("Unexpected globalDetail implementation for updating ICR Account collection: " + globalDetail.getClass());
+		}
 	}
 
 	public void updateIcrAccounts(GlobalBusinessObjectDetailBase globalDetail, List<IndirectCostRecoveryAccount> icrAccounts){
@@ -228,6 +321,9 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	 */
 	@Override
 	public List<? extends GlobalBusinessObjectDetail> getAllDetailObjects() {
+	    List<GlobalBusinessObjectDetail> detailObjects = new ArrayList<>();
+	    detailObjects.addAll(subAccountGlobalDetails);
+	    detailObjects.addAll(subAccountGlobalNewAccountDetails);
 		return subAccountGlobalDetails;
 	}
 

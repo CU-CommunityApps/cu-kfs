@@ -200,9 +200,11 @@
     <property name="title" value="Add New Sub Accounts"/>
     <property name="maintainableItems">
       <list>
+        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Type of New Sub Accounts to Add"/>
+        <bean parent="MaintainableFieldDefinition" p:name="newSubAccountTypeCode"/>
+        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Common Sub Account Values to Add (Optional)"/>
         <bean parent="MaintainableFieldDefinition" p:name="newSubAccountNumber"/>
         <bean parent="MaintainableFieldDefinition" p:name="newSubAccountName"/>
-        <bean parent="MaintainableFieldDefinition" p:name="newSubAccountTypeCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="newSubAccountOffCampusCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="applyToAllNewSubAccounts"/>
         <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Edit List of Accounts"/>

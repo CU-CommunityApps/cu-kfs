@@ -3,18 +3,19 @@ package edu.cornell.kfs.coa.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.maintenance.MaintenanceLock;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
+import edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail;
 
 public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaintainable {
 	private static final String REQUIRES_CG_APPROVAL_NODE = "RequiresCGResponsibilityApproval";
@@ -45,7 +46,29 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
             maintenanceLock.setLockingRepresentation(lockrep.toString());
             maintenanceLocks.add(maintenanceLock);
         }
+        
+        for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
+            MaintenanceLock maintenanceLock = new MaintenanceLock();
+            maintenanceLock.setDocumentNumber(subAccountGlobal.getDocumentNumber());
+            maintenanceLock.setLockingRepresentation(buildLockRepForNewSubAccount(subAccountGlobal, newAccountDetail));
+            maintenanceLocks.add(maintenanceLock);
+        }
+        
         return maintenanceLocks;
+    }
+    
+    protected String buildLockRepForNewSubAccount(SubAccountGlobal subAccountGlobal, SubAccountGlobalNewAccountDetail newAccountDetail) {
+        String subAccountNumber = subAccountGlobal.isApplyToAllNewSubAccounts()
+                ? subAccountGlobal.getNewSubAccountNumber() : newAccountDetail.getSubAccountNumber();
+        StringBuilder lockrep = new StringBuilder();
+        lockrep.append(Account.class.getName() + KFSConstants.Maintenance.AFTER_CLASS_DELIM);
+        lockrep.append(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+        lockrep.append(newAccountDetail.getChartOfAccountsCode() + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
+        lockrep.append(KFSPropertyConstants.ACCOUNT_NUMBER + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+        lockrep.append(newAccountDetail.getAccountNumber() + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
+        lockrep.append(KFSPropertyConstants.SUB_ACCOUNT_NUMBER + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+        lockrep.append(subAccountNumber + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
+        return lockrep.toString();
     }
     
     /**
@@ -90,6 +113,10 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         	}
         }
 
+        if (StringUtils.equals(KFSConstants.SubAccountType.COST_SHARE, subAccountGlobal.getNewSubAccountTypeCode())) {
+            retval = true;
+        }
+
         return retval; 
     }
 
@@ -115,6 +142,11 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
 			A21SubAccountChange a21SubAccount = subAccountGlobal.getA21SubAccount();
 			if (a21SubAccount != null) {
 				a21SubAccount.setDocumentNumber(getDocumentNumber());
+			}
+			if (subAccountGlobal.isApplyToAllNewSubAccounts()) {
+			    for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
+			        newAccountDetail.setSubAccountNumber(KFSConstants.getDashSubAccountNumber());
+			    }
 			}
 		}
 	}
