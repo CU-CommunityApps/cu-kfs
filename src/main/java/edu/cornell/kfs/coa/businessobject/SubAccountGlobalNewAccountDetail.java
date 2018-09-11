@@ -2,6 +2,7 @@ package edu.cornell.kfs.coa.businessobject;
 
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
+import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 
 public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetailBase {
@@ -16,6 +17,7 @@ public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetail
 
     private Chart chart;
     private Account account;
+    private transient SubAccount subAccount;
 
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
@@ -71,6 +73,14 @@ public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetail
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public SubAccount getSubAccount() {
+        return subAccount;
+    }
+
+    public void setSubAccount(SubAccount subAccount) {
+        this.subAccount = subAccount;
     }
 
 }
