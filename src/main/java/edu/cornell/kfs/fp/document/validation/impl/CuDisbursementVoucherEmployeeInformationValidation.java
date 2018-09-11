@@ -35,7 +35,10 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
         CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) getAccountingDocumentForValidation();
         DisbursementVoucherPayeeDetail payeeDetail = document.getDvPayeeDetail();
         
-        if(!payeeDetail.isEmployee() || payeeDetail.isVendor() || !(document.getDocumentHeader().getWorkflowDocument().isInitiated() || document.getDocumentHeader().getWorkflowDocument().isSaved())) {
+        if (!payeeDetail.isEmployee()
+                || payeeDetail.isVendor()
+                || !(document.getDocumentHeader().getWorkflowDocument().isInitiated()
+                || document.getDocumentHeader().getWorkflowDocument().isSaved())) {
             return true;
         }
         
@@ -55,7 +58,8 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
                     !CUKFSConstants.EMPLOYEE_RETIRED_STATUS.equals(employee.getEmployeeStatusCode())) {
                 // If employee is found, then check that employee is active or retired if the doc has not already been routed.
                 if(stateIsInitiated) {
-                    String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
+                    String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(
+                            DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
                     errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_INACTIVE, label);
                     isValid = false;
                 }
@@ -64,7 +68,8 @@ public class CuDisbursementVoucherEmployeeInformationValidation extends Disburse
         
      // check existence of employee
         if (employee == null) { // If employee is not found, report existence error
-            String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
+            String label = SpringContext.getBean(DataDictionaryService.class).getAttributeLabel(
+                    DisbursementVoucherPayeeDetail.class, KFSPropertyConstants.DISB_VCHR_PAYEE_ID_NUMBER);
             errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, KFSKeyConstants.ERROR_EXISTENCE, label);
             isValid = false;
         } 

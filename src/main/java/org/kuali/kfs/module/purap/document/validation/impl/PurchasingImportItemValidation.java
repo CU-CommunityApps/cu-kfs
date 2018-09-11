@@ -83,9 +83,10 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
         if (StringUtils.isEmpty(item.getItemDescription())) {
             valid = false;
             String attributeLabel = dataDictionaryService.
-                                    getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                    getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
-            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_DESCRIPTION, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
+                getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
+                getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
+            GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_DESCRIPTION,
+                    KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
         }
         return valid;
     }
@@ -103,21 +104,29 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
             if (ObjectUtils.isNull(item.getItemUnitPrice())) {
                 valid = false;
                 String attributeLabel = dataDictionaryService.
-                                        getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
-                                        getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE, KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
+                    getDataDictionary().getBusinessObjectEntry(item.getClass().getName()).
+                    getAttributeDefinition(PurapPropertyConstants.ITEM_UNIT_PRICE).getLabel();
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
+                        KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
             }
-        }    
+        }   
 
         if (ObjectUtils.isNotNull(item.getItemUnitPrice())) {
-            if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) > 0) && ((!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)) && (!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
+            if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) > 0)
+                    && ((!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE))
+                    && (!item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
                 // If the item type is not full order discount or trade in items, don't allow negative unit price.
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_ITEM_AMOUNT_BELOW_ZERO, ItemFields.UNIT_COST, item.getItemIdentifierString());
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
+                        PurapKeyConstants.ERROR_ITEM_AMOUNT_BELOW_ZERO, ItemFields.UNIT_COST,
+                        item.getItemIdentifierString());
                 valid = false;
-            }
-            else if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) < 0) && ((item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)) || (item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
+            } else if ((BigDecimal.ZERO.compareTo(item.getItemUnitPrice()) < 0)
+                    && ((item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE))
+                    || (item.getItemTypeCode().equals(ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)))) {
                 // If the item type is full order discount or trade in items, its unit price must be negative.
-                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE, PurapKeyConstants.ERROR_ITEM_AMOUNT_NOT_BELOW_ZERO, ItemFields.UNIT_COST, item.getItemIdentifierString());
+                GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_UNIT_PRICE,
+                        PurapKeyConstants.ERROR_ITEM_AMOUNT_NOT_BELOW_ZERO, ItemFields.UNIT_COST,
+                        item.getItemIdentifierString());
                 valid = false;
             }
         }
@@ -142,10 +151,11 @@ public class PurchasingImportItemValidation extends PurchasingAccountsPayableImp
             Map<String,String> fieldValues = new HashMap<String,String>();
             fieldValues.put(KFSPropertyConstants.ITEM_UNIT_OF_MEASURE_CODE, uomCode);
             if (businessObjectService.countMatching(UnitOfMeasure.class, fieldValues) != 1) {
-                String[] errorParams = { uomCode, "" + item.getItemLineNumber() };
-                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERRORS, PurapKeyConstants.ERROR_ITEMPARSER_INVALID_UOM_CODE, errorParams);
+                String[] errorParams = {uomCode, "" + item.getItemLineNumber()};
+                GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERRORS,
+                        PurapKeyConstants.ERROR_ITEMPARSER_INVALID_UOM_CODE, errorParams);
                 valid = false;
-            }  
+            }
         }
 
         return valid;

@@ -48,7 +48,8 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         String recurringPaymentTypeCode = purDoc.getRecurringPaymentTypeCode();
         //Capital asset validations are only done on line items (not additional charge items).
         if (!getItemForValidation().getItemType().isAdditionalChargeIndicator()) {
-            valid &= capitalAssetManagementModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode, getItemForValidation(), false);
+            valid &= capitalAssetManagementModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode,
+                    getItemForValidation(), false);
         }
         unitOfMeasureValidation.setItemForValidation(getItemForValidation());
         valid &= unitOfMeasureValidation.validate(event);
@@ -83,7 +84,6 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
      * @return boolean false if the document does not contain at least one item.
      */
     public boolean validateContainsAtLeastOneItem(PurchasingDocument purDocument) {
-        boolean valid = false;
         for (PurApItem item : purDocument.getItems()) {
             if (!((PurchasingItemBase) item).isEmpty() && item.getItemType().isLineItemIndicator()) {
 
@@ -92,11 +92,10 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         }
         String documentType = getDocumentTypeLabel(purDocument.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
 
-        if (!valid) {
-            GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY, PurapKeyConstants.ERROR_ITEM_REQUIRED, documentType);
-        }
+        GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
+                PurapKeyConstants.ERROR_ITEM_REQUIRED, documentType);
 
-        return valid;
+        return false;
     }
         
     /**

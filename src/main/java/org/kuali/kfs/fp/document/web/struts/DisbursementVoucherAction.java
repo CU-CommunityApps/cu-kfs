@@ -33,6 +33,7 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherCoverSheetService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
+import org.kuali.kfs.fp.document.service.DisbursementVoucherValidationService;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
@@ -54,6 +55,7 @@ import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.kfs.sys.util.DuplicatePaymentCheckUtils;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -70,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +89,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     private static final String DV_ADHOC_NODE = "AdHoc"; // ==== CU Customization ====
 
     protected DisbursementVoucherPayeeService disbursementVoucherPayeeService;
+    protected DisbursementVoucherValidationService disbursementVoucherValidationService;
 
     /**
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
@@ -112,6 +116,34 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             } else {
                 dvDoc.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(false);
             }
+        }
+        
+        if(dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED) ||
+        		dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.ENROUTE)) {
+        		checkForDuplicatePayments(dvDoc);		
+        }
+    }
+    
+    @Override
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ActionForward actionForward = super.save(mapping, form, request, response);
+
+        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
+
+        checkForDuplicatePayments(dvDoc);
+
+        return actionForward;
+    }
+
+    protected void checkForDuplicatePayments(DisbursementVoucherDocument dvDoc) {
+        Map<String, String> duplicateMessages = new HashMap<>();
+        duplicateMessages.putAll(getDisbursementVoucherValidationService().checkForDuplicatePaymentRequests(dvDoc, false));
+        duplicateMessages.putAll(getDisbursementVoucherValidationService().checkForDuplicateDisbursementVouchers(dvDoc, false));
+
+        if (duplicateMessages.size() > 0) {
+            String[] splitMessage = DuplicatePaymentCheckUtils.buildQuestionText(duplicateMessages).split(DuplicatePaymentCheckUtils.ESCAPED_NEWLINE);
+            Arrays.stream(splitMessage).forEach(message -> GlobalVariables.getMessageMap().putWarning(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, message));
         }
     }
 
@@ -882,5 +914,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         }
         
         return disbursementVoucherPayeeService;
+    }
+    
+    protected DisbursementVoucherValidationService getDisbursementVoucherValidationService() {
+        if (disbursementVoucherValidationService == null) {
+            disbursementVoucherValidationService = SpringContext.getBean(DisbursementVoucherValidationService.class);
+        }
+
+        return disbursementVoucherValidationService;
     }
 }
