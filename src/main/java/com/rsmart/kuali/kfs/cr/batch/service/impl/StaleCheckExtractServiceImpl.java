@@ -1,9 +1,9 @@
-package edu.cornell.kfs.pdp.batch.service.impl;
+package com.rsmart.kuali.kfs.cr.batch.service.impl;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
-import edu.cornell.kfs.pdp.batch.service.StaleCheckExtractService;
+import com.rsmart.kuali.kfs.cr.batch.service.StaleCheckExtractService;
 import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,7 +84,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         if (!partialProcessingSummary.isEmpty()) {
             for (String failingFileName : partialProcessingSummary.keySet()) {
                 List<String> errorsEncountered = partialProcessingSummary.get(failingFileName);
-                LOG.error("processStaleCheckBatchFiles:  Stale Check Batch input file contained "+ errorsEncountered.size() + " rows that could not be processed.");
+                LOG.error("processStaleCheckBatchFiles: Stale Check Batch input file contained "+ errorsEncountered.size() + " rows that could not be processed. (" + failingFileName + ")");
                 for (String dataError : errorsEncountered) {
                     LOG.error("processStaleCheckBatchFiles: " + dataError);
                 }
@@ -221,7 +221,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     protected String appendFailureMessage(String failureMessage, int listIndex, String errorMessage) {
         if (failureMessage.length() == 0) {
-            failureMessage += "Stale Check Row " + listIndex + " could not be processed for the following reasons: ";
+            failureMessage += "Stale Check Row could not be processed for the following reasons: ";
         }
         failureMessage += "[" + Integer.toString(listIndex) + "] " + errorMessage;
         return failureMessage;

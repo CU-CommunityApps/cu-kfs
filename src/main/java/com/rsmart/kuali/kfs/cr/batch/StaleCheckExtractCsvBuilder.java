@@ -1,4 +1,4 @@
-package edu.cornell.kfs.pdp.batch;
+package com.rsmart.kuali.kfs.cr.batch;
 
 import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
 

@@ -1,6 +1,9 @@
-package edu.cornell.kfs.pdp.batch;
+package com.rsmart.kuali.kfs.cr.batch;
 
+import com.rsmart.kuali.kfs.cr.CRConstants;
+import com.rsmart.kuali.kfs.cr.CRKeyConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsv;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -26,7 +29,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     @Override
     public String getFileTypeIdentifer() {
-        return CUPdpConstants.STALE_CHECK_EXTRACT_FILE_TYPE_ID;
+        return CRConstants.STALE_CHECK_EXTRACT_FILE_TYPE_ID;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     @Override
     public String getTitleKey() {
-        return CUPdpConstants.MESSAGE_BATCH_UPLOAD_TITLE_STALE_CHECK;
+        return CRKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_STALE_CHECK;
     }
 
     /**

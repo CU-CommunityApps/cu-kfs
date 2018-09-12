@@ -174,41 +174,9 @@
         <property name="batchInputFileType" ref="payeeACHAccountExtractCsvInputFileType" />
     </bean>
 
-    <bean id="staleCheckExtractService" parent="staleCheckExtractService-parentBean" />
-    <bean id="staleCheckExtractService-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.service.impl.StaleCheckExtractServiceImpl">
-        <property name="batchInputFileService" ref="batchInputFileService" />
-        <property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
-        <property name="businessObjectService" ref="businessObjectService" />
-        <property name="batchInputFileTypes">
-            <list>
-                <ref bean="staleCheckExtractCsvInputFileType" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="staleCheckExtractStep" class="edu.cornell.kfs.pdp.batch.StaleCheckExtractStep" parent="step">
-        <property name="staleCheckExtractService" ref="staleCheckExtractService" />
-        <property name="batchInputFileType" ref="staleCheckExtractCsvInputFileType" />
-    </bean>
-
-    <bean id="staleCheckExtractCsvInputFileType" parent="staleCheckExtractCsvInputFileType-parentBean" />
-    <bean id="staleCheckExtractCsvInputFileType-parentBean" abstract="true" class="edu.cornell.kfs.pdp.batch.StaleCheckExtractCsvInputFileType">
-        <property name="directoryPath">
-            <value>${staging.directory}/pdp/staleCheckExtract</value>
-        </property>
-        <property name="fileExtension">
-            <value>csv</value>
-        </property>
-        <property name="csvEnumClass">
-            <value>edu.cornell.kfs.pdp.batch.StaleCheckExtractCsvFields</value>
-        </property>
-    </bean>
-
-
     <bean id="payeeACHAccountExtractJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
-                <ref bean="staleCheckExtractStep" />
                 <ref bean="payeeACHAccountExtractStep" />
             </list>
         </property>

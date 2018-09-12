@@ -1,13 +1,13 @@
-package edu.cornell.kfs.pdp.batch.service.impl;
+package com.rsmart.kuali.kfs.cr.batch.service.impl;
 
+import com.rsmart.kuali.kfs.cr.batch.fixture.CheckReconciliationFixture;
+import com.rsmart.kuali.kfs.cr.batch.fixture.StaleCheckFileFixture;
+import com.rsmart.kuali.kfs.cr.batch.fixture.StaleCheckRowFixture;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
-import edu.cornell.kfs.pdp.batch.StaleCheckExtractCsvFields;
-import edu.cornell.kfs.pdp.batch.StaleCheckExtractCsvInputFileType;
-import edu.cornell.kfs.pdp.batch.fixture.CheckReconciliationFixture;
-import edu.cornell.kfs.pdp.batch.fixture.StaleCheckFileFixture;
+import com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvFields;
+import com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvInputFileType;
 import edu.cornell.kfs.pdp.CUPdpTestConstants;
-import edu.cornell.kfs.pdp.batch.fixture.StaleCheckRowFixture;
 import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.io.FileUtils;
@@ -42,8 +42,8 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("deprecation")
 public class StaleCheckExtractServiceImplTest {
 
-    private static final String STALE_CHECK_SOURCE_FILE_PATH = "src/test/resources/edu/cornell/kfs/pdp/batch/service/fixture";
-    private static final String STALE_CHECK_TESTING_FILE_PATH = "test/pdp/staleCheckExtract";
+    private static final String STALE_CHECK_SOURCE_FILE_PATH = "src/test/resources/com/rsmart/kuali/kfs/cr/batch/service/fixture";
+    private static final String STALE_CHECK_TESTING_FILE_PATH = "test/cr/staleCheckExtract";
     private static final String STALE_CHECK_TESTING_DIRECTORY = STALE_CHECK_TESTING_FILE_PATH + "/";
     private static final String FILE_PATH_FORMAT = "{0}/{1}{2}";
 

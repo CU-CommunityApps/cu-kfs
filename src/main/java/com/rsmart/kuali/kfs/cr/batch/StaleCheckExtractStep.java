@@ -1,7 +1,7 @@
-package edu.cornell.kfs.pdp.batch;
+package com.rsmart.kuali.kfs.cr.batch;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
-import edu.cornell.kfs.pdp.batch.service.StaleCheckExtractService;
+import com.rsmart.kuali.kfs.cr.batch.service.StaleCheckExtractService;
 
 import java.util.Date;
 

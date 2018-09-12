@@ -1,4 +1,4 @@
-package edu.cornell.kfs.pdp.batch.fixture;
+package com.rsmart.kuali.kfs.cr.batch.fixture;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import edu.cornell.kfs.pdp.CUPdpTestConstants;

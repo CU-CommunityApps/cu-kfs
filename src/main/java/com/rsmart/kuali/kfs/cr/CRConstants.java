@@ -107,4 +107,6 @@ public class CRConstants {
     public static final String BNK_CD_NOT_FOUND = "CR_NOT_FOUND_BANK_CD";
     
     public static final String ID_COL = "CR_ID";
+
+    public static final String STALE_CHECK_EXTRACT_FILE_TYPE_ID = "staleCheckExtractCsvInputFileType";
 }
