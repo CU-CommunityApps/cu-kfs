@@ -4,7 +4,7 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 import com.rsmart.kuali.kfs.cr.batch.service.StaleCheckExtractService;
-import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
+import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

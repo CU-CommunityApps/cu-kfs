@@ -1,4 +1,4 @@
-package edu.cornell.kfs.pdp.businessobject;
+package com.rsmart.kuali.kfs.cr.businessobject;
 
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 

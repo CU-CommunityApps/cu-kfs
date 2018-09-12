@@ -1,6 +1,6 @@
 package com.rsmart.kuali.kfs.cr.batch;
 
-import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
+import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
 
 import java.util.ArrayList;
 import java.util.List;

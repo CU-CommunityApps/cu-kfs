@@ -8,7 +8,7 @@ import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 import com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvFields;
 import com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvInputFileType;
 import edu.cornell.kfs.pdp.CUPdpTestConstants;
-import edu.cornell.kfs.pdp.businessobject.StaleCheckBatchRow;
+import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
