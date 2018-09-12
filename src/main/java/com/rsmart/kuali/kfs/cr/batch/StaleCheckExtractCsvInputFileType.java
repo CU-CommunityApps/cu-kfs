@@ -2,8 +2,6 @@ package com.rsmart.kuali.kfs.cr.batch;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.CRKeyConstants;
-import edu.cornell.kfs.pdp.CUPdpConstants;
-import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractCsv;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -14,7 +12,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase<PayeeACHAccountExtractCsv> {
+public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase<StaleCheckExtractCsvFields> {
 	private static final Logger LOG = LogManager.getLogger(StaleCheckExtractCsvInputFileType.class);
 
     /**
