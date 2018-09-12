@@ -79,6 +79,11 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper.getVendorDetail().setVendorContacts(buildVendorContacts(pmwVendor));
             kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor));
             kfsVendorDataWrapper.getVendorDetail().setVendorParentIndicator(true);
+            if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
+                kfsVendorDataWrapper.getVendorDetail().setVendorPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.PAYMENT_TERMS_NET_30_DAYS_CODE);
+                kfsVendorDataWrapper.getVendorDetail().setVendorShippingTitleCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.VENDOR_SHIPPING_TITLE_DESTINATION_CODE);
+                kfsVendorDataWrapper.getVendorDetail().setVendorShippingPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.VENDOR_SHIPPING_PAYMENT_TERMS_PREPAID_AND_ADD_CODE);
+            }
             kfsVendorDataWrapper = buildRemainingVendorNotes(pmwVendor, kfsVendorDataWrapper);
             kfsVendorDataWrapper.getVendorDetail().setBoNotes(kfsVendorDataWrapper.getVendorNotes());
         }
@@ -642,9 +647,6 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
         vendorDetailExtension.setDefaultB2BPaymentMethodCode(DisbursementVoucherConstants.PAYMENT_METHOD_CHECK);
-        if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
-            vendorDetailExtension.setEinvoiceVendorIndicator(pmwVendor.isInvoicing());
-        }
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(getDateTimeService().getCurrentTimestamp());
         return vendorDetailExtension;
