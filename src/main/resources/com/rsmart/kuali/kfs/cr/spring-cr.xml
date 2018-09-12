@@ -123,7 +123,7 @@
 	</bean>
 
 	<bean id="staleCheckExtractService" parent="staleCheckExtractService-parentBean" />
-	<bean id="staleCheckExtractService-parentBean" abstract="true" class="com.rsmart.kuali.kfs.cr.batch.service.impl.impl.StaleCheckExtractServiceImpl">
+	<bean id="staleCheckExtractService-parentBean" abstract="true" class="com.rsmart.kuali.kfs.cr.batch.service.impl.StaleCheckExtractServiceImpl">
 		<property name="batchInputFileService" ref="batchInputFileService" />
 		<property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
 		<property name="businessObjectService" ref="businessObjectService" />
