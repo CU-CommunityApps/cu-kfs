@@ -67,7 +67,6 @@
     <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" >
     		<property name="documentService" ref="documentService"/>
     		<property name="noteService" ref="noteService"/>
-    		<property name="checkReconciliationDao" ref="crCheckReconciliationDao"/>
     </bean>
 
     
@@ -175,11 +174,11 @@
     </bean>
 
     <bean id="payeeACHAccountExtractJob" parent="scheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="payeeACHAccountExtractStep" />
-            </list>
-        </property>
+       <property name="steps">
+           <list>
+               <ref bean="payeeACHAccountExtractStep" />
+           </list>
+       </property>
     </bean>
 
 </beans>

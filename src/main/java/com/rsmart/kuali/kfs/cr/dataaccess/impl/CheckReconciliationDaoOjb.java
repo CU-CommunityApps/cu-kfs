@@ -21,19 +21,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksVendorDaoJdbc;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
-import org.eclipse.persistence.queries.UpdateObjectQuery;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.PdpConstants.DisbursementTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -41,10 +36,8 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
-import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 
@@ -214,7 +207,6 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         return list;
     }
 
-    //Used by Stale Check Service
     public CheckReconciliation findByCheckNumber(String checkNumber) {
         Criteria criteria = new Criteria();
 
