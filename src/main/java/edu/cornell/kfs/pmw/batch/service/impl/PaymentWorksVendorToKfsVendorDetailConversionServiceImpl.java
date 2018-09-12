@@ -80,9 +80,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor));
             kfsVendorDataWrapper.getVendorDetail().setVendorParentIndicator(true);
             if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
-                kfsVendorDataWrapper.getVendorDetail().setVendorPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.PAYMENT_TERMS_CODE);
-                kfsVendorDataWrapper.getVendorDetail().setVendorShippingTitleCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.VENDOR_SHIPPING_TITLE_CODE);
-                kfsVendorDataWrapper.getVendorDetail().setVendorShippingPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.VENDOR_SHIPPING_PAYMENT_TERMS_CODE);
+                kfsVendorDataWrapper.getVendorDetail().setVendorPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.PAYMENT_TERMS_NET_30_DAYS_CODE);
+                kfsVendorDataWrapper.getVendorDetail().setVendorShippingTitleCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.VENDOR_SHIPPING_TITLE_DESTINATION_CODE);
+                kfsVendorDataWrapper.getVendorDetail().setVendorShippingPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.VENDOR_SHIPPING_PAYMENT_TERMS_PREPAID_AND_ADD_CODE);
             }
             kfsVendorDataWrapper = buildRemainingVendorNotes(pmwVendor, kfsVendorDataWrapper);
             kfsVendorDataWrapper.getVendorDetail().setBoNotes(kfsVendorDataWrapper.getVendorNotes());
