@@ -193,7 +193,7 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
         } else {
             LOG.error("registerKfsPvenApprovalForKfsEnteredVendor: Vendor '" + vendorDetail.getVendorHeaderGeneratedIdentifier()
                       + "-" + vendorDetail.getVendorDetailAssignedIdentifier() + "' with KFS document number '" + kfsVendorDocumentNumber
-                      + "' was not inserted into PaymentWorks table because of either it's KFS vendorCorpCitizenCode being '" + vendorDetail.getVendorHeader().getVendorCorpCitizenCode()
+                      + "' was NOT inserted into PaymentWorks table because of either it's KFS vendorForeignIndicator being '" + vendorDetail.getVendorHeader().getVendorForeignIndicator().booleanValue()
                       + "' or its KFS vendorTypeCode being '" + vendorDetail.getVendorHeader().getVendorTypeCode() + "'.");
         }
     }
@@ -237,13 +237,8 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     }
 
     private boolean isDomesticVendor(VendorDetail vendorDetail) {
-        LOG.info("isDomesticVendor: Country Code used in comparison was " + vendorDetail.getVendorHeader().getVendorCorpCitizenCode());
-        //Returning true for null here is valid. 
-        //"Country of Incorporation/Citizenship" is not a required field.
-        //That value is left blank on the edoc for US vendors when their data 
-        //is either hand keyed into KFS or entered through Purchasing's AVF form.
-        return (ObjectUtils.isNull(vendorDetail.getVendorHeader().getVendorCorpCitizenCode()) 
-                || StringUtils.equalsIgnoreCase(vendorDetail.getVendorHeader().getVendorCorpCitizenCode(), KFSConstants.COUNTRY_CODE_UNITED_STATES));
+        LOG.info("isDomesticVendor: Vendor Foreign Indicator =  " + vendorDetail.getVendorHeader().getVendorForeignIndicator().booleanValue());
+        return (!vendorDetail.getVendorHeader().getVendorForeignIndicator().booleanValue());
     }
 
     private PaymentWorksVendor populateKfsEnteredPaymentWorksVendor(String kfsVendorDocumentNumber, VendorDetail vendorDetail, String kfsVendorProcessingStatus) {
