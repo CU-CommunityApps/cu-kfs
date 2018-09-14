@@ -12,9 +12,11 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -162,8 +164,8 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
             return processingError;
         }
         checkReconciliation.setStatus(CRConstants.STALE);
-        java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
-        checkReconciliation.setStatusChangeDate(java.sql.Date.valueOf(currentTimestamp.toLocalDateTime().toLocalDate()));
+        java.sql.Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
+        checkReconciliation.setStatusChangeDate(currentDate);
         businessObjectService.save(checkReconciliation);
 
         return processingError;
