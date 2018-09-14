@@ -127,6 +127,7 @@
 		<property name="batchInputFileService" ref="batchInputFileService" />
 		<property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
 		<property name="businessObjectService" ref="businessObjectService" />
+		<property name="dateTimeService" ref="dateTimeService" />
 		<property name="batchInputFileTypes">
 			<list>
 				<ref bean="staleCheckExtractCsvInputFileType" />

@@ -20,6 +20,8 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.impl.BusinessObjectServiceImpl;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.AdditionalAnswers;
 
 import java.io.File;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +59,7 @@ public class StaleCheckExtractServiceImplTest {
         staleCheckExtractService.setBatchInputFileTypes(Collections.singletonList(createStaleCheckBatchInputFileType()));
         staleCheckExtractService.setBusinessObjectService(createMockBusinessObjectService());
         staleCheckExtractService.setCheckReconciliationDao(createMockCheckReconciliationDao());
+        staleCheckExtractService.setDateTimeService(createMockDateTimeService());
     }
 
     @After
@@ -280,6 +284,13 @@ public class StaleCheckExtractServiceImplTest {
         BusinessObjectService businessObjectService = mock(BusinessObjectServiceImpl.class);
         when(businessObjectService.save(any(CheckReconciliation.class))).then(AdditionalAnswers.returnsFirstArg());
         return businessObjectService;
+    }
+
+    private static DateTimeService createMockDateTimeService() {
+        DateTimeService dateTimeService = mock(DateTimeServiceImpl.class);
+        java.sql.Date currentSqlDate = new java.sql.Date(Calendar.getInstance().getTimeInMillis());
+        when(dateTimeService.getCurrentSqlDate()).thenReturn(currentSqlDate);
+        return dateTimeService;
     }
 
     private static CheckReconciliationDao createMockCheckReconciliationDao() {

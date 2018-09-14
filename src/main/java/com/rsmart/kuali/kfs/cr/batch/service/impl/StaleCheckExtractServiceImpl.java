@@ -40,6 +40,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
     private BatchInputFileService batchInputFileService;
     private List<BatchInputFileType> batchInputFileTypes;
     private CheckReconciliationDao checkReconciliationDao;
+    private DateTimeService dateTimeService;
 
     @Transactional
     @Override
@@ -164,8 +165,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
             return processingError;
         }
         checkReconciliation.setStatus(CRConstants.STALE);
-        java.sql.Date currentDate = SpringContext.getBean(DateTimeService.class).getCurrentSqlDate();
-        checkReconciliation.setStatusChangeDate(currentDate);
+        checkReconciliation.setStatusChangeDate(dateTimeService.getCurrentSqlDate());
         businessObjectService.save(checkReconciliation);
 
         return processingError;
@@ -280,6 +280,10 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
     private class StaleCheckBatchProcessResults {
