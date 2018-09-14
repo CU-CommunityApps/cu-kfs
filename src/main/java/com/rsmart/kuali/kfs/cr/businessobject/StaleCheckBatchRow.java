@@ -4,7 +4,7 @@ import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
 public class StaleCheckBatchRow extends TransientBusinessObjectBase {
     private static final long serialVersionUID = -2282621440553926073L;
-    private static final String DATA_DELIMITER = ",";
+    private static final String DATA_DELIMITER = org.kuali.kfs.sys.KFSConstants.COMMA;
 
     private String checkIssuedDate;
     private String bankCode;

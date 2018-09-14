@@ -11,8 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -81,24 +79,24 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
     }
 
     private void logStaleCheckBatchResults(StaleCheckBatchProcessResults staleCheckBatchProcessResults) {
-        LOG.info("processStaleCheckBatchFiles: ==============================================");
-        LOG.info("processStaleCheckBatchFiles: ==== Summary of Stale Check Batch ====");
-        LOG.info("processStaleCheckBatchFiles: ==============================================");
-        LOG.info("processStaleCheckBatchFiles: Files loaded successfully: " + staleCheckBatchProcessResults.getNumSuccessFiles());
-        LOG.info("processStaleCheckBatchFiles: Files loaded with one or more failed rows: " + staleCheckBatchProcessResults.getNumPartialFiles());
+        LOG.info("logStaleCheckBatchResults: ==============================================");
+        LOG.info("logStaleCheckBatchResults: ==== Summary of Stale Check Batch ====");
+        LOG.info("logStaleCheckBatchResults: ==============================================");
+        LOG.info("logStaleCheckBatchResults: Files loaded successfully: " + staleCheckBatchProcessResults.getNumSuccessFiles());
+        LOG.info("logStaleCheckBatchResults: Files loaded with one or more failed rows: " + staleCheckBatchProcessResults.getNumPartialFiles());
         if (!staleCheckBatchProcessResults.getPartialProcessingSummary().isEmpty()) {
             for (String failingFileName : staleCheckBatchProcessResults.getPartialProcessingSummary().keySet()) {
                 List<String> errorsEncountered = staleCheckBatchProcessResults.getPartialProcessingSummary().get(failingFileName);
-                LOG.error("processStaleCheckBatchFiles: Stale Check Batch input file contained "+ errorsEncountered.size() +
+                LOG.error("logStaleCheckBatchResults: Stale Check Batch input file contained "+ errorsEncountered.size() +
                         " rows that could not be processed. (" + failingFileName + ")");
                 for (String dataError : errorsEncountered) {
-                    LOG.error("processStaleCheckBatchFiles: " + dataError);
+                    LOG.error("logStaleCheckBatchResults: " + dataError);
                 }
             }
         }
-        LOG.info("processStaleCheckBatchFiles: Files with errors: " + staleCheckBatchProcessResults.getNumErrorFiles());
-        LOG.info("processStaleCheckBatchFiles: =====================");
-        LOG.info("processStaleCheckBatchFiles: ==== End Summary ====");
+        LOG.info("logStaleCheckBatchResults: Files with errors: " + staleCheckBatchProcessResults.getNumErrorFiles());
+        LOG.info("logStaleCheckBatchResults: =====================");
+        LOG.info("logStaleCheckBatchResults: ==== End Summary ====");
     }
 
     protected Map<String,BatchInputFileType> getListOfFilesToProcess() {
@@ -172,61 +170,62 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
     }
 
     protected String validateStaleCheckBatchRow(StaleCheckBatchRow staleCheckRow, CheckReconciliation checkReconciliation) {
-        String failureMessage = KFSConstants.EMPTY_STRING;
-        int listIndex = 1;
+        List<String> validationErrors = new ArrayList<>();
 
         if (StringUtils.isBlank(staleCheckRow.getBankCode())) {
-            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Bank is blank. ");
+            validationErrors.add("Bank is blank.");
         }
 
         if (StringUtils.isBlank(staleCheckRow.getCheckNumber())) {
-            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Number is blank. ");
+            validationErrors.add("Check Number is blank.");
         }
 
         if (StringUtils.isBlank(staleCheckRow.getCheckTotalAmount())) {
-            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Total Amount is blank. ");
+            validationErrors.add("Check Total Amount is blank.");
         }
 
         if (ObjectUtils.isNull(checkReconciliation) || ObjectUtils.isNull(checkReconciliation.getCheckNumber())) {
-            failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Reconciliation does not exist in KFS. ");
+            validationErrors.add("Check Reconciliation does not exist in KFS.");
         } else {
-            if (!StringUtils.equalsIgnoreCase(staleCheckRow.getBankCode(), checkReconciliation.getBankCode())) {
-                String message = " The Bank Code in the file (" + staleCheckRow.getBankCode() + ") row does not match the bank on the Check (" +
-                        checkReconciliation.getBankCode() + "). ";
-                failureMessage = appendFailureMessage(failureMessage, listIndex++, message);
-            }
-
-            try {
-                Double checkTotalAmountParsed = NumberFormat.getNumberInstance(java.util.Locale.US).parse(staleCheckRow.getCheckTotalAmount()).doubleValue();
-                KualiDecimal checkTotalAmount = new KualiDecimal(checkTotalAmountParsed);
-                if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
-                    String message = " The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
-                            checkReconciliation.getAmount().toString() + "). ";
-                    failureMessage = appendFailureMessage(failureMessage, listIndex++, message);
-                }
-            } catch (java.text.ParseException ex) {
-                String message = " Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString();
-                failureMessage = appendFailureMessage(failureMessage, listIndex++, message);
-            }
-
-            if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {
-                failureMessage = appendFailureMessage(failureMessage, listIndex++, " Check Status is already STALE.");
-            }
+            validateCheckReconciliation(staleCheckRow, checkReconciliation, validationErrors);
         }
 
-        if (failureMessage.length() > 0) {
-            LOG.warn("validateStaleCheckBatchRow:" + failureMessage);
-            return failureMessage;
+        if (validationErrors.size() > 0) {
+            String validationErrorMessagesForRow = getValidationErrorsForRow(validationErrors);
+            LOG.warn("validateStaleCheckBatchRow:" + validationErrorMessagesForRow);
+            return validationErrorMessagesForRow;
         }
         return StringUtils.EMPTY;
     }
 
-    protected String appendFailureMessage(String failureMessage, int listIndex, String errorMessage) {
-        if (StringUtils.isEmpty(failureMessage)) {
-            failureMessage = "Stale Check Row could not be processed for the following reasons: ";
+    protected String getValidationErrorsForRow(List<String> validationErrors) {
+        String failureMessage = "Stale Check Row could not be processed for the following reasons:";
+        for (int i=0; i<validationErrors.size(); ++i) {
+            failureMessage += " [" + Integer.toString(i + 1) + "] " + validationErrors.get(i);
         }
-        failureMessage += "[" + Integer.toString(listIndex) + "] " + errorMessage;
         return failureMessage;
+    }
+
+    protected void validateCheckReconciliation(StaleCheckBatchRow staleCheckRow, CheckReconciliation checkReconciliation, List<String> validationErrors) {
+        if (!StringUtils.equalsIgnoreCase(staleCheckRow.getBankCode(), checkReconciliation.getBankCode())) {
+            validationErrors.add("The Bank Code in the file (" + staleCheckRow.getBankCode() + ") row does not match the bank on the Check (" +
+                    checkReconciliation.getBankCode() + ").");
+        }
+
+        try {
+            Double checkTotalAmountParsed = NumberFormat.getNumberInstance(java.util.Locale.US).parse(staleCheckRow.getCheckTotalAmount()).doubleValue();
+            KualiDecimal checkTotalAmount = new KualiDecimal(checkTotalAmountParsed);
+            if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
+                validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
+                        checkReconciliation.getAmount().toString() + ").");
+            }
+        } catch (java.text.ParseException ex) {
+            validationErrors.add("Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString());
+        }
+
+        if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {
+            validationErrors.add("Check Status is already STALE.");
+        }
     }
 
     protected byte[] safelyLoadFileBytes(String fileName) {
