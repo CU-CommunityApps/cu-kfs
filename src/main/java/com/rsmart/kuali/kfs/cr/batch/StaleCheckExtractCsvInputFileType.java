@@ -2,6 +2,8 @@ package com.rsmart.kuali.kfs.cr.batch;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.CRKeyConstants;
+import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -17,8 +19,6 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     /**
      * This implementation just returns an empty string, since the returned value is not needed in this case.
-     *
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileName(String, Object, String)
      */
     @Override
     public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
@@ -37,7 +37,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     @Override
     public String getAuthorPrincipalName(File file) {
-        return null;
+        return StringUtils.EMPTY;
     }
 
     @Override
@@ -47,8 +47,6 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     /**
      * Overridden to call "convertParsedObjectToVO" after performing the regular parsing.
-     *
-     * @see CsvBatchInputFileTypeBase#parse(byte[])
      */
     @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
@@ -58,12 +56,12 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Object convertParsedObjectToVO(Object parsedContent) {
+    protected List<StaleCheckBatchRow> convertParsedObjectToVO(Object parsedContent) {
         // Convert from List<Map<String,String>> to a list of DTOs, and catch errors appropriately as in similar parsing methods.
         try {
             return StaleCheckExtractCsvBuilder.buildStaleCheckExtract((List<Map<String,String>>) parsedContent);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error("convertParsedObjectToVO: " + e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

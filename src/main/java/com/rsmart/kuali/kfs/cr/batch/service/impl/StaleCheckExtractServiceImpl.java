@@ -43,11 +43,9 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
     @Override
     public boolean processStaleCheckBatchFiles() {
         LOG.info("processStaleCheckBatchFiles: Beginning processing of Stale Check Batch input files");
-        
-        int numSuccess = 0;
-        int numPartial = 0;
-        int numFail = 0;
-        Map<String, List<String>> partialProcessingSummary = new HashMap<>();
+
+        StaleCheckBatchProcessResults staleCheckBatchProcessResults = new StaleCheckBatchProcessResults();
+
 
         Map<String,BatchInputFileType> fileNamesToLoad = getListOfFilesToProcess();
         LOG.info("processStaleCheckBatchFiles: Found " + fileNamesToLoad.size() + " file(s) to process.");
@@ -63,39 +61,41 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
                 List<String> errorList = loadStaleCheckBatchFile(inputFileName, fileNamesToLoad.get(inputFileName));
                 if (errorList.isEmpty()) {
                     LOG.info("processStaleCheckBatchFiles: Successfully loaded Stale Check Batch input file");
-                    numSuccess++;
+                    staleCheckBatchProcessResults.incrementNumSuccessFiles();
                 } else {
                     LOG.warn("processStaleCheckBatchFiles: Stale Check Batch input file contained "+ errorList.size() + " rows that could not be processed.");
-                    partialProcessingSummary.put(inputFileName, errorList);
-                    numPartial++;
+                    staleCheckBatchProcessResults.addPartialProcessResult(inputFileName, errorList);
+                    staleCheckBatchProcessResults.incrementNumPartialFiles();
                 }
             } catch (Exception e) {
                 LOG.error("processStaleCheckBatchFiles: Failed to load  Stale Check Batch input file due to this Exception:", e);
-                numFail++;
+                staleCheckBatchProcessResults.incrementNumErrorFiles();
             }
         }
         removeDoneFiles(processedFiles);
+        logStaleCheckBatchResults(staleCheckBatchProcessResults);
+        return true;
+    }
 
+    private void logStaleCheckBatchResults(StaleCheckBatchProcessResults staleCheckBatchProcessResults) {
         LOG.info("processStaleCheckBatchFiles: ==============================================");
         LOG.info("processStaleCheckBatchFiles: ==== Summary of Stale Check Batch ====");
         LOG.info("processStaleCheckBatchFiles: ==============================================");
-        LOG.info("processStaleCheckBatchFiles: Files loaded successfully: " + numSuccess);
-        LOG.info("processStaleCheckBatchFiles: Files loaded with one or more failed rows: " + numPartial);
-        if (!partialProcessingSummary.isEmpty()) {
-            for (String failingFileName : partialProcessingSummary.keySet()) {
-                List<String> errorsEncountered = partialProcessingSummary.get(failingFileName);
-                LOG.error("processStaleCheckBatchFiles: Stale Check Batch input file contained "+ errorsEncountered.size() + " rows that could not be processed. (" + failingFileName + ")");
+        LOG.info("processStaleCheckBatchFiles: Files loaded successfully: " + staleCheckBatchProcessResults.getNumSuccessFiles());
+        LOG.info("processStaleCheckBatchFiles: Files loaded with one or more failed rows: " + staleCheckBatchProcessResults.getNumPartialFiles());
+        if (!staleCheckBatchProcessResults.getPartialProcessingSummary().isEmpty()) {
+            for (String failingFileName : staleCheckBatchProcessResults.getPartialProcessingSummary().keySet()) {
+                List<String> errorsEncountered = staleCheckBatchProcessResults.getPartialProcessingSummary().get(failingFileName);
+                LOG.error("processStaleCheckBatchFiles: Stale Check Batch input file contained "+ errorsEncountered.size() +
+                        " rows that could not be processed. (" + failingFileName + ")");
                 for (String dataError : errorsEncountered) {
                     LOG.error("processStaleCheckBatchFiles: " + dataError);
                 }
             }
         }
-        LOG.info("processStaleCheckBatchFiles: Files with errors: " + numFail);
+        LOG.info("processStaleCheckBatchFiles: Files with errors: " + staleCheckBatchProcessResults.getNumErrorFiles());
         LOG.info("processStaleCheckBatchFiles: =====================");
         LOG.info("processStaleCheckBatchFiles: ==== End Summary ====");
-        LOG.info("processStaleCheckBatchFiles: =====================");
-
-        return true;
     }
 
     protected Map<String,BatchInputFileType> getListOfFilesToProcess() {
@@ -105,13 +105,13 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
             List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
             if (inputFileNames == null) {
-                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer()
+                criticalError("getListOfFilesToProcess: BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer()
                         + ") returned NULL which should never happen.");
             } else {
                 for (String inputFileName : inputFileNames) {
 
                     if (StringUtils.isBlank(inputFileName)) {
-                        criticalError("One of the file names returned as ready to process [" + inputFileName
+                        criticalError("getListOfFilesToProcess: One of the file names returned as ready to process [" + inputFileName
                                 + "] was blank.  This should not happen, so throwing an error to investigate.");
                     }
 
@@ -220,8 +220,8 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
     }
 
     protected String appendFailureMessage(String failureMessage, int listIndex, String errorMessage) {
-        if (failureMessage.length() == 0) {
-            failureMessage += "Stale Check Row could not be processed for the following reasons: ";
+        if (StringUtils.isEmpty(failureMessage)) {
+            failureMessage = "Stale Check Row could not be processed for the following reasons: ";
         }
         failureMessage += "[" + Integer.toString(listIndex) + "] " + errorMessage;
         return failureMessage;
@@ -278,6 +278,47 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
+    }
+
+    private class StaleCheckBatchProcessResults {
+        private int numSuccessFiles = 0;
+        private int numPartialFiles = 0;
+        private int numErrorFiles = 0;
+        private Map<String, List<String>> partialProcessingSummary = new HashMap<>();
+
+        public StaleCheckBatchProcessResults() {}
+
+        public Map<String, List<String>> getPartialProcessingSummary() {
+            return partialProcessingSummary;
+        }
+
+        public void addPartialProcessResult(String inputFileName, List<String> errorList) {
+            partialProcessingSummary.put(inputFileName, errorList);
+        }
+
+        public int getNumSuccessFiles() {
+            return numSuccessFiles;
+        }
+
+        public void incrementNumSuccessFiles() {
+            ++numSuccessFiles;
+        }
+
+        public int getNumPartialFiles() {
+            return numPartialFiles;
+        }
+
+        public void incrementNumPartialFiles() {
+            ++numPartialFiles;
+        }
+
+        public int getNumErrorFiles() {
+            return numErrorFiles;
+        }
+
+        public void incrementNumErrorFiles() {
+            ++numErrorFiles;
+        }
     }
 
 }
