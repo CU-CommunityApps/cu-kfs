@@ -252,7 +252,9 @@ public class AwardExtensionRule extends AwardRule {
                         getBillingFrequencyDescription(newAwardCopy));
                     break;
                 } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
-                    SpringContext.getBean(AccountsReceivableModuleBillingService.class).hasActiveBills(proposalNumber)) {
+                    SpringContext.getBean(AccountsReceivableModuleBillingService.class)
+                    		.hasActiveBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                    			awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
                         CGKeyConstants.AwardConstants.ERROR_CG_ACTIVE_BILLS_EXIST,
