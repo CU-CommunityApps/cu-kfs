@@ -19,6 +19,8 @@
 package org.kuali.kfs.sys.document.validation.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.service.DataDictionaryService;
@@ -65,6 +67,9 @@ import java.util.Set;
  * A validation that checks whether the given accounting line is accessible to the given user or not
  */
 public class AccountingLineAccessibleValidation extends GenericValidation {
+	
+    private static final Logger LOG = LogManager.getLogger(AccountingLineAccessibleValidation.class);
+    
     protected DataDictionaryService dataDictionaryService;
     protected AccountingDocument accountingDocumentForValidation;
     protected AccountingLine accountingLineForValidation;
@@ -73,8 +78,10 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * Indicates what is being done to an accounting line. This allows the same method to be used for different actions.
      */
     public enum AccountingLineAction {
-        ADD(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_ADD), DELETE(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_DELETE), UPDATE(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_UPDATE);
-
+        ADD(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_ADD),
+        DELETE(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_DELETE),
+        UPDATE(KFSKeyConstants.ERROR_ACCOUNTINGLINE_INACCESSIBLE_UPDATE);
+    	
         public final String accessibilityErrorKey;
 
         AccountingLineAction(String accessabilityErrorKey) {
@@ -85,32 +92,41 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     /**
      * Validates that the given accounting line is accessible for editing by the current user.
      * <strong>This method expects a document as the first parameter and an accounting line as the second</strong>
-     *
-     * @see org.kuali.kfs.sys.document.validation.Validation#validate(java.lang.Object[])
      */
     @Override
     public boolean validate(AttributedDocumentEvent event) {
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
 
         if (accountingDocumentForValidation instanceof Correctable) {
-            final String errorDocumentNumber = ((FinancialSystemDocumentHeader)accountingDocumentForValidation.getDocumentHeader()).getFinancialDocumentInErrorNumber();
+            final String errorDocumentNumber = ((FinancialSystemDocumentHeader) accountingDocumentForValidation
+                .getDocumentHeader()).getFinancialDocumentInErrorNumber();
             if (StringUtils.isNotBlank(errorDocumentNumber)) {
                 return true;
             }
         }
 
         final AccountingLineAuthorizer accountingLineAuthorizer = lookupAccountingLineAuthorizer();
-        final Set<String> currentNodes = accountingDocumentForValidation.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames();
-        final boolean lineIsAccessible = accountingLineAuthorizer.hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), currentUser, true, currentNodes);
-        final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER, lineIsAccessible, true, currentUser, currentNodes);
+        final Set<String> currentNodes = accountingDocumentForValidation.getDocumentHeader().getWorkflowDocument()
+                .getCurrentNodeNames();
+        final boolean lineIsAccessible = accountingLineAuthorizer
+                .hasEditPermissionOnAccountingLine(accountingDocumentForValidation, accountingLineForValidation,
+                    getAccountingLineCollectionProperty(), currentUser, true, currentNodes);
+        final boolean isAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation,
+                accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.ACCOUNT_NUMBER,
+                lineIsAccessible, true, currentUser, currentNodes);
+
         boolean valid = true;
         boolean isExceptionNode = isExceptionNode(event.getDocument());
 
         if (!isAccessible) {
             // if only object code changed and the user has edit permissions on object code, that's ok
             if (event instanceof UpdateAccountingLineEvent) {
-                final boolean isObjectCodeAccessible = accountingLineAuthorizer.hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation, getAccountingLineCollectionProperty(), KFSPropertyConstants.FINANCIAL_OBJECT_CODE, lineIsAccessible, true, currentUser, currentNodes);
-                final boolean onlyObjectCodeChanged = onlyObjectCodeChanged(((UpdateAccountingLineEvent) event).getAccountingLine(), ((UpdateAccountingLineEvent) event).getUpdatedAccountingLine());
+                final boolean isObjectCodeAccessible = accountingLineAuthorizer
+                        .hasEditPermissionOnField(accountingDocumentForValidation, accountingLineForValidation,
+                            getAccountingLineCollectionProperty(), KFSPropertyConstants.FINANCIAL_OBJECT_CODE,
+                            lineIsAccessible, true, currentUser, currentNodes);
+                final boolean onlyObjectCodeChanged = onlyObjectCodeChanged(((UpdateAccountingLineEvent) event)
+                        .getAccountingLine(), ((UpdateAccountingLineEvent) event).getUpdatedAccountingLine());
 
                 if (isObjectCodeAccessible && onlyObjectCodeChanged) {
                     return true;
@@ -164,32 +180,31 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
                 && accountingLineForValidation instanceof PaymentRequestAccount  && isDiscountTradeInAccount();
     }
     /**
-     * Checks to see if the object code is the only difference between the original accounting line and the updated accounting line.
-     *
+     * Checks to see if the object code is the only difference between the original accounting line and the updated
+     * accounting line.
+     * 
      * @param accountingLine
      * @param updatedAccountingLine
      * @return true if only the object code has changed on the accounting line, false otherwise
      */
     protected boolean onlyObjectCodeChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
-        // no changes, return false
         if (accountingLine.isLike(updatedAccountingLine)) {
             return false;
         }
 
-        // copy the updatedAccountLine so we can set the object code on the copy of the updated accounting line
-        // to be the original value for comparison purposes
-        AccountingLine updatedLine = null;
-        if (updatedAccountingLine.isSourceAccountingLine()) {
-            updatedLine = new SourceAccountingLine();
-        } else {
-            updatedLine = new TargetAccountingLine();
+        AccountingLine updatedLine;
+        try {
+            updatedLine = updatedAccountingLine.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOG.warn("Exception trying to create a new instance of the updatedLine ("
+                + updatedAccountingLine.getClass() + ").");
+            return false;
         }
 
         updatedLine.copyFrom(updatedAccountingLine);
         updatedLine.setFinancialObjectCode(accountingLine.getFinancialObjectCode());
 
-        // if they're the same, the only change was the object code
-        return (accountingLine.isLike(updatedLine));
+        return accountingLine.isLike(updatedLine);
     }
 
     /**
@@ -198,16 +213,20 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @return the name of the accouting line group to get the authorizer from
      */
     protected String getGroupName() {
-        return (accountingLineForValidation.isSourceAccountingLine() ? KFSConstants.SOURCE_ACCOUNTING_LINES_GROUP_NAME : KFSConstants.TARGET_ACCOUNTING_LINES_GROUP_NAME);
+        return (accountingLineForValidation.isSourceAccountingLine() ? KFSConstants.SOURCE_ACCOUNTING_LINES_GROUP_NAME :
+            KFSConstants.TARGET_ACCOUNTING_LINES_GROUP_NAME);
     }
 
     /**
-     * @return hopefully, the best accounting line authorizer implementation to do the KIM check for to see if lines are accessible
+     * @return hopefully, the best accounting line authorizer implementation to do the KIM check for to see if lines
+     * are accessible
      */
     protected AccountingLineAuthorizer lookupAccountingLineAuthorizer() {
         final String groupName = getGroupName();
-        final Map<String, AccountingLineGroupDefinition> groups = ((FinancialSystemTransactionalDocumentEntry)dataDictionaryService.getDataDictionary().getDictionaryObjectEntry(accountingDocumentForValidation.getClass().getName())).getAccountingLineGroups();
-
+        final Map<String, AccountingLineGroupDefinition> groups = ((FinancialSystemTransactionalDocumentEntry)
+                dataDictionaryService.getDataDictionary().getDictionaryObjectEntry(accountingDocumentForValidation
+                    .getClass().getName())).getAccountingLineGroups();
+        
         if (groups.isEmpty())
          {
             return new AccountingLineAuthorizerBase(); // no groups? just use the default...
@@ -217,7 +236,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             return groups.get(groupName).getAccountingLineAuthorizer(); // we've got the group
         }
 
-        final Set<String> groupNames = groups.keySet(); // we've got groups, just not the proper name; try our luck and get the first group iterator
+        // we've got groups, just not the proper name; try our luck and get the first group iterator
+        final Set<String> groupNames = groups.keySet();
         final Iterator<String> groupNameIterator = groupNames.iterator();
         final String firstGroupName = groupNameIterator.next();
         return groups.get(firstGroupName).getAccountingLineAuthorizer();
@@ -229,11 +249,14 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @return the accounting line collection property
      */
     protected String getAccountingLineCollectionProperty() {
-        String propertyName = null;
+        String propertyName;
         if (GlobalVariables.getMessageMap().getErrorPath().size() > 0) {
-            propertyName = GlobalVariables.getMessageMap().getErrorPath().get(0).replaceFirst(".*?document\\.", "");
+            propertyName = GlobalVariables.getMessageMap().getErrorPath().get(0).replaceFirst(".*?document\\."
+                    , "");
         } else {
-            propertyName = accountingLineForValidation.isSourceAccountingLine() ? KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value : KFSConstants.PermissionAttributeValue.TARGET_ACCOUNTING_LINES.value;
+            propertyName = accountingLineForValidation.isSourceAccountingLine() ?
+                    KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value :
+                    KFSConstants.PermissionAttributeValue.TARGET_ACCOUNTING_LINES.value;
         }
         if (propertyName.equals("newSourceLine")) {
             return KFSConstants.PermissionAttributeValue.SOURCE_ACCOUNTING_LINES.value;
@@ -262,56 +285,26 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         }
     }
 
-    /**
-     * Gets the accountingDocumentForValidation attribute.
-     *
-     * @return Returns the accountingDocumentForValidation.
-     */
     public AccountingDocument getAccountingDocumentForValidation() {
         return accountingDocumentForValidation;
     }
 
-    /**
-     * Sets the accountingDocumentForValidation attribute value.
-     *
-     * @param accountingDocumentForValidation The accountingDocumentForValidation to set.
-     */
     public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
     }
 
-    /**
-     * Gets the accountingLineForValidation attribute.
-     *
-     * @return Returns the accountingLineForValidation.
-     */
     public AccountingLine getAccountingLineForValidation() {
         return accountingLineForValidation;
     }
 
-    /**
-     * Sets the accountingLineForValidation attribute value.
-     *
-     * @param accountingLineForValidation The accountingLineForValidation to set.
-     */
     public void setAccountingLineForValidation(AccountingLine accountingLineForValidation) {
         this.accountingLineForValidation = accountingLineForValidation;
     }
 
-    /**
-     * Gets the dataDictionaryService attribute.
-     *
-     * @return Returns the dataDictionaryService.
-     */
     public DataDictionaryService getDataDictionaryService() {
         return dataDictionaryService;
     }
 
-    /**
-     * Sets the dataDictionaryService attribute value.
-     *
-     * @param dataDictionaryService The dataDictionaryService to set.
-     */
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
     }
@@ -395,7 +388,6 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     		  workflowDocument.getCurrentNodeNames().contains("ContractManagement") ||
     		  workflowDocument.getCurrentNodeNames().contains(PurapConstants.PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW));
     }
-
 
 }
 

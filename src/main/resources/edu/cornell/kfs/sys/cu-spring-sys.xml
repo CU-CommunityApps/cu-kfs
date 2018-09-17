@@ -215,15 +215,6 @@
 		</property>
 	</bean>
 	
-    <bean id="universityDateFiscalYearMaker" class="edu.cornell.kfs.sys.batch.dataaccess.impl.CuUniversityDateFiscalYearMakerImpl" parent="FiscalYearMaker">
-		<property name="businessObjectClass" value="org.kuali.kfs.sys.businessobject.UniversityDate" /> 
-        <property name="twoYearCopy" value="true" />
-        <property name="allowOverrideTargetYear" value="false" />
-        <property name="parameterService">
-			<ref bean="parameterService" /> 
-		</property>
-	</bean>	
-	
 	<bean id="createDoneBatchFileLookupableHelperService" parent="createDoneBatchFileLookupableHelperService-parentBean" scope="prototype" />	
 	<bean id="createDoneBatchFileLookupableHelperService-parentBean" class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService" abstract="true">
 		<property name="dateTimeService" ref="dateTimeService" />
