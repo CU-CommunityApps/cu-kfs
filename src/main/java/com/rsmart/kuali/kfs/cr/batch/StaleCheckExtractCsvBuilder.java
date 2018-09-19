@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class StaleCheckExtractCsvBuilder {
 
-    public static List<StaleCheckBatchRow> buildStaleCheckExtract(List<Map<String,String>> parseDataList) {
+    public static List<StaleCheckBatchRow> buildStaleCheckExtractList(List<Map<String,String>> parseDataList) {
         List<StaleCheckBatchRow> staleCheckDetails = new ArrayList<>();
 
         for (Map<String,String> rowDataMap : parseDataList) {

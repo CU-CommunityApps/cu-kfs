@@ -55,7 +55,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
     @Override
     protected List<StaleCheckBatchRow> convertParsedObjectToVO(Object parsedContent) {
         try {
-            return StaleCheckExtractCsvBuilder.buildStaleCheckExtract((List<Map<String,String>>) parsedContent);
+            return StaleCheckExtractCsvBuilder.buildStaleCheckExtractList((List<Map<String,String>>) parsedContent);
         } catch (Exception e) {
             LOG.error("convertParsedObjectToVO: " + e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
