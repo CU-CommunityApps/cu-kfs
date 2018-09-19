@@ -46,6 +46,7 @@
 			<list>
 				<value>checkReconciliationJob</value>
 				<value>crGlTransactionJob</value>
+				<value>staleCheckJob</value>
 			</list>
 		</property>
 		<property name="triggerNames">
@@ -87,6 +88,13 @@
 		<property name="steps">
 			<list>
 				<ref bean="checkReconciliationImportStep" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="staleCheckJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
 				<ref bean="staleCheckExtractStep" />
 			</list>
 		</property>
@@ -143,7 +151,7 @@
 	<bean id="staleCheckExtractCsvInputFileType" parent="staleCheckExtractCsvInputFileType-parentBean" />
 	<bean id="staleCheckExtractCsvInputFileType-parentBean" abstract="true" class="com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvInputFileType">
 		<property name="directoryPath">
-			<value>${staging.directory}/cr/staleCheckExtract</value>
+			<value>${staging.directory}/cr</value>
 		</property>
 		<property name="fileExtension">
 			<value>csv</value>
