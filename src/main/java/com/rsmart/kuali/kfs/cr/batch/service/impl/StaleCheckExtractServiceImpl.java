@@ -235,14 +235,14 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         try {
             fileContents = new FileInputStream(fileName);
         } catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fileName + "]. " + e1.getMessage());
+            LOG.error("safelyLoadFileBytes: Batch file not found [" + fileName + "]. " + e1.getMessage());
             throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
         }
         
         try {
             fileByteContent = IOUtils.toByteArray(fileContents);
         } catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
+            LOG.error("safelyLoadFileBytes: IO Exception loading: [" + fileName + "]. " + e1.getMessage());
             throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
         } finally {
             IOUtils.closeQuietly(fileContents);

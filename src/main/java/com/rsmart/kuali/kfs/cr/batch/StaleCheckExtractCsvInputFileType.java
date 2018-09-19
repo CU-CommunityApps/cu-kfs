@@ -45,9 +45,6 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
         return CRKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_STALE_CHECK;
     }
 
-    /**
-     * Overridden to call "convertParsedObjectToVO" after performing the regular parsing.
-     */
     @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
         Object parsedContents = super.parse(fileByteContent);
@@ -57,7 +54,6 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
     @SuppressWarnings("unchecked")
     @Override
     protected List<StaleCheckBatchRow> convertParsedObjectToVO(Object parsedContent) {
-        // Convert from List<Map<String,String>> to a list of DTOs, and catch errors appropriately as in similar parsing methods.
         try {
             return StaleCheckExtractCsvBuilder.buildStaleCheckExtract((List<Map<String,String>>) parsedContent);
         } catch (Exception e) {

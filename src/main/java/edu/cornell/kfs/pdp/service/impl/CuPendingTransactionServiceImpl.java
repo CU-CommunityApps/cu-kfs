@@ -285,7 +285,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         catch(Exception ex) {
             LOG.error("getCheckYear", ex);
         }
-        return StringUtils.isBlank(checkYear) ? KFSConstants.getDashSubAccountNumber() : checkYear;
+        return checkYear;
     }
 
     /**
