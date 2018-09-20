@@ -59,6 +59,7 @@
           <list>
             <value>${reports.directory}/cr</value>
             <value>${staging.directory}/cr</value>
+            <value>${staging.directory}/cr/staleCheck</value>
           </list>
         </property>
 	</bean>
@@ -151,7 +152,7 @@
 	<bean id="staleCheckExtractCsvInputFileType" parent="staleCheckExtractCsvInputFileType-parentBean" />
 	<bean id="staleCheckExtractCsvInputFileType-parentBean" abstract="true" class="com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvInputFileType">
 		<property name="directoryPath">
-			<value>${staging.directory}/cr</value>
+			<value>${staging.directory}/cr/staleCheck</value>
 		</property>
 		<property name="fileExtension">
 			<value>csv</value>
