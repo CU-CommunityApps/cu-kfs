@@ -59,6 +59,8 @@ public class CRConstants {
     
     public static final String CHECK_FILE_FOOTER_COLUMNS = "CR_FILE_FOOTER_COL_LENGTHS";
     
+    public static final String CU_CR_CHECK_RECON_T_CHECK_NBR_COL = "CHECK_NBR";
+
     public static final String CHECK_NUM_COL = "CR_CHECK_NUM_COL";
     
     public static final String CHECK_DATE_COL = "CR_CHECK_DATE_COL";
@@ -103,5 +105,6 @@ public class CRConstants {
     public static final String ACCOUNT_NUM = "CR_ACCOUNT_NUMBER";
     public static final String SRC_NOT_FOUND = "CR_SOURCE_FOR_NOT_FOUND";
     public static final String BNK_CD_NOT_FOUND = "CR_NOT_FOUND_BANK_CD";
-    
+
+    public static final String STALE_CHECK_EXTRACT_FILE_TYPE_ID = "staleCheckExtractCsvInputFileType";
 }

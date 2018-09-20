@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
-import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 
@@ -207,5 +205,15 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         List list = (List) getPersistenceBrokerTemplate().getCollectionByQuery(qbc);
         
         return list;
+    }
+
+    public CheckReconciliation findByCheckNumber(String checkNumber) {
+        Criteria criteria = new Criteria();
+
+        criteria.addEqualTo(CRConstants.CU_CR_CHECK_RECON_T_CHECK_NBR_COL, checkNumber);
+        QueryByCriteria qbc = new QueryByCriteria(CheckReconciliation.class, criteria);
+
+        CheckReconciliation checkReconciliation = (CheckReconciliation)getPersistenceBrokerTemplate().getObjectByQuery(qbc);
+        return checkReconciliation;
     }
 }
