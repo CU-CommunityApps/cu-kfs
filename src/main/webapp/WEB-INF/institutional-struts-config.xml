@@ -211,7 +211,7 @@
             <forward name="basic" path="/jsp/concur/manageAccessToken.jsp"/>
         </action>
 
-        <action path="/pmw/manageAuthorizationToken" name="KualiForm" type="edu.cornell.kfs.pmw.web.struts.PaymentWorksManageAuthorizationTokenAction" 
+        <action path="/pmw/manageAuthorizationToken" name="PaymentWorksManageAuthorizationTokenForm" type="edu.cornell.kfs.pmw.web.struts.PaymentWorksManageAuthorizationTokenAction"
                 scope="request" parameter="methodToCall" attribute="KualiForm">
             <forward name="basic" path="/jsp/pmw/manageAuthorizationToken.jsp"/>
         </action>

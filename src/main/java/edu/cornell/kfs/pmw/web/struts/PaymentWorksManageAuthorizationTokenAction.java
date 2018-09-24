@@ -3,6 +3,7 @@ package edu.cornell.kfs.pmw.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.cornell.kfs.pmw.web.struts.form.PaymentWorksManageAuthorizationTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -15,6 +16,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
+import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 @SuppressWarnings("deprecation")
 public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
@@ -22,7 +25,16 @@ public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksManageAuthorizationTokenAction.class);
 
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        updateFormValues((PaymentWorksManageAuthorizationTokenForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+    protected void updateFormValues(PaymentWorksManageAuthorizationTokenForm pmwTokenForm) {
+        pmwTokenForm.setIsProduction(ConfigContext.getCurrentContextConfig().isProductionEnvironment());
+        if (!pmwTokenForm.isProduction()) {
+            String warningMessage = getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.WARNING_PMW_TOKEN_REFRESH_UPDATE_NONPRODSQL);
+            pmwTokenForm.setRefreshWarning(warningMessage);
+        }
     }
 
     public ActionForward refreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -35,6 +47,10 @@ public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
         }
         
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
+    protected ConfigurationService getConfigurationService() {
+        return SpringContext.getBean(ConfigurationService.class);
     }
 
     protected PaymentWorksWebServiceCallsService getPaymentWorksWebServiceCallsService() {
