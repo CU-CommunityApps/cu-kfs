@@ -44,7 +44,7 @@
 <c:set var="lockB2BEntry" value="${(not empty KualiForm.editingMode['lockB2BEntry'])}" />
 <c:set var="editPreExtract"	value="${(not empty KualiForm.editingMode['editPreExtract'])}" />
 <c:set var="currentUserCampusCode" value="${sessionScope['cf.UserSession'].person.campusCode}" />
-<c:set var="restrictFiscalEntry" value="${(not empty KualiForm.editingMode['restrictFiscalEntry'])}" />
+<c:set var="restrictFullEntry" value="${(not empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="30" />
 
 <!--  this is a temporary workaround until release 3, where this is fixed more generally -->
@@ -101,7 +101,7 @@
                     	attributeEntry="${documentAttributes.vendorName}" property="document.vendorName" 
                     	readOnly="${not (fullEntryMode or amendmentEntry) or vendorReadOnly or displayPaymentRequestFields or displayCreditMemoFields or purchaseOrderAwarded or lockB2BEntry}" tabindexOverride="${tabindexOverrideBase + 0}"/>
                     <%-- KFSUPGRADE-349 --%>
-                    <c:if test="${(((fullEntryMode and !amendmentEntry) or (restrictFiscalEntry and displayRequisitionFields)) and (displayRequisitionFields or displayPurchaseOrderFields) and !purchaseOrderAwarded and !lockB2BEntry)}" >
+                    <c:if test="${(((fullEntryMode and !amendmentEntry) or (restrictFullEntry and displayRequisitionFields)) and (displayRequisitionFields or displayPurchaseOrderFields) and !purchaseOrderAwarded and !lockB2BEntry)}" >
                         <kul:lookup  boClassName="org.kuali.kfs.vnd.businessobject.VendorDetail" 
                         	lookupParameters="'Y':activeIndicator, 'PO':vendorHeader.vendorTypeCode"
                         	fieldConversions="vendorHeaderGeneratedIdentifier:document.vendorHeaderGeneratedIdentifier,vendorDetailAssignedIdentifier:document.vendorDetailAssignedIdentifier,defaultAddressLine1:document.vendorLine1Address,defaultAddressLine2:document.vendorLine2Address,defaultAddressCity:document.vendorCityName,defaultAddressPostalCode:document.vendorPostalCode,defaultAddressStateCode:document.vendorStateCode,defaultAddressInternationalProvince:document.vendorAddressInternationalProvinceName,defaultAddressCountryCode:document.vendorCountryCode"/>
