@@ -1,5 +1,5 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
-<c:set var="isOpen" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])
+<c:set var="isOpen" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])
                                && KualiForm.document.paymentMethodCode == 'W'}" />
 <c:set var="wireTransAttributes" value="${DataDictionary.PaymentRequestWireTransfer.attributes}" />
 
