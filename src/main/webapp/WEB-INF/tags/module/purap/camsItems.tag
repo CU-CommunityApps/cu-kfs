@@ -28,7 +28,7 @@
 <%@ attribute name="isPurchaseOrder" required="false" description="Determines if this is a requisition document"%>
 <!--  KFSPTS-1792 : allow FO to edit REQ capital asset tab add 'enableCa' in purCams.tag-->
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}" />
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="60" />
 <c:set var="availabilityOnce" value="${PurapConstants.CapitalAssetAvailability.ONCE}"/>
 <c:set var="colSpan" value="10"/>

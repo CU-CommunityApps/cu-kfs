@@ -172,6 +172,7 @@
         <url-pattern>/pdp/api/*</url-pattern>
         <url-pattern>/purap/api/*</url-pattern>
         <url-pattern>/vnd/api/*</url-pattern>
+        <url-pattern>/app/sys/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

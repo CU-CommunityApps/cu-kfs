@@ -20,6 +20,7 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
+<c:set var="camsFullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
 <c:set var="purchaseOrderPrintRequested" value="${KualiForm.purchaseOrderPrintRequested}"/>
 
 <kul:documentPage showDocumentInfo="true"
@@ -132,7 +133,8 @@
                                camsSystemAttributes="${DataDictionary.PurchaseOrderCapitalAssetSystem.attributes}"
                                camsAssetAttributes="${DataDictionary.PurchaseOrderItemCapitalAsset.attributes}"
                                camsLocationAttributes="${DataDictionary.PurchaseOrderCapitalAssetLocation.attributes}"
-                               isPurchaseOrder="true"/>
+                               isPurchaseOrder="true"
+                               fullEntryMode="${camsFullEntryMode}"/>
 
                 <purap:paymentinfo
                         documentAttributes="${DataDictionary.PurchaseOrderDocument.attributes}"

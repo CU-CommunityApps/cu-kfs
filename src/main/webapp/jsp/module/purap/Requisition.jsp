@@ -26,7 +26,7 @@
                   showTabButtons="true">
 
     <c:set var="fullEntryMode"
-           value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}"/>
+           value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
 
     <sys:documentOverview editingMode="${KualiForm.editingMode}"
                           includePostingYear="true"

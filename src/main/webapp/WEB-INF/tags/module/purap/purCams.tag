@@ -31,7 +31,7 @@
 <!--  KFSPTS-1792 : allow FO to edit REQ capital asset tab-->
 <c:set var="enableCa" value="${isRequisition &&  KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (not empty KualiForm.editingMode['enableCapitalAsset'])}" scope="request"/> 
 
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFiscalEntry'])}" />
+<c:set var="fullEntryMode" value="${KualiForm.documentActions[Constants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}" />
 <c:set var="tabindexOverrideBase" value="60" />
 
 <c:if test="${empty isRequisition}">
