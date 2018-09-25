@@ -17,12 +17,14 @@ import java.util.Map;
 public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase<StaleCheckExtractCsvFields> {
 	private static final Logger LOG = LogManager.getLogger(StaleCheckExtractCsvInputFileType.class);
 
-    /**
-     * This implementation just returns an empty string, since the returned value is not needed in this case.
-     */
     @Override
-    public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
-        return KFSConstants.EMPTY_STRING;
+    public String getFileName(String principalName, Object parsedFileContents, String userIdentifier) {
+        String fileName = "cr_stale_" + principalName;
+        if (StringUtils.isNotBlank(userIdentifier)) {
+            fileName += "_" + userIdentifier;
+        }
+        fileName = StringUtils.remove(fileName, " ");
+        return fileName;
     }
 
     @Override
