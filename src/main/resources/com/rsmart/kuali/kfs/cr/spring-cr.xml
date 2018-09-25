@@ -46,7 +46,6 @@
 			<list>
 				<value>checkReconciliationJob</value>
 				<value>crGlTransactionJob</value>
-				<value>staleCheckJob</value>
 			</list>
 		</property>
 		<property name="triggerNames">
@@ -59,7 +58,6 @@
           <list>
             <value>${reports.directory}/cr</value>
             <value>${staging.directory}/cr</value>
-            <value>${staging.directory}/cr/staleCheck</value>
           </list>
         </property>
 	</bean>
@@ -92,14 +90,6 @@
 			</list>
 		</property>
 	</bean>
-
-	<bean id="staleCheckJob" parent="scheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="staleCheckExtractStep" />
-			</list>
-		</property>
-	</bean>
 	
 	<bean id="checkReconciliationImportStep" class="com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep" parent="step">
 		<property name="businessObjectService"      ref="businessObjectService" />
@@ -129,36 +119,5 @@
 	<bean id="crGlTransJobTrigger" parent="cronTrigger">
 		<property name="jobName" value="crGlTransactionJob" />
 		<property name="cronExpression" value="0 0 23 * * ?" />
-	</bean>
-
-	<bean id="staleCheckExtractService" parent="staleCheckExtractService-parentBean" />
-	<bean id="staleCheckExtractService-parentBean" abstract="true" class="com.rsmart.kuali.kfs.cr.batch.service.impl.StaleCheckExtractServiceImpl">
-		<property name="batchInputFileService" ref="batchInputFileService" />
-		<property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
-		<property name="businessObjectService" ref="businessObjectService" />
-		<property name="dateTimeService" ref="dateTimeService" />
-		<property name="batchInputFileTypes">
-			<list>
-				<ref bean="staleCheckExtractCsvInputFileType" />
-			</list>
-		</property>
-	</bean>
-
-	<bean id="staleCheckExtractStep" class="com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractStep" parent="step">
-		<property name="staleCheckExtractService" ref="staleCheckExtractService" />
-		<property name="batchInputFileType" ref="staleCheckExtractCsvInputFileType" />
-	</bean>
-
-	<bean id="staleCheckExtractCsvInputFileType" parent="staleCheckExtractCsvInputFileType-parentBean" />
-	<bean id="staleCheckExtractCsvInputFileType-parentBean" abstract="true" class="com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvInputFileType">
-		<property name="directoryPath">
-			<value>${staging.directory}/cr/staleCheck</value>
-		</property>
-		<property name="fileExtension">
-			<value>csv</value>
-		</property>
-		<property name="csvEnumClass">
-			<value>com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvFields</value>
-		</property>
 	</bean>
 </beans>
