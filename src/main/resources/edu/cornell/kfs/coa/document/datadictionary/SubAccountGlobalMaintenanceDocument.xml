@@ -33,6 +33,7 @@
         <ref bean="SubAccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts"/>
         <ref bean="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts"/>
         <ref bean="SubAccountGlobalMaintenanceDocument-AddNewSubAccounts"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts"/>
       </list>
     </property>
     <property name="defaultExistenceChecks">
@@ -207,7 +208,17 @@
         <bean parent="MaintainableFieldDefinition" p:name="newSubAccountName"/>
         <bean parent="MaintainableFieldDefinition" p:name="newSubAccountOffCampusCode"/>
         <bean parent="MaintainableFieldDefinition" p:name="applyToAllNewSubAccounts"/>
-        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Edit List of Accounts"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts" parent="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="List of New Sub Accounts"/>
+    <property name="title" value="List of New Sub Accounts"/>
+    <property name="maintainableItems">
+      <list>
         <bean parent="MaintainableCollectionDefinition">
           <property name="name" value="subAccountGlobalNewAccountDetails"/>
           <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail"/>
@@ -223,20 +234,14 @@
           </property>
           <property name="maintainableFields">
             <list>
+              <bean parent="MaintainableFieldDefinition" p:name="sequenceNumber"/>
               <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:readOnlyAfterAdd="true" p:template="accountNumber" />
-              <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber" />
-              <bean parent="MaintainableFieldDefinition" p:name="subAccountName" />
-              <bean parent="MaintainableFieldDefinition" p:name="offCampusCode" />
+              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:readOnlyAfterAdd="true" p:template="accountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="offCampusCode"/>
               <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
             </list>
-          </property>
-          <property name="duplicateIdentificationFields">
-          	<list>
-          		<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
-          		<bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
-          		<bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
-          	</list>
           </property>
         </bean>
       </list>

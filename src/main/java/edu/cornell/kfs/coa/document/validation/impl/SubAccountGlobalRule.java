@@ -101,7 +101,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 	}
 	
 	 /**
-	 * Checks that at least one sub account is entered.
+	 * Checks that at least one sub account edit is entered if the new-sub-accounts section is empty.
 	 * 
 	 * @return true if at least one sub account entered, false otherwise
 	 */
@@ -111,7 +111,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 		SubAccountGlobal newSubAccountGlobal = (SubAccountGlobal) super.getNewBo();
 		List<SubAccountGlobalDetail> details = newSubAccountGlobal.getSubAccountGlobalDetails();
 		// check if there are any accounts
-		if (details.size() == 0) {
+		if (details.size() == 0 && newSubAccountSectionHasEmptyValues(newSubAccountGlobal)) {
 			putFieldError(KFSConstants.MAINTENANCE_ADD_PREFIX + CUKFSPropertyConstants.SUB_ACCOUNT_GLBL_CHANGE_DETAILS + "." + KFSPropertyConstants.ACCOUNT_NUMBER, CUKFSKeyConstants.ERROR_DOCUMENT_GLOBAL_SUS_ACCOUNT_NO_SUB_ACCOUNTS);
 			success = false;
 		}
@@ -551,12 +551,12 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     protected boolean checkCommonSubAccountFieldsAreEnteredAndIndividualizedOnesAreBlank(SubAccountGlobal subAccountGlobal) {
         boolean success = true;
         if (StringUtils.isBlank(subAccountGlobal.getNewSubAccountName())) {
-            putFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NAME,
+            putGlobalFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NAME,
                     CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_GLOBAL_FIELD);
             success = false;
         }
         if (StringUtils.isBlank(subAccountGlobal.getNewSubAccountNumber())) {
-            putFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NUMBER,
+            putGlobalFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NUMBER,
                     CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_GLOBAL_FIELD);
             success = false;
         }
@@ -586,17 +586,17 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     protected boolean checkCommonSubAccountFieldsAreBlankAndIndividualizedOnesAreEntered(SubAccountGlobal subAccountGlobal) {
         boolean success = true;
         if (StringUtils.isNotBlank(subAccountGlobal.getNewSubAccountName())) {
-            putFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NAME,
+            putGlobalFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NAME,
                     CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_GLOBAL_FIELD);
             success = false;
         }
         if (StringUtils.isNotBlank(subAccountGlobal.getNewSubAccountNumber())) {
-            putFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NUMBER,
+            putGlobalFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_NUMBER,
                     CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_GLOBAL_FIELD);
             success = false;
         }
         if (subAccountGlobal.isNewSubAccountOffCampusCode()) {
-            putFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_OFF_CAMPUS_CODE,
+            putGlobalFieldErrorForApplyAllCheckboxRulesFailure(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_OFF_CAMPUS_CODE,
                     CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_GLOBAL_FIELD);
             success = false;
         }
@@ -617,14 +617,19 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         return success;
     }
     
-    protected void putLineFieldErrorForApplyAllCheckboxRulesFailure(String linePropertyName, String errorConstant, int index) {
-        String propertyName = buildListObjectPropertyPath(
-                CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, linePropertyName, index);
-        putFieldErrorForApplyAllCheckboxRulesFailure(propertyName, errorConstant);
+    protected void putGlobalFieldErrorForApplyAllCheckboxRulesFailure(String globalPropertyName, String errorConstant) {
+        String propertyDisplayName = getDisplayNameForGlobalObjectProperty(globalPropertyName);
+        putFieldErrorForApplyAllCheckboxRulesFailure(globalPropertyName, propertyDisplayName, errorConstant);
     }
     
-    protected void putFieldErrorForApplyAllCheckboxRulesFailure(String propertyName, String errorConstant) {
-        String propertyDisplayName = getDisplayNameForGlobalObjectProperty(propertyName);
+    protected void putLineFieldErrorForApplyAllCheckboxRulesFailure(String linePropertyName, String errorConstant, int index) {
+        String fullPropertyName = buildListObjectPropertyPath(
+                CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, linePropertyName, index);
+        String propertyDisplayName = getDisplayNameForObjectProperty(SubAccountGlobalNewAccountDetail.class, linePropertyName);
+        putFieldErrorForApplyAllCheckboxRulesFailure(fullPropertyName, propertyDisplayName, errorConstant);
+    }
+    
+    protected void putFieldErrorForApplyAllCheckboxRulesFailure(String propertyName, String propertyDisplayName, String errorConstant) {
         String checkboxDisplayName = getDisplayNameForGlobalObjectProperty(CUKFSPropertyConstants.APPLY_TO_ALL_NEW_SUB_ACCOUNTS);
         putFieldError(propertyName, errorConstant, new String[] {propertyDisplayName, checkboxDisplayName});
     }
@@ -656,7 +661,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     
     protected boolean checkSubAccountDoesNotExist(
             SubAccountGlobalNewAccountDetail newAccountDetail, String subAccountNumber, String subAccountKey, int index) {
-        SubAccount subAccount = subAccountService.getByPrimaryIdWithCaching(
+        SubAccount subAccount = getSubAccountService().getByPrimaryId(
                 newAccountDetail.getChartOfAccountsCode(), newAccountDetail.getAccountNumber(), subAccountNumber);
         if (ObjectUtils.isNotNull(subAccount)) {
             putFieldErrorForDuplicateOrExistingSubAccount(
@@ -667,9 +672,9 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     }
     
     protected void putFieldErrorForDuplicateOrExistingSubAccount(String errorConstant, String subAccountKey, int index) {
-        String propertyName = buildListObjectPropertyPath(
+        String fullPropertyName = buildListObjectPropertyPath(
                 CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, KFSPropertyConstants.SUB_ACCOUNT_NUMBER, index);
-        putFieldError(propertyName, errorConstant, subAccountKey);
+        putFieldError(fullPropertyName, errorConstant, subAccountKey);
     }
     
     protected boolean checkContractsAndGrantsSetupForNewAccounts(SubAccountGlobal subAccountGlobal) {
@@ -798,4 +803,16 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     protected String buildListObjectPropertyPath(String listPropertyName, String objectPropertyName, int index) {
         return String.format("%s[%d].%s", listPropertyName, index, objectPropertyName);
     }
+    
+    public SubAccountService getSubAccountService() {
+        if (subAccountService == null) {
+            subAccountService = SpringContext.getBean(SubAccountService.class);
+        }
+        return subAccountService;
+    }
+    
+    public void setSubAccountService(SubAccountService subAccountService) {
+        this.subAccountService = subAccountService;
+    }
+    
 }
