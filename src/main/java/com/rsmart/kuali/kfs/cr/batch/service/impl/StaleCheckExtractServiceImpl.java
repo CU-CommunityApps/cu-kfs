@@ -211,14 +211,19 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
                     checkReconciliation.getBankCode() + ").");
         }
 
-        KualiDecimal checkTotalAmount = new KualiDecimal(staleCheckRow.getCheckTotalAmount());
-        if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
-            validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
-                    checkReconciliation.getAmount().toString() + ").");
-        }
+        try {
+            KualiDecimal checkTotalAmount = new KualiDecimal(staleCheckRow.getCheckTotalAmount());
+            if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
+                validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
+                        checkReconciliation.getAmount().toString() + ").");
+            }
 
-        if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {
-            validationErrors.add("Check Status is already STALE.");
+            if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {
+                validationErrors.add("Check Status is already STALE.");
+            }
+        }
+        catch (NumberFormatException ex) {
+            validationErrors.add("Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString());
         }
     }
 
