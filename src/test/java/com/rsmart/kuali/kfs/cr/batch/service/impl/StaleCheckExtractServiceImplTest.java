@@ -1,5 +1,6 @@
 package com.rsmart.kuali.kfs.cr.batch.service.impl;
 
+import com.rsmart.kuali.kfs.cr.CrTestConstants;
 import com.rsmart.kuali.kfs.cr.batch.fixture.CheckReconciliationFixture;
 import com.rsmart.kuali.kfs.cr.batch.fixture.StaleCheckFileFixture;
 import com.rsmart.kuali.kfs.cr.batch.fixture.StaleCheckRowFixture;
@@ -296,13 +297,13 @@ public class StaleCheckExtractServiceImplTest {
     private static CheckReconciliationDao createMockCheckReconciliationDao() {
         CheckReconciliationDao checkReconciliationDao = mock(CheckReconciliationDao.class);
         CheckReconciliation mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_999_DISB_STAL_925);
-        when(checkReconciliationDao.findByCheckNumber("99999999")).thenReturn(mockedCheckReconciliation);
+        when(checkReconciliationDao.findByCheckNumber("99999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
         mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_123_DISB_STAL_29252);
-        when(checkReconciliationDao.findByCheckNumber("12345678")).thenReturn(mockedCheckReconciliation);
+        when(checkReconciliationDao.findByCheckNumber("12345678", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
         mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_199_DISB_STAL_925);
-        when(checkReconciliationDao.findByCheckNumber("19999999")).thenReturn(mockedCheckReconciliation);
+        when(checkReconciliationDao.findByCheckNumber("19999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
         return checkReconciliationDao;
     }
 

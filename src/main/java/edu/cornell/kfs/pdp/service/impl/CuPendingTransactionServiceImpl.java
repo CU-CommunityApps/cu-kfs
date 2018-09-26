@@ -272,7 +272,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     private String getCheckYear(PaymentGroup paymentGroup) {
         String checkYear = KFSConstants.getDashSubAccountNumber();
         try {
-            CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(paymentGroup.getDisbursementNbr().toString());
+            CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(paymentGroup.getDisbursementNbr().toString(), paymentGroup.getBankCode());
             Calendar calendar = Calendar.getInstance();
             if (ObjectUtils.isNotNull(checkReconciliation) && ObjectUtils.isNotNull(checkReconciliation.getCheckDate())) {
                 calendar.setTime(checkReconciliation.getCheckDate());

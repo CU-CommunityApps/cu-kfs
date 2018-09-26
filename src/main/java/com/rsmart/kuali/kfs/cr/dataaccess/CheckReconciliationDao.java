@@ -74,5 +74,5 @@ public interface CheckReconciliationDao {
      */
     public List<PaymentGroup> getAllPaymentGroupForSearchCriteria(KualiInteger disbNbr, Collection<String> bankCodes);
 
-    public CheckReconciliation findByCheckNumber(String checkNumber);
+    public CheckReconciliation findByCheckNumber(String checkNumber, String bankCode);
 }

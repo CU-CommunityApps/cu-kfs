@@ -155,7 +155,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     protected String processStaleCheckBatchRow(StaleCheckBatchRow staleCheckRow) {
         LOG.info("processStaleCheckBatchRow: Starting processStaleCheckBatchRow for: " + staleCheckRow.getLogData());
-        CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(staleCheckRow.getCheckNumber());
+        CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(staleCheckRow.getCheckNumber(), staleCheckRow.getBankCode());
 
         String processingError = validateStaleCheckBatchRow(staleCheckRow, checkReconciliation);
         if (StringUtils.isNotBlank(processingError)) {

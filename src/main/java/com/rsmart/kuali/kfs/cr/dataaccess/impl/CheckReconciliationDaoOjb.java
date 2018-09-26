@@ -207,10 +207,11 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         return list;
     }
 
-    public CheckReconciliation findByCheckNumber(String checkNumber) {
+    public CheckReconciliation findByCheckNumber(String checkNumber, String bankCode) {
         Criteria criteria = new Criteria();
 
         criteria.addEqualTo(CRConstants.CU_CR_CHECK_RECON_T_CHECK_NBR_COL, checkNumber);
+        criteria.addEqualTo(CRConstants.CU_CR_CHECK_RECON_T_BNK_CD_COL, bankCode);
         QueryByCriteria qbc = new QueryByCriteria(CheckReconciliation.class, criteria);
 
         CheckReconciliation checkReconciliation = (CheckReconciliation)getPersistenceBrokerTemplate().getObjectByQuery(qbc);
