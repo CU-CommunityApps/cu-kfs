@@ -9,15 +9,24 @@ public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetail
 
     private static final long serialVersionUID = -2342683801306880511L;
 
+    private Long sequenceNumber;
     private String chartOfAccountsCode;
     private String accountNumber;
     private String subAccountNumber;
     private String subAccountName;
     private boolean offCampusCode;
 
-    private Chart chart;
+    private Chart chartOfAccounts;
     private Account account;
     private transient SubAccount subAccount;
+
+    public Long getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(Long sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
 
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
@@ -59,12 +68,12 @@ public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetail
         this.offCampusCode = offCampusCode;
     }
 
-    public Chart getChart() {
-        return chart;
+    public Chart getChartOfAccounts() {
+        return chartOfAccounts;
     }
 
-    public void setChart(Chart chart) {
-        this.chart = chart;
+    public void setChartOfAccounts(Chart chartOfAccounts) {
+        this.chartOfAccounts = chartOfAccounts;
     }
 
     public Account getAccount() {

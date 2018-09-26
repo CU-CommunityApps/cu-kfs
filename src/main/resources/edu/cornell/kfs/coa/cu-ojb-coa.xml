@@ -1941,9 +1941,10 @@
 	
 	<class-descriptor class="edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail" table="CA_SUB_ACCT_CHG_ACCT_DTL_T">
   		<field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+  		<field-descriptor name="sequenceNumber" column="SEQ_NBR" jdbc-type="BIGINT" primarykey="true" index="true" />
  	 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
   		<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
-  		<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
+  		<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" index="true" />
   		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
   		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
   		<field-descriptor name="offCampusCode" column="OFF_CMP_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
@@ -1966,6 +1967,7 @@
   		<field-descriptor name="financialReportChartCode" column="FIN_RPT_CHRT_CD" jdbc-type="VARCHAR" />
   		<field-descriptor name="finReportOrganizationCode" column="FIN_RPT_ORG_CD" jdbc-type="VARCHAR" />
   		<field-descriptor name="financialReportingCode" column="FIN_RPT_CD" jdbc-type="VARCHAR" />
+  		<field-descriptor name="nextNewAccountDetailSequenceNumber" column="NEXT_NEW_ACCT_DTL_SEQ_NBR" jdbc-type="BIGINT" />
   		<field-descriptor name="newSubAccountName" column="NEW_SUB_ACCT_NM" jdbc-type="VARCHAR" />
   		<field-descriptor name="newSubAccountNumber" column="NEW_SUB_ACCT_NBR" jdbc-type="VARCHAR" />
   		<field-descriptor name="newSubAccountTypeCode" column="NEW_SUB_ACCT_TYP_CD" jdbc-type="VARCHAR" />

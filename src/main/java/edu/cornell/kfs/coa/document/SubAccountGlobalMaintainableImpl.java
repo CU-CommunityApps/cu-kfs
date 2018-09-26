@@ -1,11 +1,13 @@
 package edu.cornell.kfs.coa.document;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.sys.KFSConstants;
@@ -16,6 +18,7 @@ import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaintainable {
 	private static final String REQUIRES_CG_APPROVAL_NODE = "RequiresCGResponsibilityApproval";
@@ -128,6 +131,49 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         return SubAccount.class;
     }
     
+    @Override
+    public void addNewLineToCollection(String collectionName) {
+        super.addNewLineToCollection(collectionName);
+        if (isNewAccountDetailsCollection(collectionName)) {
+            SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getBusinessObject();
+            int newItemIndex = subAccountGlobal.getSubAccountGlobalNewAccountDetails().size() - 1;
+            setSequenceNumbersOnNewAccountDetails(subAccountGlobal, newItemIndex);
+        }
+    }
+    
+    @Override
+    public void addMultipleValueLookupResults(MaintenanceDocument document, String collectionName,
+            Collection<PersistableBusinessObject> rawValues, boolean needsBlank, PersistableBusinessObject bo) {
+        if (isNewAccountDetailsCollection(collectionName)) {
+            SubAccountGlobal subAccountGlobal = (SubAccountGlobal) bo;
+            int oldCollectionSizeAsStartIndex = subAccountGlobal.getSubAccountGlobalNewAccountDetails().size();
+            super.addMultipleValueLookupResults(document, collectionName, rawValues, needsBlank, bo);
+            setSequenceNumbersOnNewAccountDetails(subAccountGlobal, oldCollectionSizeAsStartIndex);
+        } else {
+            super.addMultipleValueLookupResults(document, collectionName, rawValues, needsBlank, bo);
+        }
+    }
+    
+    private void setSequenceNumbersOnNewAccountDetails(SubAccountGlobal subAccountGlobal, int newItemsStartIndex) {
+        List<SubAccountGlobalNewAccountDetail> newAccountDetails = subAccountGlobal.getSubAccountGlobalNewAccountDetails();
+        if (newItemsStartIndex >= newAccountDetails.size()) {
+            return;
+        }
+        
+        long nextSequenceNumber = subAccountGlobal.getNextNewAccountDetailSequenceNumber().longValue();
+        for (int i = newItemsStartIndex; i < newAccountDetails.size(); i++) {
+            SubAccountGlobalNewAccountDetail newAccountDetail = newAccountDetails.get(i);
+            newAccountDetail.setSequenceNumber(Long.valueOf(nextSequenceNumber));
+            nextSequenceNumber++;
+        }
+        
+        subAccountGlobal.setNextNewAccountDetailSequenceNumber(Long.valueOf(nextSequenceNumber));
+    }
+    
+    private boolean isNewAccountDetailsCollection(String collectionName) {
+        return StringUtils.equals(CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, collectionName);
+    }
+    
 	/**
 	 * Overriden to set the document number on the a21SubAccount.
 	 * 
@@ -142,11 +188,6 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
 			A21SubAccountChange a21SubAccount = subAccountGlobal.getA21SubAccount();
 			if (a21SubAccount != null) {
 				a21SubAccount.setDocumentNumber(getDocumentNumber());
-			}
-			if (subAccountGlobal.isApplyToAllNewSubAccounts()) {
-			    for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
-			        newAccountDetail.setSubAccountNumber(KFSConstants.getDashSubAccountNumber());
-			    }
 			}
 		}
 	}

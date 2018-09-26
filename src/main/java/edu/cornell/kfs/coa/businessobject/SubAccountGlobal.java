@@ -38,6 +38,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
     protected String finReportOrganizationCode;
     protected String financialReportingCode;
 
+    protected Long nextNewAccountDetailSequenceNumber;
     protected String newSubAccountName;
     protected String newSubAccountNumber;
     protected String newSubAccountTypeCode;
@@ -62,6 +63,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
      */
     public SubAccountGlobal() {
     	super();
+    	nextNewAccountDetailSequenceNumber = Long.valueOf(1L);
     	a21SubAccount = new A21SubAccountChange();
     	subAccountGlobalDetails = new ArrayList<SubAccountGlobalDetail>();
     	subAccountGlobalNewAccountDetails = new ArrayList<>();
@@ -181,6 +183,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
         subAccount.setAccountNumber(newAccountDetail.getAccountNumber());
         subAccount.setSubAccountNumber(subAccountNumberToUse);
         subAccount.setA21SubAccount(createA21SubAccount(newAccountDetail, subAccountNumberToUse, offCampusCode));
+        subAccount.setActive(true);
         
         if (StringUtils.isNotBlank(financialReportChartCode)) {
             subAccount.setFinancialReportChartCode(financialReportChartCode);
@@ -563,7 +566,15 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
 	}
 
-	public String getNewSubAccountName() {
+	public Long getNextNewAccountDetailSequenceNumber() {
+        return nextNewAccountDetailSequenceNumber;
+    }
+
+    public void setNextNewAccountDetailSequenceNumber(Long nextNewAccountDetailSequenceNumber) {
+        this.nextNewAccountDetailSequenceNumber = nextNewAccountDetailSequenceNumber;
+    }
+
+    public String getNewSubAccountName() {
         return newSubAccountName;
     }
 
