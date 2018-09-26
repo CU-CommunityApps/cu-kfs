@@ -212,15 +212,10 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
                     checkReconciliation.getBankCode() + ").");
         }
 
-        try {
-            Double checkTotalAmountParsed = NumberFormat.getNumberInstance(java.util.Locale.US).parse(staleCheckRow.getCheckTotalAmount()).doubleValue();
-            KualiDecimal checkTotalAmount = new KualiDecimal(checkTotalAmountParsed);
-            if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
-                validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
-                        checkReconciliation.getAmount().toString() + ").");
-            }
-        } catch (java.text.ParseException ex) {
-            validationErrors.add("Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString());
+        KualiDecimal checkTotalAmount = new KualiDecimal(staleCheckRow.getCheckTotalAmount());
+        if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
+            validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
+                    checkReconciliation.getAmount().toString() + ").");
         }
 
         if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {

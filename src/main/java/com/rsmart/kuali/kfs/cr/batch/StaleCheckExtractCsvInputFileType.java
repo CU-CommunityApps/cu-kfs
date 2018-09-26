@@ -3,7 +3,7 @@ package com.rsmart.kuali.kfs.cr.batch;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.CRKeyConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
@@ -23,7 +23,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
         if (StringUtils.isNotBlank(userIdentifier)) {
             fileName += "_" + userIdentifier;
         }
-        fileName = StringUtils.remove(fileName, " ");
+        fileName = StringUtils.remove(fileName, KFSConstants.BLANK_SPACE);
         return fileName;
     }
 
