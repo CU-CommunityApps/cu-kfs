@@ -80,6 +80,4 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_BANK_ACCOUNT_TYPE_INVALID = "error.paymentworks.bank.account.type.invalid";
     public final static String NO_ACH_DATA_PROVIDED_BY_VENDOR_MESSAGE = "message.paymentworks.no.ach.data.provided";
 
-    public final static String WARNING_PMW_TOKEN_REFRESH_UPDATE_NONPRODSQL = "warning.paymentworks.token.refresh.nonprod";
-
 }
