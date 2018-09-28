@@ -172,6 +172,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
     @Override
     public void toCopy() throws WorkflowException, ValidationException {
         super.toCopy();
+        this.setObjectId(null);
         this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
     }
     
@@ -203,6 +204,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
         updatePostingYearForAccountingLines(getTargetAccountingLines());
         
         //--RequisitionDocument:
+        this.setObjectId(null);
         
         // Clear related views
         this.setAccountsPayablePurchasingDocumentLinkIdentifier(null);
