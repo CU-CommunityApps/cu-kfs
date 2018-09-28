@@ -5,7 +5,7 @@ import org.kuali.kfs.kns.web.struts.form.KualiForm;
 
 public class ConcurManageAccessTokenForm extends KualiForm {
 
-    private static final long serialVersionUID = -8345711992403008219L;
+    private static final long serialVersionUID = -8345718162403008219L;
     
     private String accessTokenExpirationDate;
     private boolean showResetTokenToEmptyStringButton;

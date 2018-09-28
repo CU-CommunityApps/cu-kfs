@@ -25,16 +25,8 @@ public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksManageAuthorizationTokenAction.class);
 
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        updateFormValues((PaymentWorksManageAuthorizationTokenForm) form);
+        ((PaymentWorksManageAuthorizationTokenForm) form).setIsProduction(ConfigContext.getCurrentContextConfig().isProductionEnvironment());
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
-    }
-
-    protected void updateFormValues(PaymentWorksManageAuthorizationTokenForm pmwTokenForm) {
-        pmwTokenForm.setIsProduction(ConfigContext.getCurrentContextConfig().isProductionEnvironment());
-        if (!pmwTokenForm.isProduction()) {
-            String warningMessage = getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.WARNING_PMW_TOKEN_REFRESH_UPDATE_NONPRODSQL);
-            pmwTokenForm.setRefreshWarning(warningMessage);
-        }
     }
 
     public ActionForward refreshToken(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
