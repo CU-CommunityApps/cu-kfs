@@ -58,7 +58,8 @@
                    camsSystemAttributes="${DataDictionary.RequisitionCapitalAssetSystem.attributes}"
                    camsAssetAttributes="${DataDictionary.RequisitionItemCapitalAsset.attributes}"
                    camsLocationAttributes="${DataDictionary.RequisitionCapitalAssetLocation.attributes}"
-                   isRequisition="true"/>
+                   isRequisition="true"
+                   fullEntryMode="${fullEntryMode}"/>
 
     <purap:paymentinfo
             documentAttributes="${DataDictionary.RequisitionDocument.attributes}"/>
