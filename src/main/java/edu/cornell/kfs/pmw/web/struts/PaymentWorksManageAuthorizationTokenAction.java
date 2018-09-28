@@ -41,10 +41,6 @@ public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected ConfigurationService getConfigurationService() {
-        return SpringContext.getBean(ConfigurationService.class);
-    }
-
     protected PaymentWorksWebServiceCallsService getPaymentWorksWebServiceCallsService() {
         return SpringContext.getBean(PaymentWorksWebServiceCallsService.class);
     }
