@@ -92,7 +92,7 @@ public class ConcurManageAccessTokenAction extends KualiAction {
     protected boolean isProduction() {
         boolean isProd = ConfigContext.getCurrentContextConfig().isProductionEnvironment();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("isProd, isProd: " + isProd);
+            LOG.debug("isProduction, isProd: " + isProd);
         }
         return isProd;
     }
