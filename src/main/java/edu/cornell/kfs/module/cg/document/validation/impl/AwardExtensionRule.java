@@ -32,6 +32,8 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 @SuppressWarnings("deprecation")
 public class AwardExtensionRule extends AwardRule {
 	protected ParameterService parameterService;
+    Award newAwardCopy;
+    Award oldAwardCopy;
 
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
