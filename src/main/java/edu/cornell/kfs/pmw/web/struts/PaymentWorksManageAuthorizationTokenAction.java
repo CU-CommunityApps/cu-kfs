@@ -17,7 +17,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
 import org.kuali.rice.core.api.config.property.ConfigContext;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 @SuppressWarnings("deprecation")
 public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
