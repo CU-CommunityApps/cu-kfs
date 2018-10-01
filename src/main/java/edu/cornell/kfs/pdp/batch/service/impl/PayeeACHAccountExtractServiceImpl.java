@@ -1,10 +1,6 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +13,6 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +58,7 @@ import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep;
 import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 import edu.cornell.kfs.pdp.service.CuAchService;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtractService {
 	private static final Logger LOG = LogManager.getLogger(PayeeACHAccountExtractServiceImpl.class);
@@ -182,7 +178,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     protected List<String> loadACHBatchDetailFile(String inputFileName, BatchInputFileType batchInputFileType) {
         List<String>failedRowsErrors = new ArrayList();
         
-        byte[] fileByteContent = safelyLoadFileBytes(inputFileName);
+        byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(inputFileName);
         
         LOG.info("loadACHBatchDetailFile: Attempting to parse the file.");
         
@@ -664,40 +660,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
      */
     private Person getSystemUser() {
         return personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
-    }
-
-    /**
-     * Accepts a file name and returns a byte-array of the file name contents, if possible.
-     * 
-     * Throws RuntimeExceptions if FileNotFound or IOExceptions occur.
-     * 
-     * This method has been copied from CustomerLoadServiceImpl, but has been tweaked
-     * to properly close the file stream after use.
-     * 
-     * @param fileName String containing valid path & filename (relative or absolute) of file to load.
-     * @return A Byte Array of the contents of the file.
-     */
-    protected byte[] safelyLoadFileBytes(String fileName) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        
-        try {
-            fileContents = new FileInputStream(fileName);
-        } catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
-        }
-        
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-        
-        return fileByteContent;
     }
 
     /**

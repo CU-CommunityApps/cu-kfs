@@ -50,6 +50,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 import edu.cornell.kfs.vnd.batch.service.VendorBatchService;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
@@ -201,7 +202,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
         boolean result = true;
         
         //  load up the file into a byte array 
-        byte[] fileByteContent = safelyLoadFileBytes(fileName);
+        byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(fileName);
         
         LOG.info("Attempting to parse the file");
         Object parsedObject = null;
@@ -245,36 +246,6 @@ public class VendorBatchServiceImpl implements VendorBatchService{
                 
         return result;
 	}
-	
-	
-    /**
-    *
-    * Accepts a file name and returns a byte-array of the file name contents, if possible.
-    *
-    * Throws RuntimeExceptions if FileNotFound or IOExceptions occur.
-    *
-    * @param fileName String containing valid path & filename (relative or absolute) of file to load.
-    * @return A Byte Array of the contents of the file.
-    */
-    protected byte[] safelyLoadFileBytes(String fileName) {
-    // TODO : several classes have this same method.  Should re-factor to a util class for sharing.    
-        InputStream fileContents;
-        byte[] fileByteContent;
-        try {
-            fileContents = new FileInputStream(fileName);
-        } catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
-        }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        }
-        catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        }
-        return fileByteContent;
-    }
 
     private void criticalError(String errorMessage){
         LOG.error(errorMessage);

@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +38,7 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
-import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocumentService {
 	private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentServiceImpl.class);
@@ -70,7 +67,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
             
-            byte[] fileData = safelyLoadFileBytes(fileName);
+            byte[] fileData = LoadFileUtils.safelyLoadFileBytes(fileName);
             AccountingXmlDocumentListWrapper accountingXmlDocuments = (AccountingXmlDocumentListWrapper) batchInputFileService.parse(
                     accountingDocumentBatchInputFileType, fileData);
             int documentCount = accountingXmlDocuments.getDocuments().size();
@@ -92,19 +89,6 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         } finally {
             removeDoneFileQuietly(fileName);
             createAndEmailReport(reportItem);
-        }
-    }
-
-    protected byte[] safelyLoadFileBytes(String fileName) {
-        FileInputStream inputStream = null;
-        
-        try {
-            inputStream = new FileInputStream(fileName);
-            return IOUtils.toByteArray(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
         }
     }
 

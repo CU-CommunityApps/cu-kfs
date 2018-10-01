@@ -1,5 +1,66 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.ObjectType;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.businessobject.AdvanceDepositDetail;
+import org.kuali.kfs.fp.document.AdvanceDepositDocument;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.BatchInputFileType;
+import org.kuali.kfs.sys.batch.FlatFileInformation;
+import org.kuali.kfs.sys.batch.FlatFileTransactionInformation;
+import org.kuali.kfs.sys.batch.PhysicalFlatFileInformation;
+import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
+import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.mail.BodyMailMessage;
+import org.kuali.kfs.sys.service.BankService;
+import org.kuali.kfs.sys.service.EmailService;
+import org.kuali.kfs.sys.util.GlobalVariablesUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.web.format.FormatException;
+import org.kuali.rice.kew.api.KewApiConstants;
+import org.kuali.rice.kew.api.KewApiServiceLocator;
+import org.kuali.rice.kew.api.document.Document;
+import org.kuali.rice.kew.api.document.DocumentStatus;
+import org.kuali.rice.kew.api.document.WorkflowDocumentService;
+import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
+import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
+import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.identity.Person;
+import org.kuali.rice.kim.api.identity.PersonService;
+
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.batch.GenerateAdvanceDepositDocumentsStep;
@@ -18,74 +79,7 @@ import edu.cornell.kfs.fp.businessobject.AchIncomeNote;
 import edu.cornell.kfs.fp.businessobject.AchIncomeTransaction;
 import edu.cornell.kfs.fp.businessobject.IncomingWireAchMapping;
 import edu.cornell.kfs.sys.CUKFSConstants;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coa.businessobject.ObjectCode;
-import org.kuali.kfs.coa.businessobject.ObjectType;
-import org.kuali.kfs.fp.businessobject.AdvanceDepositDetail;
-import org.kuali.kfs.fp.document.AdvanceDepositDocument;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
-import org.kuali.kfs.sys.batch.FlatFileInformation;
-import org.kuali.kfs.sys.batch.FlatFileTransactionInformation;
-import org.kuali.kfs.sys.batch.PhysicalFlatFileInformation;
-import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.sys.mail.BodyMailMessage;
-import org.kuali.kfs.sys.service.EmailService;
-import org.kuali.kfs.sys.util.GlobalVariablesUtils;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.core.web.format.FormatException;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.KewApiServiceLocator;
-import org.kuali.rice.kew.api.document.Document;
-import org.kuali.rice.kew.api.document.DocumentStatus;
-import org.kuali.rice.kew.api.document.WorkflowDocumentService;
-import org.kuali.rice.kew.api.document.search.DocumentSearchCriteria;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResult;
-import org.kuali.rice.kew.api.document.search.DocumentSearchResults;
-import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.kim.api.identity.Person;
-import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.exception.InvalidAddressException;
-import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
-
-import javax.mail.MessagingException;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 /**
  * Portions Modified 04/2016 and Copyright Cornell University
@@ -448,7 +442,7 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
 
     public boolean loadFile(String fileName, PhysicalFlatFileInformation physicalFlatFileInformation) {
         boolean valid = true;
-        byte[] fileByteContent = safelyLoadFileBytes(fileName);
+        byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(fileName);
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Attempting to parse the file ");
@@ -782,35 +776,6 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
         }
 
         return fileNamesToLoad;
-    }
-
-    /**
-     * Accepts a file name and returns a byte-array of the file name contents, if possible.
-     *
-     * Throws RuntimeExceptions if FileNotFound or IOExceptions occur.
-     *
-     * @param fileName String containing valid path & filename (relative or absolute) of file to load.
-     * @return A Byte Array of the contents of the file.
-     */
-    protected byte[] safelyLoadFileBytes(String fileName) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        try {
-            fileContents = new FileInputStream(fileName);
-        } catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
-        }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-
-        return fileByteContent;
     }
 
     /**
