@@ -8,7 +8,6 @@ import static org.kuali.rice.core.api.util.type.KualiDecimal.ZERO;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,8 +88,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     private DocumentService documentService;
     private NoteService noteService;
     private ParameterService parameterService;
-    private CheckReconciliationDao checkReconciliationDao;
-
+    
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
@@ -193,7 +190,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 glPendingTransaction.setChartOfAccountsCode(coaCode);
                 glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
                 
-                glPendingTransaction.setSubAccountNumber(getCheckYear(paymentGroup));
+                // KFSUPGRADE-943
+                glPendingTransaction.setSubAccountNumber(KFSConstants.getDashSubAccountNumber());              
             } else {
 
                 Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
@@ -269,25 +267,6 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         }
     }
     
-    private String getCheckYear(PaymentGroup paymentGroup) {
-        String checkYear = KFSConstants.getDashSubAccountNumber();
-        try {
-            CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(paymentGroup.getDisbursementNbr().toString(), paymentGroup.getBankCode());
-            Calendar calendar = Calendar.getInstance();
-            if (ObjectUtils.isNotNull(checkReconciliation) && ObjectUtils.isNotNull(checkReconciliation.getCheckDate())) {
-                calendar.setTime(checkReconciliation.getCheckDate());
-                checkYear = Integer.toString(calendar.get(Calendar.YEAR));
-            }
-            else {
-                LOG.error("getCheckYear", "Failed getting year check was issued, defaulting clearing subaccount to dashes.");
-            }
-        }
-        catch(Exception ex) {
-            LOG.error("getCheckYear", ex);
-        }
-        return checkYear;
-    }
-
     /**
      * Reverses the entries of the source documents
      * 
@@ -1009,8 +988,6 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 		this.parameterService = parameterService;
 	}
 
-	public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
-		this.checkReconciliationDao = checkReconciliationDao;
-	}
+
 
 }
