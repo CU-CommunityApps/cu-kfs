@@ -1,6 +1,7 @@
 package edu.cornell.kfs.coa.businessobject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -353,7 +354,15 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
         return true;
 	}
 
-	/**
+	@Override
+    public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
+	    List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
+	    managedLists.add(new ArrayList<>(getSubAccountGlobalDetails()));
+	    managedLists.add(new ArrayList<>(getSubAccountGlobalNewAccountDetails()));
+	    return managedLists;
+    }
+
+    /**
 	 * @see org.kuali.kfs.krad.bo.GlobalBusinessObject#getDocumentNumber()
 	 */
 	public String getDocumentNumber() {

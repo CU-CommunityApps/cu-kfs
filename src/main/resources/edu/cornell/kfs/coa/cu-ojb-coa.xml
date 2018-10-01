@@ -1945,6 +1945,7 @@
  	 	<field-descriptor name="chartOfAccountsCode" column="FIN_COA_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
   		<field-descriptor name="accountNumber" column="ACCOUNT_NBR" jdbc-type="VARCHAR" primarykey="true" index="true" />
   		<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" index="true" />
+  		<field-descriptor name="subAccountName" column="SUB_ACCT_NM" jdbc-type="VARCHAR" />
   		<field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
   		<field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
   		<field-descriptor name="offCampusCode" column="OFF_CMP_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
@@ -2004,7 +2005,7 @@
     		<inverse-foreignkey field-ref="documentNumber" />
   		</collection-descriptor>
   		
-  		<collection-descriptor name="subAccountGlobalNewAccountDetails" element-class-ref="edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="none" proxy="true">
+  		<collection-descriptor name="subAccountGlobalNewAccountDetails" element-class-ref="edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
     		<inverse-foreignkey field-ref="documentNumber" />
   		</collection-descriptor>
 	</class-descriptor>
