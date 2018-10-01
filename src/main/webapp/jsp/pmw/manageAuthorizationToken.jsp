@@ -9,7 +9,7 @@
 
     	<div class="center" style="margin: 30px 0;">
 			<div>
-				<c:if test="${!KualiForm.isProduction()}">
+				<c:if test="${!kfunc:isProductionEnvironment()}">
 					<div class="alert alert-warning" style="width: 50%; margin-left: 25%;">
 						<strong>Non-prod SQL needs to be updated with the new token value after a refresh.</strong>
 					</div>

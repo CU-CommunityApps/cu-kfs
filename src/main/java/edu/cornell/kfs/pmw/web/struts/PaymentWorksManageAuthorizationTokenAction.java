@@ -3,7 +3,6 @@ package edu.cornell.kfs.pmw.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.cornell.kfs.pmw.web.struts.form.PaymentWorksManageAuthorizationTokenForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -16,7 +15,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceCallsService;
-import org.kuali.rice.core.api.config.property.ConfigContext;
 
 @SuppressWarnings("deprecation")
 public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
@@ -24,7 +22,6 @@ public class PaymentWorksManageAuthorizationTokenAction extends KualiAction {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksManageAuthorizationTokenAction.class);
 
     public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ((PaymentWorksManageAuthorizationTokenForm) form).setIsProduction(ConfigContext.getCurrentContextConfig().isProductionEnvironment());
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
