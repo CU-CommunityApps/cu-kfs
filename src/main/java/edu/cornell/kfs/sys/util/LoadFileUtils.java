@@ -38,23 +38,10 @@ public class LoadFileUtils {
     }
     
     public static byte[] safelyLoadFileBytes(File file) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        String fileName = file.getName();
-        try {
-            fileContents = new FileInputStream(file);
-        } catch (FileNotFoundException e1) {
-            LOG.error("safelyLoadFileBytes, Batch file not found [" + fileName + "]. " + e1.getMessage(), e1);
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
+        if (file == null) {
+            LOG.error("safelyLoadFileBytes, a NULL file was provided");
+            throw new IllegalArgumentException("A file must be provided");
         }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("safelyLoadFileBytes, IO Exception loading: [" + fileName + "]. " + e1.getMessage(), e1);
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-        return fileByteContent;
+        return safelyLoadFileBytes(file.getAbsolutePath());
     }
 }
