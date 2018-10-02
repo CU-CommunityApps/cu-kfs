@@ -277,12 +277,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             if (ObjectUtils.isNotNull(checkReconciliation) && ObjectUtils.isNotNull(checkReconciliation.getCheckDate())) {
                 calendar.setTime(checkReconciliation.getCheckDate());
                 checkYear = Integer.toString(calendar.get(Calendar.YEAR));
+            } else {
+                LOG.error("getCheckYear: Failed getting year check was issued, defaulting clearing subaccount to dashes.");
             }
-            else {
-                LOG.error("getCheckYear", "Failed getting year check was issued, defaulting clearing subaccount to dashes.");
-            }
-        }
-        catch(Exception ex) {
+        } catch(Exception ex) {
             LOG.error("getCheckYear", ex);
         }
         return checkYear;
