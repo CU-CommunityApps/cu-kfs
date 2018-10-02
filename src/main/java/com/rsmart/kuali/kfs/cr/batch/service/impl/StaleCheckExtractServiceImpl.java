@@ -183,6 +183,10 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
             validationErrors.add("Check Total Amount is blank.");
         }
 
+        if (StringUtils.isBlank(staleCheckRow.getCheckStatus())) {
+            validationErrors.add("Check Status is blank.");
+        }
+
         if (ObjectUtils.isNull(checkReconciliation) || ObjectUtils.isNull(checkReconciliation.getCheckNumber())) {
             validationErrors.add("Check Reconciliation does not exist in KFS.");
         } else {
@@ -217,13 +221,12 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
                 validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
                         checkReconciliation.getAmount().toString() + ").");
             }
-
-            if (StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.STALE)) {
-                validationErrors.add("Check Status is already STALE.");
-            }
-        }
-        catch (NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             validationErrors.add("Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString());
+        }
+
+        if (!StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.ISSUED)) {
+            validationErrors.add("Invalid Check Status " + checkReconciliation.getStatus() + " (Only ISSD is allowed).");
         }
     }
 
