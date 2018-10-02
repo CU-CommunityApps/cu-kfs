@@ -89,12 +89,6 @@
       class="edu.cornell.kfs.coa.dataaccess.impl.AccountGlobalSearchDaoOjb"
       p:lookupDao-ref="lookupDaoOjb"
       p:businessObjectDao-ref="businessObjectDaoOjb"/>
-      
- 	<bean id="organizationService" class="org.kuali.kfs.coa.service.impl.OrganizationServiceImpl">
-        <property name="parameterService" ref="parameterService" />
-        <property name="chartService" ref="chartService" />
-        <property name="businessObjectService" ref="businessObjectService" />
-	</bean>
  
  	<bean id="accountReversionImportDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.dataaccess.impl.AccountReversionImportDaoJdbc"/>
 	
