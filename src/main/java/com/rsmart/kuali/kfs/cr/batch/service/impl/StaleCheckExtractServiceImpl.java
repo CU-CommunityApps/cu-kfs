@@ -216,12 +216,13 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         }
 
         try {
-            KualiDecimal checkTotalAmount = new KualiDecimal(staleCheckRow.getCheckTotalAmount());
+            double parsedAmount = java.text.NumberFormat.getNumberInstance(java.util.Locale.US).parse(staleCheckRow.getCheckTotalAmount()).doubleValue();
+            KualiDecimal checkTotalAmount = new KualiDecimal(parsedAmount);
             if (!checkTotalAmount.equals(checkReconciliation.getAmount())) {
                 validationErrors.add("The Total Check Amount in the file row (" + checkTotalAmount.toString() + ") does not match the amount on the Check (" +
                         checkReconciliation.getAmount().toString() + ").");
             }
-        } catch (NumberFormatException ex) {
+        } catch (java.text.ParseException ex) {
             validationErrors.add("Error converting total amount to decimal [" + staleCheckRow.getCheckTotalAmount() + "] " + ex.toString());
         }
 

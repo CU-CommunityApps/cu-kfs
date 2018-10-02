@@ -130,20 +130,21 @@ public class StaleCheckExtractServiceImplTest {
 
             for (int i = 0; i < expectedRows.size(); i++) {
                 StaleCheckRowFixture expectedStaleCheckRow = expectedRows.get(i);
-                StaleCheckBatchRow actualStaleCheckRow = actualRows.get(i).staleCheckBatchRow;
+                StaleCheckRowResult actualStaleCheckRowResult = actualRows.get(i);
 
-                verifyParsedRowMatchesExpectedResult(expectedStaleCheckRow, actualStaleCheckRow);
+                verifyParsedRowMatchesExpectedResult(expectedStaleCheckRow, actualStaleCheckRowResult);
             }
         }
     }
 
-    private void verifyParsedRowMatchesExpectedResult(StaleCheckRowFixture expectedRow, StaleCheckBatchRow actualRow) {
+    private void verifyParsedRowMatchesExpectedResult(StaleCheckRowFixture expectedRow, StaleCheckRowResult actualStaleCheckRowResult) {
+        assertEquals("Unexpected Stale Check Row Result", expectedRow.valid, actualStaleCheckRowResult.validRow);
         if (expectedRow.valid) {
-            assertEquals("Unexpected Check Number", expectedRow.checkNumber, actualRow.getCheckNumber());
-            assertEquals("Unexpected Check Status", expectedRow.checkStatus, actualRow.getCheckStatus());
-            assertEquals("Unexpected Bank Code", expectedRow.bankCode, actualRow.getBankCode());
-            assertEquals("Unexpected Check Issued Date", expectedRow.checkIssuedDate, actualRow.getCheckIssuedDate());
-            assertEquals("Unexpected Check Total Amount", expectedRow.checkTotalAmount, actualRow.getCheckTotalAmount());
+            assertEquals("Unexpected Check Number", expectedRow.checkNumber, actualStaleCheckRowResult.staleCheckBatchRow.getCheckNumber());
+            assertEquals("Unexpected Check Status", expectedRow.checkStatus, actualStaleCheckRowResult.staleCheckBatchRow.getCheckStatus());
+            assertEquals("Unexpected Bank Code", expectedRow.bankCode, actualStaleCheckRowResult.staleCheckBatchRow.getBankCode());
+            assertEquals("Unexpected Check Issued Date", expectedRow.checkIssuedDate, actualStaleCheckRowResult.staleCheckBatchRow.getCheckIssuedDate());
+            assertEquals("Unexpected Check Total Amount", expectedRow.checkTotalAmount, actualStaleCheckRowResult.staleCheckBatchRow.getCheckTotalAmount());
         }
     }
 
