@@ -18,7 +18,14 @@ public enum StaleCheckFileFixture {
     FILE_MULTIPLE_VALID_LINES("stale_check_test_multi_good",
             StaleCheckRowFixture.CHECK_999_DISB_STAL_925_VALID,
             StaleCheckRowFixture.CHECK_123_DISB_STAL_29252_VALID,
-            StaleCheckRowFixture.CHECK_199_DISB_STAL_212319_VALID);
+            StaleCheckRowFixture.CHECK_199_DISB_STAL_212319_VALID),
+    FILE_MULTIPLE_INVALID_STATUS_LINES("stale_check_test_multi_bad_status",
+            StaleCheckRowFixture.CHECK_399_DISB_VOID_951,
+            StaleCheckRowFixture.CHECK_111_DISB_CLRD_123,
+            StaleCheckRowFixture.CHECK_211_DISB_STOP_123,
+            StaleCheckRowFixture.CHECK_311_DISB_STAL_123,
+            StaleCheckRowFixture.CHECK_411_DISB_EXCP_123,
+            StaleCheckRowFixture.CHECK_511_DISB_CDIS_321);
 
     public final String baseFileName;
     public final List<StaleCheckRowFixture> staleCheckRows;

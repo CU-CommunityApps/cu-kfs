@@ -93,6 +93,11 @@ public class StaleCheckExtractServiceImplTest {
         assertStaleCheckExtractionHasCorrectResults(StaleCheckFileFixture.FILE_MULTIPLE_VALID_LINES);
     }
 
+    @Test
+    public void testLoadFileWithMultipleInvalidStatusRows() throws Exception {
+        assertStaleCheckExtractionHasCorrectResults(StaleCheckFileFixture.FILE_MULTIPLE_INVALID_STATUS_LINES);
+    }
+
     private void assertStaleCheckExtractionHasCorrectResults(StaleCheckFileFixture... fixtures) throws Exception {
         List<StaleCheckFileFixture> expectedResults = Arrays.asList(fixtures);
         String[] fileNames = Arrays.stream(fixtures)
@@ -304,6 +309,24 @@ public class StaleCheckExtractServiceImplTest {
 
         mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_199_DISB_STAL_925);
         when(checkReconciliationDao.findByCheckNumber("19999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_399_DISB_VOID_951);
+        when(checkReconciliationDao.findByCheckNumber("39999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_111_DISB_CLRD_123);
+        when(checkReconciliationDao.findByCheckNumber("11111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_211_DISB_STOP_123);
+        when(checkReconciliationDao.findByCheckNumber("21111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_311_DISB_STAL_123);
+        when(checkReconciliationDao.findByCheckNumber("31111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_411_DISB_EXCP_123);
+        when(checkReconciliationDao.findByCheckNumber("41111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_511_DISB_CDIS_321);
+        when(checkReconciliationDao.findByCheckNumber("51111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
         return checkReconciliationDao;
     }
 

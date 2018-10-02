@@ -11,7 +11,13 @@ public enum StaleCheckRowFixture {
             KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING, false),
     CHECK_123_DISB_STAL_29252_VALID("20180809", CrTestConstants.MELLON_BANK_CODE, CRConstants.STALE, "12345678", "292.52", true),
     CHECK_123_BLANK_STAL_19223_INVALID("20180609", KFSConstants.EMPTY_STRING, CRConstants.STALE, "82345678", "192.23", false),
-    CHECK_199_DISB_STAL_212319_VALID("20180712", CrTestConstants.MELLON_BANK_CODE, CRConstants.STALE, "19999999", "2,123.19", true);
+    CHECK_199_DISB_STAL_212319_VALID("20180712", CrTestConstants.MELLON_BANK_CODE, CRConstants.STALE, "19999999", "2,123.19", true),
+    CHECK_399_DISB_VOID_951("20180712", CrTestConstants.MELLON_BANK_CODE, CRConstants.VOIDED, "39999999", "9.51", false),
+    CHECK_111_DISB_CLRD_123("20180715", CrTestConstants.MELLON_BANK_CODE, CRConstants.CLEARED, "11111111", "1.23", false),
+    CHECK_211_DISB_STOP_123("20180715", CrTestConstants.MELLON_BANK_CODE, CRConstants.STOP, "21111111", "1.23", false),
+    CHECK_311_DISB_STAL_123("20180715", CrTestConstants.MELLON_BANK_CODE, CRConstants.STALE, "31111111", "1.23", false),
+    CHECK_411_DISB_EXCP_123("20180715", CrTestConstants.MELLON_BANK_CODE, CRConstants.EXCP, "41111111", "1.23", false),
+    CHECK_511_DISB_CDIS_321("20180715", CrTestConstants.MELLON_BANK_CODE, CRConstants.CANCELLED, "51111111", "3.21", false);
 
     public final String checkIssuedDate;
     public final String bankCode;
