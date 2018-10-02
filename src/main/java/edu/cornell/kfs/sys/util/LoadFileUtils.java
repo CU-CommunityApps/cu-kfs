@@ -24,15 +24,19 @@ public class LoadFileUtils {
             fileContents = new FileInputStream(fullyQualifiedFileName);
         } catch (FileNotFoundException e1) {
             LOG.error("safelyLoadFileBytes:  Batch file not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
+            throw new RuntimeException("Batch File not found [" + fullyQualifiedFileName + "]. " + e1.getMessage(), e1);
         }
         try {
             fileByteContent = IOUtils.toByteArray(fileContents);
         } catch (IOException e1) {
             LOG.error("safelyLoadFileBytes:  IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
+            throw new RuntimeException("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage(), e1);
         } finally {
-            IOUtils.closeQuietly(fileContents);
+            try {
+                IOUtils.closeQuietly(fileContents);
+            } catch (Exception e) {
+                LOG.error("safelyLoadFileBytes, unable tlose input stream.", e);
+            }
         }
         return fileByteContent;
     }
