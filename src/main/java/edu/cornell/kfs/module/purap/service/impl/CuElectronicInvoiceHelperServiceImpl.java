@@ -245,11 +245,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 	    }
         	            updateSummaryCounts(EXTRACT_FAILURES);
                }
-                /**
-                 * Clear the error map, so that subsequent EIRT routing isn't prevented since rice
-                 * is throwing a ValidationException if the error map is not empty before routing the doc.
-                 */
-                GlobalVariables.getMessageMap().clearErrorMessages();
+                clearMessageMap();
 
                 //Do not execute rest of code below
                 //continue;
@@ -1063,11 +1059,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
 			                
 			                if (orderHolder.isInvoiceRejected()) {
-			                    /**
-			                     * This is required. If there is anything in the error map, then it's not possible to route the doc since the rice
-			                     * is throwing error if errormap is not empty before routing the doc. 
-			                     */
-			                    GlobalVariables.getMessageMap().clearErrorMessages();
+			                    clearMessageMap();
 			                    
 			                    ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
 			                    
@@ -1233,8 +1225,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         return eInvoiceRejectDocument;
     }
-
+    
+    @Override
     protected void rejectElectronicInvoiceFile(ElectronicInvoiceLoad eInvoiceLoad, String fileDunsNumber, File invoiceFile, String extraDescription, String rejectReasonTypeCode) {
+        clearMessageMap();
         if (LOG.isInfoEnabled()) {
             LOG.info("Rejecting the entire invoice file - " + invoiceFile.getName());
         }
@@ -1287,6 +1281,16 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         if (LOG.isInfoEnabled()) {
             LOG.info("Complete failure document has been created (DocNo:" + eInvoiceRejectDocument.getDocumentNumber() + ")");
         }
+    }
+
+    private void clearMessageMap() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("clearMessageMap, Logging previously created error messages");
+            for (String key : GlobalVariables.getMessageMap().getErrorMessages().keySet()) {
+                LOG.debug("clearMessageMap, key: " + key + "value: " + GlobalVariables.getMessageMap().getErrorMessages().get(key));
+            }
+        }
+        GlobalVariables.getMessageMap().clearErrorMessages();
     }
 
     protected void attachInvoiceXMLWithRejectDoc(ElectronicInvoiceRejectDocument eInvoiceRejectDocument, File attachmentFile, String noteText) {
@@ -1440,7 +1444,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         //  if no reject reasons, then clear error messages
         if (rejectDocument.getInvoiceRejectReasons().isEmpty()) {
-            GlobalVariables.getMessageMap().clearErrorMessages();
+            clearMessageMap();
         }
 
         //  this automatically returns false if there are no reject reasons
