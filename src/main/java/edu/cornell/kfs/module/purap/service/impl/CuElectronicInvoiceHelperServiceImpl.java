@@ -89,6 +89,7 @@ import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceHelperServiceImp
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceItemHolder;
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceOrderHolder;
 import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
@@ -245,7 +246,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 	    }
         	            updateSummaryCounts(EXTRACT_FAILURES);
                }
-                clearErrorMessagesToPreventRiceSaveAndRoutErrors();
+                clearErrorMessagesToPreventRiceSaveAndRouteErrors();
 
                 //Do not execute rest of code below
                 //continue;
@@ -1059,7 +1060,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
 			                
 			                if (orderHolder.isInvoiceRejected()) {
-			                    clearErrorMessagesToPreventRiceSaveAndRoutErrors();
+			                    clearErrorMessagesToPreventRiceSaveAndRouteErrors();
 			                    
 			                    ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
 			                    
@@ -1228,7 +1229,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     
     @Override
     protected void rejectElectronicInvoiceFile(ElectronicInvoiceLoad eInvoiceLoad, String fileDunsNumber, File invoiceFile, String extraDescription, String rejectReasonTypeCode) {
-        clearErrorMessagesToPreventRiceSaveAndRoutErrors();
+        clearErrorMessagesToPreventRiceSaveAndRouteErrors();
         if (LOG.isInfoEnabled()) {
             LOG.info("Rejecting the entire invoice file - " + invoiceFile.getName());
         }
@@ -1283,14 +1284,32 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
-    private void clearErrorMessagesToPreventRiceSaveAndRoutErrors() {
+    private void clearErrorMessagesToPreventRiceSaveAndRouteErrors() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("clearErrorMessagesToPreventRiceSaveAndRoutErrors, Logging previously created error messages");
-            for (String key : GlobalVariables.getMessageMap().getErrorMessages().keySet()) {
-                LOG.debug("clearErrorMessagesToPreventRiceSaveAndRoutErrors, key: " + key + "value: " + GlobalVariables.getMessageMap().getErrorMessages().get(key));
+            LOG.debug("clearErrorMessagesToPreventRiceSaveAndRouteErrors, Logging previously created error messages");
+            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+            for (String key : errorMessages.keySet()) {
+                LOG.debug("clearErrorMessagesToPreventRiceSaveAndRouteErrors, key: " + key + ", value: " + buldErrorString(errorMessages.get(key)));
             }
         }
         GlobalVariables.getMessageMap().clearErrorMessages();
+    }
+    
+    private String buldErrorString(AutoPopulatingList<ErrorMessage> errorMessageList) {
+        if (errorMessageList != null) {
+            StringBuilder sb = new StringBuilder();
+            boolean needComma = false;
+            for (ErrorMessage message : errorMessageList) {
+                if (needComma) {
+                    sb.append(KFSConstants.COMMA).append(KFSConstants.BLANK_SPACE);
+                }
+                sb.append(message);
+                needComma = true;
+            }
+            return sb.toString();
+        } else {
+            return "Null Error List";
+        }
     }
 
     protected void attachInvoiceXMLWithRejectDoc(ElectronicInvoiceRejectDocument eInvoiceRejectDocument, File attachmentFile, String noteText) {
@@ -1444,7 +1463,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         //  if no reject reasons, then clear error messages
         if (rejectDocument.getInvoiceRejectReasons().isEmpty()) {
-            clearErrorMessagesToPreventRiceSaveAndRoutErrors();
+            clearErrorMessagesToPreventRiceSaveAndRouteErrors();
         }
 
         //  this automatically returns false if there are no reject reasons
