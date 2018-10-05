@@ -101,8 +101,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     
     protected String findContractControlAccountNumber(List<InvoiceAccountDetail> details) {
         for (InvoiceAccountDetail detail : details) {
-            if (StringUtils.isNotBlank(detail.getContractControlAccountNumber())) {
-                return detail.getContractControlAccountNumber();
+            if (StringUtils.isNotBlank(detail.getAccountNumber())) {
+                return detail.getAccountNumber();
             }
         }
         return StringUtils.EMPTY;

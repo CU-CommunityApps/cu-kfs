@@ -114,7 +114,8 @@
 		<tr>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.payeeAccountNumber}"/></div></th>
 			<td class="datacell" colspan="3">
-				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.payeeAccountNumber}" property="document.wireTransfer.payeeAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}" />
+				<c:set var="mask" value="${not KualiForm.document.documentHeader.workflowDocument.initiated}"/>
+				<kul:htmlControlAttribute mask="${mask}" attributeEntry="${wireTransAttributes.payeeAccountNumber}" property="document.wireTransfer.payeeAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}" />
 			</td>
 		</tr>
 		<tr>

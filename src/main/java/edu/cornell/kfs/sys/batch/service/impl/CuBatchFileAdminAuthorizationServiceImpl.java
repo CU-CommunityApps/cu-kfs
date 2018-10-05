@@ -1,5 +1,7 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
+import java.util.HashMap;
+
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
@@ -30,11 +32,11 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
         if (batchFile.getFileName().indexOf(PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX) >= 0) {
             isAuthorized = getIdentityManagementService().hasPermissionByTemplateName(user.getPrincipalId(),
                     KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
-                    generateDownloadCheckPermissionDetails(batchFile, user));
+                    generatePermissionDetails(batchFile));
         } else {
             isAuthorized = getIdentityManagementService().isAuthorizedByTemplateName(user.getPrincipalId(),
                     KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.DOWNLOAD_BATCH_FILE_PERMISSION_TEMPLATE_NAME,
-                    generateDownloadCheckPermissionDetails(batchFile, user), generateDownloadCheckRoleQualifiers(batchFile, user));
+                    generatePermissionDetails(batchFile), new HashMap<>());
         }
         return isAuthorized || super.canDownload(batchFile, user);
     }
