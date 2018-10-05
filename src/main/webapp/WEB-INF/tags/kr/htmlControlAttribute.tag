@@ -43,6 +43,8 @@
               THIS VALUE WILL BE DISPLAYED WITHOUT ANY XML FILTERING/ESCAPING, AND NEEDS TO BE PROPERLY ESCAPED TO PREVENT CROSS-SITE SCRIPTING VULNERABILITIES" %>
 <%@ attribute name="displayMask" required="false"
               description="Specify whether to mask the given field using the displayMaskValue rather than showing the actual value." %>
+              <%@ attribute name="mask" required="false"
+              description="Specify whether to mask the given field using the displayMaskValue rather than showing the actual value." %>
 <%@ attribute name="displayMaskValue" required="false"
 			  description="when a field is not to be displayed in clear text and encrypted as hidden, the
 			  string to display." %>
@@ -68,7 +70,11 @@ if (attributeEntry == null) {
     <c:set var="readOnly" value="false"/>
 </c:if>
 
-<c:if test="${!empty attributeEntry.attributeSecurityMask && attributeEntry.attributeSecurityMask == true  }">
+<c:if test="${empty mask}">
+    <c:set var="mask" value="true"/>
+</c:if>
+
+<c:if test="${!empty attributeEntry.attributeSecurityMask && attributeEntry.attributeSecurityMask == true  && mask}">
 	<c:set var="className" value ="${attributeEntry.fullClassName}" />
 	<c:set var="fieldName" value ="${attributeEntry.name}" />
 	<c:set var="displayMask" value="${kfunc:canFullyUnmaskField(className, fieldName,KualiForm)? 'false' : 'true'}" />

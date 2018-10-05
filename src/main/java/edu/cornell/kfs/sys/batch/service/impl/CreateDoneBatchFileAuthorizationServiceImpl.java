@@ -1,5 +1,6 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.kfs.sys.KFSConstants;
@@ -24,17 +25,13 @@ public class CreateDoneBatchFileAuthorizationServiceImpl extends BatchFileAdminA
 
             isAuthorized = getIdentityManagementService().isAuthorizedByTemplateName(user.getPrincipalId(),
                 KFSConstants.CoreModuleNamespaces.KFS, CUKFSConstants.SysKimApiConstants.CREATE_DONE_FILE_PERMISSION_TEMPLATE_NAME,
-                generateCreateDoneCheckPermissionDetails(batchFile, user), generateCreateDoneCheckRoleQualifiers(batchFile, user));
+                generateCreateDoneCheckPermissionDetails(batchFile, user), new HashMap<>());
             
         return isAuthorized;
 	}
-	
-    protected Map<String,String> generateCreateDoneCheckRoleQualifiers(BatchFile batchFile, Person user) {
-        return generateRoleQualifiers(batchFile, user);
-    }
 
     protected Map<String,String> generateCreateDoneCheckPermissionDetails(BatchFile batchFile, Person user) {
-        return generatePermissionDetails(batchFile, user);
+        return generatePermissionDetails(batchFile);
     }
 	
     protected IdentityManagementService getIdentityManagementService() {
