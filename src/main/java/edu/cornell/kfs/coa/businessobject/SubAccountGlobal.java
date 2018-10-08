@@ -22,6 +22,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.PersistenceStructureService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -640,6 +641,14 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
     public void setSubAccountGlobalNewAccountDetails(
             List<SubAccountGlobalNewAccountDetail> subAccountGlobalNewAccountDetails) {
         this.subAccountGlobalNewAccountDetails = subAccountGlobalNewAccountDetails;
+    }
+
+    public List<SubAccountGlobalNewAccountDetail> getSubAccountGlobalNewAccountDetailsForAwardRouting() {
+        if (StringUtils.equals(KFSConstants.SubAccountType.COST_SHARE, newSubAccountTypeCode)) {
+            return subAccountGlobalNewAccountDetails;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     public GlobalObjectWithIndirectCostRecoveryAccountsService getGlobalObjectWithIndirectCostRecoveryAccountsService() {

@@ -4,6 +4,8 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetailBase {
 
@@ -90,6 +92,14 @@ public class SubAccountGlobalNewAccountDetail extends GlobalBusinessObjectDetail
 
     public void setSubAccount(SubAccount subAccount) {
         this.subAccount = subAccount;
+    }
+
+    public Integer getContractsAndGrantsAccountResponsibilityIdForRouting() {
+        refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+        if (ObjectUtils.isNotNull(getAccount())) {
+            return getAccount().getContractsAndGrantsAccountResponsibilityId();
+        }
+        return null;
     }
 
 }

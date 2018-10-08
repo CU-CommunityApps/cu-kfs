@@ -235,8 +235,8 @@
           <property name="maintainableFields">
             <list>
               <bean parent="MaintainableFieldDefinition" p:name="sequenceNumber"/>
-              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:readOnlyAfterAdd="true" p:template="accountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:template="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber"/>
               <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
               <bean parent="MaintainableFieldDefinition" p:name="subAccountName"/>
               <bean parent="MaintainableFieldDefinition" p:name="offCampusCode"/>
@@ -341,6 +341,7 @@
         <property name="documentValuePathGroups">
             <list>
                 <ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award"/>
+                <ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award-NewAccountDetail"/>
             </list>
         </property>
     </bean>
@@ -357,7 +358,15 @@
     		</bean>
     	</property>
    	</bean>
-	
+
+    <bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award-NewAccountDetail" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+        <property name="documentCollectionPath">
+            <bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-responsibilityId">
+                <property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalNewAccountDetailsForAwardRouting"/>
+            </bean>
+        </property>
+   	</bean>
+
    	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-responsibilityId" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
