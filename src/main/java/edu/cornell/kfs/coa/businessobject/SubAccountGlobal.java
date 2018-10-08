@@ -270,21 +270,21 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		return globalObjectDetailsAndIcrAccountsMap;
 	}
 
-	@Override
-	public IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(GlobalBusinessObjectDetailBase globalDetail, IndirectCostRecoveryAccountChange newICR) {
-		String chart;
-		String account;
-		if (globalDetail instanceof SubAccountGlobalDetail) {
-		    SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
-	        chart = subAccountGlobalDetail.getChartOfAccountsCode();
-	        account = subAccountGlobalDetail.getAccountNumber();
-		} else if (globalDetail instanceof SubAccountGlobalNewAccountDetail) {
-		    SubAccountGlobalNewAccountDetail newAccountDetail = (SubAccountGlobalNewAccountDetail) globalDetail;
+    @Override
+    public IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(GlobalBusinessObjectDetailBase globalDetail, IndirectCostRecoveryAccountChange newICR) {
+        String chart;
+        String account;
+        if (globalDetail instanceof SubAccountGlobalDetail) {
+            SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail) globalDetail;
+            chart = subAccountGlobalDetail.getChartOfAccountsCode();
+            account = subAccountGlobalDetail.getAccountNumber();
+        } else if (globalDetail instanceof SubAccountGlobalNewAccountDetail) {
+            SubAccountGlobalNewAccountDetail newAccountDetail = (SubAccountGlobalNewAccountDetail) globalDetail;
             chart = newAccountDetail.getChartOfAccountsCode();
             account = newAccountDetail.getAccountNumber();
-		} else {
-		    throw new IllegalArgumentException("Unexpected globalDetail implementation for creating ICR Account: " + globalDetail.getClass());
-		}
+        } else {
+            throw new IllegalArgumentException("Unexpected globalDetail implementation for creating ICR Account: " + globalDetail.getClass());
+        }
 
 		A21IndirectCostRecoveryAccount icrAccount = new A21IndirectCostRecoveryAccount();
 		icrAccount.setAccountNumber(account);
@@ -328,7 +328,7 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	    List<GlobalBusinessObjectDetail> detailObjects = new ArrayList<>();
 	    detailObjects.addAll(subAccountGlobalDetails);
 	    detailObjects.addAll(subAccountGlobalNewAccountDetails);
-		return subAccountGlobalDetails;
+	    return detailObjects;
 	}
 
 	/**
@@ -354,12 +354,12 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
         return true;
 	}
 
-	@Override
+    @Override
     public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
-	    List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
-	    managedLists.add(new ArrayList<>(getSubAccountGlobalDetails()));
-	    managedLists.add(new ArrayList<>(getSubAccountGlobalNewAccountDetails()));
-	    return managedLists;
+        List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
+        managedLists.add(new ArrayList<>(getSubAccountGlobalDetails()));
+        managedLists.add(new ArrayList<>(getSubAccountGlobalNewAccountDetails()));
+        return managedLists;
     }
 
     /**
@@ -575,12 +575,22 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
 	}
 
-	public Long getNextNewAccountDetailSequenceNumber() {
+    public Long getNextNewAccountDetailSequenceNumber() {
         return nextNewAccountDetailSequenceNumber;
     }
 
     public void setNextNewAccountDetailSequenceNumber(Long nextNewAccountDetailSequenceNumber) {
         this.nextNewAccountDetailSequenceNumber = nextNewAccountDetailSequenceNumber;
+    }
+
+    public Long getAndIncrementNextNewAccountDetailSequenceNumber() {
+        Long currentNumber = getNextNewAccountDetailSequenceNumber();
+        if (currentNumber == null) {
+            currentNumber = Long.valueOf(1L);
+        }
+        Long nextNumber = Long.valueOf(currentNumber.longValue() + 1L);
+        setNextNewAccountDetailSequenceNumber(nextNumber);
+        return currentNumber;
     }
 
     public String getNewSubAccountName() {

@@ -160,14 +160,10 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
             return;
         }
         
-        long nextSequenceNumber = subAccountGlobal.getNextNewAccountDetailSequenceNumber().longValue();
         for (int i = newItemsStartIndex; i < newAccountDetails.size(); i++) {
             SubAccountGlobalNewAccountDetail newAccountDetail = newAccountDetails.get(i);
-            newAccountDetail.setSequenceNumber(Long.valueOf(nextSequenceNumber));
-            nextSequenceNumber++;
+            newAccountDetail.setSequenceNumber(subAccountGlobal.getAndIncrementNextNewAccountDetailSequenceNumber());
         }
-        
-        subAccountGlobal.setNextNewAccountDetailSequenceNumber(Long.valueOf(nextSequenceNumber));
     }
     
     private boolean isNewAccountDetailsCollection(String collectionName) {

@@ -364,18 +364,18 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         // Cost Sharing COA Code and Cost Sharing Account Number are required
         if (!allFieldsSet && StringUtils.isNotBlank(a21.getCostShareChartOfAccountCode())) {
-        	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, a21.getCostShareSourceAccountNumber(), getDisplayName(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
+        	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, a21.getCostShareSourceAccountNumber(), getDisplayNameForSubAccountProperty(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
         }
         
         if (!allFieldsSet && StringUtils.isNotBlank(a21.getCostShareSourceAccountNumber())) {
-        	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE, a21.getCostShareChartOfAccountCode(),  getDisplayName(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE));
+        	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE, a21.getCostShareChartOfAccountCode(),  getDisplayNameForSubAccountProperty(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE));
         }
 
         a21.refreshReferenceObject(KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT);
         // existence test on Cost Share Account
         if (allFieldsSet) {
             if (ObjectUtils.isNull(a21.getCostShareAccount())) {
-                putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, getDisplayName(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
+                putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, getDisplayNameForSubAccountProperty(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
                 success &= false;
             }
         }
@@ -384,7 +384,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         // existence test on Cost Share SubAccount
         if (allFieldsSet && StringUtils.isNotBlank(a21.getCostShareSourceSubAccountNumber())) {
             if (ObjectUtils.isNull(a21.getCostShareSourceSubAccount())) {
-                putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_SUB_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, getDisplayName(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_SUB_ACCOUNT_NUMBER));
+                putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_SUB_ACCOUNT_NUMBER, KFSKeyConstants.ERROR_EXISTENCE, getDisplayNameForSubAccountProperty(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_SUB_ACCOUNT_NUMBER));
                 success &= false;
             }
         }
@@ -473,7 +473,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
             if (newAccountFieldsAreEntered) {
                 success &= checkDuplicateOrExistingSubAccountsAreNotPresent(subAccountGlobal);
             }
-            success &= checkContractsAndGrantsSetupForNewAccounts(subAccountGlobal);
+            success &= checkContractsAndGrantsSetupForNonEmptyNewAccountsList(subAccountGlobal);
         }
         
         return success;
@@ -678,23 +678,21 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         putFieldError(fullPropertyName, errorConstant, subAccountKey);
     }
     
-    protected boolean checkContractsAndGrantsSetupForNewAccounts(SubAccountGlobal subAccountGlobal) {
+    protected boolean checkContractsAndGrantsSetupForNonEmptyNewAccountsList(SubAccountGlobal subAccountGlobal) {
         boolean success = true;
-        boolean allCG = true;
-        boolean noneCG = true;
+        boolean allAccountsAreForContractsAndGrants = true;
+        boolean atLeastOneAccountIsForContractsAndGrants = false;
         
         for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
-            if (accountIsForContractsAndGrants(newAccountDetail)) {
-                noneCG = false;
-            } else {
-                allCG = false;
-            }
+            boolean currentAccountIsForContractsAndGrants = accountIsForContractsAndGrants(newAccountDetail);
+            allAccountsAreForContractsAndGrants &= currentAccountIsForContractsAndGrants;
+            atLeastOneAccountIsForContractsAndGrants |= currentAccountIsForContractsAndGrants;
         }
         
-        if (!allCG && !noneCG) {
+        if (!allAccountsAreForContractsAndGrants && atLeastOneAccountIsForContractsAndGrants) {
             putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_AND_NON_CG_MIX);
             success = false;
-        } else if (allCG) {
+        } else if (allAccountsAreForContractsAndGrants) {
             if (StringUtils.equals(KFSConstants.SubAccountType.COST_SHARE, subAccountGlobal.getNewSubAccountTypeCode())) {
                 success &= checkCgCostSharingForNewAccounts(subAccountGlobal);
             } else if (StringUtils.equals(KFSConstants.SubAccountType.EXPENSE, subAccountGlobal.getNewSubAccountTypeCode())) {
@@ -736,7 +734,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     }
     
     protected boolean checkEmptyBOField(String propertyName, Object valueToTest) {
-        return checkEmptyBOField(propertyName, valueToTest, getDisplayName(propertyName));
+        return checkEmptyBOField(propertyName, valueToTest, getDisplayNameForSubAccountProperty(propertyName));
     }
     
     protected boolean accountIsForContractsAndGrants(SubAccountGlobalNewAccountDetail newAccountDetail) {
@@ -797,7 +795,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
      * @param propertyName - property to retrieve label for (from the DD)
      * @return the label
      */
-    protected String getDisplayName(String propertyName) {
+    protected String getDisplayNameForSubAccountProperty(String propertyName) {
         return getDisplayNameForObjectProperty(SubAccount.class, propertyName);
     }
     
