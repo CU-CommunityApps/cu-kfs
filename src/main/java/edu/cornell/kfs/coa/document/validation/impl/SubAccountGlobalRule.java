@@ -235,7 +235,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
                 // compare them, exit if the account isn't for contracts and grants
                 if (!getSubFundGroupService().isForContractsAndGrants(account.getSubFundGroup())) {
 
-                    if (checkCgCostSharingIsEmpty() == false) {
+                    if (!checkCgCostSharingIsEmpty()) {
                         putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_CS_INVALID, new String[] { getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel(), getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage() });
                         success = false;
                     }
@@ -364,7 +364,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         // Cost Sharing COA Code and Cost Sharing Account Number are required
         if (!allFieldsSet && StringUtils.isNotBlank(a21.getCostShareChartOfAccountCode())) {
-        	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, a21.getCostShareSourceAccountNumber(), getDisplayNameForSubAccountProperty(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
+        	success &= checkEmptyBOField(KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER, a21.getCostShareSourceAccountNumber(), getDisplayNameForSubAccountProperty(KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER));
         }
         
         if (!allFieldsSet && StringUtils.isNotBlank(a21.getCostShareSourceAccountNumber())) {
@@ -448,7 +448,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         }
 
         // The cost sharing fields must be empty if the sub-account type code is for ICR
-        if (checkCgCostSharingIsEmpty() == false) {
+        if (!checkCgCostSharingIsEmpty()) {
             putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + "." + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE, KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_COST_SHARE_SECTION_INVALID, subAccountTypeCode);
 
             success &= false;
@@ -680,27 +680,25 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     
     protected boolean checkContractsAndGrantsSetupForNonEmptyNewAccountsList(SubAccountGlobal subAccountGlobal) {
         boolean success = true;
-        boolean allAccountsAreForContractsAndGrants = true;
-        boolean atLeastOneAccountIsForContractsAndGrants = false;
+        List<SubAccountGlobalNewAccountDetail> newAccountDetails = subAccountGlobal.getSubAccountGlobalNewAccountDetails();
+        int numberOfAccountsForContractsAndGrants = (int) newAccountDetails.stream()
+                .filter(this::accountIsForContractsAndGrants)
+                .count();
+        boolean allAccountsAreForContractsAndGrants = (numberOfAccountsForContractsAndGrants == newAccountDetails.size());
+        boolean noneOfAccountsAreForContractsAndGrants = (numberOfAccountsForContractsAndGrants == 0);
         
-        for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
-            boolean currentAccountIsForContractsAndGrants = accountIsForContractsAndGrants(newAccountDetail);
-            allAccountsAreForContractsAndGrants &= currentAccountIsForContractsAndGrants;
-            atLeastOneAccountIsForContractsAndGrants |= currentAccountIsForContractsAndGrants;
-        }
-        
-        if (!allAccountsAreForContractsAndGrants && atLeastOneAccountIsForContractsAndGrants) {
-            putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_AND_NON_CG_MIX);
-            success = false;
-        } else if (allAccountsAreForContractsAndGrants) {
+        if (allAccountsAreForContractsAndGrants) {
             if (StringUtils.equals(KFSConstants.SubAccountType.COST_SHARE, subAccountGlobal.getNewSubAccountTypeCode())) {
                 success &= checkCgCostSharingForNewAccounts(subAccountGlobal);
             } else if (StringUtils.equals(KFSConstants.SubAccountType.EXPENSE, subAccountGlobal.getNewSubAccountTypeCode())) {
                 success &= checkIndirectCostRecoveryFieldsHaveValuesForCgExpenseAccounts(subAccountGlobal);
                 success &= checkCgIcrRules(subAccountGlobal.getNewSubAccountTypeCode());
             }
-        } else {
+        } else if (noneOfAccountsAreForContractsAndGrants) {
             success &= checkCgFieldsAreEmptyForNonCgAccounts(subAccountGlobal);
+        } else {
+            putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_AND_NON_CG_MIX);
+            success = false;
         }
         
         return success;

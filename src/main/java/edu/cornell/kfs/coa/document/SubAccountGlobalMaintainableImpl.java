@@ -64,13 +64,13 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         String subAccountNumber = subAccountGlobal.isApplyToAllNewSubAccounts()
                 ? subAccountGlobal.getNewSubAccountNumber() : newAccountDetail.getSubAccountNumber();
         StringBuilder lockrep = new StringBuilder();
-        lockrep.append(Account.class.getName() + KFSConstants.Maintenance.AFTER_CLASS_DELIM);
-        lockrep.append(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
-        lockrep.append(newAccountDetail.getChartOfAccountsCode() + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
-        lockrep.append(KFSPropertyConstants.ACCOUNT_NUMBER + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
-        lockrep.append(newAccountDetail.getAccountNumber() + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
-        lockrep.append(KFSPropertyConstants.SUB_ACCOUNT_NUMBER + KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
-        lockrep.append(subAccountNumber + KFSConstants.Maintenance.AFTER_VALUE_DELIM);
+        lockrep.append(Account.class.getName()).append(KFSConstants.Maintenance.AFTER_CLASS_DELIM);
+        lockrep.append(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE).append(KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+        lockrep.append(newAccountDetail.getChartOfAccountsCode()).append(KFSConstants.Maintenance.AFTER_VALUE_DELIM);
+        lockrep.append(KFSPropertyConstants.ACCOUNT_NUMBER).append(KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+        lockrep.append(newAccountDetail.getAccountNumber()).append(KFSConstants.Maintenance.AFTER_VALUE_DELIM);
+        lockrep.append(KFSPropertyConstants.SUB_ACCOUNT_NUMBER).append(KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
+        lockrep.append(subAccountNumber).append(KFSConstants.Maintenance.AFTER_VALUE_DELIM);
         return lockrep.toString();
     }
     
