@@ -97,6 +97,7 @@ public class AwardExtensionRule extends AwardRule {
         newAwardCopy = (Award) document.getNewMaintainableObject().getBusinessObject();
         newAwardCopy.setProposal(tempProposal);
         super.setNewBo(newAwardCopy);
+        oldAwardCopy = (Award) super.getOldBo();
     }
 	
     /**
