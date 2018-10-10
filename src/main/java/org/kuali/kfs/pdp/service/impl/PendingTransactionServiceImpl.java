@@ -73,15 +73,15 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     public final static String REF_FDOC_TYP_CD_LIABILITY_CHECK = "PO";
 
     private PendingTransactionDao glPendingTransactionDao;
-    private AccountingPeriodService accountingPeriodService;
-    private DateTimeService dateTimeService;
+    protected AccountingPeriodService accountingPeriodService;
+    protected DateTimeService dateTimeService;
     private ConfigurationService kualiConfigurationService;
-    private BusinessObjectService businessObjectService;
-    private BankService bankService;
+    protected BusinessObjectService businessObjectService;
+    protected BankService bankService;
     protected DataDictionaryService dataDictionaryService;
     protected ParameterService parameterService;
-    private ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService;
-    private PdpUtilService pdpUtilService;
+    protected ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService;
+    protected PdpUtilService pdpUtilService;
     private OffsetDefinitionService offsetDefinitionService;
     private FlexibleOffsetAccountService flexibleOffsetAccountService;
 

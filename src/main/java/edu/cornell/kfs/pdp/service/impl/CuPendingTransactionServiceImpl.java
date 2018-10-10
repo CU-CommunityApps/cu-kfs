@@ -93,16 +93,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
     protected static String FDOC_TYP_CD_STALE_CHECK = "CHKL";
     
-    private AccountingPeriodService accountingPeriodService;
-    private BankService bankService;
-    private BusinessObjectService businessObjectService;
-    private DateTimeService dateTimeService;
 	private DocumentService documentService;
     private NoteService noteService;
-    private ParameterService parameterService;
     private CheckReconciliationDao checkReconciliationDao;
-    private ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService;
-    private PdpUtilService pdpUtilService;
 
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
@@ -996,57 +989,12 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         return count + 1;
     }
 
-	public DocumentService getDocumentService() {
-		return documentService;
-	}
-
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;
 	}
 
-	public NoteService getNoteService() {
-		return noteService;
-	}
-
 	public void setNoteService(NoteService noteService) {
 		this.noteService = noteService;
-	}
-
-	public ParameterService getParameterService() {
-		return parameterService;
-	}
-
-	public void setParameterService(ParameterService parameterService) {
-		this.parameterService = parameterService;
-	}
-
-	public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
-		this.checkReconciliationDao = checkReconciliationDao;
-	}
-	
-    public void setDateTimeService(DateTimeService dateTimeService) {
-		this.dateTimeService = dateTimeService;
-	}
-
-	public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
-		this.accountingPeriodService = accountingPeriodService;
-	}
-
-	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-		this.businessObjectService = businessObjectService;
-	}
-
-	public void setResearchParticipantPaymentValidationService(
-			ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService) {
-		this.researchParticipantPaymentValidationService = researchParticipantPaymentValidationService;
-	}
-
-	public void setPdpUtilService(PdpUtilService pdpUtilService) {
-		this.pdpUtilService = pdpUtilService;
-	}
-
-	public void setBankService(BankService bankService) {
-		this.bankService = bankService;
 	}
 
 }
