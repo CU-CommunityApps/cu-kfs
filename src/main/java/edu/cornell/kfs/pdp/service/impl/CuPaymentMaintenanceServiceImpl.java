@@ -166,7 +166,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     pgh.setDisbursementType(pg.getDisbursementType());
                     pgh.setProcess(pg.getProcess());
 
-                    glPendingTransactionService.generateReissueGeneralLedgerPendingEntry(pg);
+                    glPendingTransactionService.generateCancelReissueGeneralLedgerPendingEntry(pg);
 
                     LOG.debug("cancelReissueDisbursement() Status is '" + paymentStatus + "; delete row from AchAccountNumber table.");
 

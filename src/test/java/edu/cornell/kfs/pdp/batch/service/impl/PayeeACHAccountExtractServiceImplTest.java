@@ -40,6 +40,8 @@ import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
+import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -446,9 +448,9 @@ public class PayeeACHAccountExtractServiceImplTest {
         AttributeDefinition maskedAttribute = createMaskedAttributeDefinition();
         AttributeDefinition unmaskedAttribute = createUnmaskedAttributeDefinition();
         AttributeDefinition payeeIdTypeAttribute = createAttributeDefinitionWithValuesFinder(
-                TestPayeeAchIdTypeValuesFinder.class.getName(), false);
+                new TestPayeeAchIdTypeValuesFinder(), false);
         AttributeDefinition bankAccountTypeAttribute = createAttributeDefinitionWithValuesFinder(
-                CUCheckingSavingsValuesFinder.class.getName(), true);
+                new CUCheckingSavingsValuesFinder(), true);
         
         when(ddService.getAttributeDefinition(PAYEE_ACH_ACCOUNT_CLASSNAME, PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE))
                 .thenReturn(payeeIdTypeAttribute);
@@ -484,11 +486,11 @@ public class PayeeACHAccountExtractServiceImplTest {
         return new AttributeDefinition();
     }
 
-    private AttributeDefinition createAttributeDefinitionWithValuesFinder(String valuesFinderClass, boolean includeKeyInLabel) {
+    private AttributeDefinition createAttributeDefinitionWithValuesFinder(KeyValuesFinder valuesFinder, boolean includeKeyInLabel) {
         // We only care about the values finder and include-key-in-label flag, not about any other setup like property name and max length.
         AttributeDefinition attrDefinition = new AttributeDefinition();
         SelectControlDefinition controlDefinition = new SelectControlDefinition();
-        controlDefinition.setValuesFinderClass(valuesFinderClass);
+        controlDefinition.setValuesFinder(valuesFinder);
         controlDefinition.setIncludeKeyInLabel(Boolean.valueOf(includeKeyInLabel));
         attrDefinition.setControl(controlDefinition);
         return attrDefinition;
