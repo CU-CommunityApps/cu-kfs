@@ -205,9 +205,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());
                     glPendingTransaction.setFinancialSubObjectCode(paymentAccountDetail.getFinSubObjectCode());
                 }
+
+                glPendingTransaction.setProjectCd(paymentAccountDetail.getProjectCode());
             }
 
-            glPendingTransaction.setProjectCd(paymentAccountDetail.getProjectCode());
 
             glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
             
