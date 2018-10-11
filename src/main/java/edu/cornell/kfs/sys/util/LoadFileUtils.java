@@ -14,7 +14,7 @@ public class LoadFileUtils {
     private static final Logger LOG = LogManager.getLogger(LoadFileUtils.class);
     
     public LoadFileUtils() {
-        throw new IllegalAccessError("This utility class as static methods, you should not instantiate this object.");
+        throw new IllegalAccessError("This utility class has static methods, you should not instantiate this object.");
     }
     
     public static byte[] safelyLoadFileBytes(String fullyQualifiedFileName) {
@@ -32,11 +32,7 @@ public class LoadFileUtils {
             LOG.error("safelyLoadFileBytes:  IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
             throw new RuntimeException("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage(), e1);
         } finally {
-            try {
-                IOUtils.closeQuietly(fileContents);
-            } catch (Exception e) {
-                LOG.error("safelyLoadFileBytes, unable tlose input stream.", e);
-            }
+            IOUtils.closeQuietly(fileContents);
         }
         return fileByteContent;
     }

@@ -4,9 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import edu.cornell.kfs.concur.batch.service.impl.fixture.EmailFileFixture;
@@ -14,14 +12,12 @@ import edu.cornell.kfs.concur.batch.service.impl.fixture.EmailFileFixture;
 public class LoadFileUtilsTest {
 
     @Test
-    public void testLoadFileUtils() {
+    public void testConstructor() {
         try {
             LoadFileUtils util = new LoadFileUtils();
+            fail("Should not be able to initiate");
         } catch (IllegalAccessError iae) {
-            assertTrue(true);
-            return;
         }
-        assertTrue("Should not be able to initiate ", false);
     }
 
     @Test
@@ -40,11 +36,9 @@ public class LoadFileUtilsTest {
     public void testNullFileByFileName() {
         try {
             byte[] nullContents = LoadFileUtils.safelyLoadFileBytes(StringUtils.EMPTY);
+            fail("An empty file name should throw a run time axpection as the file can't be found ");
         } catch (RuntimeException re) {
-            assertTrue(true);
-            return; 
         }
-        assertTrue("An empty file name should throw a run time axpection as the file can't be found ", false);
     }
 
     @Test
@@ -66,11 +60,9 @@ public class LoadFileUtilsTest {
         try {
             File nullFile = null;
             byte[] nullFIleContents = LoadFileUtils.safelyLoadFileBytes(nullFile);
+            fail("Expected to cause illegal argument exception, but did not.");
         } catch (IllegalArgumentException iae) {
-            assertTrue(true);
-            return;
         }
-        assertTrue("Expected to cause illegal argument exception, but did not.", false);
     }
 
 }
