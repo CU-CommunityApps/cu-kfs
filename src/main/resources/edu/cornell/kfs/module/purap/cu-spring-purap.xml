@@ -197,7 +197,7 @@
 	       <value>edu/cornell/kfs/module/purap/batch/iWantDocumentDigesterRules.xml</value>
 	    </property>
 	    <property name="schemaLocation">
-	       <value>${externalizable.static.content.url}/xsd/purap/iWantDocument.xsd</value>
+	       <value>classpath:edu/cornell/kfs/module/purap/batch/iWantDocument.xsd</value>
 	    </property>
 	    <property name="dateTimeService">
 	       <ref bean="dateTimeService"/>
