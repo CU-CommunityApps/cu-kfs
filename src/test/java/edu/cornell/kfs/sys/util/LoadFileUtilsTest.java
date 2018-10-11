@@ -36,7 +36,7 @@ public class LoadFileUtilsTest {
     public void testNullFileByFileName() {
         try {
             byte[] nullContents = LoadFileUtils.safelyLoadFileBytes(StringUtils.EMPTY);
-            fail("An empty file name should throw a run time axpection as the file can't be found ");
+            fail("An empty file name should throw a run time exception as the file can't be found ");
         } catch (RuntimeException re) {
         }
     }
