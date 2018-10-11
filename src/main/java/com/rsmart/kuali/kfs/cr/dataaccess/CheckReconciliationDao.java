@@ -73,6 +73,4 @@ public interface CheckReconciliationDao {
      * @return
      */
     public List<PaymentGroup> getAllPaymentGroupForSearchCriteria(KualiInteger disbNbr, Collection<String> bankCodes);
-
-    public CheckReconciliation findByCheckNumber(String checkNumber, String bankCode);
 }
