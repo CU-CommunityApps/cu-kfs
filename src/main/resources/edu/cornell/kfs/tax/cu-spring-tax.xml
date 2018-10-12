@@ -70,7 +70,7 @@
             <value>edu/cornell/kfs/tax/batch/taxOutputDefinitionDigesterRules.xml</value>
         </property>
         <property name="schemaLocation">
-            <value>${externalizable.static.content.url}/xsd/tax/taxOutputDefinition.xsd</value>
+            <value>classpath:edu/cornell/kfs/tax/batch/taxOutputDefinition.xsd</value>
         </property>
     </bean>
 
@@ -83,7 +83,7 @@
             <value>edu/cornell/kfs/tax/batch/taxDataDefinitionDigesterRules.xml</value>
         </property>
         <property name="schemaLocation">
-            <value>${externalizable.static.content.url}/xsd/tax/taxDataDefinition.xsd</value>
+            <value>classpath:edu/cornell/kfs/tax/batch/taxDataDefinition.xsd</value>
         </property>
     </bean>
 
