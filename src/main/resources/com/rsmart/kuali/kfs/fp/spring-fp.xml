@@ -74,7 +74,7 @@
 	       <value>com/rsmart/kuali/kfs/fp/batch/disbursementVoucherDigesterRules.xml</value>
 	    </property>
 	    <property name="schemaLocation">
-	       <value>${externalizable.static.content.url}/xsd/fp/disbursementVoucher.xsd</value>
+	       <value>classpath:com/rsmart/kuali/kfs/fp/batch/disbursementVoucher.xsd</value>
 	    </property>
 	    <property name="disbursementVoucherDocumentBatchService">
 	       <ref bean="disbursementVoucherDocumentBatchService"/>
