@@ -207,4 +207,19 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String OBJECT_CODE_ACTIVATION_GLOBAL_OBJECT_CODE_NEW_CODE_ERROR = "object.code.activation.global.object.code.list.new.code.error";
     
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_DETAILS_INVALID_RESTRICTION_CODE_CHANGE = "error.document.subAccountGlobalDetails.invalidRestrictionCodeChange";
+
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_INVALID_PROPERTY_FOR_NEW_SUB_ACCOUNT = "error.document.subAccountGlobal.invalidPropertyForNewSubAccount";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CANNOT_SPECIFY_CHANGES_AND_ADDITIONS = "error.document.subAccountGlobal.cannotSpecifyChangesAndAdditions";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_FIELD_FOR_NEW_SUB_ACCOUNT = "error.document.subAccountGlobal.requiredFieldForNewSubAccount";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_ACCOUNT_FOR_NEW_SUB_ACCOUNT_NOT_FOUND = "error.document.subAccountGlobal.accountForNewSubAccountNotFound";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_GLOBAL_FIELD = "error.document.subAccountGlobal.nonBlankGlobalField";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_GLOBAL_FIELD = "error.document.subAccountGlobal.requiredGlobalField";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_LINE_FIELD = "error.document.subAccountGlobal.nonBlankLineField";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_LINE_FIELD = "error.document.subAccountGlobal.requiredLineField";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NEW_SUB_ACCOUNT_DUPLICATE = "error.document.subAccountGlobal.newSubAccountDuplicate";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NEW_SUB_ACCOUNT_EXISTS = "error.document.subAccountGlobal.newSubAccountExists";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_AND_NON_CG_MIX = "error.document.subAccountGlobal.cgAndNonCgMix";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_COST_SHARE_REQUIRED_SECTION = "error.document.subAccountGlobal.cgCostShareRequiredSection";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_EXPENSE_REQUIRED_SECTION = "error.document.subAccountGlobal.cgExpenseRequiredSection";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_CG_NON_BLANK_SECTION = "error.document.subAccountGlobal.nonCgNonBlankSection";
 }
