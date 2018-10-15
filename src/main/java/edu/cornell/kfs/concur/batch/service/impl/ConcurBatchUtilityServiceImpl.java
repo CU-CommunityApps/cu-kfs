@@ -1,29 +1,25 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
 import java.util.Collections;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.kns.service.DataDictionaryService;
-import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.kfs.sys.service.FileStorageService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
@@ -32,6 +28,7 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService {
 	private static final Logger LOG = LogManager.getLogger(ConcurBatchUtilityServiceImpl.class);
@@ -113,29 +110,9 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     
     @Override
     public Object loadFile(String fullyQualifiedFileName, BatchInputFileType batchInputFileType) {
-        byte[] fileByteContent = safelyLoadFileBytes(fullyQualifiedFileName);
+        byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(fullyQualifiedFileName);
         Object parsedObject = getBatchInputFileService().parse(batchInputFileType, fileByteContent);
         return parsedObject;
-    }
-    
-    protected byte[] safelyLoadFileBytes(String fullyQualifiedFileName) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        try {
-            fileContents = new FileInputStream(fullyQualifiedFileName);
-        } catch (FileNotFoundException e1) {
-            LOG.error("safelyLoadFileBytes:  Batch file not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-        }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("safelyLoadFileBytes:  IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-        return fileByteContent;
     }
 
     @Override
@@ -163,7 +140,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     @Override
     public String getFileContents(String fileName) {
         try {
-            byte[] fileByteArray = safelyLoadFileBytes(fileName);
+            byte[] fileByteArray = LoadFileUtils.safelyLoadFileBytes(fileName);
             String formattedString = new String(fileByteArray);
             return formattedString;
         } catch (RuntimeException e) {

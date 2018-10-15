@@ -1,16 +1,12 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +37,7 @@ import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
 	private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
@@ -70,7 +67,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private ConcurStandardAccountingExtractFile loadConcurStandardAccountingExtractFile(String standardAccountingExtractFileName) {
         ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile;
         File standardAccountingExtractFile = new File(standardAccountingExtractFileName);
-        List parsed = (List) batchInputFileService.parse(batchInputFileType, safelyLoadFileBytes(standardAccountingExtractFile));
+        List parsed = (List) batchInputFileService.parse(batchInputFileType, LoadFileUtils.safelyLoadFileBytes(standardAccountingExtractFile));
         if (parsed == null || parsed.size() != 1) {
             LOG.error("parseStandardAccoutingExtractFileToStandardAccountingExtractFile, Unable to parse the file into exactly 1 POJO");
             throw new ValidationException(
@@ -79,27 +76,6 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
         concurStandardAccountingExtractFile = (ConcurStandardAccountingExtractFile) parsed.get(0);
         concurStandardAccountingExtractFile.setOriginalFileName(standardAccountingExtractFile.getName());
         return concurStandardAccountingExtractFile;
-    }
-
-    protected byte[] safelyLoadFileBytes(File file) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        String fileName = file.getName();
-        try {
-            fileContents = new FileInputStream(file);
-        } catch (FileNotFoundException e1) {
-            LOG.error("safelyLoadFileBytes, Batch file not found [" + fileName + "]. " + e1.getMessage(), e1);
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
-        }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("safelyLoadFileBytes, IO Exception loading: [" + fileName + "]. " + e1.getMessage(), e1);
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-        return fileByteContent;
     }
     
     protected void logDetailedInfoForConcurStandardAccountingExtractFile(ConcurStandardAccountingExtractFile saeFile) {
