@@ -3,9 +3,11 @@ package com.rsmart.kuali.kfs.cr.batch.service.impl;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.dataaccess.CheckReconciliationDao;
+
+import edu.cornell.kfs.sys.util.LoadFileUtils;
+
 import com.rsmart.kuali.kfs.cr.batch.service.StaleCheckExtractService;
 import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,10 +21,6 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +123,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
     protected List<String> loadStaleCheckBatchFile(String inputFileName, BatchInputFileType batchInputFileType) {
         List<String> failedRowsErrors = new ArrayList<>();
-        byte[] fileByteContent = safelyLoadFileBytes(inputFileName);
+        byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(inputFileName);
         LOG.info("loadStaleCheckBatchFile: Attempting to parse the file.");
         
         Object parsedObject = null;
@@ -229,29 +227,6 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
         if (!StringUtils.equalsIgnoreCase(checkReconciliation.getStatus(), CRConstants.ISSUED)) {
             validationErrors.add("Invalid Check Status " + checkReconciliation.getStatus() + " (Only ISSD is allowed).");
         }
-    }
-
-    protected byte[] safelyLoadFileBytes(String fileName) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        
-        try {
-            fileContents = new FileInputStream(fileName);
-        } catch (FileNotFoundException e1) {
-            LOG.error("safelyLoadFileBytes: Batch file not found [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
-        }
-        
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("safelyLoadFileBytes: IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-        
-        return fileByteContent;
     }
 
     protected void removeDoneFiles(List<String> dataFileNames) {

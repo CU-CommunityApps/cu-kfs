@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,11 +19,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
+import org.kuali.kfs.krad.bo.Attachment;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -32,15 +35,11 @@ import org.kuali.kfs.sys.exception.ParseException;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
-import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.service.AttachmentService;
-import org.kuali.kfs.krad.service.NoteService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao;
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
 import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 	private static final Logger LOG = LogManager.getLogger(ReceiptProcessingServiceImpl.class);
@@ -149,7 +148,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
         boolean result = true;
         
         //  load up the file into a byte array 
-        byte[] fileByteContent = safelyLoadFileBytes(fileName);
+        byte[] fileByteContent = LoadFileUtils.safelyLoadFileBytes(fileName);
         
         LOG.info("Attempting to parse the file");
         Object parsedObject = null;
@@ -513,28 +512,6 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
     protected String getCustomerNameFromFileName(String fileName, BatchInputFileType batchInputFileType){
     	String customerName = fileName.substring(fileName.lastIndexOf(batchInputFileType.getFileTypeIdentifer() + "_") + batchInputFileType.getFileTypeIdentifer().length() + 1, fileName.lastIndexOf("_"));
     	return customerName;
-    }
-    
- 
-    protected byte[] safelyLoadFileBytes(String fileName) {
-        
-        InputStream fileContents;
-        byte[] fileByteContent;
-        try {
-            fileContents = new FileInputStream(fileName);
-        }
-        catch (FileNotFoundException e1) {
-            LOG.error("Batch file not found [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fileName + "]. " + e1.getMessage());
-        }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        }
-        catch (IOException e1) {
-            LOG.error("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fileName + "]. " + e1.getMessage());
-        }
-        return fileByteContent;
     }
     
     /**

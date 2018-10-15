@@ -1,9 +1,5 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,6 +41,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.dataaccess.PaymentWorksVendorDao;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUtilityService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksBatchUtilityServiceImpl.class);
@@ -73,33 +69,13 @@ public class PaymentWorksBatchUtilityServiceImpl implements PaymentWorksBatchUti
     @Override
     public String getFileContents(String fileName) {
         try {
-            byte[] fileByteArray = safelyLoadFileBytes(fileName);
+            byte[] fileByteArray = LoadFileUtils.safelyLoadFileBytes(fileName);
             String formattedString = new String(fileByteArray);
             return formattedString;
         } catch (RuntimeException e) {
             LOG.error("getFileContents: unable to read the file.", e);
             return StringUtils.EMPTY;
         }
-    }
-
-    protected byte[] safelyLoadFileBytes(String fullyQualifiedFileName) {
-        InputStream fileContents;
-        byte[] fileByteContent;
-        try {
-            fileContents = new FileInputStream(fullyQualifiedFileName);
-        } catch (FileNotFoundException e1) {
-            LOG.error("safelyLoadFileBytes:  Batch file not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-            throw new RuntimeException("Batch File not found [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-        }
-        try {
-            fileByteContent = IOUtils.toByteArray(fileContents);
-        } catch (IOException e1) {
-            LOG.error("safelyLoadFileBytes:  IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-            throw new RuntimeException("IO Exception loading: [" + fullyQualifiedFileName + "]. " + e1.getMessage());
-        } finally {
-            IOUtils.closeQuietly(fileContents);
-        }
-        return fileByteContent;
     }
     
     @Override 
