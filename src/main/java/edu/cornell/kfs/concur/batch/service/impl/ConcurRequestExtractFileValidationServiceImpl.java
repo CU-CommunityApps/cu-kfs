@@ -203,7 +203,7 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
 
     private boolean payeeIdTypeIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
         if (StringUtils.isNotEmpty(detailFileLine.getPayeeIdType())
-                && getConcurBatchUtilityService().isValidTravelerStatus(detailFileLine.getPayeeIdType())) {
+                && getConcurBatchUtilityService().isValidTravelerStatusForProcessingAsPDPEmployeeType(detailFileLine.getPayeeIdType())) {
             return true;
         } else {
             detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_PAYEE_ID_TYPE_INVALID));

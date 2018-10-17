@@ -96,7 +96,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedPayeeIdEntry payeeIdEntry = new PdpFeedPayeeIdEntry();
         payeeIdEntry.setContent(line.getEmployeeId());
-        if (getConcurBatchUtilityService().isValidTravelerStatus(line.getEmployeeStatus())) {
+        if (getConcurBatchUtilityService().isValidTravelerStatusForProcessingAsPDPEmployeeType(line.getEmployeeStatus())) {
             payeeIdEntry.setIdType(ConcurConstants.EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
         } else {
             LOG.error("buildPayeeIdEntry, Unable to to set the payee ID type based do the line's employee status " + line.getEmployeeStatus());

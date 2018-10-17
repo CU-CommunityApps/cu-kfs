@@ -152,8 +152,8 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     }
 
     @Override
-    public boolean isValidTravelerStatus(String status) {
-        String validStatusesString = getConcurParameterValue(ConcurParameterConstants.CONCUR_VALID_TRAVELER_STATUSES);
+    public boolean isValidTravelerStatusForProcessingAsPDPEmployeeType(String status) {
+        String validStatusesString = getConcurParameterValue(ConcurParameterConstants.CONCUR_VALID_TRAVELER_STATUSES_FOR_PDP_EMPLOYEE_PROCESSING);
         String[] validStatuses = StringUtils.split(validStatusesString, CUKFSConstants.SEMICOLON);
         return Arrays.stream(validStatuses)
                 .anyMatch((validStatusValue) -> StringUtils.equalsIgnoreCase(validStatusValue, status));

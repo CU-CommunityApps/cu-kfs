@@ -38,7 +38,7 @@ public class ConcurBatchUtilityServiceImplTest {
         String testValidTravelerStatuses = StringUtils.joinWith(CUKFSConstants.SEMICOLON,
                 ConcurConstants.EMPLOYEE_STATUS_CODE, ConcurConstants.NON_EMPLOYEE_STATUS_CODE);
         when(parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.CONCUR,
-                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_VALID_TRAVELER_STATUSES))
+                CUKFSParameterKeyConstants.ALL_COMPONENTS, ConcurParameterConstants.CONCUR_VALID_TRAVELER_STATUSES_FOR_PDP_EMPLOYEE_PROCESSING))
                 .thenReturn(testValidTravelerStatuses);
         
         return parameterService;
@@ -82,11 +82,13 @@ public class ConcurBatchUtilityServiceImplTest {
     }
 
     private void assertTravelerStatusIsValid(String status) {
-        assertTrue("The status '" + status + "' should have been seen as valid", utilityService.isValidTravelerStatus(status));
+        assertTrue("The status '" + status + "' should have been seen as valid",
+                utilityService.isValidTravelerStatusForProcessingAsPDPEmployeeType(status));
     }
 
     private void assertTravelerStatusIsInvalid(String status) {
-        assertFalse("The status '" + status + "' should have been seen as invalid", utilityService.isValidTravelerStatus(status));
+        assertFalse("The status '" + status + "' should have been seen as invalid",
+                utilityService.isValidTravelerStatusForProcessingAsPDPEmployeeType(status));
     }
 
 }

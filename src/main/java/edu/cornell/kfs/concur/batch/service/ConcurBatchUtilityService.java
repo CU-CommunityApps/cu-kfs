@@ -137,10 +137,11 @@ public interface ConcurBatchUtilityService {
     String getFileContents(String fileName);
 
     /**
-     * Determines whether the given traveler/employee status is valid for processing into KFS.
+     * Determines whether the given traveler/employee status is valid for use
+     * when creating KFS PDP payment information under the Employee type.
      * 
-     * @param status The traveler/employee status to examine.
-     * @return True if the status value is a recognized one for KFS processing, false otherwise.
+     * @param status The Concur traveler/employee status to examine.
+     * @return True if the status value is a recognized one for KFS PDP employee payment processing, false otherwise.
      */
-    boolean isValidTravelerStatus(String status);
+    boolean isValidTravelerStatusForProcessingAsPDPEmployeeType(String status);
 }
