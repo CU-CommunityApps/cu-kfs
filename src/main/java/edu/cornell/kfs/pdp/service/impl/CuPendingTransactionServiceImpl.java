@@ -988,6 +988,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         int count = businessObjectService.countMatching(GeneralLedgerPendingEntry.class, fieldValues);
         return count + 1;
     }
+    
+	public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
+		this.checkReconciliationDao = checkReconciliationDao;
+	}
 
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;

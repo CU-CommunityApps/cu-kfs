@@ -100,7 +100,7 @@
   <bean id="Account-extension-invoiceFrequencyCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceFrequencyCode" >
   	<property name="name" value="extension.invoiceFrequencyCode"/>
   	<property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="invoiceFrequencyValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
@@ -108,7 +108,7 @@
   <bean id="Account-extension-invoiceTypeCode-parentBean" abstract="true" parent="AccountExtendedAttribute-invoiceTypeCode" >
   	<property name="name" value="extension.invoiceTypeCode"/>
   	<property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="invoiceTypeValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
@@ -238,6 +238,11 @@
 			</list>
 		</property>
 	</bean>
+	
+ 	<bean id="invoiceFrequencyValuesFinder"
+          class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder"/>
+    <bean id="invoiceTypeValuesFinder"
+          class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder"/>
       
 </beans>
 
