@@ -202,12 +202,10 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
     }
 
     private boolean payeeIdTypeIsValid(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
-        if ( StringUtils.isNotEmpty(detailFileLine.getPayeeIdType()) &&
-             (detailFileLine.getPayeeIdType().equalsIgnoreCase(ConcurConstants.EMPLOYEE_STATUS_CODE) ||
-              detailFileLine.getPayeeIdType().equalsIgnoreCase(ConcurConstants.NON_EMPLOYEE_STATUS_CODE)) ){
+        if (StringUtils.isNotEmpty(detailFileLine.getPayeeIdType())
+                && getConcurBatchUtilityService().isValidTravelerStatus(detailFileLine.getPayeeIdType())) {
             return true;
-        }
-        else {
+        } else {
             detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_PAYEE_ID_TYPE_INVALID));
             return false;
         }

@@ -22,6 +22,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
+import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedAccountingEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
@@ -39,6 +40,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     protected DataDictionaryService dataDictionaryService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
+    protected ConcurBatchUtilityService concurBatchUtilityService;
     
     private Integer payeeNameFieldSize;
     
@@ -94,10 +96,8 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     public PdpFeedPayeeIdEntry buildPayeeIdEntry(ConcurStandardAccountingExtractDetailLine line) {
         PdpFeedPayeeIdEntry payeeIdEntry = new PdpFeedPayeeIdEntry();
         payeeIdEntry.setContent(line.getEmployeeId());
-        if (StringUtils.equalsIgnoreCase(line.getEmployeeStatus(), ConcurConstants.EMPLOYEE_STATUS_CODE)) {
+        if (getConcurBatchUtilityService().isValidTravelerStatus(line.getEmployeeStatus())) {
             payeeIdEntry.setIdType(ConcurConstants.EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
-        } else if (StringUtils.equalsIgnoreCase(line.getEmployeeStatus(), ConcurConstants.NON_EMPLOYEE_STATUS_CODE)) {
-            payeeIdEntry.setIdType(ConcurConstants.NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
         } else {
             LOG.error("buildPayeeIdEntry, Unable to to set the payee ID type based do the line's employee status " + line.getEmployeeStatus());
         }
@@ -377,6 +377,14 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public ConcurBatchUtilityService getConcurBatchUtilityService() {
+        return concurBatchUtilityService;
+    }
+
+    public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
+        this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
 }

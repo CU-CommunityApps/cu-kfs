@@ -135,5 +135,12 @@ public interface ConcurBatchUtilityService {
      * @return
      */
     String getFileContents(String fileName);
-    
+
+    /**
+     * Determines whether the given traveler/employee status is valid for processing into KFS.
+     * 
+     * @param status The traveler/employee status to examine.
+     * @return True if the status value is a recognized one for KFS processing, false otherwise.
+     */
+    boolean isValidTravelerStatus(String status);
 }
