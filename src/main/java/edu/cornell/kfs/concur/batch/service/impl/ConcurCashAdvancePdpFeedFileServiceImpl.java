@@ -146,10 +146,8 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     private PdpFeedPayeeIdEntry buildPdpFeedPayeeIdEntry(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
         PdpFeedPayeeIdEntry payeeIdEntry = new PdpFeedPayeeIdEntry();
         payeeIdEntry.setContent(detailFileLine.getEmployeeId());
-        if (StringUtils.equalsIgnoreCase(detailFileLine.getPayeeIdType(), ConcurConstants.EMPLOYEE_STATUS_CODE)) {
+        if (getConcurBatchUtilityService().isValidTravelerStatusForProcessingAsPDPEmployeeType(detailFileLine.getPayeeIdType())) {
             payeeIdEntry.setIdType(ConcurConstants.EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
-        } else if (StringUtils.equalsIgnoreCase(detailFileLine.getPayeeIdType(), ConcurConstants.NON_EMPLOYEE_STATUS_CODE)) {
-            payeeIdEntry.setIdType(ConcurConstants.NON_EMPLOYEE_PAYEE_STATUS_TYPE_CODE);
         } else {
             LOG.error("buildPdpFeedPayeeIdEntry: Invalid PayeeIdType detected in buildPdpFeedPayeeIdEntry AFTER validation while building PDP output file:" + detailFileLine.getPayeeIdType());
         }
