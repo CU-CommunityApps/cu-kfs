@@ -24,7 +24,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">                      
 
-    <bean id="paymentMethodValuesFinder"
+    <bean id="cuBatchFileDirectoryPathValuesFinder"
           class="edu.cornell.kfs.sys.businessobject.options.CuBatchFileDirectoryPathValuesFinder"/>
+    <bean id="cuConfidentialAttachmentTypeValuesFinder"
+          class="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
 
 </beans>

@@ -15,6 +15,8 @@
  limitations under the License.
 -->
 
+  <import resource="classpath:edu/cornell/kfs/fp/cu-fp-lookup-beans.xml"/>
+
   <bean id="VendorCreditMemoDocument" parent="VendorCreditMemoDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.CuCreditMemoDocumentPreRules"/> 
@@ -36,7 +38,7 @@
     <property name="name" value="paymentMethodCode"/>
     <!-- probably a values finder -->
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.PaymentMethodValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="paymentMethodValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   
@@ -65,7 +67,6 @@
     		</list>
     	</property>
     </bean>
-   
    
    
    </beans>

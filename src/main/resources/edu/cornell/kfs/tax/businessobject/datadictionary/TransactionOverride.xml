@@ -49,7 +49,7 @@
       <ref bean="AnyCharacterValidation" />
     </property>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.tax.businessobject.options.TaxReportingTypeValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="taxReportingTypeValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
@@ -152,5 +152,8 @@
       </list>
     </property>
   </bean>
+
+  <bean id="taxReportingTypeValuesFinder"
+        class="edu.cornell.kfs.tax.businessobject.options.TaxReportingTypeValuesFinder"/>
 
 </beans>

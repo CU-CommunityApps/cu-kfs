@@ -14,11 +14,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
+    <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
+    
 	<bean id="AdvanceDepositDocument" parent="AdvanceDepositDocument-parentBean">
 		<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentPresentationController"/>
 		<property name="documentAuthorizerClass" value="edu.cornell.kfs.fp.document.authorization.CuAdvanceDepositDocumentAuthorizer"/>
 		<property name="allowsErrorCorrection" value="false"/>
-		<property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
+		<property name="attachmentTypesValuesFinderClass" value="cuConfidentialAttachmentTypeValuesFinder"/>
 	</bean>
 	
 	<bean id="AdvanceDepositDocument-sourceAccountingLineGroup" parent="AdvanceDepositDocument-sourceAccountingLineGroup-parentBean">
