@@ -7,7 +7,7 @@
 	<bean id="DistributionOfIncomeAndExpenseDocument" parent="DistributionOfIncomeAndExpenseDocument-parentBean">
         <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDistributionOfIncomeAndExpenseDocumentPresentationController"/>
 		<property name="documentClass" value="edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument"/>
-		<property name="attachmentTypesValuesFinderClass" value="cuConfidentialAttachmentTypeValuesFinder"/>
+		<property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
 	</bean>
 
 </beans>

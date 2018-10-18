@@ -8,7 +8,7 @@
     <property name="documentClass" value="edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument"/>
   	<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"/>
   	<property name="promptBeforeValidationClass" value="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"/>
-    <property name="attachmentTypesValuesFinderClass" value="cuConfidentialAttachmentTypeValuesFinder"/>
+    <property name="attachmentTypesValuesFinderClass" value="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
   </bean>
 
   

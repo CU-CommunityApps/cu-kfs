@@ -26,7 +26,5 @@
 
     <bean id="cuBatchFileDirectoryPathValuesFinder"
           class="edu.cornell.kfs.sys.businessobject.options.CuBatchFileDirectoryPathValuesFinder"/>
-    <bean id="cuConfidentialAttachmentTypeValuesFinder"
-          class="edu.cornell.kfs.sys.businessobject.options.CUConfidentialAttachmentTypeValuesFinder"/>
 
 </beans>
