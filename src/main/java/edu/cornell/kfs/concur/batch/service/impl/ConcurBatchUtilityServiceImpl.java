@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.xml.bind.JAXBException;
@@ -26,6 +27,7 @@ import org.kuali.kfs.sys.exception.FileStorageException;
 import org.kuali.kfs.sys.service.FileStorageService;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
@@ -170,6 +172,14 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
             LOG.error("getFileContents, unable to read the file.", e);
             return StringUtils.EMPTY;
         }
+    }
+
+    @Override
+    public boolean isValidTravelerStatusForProcessingAsPDPEmployeeType(String status) {
+        String validStatusesString = getConcurParameterValue(ConcurParameterConstants.CONCUR_VALID_TRAVELER_STATUSES_FOR_PDP_EMPLOYEE_PROCESSING);
+        String[] validStatuses = StringUtils.split(validStatusesString, CUKFSConstants.SEMICOLON);
+        return Arrays.stream(validStatuses)
+                .anyMatch((validStatusValue) -> StringUtils.equalsIgnoreCase(validStatusValue, status));
     }
 
     public DateTimeService getDateTimeService() {
