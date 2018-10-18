@@ -88,9 +88,6 @@ public class CuDisbursementVoucherPaymentReasonServiceImplTest {
 
     public class TestableDisbursementVoucherPaymentReasonServiceImpl extends DisbursementVoucherPaymentReasonServiceImpl {
 
-        /*
-         * This is the same function as is in DisbursementVoucherPaymentReasonServiceImpl, except it doesn't use SpringContext
-         */
         @Override
         public String getDescriptivePayeeTypesAsString(Collection<String> payeeTypeCodes) {
             List<String> payeeTypeDescriptions = new ArrayList<>();

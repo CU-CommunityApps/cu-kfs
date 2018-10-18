@@ -19,6 +19,6 @@ public class CuDisbursementVoucherPaymentReasonServiceImpl extends DisbursementV
             }
         }
 
-        return this.convertListToString(payeeTypeDescriptions);
+        return convertListToString(payeeTypeDescriptions);
     }
 }
