@@ -22,7 +22,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	<bean id="SubObjectCodeGlobalInactivationSearch" parent="SubObjectCodeGlobalInactivationSearch-parentBean" />
 
-  <bean id="SubObjectCodeGlobalInactivationSearch-parentBean" abstract="true" parent="BusinessObjectEntry">
+  <bean id="SubObjectCodeGlobalInactivationSearch-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubObjectCodeGlobalInactivationSearch"/>
     <property name="inquiryDefinition">
       <ref bean="SubObjectCodeGlobalInactivationSearch-inquiryDefinition"/>

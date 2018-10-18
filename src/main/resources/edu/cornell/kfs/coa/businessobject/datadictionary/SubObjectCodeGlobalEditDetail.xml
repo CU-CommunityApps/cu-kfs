@@ -22,7 +22,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	<bean id="SubObjectCodeGlobalEditDetail" parent="SubObjectCodeGlobalEditDetail-parentBean" />
 
-  <bean id="SubObjectCodeGlobalEditDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
+  <bean id="SubObjectCodeGlobalEditDetail-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry">
     <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubObjectCodeGlobalEditDetail"/>
     <property name="inquiryDefinition">
       <ref bean="SubObjectCodeGlobalEditDetail-inquiryDefinition"/>

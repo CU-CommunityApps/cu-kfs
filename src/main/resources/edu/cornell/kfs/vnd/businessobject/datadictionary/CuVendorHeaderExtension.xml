@@ -40,7 +40,7 @@
 	  <bean parent="AnyCharacterValidationPattern" />
 	</property>
 	<property name="control">
-	  <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.CuLocaleValuesFinder" />
+	  <bean parent="SelectControlDefinition" p:valuesFinder-ref="cuLocaleValuesFinder" />
 	</property>
 	<property name="attributeSecurity">
       <bean parent="AttributeSecurity">
@@ -48,5 +48,8 @@
       </bean>
     </property>
   </bean>
+  
+  <bean id="cuLocaleValuesFinder"
+        class="edu.cornell.kfs.vnd.businessobject.options.CuLocaleValuesFinder"/>
 
 </beans>
