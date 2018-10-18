@@ -8,6 +8,7 @@ import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherPaymentReasonSe
 
 public class CuDisbursementVoucherPaymentReasonServiceImpl extends DisbursementVoucherPaymentReasonServiceImpl {
     
+    @Override
     protected String getDescriptivePayeeTypesAsString(Collection<String> payeeTypeCodes) {
         List<String> payeeTypeDescriptions = new ArrayList<>();
 
