@@ -381,6 +381,16 @@
                             </xsd:element>
 
                             <xsd:element ref="Description" minOccurs="0"/>
+                            
+                            <xsd:element name="Classification" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:simpleContent>
+                                        <xsd:extension base="xsd:string">
+                                            <xsd:attribute name="domain" type="kfs:oneToTenCharType" use="required"/>
+                                        </xsd:extension>
+                                    </xsd:simpleContent>
+                                </xsd:complexType>
+                            </xsd:element>
 
                             <xsd:choice minOccurs="0">
                                 <xsd:sequence>
@@ -448,14 +458,14 @@
                 <xsd:element ref="InvoiceDetailDiscount" minOccurs="0"/>
                 <xsd:element ref="NetAmount" minOccurs="0"/>
 
-                <!-- Distribution not used in EPIC -->
-                <!-- <xsd:element name="Distribution" minOccurs="0" maxOccurs="unbounded">
+                <!-- Distribution not used in FIN -->
+                <xsd:element name="Distribution" minOccurs="0" maxOccurs="unbounded">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:element name="Accounting">
                                 <xsd:complexType>
                                     <xsd:sequence>
-                                        <xsd:element name="AccountingSegment">
+                                        <xsd:element name="AccountingSegment" maxOccurs="unbounded">
                                             <xsd:complexType>
                                                 <xsd:sequence>
                                                     <xsd:element ref="Name" />
@@ -477,7 +487,7 @@
                             </xsd:element>
                         </xsd:sequence>
                     </xsd:complexType>
-                </xsd:element> -->
+                </xsd:element>
 
                 <xsd:element ref="Comments" minOccurs="0"/>
                 <xsd:element ref="Extrinsic" minOccurs="0" maxOccurs="unbounded"/>

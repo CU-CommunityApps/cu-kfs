@@ -26,7 +26,6 @@
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
                 
   <bean id="ObjectCode" parent="ObjectCode-parentBean"/>
-
   <bean id="ObjectCode-parentBean" abstract="true" parent="FinancialSystemBusinessObjectEntry">
     <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.ObjectCode"/>
     <property name="inquiryDefinition">
