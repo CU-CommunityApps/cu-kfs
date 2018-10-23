@@ -17,6 +17,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
     -->
+    
+    <import resource="classpath:org/kuali/kfs/module/ar/ar-lookup-beans.xml"/>
 
     <bean id="Award" parent="Award-parentBean">
         <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
@@ -44,7 +46,7 @@
         <property name="label" value="Letter Of Credit Fund Group"/>
         <property name="control">
             <bean parent="SelectControlDefinition"
-                  p:valuesFinderClass="org.kuali.kfs.module.ar.businessobject.options.LetterOfCreditFundGroupValuesFinder"
+                  p:valuesFinder-ref="letterOfCreditFundGroupValuesFinder"
                   p:includeKeyInLabel="false"/>
         </property>
     </bean>

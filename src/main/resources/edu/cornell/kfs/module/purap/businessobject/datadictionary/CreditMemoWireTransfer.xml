@@ -15,6 +15,9 @@
  limitations under the License.
 -->
 
+  <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+  <import resource="classpath:edu/cornell/kfs/module/purap/cu-purap-lookup-beans.xml"/>
+
   <bean id="CreditMemoWireTransfer" parent="CreditMemoWireTransfer-parentBean"/>
 
   <bean id="CreditMemoWireTransfer-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -105,7 +108,7 @@
     <property name="maxLength" value="40"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="countryValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   <bean id="CreditMemoWireTransfer-cmAttentionLineText" parent="CreditMemoWireTransfer-cmAttentionLineText-parentBean"/>
@@ -165,7 +168,7 @@
     <property name="maxLength" value="1"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.CuCurrencyTypeValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="cuCurrencyTypeValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   <bean id="CreditMemoWireTransfer-cmCurrencyTypeName" parent="CreditMemoWireTransfer-cmCurrencyTypeName-parentBean"/>
@@ -216,7 +219,7 @@
     <property name="maxLength" value="1"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="RadioControlDefinition" p:valuesFinderClass="org.kuali.kfs.fp.businessobject.options.BankAccountTypeValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="RadioControlDefinition" p:valuesFinder-ref="bankAccountTypeValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   <bean id="CreditMemoWireTransfer-cmAutomatedClearingHouseProfileNumber" parent="CreditMemoWireTransfer-cmAutomatedClearingHouseProfileNumber-parentBean"/>

@@ -68,7 +68,7 @@
 		<property name="name" value="disbVchrPaymentMethodCode" />
 		<property name="control">
 			<bean parent="SelectControlDefinition"
-				p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"
+				p:valuesFinder-ref="recurringDisbursementVoucherPaymentMethodValuesFinder"
 				p:includeKeyInLabel="false" />
 		</property>
 	</bean>
@@ -129,5 +129,8 @@
 			</list>
 		</property>
 	</bean>
+
+    <bean id="recurringDisbursementVoucherPaymentMethodValuesFinder"
+          class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"/>
 
 </beans>

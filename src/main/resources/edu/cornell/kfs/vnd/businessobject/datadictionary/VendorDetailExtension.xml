@@ -285,7 +285,7 @@
 	<property name="name" value="procurementMethodsArray" />
 	<property name="control">
 	  <bean parent="MultiselectControlDefinition" p:size="4"
-	          p:valuesFinderClass="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder" />
+	          p:valuesFinder-ref="cuProcurementMethodValuesFinder" />
 	</property>
 	<property name="attributeSecurity">
       <bean parent="AttributeSecurity">
@@ -299,4 +299,7 @@
 	<property name="name" value="procurementMethodsForDisplay" />
   </bean>
 
+  <bean id="cuProcurementMethodValuesFinder"
+        class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
+          
 </beans>

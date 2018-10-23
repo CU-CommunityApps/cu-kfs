@@ -44,7 +44,7 @@
     <property name="label" value="File Path"/>
     <property name="shortLabel" value="Path"/>
     <property name="control">
-      <bean parent="MultiselectControlDefinition" p:size="15" p:valuesFinderClass="edu.cornell.kfs.sys.businessobject.options.CreateDoneBatchFileDirectoryPathValuesFinder"/>
+      <bean parent="MultiselectControlDefinition" p:size="15" p:valuesFinder-ref="createDoneBatchFileDirectoryPathValuesFinder"/>
     </property>
   </bean>
   
@@ -113,4 +113,8 @@
       </list>
     </property>
   </bean>
+  
+  <bean id="createDoneBatchFileDirectoryPathValuesFinder"
+        class="edu.cornell.kfs.sys.businessobject.options.CreateDoneBatchFileDirectoryPathValuesFinder"/>
+  
 </beans>

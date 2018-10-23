@@ -53,7 +53,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
                     for (ContractsAndGrantsBillingAwardAccount awardAccount : award.getActiveAwardAccounts()) {
 
-                        cumulativeExpenses = cumulativeExpenses.add(contractsGrantsInvoiceDocumentService.getBudgetAndActualsForAwardAccount(awardAccount, systemOptions.getActualFinancialBalanceTypeCd(), beginningDate));
+                        cumulativeExpenses = cumulativeExpenses.add(contractsGrantsInvoiceDocumentService.getBudgetAndActualsForAwardAccount(awardAccount, systemOptions.getActualFinancialBalanceTypeCd()));
                         if (firstLineFlag) {
                             firstLineFlag = false;
                             contractsGrantsInvoiceDocumentErrorLog.setAccounts(awardAccount.getAccountNumber());
