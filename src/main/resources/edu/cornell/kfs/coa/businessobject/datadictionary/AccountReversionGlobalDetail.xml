@@ -14,7 +14,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
+  <import resource="classpath:edu/cornell/kfs/coa/cu-coa-lookup-beans.xml"/>
+  
   <bean id="AccountReversionGlobalDetail" parent="AccountReversionGlobalDetail-parentBean"/>
 
   <bean id="AccountReversionGlobalDetail-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -57,7 +58,7 @@
     <property name="forceUppercase" value="true"/>
     <property name="shortLabel" value="Category"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.coa.businessobject.options.ReversionCategoryValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="accountReversionCategoryValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
@@ -77,7 +78,7 @@
   <bean id="AccountReversionGlobalDetail-accountReversionCode-parentBean" abstract="true" parent="AccountReversionDetail-accountReversionCode">
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.coa.businessobject.options.ReversionCodeValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="accountReversionCodeValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 

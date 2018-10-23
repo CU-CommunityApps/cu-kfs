@@ -101,7 +101,7 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
     <property name="required" value="false" />
     <property name="control" >
       <bean parent="SelectControlDefinition"
-            p:valuesFinderClass="com.rsmart.kuali.kfs.cr.businessobject.options.CheckReconSrcValuesFinder"
+            p:valuesFinder-ref="checkReconSrcValuesFinder"
             p:includeKeyInLabel="true" />
     </property>
     
@@ -224,7 +224,7 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
     <property name="required" value="true" />
     <property name="control" >
       <bean parent="SelectControlDefinition"
-            p:valuesFinderClass="com.rsmart.kuali.kfs.cr.businessobject.options.StatusValuesFinder"
+            p:valuesFinder-ref="checkReconStatusValuesFinder"
             p:includeKeyInLabel="true" />
     </property>
   </bean>
@@ -301,5 +301,10 @@ http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
       </list>
     </property>
   </bean>
+  
+  <bean id="checkReconSrcValuesFinder"
+        class="com.rsmart.kuali.kfs.cr.businessobject.options.CheckReconSrcValuesFinder"/>
+  <bean id="checkReconStatusValuesFinder"
+        class="com.rsmart.kuali.kfs.cr.businessobject.options.StatusValuesFinder"/>
   
 </beans>

@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
+import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.module.purap.PurapConstants;
@@ -46,6 +47,8 @@ import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.service.PdpUtilService;
+import org.kuali.kfs.pdp.service.ResearchParticipantPaymentValidationService;
 import org.kuali.kfs.pdp.service.impl.PendingTransactionServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -54,8 +57,10 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
+import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -66,6 +71,7 @@ import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -87,9 +93,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     protected static String FDOC_TYP_CD_STOP_CHECK = "CHKS";
     protected static String FDOC_TYP_CD_STALE_CHECK = "CHKL";
     
-    private DocumentService documentService;
+	private DocumentService documentService;
     private NoteService noteService;
-    private ParameterService parameterService;
     private CheckReconciliationDao checkReconciliationDao;
 
     /**
@@ -983,33 +988,17 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         int count = businessObjectService.countMatching(GeneralLedgerPendingEntry.class, fieldValues);
         return count + 1;
     }
-
-	public DocumentService getDocumentService() {
-		return documentService;
+    
+	public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
+		this.checkReconciliationDao = checkReconciliationDao;
 	}
 
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;
 	}
 
-	public NoteService getNoteService() {
-		return noteService;
-	}
-
 	public void setNoteService(NoteService noteService) {
 		this.noteService = noteService;
-	}
-
-	public ParameterService getParameterService() {
-		return parameterService;
-	}
-
-	public void setParameterService(ParameterService parameterService) {
-		this.parameterService = parameterService;
-	}
-
-	public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
-		this.checkReconciliationDao = checkReconciliationDao;
 	}
 
 }

@@ -125,7 +125,11 @@
   
   <bean id="ScheduleTypeControl" parent="ScheduleTypeControl-parentBean" />
   <bean id="ScheduleTypeControl-parentBean" abstract="true" parent="SelectControlDefinition" 
-  	p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.ScheduleTypeKeyValuesFinder">
-  </bean>           
+  	p:valuesFinder-ref="scheduleTypeKeyValuesFinder">
+  </bean>   
+  
+  <bean id="scheduleTypeKeyValuesFinder"
+        class="edu.cornell.kfs.fp.businessobject.options.ScheduleTypeKeyValuesFinder"/>
+          
   
 </beans>

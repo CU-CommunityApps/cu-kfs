@@ -4,6 +4,8 @@
     xmlns:dd="http://rice.kuali.org/dd"
     xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
 
+  <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+    
   <bean id="OrganizationGlobal" parent="OrganizationGlobal-parentBean" />
 
   <bean id="OrganizationGlobal-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -127,7 +129,7 @@
     <property name="shortLabel" value="Country Cd" />
     <property name="required" value="false" />
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="org.kuali.kfs.kns.bo.lookup.CountryValuesFinder"
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="countryValuesFinder"
           p:includeKeyInLabel="false" />
     </property>
   </bean>

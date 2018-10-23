@@ -32,8 +32,6 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 @SuppressWarnings("deprecation")
 public class AwardExtensionRule extends AwardRule {
 	protected ParameterService parameterService;
-    Award newAwardCopy;
-    Award oldAwardCopy;
 
     @Override
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
@@ -247,7 +245,7 @@ public class AwardExtensionRule extends AwardRule {
             for(ContractsAndGrantsBillingAwardAccount awardAccount: newAwardCopy.getActiveAwardAccounts()) {
                 if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.MILESTONE_BILLING_SCHEDULE_CODE) &&
                     SpringContext.getBean(AccountsReceivableModuleBillingService.class)
-                        .hasActiveMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                        .hasActiveUnbilledMilestones(proposalNumber, awardAccount.getChartOfAccountsCode(),
                             awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,
@@ -256,7 +254,7 @@ public class AwardExtensionRule extends AwardRule {
                     break;
                 } else if (StringUtils.equals(oldBillingFrequencyCode, CGConstants.PREDETERMINED_BILLING_SCHEDULE_CODE) &&
                     SpringContext.getBean(AccountsReceivableModuleBillingService.class)
-                    		.hasActiveBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
+                    		.hasActiveUnbilledBills(proposalNumber, awardAccount.getChartOfAccountsCode(),
                     			awardAccount.getAccountNumber())) {
                     success = false;
                     putFieldError(CGPropertyConstants.AwardFields.BILLING_FREQUENCY_CODE,

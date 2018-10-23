@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+  <import resource="classpath:edu/cornell/kfs/fp/cu-fp-lookup-beans.xml"/>
+
   <bean id="PaymentMethod" parent="PaymentMethod-parentBean"/>
 
   <bean id="PaymentMethod-parentBean" abstract="true" parent="BusinessObjectEntry">
@@ -31,13 +33,13 @@
 		by all uses.
 	-->
 	<bean name="PaymentMethodSelectControl" parent="SelectControlDefinition"
-		p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.PaymentMethodValuesFinder" />
+		p:valuesFinder-ref="paymentMethodValuesFinder" />
 		
 	<bean name="PaymentMethodsForDVSelectControl" parent="SelectControlDefinition"
-		p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForDVValuesFinder" />
+		p:valuesFinder-ref="paymentMethodsForDVValuesFinder" />
 
 	<bean name="PaymentMethodsForVendorSelectControl" parent="SelectControlDefinition"
-		p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder" />
+		p:valuesFinder-ref="paymentMethodsForVendorValuesFinder" />
 
   <bean id="PaymentMethodAttribute-SelectControl" parent="PaymentMethod-paymentMethodCode" p:control-ref="PaymentMethodSelectControl" />
 

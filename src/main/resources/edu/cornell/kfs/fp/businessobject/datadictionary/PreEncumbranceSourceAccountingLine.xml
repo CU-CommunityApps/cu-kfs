@@ -392,6 +392,10 @@
   <bean id="AutoDisEncumberTypeControl" parent="AutoDisEncumberTypeControl-parentBean" />
   
   <bean id="AutoDisEncumberTypeControl-parentBean" abstract="true" parent="SelectControlDefinition" 
-                p:valuesFinderClass="edu.cornell.kfs.fp.businessobject.options.AutoDisEncumberType"/>           
+                p:valuesFinder-ref="autoDisEncumberType"/>    
+                
+  <bean id="autoDisEncumberType"
+          class="edu.cornell.kfs.fp.businessobject.options.AutoDisEncumberType"/>
+                       
   
 </beans>

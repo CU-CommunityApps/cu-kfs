@@ -123,8 +123,12 @@
     <property name="required" value="false"/>
     <property name="maxLength" value="10"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.module.purap.businessobject.options.AmountOrPercentValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="amountOrPercentValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
+  
+  <bean id="amountOrPercentValuesFinder"
+        class="edu.cornell.kfs.module.purap.businessobject.options.AmountOrPercentValuesFinder"/>
+  
  
 </beans>

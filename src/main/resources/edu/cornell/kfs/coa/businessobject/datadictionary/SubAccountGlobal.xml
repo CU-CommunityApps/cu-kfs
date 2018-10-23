@@ -83,9 +83,8 @@
 		<property name="required" value="false" />
 		<property name="attributeSecurity" ref="ReadOnlyAttributeSecurity" />
 		<property name="control">
-			<bean parent="SelectControlDefinition"
-				p:valuesFinderClass="org.kuali.kfs.coa.businessobject.options.IndirectCostRecoveryTypeValuesFinder"
-				p:includeKeyInLabel="false" />
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="indirectCostRecoveryTypeValuesFinder"
+                  p:includeKeyInLabel="false"/>
 		</property>
     </bean>
     <bean id="SubAccountGlobal-a21SubAccount.financialIcrSeriesIdentifier" parent="SubAccountGlobal-a21SubAccount.financialIcrSeriesIdentifier-parentBean"/>

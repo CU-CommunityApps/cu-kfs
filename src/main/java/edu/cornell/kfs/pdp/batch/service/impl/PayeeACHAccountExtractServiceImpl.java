@@ -596,8 +596,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                         Object propertyValue = ObjectPropertyUtils.getPropertyValue(achAccount, propertyName);
                         replacement = ObjectUtils.isNotNull(propertyValue) ? propertyValue.toString() : StringUtils.EMPTY;
                         // If a values finder is defined, use the label from the matching key/value pair instead.
-                        if (attDefinition.getControl() != null && StringUtils.isNotBlank(attDefinition.getControl().getValuesFinderClass())) {
-                            KeyValuesFinder valuesFinder = (KeyValuesFinder) Class.forName(attDefinition.getControl().getValuesFinderClass()).newInstance();
+                        if (attDefinition.getControl() != null && ObjectUtils.isNotNull(attDefinition.getControl().getValuesFinder())) {
+                            KeyValuesFinder valuesFinder = attDefinition.getControl().getValuesFinder();
                             String key = replacement;
                             replacement = valuesFinder.getKeyLabel(key);
                             // If the key is in the label, then remove it from the label.
@@ -620,7 +620,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                             replacement = replacement.replace("$", "\\$");
                         }
                         
-                    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | RuntimeException e) {
+                    } catch (RuntimeException e) {
                         replacement = StringUtils.EMPTY;
                     }
                 }

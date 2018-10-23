@@ -39,7 +39,7 @@
       <bean parent="AnyCharacterValidationPattern" p:exactLength="1" />
     </property>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinderClass="edu.cornell.kfs.tax.businessobject.options.TaxFpPaymentReasonValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="taxFpPaymentReasonValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
 
@@ -123,5 +123,8 @@
       </list>
     </property>
   </bean>
+
+  <bean id="taxFpPaymentReasonValuesFinder"
+        class="edu.cornell.kfs.tax.businessobject.options.TaxFpPaymentReasonValuesFinder"/>
 
 </beans>
