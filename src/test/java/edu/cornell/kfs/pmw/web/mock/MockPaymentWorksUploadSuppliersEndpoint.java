@@ -15,6 +15,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpException;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -76,6 +77,7 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
         this.calledUploadSuppliersService = true;
         assertRequestHasCorrectHttpMethod(request, HttpMethod.POST);
         assertRequestHasCorrectContentType(request, ContentType.MULTIPART_FORM_DATA);
+        assertHeaderHasNonBlankValue(request, HttpHeaders.CONTENT_LENGTH);
         
         String authorizationHeader = getNonBlankHeaderValue(request, PaymentWorksWebServiceConstants.AUTHORIZATION_HEADER_KEY);
         assertEquals("Wrong authorization token value",

@@ -145,6 +145,14 @@ public class PaymentWorksUploadSuppliersTest extends LocalServerTestBase {
                 PaymentWorksVendorFixture.JOHN_DOE, PaymentWorksVendorFixture.MARY_SMITH, PaymentWorksVendorFixture.WIDGET_MAKERS);
     }
 
+    @Test
+    public void testLargeVendorUploadContainsContentLengthHeader() throws Exception {
+        int rowCount = 200;
+        PaymentWorksVendorFixture[] fixtures = new PaymentWorksVendorFixture[rowCount];
+        Arrays.fill(fixtures, PaymentWorksVendorFixture.JOHN_DOE);
+        assertUploadSucceedsCompletely(fixtures);
+    }
+
     private void assertUploadSucceedsCompletely(PaymentWorksVendorFixture... fixtures) {
         PaymentWorksUploadSuppliersBatchReportData reportData = new PaymentWorksUploadSuppliersBatchReportData();
         assertUploadSucceeds(reportData, fixtures);
