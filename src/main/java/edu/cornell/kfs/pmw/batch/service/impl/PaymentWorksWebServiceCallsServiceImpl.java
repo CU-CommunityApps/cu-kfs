@@ -415,15 +415,15 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
 
     private void disableRequestChunkingIfNecessary(Client client, Invocation.Builder requestBuilder) {
         if (client instanceof org.apache.cxf.jaxrs.client.spec.ClientImpl) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("disableRequestChunkingIfNecessary: Explicitly disabling chunking because KFS is using a CXF JAX-RS client");
-            }
+            LOG.info("disableRequestChunkingIfNecessary: Explicitly disabling chunking because KFS is using a JAX-RS client of CXF type "
+                    + client.getClass().getName());
             ClientConfiguration cxfConfig = WebClient.getConfig(requestBuilder);
             HTTPConduit conduit = cxfConfig.getHttpConduit();
             HTTPClientPolicy clientPolicy = conduit.getClient();
             clientPolicy.setAllowChunking(false);
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug("disableRequestChunkingIfNecessary: The JAX-RS client implementation does not need to explicitly disable chunking");
+        } else {
+            LOG.info("disableRequestChunkingIfNecessary: There is no need to explicitly disable chunking for a JAX-RS client of type "
+                    + client.getClass().getName());
         }
     }
 
