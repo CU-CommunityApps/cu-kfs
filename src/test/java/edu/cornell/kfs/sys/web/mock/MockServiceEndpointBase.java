@@ -99,6 +99,10 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         assertEquals("Wrong content type for request", expectedContentType, actualContentType);
     }
 
+    protected void assertHeaderHasNonBlankValue(HttpRequest request, String headerName) {
+        getNonBlankHeaderValue(request, headerName);
+    }
+
     protected String getNonBlankHeaderValue(HttpRequest request, String headerName) {
         return getValueOrFail(
                 () -> getNonBlankHeaderValueIfPresent(request, headerName),
