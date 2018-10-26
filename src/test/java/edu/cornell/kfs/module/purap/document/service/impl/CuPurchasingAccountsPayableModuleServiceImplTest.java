@@ -9,40 +9,37 @@ import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.TestUtils;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
 @ConfigureContext(session = UserNameFixture.mo14)
-@PrepareForTest({CuVendorCreditMemoDocument.class})
 public class CuPurchasingAccountsPayableModuleServiceImplTest extends KualiTestBase {
 
-	private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);
+    private static final Logger LOG = LogManager.getLogger(CuPurchasingAccountsPayableModuleServiceImplTest.class);
 
-	private CuPurchasingAccountsPayableModuleServiceImpl accountsPayableModuleServiceImpl;
+    private CuPurchasingAccountsPayableModuleServiceImpl accountsPayableModuleServiceImpl;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		accountsPayableModuleServiceImpl = (CuPurchasingAccountsPayableModuleServiceImpl) TestUtils.getUnproxiedService("purchasingAccountsPayableModuleService");
+        accountsPayableModuleServiceImpl = (CuPurchasingAccountsPayableModuleServiceImpl) TestUtils.getUnproxiedService("purchasingAccountsPayableModuleService");
 
-	}
-	
-	public void testHandlePurchasingBatchCancels_CRCancel() throws WorkflowException{
-		
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocumentForMicroTest();
-		accountsPayableModuleServiceImpl.handlePurchasingBatchCancels(creditMemoDocument.getDocumentNumber(), creditMemoDocument.getDocumentType(), true, false, true);
-		
-		assertFalse(PurapConstants.CreditMemoStatuses.CANCELLED_STATUSES.contains(creditMemoDocument.getApplicationDocumentStatus()));
-	}
-	
-	public void testHandlePurchasingBatchCancels_NonCRCancel() throws WorkflowException{
-		
-		VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocumentForMicroTest();
-		accountsPayableModuleServiceImpl.handlePurchasingBatchCancels(creditMemoDocument.getDocumentNumber(), creditMemoDocument.getDocumentType(), true, false, false);
-		
-		assertTrue(PurapConstants.CreditMemoStatuses.CANCELLED_STATUSES.contains(creditMemoDocument.getApplicationDocumentStatus()));
-	}
+    }
+    
+    public void testHandlePurchasingBatchCancels_CRCancel() throws WorkflowException{
+        
+        VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+        accountsPayableModuleServiceImpl.handlePurchasingBatchCancels(creditMemoDocument.getDocumentNumber(), creditMemoDocument.getDocumentType(), true, false, true);
+        
+        assertFalse(PurapConstants.CreditMemoStatuses.CANCELLED_STATUSES.contains(creditMemoDocument.getApplicationDocumentStatus()));
+    }
+    
+    public void testHandlePurchasingBatchCancels_NonCRCancel() throws WorkflowException{
+        
+        VendorCreditMemoDocument creditMemoDocument = VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO.createVendorCreditMemoDocument();
+        accountsPayableModuleServiceImpl.handlePurchasingBatchCancels(creditMemoDocument.getDocumentNumber(), creditMemoDocument.getDocumentType(), true, false, false);
+        
+        assertTrue(PurapConstants.CreditMemoStatuses.CANCELLED_STATUSES.contains(creditMemoDocument.getApplicationDocumentStatus()));
+    }
 }

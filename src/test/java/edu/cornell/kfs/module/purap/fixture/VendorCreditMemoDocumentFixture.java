@@ -4,8 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.kuali.kfs.krad.document.DocumentBase;
+import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
@@ -54,16 +60,27 @@ public enum VendorCreditMemoDocumentFixture {
 	    this.purchaseOrderIdentifier = purchaseOrderIdentifier;
 	    this.creditMemoAmount = creditMemoAmount;
 	}
+	
+	public VendorCreditMemoDocument createVendorCreditMemoDocument()
+            throws WorkflowException {
+        VendorCreditMemoDocument creditMemoDocument = (VendorCreditMemoDocument) SpringContext.getBean(DocumentService.class).getNewDocument(VendorCreditMemoDocument.class);
+        creditMemoDocument.initiateDocument();
+
+        creditMemoDocument.getDocumentHeader().setDocumentDescription(this.documentDescription);
+        creditMemoDocument.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
+        creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
+        creditMemoDocument.setCreditMemoNumber(this.creditMemoNumber);
+        creditMemoDocument.setCreditMemoDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+        creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
+
+        creditMemoDocument.prepareForSave();
+        AccountingDocumentTestUtils.saveDocument(creditMemoDocument, SpringContext.getBean(DocumentService.class));
+        return creditMemoDocument;
+    }
 
 	public CuVendorCreditMemoDocument createVendorCreditMemoDocumentForMicroTest() {
 	    PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
 	    CuVendorCreditMemoDocument creditMemoDocument = PowerMockito.spy(new CuVendorCreditMemoDocument());
-	    try {
-            PowerMockito.doReturn(CUPdpConstants.PdpDocumentTypes.CREDIT_MEMO).when(creditMemoDocument, "getDocumentType");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-	    
 	    
 	    FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
 	    documentHeader.setDocumentNumber(this.documentNumber);
