@@ -16,7 +16,6 @@ import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
-import edu.cornell.kfs.pdp.CUPdpConstants;
 
 public enum VendorCreditMemoDocumentFixture {
 
@@ -60,33 +59,32 @@ public enum VendorCreditMemoDocumentFixture {
 	    this.purchaseOrderIdentifier = purchaseOrderIdentifier;
 	    this.creditMemoAmount = creditMemoAmount;
 	}
-	
+
 	public VendorCreditMemoDocument createVendorCreditMemoDocument()
-            throws WorkflowException {
-        VendorCreditMemoDocument creditMemoDocument = (VendorCreditMemoDocument) SpringContext.getBean(DocumentService.class).getNewDocument(VendorCreditMemoDocument.class);
-        creditMemoDocument.initiateDocument();
+			throws WorkflowException {
+		VendorCreditMemoDocument creditMemoDocument = (VendorCreditMemoDocument) SpringContext.getBean(DocumentService.class).getNewDocument(VendorCreditMemoDocument.class);
+		creditMemoDocument.initiateDocument();
 
-        creditMemoDocument.getDocumentHeader().setDocumentDescription(this.documentDescription);
-        creditMemoDocument.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
-        creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
-        creditMemoDocument.setCreditMemoNumber(this.creditMemoNumber);
-        creditMemoDocument.setCreditMemoDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
-        creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
+		creditMemoDocument.getDocumentHeader().setDocumentDescription(this.documentDescription);
+		creditMemoDocument.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
+		creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
+		creditMemoDocument.setCreditMemoNumber(this.creditMemoNumber);
+		creditMemoDocument.setCreditMemoDate(SpringContext.getBean(DateTimeService.class).getCurrentSqlDate());
+		creditMemoDocument.setCreditMemoAmount(this.creditMemoAmount);
 
-        creditMemoDocument.prepareForSave();
-        AccountingDocumentTestUtils.saveDocument(creditMemoDocument, SpringContext.getBean(DocumentService.class));
-        return creditMemoDocument;
-    }
+		creditMemoDocument.prepareForSave();
+		AccountingDocumentTestUtils.saveDocument(creditMemoDocument, SpringContext.getBean(DocumentService.class));
+		return creditMemoDocument;
+	}
 
 	public CuVendorCreditMemoDocument createVendorCreditMemoDocumentForMicroTest() {
 	    PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
 	    CuVendorCreditMemoDocument creditMemoDocument = PowerMockito.spy(new CuVendorCreditMemoDocument());
-	    
 	    FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
+	    
 	    documentHeader.setDocumentNumber(this.documentNumber);
 	    documentHeader.setDocumentDescription(this.documentDescription);
 	    creditMemoDocument.setDocumentHeader(documentHeader);
-
 	    creditMemoDocument.setDocumentNumber(this.documentNumber);
 	    creditMemoDocument.setVendorDetailAssignedIdentifier(this.vendorDetailAssignedIdentifier);
 	    creditMemoDocument.setVendorHeaderGeneratedIdentifier(this.vendorHeaderGeneratedIdentifier);
