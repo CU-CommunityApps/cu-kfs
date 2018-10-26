@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.purap.fixture;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import org.easymock.EasyMock;
+import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -12,6 +12,7 @@ import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
@@ -77,10 +78,9 @@ public enum VendorCreditMemoDocumentFixture {
 	}
 
 	public CuVendorCreditMemoDocument createVendorCreditMemoDocumentForMicroTest() {
-	    CuVendorCreditMemoDocument creditMemoDocument = EasyMock.partialMockBuilder(CuVendorCreditMemoDocument.class)
-	            .createNiceMock();
+	    PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
+	    CuVendorCreditMemoDocument creditMemoDocument = PowerMockito.spy(new CuVendorCreditMemoDocument());
 	    FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
-	    EasyMock.replay(creditMemoDocument);
 	    
 	    documentHeader.setDocumentNumber(this.documentNumber);
 	    documentHeader.setDocumentDescription(this.documentDescription);

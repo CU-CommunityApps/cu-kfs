@@ -13,12 +13,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.easymock.Capture;
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kuali.kfs.gl.businessobject.Entry;
-import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
@@ -26,6 +25,11 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.rice.krad.bo.BusinessObject;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.cam.fixture.EntryFixture;
@@ -34,6 +38,8 @@ import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
 @SuppressWarnings("deprecation")
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({CuVendorCreditMemoDocument.class, CuPaymentRequestDocument.class})
 public class CuBatchExtractServiceImplTest {
 
     private CuBatchExtractServiceImpl cuBatchExtractServiceImpl;
@@ -110,22 +116,15 @@ public class CuBatchExtractServiceImplTest {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private BusinessObjectService buildMockBusinessObjectService() {
-        BusinessObjectService businessObjectService = EasyMock.createMock(BusinessObjectService.class);
-        // Had to leave the boClassArg's inner type as a raw type, due to compiling problems from a bounded-type service method argument.
-        Capture<Class> boClassArg = EasyMock.newCapture();
-        Capture<Map<String, ?>> criteriaArg = EasyMock.newCapture();
-        
-        EasyMock.expect(
-                businessObjectService.findMatching(EasyMock.<Class>capture(boClassArg), EasyMock.capture(criteriaArg)))
-                .andStubAnswer(() -> findMatching(boClassArg.getValue(), criteriaArg.getValue()));
-        
-        EasyMock.replay(businessObjectService);
+        BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
+        Mockito.when(businessObjectService.findMatching(Mockito.any(), Mockito.any())).then(this::findMatching);
         return businessObjectService;
     }
-
-    private <T extends BusinessObject> Collection<T> findMatching(Class<T> boClass, Map<String, ?> criteria) {
+    
+    private <T extends BusinessObject> Collection<T> findMatching(InvocationOnMock invocation) {
+        Class<T> boClass = invocation.getArgument(0);
+        Map<String, ?> criteria = invocation.getArgument(1);
         if (criteria.size() == 1) {
             String documentNumber = (String) criteria.get(CamsPropertyConstants.DOCUMENT_NUMBER);
             if (StringUtils.isNotBlank(documentNumber)) {
@@ -157,31 +156,27 @@ public class CuBatchExtractServiceImplTest {
     }
 
     private CuPaymentRequestDocument buildMinimalPaymentRequestDocument(String documentNumber) {
-        CuPaymentRequestDocument paymentRequestDocument = EasyMock.partialMockBuilder(CuPaymentRequestDocument.class)
-                .createNiceMock();
-        EasyMock.replay(paymentRequestDocument);
+        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
+        CuPaymentRequestDocument paymentRequestDocument = PowerMockito.spy(new CuPaymentRequestDocument());
         paymentRequestDocument.setDocumentNumber(documentNumber);
         return paymentRequestDocument;
     }
 
     private DataDictionaryService buildMockDataDictionaryService() {
-        DataDictionaryService dataDictionaryService = EasyMock.createMock(DataDictionaryService.class);
-        
-        expectDocumentClassMapping(
-                dataDictionaryService, PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT, CuVendorCreditMemoDocument.class);
-        expectDocumentClassMapping(
-                dataDictionaryService, PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT, CuPaymentRequestDocument.class);
-        
-        EasyMock.replay(dataDictionaryService);
+        DataDictionaryService dataDictionaryService = Mockito.mock(DataDictionaryService.class);
+        Mockito.when(dataDictionaryService.getDocumentClassByTypeName(Mockito.anyString())).then(this::findClassByType);
         return dataDictionaryService;
     }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void expectDocumentClassMapping(
-            DataDictionaryService dataDictionaryService, String typeName, Class<? extends Document> docClass) {
-        // Had to cast docClass to a raw type, due to compiling problems from the service method's bounded-wildcard return type.
-        EasyMock.expect(dataDictionaryService.getDocumentClassByTypeName(typeName))
-                .andStubReturn((Class) docClass);
+    
+    private Class findClassByType(InvocationOnMock invocation) {
+        String documentTypeName = invocation.getArgument(0);
+        if (StringUtils.equalsIgnoreCase(documentTypeName, PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT)) {
+            return CuVendorCreditMemoDocument.class;
+        } else if (StringUtils.equalsIgnoreCase(documentTypeName, PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT)) {
+            return CuPaymentRequestDocument.class;
+        } else {
+            throw new IllegalArgumentException("Unexpected document type: " + documentTypeName);
+        }
     }
 
 }
