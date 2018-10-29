@@ -61,9 +61,38 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     }
     
     @Test
-    public void testNoSespenseBudgetTotal() {
+    public void testSuspensionByBudgetAmountLessThanBudget() {
         configureParameterServiceForSuspensionCheck(new Boolean(true));
-        
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(25));
+        assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
+    }
+    
+    @Test
+    public void testSuspensionByBudgetAmountMoreThanBudget() {
+        configureParameterServiceForSuspensionCheck(new Boolean(true));
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(55));
+        assertTrue(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
+    }
+    
+    @Test
+    public void testSuspensionByAwardTotalAmountLessThanBudget() {
+        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(25));
+        assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
+    }
+    
+    @Test
+    public void testSuspensionByAwardTotalAmountLessThanAwardTotal() {
+        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(55));
+        assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
+    }
+    
+    @Test
+    public void testSuspensionByAwardTotalAmountMoreThanAwardTotal() {
+        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(105));
+        assertTrue(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
     
     
@@ -73,21 +102,22 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
         suspensionCategory.setParameterService(parameterService);
     }
     
-    private void prepareContractsGrantsInvoiceDocument(KualiDecimal awardTotal, KualiDecimal budgetTotal) {
+    private void prepareContractsGrantsInvoiceDocument(KualiDecimal totalAmountBilledToDate) {
         PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
         contractsGrantsInvoiceDocument = PowerMockito.spy(new ContractsGrantsInvoiceDocument());
         
-        InvoiceGeneralDetail invoiceGeneralDetail = new InvoiceGeneralDetail();
-        
         CuAward award = PowerMockito.spy(new CuAward());
-        award.setAwardTotalAmount(awardTotal);
+        award.setAwardIndirectCostAmount(new KualiDecimal(50));
+        award.setAwardDirectCostAmount(new KualiDecimal(50));
         
         AwardExtendedAttribute attribute = new AwardExtendedAttribute();
-        attribute.setBudgetTotalAmount(budgetTotal);
+        attribute.setBudgetTotalAmount(new KualiDecimal(50));
         
         award.setExtension(attribute);
         
-        invoiceGeneralDetail.setAward(award);
+        InvoiceGeneralDetail invoiceGeneralDetail = Mockito.mock(InvoiceGeneralDetail.class);
+        Mockito.when(invoiceGeneralDetail.getTotalAmountBilledToDate()).thenReturn(totalAmountBilledToDate);
+        Mockito.when(invoiceGeneralDetail.getAward()).thenReturn(award);
         
         contractsGrantsInvoiceDocument.setInvoiceGeneralDetail(invoiceGeneralDetail);
     }
