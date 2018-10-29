@@ -45,4 +45,9 @@
 	<bean id="contractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean"
 		  class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsInvoiceDocumentServiceImpl"  />
 
+	<bean id="totalAmountBilledToDateExceedsAwardTotalSuspensionCategory" parent="totalAmountBilledToDateExceedsAwardTotalSuspensionCategory-parentBean" 
+		class="edu.cornell.kfs.module.ar.document.validation.impl.CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory">
+		<property name="parameterService" ref="parameterService" />
+	</bean>
+
 </beans>
