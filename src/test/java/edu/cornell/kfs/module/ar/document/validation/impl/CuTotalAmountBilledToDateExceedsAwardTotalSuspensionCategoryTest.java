@@ -44,53 +44,61 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
 
     @Test
     public void shouldValidateOnBudgetTotalForTrueParam() {
-        configureParameterServiceForSuspensionCheck(new Boolean(true));
-        assertTrue(suspensionCategory.shouldValidateOnBudgetTotal());
-    }
-    
-    @Test
-    public void shouldValidateOnBudgetTotalForNullParam() {
-        configureParameterServiceForSuspensionCheck(null);
+        configureParameterServiceForSuspensionCheck(Boolean.TRUE);
         assertTrue(suspensionCategory.shouldValidateOnBudgetTotal());
     }
     
     @Test
     public void shouldValidateOnBudgetTotalForFalseParam() {
-        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        configureParameterServiceForSuspensionCheck(Boolean.FALSE);
         assertFalse(suspensionCategory.shouldValidateOnBudgetTotal());
     }
     
     @Test
     public void testSuspensionByBudgetAmountLessThanBudget() {
-        configureParameterServiceForSuspensionCheck(new Boolean(true));
+        configureParameterServiceForSuspensionCheck(Boolean.TRUE);
         prepareContractsGrantsInvoiceDocument(new KualiDecimal(25));
         assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
     
     @Test
+    public void testSuspensionByBudgetAmountEqualBudget() {
+        configureParameterServiceForSuspensionCheck(Boolean.TRUE);
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(50));
+        assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
+    }
+    
+    @Test
     public void testSuspensionByBudgetAmountMoreThanBudget() {
-        configureParameterServiceForSuspensionCheck(new Boolean(true));
+        configureParameterServiceForSuspensionCheck(Boolean.TRUE);
         prepareContractsGrantsInvoiceDocument(new KualiDecimal(55));
         assertTrue(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
     
     @Test
     public void testSuspensionByAwardTotalAmountLessThanBudget() {
-        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        configureParameterServiceForSuspensionCheck(Boolean.FALSE);
         prepareContractsGrantsInvoiceDocument(new KualiDecimal(25));
         assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
     
     @Test
     public void testSuspensionByAwardTotalAmountLessThanAwardTotal() {
-        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        configureParameterServiceForSuspensionCheck(Boolean.FALSE);
         prepareContractsGrantsInvoiceDocument(new KualiDecimal(55));
         assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
     
     @Test
+    public void testSuspensionByAwardTotalAmountEqualAwardTotal() {
+        configureParameterServiceForSuspensionCheck(Boolean.FALSE);
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(100));
+        assertFalse(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
+    }
+    
+    @Test
     public void testSuspensionByAwardTotalAmountMoreThanAwardTotal() {
-        configureParameterServiceForSuspensionCheck(new Boolean(false));
+        configureParameterServiceForSuspensionCheck(Boolean.FALSE);
         prepareContractsGrantsInvoiceDocument(new KualiDecimal(105));
         assertTrue(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
@@ -98,7 +106,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     
     private void configureParameterServiceForSuspensionCheck(Boolean value) {
         Mockito.when(parameterService.getParameterValueAsBoolean(ArConstants.AR_NAMESPACE_CODE, 
-                ArConstants.CONTRACTS_GRANTS_INVOICE_COMPONENT, CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENION_BY_BUDGET_TOTAL)).thenReturn(value);
+                ArConstants.CONTRACTS_GRANTS_INVOICE_COMPONENT, CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENSION_BY_BUDGET_TOTAL, Boolean.TRUE.booleanValue())).thenReturn(value);
         suspensionCategory.setParameterService(parameterService);
     }
     
