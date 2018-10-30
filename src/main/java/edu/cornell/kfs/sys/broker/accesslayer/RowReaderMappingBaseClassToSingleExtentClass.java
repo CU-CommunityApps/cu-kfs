@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.broker.accesslayer;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ojb.broker.PersistenceBrokerException;
 import org.apache.ojb.broker.accesslayer.RowReaderDefaultImpl;
 import org.apache.ojb.broker.metadata.ClassDescriptor;
@@ -34,7 +35,8 @@ public class RowReaderMappingBaseClassToSingleExtentClass extends RowReaderDefau
         List<?> extentClassNames = baseClassDescriptor.getExtentClassNames();
         if (extentClassNames.size() != 1) {
             throw new PersistenceBrokerException("The class descriptor for " + baseClassDescriptor.getClassNameOfObject()
-                    + " should have had exactly 1 extent class, but instead had " + extentClassNames.size());
+                    + " should have had exactly 1 extent class, but instead had " + extentClassNames.size() + " extents: "
+                    + extentClassNames);
         }
         
         String extentClassName = (String) extentClassNames.get(0);
@@ -42,6 +44,9 @@ public class RowReaderMappingBaseClassToSingleExtentClass extends RowReaderDefau
         if (extentClassDescriptor == null) {
             throw new PersistenceBrokerException("Could not find " + extentClassName
                     + " extent class descriptor for base class " + baseClassDescriptor.getClassNameOfObject());
+        } else if (StringUtils.equals(baseClassDescriptor.getClassNameOfObject(), extentClassDescriptor.getClassNameOfObject())) {
+            throw new PersistenceBrokerException("The base class descriptor for " + baseClassDescriptor.getClassNameOfObject()
+                    + " should not have been selected as the implicit descriptor for extent class " + extentClassName);
         }
         
         return extentClassDescriptor;
