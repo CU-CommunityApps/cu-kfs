@@ -212,6 +212,7 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CANNOT_SPECIFY_CHANGES_AND_ADDITIONS = "error.document.subAccountGlobal.cannotSpecifyChangesAndAdditions";
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_FIELD_FOR_NEW_SUB_ACCOUNT = "error.document.subAccountGlobal.requiredFieldForNewSubAccount";
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_ACCOUNT_FOR_NEW_SUB_ACCOUNT_NOT_FOUND = "error.document.subAccountGlobal.accountForNewSubAccountNotFound";
+    public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_ACCOUNT_FOR_NEW_SUB_ACCOUNT_CLOSED = "error.document.subAccountGlobal.accountForNewSubAccountClosed";
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_GLOBAL_FIELD = "error.document.subAccountGlobal.nonBlankGlobalField";
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_GLOBAL_FIELD = "error.document.subAccountGlobal.requiredGlobalField";
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_BLANK_LINE_FIELD = "error.document.subAccountGlobal.nonBlankLineField";
