@@ -114,7 +114,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
         PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
         contractsGrantsInvoiceDocument = PowerMockito.spy(new ContractsGrantsInvoiceDocument());
         
-        CuAward award = PowerMockito.spy(new CuAward());
+        CuAward award = new CuAward();
         award.setAwardIndirectCostAmount(new KualiDecimal(50));
         award.setAwardDirectCostAmount(new KualiDecimal(50));
         
