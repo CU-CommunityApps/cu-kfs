@@ -24,7 +24,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extend
             AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) cuAward.getExtension();
             return contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getTotalAmountBilledToDate().isGreaterThan(awardExtension.getBudgetTotalAmount());
         } else {
-            LOG.debug("shouldSuspend, validating based on ward total");
+            LOG.debug("shouldSuspend, validating based on award total");
             return super.shouldSuspend(contractsGrantsInvoiceDocument);
         }
     }
