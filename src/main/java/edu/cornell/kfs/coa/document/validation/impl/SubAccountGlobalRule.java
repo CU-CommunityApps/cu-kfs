@@ -465,11 +465,11 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         }
         
         boolean newAccountFieldsAreEntered = checkAppropriateNewAccountFieldsAreEnteredBasedOnApplyAllCheckboxStatus(subAccountGlobal);
-        boolean accountsExist = checkAccountsExist(subAccountGlobal);
-        boolean success = newAccountFieldsAreEntered && accountsExist;
+        boolean accountsExistAndAreOpen = checkAccountsExistAndAreOpen(subAccountGlobal);
+        boolean success = newAccountFieldsAreEntered && accountsExistAndAreOpen;
         success &= checkBasicGlobalFieldsAndEditSubAccountSectionAreEmpty(subAccountGlobal);
         success &= checkSubAccountTypeIsSpecified(subAccountGlobal);
-        if (accountsExist) {
+        if (accountsExistAndAreOpen) {
             if (newAccountFieldsAreEntered) {
                 success &= checkDuplicateOrExistingSubAccountsAreNotPresent(subAccountGlobal);
             }
@@ -523,17 +523,23 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         return true;
     }
     
-    protected boolean checkAccountsExist(SubAccountGlobal subAccountGlobal) {
+    protected boolean checkAccountsExistAndAreOpen(SubAccountGlobal subAccountGlobal) {
         boolean success = true;
         int i = 0;
         for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
             newAccountDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
-            if (ObjectUtils.isNull(newAccountDetail.getAccount())) {
+            Account account = newAccountDetail.getAccount();
+            if (ObjectUtils.isNull(account)) {
                 String propertyName = buildListObjectPropertyPath(
                         CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, KFSPropertyConstants.ACCOUNT_NUMBER, i);
                 putFieldError(propertyName, CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_ACCOUNT_FOR_NEW_SUB_ACCOUNT_NOT_FOUND,
                         new String[] {newAccountDetail.getChartOfAccountsCode(), newAccountDetail.getAccountNumber()});
                 success = false;
+            } else if (account.isClosed()) {
+                String propertyName = buildListObjectPropertyPath(
+                        CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, KFSPropertyConstants.ACCOUNT_NUMBER, i);
+                putFieldError(propertyName, CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_ACCOUNT_FOR_NEW_SUB_ACCOUNT_CLOSED,
+                        new String[] {newAccountDetail.getChartOfAccountsCode(), newAccountDetail.getAccountNumber()});
             }
             i++;
         }
