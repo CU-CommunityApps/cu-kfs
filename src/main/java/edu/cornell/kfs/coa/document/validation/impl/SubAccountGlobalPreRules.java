@@ -6,7 +6,6 @@ import org.kuali.kfs.coa.document.validation.impl.MaintenancePreRulesBase;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
@@ -67,7 +66,7 @@ public class SubAccountGlobalPreRules extends MaintenancePreRulesBase{
 
     protected boolean checkContinuationAccountsForNewSubAccounts(MaintenanceDocument maintenanceDocument) {
         SubAccountGlobal subAccountGlobal = (SubAccountGlobal) maintenanceDocument.getNewMaintainableObject().getBusinessObject();
-        subAccountGlobal.getSubAccountGlobalNewAccountDetails().stream()
+        subAccountGlobal.getSubAccountGlobalNewAccountDetails()
                 .forEach(this::updateDetailToUseContinuationAccountIfNecessary);
         return true;
     }
