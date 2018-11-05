@@ -20,13 +20,6 @@
 				<value>edu/cornell/kfs/module/cg/cu-ojb-cg.xml</value>
 			</list>
 		</property>
-		<property name="externalizableBusinessObjectImplementations">
-            <map merge="true">
-                <entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsAward" value="edu.cornell.kfs.module.cg.businessobject.CuAward" />
-				<entry key="org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward" value="edu.cornell.kfs.module.cg.businessobject.CuAward" />
-				<entry key="org.kuali.kfs.module.cg.businessobject.Award" value="edu.cornell.kfs.module.cg.businessobject.CuAward" />
-			</map>
-        </property>
 	</bean>
 
 	<bean id="awardAccountDao" parent="platformAwareDao"  class="edu.cornell.kfs.module.cg.dataaccess.impl.AwardAccountDaoOjb" />

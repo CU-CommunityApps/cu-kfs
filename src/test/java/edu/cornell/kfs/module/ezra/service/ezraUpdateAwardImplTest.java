@@ -11,16 +11,15 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.context.KualiTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
-import edu.cornell.kfs.module.cg.businessobject.CuAward;
 import edu.cornell.kfs.module.ezra.businessobject.EzraProposalAward;
 import edu.cornell.kfs.module.ezra.dataaccess.EzraAwardProposalDao;
 
@@ -76,14 +75,14 @@ public class ezraUpdateAwardImplTest extends KualiTestBase {
             ezraAward = awards.get(0);
             fields.clear();
             fields.put("proposalNumber", ezraAward.getProjectId());             
-            Award award = (CuAward)businessObjectService.findByPrimaryKey(CuAward.class, fields);
+            Award award = businessObjectService.findByPrimaryKey(Award.class, fields);
             award.setAwardProjectTitle(awardProjectTitle);
             getAwardExtension(award).setBudgetBeginningDate(new Date(budgetStartDate.getTime()));
             getAwardExtension(award).setBudgetEndingDate(new Date(budgetEndDate.getTime()));
             getAwardExtension(award).setBudgetTotalAmount(budgetTotal);
             businessObjectService.save(award);
             assertTrue(ezraService.updateAwardsSince(sqlDate));
-            Award awardAfter = (CuAward)businessObjectService.findByPrimaryKey(CuAward.class, fields);
+            Award awardAfter = businessObjectService.findByPrimaryKey(Award.class, fields);
             awardProjectTitleAfter = awardAfter.getAwardProjectTitle();
             budgetStartDateAfter = getAwardExtension(awardAfter).getBudgetBeginningDate();
             budgetEndDateAfter = getAwardExtension(awardAfter).getBudgetEndingDate();
