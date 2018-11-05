@@ -42,8 +42,6 @@
 		  class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
 		  parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
 
-	<bean id="milestoneDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ar.dataaccess.impl.CuMilestoneDaoOjb"/>
-
 	<bean id="contractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean"
 		  class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsInvoiceDocumentServiceImpl"  />
 
