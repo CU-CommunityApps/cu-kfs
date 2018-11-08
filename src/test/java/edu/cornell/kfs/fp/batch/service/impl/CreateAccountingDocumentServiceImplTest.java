@@ -836,24 +836,25 @@ public class CreateAccountingDocumentServiceImplTest {
         }
 
         @Override
-        public void createAccountingDocumentsFromXml() {
+        public boolean createAccountingDocumentsFromXml() {
             Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
             UserSession systemUserSession = MockPersonUtil.createMockUserSession(systemUser);
-            
+
+            boolean result = false;
             try {
-                GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
-                    super.createAccountingDocumentsFromXml();
-                    return null;
+            	result = GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
+                	return super.createAccountingDocumentsFromXml();
                 });
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            return  result;
         }
 
         @Override
-        protected void processAccountingDocumentFromXml(String fileName) {
+        protected boolean processAccountingDocumentFromXml(String fileName) {
             processingOrderedBaseFileNames.add(convertToBaseFileName(fileName));
-            super.processAccountingDocumentFromXml(fileName);
+            return super.processAccountingDocumentFromXml(fileName);
         }
 
         private String convertToBaseFileName(String fileName) {
