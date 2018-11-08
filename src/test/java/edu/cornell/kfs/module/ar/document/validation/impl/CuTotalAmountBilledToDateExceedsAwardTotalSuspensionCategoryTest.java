@@ -81,7 +81,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     @Test
     public void testSuspensionByBudgetAmounNullBudgetTotalt() {
         configureParameterServiceForSuspensionCheck(Boolean.TRUE);
-        prepareContractsGrantsInvoiceDocument(new KualiDecimal(55), STANDARD_AWARD_TOTAL, null);
+        prepareContractsGrantsInvoiceDocument(new KualiDecimal(1), STANDARD_AWARD_TOTAL, null);
         assertTrue(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
     }
     

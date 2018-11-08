@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.ar.document.validation.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.validation.impl.TotalAmountBilledToDateExceedsAwardTotalSuspensionCategory;
@@ -26,8 +27,13 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extend
             Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
             AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
             KualiDecimal budgetTotalAmount = awardExtension.getBudgetTotalAmount();
-            
-            LOG.info("shouldSuspend, award proposal number: " + award.getProposalNumber() + " totalAmountBilledToDate: " + totalAmountBilledToDate + " budgetTotalAmount: " + budgetTotalAmount);
+            if (ObjectUtils.isNull(budgetTotalAmount)) {
+                LOG.error("shouldSuspend, no budget amount set, setting budget amount to 0, wich will cause a suspension.");
+                budgetTotalAmount = KualiDecimal.ZERO;
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("shouldSuspend, award proposal number: " + award.getProposalNumber() + " totalAmountBilledToDate: " + totalAmountBilledToDate + " budgetTotalAmount: " + budgetTotalAmount);
+            }
             return totalAmountBilledToDate.isGreaterThan(budgetTotalAmount);
         } else {
             LOG.debug("shouldSuspend, validating based on award total");
