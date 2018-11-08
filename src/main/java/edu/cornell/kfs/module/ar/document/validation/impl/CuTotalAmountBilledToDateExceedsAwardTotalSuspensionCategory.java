@@ -6,10 +6,11 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.validation.impl.TotalAmountBilledToDateExceedsAwardTotalSuspensionCategory;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
-import edu.cornell.kfs.module.cg.businessobject.CuAward;
 
 public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extends TotalAmountBilledToDateExceedsAwardTotalSuspensionCategory {
     private static final Logger LOG = LogManager.getLogger(CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory.class);
@@ -20,9 +21,14 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extend
     public boolean shouldSuspend(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         if (shouldValidateOnBudgetTotal()) {
             LOG.debug("shouldSuspend, validating based on award budget total");
-            CuAward cuAward = (CuAward) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
-            AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) cuAward.getExtension();
-            return contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getTotalAmountBilledToDate().isGreaterThan(awardExtension.getBudgetTotalAmount());
+            KualiDecimal totalAmountBilledToDate = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getTotalAmountBilledToDate();
+            
+            Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+            AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+            KualiDecimal budgetTotalAmount = awardExtension.getBudgetTotalAmount();
+            
+            LOG.info("shouldSuspend, award proposal number: " + award.getProposalNumber() + " totalAmountBilledToDate: " + totalAmountBilledToDate + " budgetTotalAmount: " + budgetTotalAmount);
+            return totalAmountBilledToDate.isGreaterThan(budgetTotalAmount);
         } else {
             LOG.debug("shouldSuspend, validating based on award total");
             return super.shouldSuspend(contractsGrantsInvoiceDocument);
