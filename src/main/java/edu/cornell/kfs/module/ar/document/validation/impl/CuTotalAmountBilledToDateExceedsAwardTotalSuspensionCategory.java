@@ -28,7 +28,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extend
             AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
             KualiDecimal budgetTotalAmount = awardExtension.getBudgetTotalAmount();
             if (ObjectUtils.isNull(budgetTotalAmount)) {
-                LOG.error("shouldSuspend, no budget amount set, setting budget amount to 0, wich will cause a suspension.");
+                LOG.error("shouldSuspend, no budget amount set, setting budget amount to 0, which will cause a suspension.");
                 budgetTotalAmount = KualiDecimal.ZERO;
             }
             if (LOG.isDebugEnabled()) {
@@ -43,7 +43,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory extend
     
     protected boolean shouldValidateOnBudgetTotal() {
         Boolean validateOnBudgetTotal = parameterService.getParameterValueAsBoolean(ArConstants.AR_NAMESPACE_CODE, ArConstants.CONTRACTS_GRANTS_INVOICE_COMPONENT, 
-                CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENSION_BY_BUDGET_TOTAL, Boolean.TRUE.booleanValue());
+                CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENSION_BY_BUDGET_TOTAL, Boolean.TRUE);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("shouldValidateOnBudgetTotal, the value of " + CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENSION_BY_BUDGET_TOTAL + " is " + validateOnBudgetTotal.booleanValue());

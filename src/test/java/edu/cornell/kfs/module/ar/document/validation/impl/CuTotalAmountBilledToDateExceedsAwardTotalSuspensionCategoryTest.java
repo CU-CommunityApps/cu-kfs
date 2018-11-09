@@ -22,7 +22,7 @@ import edu.cornell.kfs.module.ar.CuArConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Award.class, ContractsGrantsInvoiceDocument.class})
+@PrepareForTest({ContractsGrantsInvoiceDocument.class})
 public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     
     private CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory suspensionCategory;
@@ -79,7 +79,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     }
     
     @Test
-    public void testSuspensionByBudgetAmounNullBudgetTotalt() {
+    public void testSuspensionByBudgetAmounNullBudgetTotal() {
         configureParameterServiceForSuspensionCheck(Boolean.TRUE);
         prepareContractsGrantsInvoiceDocument(new KualiDecimal(1), STANDARD_AWARD_TOTAL, null);
         assertTrue(suspensionCategory.shouldSuspend(contractsGrantsInvoiceDocument));
@@ -115,7 +115,7 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     
     private void configureParameterServiceForSuspensionCheck(Boolean value) {
         Mockito.when(parameterService.getParameterValueAsBoolean(ArConstants.AR_NAMESPACE_CODE, 
-                ArConstants.CONTRACTS_GRANTS_INVOICE_COMPONENT, CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENSION_BY_BUDGET_TOTAL, Boolean.TRUE.booleanValue())).thenReturn(value);
+                ArConstants.CONTRACTS_GRANTS_INVOICE_COMPONENT, CuArConstants.CG_INVOICE_AMT_BILLED_SUSPENSION_BY_BUDGET_TOTAL, Boolean.TRUE)).thenReturn(value);
         suspensionCategory.setParameterService(parameterService);
     }
     
