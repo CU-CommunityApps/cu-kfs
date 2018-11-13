@@ -17,7 +17,6 @@
             <ref bean="AwardExtendedAttribute-budgetEndingDate"/>
             <ref bean="AwardExtendedAttribute-budgetTotalAmount"/>
             <ref bean="AwardExtendedAttribute-everify"/>
-            <ref bean="AwardExtendedAttribute-letterOfCreditFundGroupCode"/>
       </list> 
     </property> 
     </bean> 
@@ -100,17 +99,5 @@
         </property>
         <property name="formatterClass" value="org.kuali.rice.core.web.format.BooleanFormatter"/>
   	</bean>
-
-    <bean id="AwardExtendedAttribute-letterOfCreditFundGroupCode" parent="AwardExtendedAttribute-letterOfCreditFundGroupCode-parentBean"/>
-    <bean id="AwardExtendedAttribute-letterOfCreditFundGroupCode-parentBean" abstract="true"
-          parent="LetterOfCreditFundGroup-letterOfCreditFundGroupCode">
-        <property name="name" value="letterOfCreditFundGroupCode"/>
-        <property name="label" value="Letter Of Credit Fund Group"/>
-        <property name="control">
-            <bean parent="SelectControlDefinition"
-                  p:valuesFinder-ref="letterOfCreditFundGroupValuesFinder"
-                  p:includeKeyInLabel="false"/>
-        </property>
-    </bean>
 
 </beans> 

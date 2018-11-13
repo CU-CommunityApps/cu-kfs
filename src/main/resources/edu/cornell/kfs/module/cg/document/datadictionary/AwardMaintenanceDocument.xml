@@ -19,6 +19,7 @@
     -->
 
     <bean id="AwardMaintenanceDocument" parent="AwardMaintenanceDocument-parentBean">
+        <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
         <property name="maintainableClass" value="edu.cornell.kfs.module.cg.document.CuAwardMaintainableImpl"/>
         <property name="defaultExistenceChecks">
             <list>
@@ -28,8 +29,8 @@
                       p:attributeToHighlightOnFail="proposalAwardTypeCode"/>
                 <bean parent="ReferenceDefinition" p:attributeName="awardStatus"
                       p:attributeToHighlightOnFail="awardStatusCode"/>
-                <bean parent="ReferenceDefinition" p:attributeName="extension.letterOfCreditFundGroup"
-                      p:attributeToHighlightOnFail="extension.letterOfCreditFundGroupCode"/>
+                <bean parent="ReferenceDefinition" p:attributeName="letterOfCreditFundGroup"
+                      p:attributeToHighlightOnFail="letterOfCreditFundGroupCode"/>
                 <bean parent="ReferenceDefinition" p:attributeName="grantDescription"
                       p:attributeToHighlightOnFail="grantDescriptionCode"/>
                 <bean parent="ReferenceDefinition" p:attributeName="agency"
@@ -59,7 +60,7 @@
                     </property>
                     <property name="insertAfter">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="extension.letterOfCreditFundGroupCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="letterOfCreditFundGroupCode"/>
                             <bean parent="MaintainableFieldDefinition" p:name="extension.locAccountId"/>
                         </list>
                     </property>
@@ -156,6 +157,21 @@
     <bean id="AwardMaintenanceDocument-RoutingAttribute-Award"
           class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
         <property name="qualificationAttributeName" value="contractsAndGrantsAccountResponsibilityId"/>
+    </bean>
+
+    <bean id="AwardMaintenanceDocument-SearchingType-awardStatus"
+          class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+        <property name="searchingAttribute">
+            <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
+                <property name="businessObjectClassName" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
+                <property name="attributeName" value="awardStatusCode"/>
+            </bean>
+        </property>
+        <property name="documentValues">
+            <list>
+                <value>newMaintainableObject.businessObject.awardStatusCode</value>
+            </list>
+        </property>
     </bean>
 
 </beans>

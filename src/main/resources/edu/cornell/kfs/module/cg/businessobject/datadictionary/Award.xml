@@ -21,9 +21,10 @@
     <import resource="classpath:org/kuali/kfs/module/ar/ar-lookup-beans.xml"/>
 
     <bean id="Award" parent="Award-parentBean">
+        <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
         <property name="attributes">
             <list merge="true">
-                <ref bean="Award-extension-letterOfCreditFundGroupCode"/>
+                <ref bean="Award-letterOfCreditFundGroupCode"/>
                 <ref bean="Award-extension-costShareRequired"/>
                 <ref bean="Award-extension-finalFiscalReportDate"/>
                 <ref bean="Award-extension-finalFinancialReportRequired"/>
@@ -32,16 +33,16 @@
                 <ref bean="Award-extension-budgetBeginningDate"/>
                 <ref bean="Award-extension-budgetEndingDate"/>
                 <ref bean="Award-extension-budgetTotalAmount"/>
-                <ref bean="Award-extension-invoiceLink"/>
+                <ref bean="Award-invoiceLink"/>
             </list>
         </property>
     </bean>
 
-    <bean id="Award-extension-letterOfCreditFundGroupCode" parent="Award-extension-letterOfCreditFundGroupCode-parentBean"/>
+    <bean id="Award-letterOfCreditFundGroupCode" parent="Award-letterOfCreditFundGroupCode-parentBean"/>
 
-    <bean id="Award-extension-letterOfCreditFundGroupCode-parentBean" abstract="true"
+    <bean id="Award-letterOfCreditFundGroupCode-parentBean" abstract="true"
           parent="LetterOfCreditFundGroup-letterOfCreditFundGroupCode">
-        <property name="name" value="extension.letterOfCreditFundGroupCode"/>
+        <property name="name" value="letterOfCreditFundGroupCode"/>
         <property name="label" value="Letter Of Credit Fund Group"/>
         <property name="control">
             <bean parent="SelectControlDefinition"
@@ -118,9 +119,9 @@
         <property name="name" value="extension.budgetTotalAmount"/>
     </bean>
     
-    <bean id="Award-extension-invoiceLink" parent="Award-extension-invoiceLink-parentBean"/>
-    <bean id="Award-extension-invoiceLink-parentBean" abstract="true" parent="AttributeDefinition">
-        <property name="name" value="extension.invoiceLink"/>
+    <bean id="Award-invoiceLink" parent="Award-invoiceLink-parentBean"/>
+    <bean id="Award-invoiceLink-parentBean" abstract="true" parent="AttributeDefinition">
+        <property name="name" value="invoiceLink"/>
         <property name="label" value="Invoices"/>
         <property name="control">
             <bean parent="TextControlDefinition" p:size="15"/>
@@ -139,7 +140,7 @@
                     </property>
                     <property name="insertAfter">
                         <list>
-                            <bean parent="FieldDefinition" p:attributeName="extension.letterOfCreditFundGroupCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="letterOfCreditFundGroupCode"/>
                             <bean parent="FieldDefinition" p:attributeName="extension.locAccountId"/>
                             <bean parent="FieldDefinition" p:attributeName="extension.costShareRequired"/>
                             <bean parent="FieldDefinition" p:attributeName="extension.finalFiscalReportDate"/>
@@ -189,7 +190,7 @@
                    </property>
                    <property name="insertBefore">
                        <list>
-                           <bean parent="FieldDefinition" p:attributeName="extension.invoiceLink" />
+                           <bean parent="FieldDefinition" p:attributeName="invoiceLink" />
                        </list>
                    </property>
                </bean>
