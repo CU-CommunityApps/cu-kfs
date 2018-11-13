@@ -535,6 +535,11 @@
                 <match>edu.cornell.kfs.vnd.businessobject.CuVendorChapter4Status</match>
                 <replacement>org.kuali.kfs.vnd.businessobject.Chapter4Status</replacement>
             </pattern>
+            <!-- KFSPTS-13687 -->
+            <pattern>
+                <match>edu.cornell.kfs.module.cg.businessobject.CuAward</match>
+                <replacement>org.kuali.kfs.module.cg.businessobject.Award</replacement>
+            </pattern>
             <!-- Moved the following entries over from the "maint_doc_classname_changes" section. -->
             <pattern>
                 <match>org.kuali.rice.kns.bo.CampusImpl</match>
