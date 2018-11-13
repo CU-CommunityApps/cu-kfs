@@ -21,7 +21,6 @@
     <import resource="classpath:org/kuali/kfs/module/ar/ar-lookup-beans.xml"/>
 
     <bean id="Award" parent="Award-parentBean">
-        <property name="businessObjectClass" value="edu.cornell.kfs.module.cg.businessobject.CuAward"/>
         <property name="attributes">
             <list merge="true">
                 <ref bean="Award-letterOfCreditFundGroupCode"/>
