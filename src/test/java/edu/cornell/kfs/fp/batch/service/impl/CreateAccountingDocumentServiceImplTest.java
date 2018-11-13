@@ -87,6 +87,7 @@ import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
+import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImpl.CreateAccountingDocumentLogReport;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
@@ -325,13 +326,49 @@ public class CreateAccountingDocumentServiceImplTest {
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
     }
-
-
+    
+    @Test
+    public void testEmptyFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-file-test");
+        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertFalse("An empty file should fail this job", results);
+    }
+    
+    @Test
+    public void testEmptyFileWithGoodFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-file-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST,
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testBadXmlFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-xml-test");
+        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertFalse("XML That can not be marshalled should fail", results);
+    }
+    
+    @Test
+    public void testBadXmlEmptyFIleWithGoodFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-xml-test", "empty-file-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST, 
+                AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST, AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
-        createAccountingDocumentService.createAccountingDocumentsFromXml();
+        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertDocumentsWereCreatedAndRoutedCorrectly(fixtures);
         assertDoneFilesWereDeleted();
+        assertActualResultsAreExpected(results, fixtures);
+    }
+    
+    private void assertActualResultsAreExpected(boolean actualResults, AccountingXmlDocumentListWrapperFixture... fixtures) {
+        Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap = buildFileNameToFixtureMap(fixtures);
+        boolean expectedResult = true;
+        for (AccountingXmlDocumentListWrapperFixture xmlFixture : fileNameToFixtureMap.values()) {
+            expectedResult &= xmlFixture.expectedResults;
+        }
+        assertEquals("The expected result should equal the actual result", expectedResult, actualResults);
     }
 
     private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentListWrapperFixture... fixtures) {
@@ -703,8 +740,6 @@ public class CreateAccountingDocumentServiceImplTest {
         String groupCode = invocation.getArgument(0);
         return WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCode);
     }
-    
-    
 
     private FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
         List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
@@ -852,9 +887,9 @@ public class CreateAccountingDocumentServiceImplTest {
         }
 
         @Override
-        protected boolean processAccountingDocumentFromXml(String fileName) {
+        protected void processAccountingDocumentFromXml(String fileName, CreateAccountingDocumentLogReport logReport) {
             processingOrderedBaseFileNames.add(convertToBaseFileName(fileName));
-            return super.processAccountingDocumentFromXml(fileName);
+            super.processAccountingDocumentFromXml(fileName, logReport);
         }
 
         private String convertToBaseFileName(String fileName) {

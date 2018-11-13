@@ -55,15 +55,20 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     public boolean createAccountingDocumentsFromXml() {
         List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(accountingDocumentBatchInputFileType);
         LOG.info("createAccountingDocumentsFromXml: Found " + inputFileNames.size() + " files to process");
-        List <Boolean> results = new ArrayList<Boolean>();
-        inputFileNames.stream()
-                .forEach(fileName -> {results.add(processAccountingDocumentFromXml(fileName));});
         
+        CreateAccountingDocumentLogReport logReport = new CreateAccountingDocumentLogReport();
+        
+        inputFileNames.stream()
+                .forEach(fileName -> {processAccountingDocumentFromXml(fileName, logReport);});
+        
+        LOG.info("createAccountingDocumentsFromXml, files with non business rule errors: " + logReport.getFilesWithNonBusinessRuleFailures());
+        LOG.info("createAccountingDocumentsFromXml, files without non business rule errors: " + logReport.getFilesWithoutNonBusinessRuleFailures());
         LOG.info("createAccountingDocumentsFromXml: Finished processing all pending accounting document XML files");
-        return !results.contains(Boolean.FALSE);
+        
+        return logReport.getFilesWithNonBusinessRuleFailures().isEmpty();
     }
 
-    protected boolean processAccountingDocumentFromXml(String fileName) {
+    protected void processAccountingDocumentFromXml(String fileName, CreateAccountingDocumentLogReport logReport) {
         CreateAccountingDocumentReportItem reportItem = new CreateAccountingDocumentReportItem(fileName);
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
@@ -92,7 +97,12 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             removeDoneFileQuietly(fileName);
             createAndEmailReport(reportItem);
         }
-        return !reportItem.isNonBusinessRuleFailure();
+        if (reportItem.isNonBusinessRuleFailure()) {
+            logReport.getFilesWithNonBusinessRuleFailures().add(fileName);
+        } else {
+            logReport.getFilesWithoutNonBusinessRuleFailures().add(fileName);
+        }
+        
     }
 
     protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItem reportItem) {
@@ -234,6 +244,26 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+    
+    protected class CreateAccountingDocumentLogReport {
+        private List<String> filesWithNonBusinessRuleFailures;
+        private List<String> filesWithoutNonBusinessRuleFailures;
+        
+        public CreateAccountingDocumentLogReport() {
+            filesWithNonBusinessRuleFailures = new ArrayList<String>();
+            filesWithoutNonBusinessRuleFailures = new ArrayList<String>();
+        }
+
+        public List<String> getFilesWithNonBusinessRuleFailures() {
+            return filesWithNonBusinessRuleFailures;
+        }
+
+        public List<String> getFilesWithoutNonBusinessRuleFailures() {
+            return filesWithoutNonBusinessRuleFailures;
+        }
+        
+        
     }
 
 }

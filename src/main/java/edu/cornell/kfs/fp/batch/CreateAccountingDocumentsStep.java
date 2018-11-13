@@ -19,7 +19,7 @@ public class CreateAccountingDocumentsStep extends AbstractStep {
 		try {
 			return createAccountingDocumentService.createAccountingDocumentsFromXml();
 		} catch (Exception e) {
-			LOG.error("An error has ocurred while processing input files: " + e.getMessage());
+			LOG.error("execute, An error has ocurred while processing input files: " + e.getMessage(), e);
 			return false;
 		}
     }
