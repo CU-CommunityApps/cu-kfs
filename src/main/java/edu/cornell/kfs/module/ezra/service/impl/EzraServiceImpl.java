@@ -41,6 +41,7 @@ import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.module.cg.CuCGParameterConstants;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.module.cg.businessobject.CuAward;
 import edu.cornell.kfs.module.ezra.EzraPropertyConstants;
 import edu.cornell.kfs.module.ezra.businessobject.Compliance;
 import edu.cornell.kfs.module.ezra.businessobject.Deliverable;
@@ -129,7 +130,7 @@ public class EzraServiceImpl implements EzraService {
 			String proposalId = ezraAward.getProjectId();
 			fields.clear();
 			fields.put("proposalNumber", proposalId);
-			Award award = businessObjectService.findByPrimaryKey(Award.class, fields);
+			Award award = (CuAward)businessObjectService.findByPrimaryKey(CuAward.class, fields);
 			if (award == null) {
 				LOG.error("Award: "+proposalId +" is null and probably should have already been created");
 			} else {
@@ -163,7 +164,7 @@ public class EzraServiceImpl implements EzraService {
 	}
 	
 	protected Award createAward(Proposal proposal, Award oldAward, EzraProposalAward ezraAward) {
-		Award award = new Award(proposal);
+		Award award = new CuAward(proposal);
 		award.setProposal(proposal);
 		award.setAwardStatusCode(proposal.getProposalStatusCode());
 		award.setAwardBeginningDate(proposal.getProposalBeginningDate());
@@ -293,8 +294,7 @@ public class EzraServiceImpl implements EzraService {
 	
     protected void setAwardInvoicingInfo(Award award, Award oldAward) {
         award.setLetterOfCreditFundCode(oldAward.getLetterOfCreditFundCode());
-        ((AwardExtendedAttribute) award.getExtension()).setLetterOfCreditFundGroupCode(
-                ((AwardExtendedAttribute) oldAward.getExtension()).getLetterOfCreditFundGroupCode());
+        ((CuAward) award).setLetterOfCreditFundGroupCode(((CuAward) oldAward).getLetterOfCreditFundGroupCode());
         award.setBillingFrequencyCode(oldAward.getBillingFrequencyCode());
         award.setInvoicingOptionCode(oldAward.getInvoicingOptionCode());
         award.setInvoicingOptionCode(oldAward.getInvoicingOptionCode());
