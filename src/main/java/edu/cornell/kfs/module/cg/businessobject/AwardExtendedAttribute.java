@@ -7,7 +7,6 @@ import java.sql.Date;
 
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtensionBase;
-import org.kuali.kfs.module.cg.businessobject.LetterOfCreditFundGroup;
 
 
 /**
@@ -26,10 +25,6 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	private Date budgetEndingDate;
 	private KualiDecimal budgetTotalAmount;
 	private boolean everify;
-
-    private String letterOfCreditFundGroupCode;
-    private LetterOfCreditFundGroup letterOfCreditFundGroup;
-    private transient String invoiceLink;
 
 	public boolean isCostShareRequired() {
 		return costShareRequired;
@@ -102,29 +97,5 @@ public class AwardExtendedAttribute extends PersistableBusinessObjectExtensionBa
 	public void setEverify(boolean everify) {
 	    this.everify = everify;
 	}
-
-    public String getLetterOfCreditFundGroupCode() {
-        return letterOfCreditFundGroupCode;
-    }
-
-    public void setLetterOfCreditFundGroupCode(String letterOfCreditFundGroupCode) {
-        this.letterOfCreditFundGroupCode = letterOfCreditFundGroupCode;
-    }
-
-    public LetterOfCreditFundGroup getLetterOfCreditFundGroup() {
-        return letterOfCreditFundGroup;
-    }
-
-    public void setLetterOfCreditFundGroup(LetterOfCreditFundGroup letterOfCreditFundGroup) {
-        this.letterOfCreditFundGroup = letterOfCreditFundGroup;
-    }
-
-    public String getInvoiceLink() {
-        return invoiceLink;
-    }
-
-    public void setInvoiceLink(String invoiceLink) {
-        this.invoiceLink = invoiceLink;
-    }
 
 }

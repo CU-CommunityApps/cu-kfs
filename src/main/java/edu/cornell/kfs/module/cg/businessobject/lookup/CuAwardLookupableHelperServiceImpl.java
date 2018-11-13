@@ -37,7 +37,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     private static final Logger LOG = LogManager.getLogger(CuAwardLookupableHelperServiceImpl.class);
     
     private static final String VIEW_INVOICES_LINK_VALUE = "View Invoices";
-    private static final String INVOICE_LINK_COLUMN_NAME = "extension.invoiceLink";
+    private static final String INVOICE_LINK_COLUMN_NAME = "invoiceLink";
     
     protected DocumentHelperService documentHelperService;
     protected PermissionService permissionService;
