@@ -357,21 +357,11 @@ public class CreateAccountingDocumentServiceImplTest {
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
         boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
-        assertDocumentsWereCreatedAndRoutedCorrectly(fixtures);
+        assertDocumentsWereCreatedAndRoutedCorrectly(results, fixtures);
         assertDoneFilesWereDeleted();
-        assertActualResultsAreExpected(results, fixtures);
-    }
-    
-    private void assertActualResultsAreExpected(boolean actualResults, AccountingXmlDocumentListWrapperFixture... fixtures) {
-        Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap = buildFileNameToFixtureMap(fixtures);
-        boolean expectedResult = true;
-        for (AccountingXmlDocumentListWrapperFixture xmlFixture : fileNameToFixtureMap.values()) {
-            expectedResult &= xmlFixture.expectedResults;
-        }
-        assertEquals("The expected result should equal the actual result", expectedResult, actualResults);
     }
 
-    private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentListWrapperFixture... fixtures) {
+    private void assertDocumentsWereCreatedAndRoutedCorrectly(boolean actualResults, AccountingXmlDocumentListWrapperFixture... fixtures) {
         Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap = buildFileNameToFixtureMap(fixtures);
         
         AccountingXmlDocumentEntryFixture[] processingOrderedDocumentFixtures = createAccountingDocumentService.getProcessingOrderedBaseFileNames()
@@ -381,6 +371,16 @@ public class CreateAccountingDocumentServiceImplTest {
                 .toArray(AccountingXmlDocumentEntryFixture[]::new);
         
         assertDocumentsWereCreatedAndRoutedCorrectly(processingOrderedDocumentFixtures);
+        
+        assertActualResultsAreExpected(actualResults, fileNameToFixtureMap);
+    }
+    
+    private void assertActualResultsAreExpected(boolean actualResults, Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap) {
+        boolean expectedResult = true;
+        for (AccountingXmlDocumentListWrapperFixture xmlFixture : fileNameToFixtureMap.values()) {
+            expectedResult &= xmlFixture.expectedResults;
+        }
+        assertEquals("The expected result should equal the actual result", expectedResult, actualResults);
     }
 
     private Map<String, AccountingXmlDocumentListWrapperFixture> buildFileNameToFixtureMap(
