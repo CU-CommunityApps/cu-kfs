@@ -127,7 +127,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             detail.setSuccessfullyRouted(true);
             detail.setDocumentNumber(document.getDocumentNumber());
             reportItem.getDocumentsSuccessfullyRouted().add(detail);
-        } catch (Exception e) {
+        } catch (RuntimeException | WorkflowException e) {
             detail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
                 String errorMessage = buildValidationErrorMessage((ValidationException) e);

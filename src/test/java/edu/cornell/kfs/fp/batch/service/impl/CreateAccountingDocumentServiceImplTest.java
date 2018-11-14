@@ -48,6 +48,7 @@ import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.YearEndDistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
@@ -73,6 +74,7 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -87,7 +89,6 @@ import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
-import edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImpl.CreateAccountingDocumentLogReport;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
@@ -353,6 +354,16 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("bad-xml-test", "empty-file-test", "multi-yedi-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST, 
                 AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST, AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testServiceError() throws Exception {
+        createAccountingDocumentService = Mockito.spy(createAccountingDocumentService);
+        Mockito.when(createAccountingDocumentService.getNewDocument(YearEndDistributionOfIncomeAndExpenseDocument.class)).
+            thenThrow(new ResourceLoaderException("Emulate problem getting services"));
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
+        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertFalse("When there is a problem calling services, the job should fail", results);
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
