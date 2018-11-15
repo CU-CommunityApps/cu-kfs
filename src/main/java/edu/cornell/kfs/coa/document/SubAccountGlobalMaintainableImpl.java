@@ -1,24 +1,20 @@
 package edu.cornell.kfs.coa.document;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.businessobject.A21SubAccountChange;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobal;
 import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
-import edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail;
-import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 
 public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaintainable {
 	private static final String REQUIRES_CG_APPROVAL_NODE = "RequiresCGResponsibilityApproval";
@@ -49,29 +45,7 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
             maintenanceLock.setLockingRepresentation(lockrep.toString());
             maintenanceLocks.add(maintenanceLock);
         }
-        
-        for (SubAccountGlobalNewAccountDetail newAccountDetail : subAccountGlobal.getSubAccountGlobalNewAccountDetails()) {
-            MaintenanceLock maintenanceLock = new MaintenanceLock();
-            maintenanceLock.setDocumentNumber(subAccountGlobal.getDocumentNumber());
-            maintenanceLock.setLockingRepresentation(buildLockRepForNewSubAccount(subAccountGlobal, newAccountDetail));
-            maintenanceLocks.add(maintenanceLock);
-        }
-        
         return maintenanceLocks;
-    }
-    
-    protected String buildLockRepForNewSubAccount(SubAccountGlobal subAccountGlobal, SubAccountGlobalNewAccountDetail newAccountDetail) {
-        String subAccountNumber = subAccountGlobal.isApplyToAllNewSubAccounts()
-                ? subAccountGlobal.getNewSubAccountNumber() : newAccountDetail.getSubAccountNumber();
-        StringBuilder lockrep = new StringBuilder();
-        lockrep.append(Account.class.getName()).append(KFSConstants.Maintenance.AFTER_CLASS_DELIM);
-        lockrep.append(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE).append(KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
-        lockrep.append(newAccountDetail.getChartOfAccountsCode()).append(KFSConstants.Maintenance.AFTER_VALUE_DELIM);
-        lockrep.append(KFSPropertyConstants.ACCOUNT_NUMBER).append(KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
-        lockrep.append(newAccountDetail.getAccountNumber()).append(KFSConstants.Maintenance.AFTER_VALUE_DELIM);
-        lockrep.append(KFSPropertyConstants.SUB_ACCOUNT_NUMBER).append(KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM);
-        lockrep.append(subAccountNumber).append(KFSConstants.Maintenance.AFTER_VALUE_DELIM);
-        return lockrep.toString();
     }
     
     /**
@@ -116,10 +90,6 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
         	}
         }
 
-        if (StringUtils.equals(KFSConstants.SubAccountType.COST_SHARE, subAccountGlobal.getNewSubAccountTypeCode())) {
-            retval = true;
-        }
-
         return retval; 
     }
 
@@ -129,45 +99,6 @@ public class SubAccountGlobalMaintainableImpl extends FinancialSystemGlobalMaint
     @Override
     public Class<? extends PersistableBusinessObject> getPrimaryEditedBusinessObjectClass() {
         return SubAccount.class;
-    }
-    
-    @Override
-    public void addNewLineToCollection(String collectionName) {
-        super.addNewLineToCollection(collectionName);
-        if (isNewAccountDetailsCollection(collectionName)) {
-            SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getBusinessObject();
-            int newItemIndex = subAccountGlobal.getSubAccountGlobalNewAccountDetails().size() - 1;
-            setSequenceNumbersOnNewAccountDetails(subAccountGlobal, newItemIndex);
-        }
-    }
-    
-    @Override
-    public void addMultipleValueLookupResults(MaintenanceDocument document, String collectionName,
-            Collection<PersistableBusinessObject> rawValues, boolean needsBlank, PersistableBusinessObject bo) {
-        if (isNewAccountDetailsCollection(collectionName)) {
-            SubAccountGlobal subAccountGlobal = (SubAccountGlobal) bo;
-            int oldCollectionSizeAsStartIndex = subAccountGlobal.getSubAccountGlobalNewAccountDetails().size();
-            super.addMultipleValueLookupResults(document, collectionName, rawValues, needsBlank, bo);
-            setSequenceNumbersOnNewAccountDetails(subAccountGlobal, oldCollectionSizeAsStartIndex);
-        } else {
-            super.addMultipleValueLookupResults(document, collectionName, rawValues, needsBlank, bo);
-        }
-    }
-    
-    private void setSequenceNumbersOnNewAccountDetails(SubAccountGlobal subAccountGlobal, int newItemsStartIndex) {
-        List<SubAccountGlobalNewAccountDetail> newAccountDetails = subAccountGlobal.getSubAccountGlobalNewAccountDetails();
-        if (newItemsStartIndex >= newAccountDetails.size()) {
-            return;
-        }
-        
-        for (int i = newItemsStartIndex; i < newAccountDetails.size(); i++) {
-            SubAccountGlobalNewAccountDetail newAccountDetail = newAccountDetails.get(i);
-            newAccountDetail.setSequenceNumber(subAccountGlobal.getAndIncrementNextNewAccountDetailSequenceNumber());
-        }
-    }
-    
-    private boolean isNewAccountDetailsCollection(String collectionName) {
-        return StringUtils.equals(CUKFSPropertyConstants.SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS, collectionName);
     }
     
 	/**
