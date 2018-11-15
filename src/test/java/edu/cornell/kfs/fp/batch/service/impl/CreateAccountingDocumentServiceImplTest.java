@@ -331,8 +331,7 @@ public class CreateAccountingDocumentServiceImplTest {
     @Test
     public void testEmptyFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("empty-file-test");
-        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
-        assertFalse("An empty file should fail this job", results);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);
     }
     
     @Test
@@ -345,8 +344,7 @@ public class CreateAccountingDocumentServiceImplTest {
     @Test
     public void testBadXmlFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("bad-xml-test");
-        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
-        assertFalse("XML That can not be marshalled should fail", results);
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST);
     }
     
     @Test
@@ -367,8 +365,8 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
-        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
-        assertDocumentsWereCreatedAndRoutedCorrectly(results, fixtures);
+        boolean actualResults = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertDocumentsWereCreatedAndRoutedCorrectly(actualResults, fixtures);
         assertDoneFilesWereDeleted();
     }
 

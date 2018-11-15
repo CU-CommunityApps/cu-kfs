@@ -16,12 +16,15 @@ public class CreateAccountingDocumentsStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-		try {
-			return createAccountingDocumentService.createAccountingDocumentsFromXml();
-		} catch (Exception e) {
-			LOG.error("execute, An error has ocurred while processing input files: " + e.getMessage(), e);
-			return false;
-		}
+        boolean processResults;
+        try {
+            processResults = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        } catch (Exception e) {
+            LOG.error("execute, An error has ocurred while processing input files.", e);
+            processResults = false;
+        }
+        LOG.info("execute, the processing results are: " + processResults);
+        return processResults;
     }
 
     public void setCreateAccountingDocumentService(CreateAccountingDocumentService createAccountingDocumentService) {
