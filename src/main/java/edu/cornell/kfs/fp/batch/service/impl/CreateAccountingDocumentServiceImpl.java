@@ -59,10 +59,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         CreateAccountingDocumentLogReport logReport = new CreateAccountingDocumentLogReport();
         
         inputFileNames.stream()
-                .forEach(fileName -> {processAccountingDocumentFromXml(fileName, logReport);});
+                .forEach(fileName -> processAccountingDocumentFromXml(fileName, logReport));
         
         LOG.info("createAccountingDocumentsFromXml, files with non business rule errors: " + logReport.getFilesWithNonBusinessRuleFailures());
-        LOG.info("createAccountingDocumentsFromXml, files without non business rule errors: " + logReport.getFilesWithoutNonBusinessRuleFailures());
+        LOG.info("createAccountingDocumentsFromXml, files successfully processed: " + logReport.getFilesSuccesssfullyProcessed());
         LOG.info("createAccountingDocumentsFromXml: Finished processing all pending accounting document XML files");
         
         return logReport.getFilesWithNonBusinessRuleFailures().isEmpty();
@@ -100,7 +100,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         if (reportItem.isNonBusinessRuleFailure()) {
             logReport.getFilesWithNonBusinessRuleFailures().add(fileName);
         } else {
-            logReport.getFilesWithoutNonBusinessRuleFailures().add(fileName);
+            logReport.getFilesSuccesssfullyProcessed().add(fileName);
         }
         
     }
@@ -248,19 +248,19 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     
     protected class CreateAccountingDocumentLogReport {
         private List<String> filesWithNonBusinessRuleFailures;
-        private List<String> filesWithoutNonBusinessRuleFailures;
+        private List<String> filesSuccessfullyProccessed;
         
         public CreateAccountingDocumentLogReport() {
             filesWithNonBusinessRuleFailures = new ArrayList<String>();
-            filesWithoutNonBusinessRuleFailures = new ArrayList<String>();
+            filesSuccessfullyProccessed = new ArrayList<String>();
         }
 
         public List<String> getFilesWithNonBusinessRuleFailures() {
             return filesWithNonBusinessRuleFailures;
         }
 
-        public List<String> getFilesWithoutNonBusinessRuleFailures() {
-            return filesWithoutNonBusinessRuleFailures;
+        public List<String> getFilesSuccesssfullyProcessed() {
+            return filesSuccessfullyProccessed;
         }
         
         

@@ -20,10 +20,14 @@ public class CreateAccountingDocumentsStep extends AbstractStep {
         try {
             processResults = createAccountingDocumentService.createAccountingDocumentsFromXml();
         } catch (Exception e) {
-            LOG.error("execute, An error has ocurred while processing input files.", e);
+            LOG.error("execute, An error has occurred while processing input files.", e);
             processResults = false;
         }
-        LOG.info("execute, the processing results are: " + processResults);
+        if (processResults) {
+            LOG.info("execute, The job ran successfully");
+        } else {
+            LOG.info("execute, there non business rules errors that caused this job to fail");
+        }
         return processResults;
     }
 

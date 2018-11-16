@@ -348,7 +348,7 @@ public class CreateAccountingDocumentServiceImplTest {
     }
     
     @Test
-    public void testBadXmlEmptyFIleWithGoodFile() throws Exception {
+    public void testBadXmlEmptyFileWithGoodFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("bad-xml-test", "empty-file-test", "multi-yedi-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST, 
                 AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST, AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
