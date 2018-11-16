@@ -52,17 +52,23 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     protected ParameterService parameterService;
 
     @Override
-    public void createAccountingDocumentsFromXml() {
+    public boolean createAccountingDocumentsFromXml() {
         List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(accountingDocumentBatchInputFileType);
         LOG.info("createAccountingDocumentsFromXml: Found " + inputFileNames.size() + " files to process");
         
-        inputFileNames.stream()
-                .forEach(this::processAccountingDocumentFromXml);
+        CreateAccountingDocumentLogReport logReport = new CreateAccountingDocumentLogReport();
         
+        inputFileNames.stream()
+                .forEach(fileName -> processAccountingDocumentFromXml(fileName, logReport));
+        
+        LOG.info("createAccountingDocumentsFromXml, files with non business rule errors: " + logReport.getFilesWithNonBusinessRuleFailures());
+        LOG.info("createAccountingDocumentsFromXml, files successfully processed: " + logReport.getFilesSuccessfullyProcessed());
         LOG.info("createAccountingDocumentsFromXml: Finished processing all pending accounting document XML files");
+        
+        return logReport.getFilesWithNonBusinessRuleFailures().isEmpty();
     }
 
-    protected void processAccountingDocumentFromXml(String fileName) {
+    protected void processAccountingDocumentFromXml(String fileName, CreateAccountingDocumentLogReport logReport) {
         CreateAccountingDocumentReportItem reportItem = new CreateAccountingDocumentReportItem(fileName);
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
@@ -82,6 +88,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
         } catch (Exception e) {
             reportItem.setXmlSuccessfullyLoaded(false);
+            reportItem.setNonBusinessRuleFailure(true);
             String reportErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR)
                     + KFSConstants.BLANK_SPACE + e.getMessage();
             reportItem.setReportItemMessage(reportErrorMessage);
@@ -90,6 +97,12 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             removeDoneFileQuietly(fileName);
             createAndEmailReport(reportItem);
         }
+        if (reportItem.isNonBusinessRuleFailure()) {
+            logReport.getFilesWithNonBusinessRuleFailures().add(fileName);
+        } else {
+            logReport.getFilesSuccessfullyProcessed().add(fileName);
+        }
+        
     }
 
     protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItem reportItem) {
@@ -114,7 +127,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             detail.setSuccessfullyRouted(true);
             detail.setDocumentNumber(document.getDocumentNumber());
             reportItem.getDocumentsSuccessfullyRouted().add(detail);
-        } catch (Exception e) {
+        } catch (RuntimeException | WorkflowException e) {
             detail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
                 String errorMessage = buildValidationErrorMessage((ValidationException) e);
@@ -124,6 +137,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             } else {
                 LOG.error("processAccountingDocumentEntryFromXml: Error processing accounting XML document", e);
                 detail.setErrorMessage("Non validation error: " + e.getMessage());
+                reportItem.setNonBusinessRuleFailure(true);
             }
             reportItem.getDocumentsInError().add(detail);
         } finally {
@@ -230,6 +244,26 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+    
+    protected class CreateAccountingDocumentLogReport {
+        private List<String> filesWithNonBusinessRuleFailures;
+        private List<String> filesSuccessfullyProcessed;
+        
+        public CreateAccountingDocumentLogReport() {
+            filesWithNonBusinessRuleFailures = new ArrayList<String>();
+            filesSuccessfullyProcessed = new ArrayList<String>();
+        }
+
+        public List<String> getFilesWithNonBusinessRuleFailures() {
+            return filesWithNonBusinessRuleFailures;
+        }
+
+        public List<String> getFilesSuccessfullyProcessed() {
+            return filesSuccessfullyProcessed;
+        }
+        
+        
     }
 
 }

@@ -7,6 +7,7 @@ public class CreateAccountingDocumentReportItem {
 
     private String xmlFileName;
     private boolean xmlSuccessfullyLoaded;
+    private boolean nonBusinessRuleFailure;
     private String reportEmailAddress;
     private int numberOfDocumentInFile;
     private String reportItemMessage;
@@ -83,4 +84,12 @@ public class CreateAccountingDocumentReportItem {
     public void setFileOverview(String fileOverview) {
         this.fileOverview = fileOverview;
     }
+
+	public boolean isNonBusinessRuleFailure() {
+		return nonBusinessRuleFailure;
+	}
+
+	public void setNonBusinessRuleFailure(boolean nonBusinessRuleFailure) {
+		this.nonBusinessRuleFailure = nonBusinessRuleFailure;
+	}
 }

@@ -25,7 +25,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DI_DOCUMENT_TEST_DOC3), false),
     MULTI_DI_DOCUMENT_WITH_BAD_RULES_FIRST_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
@@ -150,6 +150,12 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_YEDI_DOCUMENT_TEST_DOC1)),
+    EMPTY_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(), false),
+    BAD_XML_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(), false),
     MULTI_YEDI_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(
@@ -162,24 +168,34 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3));
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3), false);
 
     public final String createDate;
     public final String reportEmail;
     public final String overview;
     public final List<AccountingXmlDocumentEntryFixture> documents;
+    public final boolean expectedResults;
 
-    private AccountingXmlDocumentListWrapperFixture(
-            AccountingXmlDocumentListWrapperFixture baseFixture, AccountingXmlDocumentEntryFixture[] documents) {
+    private AccountingXmlDocumentListWrapperFixture(AccountingXmlDocumentListWrapperFixture baseFixture, AccountingXmlDocumentEntryFixture[] documents) {
         this(baseFixture.createDate, baseFixture.reportEmail, baseFixture.overview, documents);
+    }
+    
+    private AccountingXmlDocumentListWrapperFixture(AccountingXmlDocumentListWrapperFixture baseFixture, AccountingXmlDocumentEntryFixture[] documents, boolean expectedResults) {
+        this(baseFixture.createDate, baseFixture.reportEmail, baseFixture.overview, documents, expectedResults);
     }
 
     private AccountingXmlDocumentListWrapperFixture(String createDate, String reportEmail,
             String overview, AccountingXmlDocumentEntryFixture[] documents) {
+        this(createDate, reportEmail, overview, documents, true);
+    }
+    
+    private AccountingXmlDocumentListWrapperFixture(String createDate, String reportEmail,
+            String overview, AccountingXmlDocumentEntryFixture[] documents, boolean expectedResults) {
         this.createDate = createDate;
         this.reportEmail = reportEmail;
         this.overview = overview;
         this.documents = AccountingXmlDocumentFixtureUtils.toImmutableList(documents);
+        this.expectedResults = expectedResults;
     }
 
     public AccountingXmlDocumentListWrapper toDocumentListWrapperPojo() {
