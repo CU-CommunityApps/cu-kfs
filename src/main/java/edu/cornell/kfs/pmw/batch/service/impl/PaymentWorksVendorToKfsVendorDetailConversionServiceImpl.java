@@ -619,20 +619,57 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         }
         return kfsOwnsershipTypeCode;
     }
-    
+
     private KfsVendorDataWrapper populateBusinessLegalName(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
-        kfsVendorDataWrapper.getVendorDetail().setVendorName(pmwVendor.getRequestingCompanyLegalName());
+        kfsVendorDataWrapper.getVendorDetail().setVendorName(truncateBusinessLegalNameToMaximumAllowedLength(pmwVendor.getRequestingCompanyLegalName()));
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstLastNameIndicator(false);
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(KFSConstants.EMPTY_STRING);
         kfsVendorDataWrapper.getVendorDetail().setVendorLastName(KFSConstants.EMPTY_STRING);
         return kfsVendorDataWrapper;
     }
-    
+
     private KfsVendorDataWrapper populateFirstLastLegalName(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstLastNameIndicator(true);
-        kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(pmwVendor.getRequestingCompanyLegalFirstName());
-        kfsVendorDataWrapper.getVendorDetail().setVendorLastName(pmwVendor.getRequestingCompanyLegalLastName());
+        kfsVendorDataWrapper.getVendorDetail().setVendorLastName(truncateLegalLastNameToMaximumAllowedLength(pmwVendor.getRequestingCompanyLegalLastName()));
+        kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(pmwVendor.getRequestingCompanyLegalLastName(), pmwVendor.getRequestingCompanyLegalFirstName()));
         return kfsVendorDataWrapper;
+    }
+
+    private String truncateBusinessLegalNameToMaximumAllowedLength(String businessLegalName) {
+        if (businessLegalName.length() <= VendorConstants.MAX_VENDOR_NAME_LENGTH) {
+            return businessLegalName;
+        } else {
+            String truncatedBusinessLegalName = businessLegalName.substring(0, VendorConstants.MAX_VENDOR_NAME_LENGTH);
+            LOG.info("truncateBusinessLegalNameToMaximumAllowedLength: Received businessLegalName '" + businessLegalName
+                    + "' with length of " + businessLegalName.length() + " and it is being truncated to '"
+                    + truncatedBusinessLegalName + "' with length of " + truncatedBusinessLegalName.length());
+            return truncatedBusinessLegalName;
+        }
+    }
+
+    private static String truncateLegalLastNameToMaximumAllowedLength(String legalLastName) {
+        if (legalLastName.length() <= VendorConstants.MAX_VENDOR_NAME_LENGTH) {
+            return legalLastName;
+        } else {
+            String truncatedLegalLastName = legalLastName.substring(0, VendorConstants.MAX_VENDOR_NAME_LENGTH);
+            LOG.info("truncateBusinessLegalNameToMaximumAllowedLength: Received legalLastName '" + legalLastName
+                    + "' with length of " + legalLastName.length() + " and it is being truncated to '"
+                    + truncatedLegalLastName + "' with length of " + truncatedLegalLastName.length());
+            return truncatedLegalLastName;
+        }
+    }
+
+    private static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName) {
+        int maxAllowedLengthOfFirstName = VendorConstants.MAX_VENDOR_NAME_LENGTH - VendorConstants.NAME_DELIM.length() - legalLastName.length();
+        if (legalFirstName.length() <= maxAllowedLengthOfFirstName) {
+            return legalFirstName;
+        } else {
+            String truncatedLegalFirstName = legalFirstName.substring(0, maxAllowedLengthOfFirstName);
+            LOG.info("truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName: Received legalFirstName '"
+                    + legalFirstName  + "' with length of " + legalFirstName.length() + " and it is being truncated to '"
+                    + truncatedLegalFirstName + "' with length of " + truncatedLegalFirstName.length());
+            return truncatedLegalFirstName;
+        }
     }
 
     private KfsVendorDataWrapper populateW9Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {

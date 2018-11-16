@@ -53,7 +53,6 @@ public class PaymentWorksKeyConstants {
     public static final String NO_RECORDS_GENERATING_EXCEPTIONS_MESSAGE = "message.paymentworks.no.records.generating.exceptions";
     
     //PaymentWorks Business Rule Failure Messages
-    public static final String ERROR_COMBINED_LEGAL_FIRST_LAST_NAME_TOO_LONG_FOR_KFS = "error.paymentworks.combined.last.first.names.too.long";
     public static final String ERROR_LEGAL_NAME_TOO_LONG_FOR_KFS = "error.paymentworks.legel.name.too.long";
     public static final String ERROR_LEGAL_NAME_NULL_OR_BLANK = "error.paymentworks.legel.name.null.or.blank";
     public static final String ERROR_DATE_IS_NOT_FORMATTED_CORRECTLY = "error.paymentworks.date.bad.format";
