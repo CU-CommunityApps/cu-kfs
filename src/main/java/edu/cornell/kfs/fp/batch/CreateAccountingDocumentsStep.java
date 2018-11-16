@@ -26,7 +26,7 @@ public class CreateAccountingDocumentsStep extends AbstractStep {
         if (processResults) {
             LOG.info("execute, The job ran successfully");
         } else {
-            LOG.info("execute, there non business rules errors that caused this job to fail");
+            LOG.warn("execute, there were non business rules errors that caused this job to fail");
         }
         return processResults;
     }
