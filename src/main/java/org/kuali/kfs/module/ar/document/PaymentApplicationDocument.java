@@ -1555,10 +1555,10 @@ public class PaymentApplicationDocument extends GeneralLedgerPostingDocumentBase
     //Cornell mod
     // Used to track when user has removed an invoicePaidApplieds list item
     // from edoc but state of that data has not yet been recorded in the database.
-    // Used to manage mulitple list actions (add or delete) that could occur prior
+    // Used to manage multiple list actions (add or delete) that could occur prior
     // to Save or Route action being taken.
     // Needed to prevent invoicePaidApplieds last or only item from being
-    // readded to the list after user has just removed it.
+    // re-added to the list after user has just removed it.
     protected transient boolean deletePerformedForInvoicePaidApplied = false;
 
     //Cornell mod
