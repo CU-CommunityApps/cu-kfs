@@ -661,13 +661,18 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     private static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName) {
         int maxAllowedLengthOfFirstName = VendorConstants.MAX_VENDOR_NAME_LENGTH - VendorConstants.NAME_DELIM.length() - legalLastName.length();
-        if (legalFirstName.length() <= maxAllowedLengthOfFirstName) {
+        if (maxAllowedLengthOfFirstName <= 0) {
+            LOG.info("truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName: legalLastName is '" + legalLastName
+                    + "'. Received legalFirstName '" + legalFirstName  + "' with length of " + legalFirstName.length()
+                    + " and it is being truncated to '" + KFSConstants.EMPTY_STRING + "' with length of 0.");
+            return KFSConstants.EMPTY_STRING;
+        } else if (legalFirstName.length() <= maxAllowedLengthOfFirstName) {
             return legalFirstName;
         } else {
             String truncatedLegalFirstName = legalFirstName.substring(0, maxAllowedLengthOfFirstName);
-            LOG.info("truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName: Received legalFirstName '"
-                    + legalFirstName  + "' with length of " + legalFirstName.length() + " and it is being truncated to '"
-                    + truncatedLegalFirstName + "' with length of " + truncatedLegalFirstName.length());
+            LOG.info("truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName: legalLastName is '" + legalLastName
+                    + "Received legalFirstName '" + legalFirstName  + "' with length of " + legalFirstName.length()
+                    + " and it is being truncated to '" + truncatedLegalFirstName + "' with length of " + truncatedLegalFirstName.length());
             return truncatedLegalFirstName;
         }
     }
