@@ -140,8 +140,7 @@ public class WebUtils {
                     + request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER));
             }
             methodToCall = request.getParameter(KRADConstants.DISPATCH_REQUEST_PARAMETER);
-            // include .x at the end of the parameter to make it consistent w/
-            // other parameters
+            // include .x at the end of the parameter to make it consistent w/other parameters
             request.setAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE, KRADConstants.DISPATCH_REQUEST_PARAMETER + "."
                 + methodToCall + IMAGE_COORDINATE_CLICKED_X_EXTENSION);
         }
@@ -165,11 +164,9 @@ public class WebUtils {
                     methodToCall = getMethodToCallSettingAttribute(form, request, parameterName);
                     break;
                 } else {
-                    // KULRICE-1218: Check if the parameter's values match (not
-                    // just the name)
+                    // KULRICE-1218: Check if the parameter's values match (not just the name)
                     for (String value : request.getParameterValues(parameterName)) {
-                        // adding period to startsWith check - don't want to get
-                        // confused with methodToCallFoobar
+                        // adding period to startsWith check - don't want to get confused with methodToCallFoobar
                         if (isMethodToCall(value)) {
                             methodToCall = getMethodToCallSettingAttribute(form, request, value);
                             // why is there not a break outer loop here?
@@ -189,8 +186,7 @@ public class WebUtils {
      * @return true if is a methodToCall
      */
     private static boolean isMethodToCall(String string) {
-        // adding period to startsWith check - don't want to get confused with
-        // methodToCallFoobar
+        // adding period to startsWith check - don't want to get confused with methodToCallFoobar
         return string.startsWith(KRADConstants.DISPATCH_REQUEST_PARAMETER + ".");
     }
 
@@ -421,7 +417,7 @@ public class WebUtils {
     }
 
     public static void getMultipartParameters(HttpServletRequest request, ActionServletWrapper servletWrapper,
-                                              ActionForm form, ActionMapping mapping) {
+            ActionForm form, ActionMapping mapping) {
         // Get the ActionServletWrapper from the form bean
         // ActionServletWrapper servletWrapper = getServletWrapper();
 
@@ -481,7 +477,7 @@ public class WebUtils {
     }
 
     private static Map getFileParametersForMultipartRequest(HttpServletRequest request,
-                                                            MultipartRequestHandler multipartHandler) {
+            MultipartRequestHandler multipartHandler) {
         Map parameters = new HashMap();
         Hashtable elements = multipartHandler.getFileElements();
         Enumeration e = elements.keys();

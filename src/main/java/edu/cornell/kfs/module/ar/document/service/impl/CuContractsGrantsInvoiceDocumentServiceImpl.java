@@ -141,7 +141,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             parameterMap.put(
                     ArPropertyConstants.DIRECT_COST_INVOICE_DETAIL + "." + KFSPropertyConstants.DOCUMENT_NUMBER,
                     totalDirectCostInvoiceDetail.getDocumentNumber());
-            parameterMap.put(ArPropertyConstants.DIRECT_COST_INVOICE_DETAIL + "." + ArPropertyConstants.CATEGORY,
+            parameterMap.put(ArPropertyConstants.DIRECT_COST_INVOICE_DETAIL + "." + ArPropertyConstants.CATEGORIES,
                     getConfigurationService().getPropertyValueAsString(
                             ArKeyConstants.CONTRACTS_GRANTS_INVOICE_DETAILS_DIRECT_SUBTOTAL_LABEL));
             parameterMap.put(ArPropertyConstants.DIRECT_COST_INVOICE_DETAIL + "." + ArPropertyConstants.TOTAL_BUDGET,
