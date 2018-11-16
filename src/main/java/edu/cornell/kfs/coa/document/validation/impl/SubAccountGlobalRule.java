@@ -466,14 +466,16 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         
         boolean newAccountFieldsAreEntered = checkAppropriateNewAccountFieldsAreEnteredBasedOnApplyAllCheckboxStatus(subAccountGlobal);
         boolean accountsExistAndAreOpen = checkAccountsExistAndAreOpen(subAccountGlobal);
-        boolean success = newAccountFieldsAreEntered && accountsExistAndAreOpen;
+        boolean subAccountTypeIsValid = checkSubAccountTypeIsValid(subAccountGlobal);
+        boolean success = newAccountFieldsAreEntered && accountsExistAndAreOpen && subAccountTypeIsValid;
         success &= checkBasicGlobalFieldsAndEditSubAccountSectionAreEmpty(subAccountGlobal);
-        success &= checkSubAccountTypeIsSpecified(subAccountGlobal);
         if (accountsExistAndAreOpen) {
             if (newAccountFieldsAreEntered) {
                 success &= checkDuplicateOrExistingSubAccountsAreNotPresent(subAccountGlobal);
             }
-            success &= checkContractsAndGrantsSetupForNonEmptyNewAccountsList(subAccountGlobal);
+            if (subAccountTypeIsValid) {
+                success &= checkContractsAndGrantsSetupForNonEmptyNewAccountsList(subAccountGlobal);
+            }
         }
         
         return success;
@@ -514,11 +516,15 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         return success;
     }
     
-    protected boolean checkSubAccountTypeIsSpecified(SubAccountGlobal subAccountGlobal) {
+    protected boolean checkSubAccountTypeIsValid(SubAccountGlobal subAccountGlobal) {
         if (StringUtils.isBlank(subAccountGlobal.getNewSubAccountTypeCode())) {
             putFieldErrorWithDisplayNameAddedToMessage(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_TYPE_CODE,
                     CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_REQUIRED_FIELD_FOR_NEW_SUB_ACCOUNT);
             return false;
+        } else if (!KFSConstants.SubAccountType.ELIGIBLE_SUB_ACCOUNT_TYPE_CODES.contains(subAccountGlobal.getNewSubAccountTypeCode())) {
+            putFieldError(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_TYPE_CODE,
+                    KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_INVALI_SUBACCOUNT_TYPE_CODES,
+                    KFSConstants.SubAccountType.ELIGIBLE_SUB_ACCOUNT_TYPE_CODES.toString());
         }
         return true;
     }
@@ -702,6 +708,7 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
             }
         } else if (noneOfAccountsAreForContractsAndGrants) {
             success &= checkCgFieldsAreEmptyForNonCgAccounts(subAccountGlobal);
+            success &= checkSubAccountTypeIsValidForNonCgAccounts(subAccountGlobal);
         } else {
             putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_AND_NON_CG_MIX);
             success = false;
@@ -715,26 +722,40 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         boolean success = checkCostShareSourceChartAndAccountAreFilledIn(a21SubAccount);
         if (success) {
             success &= checkCgCostSharingRules(subAccountGlobal.getNewSubAccountTypeCode());
+            success &= checkCostShareAccountIsNotForContractsAndGrants(a21SubAccount);
         }
+        success &= checkIcrFieldsAreEmptyForCostShareSubAccount(subAccountGlobal);
         return success;
     }
     
     protected boolean checkCostShareSourceChartAndAccountAreFilledIn(A21SubAccountChange a21SubAccount) {
         boolean success = true;
-        if (checkCgCostSharingIsEmpty()) {
-            putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_COST_SHARE_REQUIRED_SECTION,
-                    CUKFSConstants.SUB_ACCOUNT_GLOBAL_CG_COST_SHARE_SECTION_NAME);
-            success = false;
-        }
-        if (success) {
-            success &= checkEmptyBOField(
-                    KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE,
-                    a21SubAccount.getCostShareChartOfAccountCode());
-            success &= checkEmptyBOField(
-                    KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER,
-                    a21SubAccount.getCostShareSourceAccountNumber());
-        }
+        success &= checkEmptyBOField(
+                CUKFSPropertyConstants.A21_COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE,
+                a21SubAccount.getCostShareChartOfAccountCode());
+        success &= checkEmptyBOField(
+                CUKFSPropertyConstants.A21_COST_SHARE_SOURCE_ACCOUNT_NUMBER,
+                a21SubAccount.getCostShareSourceAccountNumber());
         return success;
+    }
+    
+    protected boolean checkCostShareAccountIsNotForContractsAndGrants(A21SubAccountChange a21SubAccount) {
+        if (accountIsForContractsAndGrants(a21SubAccount)) {
+            putFieldErrorForMessageWithCgDenotingLabelAndValue(
+                    CUKFSPropertyConstants.A21_COST_SHARE_SOURCE_ACCOUNT_NUMBER,
+                    KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_COST_SHARE_ACCOUNT_MAY_NOT_BE_CG_FUNDGROUP);
+            return false;
+        }
+        return true;
+    }
+    
+    protected boolean checkIcrFieldsAreEmptyForCostShareSubAccount(SubAccountGlobal subAccountGlobal) {
+        if (!checkCgIcrIsEmpty() || !subAccountGlobal.getIndirectCostRecoveryAccounts().isEmpty()) {
+            putFieldError(CUKFSPropertyConstants.A21_INDIRECT_COST_RECOVERY_TYPE_CODE,
+                    KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_ICR_SECTION_INVALID, subAccountGlobal.getNewSubAccountTypeCode());
+            return false;
+        }
+        return true;
     }
     
     protected boolean checkEmptyBOField(String propertyName, Object valueToTest) {
@@ -743,7 +764,15 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     
     protected boolean accountIsForContractsAndGrants(SubAccountGlobalNewAccountDetail newAccountDetail) {
         newAccountDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
-        Account account = newAccountDetail.getAccount();
+        return accountIsForContractsAndGrants(newAccountDetail.getAccount());
+    }
+    
+    protected boolean accountIsForContractsAndGrants(A21SubAccountChange a21SubAccount) {
+        a21SubAccount.refreshReferenceObject(KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT);
+        return accountIsForContractsAndGrants(a21SubAccount.getCostShareAccount());
+    }
+    
+    protected boolean accountIsForContractsAndGrants(Account account) {
         if (ObjectUtils.isNotNull(account)) {
             account.refreshReferenceObject(KFSPropertyConstants.SUB_FUND_GROUP);
             SubFundGroup subFundGroup = account.getSubFundGroup();
@@ -772,25 +801,37 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     protected boolean checkCgFieldsAreEmptyForNonCgAccounts(SubAccountGlobal subAccountGlobal) {
         boolean success = true;
         if (!checkCgCostSharingIsEmpty()) {
-            putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_CG_NON_BLANK_SECTION,
-                    CUKFSConstants.SUB_ACCOUNT_GLOBAL_CG_COST_SHARE_SECTION_NAME);
+            putFieldErrorForMessageWithCgDenotingLabelAndValue(
+                    CUKFSPropertyConstants.A21_COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE,
+                    KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_CS_INVALID);
             success = false;
         }
-        if (!checkCgIcrIsEmpty()) {
-            putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_CG_NON_BLANK_SECTION,
-                    CUKFSConstants.SUB_ACCOUNT_GLOBAL_CG_ICR_SECTION_NAME);
-            success = false;
-        }
-        if (!subAccountGlobal.getIndirectCostRecoveryAccounts().isEmpty()) {
-            putGlobalError(CUKFSKeyConstants.ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_NON_CG_NON_BLANK_SECTION,
-                    CUKFSConstants.SUB_ACCOUNT_GLOBAL_CG_ICR_ACCOUNTS_SECTION_NAME);
+        if (!checkCgIcrIsEmpty() || !subAccountGlobal.getIndirectCostRecoveryAccounts().isEmpty()) {
+            putFieldErrorForMessageWithCgDenotingLabelAndValue(
+                    CUKFSPropertyConstants.A21_INDIRECT_COST_RECOVERY_TYPE_CODE,
+                    KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_ICR_INVALID);
             success = false;
         }
         return success;
     }
     
+    protected boolean checkSubAccountTypeIsValidForNonCgAccounts(SubAccountGlobal subAccountGlobal) {
+        if (!StringUtils.equals(KFSConstants.SubAccountType.EXPENSE, subAccountGlobal.getNewSubAccountTypeCode())) {
+            putFieldErrorForMessageWithCgDenotingLabelAndValue(CUKFSPropertyConstants.NEW_SUB_ACCOUNT_TYPE_CODE,
+                    KFSKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_NON_FUNDED_ACCT_SUB_ACCT_TYPE_CODE_INVALID);
+            return false;
+        }
+        return true;
+    }
+    
     protected void putFieldErrorWithDisplayNameAddedToMessage(String propertyName, String errorConstant) {
         putFieldError(propertyName, errorConstant, getDisplayNameForGlobalObjectProperty(propertyName));
+    }
+    
+    protected void putFieldErrorForMessageWithCgDenotingLabelAndValue(String propertyName, String errorConstant) {
+        String[] messageArgs = { getSubFundGroupService().getContractsAndGrantsDenotingAttributeLabel(),
+                getSubFundGroupService().getContractsAndGrantsDenotingValueForMessage() };
+        putFieldError(propertyName, errorConstant, messageArgs);
     }
     
     /**

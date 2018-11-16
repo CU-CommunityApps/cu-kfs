@@ -149,6 +149,10 @@
     <bean id="SubAccountGlobal-newSubAccountTypeCode-parentBean" abstract="true" parent="A21SubAccount-subAccountTypeCode">
         <property name="name" value="newSubAccountTypeCode" />
         <property name="required" value="false" />
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="subAccountTypeValuesFinder"
+                    p:includeKeyInLabel="false"/>
+        </property>
     </bean>
     
     <bean id="SubAccountGlobal-newSubAccountOffCampusCode" parent="SubAccountGlobal-newSubAccountOffCampusCode-parentBean"/>
