@@ -62,7 +62,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                 .forEach(fileName -> processAccountingDocumentFromXml(fileName, logReport));
         
         LOG.info("createAccountingDocumentsFromXml, files with non business rule errors: " + logReport.getFilesWithNonBusinessRuleFailures());
-        LOG.info("createAccountingDocumentsFromXml, files successfully processed: " + logReport.getFilesSuccesssfullyProccessed());
+        LOG.info("createAccountingDocumentsFromXml, files successfully processed: " + logReport.getFilesSuccessfullyProcessed());
         LOG.info("createAccountingDocumentsFromXml: Finished processing all pending accounting document XML files");
         
         return logReport.getFilesWithNonBusinessRuleFailures().isEmpty();
@@ -100,7 +100,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         if (reportItem.isNonBusinessRuleFailure()) {
             logReport.getFilesWithNonBusinessRuleFailures().add(fileName);
         } else {
-            logReport.getFilesSuccesssfullyProccessed().add(fileName);
+            logReport.getFilesSuccessfullyProcessed().add(fileName);
         }
         
     }
@@ -248,19 +248,19 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     
     protected class CreateAccountingDocumentLogReport {
         private List<String> filesWithNonBusinessRuleFailures;
-        private List<String> filesSuccesssfullyProccessed;
+        private List<String> filesSuccessfullyProcessed;
         
         public CreateAccountingDocumentLogReport() {
             filesWithNonBusinessRuleFailures = new ArrayList<String>();
-            filesSuccesssfullyProccessed = new ArrayList<String>();
+            filesSuccessfullyProcessed = new ArrayList<String>();
         }
 
         public List<String> getFilesWithNonBusinessRuleFailures() {
             return filesWithNonBusinessRuleFailures;
         }
 
-        public List<String> getFilesSuccesssfullyProccessed() {
-            return filesSuccesssfullyProccessed;
+        public List<String> getFilesSuccessfullyProcessed() {
+            return filesSuccessfullyProcessed;
         }
         
         
