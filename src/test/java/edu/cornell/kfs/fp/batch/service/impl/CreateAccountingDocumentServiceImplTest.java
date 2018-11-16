@@ -48,6 +48,7 @@ import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.YearEndDistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
@@ -73,6 +74,7 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
@@ -325,16 +327,50 @@ public class CreateAccountingDocumentServiceImplTest {
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_WITH_BAD_CONVERSION_SECOND_DOCUMENT_TEST);
     }
-
-
+    
+    @Test
+    public void testEmptyFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-file-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testEmptyFileWithGoodFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("empty-file-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST,
+                AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testBadXmlFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-xml-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testBadXmlEmptyFileWithGoodFile() throws Exception {
+        copyTestFilesAndCreateDoneFiles("bad-xml-test", "empty-file-test", "multi-yedi-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST, 
+                AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST, AccountingXmlDocumentListWrapperFixture.MULTI_YEDI_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testServiceError() throws Exception {
+        createAccountingDocumentService = Mockito.spy(createAccountingDocumentService);
+        Mockito.when(createAccountingDocumentService.getNewDocument(YearEndDistributionOfIncomeAndExpenseDocument.class)).
+            thenThrow(new ResourceLoaderException("Emulate problem getting services"));
+        copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
+        boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertFalse("When there is a problem calling services, the job should fail", results);
+    }
 
     private void assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture... fixtures) {
-        createAccountingDocumentService.createAccountingDocumentsFromXml();
-        assertDocumentsWereCreatedAndRoutedCorrectly(fixtures);
+        boolean actualResults = createAccountingDocumentService.createAccountingDocumentsFromXml();
+        assertDocumentsWereCreatedAndRoutedCorrectly(actualResults, fixtures);
         assertDoneFilesWereDeleted();
     }
 
-    private void assertDocumentsWereCreatedAndRoutedCorrectly(AccountingXmlDocumentListWrapperFixture... fixtures) {
+    private void assertDocumentsWereCreatedAndRoutedCorrectly(boolean actualResults, AccountingXmlDocumentListWrapperFixture... fixtures) {
         Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap = buildFileNameToFixtureMap(fixtures);
         
         AccountingXmlDocumentEntryFixture[] processingOrderedDocumentFixtures = createAccountingDocumentService.getProcessingOrderedBaseFileNames()
@@ -344,6 +380,16 @@ public class CreateAccountingDocumentServiceImplTest {
                 .toArray(AccountingXmlDocumentEntryFixture[]::new);
         
         assertDocumentsWereCreatedAndRoutedCorrectly(processingOrderedDocumentFixtures);
+        
+        assertActualResultsAreExpected(actualResults, fileNameToFixtureMap);
+    }
+    
+    private void assertActualResultsAreExpected(boolean actualResults, Map<String, AccountingXmlDocumentListWrapperFixture> fileNameToFixtureMap) {
+        boolean expectedResult = true;
+        for (AccountingXmlDocumentListWrapperFixture xmlFixture : fileNameToFixtureMap.values()) {
+            expectedResult &= xmlFixture.expectedResults;
+        }
+        assertEquals("The expected result should equal the actual result", expectedResult, actualResults);
     }
 
     private Map<String, AccountingXmlDocumentListWrapperFixture> buildFileNameToFixtureMap(
@@ -703,8 +749,6 @@ public class CreateAccountingDocumentServiceImplTest {
         String groupCode = invocation.getArgument(0);
         return WebServiceCredentialFixture.getCredentialsByCredentialGroupCode(groupCode);
     }
-    
-    
 
     private FiscalYearFunctionControlService buildMockFiscalYearFunctionControlService() {
         List<FiscalYearFunctionControl> allowedBudgetAdjustmentYears = IntStream.of(CuFPTestConstants.FY_2016, CuFPTestConstants.FY_2018)
@@ -836,24 +880,25 @@ public class CreateAccountingDocumentServiceImplTest {
         }
 
         @Override
-        public void createAccountingDocumentsFromXml() {
+        public boolean createAccountingDocumentsFromXml() {
             Person systemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
             UserSession systemUserSession = MockPersonUtil.createMockUserSession(systemUser);
-            
+
+            boolean result = false;
             try {
-                GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
-                    super.createAccountingDocumentsFromXml();
-                    return null;
+            	result = GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
+                	return super.createAccountingDocumentsFromXml();
                 });
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            return  result;
         }
 
         @Override
-        protected void processAccountingDocumentFromXml(String fileName) {
+        protected void processAccountingDocumentFromXml(String fileName, CreateAccountingDocumentLogReport logReport) {
             processingOrderedBaseFileNames.add(convertToBaseFileName(fileName));
-            super.processAccountingDocumentFromXml(fileName);
+            super.processAccountingDocumentFromXml(fileName, logReport);
         }
 
         private String convertToBaseFileName(String fileName) {
