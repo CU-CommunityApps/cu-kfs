@@ -67,7 +67,7 @@
 				<bean parent="AccountingLineView-field"
 					p:name="projectCode"  p:useShortLabel="true" p:unconditionallyReadOnly="true" 
 				    p:webUILeaveFieldFunction="loadProjectInfo"
-					p:dynamicLabelProperty="project.projectDescription" />
+					p:dynamicLabelProperty="project.name" />
 				<bean parent="AccountingLineView-field"
 					p:name="organizationReferenceId" p:useShortLabel="true" p:unconditionallyReadOnly="true" />				
 			</list>
