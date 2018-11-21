@@ -145,6 +145,11 @@ public class CUKFSConstants {
     public static final String ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX = ".accountExpiredOverride.present";
     public static final String ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX = ".accountExpiredOverride";
 
+    public static final String SUB_ACCOUNT_GLOBAL_CG_ICR_SECTION_NAME = "Global Sub Account CG ICR Maintenance";
+    public static final String SUB_ACCOUNT_GLOBAL_CG_ICR_ACCOUNTS_SECTION_NAME = "Global Sub Account Indirect Cost Recovery Accounts Maintenance";
+
+    public static final String SUB_ACCOUNT_GLOBAL_NEW_SUB_ACCOUNT_LABEL = "New Sub-Account";
+
     public static final String EQUALS_SIGN = "=";
     public static final String AMPERSAND = "&";
     public static final String LEFT_PARENTHESIS = "(";

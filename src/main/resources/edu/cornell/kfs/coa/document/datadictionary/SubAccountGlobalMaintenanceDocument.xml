@@ -31,8 +31,9 @@
         <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGCostSharingMaintenance"/>
         <ref bean="SubAccountGlobalMaintenanceDocument-GlobalSubAccountCGICRMaintenance"/>
         <ref bean="SubAccountGlobalMaintenanceDocument-IndirectCostRecoveryAccounts"/>
-        
         <ref bean="SubAccountGlobalMaintenanceDocument-EditListofSubAccounts"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-AddNewSubAccounts"/>
+        <ref bean="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts"/>
       </list>
     </property>
     <property name="defaultExistenceChecks">
@@ -193,6 +194,60 @@
     </property>
   </bean>
 
+  <bean id="SubAccountGlobalMaintenanceDocument-AddNewSubAccounts" parent="SubAccountGlobalMaintenanceDocument-AddNewSubAccounts-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-AddNewSubAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="Add New Sub Accounts"/>
+    <property name="title" value="Add New Sub Accounts"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Type of New Sub Accounts to Add"/>
+        <bean parent="MaintainableFieldDefinition" p:name="newSubAccountTypeCode"/>
+        <bean parent="MaintainableSubSectionHeaderDefinition" p:name="Common Sub Account Values to Add (Optional)"/>
+        <bean parent="MaintainableFieldDefinition" p:name="newSubAccountNumber"/>
+        <bean parent="MaintainableFieldDefinition" p:name="newSubAccountName"/>
+        <bean parent="MaintainableFieldDefinition" p:name="newSubAccountOffCampusCode"/>
+        <bean parent="MaintainableFieldDefinition" p:name="applyToAllNewSubAccounts"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts" parent="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts-parentBean"/>
+
+  <bean id="SubAccountGlobalMaintenanceDocument-ListOfNewSubAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
+    <property name="id" value="List of New Sub Accounts"/>
+    <property name="title" value="List of New Sub Accounts"/>
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableCollectionDefinition">
+          <property name="name" value="subAccountGlobalNewAccountDetails"/>
+          <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.SubAccountGlobalNewAccountDetail"/>
+          <property name="sourceClassName" value="org.kuali.kfs.coa.businessobject.Account"/>
+          <property name="summaryTitle" value="Account"/>
+          <property name="summaryFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountName"/>
+            </list>
+          </property>
+          <property name="maintainableFields">
+            <list>
+              <bean parent="MaintainableFieldDefinition" p:name="sequenceNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:template="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountNumber"/>
+              <bean parent="MaintainableFieldDefinition" p:name="subAccountName"/>
+              <bean parent="MaintainableFieldDefinition" p:name="offCampusCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+            </list>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
 <!-- workflow attributes -->
   	<bean id="SubAccountGlobalMaintenanceDocument-workflowAttributes" parent="SubAccountGlobalMaintenanceDocument-workflowAttributes-parentBean"/>
   
@@ -286,6 +341,7 @@
         <property name="documentValuePathGroups">
             <list>
                 <ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award"/>
+                <ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award-NewAccountDetail"/>
             </list>
         </property>
     </bean>
@@ -302,7 +358,15 @@
     		</bean>
     	</property>
    	</bean>
-	
+
+    <bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-Award-NewAccountDetail" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+        <property name="documentCollectionPath">
+            <bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-responsibilityId">
+                <property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalNewAccountDetailsForAwardRouting"/>
+            </bean>
+        </property>
+   	</bean>
+
    	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-responsibilityId" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>

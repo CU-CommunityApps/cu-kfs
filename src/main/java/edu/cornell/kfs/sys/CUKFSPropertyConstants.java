@@ -15,6 +15,7 @@
  */
 package edu.cornell.kfs.sys;
 
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 /**
@@ -58,4 +59,18 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
     
     public static final String ACCOUNT_GLOBAL_ACCOUNT_SECTION_FIELD_NAME_FORMAT = "accountGlobalDetails[{0}]";
+    
+    public static final String INACTIVATE = "inactivate";
+    public static final String NEW_SUB_ACCOUNT_TYPE_CODE = "newSubAccountTypeCode";
+    public static final String NEW_SUB_ACCOUNT_NUMBER = "newSubAccountNumber";
+    public static final String NEW_SUB_ACCOUNT_NAME = "newSubAccountName";
+    public static final String NEW_SUB_ACCOUNT_OFF_CAMPUS_CODE = "newSubAccountOffCampusCode";
+    public static final String APPLY_TO_ALL_NEW_SUB_ACCOUNTS = "applyToAllNewSubAccounts";
+    public static final String SUB_ACCOUNT_GLOBAL_NEW_ACCOUNT_DETAILS = "subAccountGlobalNewAccountDetails";
+    public static final String A21_COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE
+            = KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_CHART_OF_ACCOUNTS_CODE;
+    public static final String A21_COST_SHARE_SOURCE_ACCOUNT_NUMBER
+            = KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER;
+    public static final String A21_INDIRECT_COST_RECOVERY_TYPE_CODE
+            = KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.INDIRECT_COST_RECOVERY_TYPE_CODE;
 }
