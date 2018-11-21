@@ -21,8 +21,6 @@ package org.kuali.kfs.module.ar.businessobject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDate;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants;
@@ -75,10 +73,7 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
             LOG.error("determineStartDateByFrequency, unable to calculate start date by frequency when the last billed date iis NULL");
             throw new IllegalStateException("Can not calculate the start date when the last billed date is NULL");
         }
-        
-        LocalDate localDateLastBilledDate = new LocalDate(lastBilledDate.getTime(), DateTimeZone.UTC);
-        LocalDate localDateNextStartDate = localDateLastBilledDate.plusDays(1);
-        Date sqlDateNextStartDate = new Date(localDateNextStartDate.toDate().getTime());
+        Date sqlDateNextStartDate = calculateNextDay(lastBilledDate);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("determineStartDateByFrequency, lastBilledDate is: " + lastBilledDate + " and next start date is: " + sqlDateNextStartDate);
@@ -86,8 +81,6 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         
         
         return sqlDateNextStartDate;
-        //AccountingPeriod lastBilledDateAccountingPeriod = findPreviousAccountingPeriod(lastBilledDate);
-        //return calculateNextDay(lastBilledDateAccountingPeriod.getUniversityFiscalPeriodEndDate());
     }
 
     protected AccountingPeriod findPreviousAccountingPeriod(final Date date) {
