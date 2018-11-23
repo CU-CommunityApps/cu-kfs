@@ -235,7 +235,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         }
 
         if (ObjectUtils.isNotNull(award)) {
-            KualiDecimal billing = getAwardBilledToDateAmountByProposalNumber(award.getProposalNumber());
+            KualiDecimal billing = getAwardBilledToDateAmount(award.getProposalNumber());
             KualiDecimal payments = calculateTotalPaymentsToDateByAward(award);
             KualiDecimal receivable = billing.subtract(payments);
             parameterMap.put(KFSPropertyConstants.AWARD + "." + ArPropertyConstants.BILLINGS, billing);
