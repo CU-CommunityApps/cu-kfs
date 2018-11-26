@@ -70,17 +70,11 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     @Override
     protected Date determineStartDateByFrequency() {
         if (lastBilledDate == null) {
-            LOG.error("determineStartDateByFrequency, unable to calculate start date by frequency when the last billed date iis NULL");
+            LOG.error("determineStartDateByFrequency, unable to calculate start date by frequency when the last billed date is NULL");
             throw new IllegalStateException("Can not calculate the start date when the last billed date is NULL");
         }
-        Date sqlDateNextStartDate = calculateNextDay(lastBilledDate);
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("determineStartDateByFrequency, lastBilledDate is: " + lastBilledDate + " and next start date is: " + sqlDateNextStartDate);
-        }
-        
-        
-        return sqlDateNextStartDate;
+        return calculateNextDay(lastBilledDate);
     }
 
     protected AccountingPeriod findPreviousAccountingPeriod(final Date date) {
