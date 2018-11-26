@@ -18,12 +18,10 @@
    <!-- KFSPTS-1458 -->
   <bean id="PurchaseOrderDocument-vendorEmailAddress" parent="PurchaseOrderDocument-vendorEmailAddress-parentBean"/>
 
-  <bean id="PurchaseOrderDocument-vendorEmailAddress-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="vendorEmailAddress"/>
-    <property name="label" value="Email Address"/>
-    <property name="shortLabel" value="Email"/>
-    <property name="maxLength" value="90"/>
-    <property name="control">
+  <bean id="PurchaseOrderDocument-vendorEmailAddress-parentBean" abstract="true" 
+  		parent="AttributeDefinition" p:name="vendorEmailAddress" p:label="Email Address" 
+  		p:shortLabel="Email" p:maxLength="90">
+    	<property name="control">
       <bean parent="TextControlDefinition" p:size="90"/>
     </property>
   </bean>
