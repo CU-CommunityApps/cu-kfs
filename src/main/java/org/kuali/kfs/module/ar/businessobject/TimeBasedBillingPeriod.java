@@ -70,8 +70,8 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
     @Override
     protected Date determineStartDateByFrequency() {
         if (lastBilledDate == null) {
-            LOG.error("determineStartDateByFrequency, unable to calculate start date by frequency when the last billed date is NULL");
-            throw new IllegalStateException("Can not calculate the start date when the last billed date is NULL");
+            LOG.info("determineStartDateByFrequency, no previous billed date, so award start date is the next start date");
+            return awardStartDate;
         }
         
         return calculateNextDay(lastBilledDate);

@@ -68,12 +68,8 @@ public class TimeBasedBillingPeriodSTest {
     @Test
     public void testDetermineStartDateByFrequencyNullLastBilledDate() {
         Date lastBilledDate = null;
-        try {
-            findNextBillingDate(lastBilledDate).toString();
-            assertTrue("We should have caught an IllegalStateException here", false);
-        } catch (IllegalStateException ise) {
-            assertTrue("IllegalStateException successfully caught", true);
-        }
+        Date expectedNextDate = awardStartDate;
+        assertEquals(expectedNextDate.toString(), findNextBillingDate(lastBilledDate).toString());
     }
     
     private Date buildDate(int year, int month, int date) {
