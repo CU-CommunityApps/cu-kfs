@@ -50,6 +50,4 @@
 		<property name="parameterService" ref="parameterService" />
 	</bean>
 
-	<bean id="invoicePaidAppliedDao" parent="platformAwareDao" class="org.kuali.kfs.module.ar.dataaccess.impl.InvoicePaidAppliedDaoOjb"/>
-
 </beans>
