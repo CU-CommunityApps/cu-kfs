@@ -620,20 +620,21 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
 
     private KfsVendorDataWrapper populateFirstLastLegalName(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstLastNameIndicator(true);
-        kfsVendorDataWrapper.getVendorDetail().setVendorLastName(truncateValueToMaxLength(pmwVendor.getRequestingCompanyLegalLastName(), VendorConstants.MAX_VENDOR_NAME_LENGTH));
-        kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(pmwVendor.getRequestingCompanyLegalLastName(), pmwVendor.getRequestingCompanyLegalFirstName()));
+        String vendorLastName = truncateValueToMaxLength(pmwVendor.getRequestingCompanyLegalLastName(), VendorConstants.MAX_VENDOR_NAME_LENGTH);
+        kfsVendorDataWrapper.getVendorDetail().setVendorLastName(vendorLastName);
+        kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(vendorLastName, pmwVendor.getRequestingCompanyLegalFirstName(), VendorConstants.NAME_DELIM, VendorConstants.MAX_VENDOR_NAME_LENGTH));
         return kfsVendorDataWrapper;
     }
     
-    private static String truncateValueToMaxLength(String inputValue, int maxLength) {
+    protected static String truncateValueToMaxLength(String inputValue, int maxLength) {
         if (inputValue.length() <= maxLength)
             return inputValue;
         else
             return inputValue.substring(0, maxLength);
     }
 
-    private static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName) {
-        int maxAllowedLengthOfFirstName = VendorConstants.MAX_VENDOR_NAME_LENGTH - VendorConstants.NAME_DELIM.length() - legalLastName.length();
+    protected static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName, String delim, int maxLength) {
+        int maxAllowedLengthOfFirstName = maxLength - delim.length() - legalLastName.length();
         
         if (maxAllowedLengthOfFirstName <= 0)
             return KFSConstants.EMPTY_STRING;
