@@ -152,7 +152,7 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
     }
     
     private boolean pmwNewVendorAttributesConformToKfsLengthsOrFormats(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        boolean allValidationPassed = enteredLegalNameConformsToKfsLength(stgNewVendorRequestDetailToProcess, errorMessages);
+        boolean allValidationPassed = legalNameWasEntered(stgNewVendorRequestDetailToProcess, errorMessages);
         
         if (StringUtils.isBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyW8W9())) {
             errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_W8_W9_URL_IS_NULL_OR_BLANK));
@@ -195,49 +195,15 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         return valid;
     }
     
-    private boolean enteredLegalNameConformsToKfsLength(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        boolean allValidationPassed = true;
-        if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalLastName()) &
-            StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalFirstName()))  {
-            allValidationPassed = combinedLegalFirstLastNameEnteredConformsToMaxKfsLength(stgNewVendorRequestDetailToProcess, errorMessages);
+    private boolean legalNameWasEntered(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
+        if ( (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalLastName()) &
+              StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalFirstName()))
+              || (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalName())) ) {
+            return true;
+        } else {
+            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_LEGAL_NAME_NULL_OR_BLANK));
+            return false;
         }
-        else {
-            if (StringUtils.isNotBlank(stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalName())) {
-                allValidationPassed = companyLegalNameEnteredConformsToMaxKfsLength(stgNewVendorRequestDetailToProcess, errorMessages);
-            }
-            else {
-                errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_LEGAL_NAME_NULL_OR_BLANK));
-                allValidationPassed = false;
-            }
-        }
-        return allValidationPassed;
-    }
-    
-    private boolean combinedLegalFirstLastNameEnteredConformsToMaxKfsLength(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        boolean allValidationPassed = true;
-        int lastDelimiterFirstCombinedLength = stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalLastName().length() + 
-                                               VendorConstants.NAME_DELIM.length() + 
-                                               stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalFirstName().length();
-
-        if (lastDelimiterFirstCombinedLength > VendorConstants.MAX_VENDOR_NAME_LENGTH) {
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_COMBINED_LEGAL_FIRST_LAST_NAME_TOO_LONG_FOR_KFS));
-            allValidationPassed = false;
-            LOG.info("isCombinedLegalFirstLastNameEnteredWithinProperLength: PMW Legal Last Name length is " + stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalLastName().length() +
-                     " PMW Legal First Name length is " + stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalFirstName().length() +
-                     " which when combined with delimiters must be less that the KFS legal name max length of " + (VendorConstants.MAX_VENDOR_NAME_LENGTH - VendorConstants.NAME_DELIM.length()));
-        }
-        return allValidationPassed;
-    }
-    
-    private boolean companyLegalNameEnteredConformsToMaxKfsLength(PaymentWorksVendor stgNewVendorRequestDetailToProcess, List<String> errorMessages) {
-        boolean allValidationPassed = true;
-        if (stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalName().length() > VendorConstants.MAX_VENDOR_NAME_LENGTH) {
-            errorMessages.add(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.ERROR_LEGAL_NAME_TOO_LONG_FOR_KFS));
-            allValidationPassed = false;
-            LOG.info("companyLegalNameEnteredConformsToMaxKfsLength: KFS legal name max length is " + VendorConstants.MAX_VENDOR_NAME_LENGTH +
-                     " PMW legal name length received is " + stgNewVendorRequestDetailToProcess.getRequestingCompanyLegalName().length());
-        }
-        return allValidationPassed;
     }
     
     private boolean enteredDateIsFormattedProperly(String dateToValidate, String dateDescriptionForErrorMessage, List<String> errorMessages) {
