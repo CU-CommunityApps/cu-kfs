@@ -80,12 +80,10 @@
     		<list>
                 <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">                    
                     <property name="searchingAttribute">
-                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-                            <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-                            <property name="attributeName" value="sensitive"/>
-                            <property name="showAttributeInSearchCriteria" value="false"/>
-                            <property name="showAttributeInResultSet" value="false"/>
-                        </bean>
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+                       		  p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+                       		  p:attributeName="sensitive" p:showAttributeInSearchCriteria="false"
+                       		  p:showAttributeInResultSet="false"/>
                     </property>
                     <property name="documentValues">
                         <list>
@@ -95,11 +93,9 @@
                 </bean>
        			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">      				
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="purapDocumentIdentifier"/>
-    						<property name="showAttributeInResultSet" value="true"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="purapDocumentIdentifier" p:showAttributeInResultSet="true"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -109,12 +105,10 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">       		
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="applicationDocumentStatus"/>
-    						<property name="showAttributeInSearchCriteria" value="false"/>
-    						<property name="showAttributeInResultSet" value="true"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="applicationDocumentStatus" p:showAttributeInSearchCriteria="false"
+    						p:showAttributeInResultSet="true"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -124,12 +118,10 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">       		
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="chartAndOrgCodeForResult"/>
-    						<property name="showAttributeInSearchCriteria" value="false"/>
-    						<property name="showAttributeInResultSet" value="true"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="chartAndOrgCodeForResult" p:showAttributeInSearchCriteria="false"
+    						p:showAttributeInResultSet="true"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -139,12 +131,10 @@
     			</bean>    		 
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="vendorName"/>
-    						<property name="showAttributeInSearchCriteria" value="false"/>
-    						<property name="showAttributeInResultSet" value="true"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="vendorName" p:showAttributeInSearchCriteria="false"
+    						p:showAttributeInResultSet="true"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -154,10 +144,9 @@
     			</bean>
                 <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
                     <property name="searchingAttribute">
-                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-                            <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-                            <property name="attributeName" value="vendorNumber"/>
-                        </bean>
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+                            p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+                            p:attributeName="vendorNumber"/>
                     </property>
                     <property name="documentValues">
                         <list>
@@ -167,11 +156,9 @@
                 </bean>             
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     	      		<property name="searchingAttribute">
-    	      			<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    	      				<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    	      				<property name="attributeName" value="documentChartOfAccountsCodeForSearching"/>
-    	      				<property name="showAttributeInResultSet" value="false"/>
-    	      			</bean>
+    	      			<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    	      				p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    	      				p:attributeName="documentChartOfAccountsCodeForSearching" p:showAttributeInResultSet="false"/>
     	      		</property>
     	      		<property name="documentValues">
     	      			<list>
@@ -182,11 +169,9 @@
 
     	      	<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     	      		<property name="searchingAttribute">
-    	      			<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    	      				<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    	      				<property name="attributeName" value="documentOrganizationCodeForSearching"/>
-    	      				<property name="showAttributeInResultSet" value="false"/>
-    	      			</bean>
+    	      			<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    	      				p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    	      				p:attributeName="documentOrganizationCodeForSearching" p:showAttributeInResultSet="false"/>
     	      		</property>
     	      		<property name="documentValues">
     	      			<list>
@@ -196,10 +181,9 @@
     	      	</bean>   			
     		    <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="requestorPersonName"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="requestorPersonName"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -209,10 +193,9 @@
     			</bean>    			 			
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="deliveryCampusCodeForSearch"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="deliveryCampusCodeForSearch"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -222,10 +205,9 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="deliveryToName"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="deliveryToName"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -235,10 +217,9 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="requisitionOrganizationReference1Text"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="requisitionOrganizationReference1Text"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -248,10 +229,9 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="requisitionOrganizationReference2Text"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="requisitionOrganizationReference2Text"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -261,10 +241,9 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="requisitionOrganizationReference3Text"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="requisitionOrganizationReference3Text"/>
     				</property>
     				<property name="documentValues">
     					<list>
@@ -274,12 +253,10 @@
     			</bean>
           		<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"/>
-    						<property name="attributeName" value="createDateForResult"/>
-    						<property name="showAttributeInSearchCriteria" value="false"/>
-    						<property name="showAttributeInResultSet" value="true"/>
-    					</bean>
+    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+    						p:businessObjectClassName="edu.cornell.kfs.module.purap.document.CuRequisitionDocument"
+    						p:attributeName="createDateForResult" p:showAttributeInSearchCriteria="false"
+    						p:showAttributeInResultSet="true"/>
     				</property>
     				<property name="documentValues">
     					<list>
