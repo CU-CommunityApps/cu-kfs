@@ -1,6 +1,5 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,38 +7,29 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import org.kuali.rice.core.api.config.property.ConfigurationService;
-import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.location.api.state.State;
-import org.kuali.rice.location.api.state.StateService;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.krad.bo.Note;
-
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
-import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.location.api.state.StateService;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksTaxClassification;
 import edu.cornell.kfs.pmw.batch.PaymentWorksKeyConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
-import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorRequestsBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsVendorDetailConversionService;
 import edu.cornell.kfs.vnd.CUVendorConstants;
@@ -406,7 +396,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         VendorContact contact = new VendorContact();
         contact.setVendorContactPhoneNumbers(vendorContactPhoneNumbers);
         contact.setVendorContactTypeCode(contactType);
-        contact.setVendorContactName(contactName);
+        contact.setVendorContactName(truncateValueToMaxLength(contactName, CUVendorConstants.MAX_VENDOR_CONTACT_NAME_LENGTH));
         contact.setVendorContactEmailAddress(contactEmailAddress);
         contact.setActive(true);
         return contact;
@@ -619,20 +609,37 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         }
         return kfsOwnsershipTypeCode;
     }
-    
+
     private KfsVendorDataWrapper populateBusinessLegalName(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
-        kfsVendorDataWrapper.getVendorDetail().setVendorName(pmwVendor.getRequestingCompanyLegalName());
+        kfsVendorDataWrapper.getVendorDetail().setVendorName(truncateValueToMaxLength(pmwVendor.getRequestingCompanyLegalName(), VendorConstants.MAX_VENDOR_NAME_LENGTH));
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstLastNameIndicator(false);
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(KFSConstants.EMPTY_STRING);
         kfsVendorDataWrapper.getVendorDetail().setVendorLastName(KFSConstants.EMPTY_STRING);
         return kfsVendorDataWrapper;
     }
-    
+
     private KfsVendorDataWrapper populateFirstLastLegalName(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         kfsVendorDataWrapper.getVendorDetail().setVendorFirstLastNameIndicator(true);
-        kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(pmwVendor.getRequestingCompanyLegalFirstName());
-        kfsVendorDataWrapper.getVendorDetail().setVendorLastName(pmwVendor.getRequestingCompanyLegalLastName());
+        String vendorLastName = truncateValueToMaxLength(pmwVendor.getRequestingCompanyLegalLastName(), VendorConstants.MAX_VENDOR_NAME_LENGTH);
+        kfsVendorDataWrapper.getVendorDetail().setVendorLastName(vendorLastName);
+        kfsVendorDataWrapper.getVendorDetail().setVendorFirstName(truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(vendorLastName, pmwVendor.getRequestingCompanyLegalFirstName(), VendorConstants.NAME_DELIM, VendorConstants.MAX_VENDOR_NAME_LENGTH));
         return kfsVendorDataWrapper;
+    }
+    
+    protected static String truncateValueToMaxLength(String inputValue, int maxLength) {
+        if (inputValue.length() <= maxLength)
+            return inputValue;
+        else
+            return inputValue.substring(0, maxLength);
+    }
+
+    protected static String truncateLegalFirstNameToMaximumAllowedLengthWhenFormattedWithLegalLastName(String legalLastName, String legalFirstName, String delim, int maxLength) {
+        int maxAllowedLengthOfFirstName = maxLength - delim.length() - legalLastName.length();
+        
+        if (maxAllowedLengthOfFirstName <= 0)
+            return KFSConstants.EMPTY_STRING;
+        else 
+            return truncateValueToMaxLength(legalFirstName, maxAllowedLengthOfFirstName);
     }
 
     private KfsVendorDataWrapper populateW9Attributes(KfsVendorDataWrapper kfsVendorDataWrapper, PaymentWorksVendor pmwVendor) {

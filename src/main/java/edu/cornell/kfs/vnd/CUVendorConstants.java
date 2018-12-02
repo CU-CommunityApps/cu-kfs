@@ -79,4 +79,6 @@ public class CUVendorConstants extends VendorConstants {
         labelsMap.put(LOCALE_REGIONAL, LOCALE_REGIONAL_LABEL);
         LOCALES_LABEL_MAP = Collections.unmodifiableMap(labelsMap);
     }
+    
+    public static final int MAX_VENDOR_CONTACT_NAME_LENGTH = 45;
 }
