@@ -107,9 +107,6 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
             case VENDOR_US_ADDRESS :
                 throw new IllegalArgumentException("Cannot create print-only piece for VENDOR_US_ADDRESS type");
             
-            case VENDOR_FOREIGN_ADDRESS :
-                throw new IllegalArgumentException("Cannot create print-only piece for VENDOR_FOREIGN_ADDRESS type");
-            
             case VENDOR_ANY_ADDRESS :
                 throw new IllegalArgumentException("Cannot create print-only piece for VENDOR_ANY_ADDRESS type");
             
@@ -188,10 +185,6 @@ abstract class TransactionRowPrintProcessor<T extends TransactionDetailSummary> 
                 break;
             
             case VENDOR_US_ADDRESS :
-                // Leave Set empty.
-                break;
-            
-            case VENDOR_FOREIGN_ADDRESS :
                 // Leave Set empty.
                 break;
             

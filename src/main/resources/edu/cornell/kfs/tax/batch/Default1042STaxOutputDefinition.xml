@@ -49,15 +49,15 @@
         <field name="B17" length="15" type="BLANK" /><!-- B17 :: US Work Telephonse Number -->
         <field name="B18" length="10" type="BLANK" /><!-- B18 :: US FAX Number -->
         <field name="B19" length="40" type="DERIVED" value="vendorForeignAddressLine1" /><!-- B19 :: Non US Address (Line 1) -->
-        <field name="B20" length="40" type="VENDOR_FOREIGN_ADDRESS" value="vendorLine2Address" /><!-- B20 :: Non US Address (Line 2) -->
+        <field name="B20" length="40" type="DERIVED" value="vendorForeignAddressLine2" /><!-- B20 :: Non US Address (Line 2) -->
         <field name="B21" length="40" type="BLANK" /><!-- B21 :: Non US Address (Line 3) -->
-        <field name="B22" length="10" type="VENDOR_FOREIGN_ADDRESS" value="vendorZipCode" /><!-- B22 :: Non US City Postal Code -->
-        <field name="B23" length="40" type="VENDOR_FOREIGN_ADDRESS" value="vendorCityName" /><!-- B23 :: Non US City -->
+        <field name="B22" length="10" type="DERIVED" value="vendorForeignZipCode" /><!-- B22 :: Non US City Postal Code -->
+        <field name="B23" length="40" type="DERIVED" value="vendorForeignCityName" /><!-- B23 :: Non US City -->
         <field name="B24" length="10" type="BLANK" /><!-- B24 :: Non US Region Postal Code -->
         <field name="B25" length="30" type="BLANK" /><!-- B25 :: Non US Region -->
-        <field name="B26" length="2" type="VENDOR_FOREIGN_ADDRESS" value="vendorCountryCode" /><!-- B26 :: Non US Country Code -->
+        <field name="B26" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B26 :: Non US Country Code -->
         <field name="B27" length="25" type="BLANK" /><!-- B27 :: Non US Country Name (NOTE: Should be non-blank if B26 is blank or invalid) -->
-        <field name="B28" length="2" type="VENDOR_FOREIGN_ADDRESS" value="vendorCountryCode" /><!-- B28 :: Citizenship Country Code -->
+        <field name="B28" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B28 :: Citizenship Country Code -->
         <field name="B29" length="25" type="BLANK" /><!-- B29 :: Citizenship Country Name -->
         <field name="B30" length="20" type="BLANK" /><!-- B30 :: Passport Number -->
         <field name="B31" length="10" type="BLANK" /><!-- B31 :: Date first Entered US -->
@@ -79,7 +79,7 @@
         <field name="B47" length="1" type="BLANK" /><!-- B47 :: Recipient of grant -->
         <field name="B48" length="1" type="BLANK" /><!-- B48 :: Full time program -->
         <field name="B49" length="1" type="BLANK" /><!-- B49 :: US Citizen -->
-        <field name="B50" length="2" type="VENDOR_FOREIGN_ADDRESS" value="vendorCountryCode" /><!-- B50 :: Tax Residence Country Code -->
+        <field name="B50" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B50 :: Tax Residence Country Code -->
         <field name="B51" length="25" type="BLANK" /><!-- B51 :: Tax Residence Country Name (NOTE: Should be non-blank if B43 is blank or invalid) -->
         <field name="B52" length="10" type="BLANK" /><!-- B52 :: Passport Expiration Date -->
         <field name="B53" length="10" type="STATIC" value="KFS" /><!-- B53 :: Record Source -->
@@ -137,7 +137,7 @@
         <field name="D14" length="10" type="BLANK" /><!-- D14 :: Refund Amount -->
         <field name="D15" length="10" type="BLANK" /><!-- D15 :: Tax Assumed by Withholding Agent -->
         <field name="D16" length="2" type="DERIVED" value="stateCode" /><!-- D16 :: State Code -->
-        <field name="D17" length="2" type="VENDOR_FOREIGN_ADDRESS" value="vendorCountryCode" /><!-- D17 :: Country Code  -->
+        <field name="D17" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- D17 :: Country Code  -->
         <field name="D18" length="25" type="BLANK" /><!-- D18 :: Country Name (NOTE: Should be non-blank if D17 Country Code is not given) -->
         <field name="D19" length="10" type="DERIVED" value="endDate" /><!-- D19 :: Cycle Date (Payment Date) -->
         <field name="D20" length="10" type="STATIC" value="KFS" /><!-- D20 :: Record Source -->

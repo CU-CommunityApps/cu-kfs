@@ -106,7 +106,6 @@ final class TransactionRowProcessorBuilder {
         minimumPieces.put(TaxFieldSource.DETAIL, rowProcessor.getMinimumFields(TaxFieldSource.DETAIL, summary));
         minimumPieces.put(TaxFieldSource.VENDOR, rowProcessor.getMinimumFields(TaxFieldSource.VENDOR, summary));
         minimumPieces.put(TaxFieldSource.VENDOR_US_ADDRESS, rowProcessor.getMinimumFields(TaxFieldSource.VENDOR_US_ADDRESS, summary));
-        minimumPieces.put(TaxFieldSource.VENDOR_FOREIGN_ADDRESS, rowProcessor.getMinimumFields(TaxFieldSource.VENDOR_FOREIGN_ADDRESS, summary));
         minimumPieces.put(TaxFieldSource.VENDOR_ANY_ADDRESS, rowProcessor.getMinimumFields(TaxFieldSource.VENDOR_ANY_ADDRESS, summary));
         minimumPieces.put(TaxFieldSource.DERIVED, rowProcessor.getMinimumFields(TaxFieldSource.DERIVED, summary));
         
@@ -166,7 +165,6 @@ final class TransactionRowProcessorBuilder {
                         break;
                     
                     case VENDOR_US_ADDRESS :
-                    case VENDOR_FOREIGN_ADDRESS :
                     case VENDOR_ANY_ADDRESS :
                         tableField = summary.vendorAddressRow.getField(field.getValue());
                         break;
