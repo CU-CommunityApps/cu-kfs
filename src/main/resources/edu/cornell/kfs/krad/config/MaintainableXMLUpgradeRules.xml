@@ -155,11 +155,11 @@
             </pattern>
             <pattern>
                 <match>parameterWorkgroupName</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>parameterDetailType</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>parameterNamespace</match>
@@ -231,7 +231,7 @@
             </pattern>
             <pattern>
                 <match>dataObjectMaintenanceCodeActiveIndicator</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -257,7 +257,7 @@
             </pattern>
             <pattern>
                 <match>virtualDetailType</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -322,11 +322,11 @@
             <class>a21SubAccount</class>
             <pattern>
                 <match>indirectCostRecoveryChartOfAccountsCode</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>indirectCostRecoveryAccountNumber</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -337,11 +337,11 @@
             </pattern>
             <pattern>
                 <match>indirectCostRcvyFinCoaCode</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>indirectCostRecoveryAcctNbr</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -363,31 +363,31 @@
             <class>org.kuali.kfs.coa.identity.OrgReviewRole</class>
             <pattern>
                 <match>delegation</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>delegationMemberRole</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>delegationMemberGroup</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>delegationMemberPerson</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>memberRole</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>memberGroup</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>memberPerson</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <pattern>
@@ -423,35 +423,35 @@
             <class>org.kuali.rice.kim.impl.identity.PersonImpl</class>
             <pattern>
                 <match>address</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressLine1</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressLine2</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressLine3</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressCityName</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressStateCode</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressPostalCode</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>addressCountryCode</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <!-- ==== CU Customization ==== -->
@@ -459,15 +459,15 @@
             <class>org.kuali.rice.kns.util.TypedArrayList</class>
             <pattern>
                 <match>class(ATTR)</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>unserializable-parents</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.util.TypedArrayList</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl</match>
@@ -478,11 +478,11 @@
             <class>org.apache.ojb.broker.core.proxy.ListProxyDefaultImpl</class>
             <pattern>
                 <match>default</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>int</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <!-- Special entry for converting string maps. -->
@@ -490,11 +490,11 @@
             <class>map</class>
             <pattern>
                 <match>default</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>int</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>string</match>
@@ -506,7 +506,7 @@
             <class>org.apache.ojb.broker.util.collections.ManageableArrayList</class>
             <pattern>
                 <match>class(ATTR)</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <!-- Added global matches. -->
@@ -514,7 +514,7 @@
             <class>*</class>
             <pattern>
                 <match>serialization(ATTR)</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <!-- KDO-763 -->
             <pattern>
@@ -619,11 +619,11 @@
             </pattern>
             <pattern>
                 <match>unserializable-parents</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>autoIncrementSet</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>map</match>
@@ -639,11 +639,11 @@
             </pattern>
             <pattern>
                 <match>indirectCostRcvyFinCoaCode</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>indirectCostRecoveryAcctNbr</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <!-- KDO-873 end -->
@@ -665,19 +665,19 @@
             <class>edu.cornell.kfs.vnd.businessobject.CuVendorHeaderExtension</class>
             <pattern>
                 <match>vendorHeaderGeneratedIdentifier</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>objectId</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>versionNumber</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>newCollectionRecord</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>vendorW9ReceivedDate</match>
@@ -697,7 +697,7 @@
             </pattern>
             <pattern>
                 <match>vendorLocale</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
             <pattern>
                 <match>vendorChapter4Status</match>
@@ -709,7 +709,7 @@
             <class>noteType</class>
             <pattern>
                 <match>reference(ATTR)</match>
-                <replacement></replacement>
+                <replacement/>
             </pattern>
         </pattern>
         <!-- ==== End CU Customization ==== -->

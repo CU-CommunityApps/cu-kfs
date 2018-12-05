@@ -60,13 +60,9 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
     /**
      * Performs access security edit check and sets edit flag on container line to false if access is not allowed or removes
      * container if view is not allowed
-     *
-     * @see org.kuali.kfs.sys.document.web.DefaultAccountingLineGroupImpl#initialize(org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition,
-     *      org.kuali.kfs.sys.document.AccountingDocument, java.util.List, java.lang.String, java.lang.String, java.util.Map,
-     *      java.util.Map, java.util.Map, boolean)
      */
     @Override
-    public void initialize(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument, List<RenderableAccountingLineContainer> containers, String collectionPropertyName, String collectionItemPropertyName, Map<String, Object> displayedErrors, Map<String, Object> displayedWarnings, Map<String, Object> displayedInfo, boolean canEdit) {
+    public void initialize(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument, List<RenderableAccountingLineContainer> containers, String collectionPropertyName, String collectionItemPropertyName, String newLinePropertyName, Map<String, Object> displayedErrors, Map<String, Object> displayedWarnings, Map<String, Object> displayedInfo, boolean canEdit) {
         AccessSecurityService accessSecurityService = SpringContext.getBean(AccessSecurityService.class);
         Person currentUser = GlobalVariables.getUserSession().getPerson();
 
@@ -113,7 +109,7 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
             containers.remove(container);
         }
 
-        super.initialize(groupDefinition, accountingDocument, containers, collectionPropertyName, collectionItemPropertyName, displayedErrors, displayedWarnings, displayedInfo, canEdit);
+        super.initialize(groupDefinition, accountingDocument, containers, collectionPropertyName, collectionItemPropertyName, newLinePropertyName, displayedErrors, displayedWarnings, displayedInfo, canEdit);
     }
 
     /**
