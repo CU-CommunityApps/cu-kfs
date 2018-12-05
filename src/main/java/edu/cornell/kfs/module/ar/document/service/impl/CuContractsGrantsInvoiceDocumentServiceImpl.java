@@ -12,6 +12,7 @@ import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
+import org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode;
 import org.kuali.kfs.module.ar.businessobject.SystemInformation;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
@@ -28,6 +29,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl {
@@ -473,6 +475,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     @Override
     public void prorateBill(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         LOG.info("prorateBill, entering");
+        LOG.info("prorateBill before, contractsGrantsInvoiceDocumen: " + contractsGrantsInvoiceDocument);
         KualiDecimal totalCost = new KualiDecimal(0); // Amount to be billed on
                                                       // this invoice
         // must iterate through the invoice details because the user might have
@@ -480,20 +483,21 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
             totalCost = totalCost.add(invD.getInvoiceAmount());
         }
+        
         KualiDecimal billedTotalCost = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()
                 .getTotalPreviouslyBilled(); // Total Billed so far
 
         // CU Customization, use award budget total, and not the award total
         // KualiDecimal accountAwardTotal = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAwardTotal();
-        // // AwardTotal
+        
         Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
         AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
         KualiDecimal accountAwardTotal = awardExtension.getBudgetTotalAmount();
-
+        
         if (accountAwardTotal.subtract(billedTotalCost).isGreaterEqual(new KualiDecimal(0))) {
             KualiDecimal amountEligibleForBilling = accountAwardTotal.subtract(billedTotalCost);
             // only recalculate if the current invoice is over what's billable.
-
+            
             if (totalCost.isGreaterThan(amountEligibleForBilling)) {
                 // use BigDecimal because percentage should not have only a
                 // scale of 2, we need more for accuracy
@@ -527,6 +531,17 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 recalculateTotalAmountBilledToDate(contractsGrantsInvoiceDocument);
             }
         }
+        LOG.info("prorateBill after, contractsGrantsInvoiceDocumen: " + contractsGrantsInvoiceDocument);
+        
+        
     }
+    
+    @Override
+    public void recalculateObjectCodeByCategory(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
+            ContractsGrantsInvoiceDetail invoiceDetail, KualiDecimal total,
+            List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes) {
+        super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
+    }
+    
 
 }
