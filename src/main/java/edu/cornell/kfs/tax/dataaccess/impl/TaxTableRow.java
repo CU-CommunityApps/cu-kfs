@@ -597,6 +597,10 @@ abstract class TaxTableRow {
         final TaxTableField vendorEmailAddress;
         final TaxTableField vendorUSAddressLine1;
         final TaxTableField vendorForeignAddressLine1;
+        final TaxTableField vendorForeignAddressLine2;
+        final TaxTableField vendorForeignCityName;
+        final TaxTableField vendorForeignZipCode;
+        final TaxTableField vendorForeignCountryCode;
         final TaxTableField vendorAnyAddressLine1;
         final TaxTableField vendorZipCodeNumOnly;
         final TaxTableField ssn;
@@ -645,6 +649,10 @@ abstract class TaxTableRow {
             this.vendorEmailAddress = getAliasedField(DerivedFieldNames.VENDOR_EMAIL_ADDRESS);
             this.vendorUSAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_US_ADDRESS_LINE_1);
             this.vendorForeignAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ADDRESS_LINE_1);
+            this.vendorForeignAddressLine2 = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ADDRESS_LINE_2);
+            this.vendorForeignCityName = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_CITY_NAME);
+            this.vendorForeignZipCode = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_ZIP_CODE);
+            this.vendorForeignCountryCode = getAliasedField(DerivedFieldNames.VENDOR_FOREIGN_COUNTRY_CODE);
             this.vendorAnyAddressLine1 = getAliasedField(DerivedFieldNames.VENDOR_ANY_ADDRESS_LINE_1);
             this.vendorZipCodeNumOnly = getAliasedField(DerivedFieldNames.VENDOR_ZIP_CODE_NUM_ONLY);
             this.ssn = getAliasedField(DerivedFieldNames.SSN);

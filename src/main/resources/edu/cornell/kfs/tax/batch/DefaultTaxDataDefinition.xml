@@ -313,6 +313,10 @@
         <field name="vendorEmailAddress" type="VARCHAR" />
         <field name="vendorUSAddressLine1" type="VARCHAR" />
         <field name="vendorForeignAddressLine1" type="VARCHAR" />
+        <field name="vendorForeignAddressLine2" type="VARCHAR" />
+        <field name="vendorForeignCityName" type="VARCHAR" />
+        <field name="vendorForeignZipCode" type="VARCHAR" />
+        <field name="vendorForeignCountryCode" type="VARCHAR" />
         <field name="vendorAnyAddressLine1" type="VARCHAR" />
         <field name="vendorZipCodeNumOnly" type="VARCHAR" />
         <field name="ssn" type="VARCHAR" />
