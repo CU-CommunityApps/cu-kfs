@@ -59,6 +59,10 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
  *   <li>vendorEmailAddress</li>
  *   <li>vendorUSAddressLine1</li>
  *   <li>vendorForeignAddressLine1</li>
+ *   <li>vendorForeignAddressLine2</li>
+ *   <li>vendorForeignCityName</li>
+ *   <li>vendorForeignZipCode</li>
+ *   <li>vendorForeignCountryCode</li>
  *   <li>ssn</li>
  *   <li>itin</li>
  *   <li>chapter3StatusCode</li>
@@ -145,6 +149,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
     private RecordPiece1042SString vendorEmailAddressP;
     private RecordPiece1042SString vendorUSAddressLine1P;
     private RecordPiece1042SString vendorForeignAddressLine1P;
+    private RecordPiece1042SString vendorForeignAddressLine2P;
+    private RecordPiece1042SString vendorForeignCityNameP;
+    private RecordPiece1042SString vendorForeignZipCodeP;
+    private RecordPiece1042SString vendorForeignCountryCodeP;
     private RecordPiece1042SString formattedSSNValueP;
     private RecordPiece1042SString formattedITINValueP;
     private RecordPiece1042SString chapter3StatusCodeP;
@@ -293,12 +301,6 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                         field.index, VENDOR_US_ADDRESS_INDEX);
                 break;
             
-            case VENDOR_FOREIGN_ADDRESS :
-                // Create a piece that derives its value directly from the vendor foreign address ResultSet at runtime.
-                piece = new RecordPiece1042SResultSetDerivedString(name, len,
-                        field.index, VENDOR_FOREIGN_ADDRESS_INDEX);
-                break;
-            
             case VENDOR_ANY_ADDRESS :
                 // Non-country-specific pieces are not supported by this implementation.
                 throw new IllegalArgumentException("The VENDOR_ANY_ADDRESS type is not supported for 1042S processing");
@@ -399,10 +401,6 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                 // Leave Set empty.
                 break;
             
-            case VENDOR_FOREIGN_ADDRESS :
-                // Leave Set empty.
-                break;
-            
             case VENDOR_ANY_ADDRESS :
                 // Leave Set empty.
                 break;
@@ -414,6 +412,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
                         derivedValues.vendorEmailAddress,
                         derivedValues.vendorUSAddressLine1,
                         derivedValues.vendorForeignAddressLine1,
+                        derivedValues.vendorForeignAddressLine2,
+                        derivedValues.vendorForeignCityName,
+                        derivedValues.vendorForeignZipCode,
+                        derivedValues.vendorForeignCountryCode,
                         derivedValues.ssn,
                         derivedValues.itin,
                         derivedValues.chapter3StatusCode,
@@ -509,6 +511,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         vendorEmailAddressP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorEmailAddress.propertyName);
         vendorUSAddressLine1P = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorUSAddressLine1.propertyName);
         vendorForeignAddressLine1P = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignAddressLine1.propertyName);
+        vendorForeignAddressLine2P = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignAddressLine2.propertyName);
+        vendorForeignCityNameP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignCityName.propertyName);
+        vendorForeignZipCodeP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignZipCode.propertyName);
+        vendorForeignCountryCodeP = (RecordPiece1042SString) complexPieces.get(derivedValues.vendorForeignCountryCode.propertyName);
         formattedSSNValueP = (RecordPiece1042SString) complexPieces.get(derivedValues.ssn.propertyName);
         formattedITINValueP = (RecordPiece1042SString) complexPieces.get(derivedValues.itin.propertyName);
         chapter3StatusCodeP = (RecordPiece1042SString) complexPieces.get(derivedValues.chapter3StatusCode.propertyName);
@@ -707,10 +713,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
             rs.updateString(detailRow.vendorStateCode.index, rsVendorUSAddress.getString(vendorAddressRow.vendorStateCode.index));
             rs.updateString(detailRow.vendorZipCode.index, rsVendorUSAddress.getString(vendorAddressRow.vendorZipCode.index));
             rs.updateString(detailRow.vendorForeignLine1Address.index, vendorForeignAddressLine1P.value);
-            rs.updateString(detailRow.vendorForeignLine2Address.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorLine2Address.index));
-            rs.updateString(detailRow.vendorForeignCityName.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorCityName.index));
-            rs.updateString(detailRow.vendorForeignZipCode.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorZipCode.index));
-            rs.updateString(detailRow.vendorForeignCountryCode.index, rsVendorForeignAddress.getString(vendorAddressRow.vendorCountryCode.index));
+            rs.updateString(detailRow.vendorForeignLine2Address.index, vendorForeignAddressLine2P.value);
+            rs.updateString(detailRow.vendorForeignCityName.index, vendorForeignCityNameP.value);
+            rs.updateString(detailRow.vendorForeignZipCode.index, vendorForeignZipCodeP.value);
+            rs.updateString(detailRow.vendorForeignCountryCode.index, vendorForeignCountryCodeP.value);
             
             // Store any changes made to the current transaction detail row.
             rs.updateRow();
@@ -937,6 +943,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
              */
             rsVendorForeignAddress = rsDummy;
         }
+        vendorForeignAddressLine2P.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorLine2Address.index);
+        vendorForeignCityNameP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorCityName.index);
+        vendorForeignZipCodeP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorZipCode.index);
+        vendorForeignCountryCodeP.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorCountryCode.index);
         
         
         
@@ -1565,6 +1575,10 @@ class TransactionRow1042SProcessor extends TransactionRowProcessor<Transaction10
         vendorEmailAddressP = null;
         vendorUSAddressLine1P = null;
         vendorForeignAddressLine1P = null;
+        vendorForeignAddressLine2P = null;
+        vendorForeignCityNameP = null;
+        vendorForeignZipCodeP = null;
+        vendorForeignCountryCodeP = null;
         formattedSSNValueP = null;
         formattedITINValueP = null;
         chapter3StatusCodeP = null;

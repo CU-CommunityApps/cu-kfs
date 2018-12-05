@@ -34,11 +34,13 @@ public final class CUTaxBatchConstants {
      *   <li>DV :: A field from the DV tax source data.</li>
      *   <li>VENDOR :: A vendor object field.</li>
      *   <li>VENDOR_US_ADDRESS :: A vendor address field from a US-address-only query.</li>
-     *   <li>VENDOR_FOREIGN_ADDRESS :: A vendor address field from a foreign-address-only query.</li>
      *   <li>VENDOR_ANY_ADDRESS :: A vendor address field from an any-vendor-address query.</li>
      *   <li>DOCUMENT_NOTE :: A document note object field.</li>
      *   <li>DERIVED :: A field whose value is derived by the tax processing and is not directly tied to the database.</li>
      * </ul>
+     * 
+     * NOTE: Due to complications in cases involving both US and foreign addresses,
+     * vendor address fields for foreign-address-only queries should go under the DERIVED type.
      */
     public static enum TaxFieldSource {
         BLANK,
@@ -49,7 +51,6 @@ public final class CUTaxBatchConstants {
         PRNC,
         VENDOR,
         VENDOR_US_ADDRESS,
-        VENDOR_FOREIGN_ADDRESS,
         VENDOR_ANY_ADDRESS,
         DOCUMENT_NOTE,
         DERIVED;
@@ -360,6 +361,10 @@ public final class CUTaxBatchConstants {
         public static final String VENDOR_EMAIL_ADDRESS = CUTaxBatchConstants.VENDOR_EMAIL_ADDRESS;
         public static final String VENDOR_US_ADDRESS_LINE_1 = "vendorUSAddressLine1";
         public static final String VENDOR_FOREIGN_ADDRESS_LINE_1 = "vendorForeignAddressLine1";
+        public static final String VENDOR_FOREIGN_ADDRESS_LINE_2 = "vendorForeignAddressLine2";
+        public static final String VENDOR_FOREIGN_CITY_NAME = "vendorForeignCityName";
+        public static final String VENDOR_FOREIGN_ZIP_CODE = "vendorForeignZipCode";
+        public static final String VENDOR_FOREIGN_COUNTRY_CODE = "vendorForeignCountryCode";
         public static final String VENDOR_ANY_ADDRESS_LINE_1 = "vendorAnyAddressLine1";
         public static final String VENDOR_ZIP_CODE_NUM_ONLY = "vendorZipCodeNumOnly";
         public static final String SSN = "ssn";

@@ -287,10 +287,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 // Create a piece that derives its value directly from the vendor US address ResultSet at runtime.
                 throw new IllegalArgumentException("The VENDOR_US_ADDRESS type is not supported for 1099 processing");
             
-            case VENDOR_FOREIGN_ADDRESS :
-                // Country-specific pieces are not supported by this implementation.
-                throw new IllegalArgumentException("The VENDOR_FOREIGN_ADDRESS type is not supported for 1099 processing");
-            
             case VENDOR_ANY_ADDRESS :
                 // Create a piece that derives its value directly from the vendor address ResultSet at runtime.
                 piece = new RecordPiece1099ResultSetDerivedString(name, len,
@@ -395,10 +391,6 @@ public class TransactionRow1099Processor extends TransactionRowProcessor<Transac
                 break;
             
             case VENDOR_US_ADDRESS :
-                // Leave Set empty.
-                break;
-            
-            case VENDOR_FOREIGN_ADDRESS :
                 // Leave Set empty.
                 break;
             
