@@ -2,29 +2,16 @@ package edu.cornell.kfs.module.ar.document.service.impl;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
-import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
-import org.kuali.kfs.module.ar.fixture.ARAwardMockFixture;
-import org.kuali.kfs.module.ar.fixture.ContractsGrantsInvoiceDetailFixture;
-import org.kuali.kfs.module.ar.fixture.ContractsGrantsInvoiceDocumentFixture;
-import org.kuali.kfs.module.ar.fixture.InvoiceAccountDetailFixture;
-import org.kuali.kfs.module.ar.fixture.InvoiceGeneralDetailFixture;
-import org.kuali.kfs.module.ar.service.impl.ContractsGrantsInvoiceCreateDocumentServiceImpl;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -147,11 +134,12 @@ public class CuContractsGrantsInvoiceDocumentServiceImplTest {
     
     
     private void prepareCinvDocumentAndProrate(KualiDecimal totalAmountBilledToDate, KualiDecimal budgetTotal, double... invoiceAmounts) throws Exception {
-        PowerMockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl, "getAwardBilledToDateAmountByProposalNumber", Mockito.any());
+        PowerMockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl, "getAwardBilledToDateAmount", Mockito.any());
         PowerMockito.doReturn(totalAmountBilledToDate).when(cuContractsGrantsInvoiceDocumentServiceImpl, "getOtherTotalBilledForAwardPeriod", Mockito.any());
         
         PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
         contractsGrantsInvoiceDocument = PowerMockito.spy(new ContractsGrantsInvoiceDocument());
+        PowerMockito.doReturn(true).when(contractsGrantsInvoiceDocument, "isCorrectionDocument");
         
         Award award = new Award();
         

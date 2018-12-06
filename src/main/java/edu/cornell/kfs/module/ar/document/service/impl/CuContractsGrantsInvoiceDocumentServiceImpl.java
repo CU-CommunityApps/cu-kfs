@@ -473,8 +473,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     
     @Override
     public void prorateBill(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
-        LOG.info("prorateBill, entering");
-        LOG.info("prorateBill before, contractsGrantsInvoiceDocumen: " + contractsGrantsInvoiceDocument);
+        LOG.debug("prorateBill, entering");
         KualiDecimal totalCost = new KualiDecimal(0); // Amount to be billed on
                                                       // this invoice
         // must iterate through the invoice details because the user might have
@@ -530,9 +529,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 recalculateTotalAmountBilledToDate(contractsGrantsInvoiceDocument);
             }
         }
-        LOG.info("prorateBill after, contractsGrantsInvoiceDocumen: " + contractsGrantsInvoiceDocument);
-        
-        
     }
     
     @Override
