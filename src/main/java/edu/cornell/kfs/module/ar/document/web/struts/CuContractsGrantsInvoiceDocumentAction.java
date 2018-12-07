@@ -8,8 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.krad.util.ErrorMessage;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.web.struts.ContractsGrantsInvoiceDocumentAction;
@@ -31,8 +30,8 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         
         if (budgetTotalAmount == null || budgetTotalAmount.isLessEqual(KualiDecimal.ZERO)) {
             String budgetTotalAmountString = budgetTotalAmount != null ? budgetTotalAmount.toString() : "0"; 
-            ErrorMessage errorMessage = new ErrorMessage(CUKFSKeyConstants.ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_PRORATE_NO_AWARD_BUDGET_TOTAL, budgetTotalAmountString);
-            KNSGlobalVariables.getMessageList().add(errorMessage);
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, 
+                    CUKFSKeyConstants.ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_PRORATE_NO_AWARD_BUDGET_TOTAL, budgetTotalAmountString);
             
             LOG.error("prorateBill, Prorate is not valid as the budgetTotalAmount is " + budgetTotalAmount);
 
@@ -52,6 +51,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         } else {
             LOG.error("findAwardBudgetTotal, there is no award extension object on award " + award.getProposalNumber());
         }
+        
         return budgetTotalAmount;
     }
 
