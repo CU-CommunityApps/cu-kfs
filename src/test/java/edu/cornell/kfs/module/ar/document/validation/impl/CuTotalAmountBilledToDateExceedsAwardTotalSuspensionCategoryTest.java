@@ -25,7 +25,6 @@ public class CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategoryTest {
     private CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory suspensionCategory;
     private ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument;
     
-    private static final KualiDecimal STANDARD_AWARD_TOTAL = new KualiDecimal(100);
     private static final KualiDecimal STANDARD_BUDGET_TOTAL = new KualiDecimal(50);
 
     @Before

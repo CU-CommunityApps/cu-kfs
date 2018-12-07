@@ -27,11 +27,11 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     @Override
     public ActionForward prorateBill(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm = (ContractsGrantsInvoiceDocumentForm) form;
-        KualiDecimal budgetTotalAmount = findAwardBUdgetTotal(contractsGrantsInvoiceDocumentForm);
+        KualiDecimal budgetTotalAmount = findAwardBudgetTotal(contractsGrantsInvoiceDocumentForm);
         
         if (budgetTotalAmount == null || budgetTotalAmount.isLessEqual(KualiDecimal.ZERO)) {
-            String budetTotalAmountString = budgetTotalAmount != null ? budgetTotalAmount.toString() : "0"; 
-            ErrorMessage errorMessage = new ErrorMessage(CUKFSKeyConstants.ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_DOCUMENT_PRORATE_NO_AWARD_BUDGET_TOTAL, budetTotalAmountString);
+            String budgetTotalAmountString = budgetTotalAmount != null ? budgetTotalAmount.toString() : "0"; 
+            ErrorMessage errorMessage = new ErrorMessage(CUKFSKeyConstants.ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_PRORATE_NO_AWARD_BUDGET_TOTAL, budgetTotalAmountString);
             KNSGlobalVariables.getMessageList().add(errorMessage);
             
             LOG.error("prorateBill, Prorate is not valid as the budgetTotalAmount is " + budgetTotalAmount);
@@ -42,7 +42,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         return super.prorateBill(mapping, form, request, response);
     }
 
-    private KualiDecimal findAwardBUdgetTotal(ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm) {
+    private KualiDecimal findAwardBudgetTotal(ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm) {
         ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = contractsGrantsInvoiceDocumentForm.getContractsGrantsInvoiceDocument();
         Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
         AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
@@ -50,7 +50,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         if (ObjectUtils.isNotNull(awardExtension)) {
             budgetTotalAmount = awardExtension.getBudgetTotalAmount();
         } else {
-            LOG.error("findAwardBUdgetTotal, there is no award extension object on award " + award.getProposalNumber());
+            LOG.error("findAwardBudgetTotal, there is no award extension object on award " + award.getProposalNumber());
         }
         return budgetTotalAmount;
     }
