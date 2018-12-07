@@ -1,5 +1,8 @@
 package edu.cornell.kfs.module.ar.document.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -10,19 +13,16 @@ import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
 import org.kuali.kfs.module.ar.businessobject.SystemInformation;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
-import org.kuali.kfs.module.ar.report.PdfFormattingMap;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.util.FallbackMap;
 import org.kuali.kfs.sys.util.ReflectionMap;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import java.util.HashMap;
-import java.util.Map;
+import edu.cornell.kfs.module.ar.report.CuPdfFormattingMap;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl {
 
-    // Customized to default final status date to last modified date.
+    // Customized to default final status date to last modified date, and to wrap the results in a new CuPdfFormattingMap object.
     @Override
     /**
      * This method generated the template parameter list to populate the pdf invoices that are attached to the Document.
@@ -448,7 +448,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                         receivable.add(document.getInvoiceGeneralDetail().getTotalAmountBilledToDate()));
             }
         }
-        return new PdfFormattingMap(parameterMap);
+        return new CuPdfFormattingMap(parameterMap);
     }
 
     private void setFinalStatusDate(ContractsGrantsInvoiceDocument document, Map<String, Object> parameterMap) {
