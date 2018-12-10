@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -283,8 +284,10 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
         
         // Setup university/payment date, which should be a valid SQL Date.
         try {
-            transOverride.setUniversityDate(
-                    (java.sql.Date) dateFormatter.convertFromPresentationFormat(parsedLine.get(TransactionOverrideCsv.Payment_Date.toString())));
+            String rawUniversityDate = parsedLine.get(TransactionOverrideCsv.Payment_Date.toString());
+            java.sql.Date universityDateParsed = parseUniversityDate(rawUniversityDate);
+            transOverride.setUniversityDate(universityDateParsed);
+
             if (transOverride.getUniversityDate() == null) {
                 LOG.error("Found a line with a null payment date. Line number: " + Integer.toString(lineNumber));
                 valid = false;
@@ -305,6 +308,42 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
             }
             return StringUtils.join(lineValues, '\t');
         }
+    }
+
+    private java.sql.Date parseUniversityDate(String universityDateRaw) {
+        java.sql.Date ret = null;
+        try {
+            String dateFormatString = getUniversityDateFormatString(universityDateRaw);
+            SimpleDateFormat sdf = new SimpleDateFormat(dateFormatString);
+            java.util.Date utilDate = sdf.parse(universityDateRaw);
+            ret = new java.sql.Date(utilDate.getTime());
+        } catch (Exception ex) {
+            LOG.error("parseUniversityDate: " + ex.toString());
+            ret = (java.sql.Date) dateFormatter.convertFromPresentationFormat(universityDateRaw);
+        }
+        return ret;
+    }
+
+    private String getUniversityDateFormatString(String rawUniversityDate) throws Exception {
+        int firstIndexOfSeparator = -1;
+        String separator = "";
+        if (rawUniversityDate.contains("-")) {
+            firstIndexOfSeparator = rawUniversityDate.indexOf("-");
+            separator = "-";
+        } else if (rawUniversityDate.contains("/")) {
+            firstIndexOfSeparator = rawUniversityDate.indexOf("/");
+            separator = "/";
+        } else {
+            throw new Exception("Unhandled Date format: " + rawUniversityDate);
+        }
+
+        if (firstIndexOfSeparator == 1 || firstIndexOfSeparator == 2) {
+            return "M" + separator + "d" + separator + "yyyy";
+        } else if (firstIndexOfSeparator>= 3) {
+            return "yyyy" + separator + "MM" + separator + "dd";
+        }
+
+        throw new Exception("Unhandled Date Format: " + rawUniversityDate);
     }
 
     /**
