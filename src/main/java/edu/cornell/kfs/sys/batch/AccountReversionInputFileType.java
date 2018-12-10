@@ -18,7 +18,7 @@ public class AccountReversionInputFileType extends CuBatchInputFileTypeBase {
      * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
      */
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return "accountReversionInputFileType";
     }
 

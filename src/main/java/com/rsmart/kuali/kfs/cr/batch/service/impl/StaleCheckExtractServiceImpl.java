@@ -103,7 +103,7 @@ public class StaleCheckExtractServiceImpl implements StaleCheckExtractService {
 
             List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
             if (inputFileNames == null) {
-                criticalError("getListOfFilesToProcess: BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer()
+                criticalError("getListOfFilesToProcess: BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifier()
                         + ") returned NULL which should never happen.");
             } else {
                 for (String inputFileName : inputFileNames) {

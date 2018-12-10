@@ -151,7 +151,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
             List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
             if (inputFileNames == null) {
-                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer()
+                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifier()
                         + ") returned NULL which should never happen.");
             } else {
                 // update the file name mapping

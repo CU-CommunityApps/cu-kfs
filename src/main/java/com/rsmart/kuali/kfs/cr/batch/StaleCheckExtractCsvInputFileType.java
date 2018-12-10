@@ -28,7 +28,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
     }
 
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return CRConstants.STALE_CHECK_EXTRACT_FILE_TYPE_ID;
     }
 

@@ -3,12 +3,12 @@ package edu.cornell.kfs.coa.document.authorization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase;
+import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase;
 import org.kuali.rice.kew.api.WorkflowDocument;
 import org.kuali.rice.kim.api.identity.Person;
 
 
-public class CuObjectCodeActivationGlobalAuthorizer extends FinancialSystemMaintenanceDocumentAuthorizerBase {
+public class CuObjectCodeActivationGlobalAuthorizer extends MaintenanceDocumentAuthorizerBase {
     private static final long serialVersionUID = -4822839971298829022L;
     private static final Logger LOG = LogManager.getLogger(CuObjectCodeActivationGlobalAuthorizer.class);
     
