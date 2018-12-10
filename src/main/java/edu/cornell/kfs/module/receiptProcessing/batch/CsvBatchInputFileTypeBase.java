@@ -42,10 +42,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
 	private static final Logger LOG = LogManager.getLogger(CsvBatchInputFileTypeBase.class);
 
     private Class<?> csvEnumClass;
-    
-    /**
-     * Constructs a BatchInputFileTypeBase.java.
-     */
+
     public CsvBatchInputFileTypeBase() {
         super();
     }
@@ -54,17 +51,12 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
         this.csvEnumClass = csvEnumClass;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#process(java.lang.String, java.lang.Object)
-     */
     public void process(String fileName, Object parsedFileContents) {
         // default impl does nothing
     }
 
     /**
      * @see org.kuali.kfs.sys.batch.BatchInputFileType#parse(byte[])
-     * 
-     * @return parsed object in structure - List<Map<String, String>>
      */
     public Object parse(byte[] fileByteContent) throws ParseException {
         
@@ -92,11 +84,11 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             dataList.remove(0);
             
             //parse and create List of Maps base on enum value names as map keys
-            List<Map<String, String>> dataMapList = new ArrayList<Map<String, String>>();
+            List<Map<String, String>> dataMapList = new ArrayList<>();
             Map<String, String>rowMap;
             int index = 0;
             for (String[] row : dataList){
-                rowMap = new LinkedHashMap<String, String>();
+                rowMap = new LinkedHashMap<>();
                 // reset index
                 index = 0;
                 
@@ -111,7 +103,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             LOG.error(ex.getMessage(), ex);
             throw new ParseException(ex.getMessage(), ex);
         }
-        return parsedContents;    
+        return convertParsedObjectToVO(parsedContents);   
     }
     
     /**
@@ -124,7 +116,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
      * 
      * @throws IOException
      */
-    private void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws IOException {
+    protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws IOException {
 
         //use csv reader to parse the csv content
         CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents));
@@ -154,7 +146,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
         
         if (errorMessage != null){
             LOG.error(errorMessage);
-            throw new RuntimeException(errorMessage);
+            throw new ParseException(errorMessage);
         }
     }
     
@@ -165,7 +157,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
      */
     @SuppressWarnings("rawtypes")
     protected List<String> getCsvHeaderList(){
-        List<String> headerList = new ArrayList<String>();
+        List<String> headerList = new ArrayList();
         EnumSet<CSVEnum> enums = EnumSet.allOf((Class)csvEnumClass);
         for (Enum<CSVEnum> e : enums ){
             headerList.add(e.name());
@@ -180,5 +172,14 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
      * @return
      */
     abstract protected Object convertParsedObjectToVO(Object parsedContent);
+    
+    @Override
+    public String getAuthorPrincipalName(File file) {
+        String[] fileNameParts = StringUtils.split(file.getName(), "_");
+        if (fileNameParts.length > 3) {
+            return fileNameParts[2];
+        }
+        return null;
+    }
 
 }
