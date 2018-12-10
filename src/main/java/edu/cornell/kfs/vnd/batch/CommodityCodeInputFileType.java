@@ -34,7 +34,7 @@ public class CommodityCodeInputFileType extends BatchInputFileTypeBase {
     protected static final String FILE_NAME_PREFIX = "pur_unspsc_";
 
     /**
-	 * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
+	 * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifier()
 	 */
 	public String getFileTypeIdentifier() {
 		return CUKFSConstants.COMMODITY_CODE_FILE_TYPE_INDENTIFIER;
