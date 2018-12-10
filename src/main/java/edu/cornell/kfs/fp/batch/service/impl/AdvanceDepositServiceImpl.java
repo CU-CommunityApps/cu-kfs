@@ -761,9 +761,9 @@ public class AdvanceDepositServiceImpl implements AdvanceDepositService {
 
         if (fileNamesToLoad == null) {
             LOG.error("BatchInputFileService.listInputFileNamesWithDoneFile(" +
-                    batchInputFileType.getFileTypeIdentifer() + ") returned NULL which should never happen.");
+                    batchInputFileType.getFileTypeIdentifier() + ") returned NULL which should never happen.");
             throw new RuntimeException("BatchInputFileService.listInputFileNamesWithDoneFile(" +
-                    batchInputFileType.getFileTypeIdentifer() + ") returned NULL which should never happen.");
+                    batchInputFileType.getFileTypeIdentifier() + ") returned NULL which should never happen.");
         }
 
         for (String inputFileName : fileNamesToLoad) {

@@ -14,7 +14,7 @@ public class DocumentReindexFlatFileInputType extends CuBatchInputFileTypeBase {
 	private static final String FILE_NAME_PREFIX = "documentReindex";
 	
 	@Override
-	public String getFileTypeIdentifer() {
+	public String getFileTypeIdentifier() {
 		return "documentReindexFlatFileInputType";
 	}
 
