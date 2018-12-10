@@ -277,7 +277,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesFormBase calfb = (CapitalAccountingLinesFormBase) form;
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) calfb.getFinancialDocument();
 
-        String distributionCode = calfb.getCapitalAccountingLine().getDistributionCode();
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();
 
         List<CapitalAccountingLines> selectedCapitalAccountingLines = new ArrayList<>();
@@ -1088,7 +1087,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             capitalAssetInformation.setVendorDetailAssignedIdentifier(null);
             capitalAssetInformation.setVendorHeaderGeneratedIdentifier(null);
             // Set the BO to null cause it won't be updated automatically when vendorDetailAssetIdentifier and
-            // VendorHeanderGeneratedIndentifier set to null.
+            // VendorHeanderGeneratedIdentifier set to null.
             capitalAssetInformation.setVendorDetail(null);
             capitalAssetInformation.setVendorName(null);
             capitalAssetInformation.setCapitalAssetLineAmount(KualiDecimal.ZERO);
@@ -1112,8 +1111,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
                 .getFinancialDocument();
 
         List<CapitalAccountingLines> capitalAccountingLines = caldb.getCapitalAccountingLines();
-        List<CapitalAccountingLines> copiedCapitalAccountingLines = new ArrayList<>();
-        copiedCapitalAccountingLines.addAll(capitalAccountingLines);
+        List<CapitalAccountingLines> copiedCapitalAccountingLines = new ArrayList<>(capitalAccountingLines);
         capitalAccountingLines.clear();
 
         ActionForward forward = super.copy(mapping, form, request, response);
@@ -1665,11 +1663,11 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     * sets the capital assets screens for create and modify and accounting lines
-     * for capitalization screen as open. If accounting lines for capitalizataion list is
-     * not empty then set "Accounting Lines for Capitalization" tab to open else set to close.
-     * If capital asset with capital asset action indicator = 'C' then set "Create Capital Asset"
-     * tab to open else set to close
+     * sets the capital assets screens for create and modify and accounting lines for capitalization screen as open.
+     * If accounting lines for capitalization list is not empty then set "Accounting Lines for Capitalization" tab to
+     * open else set to close.
+     * If capital asset with capital asset action indicator = 'C' then set "Create Capital Asset" tab to open else
+     * set to close
      * If capital asset with capital asset action indicator = 'M' then set "Modify Capital Asset"
      * tab to open else set to close
      *
@@ -1681,15 +1679,18 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAccountingLinesFormBase capitalAccountingLinesFormBase = (CapitalAccountingLinesFormBase) form;
 
         Map<String, String> tabStates = kualiForm.getTabStates();
-        Map<String, String> newTabStates = new HashMap<>();
 
         CapitalAssetInformationFormBase capitalAssetInformationFormBase = (CapitalAssetInformationFormBase) form;
-        CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) capitalAssetInformationFormBase.getFinancialDocument();
-
+        CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) capitalAssetInformationFormBase
+                .getFinancialDocument();
+        
         //generated tab key for the three tabs
-        String tabIdForAccountingLinesForCapitalization = WebUtils.generateTabKey(KFSConstants.CapitalAssets.ACCOUNTING_LINES_FOR_CAPITALIZATION_TAB_TITLE);
-        String tabIdForCreateCapitalAsset = WebUtils.generateTabKey(KFSConstants.CapitalAssets.CREATE_CAPITAL_ASSETS_TAB_TITLE);
-        String tabIdForModifyCapitalAsset = WebUtils.generateTabKey(KFSConstants.CapitalAssets.MODIFY_CAPITAL_ASSETS_TAB_TITLE);
+        String tabIdForAccountingLinesForCapitalization = WebUtils.generateTabKey(
+                KFSConstants.CapitalAssets.ACCOUNTING_LINES_FOR_CAPITALIZATION_TAB_TITLE);
+        String tabIdForCreateCapitalAsset = WebUtils.generateTabKey(
+                KFSConstants.CapitalAssets.CREATE_CAPITAL_ASSETS_TAB_TITLE);
+        String tabIdForModifyCapitalAsset = WebUtils.generateTabKey(
+                KFSConstants.CapitalAssets.MODIFY_CAPITAL_ASSETS_TAB_TITLE);
 
         tabStates.remove(tabIdForAccountingLinesForCapitalization);
         tabStates.remove(tabIdForCreateCapitalAsset);
@@ -1697,9 +1698,11 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
 
         //if there are any capital accounting lines for capitalization exists then
         if (caldb.getCapitalAccountingLines().size() > 0 || caldb.isCapitalAccountingLinesExist()) {
-            tabStates.put(tabIdForAccountingLinesForCapitalization, KFSConstants.CapitalAssets.CAPITAL_ASSET_TAB_STATE_OPEN);
+            tabStates.put(tabIdForAccountingLinesForCapitalization,
+                    KFSConstants.CapitalAssets.CAPITAL_ASSET_TAB_STATE_OPEN);
         } else {
-            tabStates.put(tabIdForAccountingLinesForCapitalization, KFSConstants.CapitalAssets.CAPITAL_ASSET_TAB_STATE_CLOSE);
+            tabStates.put(tabIdForAccountingLinesForCapitalization,
+                    KFSConstants.CapitalAssets.CAPITAL_ASSET_TAB_STATE_CLOSE);
         }
 
         if (checkCreateAssetsExist(capitalAccountingLinesFormBase)) {
@@ -1722,7 +1725,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @return true if a capital asset with capital asset action indicator = 'C' else false;
      */
     protected boolean checkCreateAssetsExist(CapitalAccountingLinesFormBase capitalAccountingLinesFormBase) {
-        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase = (CapitalAssetInformationDocumentBase) capitalAccountingLinesFormBase.getFinancialDocument();
+        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase =
+                (CapitalAssetInformationDocumentBase) capitalAccountingLinesFormBase.getFinancialDocument();
 
         List<CapitalAssetInformation> capitalAssets = capitalAssetInformationDocumentBase.getCapitalAssetInformation();
 
@@ -1740,7 +1744,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @return true if a capital asset with capital asset action indicator = 'C' else false;
      */
     protected boolean checkModifyAssetsExist(CapitalAccountingLinesFormBase capitalAccountingLinesFormBase) {
-        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase = (CapitalAssetInformationDocumentBase) capitalAccountingLinesFormBase.getFinancialDocument();
+        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase =
+                (CapitalAssetInformationDocumentBase) capitalAccountingLinesFormBase.getFinancialDocument();
 
         List<CapitalAssetInformation> capitalAssets = capitalAssetInformationDocumentBase.getCapitalAssetInformation();
         for (CapitalAssetInformation capitalAsset : capitalAssets) {
@@ -1839,13 +1844,15 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @param form
      * @return remainingAmountToDistribute
      */
-    protected KualiDecimal getRemainingAmounToDistribute(List<CapitalAccountingLines> selectedCapitalAccountingLines, ActionForm form) {
+    protected KualiDecimal getRemainingAmounToDistribute(List<CapitalAccountingLines> selectedCapitalAccountingLines,
+            ActionForm form) {
         KualiDecimal capitalAccountsAmountToDistribute = KualiDecimal.ZERO;
         KualiDecimal capitalAssetsAllocatedAmount = KualiDecimal.ZERO;
 
         CapitalAccountingLinesFormBase calfb = (CapitalAccountingLinesFormBase) form;
 
-        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase = (CapitalAssetInformationDocumentBase) calfb.getFinancialDocument();
+        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase =
+                (CapitalAssetInformationDocumentBase) calfb.getFinancialDocument();
         List<CapitalAssetInformation> capitalAssets = capitalAssetInformationDocumentBase.getCapitalAssetInformation();
 
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) calfb.getFinancialDocument();
@@ -1869,9 +1876,11 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @param financialDocumentForm
      * @param accountingLine
      */
-    protected void deleteCapitalAssetLines(KualiAccountingDocumentFormBase financialDocumentForm, AccountingLine accountingLine) {
-        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase = (CapitalAssetInformationDocumentBase) financialDocumentForm.getFinancialDocument();
-
+    protected void deleteCapitalAssetLines(KualiAccountingDocumentFormBase financialDocumentForm,
+            AccountingLine accountingLine) {
+        CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase =
+                (CapitalAssetInformationDocumentBase) financialDocumentForm.getFinancialDocument();
+        
         List<CapitalAssetInformation> removalCaiList = new ArrayList<>();
 
         List<CapitalAssetInformation> capitalAssets = capitalAssetInformationDocumentBase.getCapitalAssetInformation();
@@ -1936,11 +1945,11 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         }
 
         List<CapitalAssetInformationDetail> detailLines = capitalAssetInformation.getCapitalAssetInformationDetails();
-        Integer nextItemLineNumber = 0;
+        int nextItemLineNumber = 0;
 
         if (ObjectUtils.isNotNull(detailLines) || detailLines.size() > 0) {
             for (CapitalAssetInformationDetail detailLine : detailLines) {
-                nextItemLineNumber = detailLine.getItemLineNumber().intValue();
+                nextItemLineNumber = detailLine.getItemLineNumber();
             }
         }
 
@@ -1981,7 +1990,8 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             }
         }
 
-        CapitalAssetInformation existingCapitalAsset = capitalAssetCreated(selectedCapitalAccountingLines, currentCapitalAssetInformation);
+        CapitalAssetInformation existingCapitalAsset = capitalAssetCreated(selectedCapitalAccountingLines,
+                currentCapitalAssetInformation);
 
         for (CapitalAccountingLines capitalAccountingLine : selectedCapitalAccountingLines) {
             if (ObjectUtils.isNull(existingCapitalAsset)) {
@@ -2173,8 +2183,6 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
      * @return true if amount already distributed else return false.
      */
     protected boolean capitalAssetAmountAlreadyDistributedToGroupAccountingLines(CapitalAssetInformation capitalAsset) {
-        boolean amountDistributed = true;
-
         KualiDecimal capitalAssetAmount = capitalAsset.getCapitalAssetLineAmount();
         KualiDecimal totalAmountDistributed = KualiDecimal.ZERO;
 
