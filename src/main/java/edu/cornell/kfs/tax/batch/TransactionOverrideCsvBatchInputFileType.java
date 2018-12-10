@@ -283,8 +283,10 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
         
         // Setup university/payment date, which should be a valid SQL Date.
         try {
-            transOverride.setUniversityDate(
-                    (java.sql.Date) dateFormatter.convertFromPresentationFormat(parsedLine.get(TransactionOverrideCsv.Payment_Date.toString())));
+            String rawUniversityDate = parsedLine.get(TransactionOverrideCsv.Payment_Date.toString());
+            java.sql.Date universityDateParsed = parseUniversityDate(rawUniversityDate);
+            transOverride.setUniversityDate(universityDateParsed);
+
             if (transOverride.getUniversityDate() == null) {
                 LOG.error("Found a line with a null payment date. Line number: " + Integer.toString(lineNumber));
                 valid = false;
@@ -305,6 +307,17 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
             }
             return StringUtils.join(lineValues, '\t');
         }
+    }
+
+    private java.sql.Date parseUniversityDate(String universityDateRaw) {
+        java.sql.Date ret = null;
+        try {
+            ret = dateTimeService.convertToSqlDate(universityDateRaw);
+        } catch (java.text.ParseException ex) {
+            LOG.error("parseUniversityDate: " + ex.toString());
+            ret = (java.sql.Date) dateFormatter.convertFromPresentationFormat(universityDateRaw);
+        }
+        return ret;
     }
 
     /**
