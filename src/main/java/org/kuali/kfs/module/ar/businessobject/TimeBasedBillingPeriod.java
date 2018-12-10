@@ -34,7 +34,8 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
      */
     private static final Logger LOG = LogManager.getLogger(TimeBasedBillingPeriod.class);
     
-    public TimeBasedBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate, Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
+    public TimeBasedBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate,
+            Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
         super(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
     }
 
@@ -54,7 +55,8 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
 
     @Override
     protected boolean canThisBeBilledByBillingFrequency() {
-        if (ArConstants.BillingFrequencyValues.ANNUALLY.equals(billingFrequency) && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >= accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
+        if (ArConstants.BillingFrequencyValues.ANNUALLY.equals(billingFrequency)
+                && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >= accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
             return false;
         } else if (StringUtils.equals(findPreviousAccountingPeriod(currentDate).getUniversityFiscalPeriodCode(), findPreviousAccountingPeriod(lastBilledDate).getUniversityFiscalPeriodCode()) &&
             accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear().equals(accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear())) {
@@ -96,9 +98,7 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
             periodCode = "" + previousAccountingPeriodCode;
         }
 
-        final AccountingPeriod previousAccountingPeriod = accountingPeriodService.getByPeriod(periodCode, currentFiscalYear);
-
-        return previousAccountingPeriod;
+        return accountingPeriodService.getByPeriod(periodCode, currentFiscalYear);
     }
 
     protected Integer findPreviousAccountingPeriodCode(Integer currentAccountingPeriodCode) {
