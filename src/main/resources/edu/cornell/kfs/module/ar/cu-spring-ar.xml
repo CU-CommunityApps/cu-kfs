@@ -49,4 +49,6 @@
 		class="edu.cornell.kfs.module.ar.document.validation.impl.CuTotalAmountBilledToDateExceedsAwardTotalSuspensionCategory">
 	</bean>
 
+    <bean id="invoicePaidAppliedDao" parent="platformAwareDao" class="org.kuali.kfs.module.ar.dataaccess.impl.InvoicePaidAppliedDaoOjb"/>
+
 </beans>
