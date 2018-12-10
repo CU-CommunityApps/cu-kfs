@@ -1,26 +1,34 @@
 package edu.cornell.kfs.module.ar.document.service.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
+import org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode;
 import org.kuali.kfs.module.ar.businessobject.SystemInformation;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
+import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.util.FallbackMap;
 import org.kuali.kfs.sys.util.ReflectionMap;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.report.CuPdfFormattingMap;
+import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl {
+    private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentServiceImpl.class);
 
     // Customized to default final status date to last modified date, and to wrap the results in a new CuPdfFormattingMap object.
     @Override
@@ -458,5 +466,73 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateLastModified().toDate()));
         }
     }
+    
+    @Override
+    public void prorateBill(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+        LOG.debug("prorateBill, entering");
+        KualiDecimal totalCost = new KualiDecimal(0); // Amount to be billed on
+                                                      // this invoice
+        // must iterate through the invoice details because the user might have
+        // manually changed the value
+        for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
+            totalCost = totalCost.add(invD.getInvoiceAmount());
+        }
+        
+        KualiDecimal billedTotalCost = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()
+                .getTotalPreviouslyBilled(); // Total Billed so far
+
+        // CU Customization, use award budget total, and not the award total
+        // KualiDecimal accountAwardTotal = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAwardTotal();
+        
+        Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+        AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+        KualiDecimal accountAwardTotal = awardExtension.getBudgetTotalAmount();
+        
+        if (accountAwardTotal.subtract(billedTotalCost).isGreaterEqual(new KualiDecimal(0))) {
+            KualiDecimal amountEligibleForBilling = accountAwardTotal.subtract(billedTotalCost);
+            // only recalculate if the current invoice is over what's billable.
+            
+            if (totalCost.isGreaterThan(amountEligibleForBilling)) {
+                // use BigDecimal because percentage should not have only a
+                // scale of 2, we need more for accuracy
+                BigDecimal percentage = amountEligibleForBilling.bigDecimalValue().divide(totalCost.bigDecimalValue(),
+                        10, BigDecimal.ROUND_HALF_DOWN);
+                // use to check if rounding has left a few cents off
+                KualiDecimal amountToBill = new KualiDecimal(0);
+
+                ContractsGrantsInvoiceDetail largestCostCategory = null;
+                BigDecimal largestAmount = BigDecimal.ZERO;
+                for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
+                    BigDecimal newValue = invD.getInvoiceAmount().bigDecimalValue().multiply(percentage);
+                    KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, BigDecimal.ROUND_DOWN));
+                    invD.setInvoiceAmount(newKualiDecimalValue);
+                    amountToBill = amountToBill.add(newKualiDecimalValue);
+                    if (newValue.compareTo(largestAmount) > 0) {
+                        largestAmount = newKualiDecimalValue.bigDecimalValue();
+                        largestCostCategory = invD;
+                    }
+                }
+                if (!amountToBill.equals(amountEligibleForBilling)) {
+                    KualiDecimal remaining = amountEligibleForBilling.subtract(amountToBill);
+                    if (ObjectUtils.isNull(largestCostCategory)
+                            && CollectionUtils.isNotEmpty(contractsGrantsInvoiceDocument.getInvoiceDetails())) {
+                        largestCostCategory = contractsGrantsInvoiceDocument.getInvoiceDetails().get(0);
+                    }
+                    if (ObjectUtils.isNotNull(largestCostCategory)) {
+                        largestCostCategory.setInvoiceAmount(largestCostCategory.getInvoiceAmount().add(remaining));
+                    }
+                }
+                recalculateTotalAmountBilledToDate(contractsGrantsInvoiceDocument);
+            }
+        }
+    }
+    
+    @Override
+    public void recalculateObjectCodeByCategory(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
+            ContractsGrantsInvoiceDetail invoiceDetail, KualiDecimal total,
+            List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes) {
+        super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
+    }
+    
 
 }

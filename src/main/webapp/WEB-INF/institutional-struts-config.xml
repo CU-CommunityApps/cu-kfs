@@ -228,6 +228,13 @@
                 type="edu.cornell.kfs.coa.document.web.struts.CuObjectCodeActivationGlobalMaintenanceDocumentAction">
 	        <forward name="basic" path="/jsp/coa/CuObjectCodeActivationGlobalMaintenanceDocument.jsp" />
 	    </action>
+	    
+	    <action path="/arContractsGrantsInvoiceDocument" name="ContractsGrantsInvoiceDocumentForm" input="/jsp/module/ar/ContractsGrantsInvoiceDocument.jsp"
+                type="edu.cornell.kfs.module.ar.document.web.struts.CuContractsGrantsInvoiceDocumentAction" scope="request"
+                parameter="methodToCall" validate="true" attribute="KualiForm">
+            <set-property property="cancellable" value="true"/>
+            <forward name="basic" path="/jsp/module/ar/ContractsGrantsInvoiceDocument.jsp"/>
+        </action>
         
     </action-mappings>
     
