@@ -171,13 +171,14 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     public List<PersistableBusinessObject> generateDeactivationsToPersist() {
         // Retrieve all the existing sub accounts for this
-        List<SubAccount> bosToDeactivate = new ArrayList<SubAccount>();
+        List<SubAccount> bosToDeactivate = new ArrayList ();
         if (!isActive()) {
-            Map<String, Object> fieldValues = new HashMap<String, Object>();
+            Map<String, Object> fieldValues = new HashMap();
             fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, getChartOfAccountsCode());
             fieldValues.put(KFSPropertyConstants.ACCOUNT_NUMBER, getAccountNumber());
             fieldValues.put(KFSPropertyConstants.ACTIVE, true);
-            Collection<SubAccount> existingSubAccounts = SpringContext.getBean(BusinessObjectService.class).findMatching(SubAccount.class, fieldValues);
+            Collection<SubAccount> existingSubAccounts = SpringContext.getBean(BusinessObjectService.class)
+                    .findMatching(SubAccount.class, fieldValues);
             bosToDeactivate.addAll(existingSubAccounts);
         }
         // mark all the sub accounts as inactive
@@ -298,10 +299,10 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * This method determines whether the account is expired or not. Note that if Expiration Date is the same as today, then this
-     * will return false. It will only return true if the account expiration date is one day earlier than today or earlier. Note
-     * that this logic ignores all time components when doing the comparison. It only does the before/after comparison based on date
-     * values, not time-values.
+     * This method determines whether the account is expired or not. Note that if Expiration Date is the same as
+     * today, then this will return false. It will only return true if the account expiration date is one day earlier
+     * than today or earlier. Note that this logic ignores all time components when doing the comparison. It only
+     * does the before/after comparison based on date values, not time-values.
      *
      * @return true or false based on the logic outlined above
      */
@@ -317,13 +318,13 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * This method determines whether the account is expired or not. Note that if Expiration Date is the same date as testDate, then
-     * this will return false. It will only return true if the account expiration date is one day earlier than testDate or earlier.
-     * Note that this logic ignores all time components when doing the comparison. It only does the before/after comparison based on
-     * date values, not time-values.
+     * This method determines whether the account is expired or not. Note that if Expiration Date is the same date as
+     * testDate, then this will return false. It will only return true if the account expiration date is one day
+     * earlier than testDate or earlier. Note that this logic ignores all time components when doing the comparison.
+     * It only does the before/after comparison based on date values, not time-values.
      *
-     * @param testDate - Calendar instance with the date to test the Account's Expiration Date against. This is most commonly set to
-     *                 today's date.
+     * @param testDate Calendar instance with the date to test the Account's Expiration Date against. This is most
+     *                 commonly set to today's date.
      * @return true or false based on the logic outlined above
      */
     @Override
@@ -351,13 +352,13 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * This method determines whether the account is expired or not. Note that if Expiration Date is the same date as testDate, then
-     * this will return false. It will only return true if the account expiration date is one day earlier than testDate or earlier.
-     * Note that this logic ignores all time components when doing the comparison. It only does the before/after comparison based on
-     * date values, not time-values.
+     * This method determines whether the account is expired or not. Note that if Expiration Date is the same date as
+     * testDate, then this will return false. It will only return true if the account expiration date is one day
+     * earlier than testDate or earlier. Note that this logic ignores all time components when doing the comparison.
+     * It only does the before/after comparison based on date values, not time-values.
      *
-     * @param testDate - java.util.Date instance with the date to test the Account's Expiration Date against. This is most commonly
-     *                 set to today's date.
+     * @param testDate java.util.Date instance with the date to test the Account's Expiration Date against. This is
+     *                 most commonly set to today's date.
      * @return true or false based on the logic outlined above
      */
     @Override
@@ -499,8 +500,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     public List<ContractsAndGrantsAccountAwardInformation> getAwards() {
-        // TODO this code totally breaks modularization but can't be fixed until data dictionary modularization plans come down the
-        // pike
+        // TODO this code totally breaks modularization but can't be fixed until data dictionary modularization plans
+        // come down the pike
         awards = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(
                 ContractsAndGrantsAccountAwardInformation.class).retrieveExternalizableBusinessObjectsList(this,
                 "awards", ContractsAndGrantsAccountAwardInformation.class);
@@ -517,7 +518,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     public List<IndirectCostRecoveryAccount> getActiveIndirectCostRecoveryAccounts() {
-        List<IndirectCostRecoveryAccount> activeList = new ArrayList<IndirectCostRecoveryAccount>();
+        List<IndirectCostRecoveryAccount> activeList = new ArrayList();
         for (IndirectCostRecoveryAccount icr : getIndirectCostRecoveryAccounts()) {
             if (icr.isActive()) {
                 activeList.add(IndirectCostRecoveryAccount.copyICRAccount(icr));
@@ -527,11 +528,10 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setIndirectCostRecoveryAccounts(List<? extends IndirectCostRecoveryAccount> indirectCostRecoveryAccounts) {
-        List<IndirectCostRecoveryAccount> accountIcrList = new ArrayList<IndirectCostRecoveryAccount>();
-        for (IndirectCostRecoveryAccount icr : indirectCostRecoveryAccounts) {
-            accountIcrList.add(icr);
-        }
+    public void setIndirectCostRecoveryAccounts(
+            List<? extends IndirectCostRecoveryAccount> indirectCostRecoveryAccounts) {
+        List<IndirectCostRecoveryAccount> accountIcrList = new ArrayList<>();
+        accountIcrList.addAll(indirectCostRecoveryAccounts);
         this.indirectCostRecoveryAccounts = accountIcrList;
     }
 
@@ -602,14 +602,16 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         if (StringUtils.isBlank(accountPhysicalCampusCode)) {
             accountPhysicalCampus = null;
         } else {
-            if (accountPhysicalCampus == null || !StringUtils.equals(accountPhysicalCampus.getCode(), accountPhysicalCampusCode)) {
+            if (accountPhysicalCampus == null
+                    || !StringUtils.equals(accountPhysicalCampus.getCode(), accountPhysicalCampusCode)) {
                 ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(CampusEbo.class);
                 if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<String, Object>(1);
+                    Map<String, Object> keys = new HashMap<>(1);
                     keys.put(LocationConstants.PrimaryKeyConstants.CODE, accountPhysicalCampusCode);
                     accountPhysicalCampus = moduleService.getExternalizableBusinessObject(CampusEbo.class, keys);
                 } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed.");
+                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  " +
+                            "Unable to proceed.");
                 }
             }
         }
@@ -627,15 +629,17 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         if (StringUtils.isBlank(accountStateCode) || StringUtils.isBlank(accountCountryCode)) {
             accountState = null;
         } else {
-            if (accountState == null || !StringUtils.equals(accountState.getCode(), accountStateCode) || !StringUtils.equals(accountState.getCountryCode(), accountCountryCode)) {
+            if (accountState == null || !StringUtils.equals(accountState.getCode(), accountStateCode)
+                    || !StringUtils.equals(accountState.getCountryCode(), accountCountryCode)) {
                 ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(StateEbo.class);
                 if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<String, Object>(2);
+                    Map<String, Object> keys = new HashMap<>(2);
                     keys.put(LocationConstants.PrimaryKeyConstants.COUNTRY_CODE, accountCountryCode);
                     keys.put(LocationConstants.PrimaryKeyConstants.CODE, accountStateCode);
                     accountState = moduleService.getExternalizableBusinessObject(StateEbo.class, keys);
                 } else {
-                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed.");
+                    throw new RuntimeException("CONFIGURATION ERROR: No responsible module found for EBO class.  " +
+                            "Unable to proceed.");
                 }
             }
         }
@@ -727,7 +731,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountFiscalOfficerUser() {
-        accountFiscalOfficerUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class).updatePersonIfNecessary(accountFiscalOfficerSystemIdentifier, accountFiscalOfficerUser);
+        accountFiscalOfficerUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+                .updatePersonIfNecessary(accountFiscalOfficerSystemIdentifier, accountFiscalOfficerUser);
         return accountFiscalOfficerUser;
     }
 
@@ -753,7 +758,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountManagerUser() {
-        accountManagerUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class).updatePersonIfNecessary(accountManagerSystemIdentifier, accountManagerUser);
+        accountManagerUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+                .updatePersonIfNecessary(accountManagerSystemIdentifier, accountManagerUser);
         return accountManagerUser;
     }
 
@@ -765,7 +771,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountSupervisoryUser() {
-        accountSupervisoryUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class).updatePersonIfNecessary(accountsSupervisorySystemsIdentifier, accountSupervisoryUser);
+        accountSupervisoryUser = SpringContext.getBean(org.kuali.rice.kim.api.identity.PersonService.class)
+                .updatePersonIfNecessary(accountsSupervisorySystemsIdentifier, accountSupervisoryUser);
         return accountSupervisoryUser;
     }
 
@@ -1038,7 +1045,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
                 || !StringUtils.equals(postalZipCode.getCountryCode(), accountCountryCode)) {
                 ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(PostalCodeEbo.class);
                 if (moduleService != null) {
-                    Map<String, Object> keys = new HashMap<String, Object>(2);
+                    Map<String, Object> keys = new HashMap<>(2);
                     keys.put(LocationConstants.PrimaryKeyConstants.COUNTRY_CODE, accountCountryCode);
                     keys.put(LocationConstants.PrimaryKeyConstants.CODE, accountZipCode);
                     postalZipCode = moduleService.getExternalizableBusinessObject(PostalCodeEbo.class, keys);
@@ -1106,9 +1113,9 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * Calculates hashCode based on current values of chartOfAccountsCode and accountNumber fields. Somewhat dangerous, since both
-     * of those fields are mutable, but I don't expect people to be editing those values directly for Accounts stored in hashed
-     * data structures.
+     * Calculates hashCode based on current values of chartOfAccountsCode and accountNumber fields. Somewhat
+     * dangerous, since both of those fields are mutable, but I don't expect people to be editing those values
+     * directly for Accounts stored in hashed data structures.
      */
     @Override
     public int hashCode() {
@@ -1118,8 +1125,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     /**
-     * Convenience method to make the primitive account fields from this Account easier to compare to the account fields from
-     * another Account or an AccountingLine
+     * Convenience method to make the primitive account fields from this Account easier to compare to the account
+     * fields from another Account or an AccountingLine
      *
      * @return String representing the account associated with this Accounting
      */
@@ -1200,17 +1207,16 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected void preUpdate() {
         super.preUpdate();
         try {
-            // KULCOA-549: update the sufficient funds table
-            // get the current data from the database
+            // KULCOA-549: update the sufficient funds table get the current data from the database
             BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
             Account originalAcct = (Account) boService.retrieve(this);
 
             if (originalAcct != null) {
-                if (!originalAcct.getSufficientFundsCode().equals(getSufficientFundsCode()) || originalAcct
-                        .isExtrnlFinEncumSufficntFndIndicator() != isExtrnlFinEncumSufficntFndIndicator() || originalAcct
-                        .isIntrnlFinEncumSufficntFndIndicator() != isIntrnlFinEncumSufficntFndIndicator() || originalAcct
-                        .isPendingAcctSufficientFundsIndicator() != isPendingAcctSufficientFundsIndicator() || originalAcct
-                        .isFinPreencumSufficientFundIndicator() != isFinPreencumSufficientFundIndicator()) {
+                if (!originalAcct.getSufficientFundsCode().equals(getSufficientFundsCode())
+                        || originalAcct.isExtrnlFinEncumSufficntFndIndicator() != isExtrnlFinEncumSufficntFndIndicator()
+                        || originalAcct.isIntrnlFinEncumSufficntFndIndicator() != isIntrnlFinEncumSufficntFndIndicator()
+                        || originalAcct.isPendingAcctSufficientFundsIndicator() != isPendingAcctSufficientFundsIndicator()
+                        || originalAcct.isFinPreencumSufficientFundIndicator() != isFinPreencumSufficientFundIndicator()) {
                     SufficientFundRebuild sfr = new SufficientFundRebuild();
                     sfr.setAccountFinancialObjectTypeCode(SufficientFundRebuild.REBUILD_ACCOUNT);
                     sfr.setChartOfAccountsCode(getChartOfAccountsCode());
