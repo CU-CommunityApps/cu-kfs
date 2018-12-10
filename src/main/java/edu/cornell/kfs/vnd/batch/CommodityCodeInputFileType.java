@@ -36,7 +36,7 @@ public class CommodityCodeInputFileType extends BatchInputFileTypeBase {
     /**
 	 * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
 	 */
-	public String getFileTypeIdentifer() {
+	public String getFileTypeIdentifier() {
 		return CUKFSConstants.COMMODITY_CODE_FILE_TYPE_INDENTIFIER;
 	}
 

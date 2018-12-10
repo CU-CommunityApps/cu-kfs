@@ -51,9 +51,9 @@ public class ReceiptProcessingCSVInputFileType extends CsvBatchInputFileTypeBase
 
     /**
      * 
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
+     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifier()
      */
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return "receiptProcessing_kfs";
     }
 

@@ -18,7 +18,7 @@ public class TaxDataDefinitionFileType extends XmlBatchInputFileTypeBase {
     }
 
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return CUTaxConstants.TAX_DATA_DEFINITION_FILE_TYPE_IDENTIFIER;
     }
 

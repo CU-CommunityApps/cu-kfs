@@ -29,7 +29,7 @@ public class PayeeACHAccountExtractCsvInputFileType extends CsvBatchInputFileTyp
     }
 
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return CUPdpConstants.PAYEE_ACH_ACCOUNT_EXTRACT_FILE_TYPE_ID;
     }
 

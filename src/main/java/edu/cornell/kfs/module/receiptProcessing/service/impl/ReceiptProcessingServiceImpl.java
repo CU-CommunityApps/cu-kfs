@@ -108,7 +108,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 
             List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
             if (inputFileNames == null) {
-                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer() + ") returned NULL which should never happen.");
+                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifier() + ") returned NULL which should never happen.");
             }
             else {
                 // update the file name mapping
@@ -510,7 +510,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
      * @return the customer name
      */
     protected String getCustomerNameFromFileName(String fileName, BatchInputFileType batchInputFileType){
-    	String customerName = fileName.substring(fileName.lastIndexOf(batchInputFileType.getFileTypeIdentifer() + "_") + batchInputFileType.getFileTypeIdentifer().length() + 1, fileName.lastIndexOf("_"));
+    	String customerName = fileName.substring(fileName.lastIndexOf(batchInputFileType.getFileTypeIdentifier() + "_") + batchInputFileType.getFileTypeIdentifier().length() + 1, fileName.lastIndexOf("_"));
     	return customerName;
     }
     
