@@ -233,13 +233,12 @@
 		<property name="title" value="Sub-Fund Group Lookup" />
 
 		<property name="defaultSort">
-			<bean parent="SortDefinition">
+			<bean parent="SortDefinition" p:sortAscending="false">
 				<property name="attributeNames">
 					<list>
 						<value>subFundGroupCode</value>
 					</list>
 				</property>
-				<property name="sortAscending" value="false" />
 			</bean>
 		</property>
 		<property name="lookupFields">
