@@ -47,20 +47,22 @@ import java.util.regex.Pattern;
  * <li>Separate the allocate amount from the source payment using ratio computed above</li>
  * <li>Apply the allocate amount by ratio to each new asset</li>
  * <li>Adjust the last payment to round against the source from which split is done</li>
- * <li>Adjust the account charge amount of each asset by rounding the last payment with reference to user input separate amount</li>
+ * <li>Adjust the account charge amount of each asset by rounding the last payment with reference to user input
+ * separate amount</li>
  * <li>Create offset payments for the source asset</li>
  * <li>Compute accumulated depreciation amount for each payment, including offsets</li>
  */
 public class AssetSeparatePaymentDistributor {
+
     private Asset sourceAsset;
     private AssetGlobal assetGlobal;
     private List<Asset> newAssets;
-    private List<AssetPayment> sourcePayments = new ArrayList<AssetPayment>();
-    private List<AssetPayment> separatedPayments = new ArrayList<AssetPayment>();
-    private List<AssetPayment> offsetPayments = new ArrayList<AssetPayment>();
-    private List<AssetPayment> remainingPayments = new ArrayList<AssetPayment>();
-    private HashMap<Long, KualiDecimal> totalByAsset = new HashMap<Long, KualiDecimal>();
-    private HashMap<Integer, List<AssetPayment>> paymentSplitMap = new HashMap<Integer, List<AssetPayment>>();
+    private List<AssetPayment> sourcePayments;
+    private List<AssetPayment> separatedPayments = new ArrayList<>();
+    private List<AssetPayment> offsetPayments = new ArrayList<>();
+    private List<AssetPayment> remainingPayments = new ArrayList<>();
+    private HashMap<Long, KualiDecimal> totalByAsset = new HashMap<>();
+    private HashMap<Integer, List<AssetPayment>> paymentSplitMap = new HashMap<>();
     private double[] assetAllocateRatios;
     private double separateRatio;
     private double retainRatio;
@@ -77,7 +79,8 @@ public class AssetSeparatePaymentDistributor {
      * @param assetGlobal     AssetGlobal Document performing the separate action
      * @param newAssets       List of new assets to be created for this separate request document
      */
-    public AssetSeparatePaymentDistributor(Asset sourceAsset, List<AssetPayment> sourcePayments, Integer maxPaymentSeqNo, AssetGlobal assetGlobal, List<Asset> newAssets) {
+    public AssetSeparatePaymentDistributor(Asset sourceAsset, List<AssetPayment> sourcePayments,
+            Integer maxPaymentSeqNo, AssetGlobal assetGlobal, List<Asset> newAssets) {
         super();
         this.sourceAsset = sourceAsset;
         this.sourcePayments = sourcePayments;
@@ -97,13 +100,14 @@ public class AssetSeparatePaymentDistributor {
         List<AssetGlobalDetail> assetGlobalDetails = this.assetGlobal.getAssetGlobalDetails();
         int size = assetGlobalDetails.size();
         assetAllocateRatios = new double[size];
-        AssetGlobalDetail assetGlobalDetail = null;
+        AssetGlobalDetail assetGlobalDetail;
         // Compute ratio by each asset
         for (int i = 0; i < size; i++) {
             assetGlobalDetail = assetGlobalDetails.get(i);
             Long capitalAssetNumber = assetGlobalDetail.getCapitalAssetNumber();
             totalByAsset.put(capitalAssetNumber, KualiDecimal.ZERO);
-            assetAllocateRatios[i] = assetGlobalDetail.getSeparateSourceAmount().doubleValue() / totalSeparateAmount.doubleValue();
+            assetAllocateRatios[i] =
+                    assetGlobalDetail.getSeparateSourceAmount().doubleValue() / totalSeparateAmount.doubleValue();
         }
         // Prepare the source and offset payments for split
         prepareSourcePaymentsForSplit();
@@ -137,7 +141,7 @@ public class AssetSeparatePaymentDistributor {
                 ObjectValueUtils.copySimpleProperties(assetPayment, remainingPayment);
                 this.remainingPayments.add(remainingPayment);
 
-                applyRatioToPaymentAmounts(assetPayment, new AssetPayment[] { separatePayment, remainingPayment }, new double[] { separateRatio, retainRatio });
+                applyRatioToPaymentAmounts(assetPayment, new AssetPayment[]{separatePayment, remainingPayment}, new double[]{separateRatio, retainRatio});
             }
         }
     }
@@ -207,8 +211,9 @@ public class AssetSeparatePaymentDistributor {
      * Rounds the last payment by adjusting the amounts against source amount
      */
     private void roundPaymentAmounts() {
-        for (int i = 0; i < this.separatedPayments.size(); i++) {
-            applyBalanceToPaymentAmounts(separatedPayments.get(i), this.paymentSplitMap.get(separatedPayments.get(i).getPaymentSequenceNumber()));
+        for (AssetPayment separatedPayment : this.separatedPayments) {
+            applyBalanceToPaymentAmounts(separatedPayment,
+                    this.paymentSplitMap.get(separatedPayment.getPaymentSequenceNumber()));
         }
     }
 
@@ -251,7 +256,8 @@ public class AssetSeparatePaymentDistributor {
         try {
             for (PropertyDescriptor propertyDescriptor : assetPaymentProperties) {
                 Method readMethod = propertyDescriptor.getReadMethod();
-                if (readMethod != null && propertyDescriptor.getPropertyType() != null && KualiDecimal.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                if (readMethod != null && propertyDescriptor.getPropertyType() != null
+                        && KualiDecimal.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     KualiDecimal amount = (KualiDecimal) readMethod.invoke(source);
                     if (amount != null && amount.isNonZero()) {
                         KualiDecimal[] ratioAmounts = KualiDecimalUtils.allocateByRatio(amount, ratios);
@@ -279,15 +285,16 @@ public class AssetSeparatePaymentDistributor {
         try {
             for (PropertyDescriptor propertyDescriptor : assetPaymentProperties) {
                 Method readMethod = propertyDescriptor.getReadMethod();
-                if (readMethod != null && propertyDescriptor.getPropertyType() != null && KualiDecimal.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                if (readMethod != null && propertyDescriptor.getPropertyType() != null
+                        && KualiDecimal.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     KualiDecimal amount = (KualiDecimal) readMethod.invoke(source);
                     if (amount != null && amount.isNonZero()) {
                         Method writeMethod = propertyDescriptor.getWriteMethod();
                         KualiDecimal consumedAmount = KualiDecimal.ZERO;
                         KualiDecimal currAmt = KualiDecimal.ZERO;
                         if (writeMethod != null) {
-                            for (int i = 0; i < consumedList.size(); i++) {
-                                currAmt = (KualiDecimal) readMethod.invoke(consumedList.get(i));
+                            for (AssetPayment aConsumedList : consumedList) {
+                                currAmt = (KualiDecimal) readMethod.invoke(aConsumedList);
                                 consumedAmount = consumedAmount.add(currAmt != null ? currAmt : KualiDecimal.ZERO);
                             }
                         }
@@ -330,7 +337,7 @@ public class AssetSeparatePaymentDistributor {
      * Sums up YTD values and Previous Year value to decide accumulated depreciation amount
      */
     private void computeAccumulatedDepreciationAmount() {
-        KualiDecimal previousYearAmount = null;
+        KualiDecimal previousYearAmount;
         for (Asset asset : this.newAssets) {
             List<AssetPayment> assetPayments = asset.getAssetPayments();
             for (AssetPayment currPayment : assetPayments) {
@@ -379,181 +386,74 @@ public class AssetSeparatePaymentDistributor {
         return ytdAmount;
     }
 
-    /**
-     * Gets the remainingPayments attribute.
-     *
-     * @return Returns the remainingPayments.
-     */
     public List<AssetPayment> getRemainingPayments() {
         return remainingPayments;
     }
 
-
-    /**
-     * Sets the remainingPayments attribute value.
-     *
-     * @param remainingPayments The remainingPayments to set.
-     */
     public void setRemainingPayments(List<AssetPayment> remainingPayments) {
         this.remainingPayments = remainingPayments;
     }
 
-
-    /**
-     * Gets the offsetPayments attribute.
-     *
-     * @return Returns the offsetPayments.
-     */
     public List<AssetPayment> getOffsetPayments() {
         return offsetPayments;
     }
 
-
-    /**
-     * Sets the offsetPayments attribute value.
-     *
-     * @param offsetPayments The offsetPayments to set.
-     */
     public void setOffsetPayments(List<AssetPayment> offsetPayments) {
         this.offsetPayments = offsetPayments;
     }
 
-
-    /**
-     * Gets the separatedPayments attribute.
-     *
-     * @return Returns the separatedPayments.
-     */
     public List<AssetPayment> getSeparatedPayments() {
         return separatedPayments;
     }
 
-
-    /**
-     * Sets the separatedPayments attribute value.
-     *
-     * @param separatedPayments The separatedPayments to set.
-     */
     public void setSeparatedPayments(List<AssetPayment> separatedPayments) {
         this.separatedPayments = separatedPayments;
     }
 
-
-    /**
-     * Gets the assetGlobal attribute.
-     *
-     * @return Returns the assetGlobal.
-     */
     public AssetGlobal getAssetGlobal() {
         return assetGlobal;
     }
 
-
-    /**
-     * Sets the assetGlobal attribute value.
-     *
-     * @param assetGlobal The assetGlobal to set.
-     */
     public void setAssetGlobal(AssetGlobal assetGlobal) {
         this.assetGlobal = assetGlobal;
     }
 
-
-    /**
-     * Gets the newAssets attribute.
-     *
-     * @return Returns the newAssets.
-     */
     public List<Asset> getNewAssets() {
         return newAssets;
     }
 
-
-    /**
-     * Sets the newAssets attribute value.
-     *
-     * @param newAssets The newAssets to set.
-     */
     public void setNewAssets(List<Asset> newAssets) {
         this.newAssets = newAssets;
     }
 
-
-    /**
-     * Gets the assetAllocateRatios attribute.
-     *
-     * @return Returns the assetAllocateRatios.
-     */
     public double[] getAssetAllocateRatios() {
         return assetAllocateRatios;
     }
 
-
-    /**
-     * Sets the assetAllocateRatios attribute value.
-     *
-     * @param assetAllocateRatios The assetAllocateRatios to set.
-     */
     public void setAssetAllocateRatios(double[] assetAllocateRatios) {
         this.assetAllocateRatios = assetAllocateRatios;
     }
 
-
-    /**
-     * Gets the separateRatio attribute.
-     *
-     * @return Returns the separateRatio.
-     */
     public double getSeparateRatio() {
         return separateRatio;
     }
 
-
-    /**
-     * Sets the separateRatio attribute value.
-     *
-     * @param separateRatio The separateRatio to set.
-     */
     public void setSeparateRatio(double separateRatio) {
         this.separateRatio = separateRatio;
     }
 
-
-    /**
-     * Gets the retainRatio attribute.
-     *
-     * @return Returns the retainRatio.
-     */
     public double getRetainRatio() {
         return retainRatio;
     }
 
-
-    /**
-     * Sets the retainRatio attribute value.
-     *
-     * @param retainRatio The retainRatio to set.
-     */
     public void setRetainRatio(double retainRatio) {
         this.retainRatio = retainRatio;
     }
 
-
-    /**
-     * Gets the sourcePayments attribute.
-     *
-     * @return Returns the sourcePayments.
-     */
     public List<AssetPayment> getSourcePayments() {
         return sourcePayments;
     }
 
-
-    /**
-     * Sets the sourcePayments attribute value.
-     *
-     * @param sourcePayments The sourcePayments to set.
-     */
     public void setSourcePayments(List<AssetPayment> sourcePayments) {
         this.sourcePayments = sourcePayments;
     }

@@ -20,11 +20,9 @@
     <property name="title" value="Edit Accounts"/>
     <property name="maintainableItems">
       <list>
-        <bean parent="MaintainableCollectionDefinition">
-          <property name="name" value="accountGlobalDetails"/>
-          <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.AccountGlobalDetail"/>
-          <property name="sourceClassName" value="edu.cornell.kfs.coa.businessobject.AccountGlobalSearch"/>
-          <property name="summaryTitle" value="Account"/>
+        <bean parent="MaintainableCollectionDefinition" p:name="accountGlobalDetails"
+              p:businessObjectClass="org.kuali.kfs.coa.businessobject.AccountGlobalDetail"
+              p:sourceClassName="org.kuali.kfs.coa.businessobject.Account" p:summaryTitle="Account">
           <property name="summaryFields">
             <list>
               <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
