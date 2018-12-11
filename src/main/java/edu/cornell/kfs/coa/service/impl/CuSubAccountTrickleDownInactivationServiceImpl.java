@@ -2,7 +2,6 @@ package edu.cornell.kfs.coa.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -11,12 +10,12 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTrickleDownInactivationServiceImpl {
 	private static final Logger LOG = LogManager.getLogger(CuSubAccountTrickleDownInactivationServiceImpl.class);
@@ -41,9 +40,9 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
         }
         
         inactivatedAccount.refreshReferenceObject(KFSPropertyConstants.SUB_ACCOUNTS);
-        if (ObjectUtils.isNotNull(inactivatedAccount.getSubAccounts()) && !inactivatedAccount.getSubAccounts().isEmpty()) {
-            for (Iterator<SubAccount> i = inactivatedAccount.getSubAccounts().iterator(); i.hasNext(); ) {
-                SubAccount subAccount = i.next();
+		if (ObjectUtils.isNotNull(inactivatedAccount.getSubAccounts()) && !inactivatedAccount.getSubAccounts().isEmpty()) {
+			for (Object entry : inactivatedAccount.getSubAccounts()) {
+				SubAccount subAccount = (SubAccount) entry;
                 if (subAccount.isActive()) {
                     subAccountMaintainable.setBusinessObject(subAccount);
                     List<MaintenanceLock> subAccountLocks = subAccountMaintainable.generateMaintenanceLocks();

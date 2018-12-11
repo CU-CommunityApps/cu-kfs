@@ -55,7 +55,7 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
             transactionEntry.getSourceAccountingLines().add(line);
         }
 
-        this.nextSourceLineNumber = new Integer(this.getNextSourceLineNumber().intValue() + 1);
+        this.nextSourceLineNumber = this.getNextSourceLineNumber() + 1;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
             transactionEntry.getTargetAccountingLines().add(line);
         }
 
-        this.nextTargetLineNumber = new Integer(this.getNextTargetLineNumber().intValue() + 1);
+        this.nextTargetLineNumber = this.getNextTargetLineNumber() + 1;
     }
     
     @Override
