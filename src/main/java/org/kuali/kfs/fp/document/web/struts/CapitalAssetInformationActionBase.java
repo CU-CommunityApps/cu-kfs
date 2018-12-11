@@ -1683,7 +1683,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
         CapitalAssetInformationFormBase capitalAssetInformationFormBase = (CapitalAssetInformationFormBase) form;
         CapitalAccountingLinesDocumentBase caldb = (CapitalAccountingLinesDocumentBase) capitalAssetInformationFormBase
                 .getFinancialDocument();
-        
+
         //generated tab key for the three tabs
         String tabIdForAccountingLinesForCapitalization = WebUtils.generateTabKey(
                 KFSConstants.CapitalAssets.ACCOUNTING_LINES_FOR_CAPITALIZATION_TAB_TITLE);
@@ -1837,7 +1837,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
     }
 
     /**
-     * Calculates the remaining amount to distribute by taking selecte capital accounting lines
+     * Calculates the remaining amount to distribute by taking selected capital accounting lines
      * and subtracting the allocated capital asset accounting lines amounts totals.
      *
      * @param selectedCapitalAccountingLines
@@ -1880,7 +1880,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
             AccountingLine accountingLine) {
         CapitalAssetInformationDocumentBase capitalAssetInformationDocumentBase =
                 (CapitalAssetInformationDocumentBase) financialDocumentForm.getFinancialDocument();
-        
+
         List<CapitalAssetInformation> removalCaiList = new ArrayList<>();
 
         List<CapitalAssetInformation> capitalAssets = capitalAssetInformationDocumentBase.getCapitalAssetInformation();
