@@ -23,7 +23,7 @@ import org.kuali.rice.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 
 /**
- * This class returns list containg 22 = Checking or 32 = Savings
+* This class returns list containing 22 = Checking or 32 = Savings
  */
 @SuppressWarnings("serial")
 public class CUCheckingSavingsValuesFinder extends KeyValuesBase {

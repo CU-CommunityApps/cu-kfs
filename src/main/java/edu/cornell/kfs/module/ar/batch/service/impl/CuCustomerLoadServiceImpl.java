@@ -10,14 +10,13 @@ import org.kuali.kfs.module.ar.document.validation.impl.CustomerRule;
 public class CuCustomerLoadServiceImpl extends CustomerLoadServiceImpl {
     
     @Override
-    protected boolean validateSingle(MaintenanceDocument maintDoc, CustomerLoadBatchErrors batchErrors, String customerName) {
-        boolean result = true;
-
+    protected boolean validateSingle(MaintenanceDocument maintDoc, CustomerLoadBatchErrors batchErrors,
+            String customerName) {
         //  get an instance of the business rule
         CustomerRule rule = new CuCustomerRule();
 
         //  run the business rules
-        result &= rule.processRouteDocument(maintDoc);
+        boolean result = rule.processRouteDocument(maintDoc);
 
         extractGlobalVariableErrors(batchErrors, customerName);
 

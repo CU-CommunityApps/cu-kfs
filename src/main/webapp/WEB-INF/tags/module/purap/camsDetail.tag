@@ -107,7 +107,7 @@
 			   	        attributeEntry="${camsSystemAttributes.capitalAssetNoteText}" 
 			   	        property="${camsAssetSystemProperty}.capitalAssetNoteText" 
 			   	        readOnly="${!(fullEntryMode or amendmentEntry or enableCa) or poItemInactive}" 
-			   	        readOnlyAlternateDisplay="${fn:replace(capitalAssetNoteTextValue, Constants.NEWLINE, '<br/>')}"		 
+			   	        readOnlyAlternateDisplay="${capitalAssetNoteTextValue}"		 
 			   	        tabindexOverride="${tabindexOverrideBase + 0}"/>
 			</td>
 		</c:if>
@@ -125,7 +125,7 @@
 		    		    attributeEntry="${camsSystemAttributes.capitalAssetSystemDescription}" 
 		    		    property="${camsAssetSystemProperty}.capitalAssetSystemDescription" 
 		    		    readOnly="${!(fullEntryMode or amendmentEntry or enableCa) or poItemInactive}" 
-		    		    readOnlyAlternateDisplay="${fn:replace(capitalAssetSystemDescriptionValue, Constants.NEWLINE, '<br/>')}"		    		    
+		    		    readOnlyAlternateDisplay="${capitalAssetSystemDescriptionValue}"		    		    
 		    		    tabindexOverride="${tabindexOverrideBase + 3}"/>
 			</td>
 		</c:if>
