@@ -29,7 +29,8 @@ import java.util.Map;
 
 public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManagementModuleServiceImpl {
 
-    protected boolean checkNewCapitalAssetFieldsExist(CapitalAssetInformation capitalAssetInformation, AccountingDocument accountingDocument, int caLineIndex) {
+    protected boolean checkNewCapitalAssetFieldsExist(CapitalAssetInformation capitalAssetInformation,
+            AccountingDocument accountingDocument, int caLineIndex) {
         boolean valid = true;
 
         if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetTypeCode())) {
@@ -159,8 +160,6 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
 
     protected boolean validateAssetTagLocationLines(CapitalAssetInformation capitalAssetInformation, int capitalAssetIndex, AccountingDocument accountingDocument) {
         boolean valid = true;
-        CapitalAssetEditable capitalAssetEditable = (CapitalAssetEditable) accountingDocument;
-        List<CapitalAssetInformation> capitalAssets = capitalAssetEditable.getCapitalAssetInformation();
 
         List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
         int index = 0;

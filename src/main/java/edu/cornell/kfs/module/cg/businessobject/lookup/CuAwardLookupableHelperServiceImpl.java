@@ -45,7 +45,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     @Override
     public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
         LOG.debug("getCustomActionUrls, entering");
-        List<HtmlData> anchorHtmlDataList = new ArrayList<HtmlData>();
+        List<HtmlData> anchorHtmlDataList = new ArrayList<>();
         
         if (canInitAward() && allowsMaintenanceEditAction(businessObject)) {
             anchorHtmlDataList.add(getUrlData(businessObject, KRADConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames));
