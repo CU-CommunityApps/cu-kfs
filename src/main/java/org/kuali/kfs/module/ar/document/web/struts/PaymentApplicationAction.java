@@ -903,14 +903,14 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
         int deleteIndex = getLineToDelete(request);
 
-        adjustBothQuickApplyToInvoiceApplyToInvoiceDetailDueToDeleteInvoicePaidApplied(paymentApplicationForm, deleteIndex);
+        adjustBothQuickApplyToInvoiceAndApplyToInvoiceDetailDueToDeleteInvoicePaidApplied(paymentApplicationForm, deleteIndex);
         paymentApplicationDocument.getInvoicePaidApplieds().remove(deleteIndex);
         GlobalVariables.getMessageMap().clearErrorMessages();
         doApplicationOfFunds((PaymentApplicationForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void adjustBothQuickApplyToInvoiceApplyToInvoiceDetailDueToDeleteInvoicePaidApplied(PaymentApplicationForm paymentApplicationForm, int deletedAppliedFundsIndex) {
+    protected void adjustBothQuickApplyToInvoiceAndApplyToInvoiceDetailDueToDeleteInvoicePaidApplied(PaymentApplicationForm paymentApplicationForm, int deletedAppliedFundsIndex) {
         PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
         InvoicePaidApplied appliedFundBeingDeleted = paymentApplicationDocument.getInvoicePaidApplieds().get(deletedAppliedFundsIndex);
 
@@ -919,7 +919,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
         if (StringUtils.isNotBlank(summaryOfAppliedFundsDocumentNumberBeingDeleted)) {
             for (PaymentApplicationInvoiceApply invoiceListItem : paymentApplicationForm.getInvoiceApplications()) {
-                for (PaymentApplicationInvoiceDetailApply invoiceListItemDetail: invoiceListItem.getDetailApplications()) {
+                for (PaymentApplicationInvoiceDetailApply invoiceListItemDetail : invoiceListItem.getDetailApplications()) {
 
                     deleteCleanupOfApplyToInvoiceDetailData(invoiceListItemDetail, summaryOfAppliedFundsDocumentNumberBeingDeleted, summaryOfAppliedFundsAmountBeingDeleted);
 
