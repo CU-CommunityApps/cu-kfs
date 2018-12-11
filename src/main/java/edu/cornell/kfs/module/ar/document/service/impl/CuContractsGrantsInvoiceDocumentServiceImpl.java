@@ -456,7 +456,10 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                         receivable.add(document.getInvoiceGeneralDetail().getTotalAmountBilledToDate()));
             }
         }
-        return new CuPdfFormattingMap(parameterMap);
+        parameterMap.put("finalBill", Boolean.TRUE);
+        Map<String, String> formattedMap =  new CuPdfFormattingMap(parameterMap);
+        
+        return formattedMap;
     }
 
     private void setFinalStatusDate(ContractsGrantsInvoiceDocument document, Map<String, Object> parameterMap) {
@@ -533,6 +536,5 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes) {
         super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
     }
-    
 
 }
