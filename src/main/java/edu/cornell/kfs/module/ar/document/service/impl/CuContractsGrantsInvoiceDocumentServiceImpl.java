@@ -24,6 +24,7 @@ import org.kuali.kfs.sys.util.FallbackMap;
 import org.kuali.kfs.sys.util.ReflectionMap;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.report.CuPdfFormattingMap;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
@@ -85,6 +86,15 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         parameterMap.put(
                 ArPropertyConstants.ACCOUNT_DETAILS + "." + KFSPropertyConstants.CONTRACT_CONTROL_ACCOUNT_NUMBER,
                 getRecipientAccountNumber(document.getAccountDetails()));
+        
+        if (document.getInvoiceGeneralDetail().isFinalBillIndicator()) {
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, "X");
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, "");
+        } else {
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, "");
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, "X");
+        }
+        
         if (ObjectUtils.isNotNull(sysInfo)) {
             parameterMap.put(
                     ArPropertyConstants.SYSTEM_INFORMATION + "."
@@ -456,10 +466,8 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                         receivable.add(document.getInvoiceGeneralDetail().getTotalAmountBilledToDate()));
             }
         }
-        parameterMap.put("finalBill", Boolean.TRUE);
-        Map<String, String> formattedMap =  new CuPdfFormattingMap(parameterMap);
         
-        return formattedMap;
+        return new CuPdfFormattingMap(parameterMap);
     }
 
     private void setFinalStatusDate(ContractsGrantsInvoiceDocument document, Map<String, Object> parameterMap) {
