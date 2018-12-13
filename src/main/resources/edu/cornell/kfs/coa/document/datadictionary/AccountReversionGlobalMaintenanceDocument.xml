@@ -43,7 +43,7 @@
     </property>
     <property name="documentTypeName" value="GARV"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountReversionGlobalRule"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountReversionGlobalPreRules"/>
     <property name="webScriptFiles">
       <list>
