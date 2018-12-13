@@ -466,7 +466,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                         receivable.add(document.getInvoiceGeneralDetail().getTotalAmountBilledToDate()));
             }
         }
-        
         return new CuPdfFormattingMap(parameterMap);
     }
 
@@ -544,5 +543,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
             List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes) {
         super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
     }
+    
 
 }
