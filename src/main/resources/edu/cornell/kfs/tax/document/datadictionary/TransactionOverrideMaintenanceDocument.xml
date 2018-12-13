@@ -21,7 +21,7 @@
       </list>
     </property>
     <property name="documentTypeName" value="TXTO"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="workflowAttributes">
       <ref bean="TransactionOverrideMaintenanceDocument-workflowAttributes"/>
     </property>

@@ -46,7 +46,7 @@
         <bean parent="ReferenceDefinition" p:collection="paymentMethodCharts" p:attributeName="clearingFinancialSubObject" p:attributeToHighlightOnFail="clearingFinancialSubObjectCode"/>
       </list>
     </property>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.fp.document.validation.impl.PaymentMethodRule"/>
     <!-- 
     <property name="documentPresentationControllerClass" value=""/>

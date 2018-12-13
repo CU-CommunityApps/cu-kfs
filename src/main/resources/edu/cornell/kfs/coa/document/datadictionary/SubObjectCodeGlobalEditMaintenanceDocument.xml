@@ -41,7 +41,7 @@
     </property>
     <property name="documentTypeName" value="GSOI"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.SubObjectCodeGlobalEditRule"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="workflowAttributes">
     	<ref bean="SubObjectCodeGlobalEditMaintenanceDocument-workflowAttributes"/>
     </property>

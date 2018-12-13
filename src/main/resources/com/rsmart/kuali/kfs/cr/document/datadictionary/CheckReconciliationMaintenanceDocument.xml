@@ -23,7 +23,7 @@
     </property>
     <property name="documentTypeName" value="CSCR" />
     <property name="businessRulesClass" value="com.rsmart.kuali.kfs.cr.document.validation.impl.CheckReconciliationRule" />
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase" />
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase" />
 	<property name="workflowProperties" >
       <ref bean="CheckReconciliationMaintenanceDocument-workflowProperties" />
     </property>
