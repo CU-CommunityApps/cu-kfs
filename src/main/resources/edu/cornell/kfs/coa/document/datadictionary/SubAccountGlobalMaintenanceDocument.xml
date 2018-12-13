@@ -49,7 +49,7 @@
     </property>
     <property name="documentTypeName" value="GSACC"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.SubAccountGlobalRule"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.SubAccountGlobalPreRules"/>
 
     <property name="workflowAttributes">
