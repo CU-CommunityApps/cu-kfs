@@ -48,16 +48,6 @@ public class PayeeACHAccountExtractCsvInputFileType extends CsvBatchInputFileTyp
         return "Workday ACH Batch Upload";
     }
 
-    /**
-     * Overridden to call "convertParsedObjectToVO" after performing the regular parsing.
-     * 
-     * @see org.kuali.kfs.sys.batch.CsvBatchInputFileTypeBase#parse(byte[])
-     */
-    @Override
-    public Object parse(byte[] fileByteContent) throws ParseException {
-        Object parsedContents = super.parse(fileByteContent);
-        return convertParsedObjectToVO(parsedContents);
-    }
 
     @SuppressWarnings("unchecked")
     @Override
