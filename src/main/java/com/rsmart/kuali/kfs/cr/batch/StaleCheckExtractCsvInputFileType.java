@@ -47,12 +47,6 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
         return CRKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_STALE_CHECK;
     }
 
-    @Override
-    public Object parse(byte[] fileByteContent) throws ParseException {
-        Object parsedContents = super.parse(fileByteContent);
-        return convertParsedObjectToVO(parsedContents);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     protected List<StaleCheckBatchRow> convertParsedObjectToVO(Object parsedContent) {
