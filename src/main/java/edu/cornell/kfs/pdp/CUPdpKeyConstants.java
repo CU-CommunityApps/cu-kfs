@@ -27,5 +27,10 @@ public class CUPdpKeyConstants {
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_PAYMENT_TABLE_ITEM_LINE = "message.pdp.achAdvice.email.attachment.paymentTableItemLine";
 	
 	public static final String ERROR_PDP_PAYMENTLOAD_INVALID_EMPLOYEE_ID = "error.pdp.paymentLoad.invalidEmployeeId";
+	
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_PREFIX = "pdp.send.ach.notification.error.report.file.prefix";
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE = "pdp.send.ach.notification.error.report.title";
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_HEADER = "pdp.send.ach.notification.error.report.header";
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_DETAIL = "pdp.send.ach.notifcations.error.report.detail";
 
 }
