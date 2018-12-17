@@ -171,9 +171,9 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     public List<PersistableBusinessObject> generateDeactivationsToPersist() {
         // Retrieve all the existing sub accounts for this
-        List<SubAccount> bosToDeactivate = new ArrayList ();
+        List<SubAccount> bosToDeactivate = new ArrayList<>();
         if (!isActive()) {
-            Map<String, Object> fieldValues = new HashMap();
+            Map<String, Object> fieldValues = new HashMap<>();
             fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, getChartOfAccountsCode());
             fieldValues.put(KFSPropertyConstants.ACCOUNT_NUMBER, getAccountNumber());
             fieldValues.put(KFSPropertyConstants.ACTIVE, true);
@@ -518,7 +518,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     public List<IndirectCostRecoveryAccount> getActiveIndirectCostRecoveryAccounts() {
-        List<IndirectCostRecoveryAccount> activeList = new ArrayList();
+        List<IndirectCostRecoveryAccount> activeList = new ArrayList<>();
         for (IndirectCostRecoveryAccount icr : getIndirectCostRecoveryAccounts()) {
             if (icr.isActive()) {
                 activeList.add(IndirectCostRecoveryAccount.copyICRAccount(icr));
