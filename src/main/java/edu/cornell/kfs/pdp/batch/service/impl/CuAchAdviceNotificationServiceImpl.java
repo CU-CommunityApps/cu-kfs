@@ -122,7 +122,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     }
     
     @NonTransactional
-    private void validateEmailAddress(String email) throws AddressException {
+    protected void validateEmailAddress(String email) throws AddressException {
         InternetAddress emailAddr = new InternetAddress(email);
         emailAddr.validate();
     }
