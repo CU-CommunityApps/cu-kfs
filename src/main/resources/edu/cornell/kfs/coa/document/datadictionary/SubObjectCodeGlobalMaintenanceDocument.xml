@@ -22,7 +22,7 @@
       <list>
         <bean parent="MaintainableCollectionDefinition" p:name="accountGlobalDetails"
               p:businessObjectClass="org.kuali.kfs.coa.businessobject.AccountGlobalDetail"
-              p:sourceClassName="org.kuali.kfs.coa.businessobject.Account" p:summaryTitle="Account">
+              p:sourceClassName="edu.cornell.kfs.coa.businessobject.AccountGlobalSearch" p:summaryTitle="Account">
           <property name="summaryFields">
             <list>
               <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
