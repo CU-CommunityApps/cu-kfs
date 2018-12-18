@@ -6,15 +6,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.batch.PDPBadEmailRecord;
 import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationWrrorReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
@@ -80,12 +86,19 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
 
     }
     
+    @Override
+    public void validateEmailAddress(String email) throws AddressException {
+        InternetAddress emailAddr = new InternetAddress(email);
+        emailAddr.validate();
+    }
+    
     private String findPdpFromEmailAddress() {
-        return parameterService.getParameterValueAsString("KFS-PDP", "Batch", "FROM_EMAIL_ADDRESS");
+        return parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM);
     }
     
     private List<String> findPDPToEmailAddress() {
-        Collection addresses = parameterService.getParameterValuesAsString("KFS-PDP", "Batch", "PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES");
+        Collection addresses = parameterService.getParameterValuesAsString(KFSConstants.ParameterNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, 
+                CUPdpParameterConstants.PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES);
         return new ArrayList<String>(addresses);
     }
 

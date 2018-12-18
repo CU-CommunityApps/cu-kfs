@@ -76,7 +76,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
                 CustomerProfile customer = payGroup.getBatch().getCustomerProfile();
                 try {
                     if (customer.getAdviceCreate()) {
-                        validateEmailAddress(payGroup.getAdviceEmailAddress());
+                        cuAchAdviceNotificationWrrorReportService.validateEmailAddress(payGroup.getAdviceEmailAddress());
                         pdpEmailService.sendAchAdviceEmail(payGroup, paymentDetails, customer);
                     }
 
@@ -100,7 +100,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
                 List<PaymentDetail> paymentDetails = paymentGroup.getPaymentDetails();
                 try {
                     if (customer.getAdviceCreate()) {
-                        validateEmailAddress(paymentGroup.getAdviceEmailAddress());
+                        cuAchAdviceNotificationWrrorReportService.validateEmailAddress(paymentGroup.getAdviceEmailAddress());
                         pdpEmailService.sendAchAdviceEmail(paymentGroup, paymentDetails, customer);
                     }
                     paymentGroup.setAdviceEmailSentDate(dateTimeService.getCurrentTimestamp());
@@ -113,12 +113,6 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
         }
 
         createAndEmailErrorReport(badEmailRecords);
-    }
-    
-    @NonTransactional
-    protected void validateEmailAddress(String email) throws AddressException {
-        InternetAddress emailAddr = new InternetAddress(email);
-        emailAddr.validate();
     }
     
     @NonTransactional

@@ -8,36 +8,36 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CuAchAdviceNotificationServiceImplTest extends CuAchAdviceNotificationServiceImpl {
+public class CuAchAdviceNotificationWrrorReportServiceImplTest extends CuAchAdviceNotificationServiceImpl {
     
-    private CuAchAdviceNotificationServiceImpl cuAchAdviceNotificationService;
+    private CuAchAdviceNotificationWrrorReportServiceImpl cuAchAdviceNotificationWrrorReportService;
 
     @Before
     public void setUp() throws Exception {
-        cuAchAdviceNotificationService = new CuAchAdviceNotificationServiceImpl();
+        cuAchAdviceNotificationWrrorReportService = new CuAchAdviceNotificationWrrorReportServiceImpl();
     }
 
     @After
     public void tearDown() throws Exception {
-        cuAchAdviceNotificationService = null;
+        cuAchAdviceNotificationWrrorReportService = null;
     }
 
     @Test
     public void validateEmailAddressGoodAddressHyperUser() throws AddressException {
-        cuAchAdviceNotificationService.validateEmailAddress("test-user@cornell-university.edu");
+        cuAchAdviceNotificationWrrorReportService.validateEmailAddress("test-user@cornell-university.edu");
         assertTrue(true);
     }
     
     @Test
     public void validateEmailAddressGoodAddressUnderscoreUser() throws AddressException {
-        cuAchAdviceNotificationService.validateEmailAddress("test_user@cornell-university.edu");
+        cuAchAdviceNotificationWrrorReportService.validateEmailAddress("test_user@cornell-university.edu");
         assertTrue(true);
     }
     
     @Test
     public void validateEmailAddressBadAddressUnderscoreDomain() {
         try {
-            cuAchAdviceNotificationService.validateEmailAddress("test_user@cornell_univesity.edu");
+            cuAchAdviceNotificationWrrorReportService.validateEmailAddress("test_user@cornell_univesity.edu");
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);
@@ -48,7 +48,7 @@ public class CuAchAdviceNotificationServiceImplTest extends CuAchAdviceNotificat
     @Test
     public void validateEmailAddressBadAddresEmpty() {
         try {
-            cuAchAdviceNotificationService.validateEmailAddress("");
+            cuAchAdviceNotificationWrrorReportService.validateEmailAddress("");
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);
