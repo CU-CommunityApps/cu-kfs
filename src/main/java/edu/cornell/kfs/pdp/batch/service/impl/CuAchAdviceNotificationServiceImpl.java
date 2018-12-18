@@ -15,7 +15,7 @@
  */
 package edu.cornell.kfs.pdp.batch.service.impl;
 
-import java.text.MessageFormat;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,9 +30,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.sys.service.NonTransactional;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,11 +38,10 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
-import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.batch.PDPBadEmailRecord;
+import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationWrrorReportService;
 import edu.cornell.kfs.pdp.dataaccess.AchBundlerAdviceDao;
 import edu.cornell.kfs.pdp.service.CuPdpEmailService;
-import edu.cornell.kfs.sys.service.ReportWriterService;
-import net.bull.javamelody.ReportServlet;
 
 public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotificationService {
     private static final Logger LOG = LogManager.getLogger(CuAchAdviceNotificationServiceImpl.class);
@@ -56,9 +53,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     private BusinessObjectService businessObjectService;
     private AchBundlerHelperService achBundlerHelperService;
     private AchBundlerAdviceDao achBundlerAdviceDao;
-    protected ReportWriterService reportWriterService;
-    protected ConfigurationService configurationService;
-    
+    private CuAchAdviceNotificationWrrorReportService cuAchAdviceNotificationWrrorReportService;
 
     @NonTransactional
     @Override
@@ -117,7 +112,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
             }
         }
 
-        createBadEmailReport(badEmailRecords);
+        createAndEmailErrorReport(badEmailRecords);
     }
     
     @NonTransactional
@@ -134,37 +129,17 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     }
     
     @NonTransactional
-    private void createBadEmailReport(List<PDPBadEmailRecord> badEmailRecords) {
+    private void createAndEmailErrorReport(List<PDPBadEmailRecord> badEmailRecords) {
         if (CollectionUtils.isNotEmpty(badEmailRecords)) {
             LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email records to report");
-            initiatlizeErrorReport();
-            printErrorReportDetails(badEmailRecords);
-            reportWriterService.destroy();
+            File reportFile = cuAchAdviceNotificationWrrorReportService.createBadEmailReport(badEmailRecords);
+            cuAchAdviceNotificationWrrorReportService.emailBadEmailReport(reportFile);
             
         } else {
             LOG.info("createBadEmailReport, there were no bad email addresses to report.");
         }
     }
     
-    @NonTransactional
-    private void initiatlizeErrorReport() {
-        reportWriterService.setFileNamePrefix(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_PREFIX));
-        reportWriterService.setTitle(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE));
-        reportWriterService.initialize();
-        reportWriterService.writeNewLines(2);
-        reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_HEADER));
-    }
-    
-    @NonTransactional
-    private void printErrorReportDetails(List<PDPBadEmailRecord> badEmailRecords) {
-        String detailLineFormat = configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_DETAIL);
-        for (PDPBadEmailRecord record : badEmailRecords) {
-            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailLineFormat, record.getPayeeId(), 
-                    String.valueOf(record.getPaymentGroupId()), record.getEmailAddress()));
-        }
-        reportWriterService.writeNewLines(1);
-    }
-
     @NonTransactional
     public void setPdpEmailService(CuPdpEmailService pdpEmailService) {
         this.pdpEmailService = pdpEmailService;
@@ -194,42 +169,9 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     public void setAchBundlerAdviceDao(AchBundlerAdviceDao achBundlerAdviceDao) {
         this.achBundlerAdviceDao = achBundlerAdviceDao;
     }
-    
-    @NonTransactional
-    public void setReportWriterService(ReportWriterService reportWriterService) {
-        this.reportWriterService = reportWriterService;
-    }
-    
-    @NonTransactional
-    public void setConfigurationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
-    }
 
-    private class PDPBadEmailRecord {
-        private String payeeId;
-        private KualiInteger paymentGroupId;
-        private String emailAddress;
-        
-        public PDPBadEmailRecord(String payeeId, KualiInteger paymentGroupId, String emailAddress) {
-            this.payeeId = payeeId;
-            this.paymentGroupId = paymentGroupId;
-            this.emailAddress = emailAddress;
-        }
-        
-        public String getPayeeId() {
-            return payeeId;
-        }
-
-        public KualiInteger getPaymentGroupId() {
-            return paymentGroupId;
-        }
-
-        public String getEmailAddress() {
-            return emailAddress;
-        }
-
-        public void logBadEmailRecord() {
-            LOG.error("logBadEmailRecord, payeeIdL '" + payeeId + "' payment group ID: '" + paymentGroupId + "' email address: '" + emailAddress + "'");
-        }
+    public void setCuAchAdviceNotificationWrrorReportService(
+            CuAchAdviceNotificationWrrorReportService cuAchAdviceNotificationWrrorReportService) {
+        this.cuAchAdviceNotificationWrrorReportService = cuAchAdviceNotificationWrrorReportService;
     }
 }

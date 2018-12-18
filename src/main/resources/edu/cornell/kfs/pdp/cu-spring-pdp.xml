@@ -121,11 +121,18 @@
         <property name="filePath" value="${reports.directory}/pdp"/>
     </bean>
     
+    <bean id="cuAchAdviceNotificationWrrorReportService" class="edu.cornell.kfs.pdp.batch.service.impl.CuAchAdviceNotificationWrrorReportServiceImpl">
+        <property name="reportWriterService" ref="pdpAchReportWriterService"/>
+        <property name="configurationService" ref="configurationService"/>
+        <property name="emailService" ref="emailService"/>
+        <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+        <property name="parameterService" ref="parameterService"/>
+    </bean>
+    
     <bean id="pdpAchAdviceNotificationService" parent="pdpAchAdviceNotificationService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuAchAdviceNotificationServiceImpl">
         <property name="achBundlerAdviceDao" ref="achBundlerAdviceDao"/>              
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />  
-        <property name="reportWriterService" ref="pdpAchReportWriterService" />
-        <property name="configurationService" ref="configurationService" />
+        <property name="cuAchAdviceNotificationWrrorReportService" ref="cuAchAdviceNotificationWrrorReportService" />
     </bean>
     
     <bean id="pdpEmailService" parent="pdpEmailService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPdpEmailServiceImpl">
