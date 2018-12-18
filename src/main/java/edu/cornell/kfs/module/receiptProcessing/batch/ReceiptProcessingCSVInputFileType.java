@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.exception.ParseException;
 
+import edu.cornell.kfs.module.receiptProcessing.CsvBatchInputFileTypeBase;
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
 import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
 
@@ -51,9 +52,9 @@ public class ReceiptProcessingCSVInputFileType extends CsvBatchInputFileTypeBase
 
     /**
      * 
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
+     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifier()
      */
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return "receiptProcessing_kfs";
     }
 
@@ -62,21 +63,6 @@ public class ReceiptProcessingCSVInputFileType extends CsvBatchInputFileTypeBase
         return true;
     }
     
-    /**
-     * override super class implementation to specify/convert to the expected data structure
-     * 
-     * For customer load, it will be CustomerDigesterVO
-     * 
-     * @see org.kuali.kfs.sys.batch.CsvBatchInputFileTypeBase#parse(byte[])
-     */
-    @Override
-    public Object parse(byte[] fileByteContent) throws ParseException {
-        
-        //super class should have already defined a way to parse the content
-        Object parsedContents = super.parse(fileByteContent);        
-        List<ReceiptProcessing> receipts = (List<ReceiptProcessing>)convertParsedObjectToVO(parsedContents);
-        return receipts;    
-    }
     
     public ReceiptProcessingService getReceiptProcessingService() {
         return receiptProcessingService;

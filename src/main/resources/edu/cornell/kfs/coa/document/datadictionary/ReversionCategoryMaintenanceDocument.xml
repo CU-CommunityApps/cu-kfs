@@ -31,7 +31,7 @@
       </list>
     </property>
     <property name="documentTypeName" value="ORGC"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="workflowAttributes">
     	<ref bean="ReversionCategoryMaintenanceDocument-workflowAttributes"/>
     </property>

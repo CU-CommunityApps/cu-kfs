@@ -43,7 +43,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Override
     protected VendorCreditMemoDocument findCreditMemoDocument(Entry entry) {
         VendorCreditMemoDocument creditMemoDocument = null;
-        Map<String, String> keys = new LinkedHashMap<String, String>();
+        Map<String, String> keys = new LinkedHashMap<>();
         keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
         Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
         
@@ -63,7 +63,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Override
     protected PaymentRequestDocument findPaymentRequestDocument(Entry entry) {
         PaymentRequestDocument paymentRequestDocument = null;
-        Map<String, String> keys = new LinkedHashMap<String, String>();
+        Map<String, String> keys = new LinkedHashMap<>();
         keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
         Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
         
@@ -86,7 +86,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
             } else if (!CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
                 fpLines.add(entry);
             } else if (CamsConstants.CM.equals(entry.getFinancialDocumentTypeCode())) {
-                Map<String, String> fieldValues = new HashMap<String, String>();
+                Map<String, String> fieldValues = new HashMap<>();
                 fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, entry.getDocumentNumber());
                 Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
                 // check if vendor credit memo, then include as FP line
@@ -109,7 +109,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     @Transactional
     @Override
     public HashSet<PurchasingAccountsPayableDocument> savePOLines(List<Entry> poLines, ExtractProcessLog processLog) {
-        HashSet<PurchasingAccountsPayableDocument> purApDocuments = new HashSet<PurchasingAccountsPayableDocument>();
+        HashSet<PurchasingAccountsPayableDocument> purApDocuments = new HashSet<>();
 
         // This is a list of pending GL entries created after last GL process and Cab Batch extract
         // PurAp Account Line history comes from PURAP module
@@ -122,19 +122,19 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
 
         // Keep track of unique item lines
-        HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<String, PurchasingAccountsPayableItemAsset>();
+        HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<>();
 
         // Keep track of unique account lines
-        HashMap<String, PurchasingAccountsPayableLineAssetAccount> assetAcctLines = new HashMap<String, PurchasingAccountsPayableLineAssetAccount>();
+        HashMap<String, PurchasingAccountsPayableLineAssetAccount> assetAcctLines = new HashMap<>();
 
         // Keep track of asset lock
-        HashMap<String, Object> assetLockMap = new HashMap<String, Object>();
+        HashMap<String, Object> assetLockMap = new HashMap<>();
 
         // Keep track of purchaseOrderDocument
-        HashMap<Integer, PurchaseOrderDocument> poDocMap = new HashMap<Integer, PurchaseOrderDocument>();
+        HashMap<Integer, PurchaseOrderDocument> poDocMap = new HashMap<>();
 
         // KFSMI-7214, add document map for processing multiple items from the same AP doc
-        HashMap<String, PurchasingAccountsPayableDocument> papdMap = new HashMap<String, PurchasingAccountsPayableDocument>();
+        HashMap<String, PurchasingAccountsPayableDocument> papdMap = new HashMap<>();
 
         for (GlAccountLineGroup group : matchedGroups) {
             Entry entry = group.getTargetEntry();
@@ -348,7 +348,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         boolean hasItemsUsuallyNegative = false;
         boolean hasOthers = false;
         boolean hasRevision = false;
-        HashSet<Integer> itemIdentifiers = new HashSet<Integer>();
+        HashSet<Integer> itemIdentifiers = new HashSet<>();
 
         for (PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
             PurApItem purapItem = purApAccountingLine.getPurapItem();

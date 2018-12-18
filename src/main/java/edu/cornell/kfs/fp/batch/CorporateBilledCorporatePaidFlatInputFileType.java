@@ -24,7 +24,7 @@ public class CorporateBilledCorporatePaidFlatInputFileType extends ProcurementCa
     }
     
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return CuFPConstants.CORPORATE_BILLED_CORPORATE_PAID_FLAT_INPUT_FILE_TYPE;
     }
     

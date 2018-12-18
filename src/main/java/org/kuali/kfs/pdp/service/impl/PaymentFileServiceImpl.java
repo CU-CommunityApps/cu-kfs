@@ -224,7 +224,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
         } catch (ParseException e1) {
             LOG.error("Error parsing xml " + e1.getMessage());
-            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML,
+            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                     new String[]{e1.getMessage()});
         }
 

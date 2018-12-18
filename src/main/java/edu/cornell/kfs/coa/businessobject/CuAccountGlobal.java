@@ -97,7 +97,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     
 	@Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
-        List<PersistableBusinessObject> persistables = new ArrayList<PersistableBusinessObject>();
+        List<PersistableBusinessObject> persistables = new ArrayList<>();
 
         for (AccountGlobalDetail accountGlobalDetail : accountGlobalDetails) {
         	updateAccountValuesAndAddToPersistablesList(persistables, accountGlobalDetail);

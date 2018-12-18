@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase;
+import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
 import org.kuali.kfs.krad.document.Document;
@@ -16,7 +16,7 @@ import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 
 @SuppressWarnings("deprecation")
-public class UserProcurementProfileAuthorizer  extends FinancialSystemMaintenanceDocumentAuthorizerBase {
+public class UserProcurementProfileAuthorizer  extends MaintenanceDocumentAuthorizerBase {
 
 	private static final long serialVersionUID = 1L;
 	

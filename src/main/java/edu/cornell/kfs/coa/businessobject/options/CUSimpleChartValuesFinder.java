@@ -24,9 +24,10 @@ public class CUSimpleChartValuesFinder extends KeyValuesBase {
 
 	 protected ParameterService parameterService;
 	
-    /**
-     * Creates a list of {@link Chart}s using their code as their key, and their code as the display value
-     */
+	/**
+	 * Creates a list of {@link org.kuali.kfs.coa.businessobject.Chart}s using their
+	 * code as their key, and their code as the display value
+	 */
     public List<KeyValue> getKeyValues() {
         parameterService = SpringContext.getBean(ParameterService.class);
         String defaultChartCode = "";
@@ -40,7 +41,7 @@ public class CUSimpleChartValuesFinder extends KeyValuesBase {
         }
         KeyValuesService boService = SpringContext.getBean(KeyValuesService.class);
         Collection<Chart> chartCodes = boService.findAll(Chart.class);
-        List<KeyValue> chartKeyLabels = new ArrayList<KeyValue>();
+        List<KeyValue> chartKeyLabels = new ArrayList<>();
 
         //If the DEFAULT_CHART_CODE_METHOD parameter DNE or has no value assigned to it, no default
         if (defaultChartCodeMethod.equals("")) { 

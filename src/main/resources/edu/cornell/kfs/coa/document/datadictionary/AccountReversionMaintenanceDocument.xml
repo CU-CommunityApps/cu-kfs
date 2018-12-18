@@ -46,7 +46,7 @@
     </property>
     <property name="documentTypeName" value="ACCR"/>
     <property name="businessRulesClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountReversionRule"/>
-    <property name="documentAuthorizerClass" value="org.kuali.kfs.sys.document.authorization.FinancialSystemMaintenanceDocumentAuthorizerBase"/>
+    <property name="documentAuthorizerClass" value="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.coa.document.validation.impl.AccountReversionPreRules"/>
     <property name="webScriptFiles">
       <list>

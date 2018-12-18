@@ -28,8 +28,6 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustmentDocumentBalancedValidation {
 
     public boolean validate(AttributedDocumentEvent event) {
-        MessageMap errors = GlobalVariables.getMessageMap();
-
         boolean balanced = true;
 
         // check base amounts are equal

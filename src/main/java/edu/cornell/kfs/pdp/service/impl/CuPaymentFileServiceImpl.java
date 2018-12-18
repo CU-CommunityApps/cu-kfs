@@ -135,7 +135,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         }
         catch (ParseException e1) {
             LOG.error("Error parsing xml " + e1.getMessage());
-            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING_XML, new String[] { e1.getMessage() });
+            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING, new String[] { e1.getMessage() });
             // Get customer object from unparsable file so error email can be sent.
             paymentFile = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
         }

@@ -131,9 +131,8 @@
   	</bean>
   	
   	<bean id="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation" parent="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" scope="prototype" />
-	<bean id="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" abstract="true" parent="CollectionValidation" scope="prototype">
+	<bean id="Requisition-saveDocument-itemCollectionValidation-commodityCodeValidation-parentBean" abstract="true" parent="CollectionValidation" scope="prototype" p:collectionProperty="document.items">
         <property name="quitOnFail" value="false" />
-		<property name="collectionProperty" value="document.items" />
   		<property name="validations">
   			<list>  				
 				<bean parent="Requisition-commodityCodeValidation" scope="prototype" >

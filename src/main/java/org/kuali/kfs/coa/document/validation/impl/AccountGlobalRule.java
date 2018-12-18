@@ -231,17 +231,20 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (StringUtils.isNotBlank(dtl.getAccountNumber()) && StringUtils.isNotBlank(dtl.getChartOfAccountsCode())) {
 			dtl.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
 			if (ObjectUtils.isNull(dtl.getAccount())) {
-				GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, new String[] { dtl.getChartOfAccountsCode(), dtl.getAccountNumber() });
+				GlobalVariables.getMessageMap().putError(KFSPropertyConstants.ACCOUNT_NUMBER, 
+                        KFSKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ACCOUNT, dtl.getChartOfAccountsCode(),
+                        dtl.getAccountNumber());
 			}
 		}
 		return GlobalVariables.getMessageMap().getErrorCount() == originalErrorCount;
 	}
 
-	/**
-	 * This method checks the basic rules for empty reference key values on a continuation account and an income stream account
-	 *
-	 * @return true if no empty values or partially filled out reference keys
-	 */
+    /**
+     * This method checks the basic rules for empty reference key values on a continuation account and an income
+     * stream account
+     *
+     * @return true if no empty values or partially filled out reference keys
+     */
 	protected boolean checkEmptyValues() {
 
 		LOG.info("checkEmptyValues called");
@@ -677,8 +680,6 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (ObjectUtils.isNull(subFundGroup)) {
 			return false;
 		}
-
-		String fundGroupCode = newAccountGlobal.getSubFundGroup().getFundGroupCode().trim();
 
 		// if the account is part of the CG fund group, then this rule does not apply, so we're done
 		if (SpringContext.getBean(SubFundGroupService.class).isForContractsAndGrants(newAccountGlobal.getSubFundGroup())) {

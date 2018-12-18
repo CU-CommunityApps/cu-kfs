@@ -125,7 +125,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
     
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         ActionForward actionForward = super.save(mapping, form, request, response);
 
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
@@ -160,13 +161,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                 if (dvNet != null) {
                     // clear values derived from travelMileageAmount if that amount has been (manually) cleared
                     Integer amount = dvNet.getDvPersonalCarMileageAmount();
-                    if ((amount == null) || (amount.intValue() == 0)) {
+                    if ((amount == null) || (amount == 0)) {
                         clearTravelMileageAmount(dvNet);
                     }
 
                     // clear values derived from perDiemRate if that amount has been (manually) cleared
                     KualiDecimal rate = dvNet.getDisbVchrPerdiemRate();
-                    if ((rate == null) || rate.isZero()) {
+                    if (rate == null || rate.isZero()) {
                         clearTravelPerDiem(dvNet);
                     }
                 }
@@ -716,9 +717,6 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     @Override
     public ActionForward performLookup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
-
         return super.performLookup(mapping, form, request, response);
     }
 
