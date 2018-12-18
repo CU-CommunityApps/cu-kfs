@@ -78,9 +78,9 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     public static final String FILE_TRAILER_RECORD_ID = "98";
 
     /**
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
+     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifier()
      */
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
      	return "procurementCardFlatInputFileType";
 //    	return KFSConstants.PCDO_FILE_TYPE_INDENTIFIER;
     }

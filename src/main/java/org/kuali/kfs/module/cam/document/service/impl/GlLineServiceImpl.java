@@ -85,13 +85,10 @@ public class GlLineServiceImpl implements GlLineService {
     protected DocumentHeaderService documentHeaderService;
     protected CapitalAssetInformationDao capitalAssetInformationDao;
 
-    /**
-     * @see GlLineService#createAssetGlobalDocument(List,
-     * GeneralLedgerEntry)
-     */
     @Override
     @NonTransactional
-    public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) throws WorkflowException {
+    public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber)
+            throws WorkflowException {
         // initiate a new document
         MaintenanceDocument document = (MaintenanceDocument) documentService.getNewDocument(DocumentTypeName.ASSET_ADD_GLOBAL);
 
@@ -121,7 +118,8 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     protected void markCapitalAssetProcessed(GeneralLedgerEntry primary, Integer capitalAssetLineNumber) {
-        CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(primary.getDocumentNumber(), capitalAssetLineNumber);
+        CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(primary.getDocumentNumber(),
+                capitalAssetLineNumber);
         //if it is create asset...
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
             capitalAssetInformation.setCapitalAssetProcessedIndicator(true);
@@ -198,44 +196,39 @@ public class GlLineServiceImpl implements GlLineService {
         }
     }
 
-   /**
-     * @see GlLineService#findCapitalAssetInformation(GeneralLedgerEntry)
-     */
     @Override
     @NonTransactional
     public CapitalAssetInformation findCapitalAssetInformation(String documentNumber, Integer capitalAssetLineNumber) {
-        Map<String, String> primaryKeys = new HashMap<String, String>(2);
+        Map<String, String> primaryKeys = new HashMap<>(2);
         primaryKeys.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
         primaryKeys.put(CamsPropertyConstants.CapitalAssetInformation.ASSET_LINE_NUMBER, capitalAssetLineNumber.toString());
 
-        CapitalAssetInformation assetInformation = businessObjectService.findByPrimaryKey(CapitalAssetInformation.class, primaryKeys);
-        return assetInformation;
+        return businessObjectService.findByPrimaryKey(CapitalAssetInformation.class, primaryKeys);
     }
 
     @Override
     @NonTransactional
     public List<CapitalAssetInformation> findAllCapitalAssetInformation(String documentNumber) {
-        Map<String, String> primaryKeys = new HashMap<String, String>(1);
+        Map<String, String> primaryKeys = new HashMap<>(1);
         primaryKeys.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
 
-        List<CapitalAssetInformation> assetInformation = (List<CapitalAssetInformation>) businessObjectService.findMatchingOrderBy(CapitalAssetInformation.class, primaryKeys, CamsPropertyConstants.CapitalAssetInformation.ACTION_INDICATOR, true);
-
-        return assetInformation;
+        return (List<CapitalAssetInformation>) businessObjectService.findMatchingOrderBy(
+                CapitalAssetInformation.class, primaryKeys,
+                CamsPropertyConstants.CapitalAssetInformation.ACTION_INDICATOR, true);
     }
 
-    /**
-     * @see GlLineService#findCapitalAssetInformationForGLLine(GeneralLedgerEntry)
-     */
     @Override
     @NonTransactional
     public List<CapitalAssetInformation> findCapitalAssetInformationForGLLine(GeneralLedgerEntry entry) {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, entry.getDocumentNumber());
         fields.put(CamsPropertyConstants.CapitalAssetInformation.ASSET_PROCESSED_IND, "N");
 
-        List<CapitalAssetInformation> assetInformation = (List<CapitalAssetInformation>) businessObjectService.findMatchingOrderBy(CapitalAssetInformation.class, fields, CamsPropertyConstants.CapitalAssetInformation.ACTION_INDICATOR, true);
-
-        List<CapitalAssetInformation> matchingAssets = new ArrayList<CapitalAssetInformation>();
+        List<CapitalAssetInformation> assetInformation = (List<CapitalAssetInformation>) businessObjectService
+                .findMatchingOrderBy(CapitalAssetInformation.class, fields,
+                        CamsPropertyConstants.CapitalAssetInformation.ACTION_INDICATOR, true);
+        
+        List<CapitalAssetInformation> matchingAssets = new ArrayList<>();
 
         for (CapitalAssetInformation capitalAsset : assetInformation) {
             addToCapitalAssets(matchingAssets, capitalAsset, entry);
@@ -325,9 +318,9 @@ public class GlLineServiceImpl implements GlLineService {
      * @param matchingAssets
      * @param capitalAsset
      * @param entry
-     * @param capitalAssetLineType
      */
-    protected void addToCapitalAssets(List<CapitalAssetInformation> matchingAssets, CapitalAssetInformation capitalAsset, GeneralLedgerEntry entry) {
+    protected void addToCapitalAssets(List<CapitalAssetInformation> matchingAssets,
+            CapitalAssetInformation capitalAsset, GeneralLedgerEntry entry) {
         List<CapitalAssetAccountsGroupDetails> groupAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
 
         for (CapitalAssetAccountsGroupDetails groupAccountLine : groupAccountLines) {
@@ -356,18 +349,20 @@ public class GlLineServiceImpl implements GlLineService {
 
     @Override
     @NonTransactional
-    public long findUnprocessedCapitalAssetInformation( String documentNumber ) {
-        Map<String, String> fieldValues = new HashMap<String, String>(2);
+    public long findUnprocessedCapitalAssetInformation(String documentNumber ) {
+        Map<String, String> fieldValues = new HashMap<>(2);
         fieldValues.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
-        fieldValues.put(CamsPropertyConstants.CapitalAssetInformation.ASSET_PROCESSED_IND, KFSConstants.CapitalAssets.CAPITAL_ASSET_PROCESSED_IND);
-
+        fieldValues.put(CamsPropertyConstants.CapitalAssetInformation.ASSET_PROCESSED_IND,
+                KFSConstants.CapitalAssets.CAPITAL_ASSET_PROCESSED_IND);
+        
         return businessObjectService.countMatching(CapitalAssetInformation.class, fieldValues);
     }
 
     @Override
     @NonTransactional
-    public Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries( Collection<GeneralLedgerEntry> allGLEntries, CapitalAssetAccountsGroupDetails accountingDetails ) {
-        Collection<GeneralLedgerEntry> matchingGLEntries = new ArrayList<GeneralLedgerEntry>();
+    public Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries(Collection<GeneralLedgerEntry> allGLEntries,
+            CapitalAssetAccountsGroupDetails accountingDetails) {
+        Collection<GeneralLedgerEntry> matchingGLEntries = new ArrayList<>();
 
         for ( GeneralLedgerEntry entry : allGLEntries ) {
             if ( doesGeneralLedgerEntryMatchAssetAccountingDetails(entry, accountingDetails) ) {
@@ -379,7 +374,8 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
 
-    protected boolean doesGeneralLedgerEntryMatchAssetAccountingDetails( GeneralLedgerEntry entry, CapitalAssetAccountsGroupDetails accountingDetails ) {
+    protected boolean doesGeneralLedgerEntryMatchAssetAccountingDetails(GeneralLedgerEntry entry,
+            CapitalAssetAccountsGroupDetails accountingDetails) {
         // this method will short-circuit and return false as soon as possible
 
         // sanity check - the arguments should already have the same document number
@@ -469,7 +465,7 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @NonTransactional
     public Collection<GeneralLedgerEntry> findAllGeneralLedgerEntry(String documentNumber) {
-        Map<String, String> fieldValues = new HashMap<String, String>(1);
+        Map<String, String> fieldValues = new HashMap<>(1);
         fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, documentNumber);
 
         return businessObjectService.findMatching(GeneralLedgerEntry.class, fieldValues);
@@ -528,7 +524,8 @@ public class GlLineServiceImpl implements GlLineService {
      */
     @Override
     @NonTransactional
-    public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber) throws WorkflowException {
+    public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber)
+            throws WorkflowException {
         // Find out the GL Entry
         // initiate a new document
         AssetPaymentDocument document = (AssetPaymentDocument) documentService.getNewDocument(DocumentTypeName.ASSET_PAYMENT);
@@ -613,14 +610,15 @@ public class GlLineServiceImpl implements GlLineService {
      * @param capitalAssetLineNumber
      * @return List<AssetPaymentDetail>
      */
-    protected List<AssetPaymentDetail> createAssetPaymentDetails(GeneralLedgerEntry entry, Document document, int seqNo, Integer capitalAssetLineNumber) {
-        List<AssetPaymentDetail> appliedPayments = new ArrayList<AssetPaymentDetail>();
+    protected List<AssetPaymentDetail> createAssetPaymentDetails(GeneralLedgerEntry entry, Document document,
+            int seqNo, Integer capitalAssetLineNumber) {
+        List<AssetPaymentDetail> appliedPayments = new ArrayList<>();
         CapitalAssetInformation capitalAssetInformation = findCapitalAssetInformation(entry.getDocumentNumber(), capitalAssetLineNumber);
         Collection<GeneralLedgerEntry> documentGlEntries = findAllGeneralLedgerEntry(entry.getDocumentNumber());
 
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
             List<CapitalAssetAccountsGroupDetails> groupAccountingLines = capitalAssetInformation.getCapitalAssetAccountsGroupDetails();
-            Integer paymentSequenceNumber = 1;
+            int paymentSequenceNumber = 1;
 
             for (CapitalAssetAccountsGroupDetails accountingLine : groupAccountingLines) {
                 AssetPaymentDetail detail = new AssetPaymentDetail();
@@ -648,7 +646,6 @@ public class GlLineServiceImpl implements GlLineService {
                 detail.setFinancialSubObjectCode(replaceFiller(accountingLine.getFinancialSubObjectCode()));
                 detail.setProjectCode(replaceFiller(accountingLine.getProjectCode()));
                 detail.setOrganizationReferenceId(replaceFiller(accountingLine.getOrganizationReferenceId()));
-                //detail.setAmount(KFSConstants.GL_CREDIT_CODE.equals(debitCreditCode) ? accountingLine.getAmount().negated() : accountingLine.getAmount());
                 detail.setAmount(getAccountingLineAmountForPaymentDetail(entry, accountingLine));
                 detail.setExpenditureFinancialSystemOriginationCode(replaceFiller(entry.getFinancialSystemOriginationCode()));
                 detail.setExpenditureFinancialDocumentNumber(entry.getDocumentNumber());
@@ -669,7 +666,8 @@ public class GlLineServiceImpl implements GlLineService {
      * @param accountingLine accounting line in the capital asset
      * @return accountingLineAmount
      */
-    protected KualiDecimal getAccountingLineAmountForPaymentDetail(GeneralLedgerEntry entry, CapitalAssetAccountsGroupDetails accountingLine) {
+    protected KualiDecimal getAccountingLineAmountForPaymentDetail(GeneralLedgerEntry entry,
+            CapitalAssetAccountsGroupDetails accountingLine) {
         KualiDecimal accountLineAmount = accountingLine.getAmount();
 
         List<String> expenseObjectTypes = objectTypeService.getExpenseAndTransferObjectTypesForPayments();
@@ -742,7 +740,8 @@ public class GlLineServiceImpl implements GlLineService {
      * @param document Document
      * @return AssetPaymentDetail
      */
-    protected AssetPaymentDetail createAssetPaymentDetail(GeneralLedgerEntry entry, Document document, int seqNo, Integer capitalAssetLineNumber) {
+    protected AssetPaymentDetail createAssetPaymentDetail(GeneralLedgerEntry entry, Document document, int seqNo,
+            Integer capitalAssetLineNumber) {
         // This is not added to constructor in CAMS to provide module isolation from CAMS
         AssetPaymentDetail detail = new AssetPaymentDetail();
         detail.setDocumentNumber(document.getDocumentNumber());
@@ -815,7 +814,7 @@ public class GlLineServiceImpl implements GlLineService {
 
         int nextCapitalAssetLineNumber = capitalAssetInformationDao.getNextCapitalAssetLineNumber(entry.getDocumentNumber());
 
-        capitalAccountingLines = new ArrayList<CapitalAccountingLines>();
+        capitalAccountingLines = new ArrayList<>();
         createCapitalAccountingLine(capitalAccountingLines, entry, null);
         createNewCapitalAsset(capitalAccountingLines,entry.getDocumentNumber(),null,nextCapitalAssetLineNumber);
     }
@@ -861,9 +860,9 @@ public class GlLineServiceImpl implements GlLineService {
         return maxLineNumber;
     }
 
-    protected List<CapitalAccountingLines> createCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry, String distributionAmountCode) {
-        Integer sequenceNumber = capitalAccountingLines.size() + 1;
-
+    protected List<CapitalAccountingLines> createCapitalAccountingLine(
+            List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry,
+            String distributionAmountCode) {
         //capital object code so we need to build the capital accounting line...
         CapitalAccountingLines cal = addCapitalAccountingLine(capitalAccountingLines, entry);
         cal.setDistributionAmountCode(distributionAmountCode);
@@ -873,14 +872,14 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     /**
-     * convenience method to add a new capital accounting line to the collection of capital
-     * accounting lines.
+     * convenience method to add a new capital accounting line to the collection of capital accounting lines.
      *
      * @param capitalAccountingLines
      * @param entry
      * @return
      */
-    protected CapitalAccountingLines addCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines, GeneralLedgerEntry entry) {
+    protected CapitalAccountingLines addCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines,
+            GeneralLedgerEntry entry) {
         CapitalAccountingLines cal = new CapitalAccountingLines();
         String capitalAssetLineType = KFSConstants.GL_CREDIT_CODE.equals(entry.getTransactionDebitCreditCode()) ? KFSConstants.SOURCE : KFSConstants.TARGET;
         cal.setLineType(capitalAssetLineType);
@@ -909,14 +908,15 @@ public class GlLineServiceImpl implements GlLineService {
      * @param actionType
      * @param nextCapitalAssetLineNumnber
      */
-    protected void createNewCapitalAsset(List<CapitalAccountingLines> capitalAccountingLines, String documentNumber, String actionType, Integer nextCapitalAssetLineNumber) {
+    protected void createNewCapitalAsset(List<CapitalAccountingLines> capitalAccountingLines, String documentNumber,
+            String actionType, Integer nextCapitalAssetLineNumber) {
         CapitalAssetInformation capitalAsset = new CapitalAssetInformation();
         capitalAsset.setCapitalAssetLineAmount(KualiDecimal.ZERO);
         capitalAsset.setDocumentNumber(documentNumber);
         capitalAsset.setCapitalAssetLineNumber(nextCapitalAssetLineNumber);
         capitalAsset.setCapitalAssetActionIndicator(actionType);
         capitalAsset.setCapitalAssetProcessedIndicator(false);
-
+ 
         KualiDecimal capitalAssetLineAmount = KualiDecimal.ZERO;
         //now setup the account line information associated with this capital asset
         for (CapitalAccountingLines capitalAccountingLine : capitalAccountingLines) {
@@ -934,7 +934,8 @@ public class GlLineServiceImpl implements GlLineService {
      * @param capitalAccountingLine
      * @param capitalAsset
      */
-    protected void createCapitalAssetAccountingLinesDetails(CapitalAccountingLines capitalAccountingLine, CapitalAssetInformation capitalAsset) {
+    protected void createCapitalAssetAccountingLinesDetails(CapitalAccountingLines capitalAccountingLine,
+            CapitalAssetInformation capitalAsset) {
         //now setup the account line information associated with this capital asset
         CapitalAssetAccountsGroupDetails capitalAssetAccountLine = new CapitalAssetAccountsGroupDetails();
         capitalAssetAccountLine.setDocumentNumber(capitalAsset.getDocumentNumber());
@@ -960,7 +961,8 @@ public class GlLineServiceImpl implements GlLineService {
      * @param capitalAsset
      * @return nextAccountingLineNumber
      */
-    protected Integer getNextAccountingLineNumber(CapitalAccountingLines capitalAccountingLine, CapitalAssetInformation capitalAsset) {
+    protected Integer getNextAccountingLineNumber(CapitalAccountingLines capitalAccountingLine,
+            CapitalAssetInformation capitalAsset) {
         Integer nextAccountingLineNumber = 0;
         List<CapitalAssetAccountsGroupDetails> capitalAssetAccountLines = capitalAsset.getCapitalAssetAccountsGroupDetails();
         for (CapitalAssetAccountsGroupDetails capitalAssetAccountLine : capitalAssetAccountLines) {

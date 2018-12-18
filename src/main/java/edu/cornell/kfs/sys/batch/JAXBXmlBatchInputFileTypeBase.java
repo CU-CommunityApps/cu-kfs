@@ -52,7 +52,7 @@ public class JAXBXmlBatchInputFileTypeBase extends BatchInputFileTypeBase {
     }
 
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return fileTypeIdentifier;
     }
 

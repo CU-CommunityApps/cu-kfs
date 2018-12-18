@@ -162,7 +162,7 @@ public class VendorBatchServiceImpl implements VendorBatchService{
 
             List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
             if (inputFileNames == null) {
-                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifer() + ") returned NULL which should never happen.");
+                criticalError("BatchInputFileService.listInputFileNamesWithDoneFile(" + batchInputFileType.getFileTypeIdentifier() + ") returned NULL which should never happen.");
             }
             else {
                 // update the file name mapping

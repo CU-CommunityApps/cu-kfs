@@ -78,7 +78,7 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
     }
 
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return CUTaxConstants.TRANSACTION_OVERRIDE_FILE_TYPE_IDENTIFIER;
     }
 

@@ -28,7 +28,7 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
     }
 
     @Override
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return CRConstants.STALE_CHECK_EXTRACT_FILE_TYPE_ID;
     }
 
@@ -45,12 +45,6 @@ public class StaleCheckExtractCsvInputFileType extends CsvBatchInputFileTypeBase
     @Override
     public String getTitleKey() {
         return CRKeyConstants.MESSAGE_BATCH_UPLOAD_TITLE_STALE_CHECK;
-    }
-
-    @Override
-    public Object parse(byte[] fileByteContent) throws ParseException {
-        Object parsedContents = super.parse(fileByteContent);
-        return convertParsedObjectToVO(parsedContents);
     }
 
     @SuppressWarnings("unchecked")

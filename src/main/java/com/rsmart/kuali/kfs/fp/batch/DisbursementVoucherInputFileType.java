@@ -59,9 +59,9 @@ public class DisbursementVoucherInputFileType extends XmlBatchInputFileTypeBase 
     }
 
     /**
-     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifer()
+     * @see org.kuali.kfs.sys.batch.BatchInputFileType#getFileTypeIdentifier()
      */
-    public String getFileTypeIdentifer() {
+    public String getFileTypeIdentifier() {
         return FPConstants.DV_FILE_TYPE_INDENTIFIER;
     }
 
