@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 
 import javax.mail.internet.AddressException;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.sys.KFSConstants;
 
-public class CuAchAdviceNotificationWrrorReportServiceImplTest extends CuAchAdviceNotificationServiceImpl {
+public class CuAchAdviceNotificationWrrorReportServiceImplTest {
     
     private CuAchAdviceNotificationWrrorReportServiceImpl cuAchAdviceNotificationWrrorReportService;
 
@@ -46,14 +48,33 @@ public class CuAchAdviceNotificationWrrorReportServiceImplTest extends CuAchAdvi
     }
     
     @Test
-    public void validateEmailAddressBadAddresEmpty() {
+    public void validateEmailAddressBadAddressEmpty() {
         try {
-            cuAchAdviceNotificationWrrorReportService.validateEmailAddress("");
+            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(StringUtils.EMPTY);
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);
         }
-        
+    }
+    
+    @Test
+    public void validateEmailAddressBadAddressSpace() {
+        try {
+            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(KFSConstants.BLANK_SPACE);
+            assertTrue(false);
+        } catch (AddressException ae) {
+            assertTrue(true);
+        }
+    }
+    
+    @Test
+    public void validateEmailAddressBadAddressNull() {
+        try {
+            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(null);
+            assertTrue(false);
+        } catch (AddressException ae) {
+            assertTrue(true);
+        }
     }
 
 }

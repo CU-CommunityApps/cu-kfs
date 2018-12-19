@@ -15,24 +15,30 @@
  */
 package edu.cornell.kfs.pdp.batch.service.impl;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.kuali.kfs.pdp.PdpConstants;
+import javax.mail.internet.AddressException;
+
 import org.kuali.kfs.pdp.batch.service.AchAdviceNotificationService;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
-import org.kuali.kfs.pdp.dataaccess.PaymentGroupDao;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
-import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
+import edu.cornell.kfs.pdp.batch.PDPBadEmailRecord;
+import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationWrrorReportService;
 import edu.cornell.kfs.pdp.dataaccess.AchBundlerAdviceDao;
 import edu.cornell.kfs.pdp.service.CuPdpEmailService;
 
@@ -40,6 +46,8 @@ import edu.cornell.kfs.pdp.service.CuPdpEmailService;
  * @see org.kuali.kfs.pdp.batch.service.AchAdviceNotificationService
  */
 public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotificationService {
+    private static final Logger LOG = LogManager.getLogger(CuAchAdviceNotificationWrrorReportServiceImpl.class);
+    
     private CuPdpEmailService pdpEmailService;
     private PaymentGroupService paymentGroupService;
 
@@ -47,6 +55,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     private BusinessObjectService businessObjectService;
     private AchBundlerHelperService achBundlerHelperService;
     private AchBundlerAdviceDao achBundlerAdviceDao;                 //KFSPTS-1460 - added
+    protected CuAchAdviceNotificationWrrorReportService cuAchAdviceNotificationWrrorReportService;
 
     /**
      * Set to NonTransactional so the payment advice email sent date will be updated and saved after the email is sent
@@ -76,7 +85,8 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     	// unique disbursement number because that mod groups ACH payments based upon all payment groups associated to a single
     	// disbursement number; thus requiring two nested data loops to send the advices.    
     	
-    	
+        List<PDPBadEmailRecord> badEmailRecords = new ArrayList<PDPBadEmailRecord>();
+        
     	if (achBundlerHelperService.shouldBundleAchPayments()) {
     		//ACH payments were bundled so the corresponding advice email notifications should also be bundled
     		HashSet<Integer> disbNbrs = achBundlerAdviceDao.getDistinctDisbursementNumbersForAchPaymentsNeedingAdviceNotification();
@@ -92,19 +102,23 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
                 PaymentDetail payDetail = paymentDetailsIter.next();
                 PaymentGroup payGroup = payDetail.getPaymentGroup();
                 CustomerProfile customer = payGroup.getBatch().getCustomerProfile();
-                
-                // verify the customer profile is setup to create advices
-	            if (customer.getAdviceCreate()) {
-	            	pdpEmailService.sendAchAdviceEmail(payGroup, paymentDetails, customer);                    
+                try {
+                    // verify the customer profile is setup to create advices
+    	            if (customer.getAdviceCreate()) {
+    	                cuAchAdviceNotificationWrrorReportService.validateEmailAddress(payGroup.getAdviceEmailAddress());
+    	            	pdpEmailService.sendAchAdviceEmail(payGroup, paymentDetails, customer);                    
+                    }
+    	            
+    	            //update sent date on the payment, must loop through all payment details because payment groups could be unique.
+    	            for (Iterator<PaymentDetail> paymentDetailsIter2 = paymentDetails.iterator(); paymentDetailsIter2.hasNext();) {
+    	            	PaymentDetail pd = paymentDetailsIter2.next();
+    	                PaymentGroup pg = pd.getPaymentGroup();
+    	                pg.setAdviceEmailSentDate(dateTimeService.getCurrentTimestamp());
+    		            businessObjectService.save(pg);
+    	            }
+                } catch (AddressException ae) {
+                    addBadEmailRecord(badEmailRecords, payGroup);
                 }
-	            
-	            //update sent date on the payment, must loop through all payment details because payment groups could be unique.
-	            for (Iterator<PaymentDetail> paymentDetailsIter2 = paymentDetails.iterator(); paymentDetailsIter2.hasNext();) {
-	            	PaymentDetail pd = paymentDetailsIter2.next();
-	                PaymentGroup pg = pd.getPaymentGroup();
-	                pg.setAdviceEmailSentDate(dateTimeService.getCurrentTimestamp());
-		            businessObjectService.save(pg);
-	            }
 	            	            
     		} //for each disb number    		
     		
@@ -117,22 +131,48 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
 	        List<PaymentGroup> paymentGroups = paymentGroupService.getAchPaymentsNeedingAdviceNotification();
 	        for (PaymentGroup paymentGroup : paymentGroups) {
 	            CustomerProfile customer = paymentGroup.getBatch().getCustomerProfile();
-	
-	            // verify the customer profile is setup to create advices
-	            if (customer.getAdviceCreate()) {
-	            	//KFSPTS-1460 - for loop removed
-	                //for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
-	                //    pdpEmailService.sendAchAdviceEmail(paymentGroup, paymentDetail, customer);
-	                //}
-	            	List<PaymentDetail> paymentDetails = paymentGroup.getPaymentDetails();
-	            	pdpEmailService.sendAchAdviceEmail(paymentGroup, paymentDetails, customer);
-	            }
-	
-	            // update advice sent date on payment
-	            paymentGroup.setAdviceEmailSentDate(dateTimeService.getCurrentTimestamp());
-	            businessObjectService.save(paymentGroup);
+	            
+	            try {
+    	            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(paymentGroup.getAdviceEmailAddress());
+    	            // verify the customer profile is setup to create advices
+    	            if (customer.getAdviceCreate()) {
+    	            	//KFSPTS-1460 - for loop removed
+    	                //for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+    	                //    pdpEmailService.sendAchAdviceEmail(paymentGroup, paymentDetail, customer);
+    	                //}
+    	            	List<PaymentDetail> paymentDetails = paymentGroup.getPaymentDetails();
+    	            	pdpEmailService.sendAchAdviceEmail(paymentGroup, paymentDetails, customer);
+    	            }
+    	
+    	            // update advice sent date on payment
+    	            paymentGroup.setAdviceEmailSentDate(dateTimeService.getCurrentTimestamp());
+    	            businessObjectService.save(paymentGroup);
+	            } catch (AddressException ae) {
+	                addBadEmailRecord(badEmailRecords, paymentGroup);
+                }
+	            
 	        }
     	}
+    	createAndEmailErrorReport(badEmailRecords);
+    }
+    
+    @NonTransactional
+    private void addBadEmailRecord(List<PDPBadEmailRecord> badEmailRecords, PaymentGroup paymentGroup) {
+        PDPBadEmailRecord badEmailRecord = new PDPBadEmailRecord(paymentGroup.getPayeeId(), paymentGroup.getId(), paymentGroup.getAdviceEmailAddress());
+        badEmailRecord.logBadEmailRecord();
+        badEmailRecords.add(badEmailRecord);
+    }
+    
+    @NonTransactional
+    private void createAndEmailErrorReport(List<PDPBadEmailRecord> badEmailRecords) {
+        if (CollectionUtils.isNotEmpty(badEmailRecords)) {
+            LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email records to report");
+            File reportFile = cuAchAdviceNotificationWrrorReportService.createBadEmailReport(badEmailRecords);
+            cuAchAdviceNotificationWrrorReportService.emailBadEmailReport(reportFile);
+
+        } else {
+            LOG.info("createBadEmailReport, there were no bad email addresses to report.");
+        }
     }
 
     /**
@@ -185,5 +225,11 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     @NonTransactional
     public void setAchBundlerAdviceDao(AchBundlerAdviceDao achBundlerAdviceDao) {
         this.achBundlerAdviceDao = achBundlerAdviceDao;
+    }
+    
+    @NonTransactional
+    public void setCuAchAdviceNotificationWrrorReportService(
+            CuAchAdviceNotificationWrrorReportService cuAchAdviceNotificationWrrorReportService) {
+        this.cuAchAdviceNotificationWrrorReportService = cuAchAdviceNotificationWrrorReportService;
     }
 }

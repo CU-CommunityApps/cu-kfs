@@ -86,12 +86,6 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
 
     }
     
-    @Override
-    public void validateEmailAddress(String email) throws AddressException {
-        InternetAddress emailAddr = new InternetAddress(email);
-        emailAddr.validate();
-    }
-    
     private String findPdpFromEmailAddress() {
         return parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM);
     }
@@ -100,6 +94,15 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
         Collection addresses = parameterService.getParameterValuesAsString(KFSConstants.ParameterNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, 
                 CUPdpParameterConstants.PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES);
         return new ArrayList<String>(addresses);
+    }
+    
+    @Override
+    public void validateEmailAddress(String email) throws AddressException {
+        if (email == null) {
+            throw new AddressException("The email must not be null/");
+        }
+        InternetAddress emailAddr = new InternetAddress(email);
+        emailAddr.validate();
     }
 
     public void setReportWriterService(ReportWriterService reportWriterService) {
