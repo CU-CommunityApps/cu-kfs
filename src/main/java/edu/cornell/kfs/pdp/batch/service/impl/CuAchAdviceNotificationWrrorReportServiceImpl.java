@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,17 +47,24 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
         reportWriterService.setTitle(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE));
         reportWriterService.initialize();
         reportWriterService.writeNewLines(2);
-        String hdrRowFormat = "%54s %20s %20s %20s";
-        //reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_HEADER));
-        reportWriterService.writeFormattedMessageLine(hdrRowFormat, "PAYEE ID", "PAYMENT GROUP", "DISBURSEMENT NUMBER", "EMAIL ADDRESS");
-        reportWriterService.writeFormattedMessageLine(hdrRowFormat, "________", "_____________", "___________________", "_____________s");
+        String rowFormat = configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_FORMAT);
+        reportWriterService.writeFormattedMessageLine(rowFormat, "PAYEE ID", "PAYMENT GROUP", "DISBURSEMENT NUMBER", "EMAIL ADDRESS");
+        String hyphens25 = buildHyphenString(20);
+        String hyphens200 = buildHyphenString(50);
+        reportWriterService.writeFormattedMessageLine(rowFormat, hyphens25, hyphens25, hyphens25, hyphens200);
+    }
+    
+    private String buildHyphenString(int numberOfHyphens) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<numberOfHyphens; i++) {
+            sb.append("-");
+        }
+        return sb.toString();
     }
     
     private void printErrorReportDetails(List<PDPBadEmailRecord> badEmailRecords) {
-        String detailLineFormat = configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_DETAIL);
-        String rowFormat = "%54s %20s %20s %20s";
+        String rowFormat = configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_FORMAT);
         for (PDPBadEmailRecord record : badEmailRecords) {
-            //reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailLineFormat, record.getPayeeId(), String.valueOf(record.getPaymentGroupId()), String.valueOf(record.getDisbursementNumber()), record.getEmailAddress()));
             reportWriterService.writeFormattedMessageLine(rowFormat, record.getPayeeId(), record.getPaymentGroupId(), record.getDisbursementNumber(), record.getEmailAddress());
         }
         reportWriterService.writeNewLines(1);

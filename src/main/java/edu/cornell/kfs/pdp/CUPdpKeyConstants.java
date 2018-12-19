@@ -30,7 +30,6 @@ public class CUPdpKeyConstants {
 	
 	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_PREFIX = "pdp.send.ach.notification.error.report.file.prefix";
 	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE = "pdp.send.ach.notification.error.report.title";
-	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_HEADER = "pdp.send.ach.notification.error.report.header";
-	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_DETAIL = "pdp.send.ach.notifcations.error.report.detail";
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_FORMAT = "pdp.send.ach.notification.error.report.line.format";
 
 }
