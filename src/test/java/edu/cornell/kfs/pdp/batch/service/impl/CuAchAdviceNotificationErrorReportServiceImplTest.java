@@ -10,36 +10,36 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.sys.KFSConstants;
 
-public class CuAchAdviceNotificationWrrorReportServiceImplTest {
+public class CuAchAdviceNotificationErrorReportServiceImplTest {
     
-    private CuAchAdviceNotificationWrrorReportServiceImpl cuAchAdviceNotificationWrrorReportService;
+    private CuAchAdviceNotificationErrorReportServiceImpl cuAchAdviceNotificationErrorReportService;
 
     @Before
     public void setUp() throws Exception {
-        cuAchAdviceNotificationWrrorReportService = new CuAchAdviceNotificationWrrorReportServiceImpl();
+        cuAchAdviceNotificationErrorReportService = new CuAchAdviceNotificationErrorReportServiceImpl();
     }
 
     @After
     public void tearDown() throws Exception {
-        cuAchAdviceNotificationWrrorReportService = null;
+        cuAchAdviceNotificationErrorReportService = null;
     }
 
     @Test
     public void validateEmailAddressGoodAddressHyperUser() throws AddressException {
-        cuAchAdviceNotificationWrrorReportService.validateEmailAddress("test-user@cornell-university.edu");
+        cuAchAdviceNotificationErrorReportService.validateEmailAddress("test-user@cornell-university.edu");
         assertTrue(true);
     }
     
     @Test
     public void validateEmailAddressGoodAddressUnderscoreUser() throws AddressException {
-        cuAchAdviceNotificationWrrorReportService.validateEmailAddress("test_user@cornell-university.edu");
+        cuAchAdviceNotificationErrorReportService.validateEmailAddress("test_user@cornell-university.edu");
         assertTrue(true);
     }
     
     @Test
     public void validateEmailAddressBadAddressUnderscoreDomain() {
         try {
-            cuAchAdviceNotificationWrrorReportService.validateEmailAddress("test_user@cornell_univesity.edu");
+            cuAchAdviceNotificationErrorReportService.validateEmailAddress("test_user@cornell_univesity.edu");
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);
@@ -50,7 +50,7 @@ public class CuAchAdviceNotificationWrrorReportServiceImplTest {
     @Test
     public void validateEmailAddressBadAddressEmpty() {
         try {
-            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(StringUtils.EMPTY);
+            cuAchAdviceNotificationErrorReportService.validateEmailAddress(StringUtils.EMPTY);
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);
@@ -60,7 +60,7 @@ public class CuAchAdviceNotificationWrrorReportServiceImplTest {
     @Test
     public void validateEmailAddressBadAddressSpace() {
         try {
-            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(KFSConstants.BLANK_SPACE);
+            cuAchAdviceNotificationErrorReportService.validateEmailAddress(KFSConstants.BLANK_SPACE);
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);
@@ -70,7 +70,7 @@ public class CuAchAdviceNotificationWrrorReportServiceImplTest {
     @Test
     public void validateEmailAddressBadAddressNull() {
         try {
-            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(null);
+            cuAchAdviceNotificationErrorReportService.validateEmailAddress(null);
             assertTrue(false);
         } catch (AddressException ae) {
             assertTrue(true);

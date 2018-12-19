@@ -38,7 +38,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
 import edu.cornell.kfs.pdp.batch.PDPBadEmailRecord;
-import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationWrrorReportService;
+import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationErrorReportService;
 import edu.cornell.kfs.pdp.dataaccess.AchBundlerAdviceDao;
 import edu.cornell.kfs.pdp.service.CuPdpEmailService;
 
@@ -46,7 +46,7 @@ import edu.cornell.kfs.pdp.service.CuPdpEmailService;
  * @see org.kuali.kfs.pdp.batch.service.AchAdviceNotificationService
  */
 public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotificationService {
-    private static final Logger LOG = LogManager.getLogger(CuAchAdviceNotificationWrrorReportServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CuAchAdviceNotificationServiceImpl.class);
     
     private CuPdpEmailService pdpEmailService;
     private PaymentGroupService paymentGroupService;
@@ -55,7 +55,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     private BusinessObjectService businessObjectService;
     private AchBundlerHelperService achBundlerHelperService;
     private AchBundlerAdviceDao achBundlerAdviceDao;                 //KFSPTS-1460 - added
-    protected CuAchAdviceNotificationWrrorReportService cuAchAdviceNotificationWrrorReportService;
+    protected CuAchAdviceNotificationErrorReportService cuAchAdviceNotificationErrorReportService;
 
     /**
      * Set to NonTransactional so the payment advice email sent date will be updated and saved after the email is sent
@@ -105,7 +105,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
                 try {
                     // verify the customer profile is setup to create advices
     	            if (customer.getAdviceCreate()) {
-    	                cuAchAdviceNotificationWrrorReportService.validateEmailAddress(payGroup.getAdviceEmailAddress());
+    	                cuAchAdviceNotificationErrorReportService.validateEmailAddress(payGroup.getAdviceEmailAddress());
     	            	pdpEmailService.sendAchAdviceEmail(payGroup, paymentDetails, customer);                    
                     }
     	            
@@ -133,7 +133,7 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
 	            CustomerProfile customer = paymentGroup.getBatch().getCustomerProfile();
 	            
 	            try {
-    	            cuAchAdviceNotificationWrrorReportService.validateEmailAddress(paymentGroup.getAdviceEmailAddress());
+    	            cuAchAdviceNotificationErrorReportService.validateEmailAddress(paymentGroup.getAdviceEmailAddress());
     	            // verify the customer profile is setup to create advices
     	            if (customer.getAdviceCreate()) {
     	            	//KFSPTS-1460 - for loop removed
@@ -167,9 +167,9 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     @NonTransactional
     private void createAndEmailErrorReport(List<PDPBadEmailRecord> badEmailRecords) {
         if (CollectionUtils.isNotEmpty(badEmailRecords)) {
-            LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email records to report");
-            File reportFile = cuAchAdviceNotificationWrrorReportService.createBadEmailReport(badEmailRecords);
-            cuAchAdviceNotificationWrrorReportService.emailBadEmailReport(reportFile);
+            LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email addresses to report");
+            File reportFile = cuAchAdviceNotificationErrorReportService.createBadEmailReport(badEmailRecords);
+            cuAchAdviceNotificationErrorReportService.emailBadEmailReport(reportFile);
 
         } else {
             LOG.info("createBadEmailReport, there were no bad email addresses to report.");
@@ -229,8 +229,8 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     }
     
     @NonTransactional
-    public void setCuAchAdviceNotificationWrrorReportService(
-            CuAchAdviceNotificationWrrorReportService cuAchAdviceNotificationWrrorReportService) {
-        this.cuAchAdviceNotificationWrrorReportService = cuAchAdviceNotificationWrrorReportService;
+    public void setCuAchAdviceNotificationErrorReportService(
+            CuAchAdviceNotificationErrorReportService cuAchAdviceNotificationErrorReportService) {
+        this.cuAchAdviceNotificationErrorReportService = cuAchAdviceNotificationErrorReportService;
     }
 }

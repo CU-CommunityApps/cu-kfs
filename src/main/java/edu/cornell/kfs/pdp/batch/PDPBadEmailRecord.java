@@ -37,7 +37,7 @@ public class PDPBadEmailRecord {
     }
 
     public void logBadEmailRecord() {
-        LOG.error("logBadEmailRecord, payeeIdL '" + payeeId + "' payment group ID: '" + paymentGroupId + "' email address: '" + 
+        LOG.error("logBadEmailRecord, payeeId: '" + payeeId + "' payment group ID: '" + paymentGroupId + "' email address: '" + 
                 emailAddress + "' disbursement number: '" + disbursementNumber + "'");
     }
 }

@@ -7,7 +7,7 @@ import javax.mail.internet.AddressException;
 
 import edu.cornell.kfs.pdp.batch.PDPBadEmailRecord;
 
-public interface CuAchAdviceNotificationWrrorReportService {
+public interface CuAchAdviceNotificationErrorReportService {
     
     File createBadEmailReport(List<PDPBadEmailRecord> badEmailRecords);
     

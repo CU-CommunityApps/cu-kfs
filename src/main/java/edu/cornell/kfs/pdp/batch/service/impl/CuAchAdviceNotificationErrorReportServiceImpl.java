@@ -21,11 +21,11 @@ import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.batch.PDPBadEmailRecord;
-import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationWrrorReportService;
+import edu.cornell.kfs.pdp.batch.service.CuAchAdviceNotificationErrorReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
-public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdviceNotificationWrrorReportService {
-    private static final Logger LOG = LogManager.getLogger(CuAchAdviceNotificationWrrorReportServiceImpl.class);
+public class CuAchAdviceNotificationErrorReportServiceImpl implements CuAchAdviceNotificationErrorReportService {
+    private static final Logger LOG = LogManager.getLogger(CuAchAdviceNotificationErrorReportServiceImpl.class);
     
     protected ReportWriterService reportWriterService;
     protected ConfigurationService configurationService;
@@ -36,13 +36,13 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
     @Override
     public File createBadEmailReport(List<PDPBadEmailRecord> badEmailRecords) {
         LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email records to report");
-        initiatlizeErrorReport();
+        initializeErrorReport();
         printErrorReportDetails(badEmailRecords);
         reportWriterService.destroy();
         return reportWriterService.getReportFile();
     }
     
-    private void initiatlizeErrorReport() {
+    private void initializeErrorReport() {
         reportWriterService.setFileNamePrefix(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_PREFIX));
         reportWriterService.setTitle(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE));
         reportWriterService.initialize();
@@ -109,7 +109,7 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
     @Override
     public void validateEmailAddress(String email) throws AddressException {
         if (email == null) {
-            throw new AddressException("The email must not be null/");
+            throw new AddressException("The email must not be null");
         }
         InternetAddress emailAddr = new InternetAddress(email);
         emailAddr.validate();
