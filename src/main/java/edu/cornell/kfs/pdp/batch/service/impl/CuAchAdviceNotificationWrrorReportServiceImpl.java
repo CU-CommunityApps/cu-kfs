@@ -48,14 +48,18 @@ public class CuAchAdviceNotificationWrrorReportServiceImpl implements CuAchAdvic
         reportWriterService.setTitle(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE));
         reportWriterService.initialize();
         reportWriterService.writeNewLines(2);
-        reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_HEADER));
+        String hdrRowFormat = "%54s %20s %20s %20s";
+        //reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_HEADER));
+        reportWriterService.writeFormattedMessageLine(hdrRowFormat, "PAYEE ID", "PAYMENT GROUP", "DISBURSEMENT NUMBER", "EMAIL ADDRESS");
+        reportWriterService.writeFormattedMessageLine(hdrRowFormat, "________", "_____________", "___________________", "_____________s");
     }
     
     private void printErrorReportDetails(List<PDPBadEmailRecord> badEmailRecords) {
         String detailLineFormat = configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_DETAIL);
+        String rowFormat = "%54s %20s %20s %20s";
         for (PDPBadEmailRecord record : badEmailRecords) {
-            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailLineFormat, record.getPayeeId(), 
-                    String.valueOf(record.getPaymentGroupId()), record.getEmailAddress()));
+            //reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailLineFormat, record.getPayeeId(), String.valueOf(record.getPaymentGroupId()), String.valueOf(record.getDisbursementNumber()), record.getEmailAddress()));
+            reportWriterService.writeFormattedMessageLine(rowFormat, record.getPayeeId(), record.getPaymentGroupId(), record.getDisbursementNumber(), record.getEmailAddress());
         }
         reportWriterService.writeNewLines(1);
     }

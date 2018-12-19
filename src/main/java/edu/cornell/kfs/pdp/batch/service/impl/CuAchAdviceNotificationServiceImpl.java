@@ -158,7 +158,8 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     
     @NonTransactional
     private void addBadEmailRecord(List<PDPBadEmailRecord> badEmailRecords, PaymentGroup paymentGroup) {
-        PDPBadEmailRecord badEmailRecord = new PDPBadEmailRecord(paymentGroup.getPayeeId(), paymentGroup.getId(), paymentGroup.getAdviceEmailAddress());
+        PDPBadEmailRecord badEmailRecord = new PDPBadEmailRecord(paymentGroup.getPayeeId(), paymentGroup.getId(), paymentGroup.getAdviceEmailAddress(), 
+                paymentGroup.getDisbursementNbr());
         badEmailRecord.logBadEmailRecord();
         badEmailRecords.add(badEmailRecord);
     }
