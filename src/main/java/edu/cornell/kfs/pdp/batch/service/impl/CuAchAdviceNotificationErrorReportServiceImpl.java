@@ -97,7 +97,7 @@ public class CuAchAdviceNotificationErrorReportServiceImpl implements CuAchAdvic
     }
     
     private String findPdpFromEmailAddress() {
-        return parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM);
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARM_NM);
     }
     
     private List<String> findPDPToEmailAddress() {
