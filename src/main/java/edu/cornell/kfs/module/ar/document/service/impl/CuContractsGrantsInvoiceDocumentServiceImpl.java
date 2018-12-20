@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
@@ -27,6 +28,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.report.CuPdfFormattingMap;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl {
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentServiceImpl.class);
@@ -88,11 +90,11 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                 getRecipientAccountNumber(document.getAccountDetails()));
         
         if (document.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, "X");
-            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, "");
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, CUKFSConstants.CAPITAL_X);
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, StringUtils.EMPTY);
         } else {
-            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, "");
-            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, "X");
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, StringUtils.EMPTY);
+            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, CUKFSConstants.CAPITAL_X);
         }
         
         if (ObjectUtils.isNotNull(sysInfo)) {
