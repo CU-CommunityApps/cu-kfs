@@ -35,7 +35,7 @@ public class CuAchAdviceNotificationErrorReportServiceImpl implements CuAchAdvic
 
     @Override
     public File createBadEmailReport(List<PDPBadEmailRecord> badEmailRecords) {
-        LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email records to report");
+        LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email addresses to report");
         initializeErrorReport();
         printErrorReportDetails(badEmailRecords);
         reportWriterService.destroy();
@@ -50,8 +50,8 @@ public class CuAchAdviceNotificationErrorReportServiceImpl implements CuAchAdvic
         String rowFormat = configurationService.getPropertyValueAsString(CUPdpKeyConstants.PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_FORMAT);
         reportWriterService.writeFormattedMessageLine(rowFormat, "PAYEE ID", "PAYMENT GROUP", "DISBURSEMENT NUMBER", "EMAIL ADDRESS");
         String hyphens25 = buildHyphenString(20);
-        String hyphens200 = buildHyphenString(50);
-        reportWriterService.writeFormattedMessageLine(rowFormat, hyphens25, hyphens25, hyphens25, hyphens200);
+        String hyphens50 = buildHyphenString(50);
+        reportWriterService.writeFormattedMessageLine(rowFormat, hyphens25, hyphens25, hyphens25, hyphens50);
     }
     
     private String buildHyphenString(int numberOfHyphens) {
@@ -101,7 +101,7 @@ public class CuAchAdviceNotificationErrorReportServiceImpl implements CuAchAdvic
     }
     
     private List<String> findPDPToEmailAddress() {
-        Collection addresses = parameterService.getParameterValuesAsString(KFSConstants.ParameterNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, 
+        Collection addresses = parameterService.getParameterValuesAsString(KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, 
                 CUPdpParameterConstants.PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES);
         return new ArrayList<String>(addresses);
     }
