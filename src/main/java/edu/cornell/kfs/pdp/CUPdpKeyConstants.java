@@ -10,7 +10,7 @@ public class CUPdpKeyConstants {
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DETAIL_INFO_MSG = "message.pdp.achAdvice.email.body.detailInfoMessage";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_DETAIL_UNDER_LIMIT_MSG="message.pdp.achAdvice.email.body.detailUnderLimitMsg";
 	
-	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE = "message.pdp.achAdvice.email.body.paymentHeaderLineOne";;
+	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE = "message.pdp.achAdvice.email.body.paymentHeaderLineOne";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PURCHASE_ORDER_NUMBER = "message.pdp.achAdvice.email.body.purchaseOrderNumber";	
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_INVOICE_NUMBER ="message.pdp.achAdvice.email.body.invoiceNumber";
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PO_NUMBER = "message.pdp.achAdvice.email.body.purchaseOrderNumber";
@@ -27,5 +27,9 @@ public class CUPdpKeyConstants {
 	public static final String MESSAGE_PDP_ACH_ADVICE_EMAIL_ATTACHMENT_PAYMENT_TABLE_ITEM_LINE = "message.pdp.achAdvice.email.attachment.paymentTableItemLine";
 	
 	public static final String ERROR_PDP_PAYMENTLOAD_INVALID_EMPLOYEE_ID = "error.pdp.paymentLoad.invalidEmployeeId";
+	
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_PREFIX = "pdp.send.ach.notification.error.report.file.prefix";
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE = "pdp.send.ach.notification.error.report.title";
+	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_FORMAT = "pdp.send.ach.notification.error.report.line.format";
 
 }
