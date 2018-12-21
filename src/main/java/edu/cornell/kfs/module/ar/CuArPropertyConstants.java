@@ -7,4 +7,5 @@ public class CuArPropertyConstants {
         public static final String PARTIAL_BILL = "partialBill";
     }
 
+    public static final String TOTAL_PROGRAM_OUTLAYS_TO_DATE = "totalProgramOutlaysToDate";
 }
