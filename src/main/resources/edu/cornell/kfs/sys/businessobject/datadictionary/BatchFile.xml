@@ -2,10 +2,5 @@
 
     <import resource="classpath:edu/cornell/kfs/sys/cu-sys-lookup-beans.xml"/>
 
-    <bean id="BatchFile-path" parent="BatchFile-path-parentBean">
-        <property name="control">
-            <bean parent="MultiselectControlDefinition" p:hierarchical="true" p:size="15" p:valuesFinder-ref="cuBatchFileDirectoryPathValuesFinder"/>
-        </property>
-    </bean>
 
 </beans>

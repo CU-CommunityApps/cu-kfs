@@ -102,5 +102,10 @@ public class LaborLedgerEnterpriseFeedServiceImplTest extends TestCase {
                 String avTypeCode, String selectedPostingPeriodCode, Integer selectedPostingYear, Date documentCreateDate) {
             return null;
         }
+
+		@Override
+		public AccountingPeriod getPreviousAccountingPeriod(AccountingPeriod currentPeriod) {
+			return null;
+		}
     }
 }

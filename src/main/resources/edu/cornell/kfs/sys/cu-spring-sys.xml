@@ -237,8 +237,6 @@
 
 	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.CuBatchFileDirectoryServiceImpl" />
 
-	<bean id="batchFileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />
-
 	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
 	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>

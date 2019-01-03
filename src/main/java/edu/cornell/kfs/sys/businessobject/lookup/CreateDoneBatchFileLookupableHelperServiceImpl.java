@@ -4,35 +4,46 @@ import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
+import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl;
 import org.kuali.kfs.kns.lookup.HtmlData;
 import org.kuali.kfs.kns.lookup.HtmlData.AnchorHtmlData;
+import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-public class CreateDoneBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
+public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLookupSearchServiceImpl {
 	
 	protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService; 
 
-	@Override
-    public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
-        List<HtmlData> links = new ArrayList<HtmlData>();
-        
-        BatchFile batchFile = (BatchFile) businessObject;
-        if (canCreateDoneFile(batchFile)) {
-            links.add(getCreateDoneUrl(batchFile));
-        }
-        return links;
-    }
+	 @Override
+	    public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
+	        BatchFile batchFile = (BatchFile)businessObject;
+	        List<Map<String, Object>> actionLinks = new LinkedList<>();
 
-    protected boolean canCreateDoneFile(BatchFile batchFile) {
+	        if (canCreateDoneFile(batchFile, user)) {
+	            Map<String, Object> createDoneLink = new LinkedHashMap<>();
+	            createDoneLink.put("label", "Create Done");
+	            createDoneLink.put("url", getCreateDoneUrl(batchFile));
+	            createDoneLink.put("method", "GET");
+	            actionLinks.add(createDoneLink);
+	        }
+
+	        return actionLinks;
+	    }
+
+    protected boolean canCreateDoneFile(BatchFile batchFile, Person user) {
     	boolean isDoneFile = StringUtils.endsWith(batchFile.getFileName(), ".done");
-    	return (!isDoneFile && createDoneAuthorizationService.canCreateDoneFile(batchFile, GlobalVariables.getUserSession().getPerson()));
+    	return (!isDoneFile && createDoneAuthorizationService.canCreateDoneFile(batchFile, user));
     }
     
     protected HtmlData getCreateDoneUrl(BatchFile batchFile) {

@@ -34,9 +34,11 @@ import org.kuali.kfs.gl.batch.CollectorBatchHeaderFieldUtil;
 import org.kuali.kfs.gl.batch.CollectorBatchTrailerRecordFieldUtil;
 import org.kuali.kfs.gl.businessobject.OriginEntryFieldUtil;
 import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.BusinessObjectStringParserFieldUtils;
+import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.mockito.invocation.InvocationOnMock;
@@ -51,7 +53,6 @@ import edu.cornell.kfs.concur.batch.fixture.ConcurCollectorBatchFixture;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.BusinessObjectFlatFileSerializerService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCreateCollectorFileService;
-import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
 
 @SuppressWarnings("deprecation")
 public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
@@ -197,9 +198,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         return new TestDateTimeServiceImpl();
     }
 
-    protected LookupableHelperService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
-        TestBatchFileLookupableHelperServiceImpl lookupableHelperServiceImpl = new TestBatchFileLookupableHelperServiceImpl();
-        lookupableHelperServiceImpl.setDateTimeService(dateTimeService);
+    protected LookupSearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
+    	LookupSearchService lookupableHelperServiceImpl = new BatchFileLookupSearchServiceImpl();
         return lookupableHelperServiceImpl;
     }
 
@@ -368,17 +368,6 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         }
     }
 
-    /**
-     * Custom batch file lookupable class that uses a pre-defined List of root directories.
-     */
-    public static class TestBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        protected List<File> retrieveRootDirectories() {
-            return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH));
-        }
-    }
 
     /**
      * Custom DateTimeService class that is configured to automatically handle certain Concur date formats.
