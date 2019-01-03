@@ -235,8 +235,6 @@
 		<property name="stateService" ref="stateService" />
     </bean>
 
-	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.CuBatchFileDirectoryServiceImpl" />
-
 	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
 	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
