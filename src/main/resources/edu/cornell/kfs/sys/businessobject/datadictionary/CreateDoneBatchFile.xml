@@ -104,9 +104,17 @@
             </list>
         </property>
     </bean>
+    
+    	
+    <bean id="createDoneAuthorizationService" parent="createDoneAuthorizationService-parentBean" />	
+	<bean id="createDoneAuthorizationService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.CreateDoneBatchFileAuthorizationServiceImpl" abstract="true" />
+    
 
     <bean id="createDoneBatchFileLookupSearchService"
           class="edu.cornell.kfs.sys.businessobject.lookup.CreateDoneBatchFileLookupableHelperServiceImpl"
-          parent="lookupSearchService"/>
+          parent="lookupSearchService">
+		<property name="createDoneAuthorizationService" ref="createDoneAuthorizationService"/>
+    </bean>
+          
     <bean id="batchFileAdminService" class="org.kuali.kfs.sys.batch.service.BatchFileAdminService"/>
 </beans>
