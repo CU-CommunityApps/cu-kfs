@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
@@ -134,9 +134,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
 
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
-                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount) &&
-                        isNotExpenditureAccount(awardAccount)) {
-                        validAwardAccounts.add(awardAccount);
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount)
+                        && isNotExpenditureAccount(awardAccount)) {
+                            validAwardAccounts.add(awardAccount);
                     }
                 }
             }
@@ -156,11 +156,11 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     }
     
     protected boolean isExpenditureSubFund(String subFundGroupCode) {
-        if(StringUtils.isNotBlank(subFundGroupCode)){
+        if(StringUtils.isNotBlank(subFundGroupCode)) {
             Collection<String> acceptedValuesForExpenditureSubFundCodes = parameterService.getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
                     CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.ContractsGrantsParameterConstants.CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS);
-            if(CollectionUtils.isNotEmpty(acceptedValuesForExpenditureSubFundCodes)){
-                return acceptedValuesForExpenditureSubFundCodes.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(subFundGroupCode)).count() > 0;
+            if(CollectionUtils.isNotEmpty(acceptedValuesForExpenditureSubFundCodes)) {
+                return acceptedValuesForExpenditureSubFundCodes.stream().anyMatch(subFundGroupCode::contains);
             }
         }
         return false;
