@@ -5,6 +5,6 @@
 	<br/>
 	<br/>
 	<li>
-		<a class="portal_link" href="kr/lookup.do?methodToCall=start&businessObjectClassName=edu.cornell.kfs.sys.batch.CreateDoneBatchFile&docFormKey=88888888&hideReturnLink=true" title="Click here to return to the Create Done Batch File lookup">Click here to return to the Create Done Batch File lookup</a>
+		<a class="portal_link" href="webapp/lookup/CreateDoneBatchFile" title="Click here to return to the Create Done Batch File lookup">Click here to return to the Create Done Batch File lookup</a>
 	</li>
 </kul:page>
