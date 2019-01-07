@@ -2,15 +2,21 @@ package edu.cornell.kfs.module.ar.service.impl;
 
 import java.sql.Date;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.service.AccountService;
+import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorMessage;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditReviewDetail;
@@ -19,12 +25,13 @@ import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.ContractsGrantsInvoiceCreateDocumentServiceImpl;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.springframework.util.CollectionUtils;
 
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
-
+    
     /**
      * Fixes NullPointerException that can occur when getting the award total amount.
      * award.getAwardTotalAmount().bigDecimalValue() causes the NullPointerException if the total amount returned null.
@@ -110,6 +117,53 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     
     protected String findTitleFormatString() {
         return getConfigurationService().getPropertyValueAsString(CuArParameterConstants.CONTRACTS_GRANTS_INVOICE_DOCUMENT_TITLE_FORMAT);
+    }
+    
+    /**
+     * Added evaluation of account sub-fund not being an expenditure to existing base code evaluation
+     * of billing frequency and invoice document status when determining valid award accounts.
+     * Expenditure sub-funds associated to accounts to exclude are defined in CG system parameter
+     * CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS.
+     */
+    @Override
+    protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
+            List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award) {
+        if (!ArConstants.BillingFrequencyValues.isMilestone(award) && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
+            List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts = new ArrayList<>();
+            Set<Account> invalidAccounts = harvestAccountsFromContractsGrantsInvoices(getInProgressInvoicesForAward(award));
+
+            for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
+                if (!invalidAccounts.contains(awardAccount.getAccount())) {
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount) &&
+                        isNotExpenditureAccount(awardAccount)) {
+                        validAwardAccounts.add(awardAccount);
+                    }
+                }
+            }
+
+            return validAwardAccounts;
+        } else {
+            return awardAccounts;
+        }
+    }
+    
+    protected boolean isNotExpenditureAccount(ContractsAndGrantsBillingAwardAccount billingAwardAccount) {
+        Account accountLinkedToAward = getAccountService().getByPrimaryId(billingAwardAccount.getChartOfAccountsCode(), billingAwardAccount.getAccountNumber());
+        if (ObjectUtils.isNotNull(accountLinkedToAward)) {
+            return !isExpenditureSubFund(accountLinkedToAward.getSubFundGroupCode());
+        }
+        return true;
+    }
+    
+    protected boolean isExpenditureSubFund(String subFundGroupCode) {
+        if(StringUtils.isNotBlank(subFundGroupCode)){
+            Collection<String> acceptedValuesForExpenditureSubFundCodes = parameterService.getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.ContractsGrantsParameterConstants.CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS);
+            if(CollectionUtils.isNotEmpty(acceptedValuesForExpenditureSubFundCodes)){
+                return acceptedValuesForExpenditureSubFundCodes.stream().filter(acceptedValue -> acceptedValue.equalsIgnoreCase(subFundGroupCode)).count() > 0;
+            }
+        }
+        return false;
     }
 
 }

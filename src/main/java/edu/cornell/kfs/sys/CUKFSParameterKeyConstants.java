@@ -44,4 +44,9 @@ public class CUKFSParameterKeyConstants {
         public static final String VALIDATE_TRANSFER_ACCOUNT_TYPES_IND = "VALIDATE_TRANSFER_ACCOUNT_TYPES_IND";
         public static final String INVALID_TO_ACCOUNT_BY_FROM_ACCOUNT = "INVALID_TO_ACCOUNT_BY_FROM_ACCOUNT";
     }
+
+    public static class ContractsGrantsParameterConstants {
+        public static final String CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS = "CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS";
+    }
+
 }
