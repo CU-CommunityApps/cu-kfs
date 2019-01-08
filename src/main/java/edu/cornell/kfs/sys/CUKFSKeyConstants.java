@@ -223,4 +223,5 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_EXPENSE_REQUIRED_SECTION = "error.document.subAccountGlobal.cgExpenseRequiredSection";
     
     public static final String ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_PRORATE_NO_AWARD_BUDGET_TOTAL = "error.document.contractsGrantsInvoice.prorate.no.award.budget.total";
+    public static final String WARNING_CINV_FINAL_BILL_INDICATOR = "warning.document.contractGrantsInvoice.final.bill.indicator";
 }
