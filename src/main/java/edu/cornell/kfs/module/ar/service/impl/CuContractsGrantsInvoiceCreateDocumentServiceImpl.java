@@ -29,6 +29,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
     
@@ -135,8 +136,8 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
                     if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount)
-                        && isNotExpenditureAccount(awardAccount)) {
-                            validAwardAccounts.add(awardAccount);
+                            && isNotExpenditureAccount(awardAccount)) {
+                        validAwardAccounts.add(awardAccount);
                     }
                 }
             }
@@ -156,11 +157,11 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     }
     
     protected boolean isExpenditureSubFund(String subFundGroupCode) {
-        if(StringUtils.isNotBlank(subFundGroupCode)) {
-            Collection<String> acceptedValuesForExpenditureSubFundCodes = parameterService.getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.CONTRACTS_AND_GRANTS, 
-                    CUKFSParameterKeyConstants.ALL_COMPONENTS, CUKFSParameterKeyConstants.ContractsGrantsParameterConstants.CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS);
-            if(CollectionUtils.isNotEmpty(acceptedValuesForExpenditureSubFundCodes)) {
-                return acceptedValuesForExpenditureSubFundCodes.stream().anyMatch(subFundGroupCode::contains);
+        if (StringUtils.isNotBlank(subFundGroupCode)) {
+            Collection<String> acceptedValuesForExpenditureSubFundCodes = parameterService.getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE,
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, CuArParameterKeyConstants.CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS);
+            if (CollectionUtils.isNotEmpty(acceptedValuesForExpenditureSubFundCodes)) {
+                return acceptedValuesForExpenditureSubFundCodes.stream().anyMatch(subFundGroupCode::equalsIgnoreCase);
             }
         }
         return false;
