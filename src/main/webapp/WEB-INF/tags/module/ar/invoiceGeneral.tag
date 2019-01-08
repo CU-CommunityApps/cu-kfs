@@ -3,7 +3,6 @@
 
 <c:set var="invoiceGeneralDetailAttributes" value="${DataDictionary.InvoiceGeneralDetail.attributes}" />
 <c:set var="documentAttributes" value="${DataDictionary.ContractsGrantsInvoiceDocument.attributes}" />
-<c:set var="readOnlyForFinal" value="${readOnly || not KualiForm.document.finalizable}" />
 <c:set var="arDocHeaderAttributes" value="${DataDictionary.AccountsReceivableDocumentHeader.attributes}" />
 <kul:tab tabTitle="General" defaultOpen="true" tabErrorKey="${KFSConstants.CUSTOMER_INVOICE_DOCUMENT_GENERAL_ERRORS}">
     <div class="tab-container" align=center>
@@ -109,8 +108,7 @@
                 <div id="document.billingPeriod.div">
                     <kul:htmlControlAttribute
                             attributeEntry="${invoiceGeneralDetailAttributes.billingPeriod}"
-                            property="document.invoiceGeneralDetail.billingPeriod"
-                            readOnly="true" />
+                            property="document.invoiceGeneralDetail.billingPeriod" />
                 </div>
             </td>
             <th class="right" style="width: 25%;">
@@ -138,8 +136,7 @@
                         <div id="document.finalBill.div">
                             <kul:htmlControlAttribute
                                     attributeEntry="${invoiceGeneralDetailAttributes.finalBillIndicator}"
-                                    property="document.invoiceGeneralDetail.finalBillIndicator"
-                                    readOnly="${readOnlyForFinal}" />
+                                    property="document.invoiceGeneralDetail.finalBillIndicator" />
                         </div>
                     </td>
                 </c:otherwise>
