@@ -253,7 +253,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                     ArPropertyConstants.TOTAL_INVOICE_DETAIL + "." + ArPropertyConstants.AMOUNT_REMAINING_TO_BILL,
                     totalCostInvoiceDetail.getAmountRemainingToBill());
             parameterMap.put(
-                    CuArPropertyConstants.TOTAL_PROGRAM_OUTLAYS_TO_DATE,
+                    CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.TOTAL_PROGRAM_OUTLAYS_TO_DATE,
                     totalCostInvoiceDetail.getTotalAmountBilledToDate().add(document.getInvoiceGeneralDetail().getCostShareAmount()));
         }
 
