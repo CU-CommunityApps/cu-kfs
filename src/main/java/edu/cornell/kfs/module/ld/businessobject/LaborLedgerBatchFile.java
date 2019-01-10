@@ -12,6 +12,10 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterConstants.NAMESPAC
 public class LaborLedgerBatchFile extends BatchFile {
 
 	private static final long serialVersionUID = 1L;
+	
+	public LaborLedgerBatchFile() {
+		super();
+	}
     
     public LaborLedgerBatchFile(String id) throws FileNotFoundException {
 		super(id);

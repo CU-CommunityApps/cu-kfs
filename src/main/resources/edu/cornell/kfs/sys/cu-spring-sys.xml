@@ -303,5 +303,16 @@
 	<bean id="unlockTAXModuleStep" parent="unlockModuleStep">
 		<property name="namespaceCode" value="KFS-TAX"/>
 	</bean>
+	
+	<bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean"
+          scope="prototype"/>
+    <bean id="batchFileLookupableHelperService-parentBean"
+          class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype"
+          parent="cf.lookupableHelperService" abstract="true" p:dateTimeService-ref="dateTimeService"
+          p:batchFileAdminAuthorizationService-ref="batchFileAdminAuthorizationService"/>
+          
+    <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
+    <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
+          p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
 
 </beans>
