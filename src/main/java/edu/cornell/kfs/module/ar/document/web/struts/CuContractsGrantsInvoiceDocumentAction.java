@@ -59,7 +59,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
             ContractsGrantsInvoiceDocument oldDocument = (ContractsGrantsInvoiceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(contractsGrantsInvoiceDocument.getDocumentNumber());
             if (!oldDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-                forward = promptForFinalBillConfirmation(mapping, form, request, response, contractsGrantsInvoiceDocument, KFSConstants.ROUTE_METHOD);
+                forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD);
                 if (forward != null) {
                     return forward;
                 }
@@ -69,7 +69,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         return super.route(mapping, form, request, response);
     }
 
-    protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
+    protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, String caller) throws Exception {
         ActionForward forward = null;
 
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
