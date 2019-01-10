@@ -199,7 +199,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
     }
 
     protected LookupSearchService buildBatchFileLookupableHelperService(DateTimeService dateTimeService) {
-    	LookupSearchService lookupableHelperServiceImpl = new BatchFileLookupSearchServiceImpl();
+    	LookupSearchService lookupableHelperServiceImpl = new TestBatchFileLookupSearchServiceImpl();
         return lookupableHelperServiceImpl;
     }
 
@@ -365,6 +365,18 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         @Override
         protected ConcurStandardAccountingExtractCollectorBatchBuilder createBatchBuilder() {
             return collectorBatchBuilder;
+        }
+    }
+    
+    /**
+     * Custom batch file lookupable class that uses a pre-defined List of root directories.
+     */
+    public static class TestBatchFileLookupSearchServiceImpl extends BatchFileLookupSearchServiceImpl {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
+            return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH));
         }
     }
 
