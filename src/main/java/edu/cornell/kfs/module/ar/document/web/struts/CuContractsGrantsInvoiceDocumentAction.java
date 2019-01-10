@@ -31,19 +31,6 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoiceDocumentAction {
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentAction.class);
 
-    public ActionForward finalizeBill(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
-        String question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
-
-        if (StringUtils.equals(question, KRADConstants.DOCUMENT_CANCEL_QUESTION) && StringUtils.equals(buttonClicked, ConfirmationQuestion.YES)) {
-            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = updateSuspensionCategoriesOnDocument(form);
-            contractsGrantsInvoiceDocument.clearAnyGeneralLedgerPendingEntries();
-            SpringContext.getBean(DocumentService.class).saveDocument(contractsGrantsInvoiceDocument, AccountingDocumentSaveWithNoLedgerEntryGenerationEvent.class);
-        }
-
-        return super.cancel(mapping, form, request, response);
-    }
-
     @Override
     public ActionForward prorateBill(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm = (ContractsGrantsInvoiceDocumentForm) form;
@@ -72,10 +59,12 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         }
 
         if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-            //todo only approve and when final bill indicator was unchecked before
-            forward = promptForFinalBillConfirmation(mapping, form, request, response, contractsGrantsInvoiceDocument, KFSConstants.ROUTE_METHOD);
-            if (forward != null) {
-                return forward;
+            ContractsGrantsInvoiceDocument oldDocument = (ContractsGrantsInvoiceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(contractsGrantsInvoiceDocument.getDocumentNumber());
+            if (!oldDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
+                forward = promptForFinalBillConfirmation(mapping, form, request, response, contractsGrantsInvoiceDocument, KFSConstants.ROUTE_METHOD);
+                if (forward != null) {
+                    return forward;
+                }
             }
         }
 
@@ -85,22 +74,19 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
         ActionForward forward = null;
 
-        if (contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories().size() > 0) {
-            Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-            if (question == null) {
-                String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR);
-                return performQuestionWithoutInput(mapping, form, request, response, CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
-            }
+        Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        if (question == null || question.toString().toLowerCase().contains("suspension")) {
+            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR);
+            return performQuestionWithoutInput(mapping, form, request, response, CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
+        }
 
-            Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
-            if (CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)) {
-                forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
-            }
+        Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
+        if (CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)) {
+            forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
         return forward;
     }
-
 
     private KualiDecimal findAwardBudgetTotal(ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm) {
         ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = contractsGrantsInvoiceDocumentForm.getContractsGrantsInvoiceDocument();
