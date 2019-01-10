@@ -376,7 +376,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
 
         @Override
         protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
-            return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH));
+            return Collections.singletonList(new File(COLLECTOR_OUTPUT_DIRECTORY_PATH).getAbsoluteFile());
         }
     }
 

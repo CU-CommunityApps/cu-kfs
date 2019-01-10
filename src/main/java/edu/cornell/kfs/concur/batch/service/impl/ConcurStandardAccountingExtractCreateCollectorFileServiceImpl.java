@@ -1,8 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -113,9 +112,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected int countCollectorFilesGeneratedFromSAEFilesToday() {
         String wildcardFileName = ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX
                 + KFSConstants.WILDCARD_CHARACTER + GeneralLedgerConstants.BatchFileSystem.EXTENSION;
-        java.sql.Date currentDate = dateTimeService.getCurrentSqlDateMidnight();
-        String currentDateAsString = Long.toString(currentDate.getTime());
-        String rangeForCurrentDate = String.format(DATE_RANGE_FORMAT, currentDateAsString, currentDateAsString);
+        String rangeForCurrentDate = buildDateRangeStringForCurrentDate();
         
         MultivaluedMap<String,String> criteria = new MultivaluedHashMap<>();
         criteria.add(CUKFSPropertyConstants.PATH, collectorDirectoryPath);
@@ -124,6 +121,13 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         
         List<? extends BusinessObject> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria);
         return searchResults.size();
+    }
+    
+    private String buildDateRangeStringForCurrentDate() {
+        java.sql.Date midnight = dateTimeService.getCurrentSqlDateMidnight();       
+        Date now = new Date(System.currentTimeMillis());
+        String rangeForCurrentDate = String.format(DATE_RANGE_FORMAT, Long.toString(midnight.getTime()), Long.toString(now.getTime()));
+        return rangeForCurrentDate;
     }
 
     protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch) {
