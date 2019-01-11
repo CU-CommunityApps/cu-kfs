@@ -159,5 +159,4 @@ public class CUKFSConstants {
     public static final String DOUBLE_QUOTE = "\"";
     public static final String CAPITAL_X = "X";
 
-    public static final String CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION = "ConfirmationForFinalBillIndicatorOnCINV";
 }
