@@ -11,7 +11,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
-import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
@@ -49,20 +48,12 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
 
     @Override
     public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = updateSuspensionCategoriesOnDocument(form);
-
-        ActionForward forward = promptForSuspensionCategories(mapping, form, request, response, contractsGrantsInvoiceDocument, KFSConstants.ROUTE_METHOD);
-        if (forward != null) {
-            return forward;
-        }
+        ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = ((ContractsGrantsInvoiceDocumentForm) form).getContractsGrantsInvoiceDocument();
 
         if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-            ContractsGrantsInvoiceDocument oldDocument = (ContractsGrantsInvoiceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(contractsGrantsInvoiceDocument.getDocumentNumber());
-            if (!oldDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-                forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD);
-                if (forward != null) {
-                    return forward;
-                }
+            ActionForward forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD);
+            if (forward != null) {
+                return forward;
             }
         }
 
@@ -73,7 +64,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         ActionForward forward = null;
 
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-        if (question == null || question.toString().toLowerCase().contains("suspension")) {
+        if (question == null || !question.toString().toLowerCase().contains("suspension")) {
             String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR);
             return performQuestionWithoutInput(mapping, form, request, response, CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
         }
