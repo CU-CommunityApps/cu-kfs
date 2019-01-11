@@ -122,6 +122,11 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
         }
     }
 
+	/*
+	 * Cornell customization: changed access level to protected on this method so
+	 * that it can be overridden in unit test
+	 * 
+	 */
     protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
         List<String> searchPaths = getPathsToSearch(selectedPaths);
 

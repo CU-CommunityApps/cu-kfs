@@ -114,9 +114,9 @@
 		<property name="parameterService" ref="parameterService"/>
 	</bean>
 	
-	    <bean id="batchFileLookupSearchService"
-          class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl"
-          parent="lookupSearchService"/>
+    <bean id="batchFileLookupSearchService"
+         class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl"
+         parent="lookupSearchService"/>
 	
 	<bean id="concurStandardAccountingExtractValidationService" parent="concurStandardAccountingExtractValidationService-parentBean" />
 	<bean id="concurStandardAccountingExtractValidationService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractValidationServiceImpl" abstract="true">

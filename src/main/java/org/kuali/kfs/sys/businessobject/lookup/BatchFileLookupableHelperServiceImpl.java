@@ -50,6 +50,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/*
+ * Cornell Customization: Add old batch file lookup to support lookups on Create Disencumbrance page. This should be removed once the new batch file lookup will support return from lookup.
+ */
 public class BatchFileLookupableHelperServiceImpl extends AbstractLookupableHelperServiceImpl {
     protected DateTimeService dateTimeService;
     protected BatchFileAdminAuthorizationService batchFileAdminAuthorizationService;

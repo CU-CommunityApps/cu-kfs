@@ -36,7 +36,12 @@ public class BatchFile extends TransientBusinessObjectBase {
 
     private File file;
     
-    public BatchFile() {
+	/*
+	 * Cornell customization: add default constructor so that the old batch file
+	 * lookup will work on the Create Disencumbrance page. This should be removed
+	 * once the new batch file lookup will suppport return from lookup.
+	 */
+	public BatchFile() {
 
 	}
 

@@ -10,7 +10,7 @@ public class CreateDoneBatchFile extends BatchFile {
 	public CreateDoneBatchFile(String id) throws FileNotFoundException {
 		super(id);
 	}
-	
+
 	public CreateDoneBatchFile(File file) {
 		super(file);
 	}
