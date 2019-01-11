@@ -3,7 +3,7 @@ package edu.cornell.kfs.module.ar.document.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.module.ar.CuArConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,11 +66,11 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
         if (question == null || !question.toString().toLowerCase().contains("suspension")) {
             String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR);
-            return performQuestionWithoutInput(mapping, form, request, response, CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
+            return performQuestionWithoutInput(mapping, form, request, response, CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
         }
 
         Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
-        if (CUKFSConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)) {
+        if (CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)) {
             forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
