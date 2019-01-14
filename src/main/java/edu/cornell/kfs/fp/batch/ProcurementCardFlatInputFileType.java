@@ -449,7 +449,7 @@ public class ProcurementCardFlatInputFileType extends BatchInputFileTypeBase {
     protected void parseAccountingInformation(String line, ProcurementCardTransaction child)
             throws java.text.ParseException {
         child.setChartOfAccountsCode(defaultChart);
-        child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, true, lineCount)); //req
+        child.setAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 317, 324, false, lineCount));
         child.setSubAccountNumber(USBankRecordFieldUtils.extractNormalizedString(line, 324, 329));
         // KITI-2583 : Object code is not a required field and will be replaced by an error code if it is not present.
         child.setFinancialObjectCode(USBankRecordFieldUtils.extractNormalizedString(line, 329, 333, false, lineCount)); //req
