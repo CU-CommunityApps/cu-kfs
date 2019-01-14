@@ -17,6 +17,7 @@ import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.service.DataDictionaryService;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -408,6 +409,15 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         }
 
         boolean success = true;
+
+        a21.refreshReferenceObject(KFSPropertyConstants.INDIRECT_COST_RECOVERY_TYPE);
+        if (StringUtils.isNotEmpty(a21.getIndirectCostRecoveryTypeCode())) {
+            if (ObjectUtils.isNull(a21.getIndirectCostRecoveryType())) {
+                putFieldError(KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.INDIRECT_COST_RECOVERY_TYPE_CODE,
+                        KFSKeyConstants.ERROR_EXISTENCE, "ICR Type Code: " + a21.getIndirectCostRecoveryTypeCode());
+                success = false;
+            }
+        }
 
         // existence check for Financial Series ID
         if (StringUtils.isNotEmpty(a21.getFinancialIcrSeriesIdentifier())) {            
@@ -854,6 +864,42 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
     
     protected String buildListObjectPropertyPath(String listPropertyName, String objectPropertyName, int index) {
         return String.format("%s[%d].%s", listPropertyName, index, objectPropertyName);
+    }
+    
+    @Override
+    protected String buildMessageFromPrimaryKey(GlobalBusinessObjectDetailBase detail) {
+        if (detail instanceof SubAccountGlobalDetail) {
+            return buildMessageFromPrimaryKeyForChangeDetail((SubAccountGlobalDetail) detail);
+        } else if (detail instanceof SubAccountGlobalNewAccountDetail) {
+            return buildMessageFromPrimaryKeyForNewDetail((SubAccountGlobalNewAccountDetail) detail);
+        } else {
+            return super.buildMessageFromPrimaryKey(detail);
+        }
+    }
+    
+    protected String buildMessageFromPrimaryKeyForChangeDetail(SubAccountGlobalDetail subAccountGlobalDetail) {
+        StringBuilder message = new StringBuilder();
+        message.append(subAccountGlobalDetail.getChartOfAccountsCode());
+        message.append(KFSConstants.DASH);
+        message.append(subAccountGlobalDetail.getAccountNumber());
+        message.append(KFSConstants.DASH);
+        message.append(subAccountGlobalDetail.getSubAccountNumber());
+        return message.toString();
+    }
+    
+    protected String buildMessageFromPrimaryKeyForNewDetail(SubAccountGlobalNewAccountDetail subAccountGlobalNewAccountDetail) {
+        SubAccountGlobal subAccountGlobal = (SubAccountGlobal) getNewBo();
+        StringBuilder message = new StringBuilder();
+        message.append(subAccountGlobalNewAccountDetail.getChartOfAccountsCode());
+        message.append(KFSConstants.DASH);
+        message.append(subAccountGlobalNewAccountDetail.getAccountNumber());
+        message.append(KFSConstants.DASH);
+        if (subAccountGlobal.isApplyToAllNewSubAccounts()) {
+            message.append(subAccountGlobal.getNewSubAccountNumber());
+        } else {
+            message.append(subAccountGlobalNewAccountDetail.getSubAccountNumber());
+        }
+        return message.toString();
     }
     
     public SubAccountService getSubAccountService() {
