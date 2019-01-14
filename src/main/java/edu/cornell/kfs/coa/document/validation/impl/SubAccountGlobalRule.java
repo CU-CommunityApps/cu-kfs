@@ -410,7 +410,6 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
 
         boolean success = true;
 
-        // existence check for ICR Type Code
         a21.refreshReferenceObject(KFSPropertyConstants.INDIRECT_COST_RECOVERY_TYPE);
         if (StringUtils.isNotEmpty(a21.getIndirectCostRecoveryTypeCode())) {
             if (ObjectUtils.isNull(a21.getIndirectCostRecoveryType())) {
