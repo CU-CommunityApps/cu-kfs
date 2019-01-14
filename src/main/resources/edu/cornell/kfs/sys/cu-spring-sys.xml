@@ -235,10 +235,6 @@
 		<property name="stateService" ref="stateService" />
     </bean>
 
-	<bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.CuBatchFileDirectoryServiceImpl" />
-
-	<bean id="batchFileLookupableHelperService" class="edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl" parent="batchFileLookupableHelperService-parentBean" scope="prototype" />
-
 	<bean id="webServiceCredentialService" parent="webServiceCredentialService-parentBean" />
 	<bean id="webServiceCredentialService-parentBean" class="edu.cornell.kfs.sys.service.impl.WebServiceCredentialServiceImpl" abstract="true">
 		<property name="businessObjectService" ref="businessObjectService"/>
@@ -307,5 +303,16 @@
 	<bean id="unlockTAXModuleStep" parent="unlockModuleStep">
 		<property name="namespaceCode" value="KFS-TAX"/>
 	</bean>
+	
+	<bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean"
+          scope="prototype"/>
+    <bean id="batchFileLookupableHelperService-parentBean"
+          class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype"
+          parent="cf.lookupableHelperService" abstract="true" p:dateTimeService-ref="dateTimeService"
+          p:batchFileAdminAuthorizationService-ref="batchFileAdminAuthorizationService"/>
+          
+    <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
+    <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
+          p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
 
 </beans>

@@ -1,8 +1,10 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -10,9 +12,10 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.CollectorBatch;
-import org.kuali.kfs.kns.lookup.LookupableHelperService;
+import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -45,7 +48,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurStandardAccountingExtractCashAdvanceService concurStandardAccountingExtractCashAdvanceService;
     protected BusinessObjectFlatFileSerializerService collectorFlatFileSerializerService;
-    protected LookupableHelperService batchFileLookupableHelperService;
+    protected LookupSearchService batchFileLookupableHelperService;
     protected ConfigurationService configurationService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected OptionsService optionsService;
@@ -109,17 +112,22 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected int countCollectorFilesGeneratedFromSAEFilesToday() {
         String wildcardFileName = ConcurConstants.COLLECTOR_CONCUR_OUTPUT_FILE_NAME_PREFIX
                 + KFSConstants.WILDCARD_CHARACTER + GeneralLedgerConstants.BatchFileSystem.EXTENSION;
-        java.sql.Date currentDate = dateTimeService.getCurrentSqlDateMidnight();
-        String currentDateAsString = dateTimeService.toDateString(currentDate);
-        String rangeForCurrentDate = String.format(DATE_RANGE_FORMAT, currentDateAsString, currentDateAsString);
+        String rangeForCurrentDate = buildDateRangeStringForCurrentDate();
         
-        Map<String,String> criteria = new HashMap<>();
-        criteria.put(CUKFSPropertyConstants.PATH, collectorDirectoryPath);
-        criteria.put(KFSPropertyConstants.FILE_NAME, wildcardFileName);
-        criteria.put(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);
+        MultivaluedMap<String,String> criteria = new MultivaluedHashMap<>();
+        criteria.add(CUKFSPropertyConstants.PATH, collectorDirectoryPath);
+        criteria.add(KFSPropertyConstants.FILE_NAME, wildcardFileName);
+        criteria.add(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);
         
-        List<? extends BusinessObject> searchResults = batchFileLookupableHelperService.getSearchResults(criteria);
+        List<? extends BusinessObject> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria);
         return searchResults.size();
+    }
+    
+    private String buildDateRangeStringForCurrentDate() {
+        java.sql.Date midnight = dateTimeService.getCurrentSqlDateMidnight();       
+        Date now = new Date(System.currentTimeMillis());
+        String rangeForCurrentDate = String.format(DATE_RANGE_FORMAT, Long.toString(midnight.getTime()), Long.toString(now.getTime()));
+        return rangeForCurrentDate;
     }
 
     protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch) {
@@ -160,7 +168,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         this.collectorFlatFileSerializerService = collectorFlatFileSerializerService;
     }
 
-    public void setBatchFileLookupableHelperService(LookupableHelperService batchFileLookupableHelperService) {
+    public void setBatchFileLookupableHelperService(LookupSearchService batchFileLookupableHelperService) {
         this.batchFileLookupableHelperService = batchFileLookupableHelperService;
     }
 

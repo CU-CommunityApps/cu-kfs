@@ -73,4 +73,8 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
             = KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.COST_SHARE_SOURCE_ACCOUNT_NUMBER;
     public static final String A21_INDIRECT_COST_RECOVERY_TYPE_CODE
             = KFSPropertyConstants.A21_SUB_ACCOUNT + KFSConstants.DELIMITER + KFSPropertyConstants.INDIRECT_COST_RECOVERY_TYPE_CODE;
+    
+    public static final String LOOKUP_RESULT_ACTION_LABEL = "label";
+    public static final String LOOKUP_RESULT_ACTION_URL = "url";
+    public static final String LOOKUP_RESULT_ACTION_METHOD = "method";
 }
