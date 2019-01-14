@@ -26,6 +26,7 @@ import edu.cornell.kfs.coa.document.validation.impl.GlobalIndirectCostRecoveryAc
 import edu.cornell.kfs.coa.service.GlobalObjectWithIndirectCostRecoveryAccountsService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
@@ -48,6 +49,7 @@ import org.kuali.kfs.integration.ld.LaborModuleService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.kns.service.DictionaryValidationService;
+import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -1831,6 +1833,21 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 protected String getDDAttributeLabel(String attribute){
 		 return ddService.getAttributeLabel(IndirectCostRecoveryAccount.class, attribute);
 	 }
+
+    // Cornell Customization: Override this method from the custom superclass.
+    @Override
+    protected String buildMessageFromPrimaryKey(GlobalBusinessObjectDetailBase detail) {
+        if (detail instanceof AccountGlobalDetail) {
+            AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) detail;
+            StringBuilder message = new StringBuilder();
+            message.append(accountGlobalDetail.getChartOfAccountsCode());
+            message.append(KFSConstants.DASH);
+            message.append(accountGlobalDetail.getAccountNumber());
+            return message.toString();
+        } else {
+            return super.buildMessageFromPrimaryKey(detail);
+        }
+    }
 
 	 public EncumbranceService getEncumbranceService() {
 		 if ( encumbranceService == null ) {

@@ -9,26 +9,23 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
 import org.kuali.kfs.coa.service.SubFundGroupService;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetailBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.businessobject.GlobalObjectWithIndirectCostRecoveryAccounts;
 import edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange;
-import edu.cornell.kfs.coa.businessobject.SubAccountGlobalDetail;
-import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBase {
@@ -331,24 +328,9 @@ public class GlobalIndirectCostRecoveryAccountsRule extends GlobalDocumentRuleBa
 		return currentPosition < maxPosition && (!foundMatch || ObjectUtils.isNotNull(matchingICRAccountWithSameActiveIndicator));
 	}
 
-	private String buildMessageFromPrimaryKey(GlobalBusinessObjectDetailBase detail){
-		StringBuilder message = new StringBuilder();
-		if(detail instanceof AccountGlobalDetail){
-			AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail)detail;
-			message.append(accountGlobalDetail.getChartOfAccountsCode());
-			message.append("-");
-			message.append(accountGlobalDetail.getAccountNumber());
-		}
-		else if(detail instanceof SubAccountGlobalDetail){
-			SubAccountGlobalDetail subAccountGlobalDetail = (SubAccountGlobalDetail)detail;
-			message.append(subAccountGlobalDetail.getChartOfAccountsCode());
-			message.append("-");
-			message.append(subAccountGlobalDetail.getAccountNumber());
-			message.append("-");
-			message.append(subAccountGlobalDetail.getSubAccountNumber());
-		}
-		return message.toString();
-	}	
+    protected String buildMessageFromPrimaryKey(GlobalBusinessObjectDetailBase detail) {
+        return KFSConstants.EMPTY_STRING;
+    }
 
 	public SubFundGroupService getSubFundGroupService() {
 		if (subFundGroupService == null) {

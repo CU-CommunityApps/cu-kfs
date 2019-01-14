@@ -40,6 +40,7 @@ public class CUKFSPropertyConstants extends KFSPropertyConstants {
     
     public static final String SUB_OBJ_CODE_EDIT_CHANGE_DETAILS = "subObjCdGlobalEditDetails";
     public static final String SUB_ACCOUNT_GLBL_CHANGE_DETAILS = "subAccountGlobalDetails";
+    public static final String SUB_ACCOUNT_GLBL_NEW_DETAILS = "subAccountGlobalNewAccountDetails";
 
     public static final String DOCUMENT_FAVORITE_ACCOUNT_LINE_IDENTIFIER = "document.favoriteAccountLineIdentifier";
 

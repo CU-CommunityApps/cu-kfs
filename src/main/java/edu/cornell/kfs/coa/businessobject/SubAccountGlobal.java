@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.A21IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
@@ -268,6 +271,13 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 			}
 
 		}
+		
+		if (CollectionUtils.isNotEmpty(subAccountGlobalNewAccountDetails)) {
+		    for (SubAccountGlobalNewAccountDetail globalNewAccountDetail : subAccountGlobalNewAccountDetails) {
+		        globalObjectDetailsAndIcrAccountsMap.put(globalNewAccountDetail, Collections.emptyList());
+		    }
+		}
+		
 		return globalObjectDetailsAndIcrAccountsMap;
 	}
 
@@ -559,12 +569,17 @@ public class SubAccountGlobal extends PersistableBusinessObjectBase implements G
 	
 	@Override
 	public List<? extends GlobalBusinessObjectDetailBase> getGlobalObjectDetails() {
-		return getSubAccountGlobalDetails();
+		return Stream.concat(getSubAccountGlobalDetails().stream(), getSubAccountGlobalNewAccountDetails().stream())
+		        .collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	@Override
 	public String getGlobalDetailsPropertyName() {
-		return CUKFSPropertyConstants.SUB_ACCOUNT_GLBL_CHANGE_DETAILS;
+	    if (CollectionUtils.isNotEmpty(subAccountGlobalDetails)) {
+	        return CUKFSPropertyConstants.SUB_ACCOUNT_GLBL_CHANGE_DETAILS;
+	    } else {
+	        return CUKFSPropertyConstants.SUB_ACCOUNT_GLBL_NEW_DETAILS;
+	    }
 	}
 
 	public List<IndirectCostRecoveryAccountChange> getIndirectCostRecoveryAccounts() {
