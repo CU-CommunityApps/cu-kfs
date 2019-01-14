@@ -15,6 +15,7 @@ import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupSearchServiceImpl;
 import org.kuali.rice.kim.api.identity.Person;
 
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.batch.service.CreateDoneBatchFileAuthorizationService;
 
 public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLookupSearchServiceImpl {
@@ -28,9 +29,9 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
 
 		if (canCreateDoneFile(batchFile, user)) {
 			Map<String, Object> createDoneLink = new LinkedHashMap<>();
-			createDoneLink.put("label", "Create Done");
-			createDoneLink.put("url", KRAD_URL_PREFIX + getCreateDoneUrl(batchFile));
-			createDoneLink.put("method", "GET");
+			createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_LABEL, "Create Done");
+			createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_URL, KRAD_URL_PREFIX + getCreateDoneUrl(batchFile));
+			createDoneLink.put(CUKFSPropertyConstants.LOOKUP_RESULT_ACTION_METHOD, "GET");
 			actionLinks.add(createDoneLink);
 		}
 
