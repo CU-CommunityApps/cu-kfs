@@ -22,7 +22,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2018-11-29</kfs.version>
+        <kfs.version>2018-12-13</kfs.version>
         <rice.version>2.6.3</rice.version>
         <cynergy.version>2.6.3</cynergy.version>
         <cynergy.version.suffix>current</cynergy.version.suffix>
