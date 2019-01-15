@@ -189,7 +189,7 @@
                                     	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="166" p:propertyName="journalAccountCodeOverridden"
                                     	p:formatterClass="edu.cornell.kfs.concur.batch.businessobject.format.ConcurJournalAccountCodeOverriddenFormatter"/>
-                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="jounalDebitCredit"/>
+                                    <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="167" p:propertyName="journalDebitCredit"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmount"
                                     	p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
                                     <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="168" p:propertyName="journalAmountString"/>

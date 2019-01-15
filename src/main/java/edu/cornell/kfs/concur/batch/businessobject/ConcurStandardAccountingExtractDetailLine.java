@@ -25,7 +25,7 @@ public class ConcurStandardAccountingExtractDetailLine {
     private String subObjectCode; 
     private String orgRefId; 
     private String projectCode; 
-    private String jounalDebitCredit;
+    private String journalDebitCredit;
     private KualiDecimal journalAmount;
     private String journalAmountString;
     private Date reportEndDate;
@@ -196,12 +196,12 @@ public class ConcurStandardAccountingExtractDetailLine {
         this.projectCode = projectCode;
     }
 
-    public String getJounalDebitCredit() {
-        return jounalDebitCredit;
+    public String getJournalDebitCredit() {
+        return journalDebitCredit;
     }
 
-    public void setJounalDebitCredit(String jounalDebitCredit) {
-        this.jounalDebitCredit = jounalDebitCredit;
+    public void setJournalDebitCredit(String journalDebitCredit) {
+        this.journalDebitCredit = journalDebitCredit;
     }
 
     public KualiDecimal getJournalAmount() {
@@ -352,7 +352,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" chartOfAccountsCode: ").append(chartOfAccountsCode).append(" accountNumber: ").append(accountNumber);
         sb.append(" subAccountNumber: ").append(subAccountNumber).append(" subObjectCode: ").append(subObjectCode);
         sb.append(" orgRefId: ").append(orgRefId).append(" projectCode: ").append(projectCode);
-        sb.append(" jounalDebitCredit: ").append(jounalDebitCredit).append(" journalAmount: ").append(journalAmount);
+        sb.append(" journalDebitCredit: ").append(journalDebitCredit).append(" journalAmount: ").append(journalAmount);
         sb.append(" journalAmountString: ").append(journalAmountString).append(" reportEndDate: ").append(reportEndDate);
         sb.append(" policy: ").append(policy).append(" expenseType: ").append(expenseType);
         sb.append(" reportChartOfAccountsCode: ").append(reportChartOfAccountsCode).append(" reportAccountNumber: ").append(reportAccountNumber);
