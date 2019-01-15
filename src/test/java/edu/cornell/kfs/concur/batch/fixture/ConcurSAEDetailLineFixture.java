@@ -523,7 +523,7 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setSubObjectCode(subObjectCode);
         detailLine.setProjectCode(projectCode);
         detailLine.setOrgRefId(orgRefId);
-        detailLine.setJounalDebitCredit(journalDebitCredit);
+        detailLine.setJournalDebitCredit(journalDebitCredit);
         detailLine.setJournalAmount(new KualiDecimal(journalAmount));
         detailLine.setJournalAmountString(String.valueOf(journalAmount));
         detailLine.setReportEndDate(ConcurFixtureUtils.toSqlDate(reportEndDate));

@@ -41,7 +41,7 @@ public class ConcurStandardAccountingExtractFileFixture {
 
     private static ConcurStandardAccountingExtractDetailLine buildConcurStandardAccountingExtractDetailLine(String debitCredit, KualiDecimal amount, String employeeGroupId) {
         ConcurStandardAccountingExtractDetailLine line = new ConcurStandardAccountingExtractDetailLine();
-        line.setJounalDebitCredit(debitCredit);
+        line.setJournalDebitCredit(debitCredit);
         line.setJournalAmount(amount);
         line.setEmployeeGroupId(employeeGroupId);
         line.setEmployeeLastName(EMPLOYEE_LAST_NAME);

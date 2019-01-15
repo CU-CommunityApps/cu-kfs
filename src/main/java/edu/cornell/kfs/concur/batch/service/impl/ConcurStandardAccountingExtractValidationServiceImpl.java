@@ -98,12 +98,12 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
 
     @Override
     public boolean validateDebitCreditField(ConcurStandardAccountingExtractDetailLine line, ConcurStandardAccountingExtractBatchReportData reportData) {
-        boolean valid = StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.CREDIT) || 
-                        StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.DEBIT);
+        boolean valid = StringUtils.equalsIgnoreCase(line.getJournalDebitCredit(), ConcurConstants.CREDIT) || 
+                        StringUtils.equalsIgnoreCase(line.getJournalDebitCredit(), ConcurConstants.DEBIT);
         if (valid) {
             LOG.debug("validateDebitCreditField, found a valid debit/credit.");
         } else {
-            String validationError = "Invalid debit or credit: " + line.getJounalDebitCredit();
+            String validationError = "Invalid debit or credit: " + line.getJournalDebitCredit();
             reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationError));
             LOG.error("validateDebitCreditField, " + validationError);
         }
