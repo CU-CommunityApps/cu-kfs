@@ -172,7 +172,7 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     protected boolean shouldProcessSAELineToPDP(ConcurStandardAccountingExtractDetailLine line) {
         boolean isCashLine = StringUtils.equalsIgnoreCase(line.getPaymentCode(), ConcurConstants.PAYMENT_CODE_CASH);
         boolean isPersonalExpenseChargedToCorporateCard = getConcurBatchUtilityService().lineRepresentsPersonalExpenseChargedToCorporateCard(line);
-        boolean isCreditLine = StringUtils.equalsIgnoreCase(line.getJounalDebitCredit(), ConcurConstants.CREDIT);
+        boolean isCreditLine = StringUtils.equalsIgnoreCase(line.getJournalDebitCredit(), ConcurConstants.CREDIT);
         boolean isReturnOfCorporateCardPersonalExpenseToUser = getConcurBatchUtilityService()
                 .lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(line);
         boolean isReturnOfCorporateCardPersonalExpenseToUniversity = getConcurBatchUtilityService()

@@ -28,14 +28,14 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
     @Override
     public boolean isAtmFeeDebitLine(ConcurStandardAccountingExtractDetailLine line) {
         return StringUtils.equalsIgnoreCase(ConcurConstants.EXPENSE_TYPE_ATM_FEE, line.getExpenseType())
-                && StringUtils.equalsIgnoreCase(ConcurConstants.DEBIT, line.getJounalDebitCredit());
+                && StringUtils.equalsIgnoreCase(ConcurConstants.DEBIT, line.getJournalDebitCredit());
     }
     
     @Override
     public boolean isAtmFeeCreditLine(ConcurStandardAccountingExtractDetailLine line) {
         return isCashAdvanceLine(line)
                 && StringUtils.equalsIgnoreCase(ConcurConstants.EXPENSE_TYPE_ATM_FEE, line.getExpenseType())
-                && StringUtils.equalsIgnoreCase(ConcurConstants.CREDIT, line.getJounalDebitCredit());
+                && StringUtils.equalsIgnoreCase(ConcurConstants.CREDIT, line.getJournalDebitCredit());
     }
     
     @Override

@@ -184,7 +184,7 @@ public class ConcurStandardAccountingExtractValidationServiceImplTest {
     }
     
     private void setBadDebitCredit() {
-        cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0).setJounalDebitCredit("foo");
+        cornellUppercasefile.getConcurStandardAccountingExtractDetailLines().get(0).setJournalDebitCredit("foo");
     }
 
     private void setBadRecordCount() {

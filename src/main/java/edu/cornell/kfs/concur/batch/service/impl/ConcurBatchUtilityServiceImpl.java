@@ -126,7 +126,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     @Override
     public boolean lineRepresentsReturnOfCorporateCardPersonalExpenseToUser(ConcurStandardAccountingExtractDetailLine line) {
         return lineRepresentsPersonalExpenseChargedToCorporateCard(line)
-                && StringUtils.equalsIgnoreCase(ConcurConstants.DEBIT, line.getJounalDebitCredit())
+                && StringUtils.equalsIgnoreCase(ConcurConstants.DEBIT, line.getJournalDebitCredit())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.UNIVERSITY_PAYMENT_TYPE, line.getJournalPayerPaymentTypeName())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.USER_PAYMENT_TYPE, line.getJournalPayeePaymentTypeName());
     }
@@ -134,7 +134,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     @Override
     public boolean lineRepresentsReturnOfCorporateCardPersonalExpenseToUniversity(ConcurStandardAccountingExtractDetailLine line) {
         return lineRepresentsPersonalExpenseChargedToCorporateCard(line)
-                && StringUtils.equalsIgnoreCase(ConcurConstants.CREDIT, line.getJounalDebitCredit())
+                && StringUtils.equalsIgnoreCase(ConcurConstants.CREDIT, line.getJournalDebitCredit())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE, line.getJournalPayerPaymentTypeName())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.UNIVERSITY_PAYMENT_TYPE, line.getJournalPayeePaymentTypeName());
     }
