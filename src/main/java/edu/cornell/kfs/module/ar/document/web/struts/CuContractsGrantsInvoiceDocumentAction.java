@@ -13,6 +13,8 @@ import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.web.struts.ContractsGrantsInvoiceDocumentAction;
 import org.kuali.kfs.module.ar.document.web.struts.ContractsGrantsInvoiceDocumentForm;
@@ -64,7 +66,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         ActionForward forward = null;
 
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-        if (question == null || !question.toString().toLowerCase().contains("suspension")) {
+        if (question == null) {
             String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR);
             return performQuestionWithoutInput(mapping, form, request, response, CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
         }
@@ -76,6 +78,27 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
 
         return forward;
     }
+
+    @Override
+    protected ActionForward promptForSuspensionCategories(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
+        ActionForward forward = null;
+
+        if (contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories().size() > 0) {
+            Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+            if (question == null || question.toString().equals(CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION)) {
+                String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(ArKeyConstants.WARNING_SUSPENSION_CATEGORIES_PRESENT);
+                return performQuestionWithoutInput(mapping, form, request, response, ArConstants.SUSPENSION_CATEGORIES_PRESENT_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
+            }
+
+            Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
+            if (ArConstants.SUSPENSION_CATEGORIES_PRESENT_QUESTION.equals(question) && ConfirmationQuestion.NO.equals(buttonClicked)) {
+                forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
+            }
+        }
+
+        return forward;
+    }
+
 
     private KualiDecimal findAwardBudgetTotal(ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm) {
         ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = contractsGrantsInvoiceDocumentForm.getContractsGrantsInvoiceDocument();
