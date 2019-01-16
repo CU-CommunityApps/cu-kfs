@@ -1,6 +1,7 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 <%@ attribute name="readOnly" required="true" description="If document is in read only mode"%>
 
+<c:set var="invoiceAccountDetailsAttributes" value="${DataDictionary.InvoiceAccountDetail.attributes}" />
 <c:set var="invoiceGeneralDetailAttributes" value="${DataDictionary.InvoiceGeneralDetail.attributes}" />
 <c:set var="documentAttributes" value="${DataDictionary.ContractsGrantsInvoiceDocument.attributes}" />
 <c:set var="arDocHeaderAttributes" value="${DataDictionary.AccountsReceivableDocumentHeader.attributes}" />
@@ -139,19 +140,19 @@
                             <kul:htmlControlAttribute
                                     attributeEntry="${invoiceGeneralDetailAttributes.finalBillIndicator}"
                                     property="document.invoiceGeneralDetail.finalBillIndicator"
-                                    readOnly="${readOnly}"/>
+                                    readOnly="${readOnly}" />
                         </div>
                     </td>
                 </c:otherwise>
             </c:choose>
             <th class="right" style="width: 25%;">
-                <kul:htmlAttributeLabel attributeEntry="${invoiceGeneralDetailAttributes.instrumentTypeCode}" />
+                <kul:htmlAttributeLabel attributeEntry="${invoiceGeneralDetailAttributes.instrumentTypeDescription}" />
             </th>
             <td class="datacell" style="width: 25%;">
-                <div id="document.instrumentTypeCode.div">
+                <div id="document.instrumentTypeDescription.div">
                     <kul:htmlControlAttribute
-                            attributeEntry="${invoiceGeneralDetailAttributes.instrumentTypeCode}"
-                            property="document.invoiceGeneralDetail.instrumentTypeCode"
+                            attributeEntry="${invoiceGeneralDetailAttributes.instrumentTypeDescription}"
+                            property="document.invoiceGeneralDetail.instrumentTypeDescription"
                             readOnly="true" />
                 </div>
             </td>
@@ -180,6 +181,52 @@
                 </div>
             </td>
         </tr>
+        <c:if test="${KualiForm.document.invoiceGeneralDetail.billingFrequencyCode == ArIntegrationConstants.BillingFrequencyValues.MILESTONE or
+				KualiForm.document.invoiceGeneralDetail.billingFrequencyCode == ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING}">
+            <tr>
+                <th class="right" style="width: 25%;">
+                    <kul:htmlAttributeLabel attributeEntry="${invoiceAccountDetailsAttributes.chartOfAccountsCode}" />
+                </th>
+                <td class="datacell" style="width: 25%;">
+                    <div id="document.chartOfAccountsCode.div">
+                        <kul:htmlControlAttribute
+                                attributeEntry="${invoiceAccountDetailsAttributes.chartOfAccountsCode}"
+                                property="document.accountDetails[0].chartOfAccountsCode"
+                                readOnly="true" />
+                    </div>
+                </td>
+                <th class="right" style="width: 25%;">
+                    <kul:htmlAttributeLabel attributeEntry="${invoiceAccountDetailsAttributes.accountNumber}" />
+                </th>
+                <td class="datacell" colspan="3">
+                    <div id="document.accountNumber.div">
+                        <kul:htmlControlAttribute
+                                attributeEntry="${invoiceAccountDetailsAttributes.accountNumber}"
+                                property="document.accountDetails[0].accountNumber"
+                                readOnly="true" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th class="right" style="width: 25%;">
+                    <kul:htmlAttributeLabel attributeEntry="${invoiceAccountDetailsAttributes['account.accountName']}" />
+                </th>
+                <td class="datacell" style="width: 25%;">
+                    <div id="document.accountName.div">
+                        <kul:htmlControlAttribute
+                                attributeEntry="${invoiceAccountDetailsAttributes['account.accountName']}"
+                                property="document.accountDetails[0].account.accountName"
+                                readOnly="true" />
+                    </div>
+                </td>
+                <th class="right" style="width: 25%;">
+                    &nbsp;
+                </th>
+                <td class="datacell" colspan="3">
+                    &nbsp;
+                </td>
+            </tr>
+        </c:if>
     </table>
 
     <c:if test="${!empty KualiForm.document.invoiceGeneralDetail.proposalNumber}">
