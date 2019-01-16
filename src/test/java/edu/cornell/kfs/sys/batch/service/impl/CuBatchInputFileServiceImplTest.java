@@ -1,8 +1,16 @@
 package edu.cornell.kfs.sys.batch.service.impl;
 
-import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
-import edu.cornell.kfs.vnd.batch.VendorBatchCsvInputFileType;
+import static org.kuali.kfs.sys.fixture.UserNameFixture.kfs;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.kuali.kfs.fp.batch.ProcurementCardInputFileType;
@@ -13,14 +21,8 @@ import org.kuali.rice.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.kuali.kfs.sys.fixture.UserNameFixture.kfs;
+import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
+import edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchCsvInputFileType;
 
 
 /**
@@ -92,7 +94,7 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
         runTestIllegalArgument();
         user = new PersonImpl();
         runTestIllegalArgument();
-        batchInputFileType = new VendorBatchCsvInputFileType();
+        batchInputFileType = new VendorInactivateConvertBatchCsvInputFileType();
         runTestIllegalArgument();
         fileContents = new InputStream() {            
             @Override

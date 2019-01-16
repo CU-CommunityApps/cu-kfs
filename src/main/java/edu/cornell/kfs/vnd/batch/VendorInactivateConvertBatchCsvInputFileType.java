@@ -32,7 +32,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorInactivateConvertBatch;
 
 
 
-public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInputFileTypeBase<VendorBatchCsv> {
+public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInputFileTypeBase<VendorInactivateConvertBatchCsv> {
 
 	private static final Logger LOG = LogManager.getLogger(VendorInactivateConvertBatchCsvInputFileType.class);
 
