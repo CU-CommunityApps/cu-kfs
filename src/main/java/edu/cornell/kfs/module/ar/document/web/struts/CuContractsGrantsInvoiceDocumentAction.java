@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,10 +23,14 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoiceDocumentAction {
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentAction.class);
@@ -52,8 +57,9 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = ((ContractsGrantsInvoiceDocumentForm) form).getContractsGrantsInvoiceDocument();
 
-        if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-            ActionForward forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD);
+        String warningMessage = getContractsGrantsInvoiceDocumentWarningMessage(contractsGrantsInvoiceDocument);
+        if (StringUtils.isNotEmpty(warningMessage)) {
+            ActionForward forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD, warningMessage);
             if (forward != null) {
                 return forward;
             }
@@ -62,13 +68,40 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         return super.route(mapping, form, request, response);
     }
 
-    protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, String caller) throws Exception {
+    protected String getContractsGrantsInvoiceDocumentWarningMessage(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+        List<String> warningMessages = new ArrayList<String>();
+        if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
+            warningMessages.add(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR));
+        }
+
+        String billingPeriod = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod();
+        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+        String billingPeriodEndDateRaw = billingPeriod.substring(14);
+        String billingPeriodStartDateRaw = billingPeriod.substring(0, 10);
+        try {
+            java.util.Date billingPeriodEndDate = dateTimeService.convertToDate(billingPeriodEndDateRaw);
+            java.util.Date billingPeriodStartDate = dateTimeService.convertToDate(billingPeriodStartDateRaw);
+
+            if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
+                warningMessages.add(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_LAST_BILLED_DATE));
+            }
+            if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) <= -1) {
+                warningMessages.add(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
+            }
+
+        } catch (java.text.ParseException ex) {
+            warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?\n\n" + ex.toString());
+        }
+
+        return CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, ", ");
+    }
+
+    protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, String caller, String warningMessage) throws Exception {
         ActionForward forward = null;
 
         Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
         if (question == null) {
-            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR);
-            return performQuestionWithoutInput(mapping, form, request, response, CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
+            return performQuestionWithoutInput(mapping, form, request, response, CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION, warningMessage, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
         }
 
         Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);

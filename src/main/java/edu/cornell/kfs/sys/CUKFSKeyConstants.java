@@ -224,4 +224,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     
     public static final String ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_PRORATE_NO_AWARD_BUDGET_TOTAL = "error.document.contractsGrantsInvoice.prorate.no.award.budget.total";
     public static final String WARNING_CINV_FINAL_BILL_INDICATOR = "warning.document.contractGrantsInvoice.final.bill.indicator";
+    public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodEndDate.after.lastBilledDate";
+    public static final String WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodStartDate.before.lastBilledDate";
 }
