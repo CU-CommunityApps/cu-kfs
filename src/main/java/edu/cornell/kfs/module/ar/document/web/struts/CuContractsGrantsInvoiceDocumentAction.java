@@ -91,20 +91,21 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                 if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
                     warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE));
                 }
-                if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, true) <= -1) {
+                if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, true) >= 1) {
                     warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE));
                 }
-                if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) <= -1) {
+                if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
                     warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
                 }
 
             } catch (java.text.ParseException ex) {
                 LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
-                warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?\n\n" + ex.getMessage());
+                warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?\n" + ex.getMessage());
             }
         }
 
-        return CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, ", ");
+        String ret = CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, KFSConstants.BLANK_SPACE + KFSConstants.BLANK_SPACE);
+        return ret;
     }
 
     protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, String caller, String warningMessage) throws Exception {
