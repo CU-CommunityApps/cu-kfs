@@ -69,28 +69,39 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     protected String getContractsGrantsInvoiceDocumentWarningMessage(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
-        List<String> warningMessages = new ArrayList<String>();
+        List<String> warningMessages = new ArrayList<>();
+        ConfigurationService configurationService = SpringContext.getBean((ConfigurationService.class));
         if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
-            warningMessages.add(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR));
+            warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_FINAL_BILL_INDICATOR));
         }
 
         String billingPeriod = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod();
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-        String billingPeriodEndDateRaw = billingPeriod.substring(14);
-        String billingPeriodStartDateRaw = billingPeriod.substring(0, 10);
-        try {
-            java.util.Date billingPeriodEndDate = dateTimeService.convertToDate(billingPeriodEndDateRaw);
-            java.util.Date billingPeriodStartDate = dateTimeService.convertToDate(billingPeriodStartDateRaw);
+        if (billingPeriod == null || billingPeriod.length() != 24) {
+            billingPeriod = billingPeriod == null ? KFSConstants.EMPTY_STRING : billingPeriod;
+            warningMessages.add("The Billing Period is Invalid [" + billingPeriod + "]. The expected length is 24 (YYYY-MM-DD to YYYY-MM-DD) do you wish to continue?");
+        } else {
 
-            if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
-                warningMessages.add(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_LAST_BILLED_DATE));
-            }
-            if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) <= -1) {
-                warningMessages.add(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
-            }
+            DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+            String billingPeriodEndDateRaw = billingPeriod.substring(14);
+            String billingPeriodStartDateRaw = billingPeriod.substring(0, 10);
+            try {
+                java.util.Date billingPeriodEndDate = dateTimeService.convertToDate(billingPeriodEndDateRaw);
+                java.util.Date billingPeriodStartDate = dateTimeService.convertToDate(billingPeriodStartDateRaw);
 
-        } catch (java.text.ParseException ex) {
-            warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?\n\n" + ex.toString());
+                if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
+                    warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE));
+                }
+                if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, true) <= -1) {
+                    warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE));
+                }
+                if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) <= -1) {
+                    warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
+                }
+
+            } catch (java.text.ParseException ex) {
+                LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
+                warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?\n\n" + ex.getMessage());
+            }
         }
 
         return CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, ", ");
