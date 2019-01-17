@@ -269,6 +269,14 @@
     	</property>
    	</bean>
    	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization-NewAccountDetail" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartOrganization-NewAccountDetail">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalNewAccountDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+   	
    	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartOrganization" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
 		<property name="documentValues">
 	   		<list>
@@ -278,10 +286,27 @@
    		</property>
    	</bean>
    	
+   	<bean id="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartOrganization-NewAccountDetail" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath" abstract="true">
+		<property name="documentValues">
+	   		<list>
+	   			<value>chartOfAccountsCode</value>
+	   			<value>account.organizationCode</value>
+	   		</list>
+   		</property>
+   	</bean>
+   	
    	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccount" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
     	<property name="documentCollectionPath">
     		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartAccount">
     			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalDetails"/>
+    		</bean>
+    	</property>
+   	</bean>
+	
+	<bean id="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccount-NewAccountDetail" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+    	<property name="documentCollectionPath">
+    		<bean parent="SubAccountGlobalMaintenanceDocument-DocumentCollectionPath-chartAccount">
+    			<property name="collectionPath" value="newMaintainableObject.businessObject.subAccountGlobalNewAccountDetails"/>
     		</bean>
     	</property>
    	</bean>
@@ -314,6 +339,7 @@
     	<property name="documentValuePathGroups">
     		<list>
     			<ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization"/>
+    			<ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartOrganization-NewAccountDetail"/>
     		</list>
     	</property>
     </bean>
@@ -328,6 +354,7 @@
     	<property name="documentValuePathGroups">
     		<list>
     			<ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccount"/>
+    			<ref bean="SubAccountGlobalMaintenanceDocument-DocumentValuePathGroup-ChartAccount-NewAccountDetail"/>
     		</list>
     	</property>
     </bean>
