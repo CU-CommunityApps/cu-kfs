@@ -741,11 +741,9 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     @Override
     public void refreshReferenceObject(String referenceObjectName) {
-        if (referenceObjectName.equals("accountFiscalOfficerUser") ||
-            referenceObjectName.equals("accountSupervisoryUser") ||
-            referenceObjectName.equals("accountManagerUser")) {
-            // do nothing
-        } else {
+        if (!referenceObjectName.equals("accountFiscalOfficerUser")
+                && !referenceObjectName.equals("accountSupervisoryUser")
+                && !referenceObjectName.equals("accountManagerUser")) {
             super.refreshReferenceObject(referenceObjectName);
         }
     }

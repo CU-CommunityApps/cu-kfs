@@ -442,9 +442,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @Override
     public void deleteItem(int lineNum) {
-        if (items.remove(lineNum) == null) {
-            // throw error here
-        }
+        items.remove(lineNum); // throw error here
         renumberItems(lineNum);
     }
 

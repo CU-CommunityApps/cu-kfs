@@ -179,9 +179,7 @@ public class PurApRelatedViews {
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        }
-        catch (WorkflowException ex) {
-        } catch (UnknownDocumentTypeException ex) {
+        } catch (WorkflowException | UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
         }
 

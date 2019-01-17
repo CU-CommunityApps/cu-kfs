@@ -213,7 +213,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         try {
             doc = docService.getByDocumentHeaderIdSessionless(docId);
         } catch (WorkflowException we) {
-
+            // ignore
         }
         if (doc != null) {
             if (doc instanceof AmountTotaling && ((AmountTotaling) doc).getTotalDollarAmount() != null) {

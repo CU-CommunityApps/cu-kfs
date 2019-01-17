@@ -93,9 +93,6 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 // on cancel, use DEBIT code
                 preq.setDebitCreditCodeForGLEntries(GL_DEBIT_CODE);
             }
-            else if (MODIFY_PAYMENT_REQUEST.equals(processType)) {
-                // no encumbrances for modify
-            }
 
             preq.setGenerateEncumbranceEntries(true);
             for (Iterator iter = encumbrances.iterator(); iter.hasNext();) {

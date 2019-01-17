@@ -463,8 +463,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             if (workFlowDocument.isCanceled()) {
                 // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList());
-            } else if (workFlowDocument.isFinal()) {
-            } else {
+            } else if (!workFlowDocument.isFinal()) {
                 super.prepareForSave(event);
             }
         }
