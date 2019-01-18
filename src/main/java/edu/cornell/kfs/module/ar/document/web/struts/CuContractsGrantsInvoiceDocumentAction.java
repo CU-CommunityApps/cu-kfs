@@ -99,11 +99,11 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                 }
             } catch(ParseException ex) {
                 LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
-                warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed? " + ex.getMessage());
+                warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?[br]" + ex.getMessage());
             }
         }
 
-        String ret = CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, KFSConstants.BLANK_SPACE + KFSConstants.BLANK_SPACE);
+        String ret = CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, "[br]");
         return ret;
     }
 
