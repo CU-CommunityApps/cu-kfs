@@ -227,4 +227,5 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodEndDate.before.lastBilledDate";
     public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE = "warning.document.contractGrantsInvoice.billingPeriodEndDate.before.billingPeriodStartDate";
     public static final String WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodStartDate.before.lastBilledDate";
+    public static final String WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_AWARD_START_DATE = "warning.document.contractGrantsInvoice.billingPeriodStartDate.before.awardStartDate";
 }

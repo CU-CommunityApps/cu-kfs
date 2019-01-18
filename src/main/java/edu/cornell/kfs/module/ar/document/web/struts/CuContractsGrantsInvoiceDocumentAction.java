@@ -84,18 +84,24 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             warningMessages.add("The Billing Period is Invalid [" + billingPeriod + "]. The expected length is 24 (YYYY-MM-DD to YYYY-MM-DD) do you wish to continue?");
         } else {
             try {
-                Pair<Date, Date> billingPeriodDates = parseBillingPeriodStartAndEndDate(contractsGrantsInvoiceDocument);
+                Pair<Date, Date> billingPeriodDates = parseDateRange(billingPeriod);
                 Date billingPeriodStartDate = billingPeriodDates.getKey();
                 Date billingPeriodEndDate = billingPeriodDates.getValue();
                 DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-                if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
+                if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) >= 1) {
                     warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE));
                 }
-                if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, true) >= 1) {
+                if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, false) >= 1) {
                     warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE));
                 }
-                if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) >= 1) {
+                if (dateTimeService.dateDiff(billingPeriodStartDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) >= 1) {
                     warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
+                }
+
+                Pair<Date, Date> awardDateRange = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAwardDateRange());
+                Date awardStartDate = awardDateRange.getKey();
+                if (dateTimeService.dateDiff(billingPeriodStartDate, awardStartDate, false) >= 1) {
+                    warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_AWARD_START_DATE));
                 }
             } catch(ParseException ex) {
                 LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
@@ -122,10 +128,10 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             }
             else if (ConfirmationQuestion.YES.equals(buttonClicked) && contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
                 try {
-                    Pair<Date, Date> billingPeriod = parseBillingPeriodStartAndEndDate(contractsGrantsInvoiceDocument);
+                    Pair<Date, Date> billingPeriod = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod());
                     Date billingEndDate = billingPeriod.getValue();
                     DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-                    if (dateTimeService.dateDiff(billingEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), true) != 0) {
+                    if (dateTimeService.dateDiff(billingEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) != 0) {
                         contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().setLastBilledDate(billingEndDate);
                     }
                 }
@@ -173,20 +179,15 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         return budgetTotalAmount;
     }
 
-    private Pair<Date, Date> parseBillingPeriodStartAndEndDate(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) throws ParseException {
-        String billingPeriod = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod();
-        if (StringUtils.isEmpty(billingPeriod) || billingPeriod.length() != 24) {
-            billingPeriod = billingPeriod == null ? KFSConstants.EMPTY_STRING : billingPeriod;
-            throw new ParseException("The Billing Period is Invalid [" + billingPeriod + "]. The expected length is 24 (YYYY-MM-DD to YYYY-MM-DD).", 0);
+    private Pair<Date, Date> parseDateRange(String dateRange) throws ParseException {
+        if (StringUtils.isEmpty(dateRange) || dateRange.length() != 24) {
+            dateRange = dateRange == null ? KFSConstants.EMPTY_STRING : dateRange;
+            throw new ParseException("The Date Range is Invalid [" + dateRange + "]. The expected length is 24 (YYYY-MM-DD to YYYY-MM-DD).", 0);
         }
-
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-        String billingPeriodEndDateRaw = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod().substring(14);
-        String billingPeriodStartDateRaw = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod().substring(0, 10);
-
-        Date billingPeriodEndDate = dateTimeService.convertToSqlDate(billingPeriodEndDateRaw);
-        Date billingPeriodStartDate = dateTimeService.convertToSqlDate(billingPeriodStartDateRaw);
-        return new Pair<>(billingPeriodStartDate, billingPeriodEndDate);
+        Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(14));
+        Date startDate = dateTimeService.convertToSqlDate(dateRange.substring(0, 10));
+        return new Pair<>(startDate, endDate);
     }
 
 }
