@@ -188,6 +188,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImplTest {
         collectorFileServiceImpl.setDateTimeService(dateTimeService);
         collectorFileServiceImpl.setBatchFileLookupableHelperService(buildBatchFileLookupableHelperService(dateTimeService));
         collectorFileServiceImpl.setCollectorBatchBuilder(buildMockBatchBuilder());
+        collectorFileServiceImpl.setStagingDirectoryPath(BASE_TEST_DIRECTORY);
         collectorFileServiceImpl.setCollectorDirectoryPath(COLLECTOR_OUTPUT_DIRECTORY_PATH);
         collectorFileServiceImpl.setCollectorFlatFileSerializerService(buildCollectorFlatFileSerializerService(dateTimeService));
         

@@ -55,6 +55,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
     protected UniversityDateService universityDateService;
     protected DateTimeService dateTimeService;
     protected ParameterService parameterService;
+    protected String stagingDirectoryPath;
     protected String collectorDirectoryPath;
 
     @Override
@@ -115,7 +116,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         String rangeForCurrentDate = buildDateRangeStringForCurrentDate();
         
         MultivaluedMap<String,String> criteria = new MultivaluedHashMap<>();
-        criteria.add(CUKFSPropertyConstants.PATH, collectorDirectoryPath);
+        criteria.add(CUKFSPropertyConstants.PATH, buildRelativeCollectorDirectoryPath());
         criteria.add(KFSPropertyConstants.FILE_NAME, wildcardFileName);
         criteria.add(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);
         
@@ -128,6 +129,13 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         Date now = new Date(System.currentTimeMillis());
         String rangeForCurrentDate = String.format(DATE_RANGE_FORMAT, Long.toString(midnight.getTime()), Long.toString(now.getTime()));
         return rangeForCurrentDate;
+    }
+
+    private String buildRelativeCollectorDirectoryPath() {
+        String separator = StringUtils.contains(stagingDirectoryPath, CUKFSConstants.SLASH) ? CUKFSConstants.SLASH : CUKFSConstants.BACKSLASH;
+        String relativeStagingDirectory = StringUtils.substringAfterLast(stagingDirectoryPath, separator);
+        String collectorDirectorySubPath = StringUtils.substringAfter(collectorDirectoryPath, stagingDirectoryPath);
+        return relativeStagingDirectory + collectorDirectorySubPath;
     }
 
     protected String writeToCollectorFile(String originalFileName, CollectorBatch collectorBatch) {
@@ -194,6 +202,10 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public void setStagingDirectoryPath(String stagingDirectoryPath) {
+        this.stagingDirectoryPath = stagingDirectoryPath;
     }
 
     public void setCollectorDirectoryPath(String collectorDirectoryPath) {
