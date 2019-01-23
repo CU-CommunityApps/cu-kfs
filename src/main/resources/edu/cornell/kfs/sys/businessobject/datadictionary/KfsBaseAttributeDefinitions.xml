@@ -19,4 +19,6 @@
         <property name="control" ref="AccountTextControl"/>
     </bean>
 
+    <bean id="IntegerValidation" class="edu.cornell.kfs.kns.datadictionary.validation.fieldlevel.IntegerValidationPattern"/>
+
 </beans>
