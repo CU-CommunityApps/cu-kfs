@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -128,8 +127,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         if (CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION.equals(question)) {
             if (ConfirmationQuestion.NO.equals(buttonClicked)) {
                 forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
-            }
-            else if (ConfirmationQuestion.YES.equals(buttonClicked) && contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
+            } else if (ConfirmationQuestion.YES.equals(buttonClicked) && contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
                 try {
                     Pair<Date, Date> billingPeriod = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod());
                     Date billingEndDate = billingPeriod.getRight();
@@ -137,8 +135,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                     if (dateTimeService.dateDiff(billingEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) != 0) {
                         contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().setLastBilledDate(billingEndDate);
                     }
-                }
-                catch(Exception ex) {
+                } catch(Exception ex) {
                     LOG.error("promptForFinalBillConfirmation setting last billed date to end date: " + ex.getMessage());
                 }
             }
@@ -188,7 +185,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             String errorMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH);
             throw new ParseException(MessageFormat.format(errorMessage, new String[] {dateRange}), 0);
         }
-        
+
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
         Date startDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_START_DATE_START_INDEX, CuArConstants.CINV_DATE_RANGE_START_DATE_END_INDEX));
         Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_END_DATE_START_INDEX));
