@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.cornell.kfs.module.ar.CuArConstants;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -80,8 +82,9 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
 
         String billingPeriod = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod();
         if (StringUtils.length(billingPeriod) != CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH) {
-            billingPeriod = StringUtils.defaultIfEmpty(billingPeriod, KFSConstants.EMPTY_STRING);
-            warningMessages.add("The Billing Period is Invalid [" + billingPeriod + "]. The expected length is " + CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH + " (YYYY-MM-DD to YYYY-MM-DD) do you wish to continue?");
+            billingPeriod = StringUtils.defaultString(billingPeriod);
+            String warningMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH);
+            warningMessages.add(MessageFormat.format(warningMessage, new String[] {billingPeriod}));
         } else {
             try {
                 Pair<Date, Date> billingPeriodDates = parseDateRange(billingPeriod);
@@ -105,11 +108,12 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                 }
             } catch(ParseException ex) {
                 LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
-                warningMessages.add("ParseException occurred while parsing the billing period. Do you want to Proceed?[br]" + ex.getMessage());
+                String warningMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_PARSE_EXCEPTION);
+                warningMessages.add(warningMessage + CuArConstants.QUESTION_NEWLINE_STRING + ex.toString());
             }
         }
 
-        return CollectionUtils.isEmpty(warningMessages) ? null : StringUtils.join(warningMessages, "[br]");
+        return StringUtils.join(warningMessages, CuArConstants.QUESTION_NEWLINE_STRING);
     }
 
     protected ActionForward promptForFinalBillConfirmation(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, String caller, String warningMessage, ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) throws Exception {
@@ -147,7 +151,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     protected ActionForward promptForSuspensionCategories(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
         ActionForward forward = null;
 
-        if (contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories().size() > 0) {
+        if (CollectionUtils.size(contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories()) > 0) {
             Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
             if (question == null || question.toString().equals(CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION)) {
                 String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(ArKeyConstants.WARNING_SUSPENSION_CATEGORIES_PRESENT);
@@ -179,13 +183,15 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     private Pair<Date, Date> parseDateRange(String dateRange) throws ParseException {
-        if (StringUtils.isEmpty(dateRange) || dateRange.length() != CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH) {
-            dateRange = dateRange == null ? KFSConstants.EMPTY_STRING : dateRange;
-            throw new ParseException("The Date Range is Invalid [" + dateRange + "]. The expected length is " + CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH + " (YYYY-MM-DD to YYYY-MM-DD).", 0);
+        if (StringUtils.length(dateRange) != CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH) {
+            dateRange = StringUtils.defaultString(dateRange);
+            String errorMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH);
+            throw new ParseException(MessageFormat.format(errorMessage, new String[] {dateRange}), 0);
         }
+        
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-        Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(14));
-        Date startDate = dateTimeService.convertToSqlDate(dateRange.substring(0, 10));
+        Date startDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_START_DATE_START_INDEX, CuArConstants.CINV_DATE_RANGE_START_DATE_END_INDEX));
+        Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_END_DATE_START_INDEX));
         return Pair.of(startDate, endDate);
     }
 
