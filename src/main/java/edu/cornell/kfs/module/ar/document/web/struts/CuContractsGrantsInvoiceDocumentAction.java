@@ -79,9 +79,9 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         }
 
         String billingPeriod = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod();
-        if (StringUtils.length(billingPeriod) != 24) {
+        if (StringUtils.length(billingPeriod) != CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH) {
             billingPeriod = StringUtils.defaultIfEmpty(billingPeriod, KFSConstants.EMPTY_STRING);
-            warningMessages.add("The Billing Period is Invalid [" + billingPeriod + "]. The expected length is 24 (YYYY-MM-DD to YYYY-MM-DD) do you wish to continue?");
+            warningMessages.add("The Billing Period is Invalid [" + billingPeriod + "]. The expected length is " + CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH + " (YYYY-MM-DD to YYYY-MM-DD) do you wish to continue?");
         } else {
             try {
                 Pair<Date, Date> billingPeriodDates = parseDateRange(billingPeriod);
@@ -179,9 +179,9 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     private Pair<Date, Date> parseDateRange(String dateRange) throws ParseException {
-        if (StringUtils.isEmpty(dateRange) || dateRange.length() != 24) {
+        if (StringUtils.isEmpty(dateRange) || dateRange.length() != CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH) {
             dateRange = dateRange == null ? KFSConstants.EMPTY_STRING : dateRange;
-            throw new ParseException("The Date Range is Invalid [" + dateRange + "]. The expected length is 24 (YYYY-MM-DD to YYYY-MM-DD).", 0);
+            throw new ParseException("The Date Range is Invalid [" + dateRange + "]. The expected length is " + CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH + " (YYYY-MM-DD to YYYY-MM-DD).", 0);
         }
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
         Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(14));
