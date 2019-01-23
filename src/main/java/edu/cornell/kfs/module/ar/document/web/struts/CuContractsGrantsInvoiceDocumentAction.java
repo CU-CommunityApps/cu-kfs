@@ -22,6 +22,7 @@ import org.kuali.kfs.module.ar.document.web.struts.ContractsGrantsInvoiceDocumen
 import org.kuali.kfs.module.ar.document.web.struts.ContractsGrantsInvoiceDocumentForm;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
@@ -99,42 +100,25 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
 
     protected void validateBillingPeriodDateRange(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, List<String> warningMessages) throws ParseException {
         Pair<Date, Date> billingPeriodDates = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod());
-        validateBillingPeriodDateRangeAgainstLastBilledDate(contractsGrantsInvoiceDocument, billingPeriodDates, warningMessages);
-        validateBillingPeriodDateRangeStartBeforeEnd(contractsGrantsInvoiceDocument, billingPeriodDates, warningMessages);
-        validateBillingPeriodStartDateAgainstAwardDate(contractsGrantsInvoiceDocument, billingPeriodDates.getLeft(), warningMessages);
-    }
-
-    protected void validateBillingPeriodDateRangeAgainstLastBilledDate(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, Pair<Date, Date> billingPeriodDates, List<String> warningMessages) {
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
         ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
+
         Date billingPeriodStartDate = billingPeriodDates.getLeft();
         Date billingPeriodEndDate = billingPeriodDates.getRight();
-        Date lastBilledDate = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate();
+        if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, false) >= 1) {
+            warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE));
+        }
 
+        Date lastBilledDate = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate();
         if (dateTimeService.dateDiff(billingPeriodEndDate, lastBilledDate, false) >= 1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE));
         }
         if (dateTimeService.dateDiff(billingPeriodStartDate, lastBilledDate, false) >= 1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
         }
-    }
 
-    protected void validateBillingPeriodDateRangeStartBeforeEnd(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, Pair<Date, Date> billingPeriodDates, List<String> warningMessages) {
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-        Date billingPeriodStartDate = billingPeriodDates.getLeft();
-        Date billingPeriodEndDate = billingPeriodDates.getRight();
-        if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, false) >= 1) {
-            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
-            warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE));
-        }
-    }
-
-    protected void validateBillingPeriodStartDateAgainstAwardDate(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, Date billingPeriodStartDate, List<String> warningMessages) throws ParseException{
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
         Pair<Date, Date> awardDateRange = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAwardDateRange());
-
         if (dateTimeService.dateDiff(billingPeriodStartDate, awardDateRange.getLeft(), false) >= 1) {
-            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_AWARD_START_DATE));
         }
     }
@@ -160,7 +144,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                         contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().setLastBilledDate(billingEndDate);
                     }
                 } catch(Exception ex) {
-                    LOG.error("promptForFinalBillConfirmation setting last billed date to end date: " + ex.getMessage());
+                    GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, "promptForFinalBillConfirmation setting last billed date to end date: " + ex.getMessage());
                 }
             }
         }
