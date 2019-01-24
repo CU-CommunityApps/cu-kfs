@@ -150,12 +150,15 @@ public class CUKFSConstants {
 
     public static final String SUB_ACCOUNT_GLOBAL_NEW_SUB_ACCOUNT_LABEL = "New Sub-Account";
 
+    public static final String INTEGER_VALIDATION_PATTERN_TYPE = "integer";
+
     public static final String EQUALS_SIGN = "=";
     public static final String AMPERSAND = "&";
     public static final String LEFT_PARENTHESIS = "(";
     public static final String RIGHT_PARENTHESIS = ")";
     public static final String COLON = ":";
     public static final String SLASH = "/";
+    public static final String BACKSLASH = "\\";
     public static final String DOUBLE_QUOTE = "\"";
     public static final String CAPITAL_X = "X";
 

@@ -98,6 +98,9 @@
 	<bean id="concurStandardAccountingExtractCreateCollectorFileService" parent="concurStandardAccountingExtractCreateCollectorFileService-parentBean"/>
 	<bean id="concurStandardAccountingExtractCreateCollectorFileService-parentBean" abstract="true"
 			class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractCreateCollectorFileServiceImpl">
+		<property name="stagingDirectoryPath">
+		    <value>${staging.directory}</value>
+		</property>
 		<property name="collectorDirectoryPath">
 		    <value>${staging.directory}/gl/collectorFlatFile/</value>
 		</property>

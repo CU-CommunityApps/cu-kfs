@@ -1,2 +1,0 @@
-vendorNumber,vendorName,legalFirstName,legalLastName,vendorTypeCode,foreignVendor,taxNumber,taxNumberType,ownershipTypeCode,defaultB2BPaymentMethodCode,taxable,eInvoice,w9ReceivedIndicator,w9ReceivedDate,addresses,contacts,phoneNumbers,supplierDiversities,insuranceTracking,notes,attachmentFiles
-,,Matt,Knight,PO,Y,,FEIN,CP,P,Y,N,N,,|PO|100 1st||Bloomington|IN|47405|US|test||test1e@abc.com||123-456-7893|Y|EMAL|Y::|PO|101 1st||Bloomington|IN|47405|US|test||test1e@abc.com||123-456-7893|N|EMAL|Y,,,,"Y|||10|12.31.2014|||||||||",,"test.pdf|testdoc.docx"
