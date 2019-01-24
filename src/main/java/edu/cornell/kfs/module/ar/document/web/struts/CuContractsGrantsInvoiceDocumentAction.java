@@ -26,6 +26,7 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
@@ -138,13 +139,16 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             } else if (ConfirmationQuestion.YES.equals(buttonClicked) && contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
                 try {
                     Pair<Date, Date> billingPeriod = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod());
-                    Date billingEndDate = billingPeriod.getRight();
+                    Date billingPeriodEndDate = billingPeriod.getRight();
                     DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-                    if (dateTimeService.dateDiff(billingEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) != 0) {
-                        contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().setLastBilledDate(billingEndDate);
+                    if (dateTimeService.dateDiff(billingPeriodEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) != 0) {
+                        contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().setLastBilledDate(billingPeriodEndDate);
                     }
                 } catch (Exception ex) {
-                    GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, "promptForFinalBillConfirmation setting last billed date to end date: " + ex.getMessage());
+                    ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
+                    String message = configurationService.getPropertyValueAsString(CUKFSKeyConstants.ERROR_CINV_SETTING_LAST_BILLED_DATE);
+                    GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, message);
+                    return mapping.findForward(RiceConstants.MAPPING_BASIC);
                 }
             }
         }
