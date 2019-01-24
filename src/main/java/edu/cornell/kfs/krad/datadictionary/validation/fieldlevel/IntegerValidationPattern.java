@@ -1,4 +1,4 @@
-package edu.cornell.kfs.kns.datadictionary.validation.fieldlevel;
+package edu.cornell.kfs.krad.datadictionary.validation.fieldlevel;
 
 import org.kuali.kfs.krad.datadictionary.validation.FieldLevelValidationPattern;
 

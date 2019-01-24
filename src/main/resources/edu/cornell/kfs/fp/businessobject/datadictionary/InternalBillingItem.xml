@@ -7,7 +7,7 @@
 
     <!--
         To properly allow the Data Dictionary to interpret the "exclusiveMin" property as unset,
-        we must set it to null instead of an empty string.
+        we must set it to null instead of an empty string when overwriting the parent bean's explicit value.
      -->
 
     <bean id="InternalBillingItem-itemUnitAmount" parent="InternalBillingItem-itemUnitAmount-parentBean"
