@@ -26,7 +26,6 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
-import org.kuali.rice.core.api.util.RiceConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
@@ -148,7 +147,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                     ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
                     String message = configurationService.getPropertyValueAsString(CUKFSKeyConstants.ERROR_CINV_SETTING_LAST_BILLED_DATE);
                     GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, message);
-                    return mapping.findForward(RiceConstants.MAPPING_BASIC);
+                    return mapping.findForward(KFSConstants.MAPPING_BASIC);
                 }
             }
         }
