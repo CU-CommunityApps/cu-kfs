@@ -88,7 +88,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         } else {
             try {
                 validateBillingPeriodDateRange(contractsGrantsInvoiceDocument, warningMessages);
-            } catch(ParseException ex) {
+            } catch (ParseException ex) {
                 LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
                 String warningMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_PARSE_EXCEPTION);
                 warningMessages.add(warningMessage + CuArConstants.QUESTION_NEWLINE_STRING + ex.toString());
@@ -143,7 +143,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
                     if (dateTimeService.dateDiff(billingEndDate, contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getLastBilledDate(), false) != 0) {
                         contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().setLastBilledDate(billingEndDate);
                     }
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, "promptForFinalBillConfirmation setting last billed date to end date: " + ex.getMessage());
                 }
             }
