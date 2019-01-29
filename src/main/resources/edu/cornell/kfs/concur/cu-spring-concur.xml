@@ -561,6 +561,7 @@
         <property name="summarySubTitle" value="Summary of Record Counts and Dollar Amounts"/>
         <property name="cashAdvancesProcessedInPdpLabel" value="Cash Advances Processed in PDP :"/>
         <property name="recordsNotSentToPdpSubLabel" value="Records Not Sent to PDP"/>
+        <property name="recordsBypassedInvalidEmployeeGroupIdLabel" value="Bypassed Records with Invalid Employee Group IDs :"/>
         <property name="cashAdvancesBypassedRelatedToExpenseReportLabel" value="Bypassed Cash Advances Related to Expense Report :"/>
         <property name="recordsBypassedTravelRequestOnlyLabel" value="Records Bypassed as Travel Requests Only :"/>
         <property name="duplicateCashAdvanceRequestsLabel" value="Duplicate Cash Advance Request :"/>

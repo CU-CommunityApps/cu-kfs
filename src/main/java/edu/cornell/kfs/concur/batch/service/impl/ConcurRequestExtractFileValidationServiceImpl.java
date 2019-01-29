@@ -17,6 +17,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestedCashAdvance;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractFile;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestDetailFileLine;
@@ -29,7 +30,7 @@ import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 
 public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequestExtractFileValidationService {
-	private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(ConcurRequestExtractFileValidationServiceImpl.class);
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
@@ -40,23 +41,24 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         boolean headerValidationPassed;
         LOG.info("requestExtractHeaderRowValidatesToFileContents:  batchDate=" + requestExtractFile.getBatchDate() + "=   recordCount=" + requestExtractFile.getRecordCount() + "=     totalApprovedAmount=" + requestExtractFile.getTotalApprovedAmount() + "=");
         headerValidationPassed = (fileRowCountMatchesHeaderRowCount(requestExtractFile, reportData) &&
-                                  fileOnlyContainsOurEmployeeCustomerIndicator(requestExtractFile, reportData) &&
+                                  fileContainsRequestDetailLines(requestExtractFile, reportData) &&
                                   fileTotalApprovedAmountsAggregatedByRequestIdMatchHeaderTotalApprovedAmount(requestExtractFile, reportData));
         LOG.info("requestExtractHeaderRowValidatesToFileContents:  Header validation : " + ((headerValidationPassed) ? "PASSED" : "FAILED"));
         return headerValidationPassed;
     }
 
     public void performRequestDetailLineValidation(ConcurRequestExtractRequestDetailFileLine detailFileLine, List<String> uniqueRequestIdsInFile) {
-        if (requestDetailFileLineIsCashAdvance(detailFileLine)) {
-            boolean lineValidationPassed = true;
-            lineValidationPassed =  requestedCashAdvanceHasNotBeenClonedInFile(detailFileLine, uniqueRequestIdsInFile);
+        boolean lineValidationPassed = requestedDetailLineContainsValidEmployeeGroupId(detailFileLine);
+        if (lineValidationPassed) { 
+            lineValidationPassed &= requestDetailFileLineIsCashAdvance(detailFileLine);
+            lineValidationPassed &= requestedCashAdvanceHasNotBeenClonedInFile(detailFileLine, uniqueRequestIdsInFile);
             lineValidationPassed &= requestedCashAdvanceHasNotBeenUsedInExpenseReport(detailFileLine);
             lineValidationPassed &= requestedCashAdvanceIsNotBeingDuplicated(detailFileLine);
             lineValidationPassed &= requestedCashAdvanceAccountingInformationIsValid(detailFileLine);
 
             detailFileLine.getValidationResult().setValidCashAdvanceLine(lineValidationPassed);
-            LOG.info("performRequestDetailLineValidation: Detail File Line validation : " + ((lineValidationPassed) ? "PASSED" : ("FAILED" + KFSConstants.NEWLINE + detailFileLine.toString())));
         }
+        LOG.info("performRequestDetailLineValidation: Detail File Line validation : " + ((lineValidationPassed) ? "PASSED" : ("FAILED" + KFSConstants.NEWLINE + detailFileLine.toString())));
     }
 
     /**
@@ -234,37 +236,25 @@ public class ConcurRequestExtractFileValidationServiceImpl implements ConcurRequ
         }
     }
 
-    private boolean fileOnlyContainsOurEmployeeCustomerIndicator(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
+    private boolean fileContainsRequestDetailLines(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
         if ( CollectionUtils.isEmpty(requestExtractFile.getRequestDetails()) ) {
             reportData.getHeaderValidationErrors().add(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_HAS_NO_REQUEST_DETAIL_LINES));
-            LOG.error("fileOnlyContainsOurEmployeeCustomerIndicator: " + getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_HAS_NO_REQUEST_DETAIL_LINES));
+            LOG.error("fileContainsRequestDetailLines: " + getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_HAS_NO_REQUEST_DETAIL_LINES));
             return false;
-        }
-        else {
-            if (customerProfileIsValidOnAllRequestDetailLines(requestExtractFile)) {
-                return true;
-            }
-            else {
-                String fileValidationError = MessageFormat.format(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP), getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID));
-                reportData.getHeaderValidationErrors().add(fileValidationError);
-                LOG.error("fileOnlyContainsOurEmployeeCustomerIndicator: " + fileValidationError);
-                return false;
-            }
+        } else {
+            return true;
         }
     }
 
-    private boolean customerProfileIsValidOnAllRequestDetailLines(ConcurRequestExtractFile requestExtractFile) {
-        if ( CollectionUtils.isEmpty(requestExtractFile.getRequestDetails()) ) {
-            return false;
+    private boolean requestedDetailLineContainsValidEmployeeGroupId(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        if (concurEmployeeInfoValidationService.isEmployeeGroupIdValid(detailFileLine.getEmployeeGroupId())) {
+            detailFileLine.getValidationResult().setValidEmployeeGroupId(true);
+        } else {
+            detailFileLine.getValidationResult().setValidEmployeeGroupId(false);
+            String validationError = MessageFormat.format(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP), detailFileLine.getEmployeeGroupId(), getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_GROUP_ID));
+            detailFileLine.getValidationResult().addMessage(validationError);
         }
-        else {
-            List<ConcurRequestExtractRequestDetailFileLine> requestDetailLines = requestExtractFile.getRequestDetails();
-            boolean foundOnAllLines = true;
-            for (ConcurRequestExtractRequestDetailFileLine detailLine : requestDetailLines) {
-                foundOnAllLines &= concurEmployeeInfoValidationService.isEmployeeGroupIdValid(detailLine.getEmployeeGroupId());
-           }
-            return foundOnAllLines;
-        }
+        return detailFileLine.getValidationResult().isValidEmployeeGroupId();
     }
 
     private boolean fileTotalApprovedAmountsAggregatedByRequestIdMatchHeaderTotalApprovedAmount(ConcurRequestExtractFile requestExtractFile, ConcurRequestExtractBatchReportData reportData) {
