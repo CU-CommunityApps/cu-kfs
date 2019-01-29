@@ -9,9 +9,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.service.impl.AttachmentServiceImpl;
+import org.kuali.rice.core.api.mo.common.GloballyUnique;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedInputStream;
@@ -67,9 +67,9 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
     /**
      * Overridden to add anti-virus scanning.
      *
-     * @see org.kuali.kfs.krad.service.impl.AttachmentServiceImpl#createAttachment(PersistableBusinessObject, String, String, int, InputStream, String)
+     * @see org.kuali.kfs.krad.service.impl.AttachmentServiceImpl#createAttachment(GloballyUnique, String, String, int, InputStream, String)
      */
-    public Attachment createAttachment(PersistableBusinessObject parent, String uploadedFileName, String mimeType, int fileSize, InputStream fileContents, String attachmentTypeCode) throws IOException {
+    public Attachment createAttachment(GloballyUnique parent, String uploadedFileName, String mimeType, int fileSize, InputStream fileContents, String attachmentTypeCode) throws IOException {
         if(parent == null) {
             throw new IllegalArgumentException("invalid (null or uninitialized) document");
         } else if(StringUtils.isBlank(uploadedFileName)) {

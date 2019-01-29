@@ -1,7 +1,7 @@
 /**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2018 Kuali, Inc.
+ * Copyright 2005-2019 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -463,8 +463,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
             if (workFlowDocument.isCanceled()) {
                 // if doc is FINAL or canceled, saving should not be creating GL entries
                 setGeneralLedgerPendingEntries(new ArrayList());
-            } else if (workFlowDocument.isFinal()) {
-            } else {
+            } else if (!workFlowDocument.isFinal()) {
                 super.prepareForSave(event);
             }
         }

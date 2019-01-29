@@ -1,7 +1,7 @@
 /**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2018 Kuali, Inc.
+ * Copyright 2005-2019 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -442,9 +442,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @Override
     public void deleteItem(int lineNum) {
-        if (items.remove(lineNum) == null) {
-            // throw error here
-        }
+        items.remove(lineNum); // throw error here
         renumberItems(lineNum);
     }
 

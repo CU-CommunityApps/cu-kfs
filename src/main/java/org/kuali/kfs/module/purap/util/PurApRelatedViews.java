@@ -1,7 +1,7 @@
 /**
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2018 Kuali, Inc.
+ * Copyright 2005-2019 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -179,9 +179,7 @@ public class PurApRelatedViews {
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        }
-        catch (WorkflowException ex) {
-        } catch (UnknownDocumentTypeException ex) {
+        } catch (WorkflowException | UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
         }
 

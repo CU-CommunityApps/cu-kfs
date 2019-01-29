@@ -71,10 +71,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             // if a payment terms discount exists but not set on teh doc, remove
             if (StringUtils.equals(item.getItemTypeCode(), PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE)) {
                 PaymentTermType pt = document.getVendorPaymentTerms();
-                if ((pt != null) && (pt.getVendorPaymentTermsPercent() != null) && (BigDecimal.ZERO.compareTo(pt.getVendorPaymentTermsPercent()) != 0)) {
-                    // discount ok
-                }
-                else {
+                if ((pt == null) || (pt.getVendorPaymentTermsPercent() == null)
+                        || (BigDecimal.ZERO.compareTo(pt.getVendorPaymentTermsPercent()) == 0)) {
                     // remove discount
                     itemsToRemove.add(item);
                 }
