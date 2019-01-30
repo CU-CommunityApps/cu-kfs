@@ -171,7 +171,9 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     }
 
     private boolean isDetailFileLineValidCashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
-        return (detailFileLine.getValidationResult().isCashAdvanceLine() && detailFileLine.getValidationResult().isValidCashAdvanceLine());
+        return (detailFileLine.getValidationResult().isValidEmployeeGroupId()
+                && detailFileLine.getValidationResult().isCashAdvanceLine()
+                && detailFileLine.getValidationResult().isValidCashAdvanceLine());
     }
 
     private boolean isDetailFileLineClonedCashAdvanceRequest(ConcurRequestExtractRequestDetailFileLine detailFileLine) {
@@ -191,7 +193,12 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     }
 
     private void updateReportDataForDetailFileLineBeingProcessed(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine, int totalPdpDetailRecordsCount, KualiDecimal totalPdpDetailRecordsAmount) {
-        if (isDetailFileLineValidCashAdvanceRequest(detailFileLine)) {
+        if (detailFileLine.getValidationResult().isNotValidEmployeeGroupId()) {
+            updateReportDataEmployeeGroupIdValidationErrorCountAndAmountTotals(reportData, detailFileLine);
+            updateReportDataWithFileLineValidationError(reportData, detailFileLine);
+            LOG.info("updateReportDataForDetailFileLineBeingProcessed: Invalid Employee Group ID detected :  " + KFSConstants.NEWLINE + detailFileLine.toString());
+        }
+        else if (isDetailFileLineValidCashAdvanceRequest(detailFileLine)) {
             updateReportDataPdpFeedFileCountAndAmountTotals(reportData, totalPdpDetailRecordsCount, totalPdpDetailRecordsAmount);
             LOG.info("updateReportDataForDetailFileLineBeingProcessed: Cash advance included in PDP feed file :  " + KFSConstants.NEWLINE + detailFileLine.toString());
         }
@@ -246,6 +253,11 @@ public class ConcurCashAdvancePdpFeedFileServiceImpl implements ConcurCashAdvanc
     private void updateReportDataTravelRequestsOnlyCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
         reportData.getRecordsBypassedTravelRequestOnly().incrementRecordCount();
         reportData.getRecordsBypassedTravelRequestOnly().addDollarAmount(detailFileLine.getRequestAmount());
+    }
+
+    private void updateReportDataEmployeeGroupIdValidationErrorCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
+        reportData.getRecordsBypassedInvalidEmployeeGroupId().incrementRecordCount();
+        reportData.getRecordsBypassedInvalidEmployeeGroupId().addDollarAmount(detailFileLine.getRequestAmount());
     }
 
     private void updateReportDataValidationErrorCountAndAmountTotals(ConcurRequestExtractBatchReportData reportData, ConcurRequestExtractRequestDetailFileLine detailFileLine) {
