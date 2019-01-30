@@ -74,6 +74,10 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     protected String getContractsGrantsInvoiceDocumentWarningMessage(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+        if (contractsGrantsInvoiceDocument.isCorrectionDocument()) {
+            return StringUtils.EMPTY;
+        }
+
         List<String> warningMessages = new ArrayList<>();
         ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
         if (contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
@@ -108,7 +112,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         if (dateTimeService.dateDiff(billingPeriodEndDate, billingPeriodStartDate, false) >= 1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE));
         }
-        if (dateTimeService.dateDiff(dateTimeService.getCurrentDate(), billingPeriodStartDate, false) >= 1) {
+        if (dateTimeService.dateDiff(dateTimeService.getCurrentDate(), billingPeriodEndDate, false) >= 1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_TODAY));
         }
 
