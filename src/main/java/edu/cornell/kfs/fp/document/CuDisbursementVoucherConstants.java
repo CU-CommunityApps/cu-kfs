@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.document;
 
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 
-public interface CuDisbursementVoucherConstants extends DisbursementVoucherConstants {
+public class CuDisbursementVoucherConstants extends DisbursementVoucherConstants {
 
     // Prefixes defined for the DV extract process to identify notes 
     public static String DV_EXTRACT_NOTE_PREFIX_PREPARER = "Info: ";

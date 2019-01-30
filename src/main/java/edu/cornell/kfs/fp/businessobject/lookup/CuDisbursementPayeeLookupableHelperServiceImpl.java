@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.fp.businessobject.lookup.DisbursementPayeeLookupableHelperServiceImpl;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -187,7 +188,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
                             StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
                         if (StringUtils.isNotBlank(personDetail.getEmployeeStatusCode()) && 
                                 (personDetail.getEmployeeStatusCode().equals(ACTIVE)) || personDetail.getEmployeeStatusCode().equals(RETIRED)) {
-                            CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, DisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
+                            CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, KFSConstants.PaymentPayeeTypes.EMPLOYEE);
                             payeeList.add(payee);
                         }
                         else {
