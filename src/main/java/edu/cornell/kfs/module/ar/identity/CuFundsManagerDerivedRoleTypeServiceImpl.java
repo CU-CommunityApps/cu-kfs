@@ -18,20 +18,26 @@ public class CuFundsManagerDerivedRoleTypeServiceImpl extends FundsManagerDerive
     public List<RoleMembership> getRoleMembersFromDerivedRole(
             String namespaceCode, String roleName, Map<String, String> qualification) {
         if (MapUtils.isNotEmpty(qualification)) {
-            Map<String, Object> fundManagerCriteria = new HashMap<>();
-            String principalId = qualification.get(KimConstants.AttributeConstants.PRINCIPAL_ID);
-            String proposalNumber = qualification.get(KFSPropertyConstants.PROPOSAL_NUMBER);
-            if (StringUtils.isNotBlank(principalId)) {
-                fundManagerCriteria.put(KimConstants.AttributeConstants.PRINCIPAL_ID, principalId);
-            }
-            if (StringUtils.isNotBlank(proposalNumber)) {
-                fundManagerCriteria.put(KFSPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
-            }
+            Map<String, Object> fundManagerCriteria = buildFundManagerSearchCriteria(qualification);
             if (MapUtils.isNotEmpty(fundManagerCriteria)) {
                 return getRoleMembers(fundManagerCriteria);
             }
         }
         return Collections.emptyList();
+    }
+
+    protected Map<String, Object> buildFundManagerSearchCriteria(Map<String, String> qualification) {
+        Map<String, Object> fundManagerCriteria = new HashMap<>();
+        String principalId = qualification.get(KimConstants.AttributeConstants.PRINCIPAL_ID);
+        String proposalNumber = qualification.get(KFSPropertyConstants.PROPOSAL_NUMBER);
+        
+        if (StringUtils.isNotBlank(principalId)) {
+            fundManagerCriteria.put(KimConstants.AttributeConstants.PRINCIPAL_ID, principalId);
+        }
+        if (StringUtils.isNotBlank(proposalNumber)) {
+            fundManagerCriteria.put(KFSPropertyConstants.PROPOSAL_NUMBER, proposalNumber);
+        }
+        return fundManagerCriteria;
     }
 
 }
