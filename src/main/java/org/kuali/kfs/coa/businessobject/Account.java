@@ -741,9 +741,9 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     @Override
     public void refreshReferenceObject(String referenceObjectName) {
-        if (!referenceObjectName.equals("accountFiscalOfficerUser")
-                && !referenceObjectName.equals("accountSupervisoryUser")
-                && !referenceObjectName.equals("accountManagerUser")) {
+        if (!"accountFiscalOfficerUser".equals(referenceObjectName)
+                && !"accountSupervisoryUser".equals(referenceObjectName)
+                && !"accountManagerUser".equals(referenceObjectName)) {
             super.refreshReferenceObject(referenceObjectName);
         }
     }
@@ -1244,7 +1244,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      * @return true if the given account is funded by a federal agency or associated with federal pass through indicator;
      *         otherwise false
      */
-    public boolean isAwardedByFederalAgency(List<String> federalAgencyTypeCodes) {
+    public boolean isAwardedByFederalAgency(Collection<String> federalAgencyTypeCodes) {
         return SpringContext.getBean(ContractsAndGrantsModuleService.class).isAwardedByFederalAgency(getChartOfAccountsCode(), getAccountNumber(), federalAgencyTypeCodes);
     }
 

@@ -452,7 +452,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      */
     @Override
     public String toString() {
-        class PayeeACHAccountToStringBuilder extends ReflectionToStringBuilder {
+    		final class PayeeACHAccountToStringBuilder extends ReflectionToStringBuilder {
             private PayeeACHAccountToStringBuilder(Object object) {
                 super(object);
             }
