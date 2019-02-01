@@ -120,9 +120,6 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         if (dateTimeService.dateDiff(billingPeriodEndDate, lastBilledDate, false) >= 1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE));
         }
-        if (dateTimeService.dateDiff(billingPeriodStartDate, lastBilledDate, false) >= 1) {
-            warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_LAST_BILLED_DATE));
-        }
         if (dateTimeService.dateDiff(billingPeriodEndDate, lastBilledDate, false) <= -1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_LAST_BILLED_DATE));
         }
