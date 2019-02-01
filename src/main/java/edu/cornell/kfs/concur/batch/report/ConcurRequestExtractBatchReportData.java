@@ -12,7 +12,6 @@ public class ConcurRequestExtractBatchReportData implements ConcurEmailableRepor
     private String concurFileName;
     private List<String> headerValidationErrors;
     private ConcurBatchReportSummaryItem cashAdvancesProcessedInPdp;
-    private ConcurBatchReportSummaryItem recordsBypassedInvalidEmployeeGroupId;
     private ConcurBatchReportSummaryItem cashAdvancesBypassedRelatedToExpenseReport;
     private ConcurBatchReportSummaryItem recordsBypassedTravelRequestOnly;
     private ConcurBatchReportSummaryItem duplicateCashAdvanceRequests;
@@ -25,7 +24,6 @@ public class ConcurRequestExtractBatchReportData implements ConcurEmailableRepor
         this.concurFileName = KFSConstants.EMPTY_STRING;
         this.headerValidationErrors = new ArrayList<String>();
         this.cashAdvancesProcessedInPdp = new ConcurBatchReportSummaryItem();
-        this.recordsBypassedInvalidEmployeeGroupId = new ConcurBatchReportSummaryItem();
         this.cashAdvancesBypassedRelatedToExpenseReport = new ConcurBatchReportSummaryItem();
         this.recordsBypassedTravelRequestOnly = new ConcurBatchReportSummaryItem();
         this.duplicateCashAdvanceRequests = new ConcurBatchReportSummaryItem();
@@ -38,7 +36,6 @@ public class ConcurRequestExtractBatchReportData implements ConcurEmailableRepor
     public ConcurRequestExtractBatchReportData (String concurFileName,
             List<String> headerValidationErrors,
             ConcurBatchReportSummaryItem cashAdvancesProcessedInPdp,
-            ConcurBatchReportSummaryItem recordsBypassedInvalidEmployeeGroupId,
             ConcurBatchReportSummaryItem cashAdvancesBypassedRelatedToExpenseReport,
             ConcurBatchReportSummaryItem recordsBypassedTravelRequestOnly,
             ConcurBatchReportSummaryItem duplicateCashAdvanceRequests,
@@ -49,7 +46,6 @@ public class ConcurRequestExtractBatchReportData implements ConcurEmailableRepor
         this.concurFileName = concurFileName;
         this.headerValidationErrors = headerValidationErrors;
         this.cashAdvancesProcessedInPdp = cashAdvancesProcessedInPdp;
-        this.recordsBypassedInvalidEmployeeGroupId = recordsBypassedInvalidEmployeeGroupId;
         this.cashAdvancesBypassedRelatedToExpenseReport = cashAdvancesBypassedRelatedToExpenseReport;
         this.recordsBypassedTravelRequestOnly = recordsBypassedTravelRequestOnly;
         this.duplicateCashAdvanceRequests = duplicateCashAdvanceRequests;
@@ -161,14 +157,6 @@ public class ConcurRequestExtractBatchReportData implements ConcurEmailableRepor
     @Override
     public String getReportTypeName() {
         return "request extract";
-    }
-
-    public ConcurBatchReportSummaryItem getRecordsBypassedInvalidEmployeeGroupId() {
-        return recordsBypassedInvalidEmployeeGroupId;
-    }
-
-    public void setRecordsBypassedInvalidEmployeeGroupId(ConcurBatchReportSummaryItem recordsBypassedInvalidEmployeeGroupId) {
-        this.recordsBypassedInvalidEmployeeGroupId = recordsBypassedInvalidEmployeeGroupId;
     }
 
 }

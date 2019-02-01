@@ -29,7 +29,6 @@ import edu.cornell.kfs.concur.batch.businessobject.ConcurRequestExtractRequestEn
 import edu.cornell.kfs.concur.batch.fixture.ConcurApplicationPropertiesFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurParameterConstantsFixture;
 import edu.cornell.kfs.concur.batch.fixture.ConcurRequestExtractFileFixture;
-import edu.cornell.kfs.concur.batch.fixture.ConcurRequestExtractRequestDetailFileLineFixture;
 import edu.cornell.kfs.concur.batch.report.ConcurRequestExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -104,27 +103,14 @@ public class ConcurRequestExtractFileValidationServiceImplTest {
     }
 
     @Test
-    public void testFileContainsDetailLineWithBadEmployeeGroupIdFileShouldNotFail() {
-        LOG.info("testFileContainsDetailLineWithBadEmployeeGroupIdFileShouldNotFail");
+    public void testFileContainsBadEmployeeGroupId() {
+        LOG.info("testFileContainsBadEmployeeGroupId");
         ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_EMPLOYEE_GROUP_ID_FILE.createConcurRequestExtractFile();
         ConcurRequestExtractBatchReportData reportData = new ConcurRequestExtractBatchReportData();
-        assertTrue("Expected Result: Request Detail row contains BAD Employee Group Id. File should NOT fail.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
-        LOG.info("Header Validation Error Messages: " + reportData.getHeaderValidationErrors());
+        assertFalse("Expected Result: Request Detail row contains BAD Employee Group Id.", concurRequestExtractFileValidationService.requestExtractHeaderRowValidatesToFileContents(testFile, reportData));
+        LOG.info(reportData.getHeaderValidationErrors());
         LOG.info(KFSConstants.NEWLINE);
         reportData = null;
-    }
-
-    @Test
-    public void testFileContainsDetailLineWithBadEmployeeGroupIdLineShouldFail() {
-        LOG.info("testFileContainsDetailLineWithBadEmployeeGroupIdLineShouldFail");
-        ConcurRequestExtractFile testFile = ConcurRequestExtractFileFixture.BAD_EMPLOYEE_GROUP_ID_FILE.createConcurRequestExtractFile();
-        ConcurRequestExtractRequestDetailFileLine testDetailFileLine = testFile.getRequestDetails().get(1);
-        List<String> uniqueRequestIdsInFile = new ArrayList<String>();
-        concurRequestExtractFileValidationService.performRequestDetailLineValidation(testDetailFileLine, uniqueRequestIdsInFile);
-        assertFalse("Expected Result: Request Detail row contains BAD Employee Group Id. Single line should fail.", testDetailFileLine.getValidationResult().isValidEmployeeGroupId());
-        LOG.info("File Detail Line Error Messages: " + testDetailFileLine.getValidationResult().getErrorMessagesAsOneFormattedString());
-        LOG.info(KFSConstants.NEWLINE);
-        uniqueRequestIdsInFile = null;
     }
 
     @Test

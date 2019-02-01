@@ -22,7 +22,7 @@ public class ConcurApplicationPropertiesFixture {
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_INVALID_KEYS_FOR_DUPLICATE_CHECK, "Could not check for duplicate cash advance. Requested cash advance was not processed.");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_HEADER_ROW_COUNT_FAILED, "Header row count validation failed. Header row line count was ({0}) while lines counted in file were ({1}).");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_HAS_NO_REQUEST_DETAIL_LINES, "There are no Request Detail lines in the file.");
-        this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP, "Payee has an invalid employee customer profile group of {0}. Valid Values: {1}");
+        this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_CONTAINS_BAD_CUSTOMER_PROFILE_GROUP, "File contains Request Detail lines that do not match the employee customer profile group of: {0}");
         this.definedProperties.put(ConcurKeyConstants.CONCUR_REQUEST_EXTRACT_HEADER_AMOUNT_FILE_AMOUNT_MISMATCH, "Header amount validation failed. Request Extract header line amount was ({0}) while file calculated amount was ({1}).");
     }
     

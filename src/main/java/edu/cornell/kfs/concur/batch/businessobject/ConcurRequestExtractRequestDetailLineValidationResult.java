@@ -10,7 +10,6 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
     private boolean cashAdvanceUsedInExpenseReport;
     private boolean duplicatedCashAdvanceLine;
     private boolean validCashAdvanceLine;
-    private boolean validEmployeeGroupId;
 
     public ConcurRequestExtractRequestDetailLineValidationResult() {
         super();
@@ -19,7 +18,6 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
         this.cashAdvanceUsedInExpenseReport = false;
         this.duplicatedCashAdvanceLine = false;
         this.validCashAdvanceLine = false;
-        this.validEmployeeGroupId = false;
     }
 
     public boolean isCashAdvanceLine() {
@@ -80,18 +78,6 @@ public class ConcurRequestExtractRequestDetailLineValidationResult extends Valid
 
     public void setValidCashAdvanceLine(boolean validCashAdvanceLine) {
         this.validCashAdvanceLine = validCashAdvanceLine;
-    }
-
-    public boolean isValidEmployeeGroupId() {
-        return validEmployeeGroupId;
-    }
-
-    public boolean isNotValidEmployeeGroupId() {
-        return !validEmployeeGroupId;
-    }
-
-    public void setValidEmployeeGroupId(boolean validEmployeeGroupId) {
-        this.validEmployeeGroupId = validEmployeeGroupId;
     }
 
 }
