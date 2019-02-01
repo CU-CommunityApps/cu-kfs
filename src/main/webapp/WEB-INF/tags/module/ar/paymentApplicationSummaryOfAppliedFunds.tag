@@ -78,7 +78,7 @@
 													<c:out value="${invoicePaidApplied.invoiceDetail.invoiceItemDescription}" />&nbsp;
 												</td>
 												<td style="text-align: right;">
-													$<c:out value="${invoicePaidApplied.invoiceItemAppliedAmount}" />
+                                                    <fmt:formatNumber value="${invoicePaidApplied.invoiceItemAppliedAmount}" currencySymbol="$" type="currency"/>
 												</td>
                                                 <c:if test="${readOnly ne true}">
                                                     <td>
@@ -133,27 +133,23 @@
 								    <c:if test="${!showCCAndBtbA}">
 		                        	    <c:if test="${readOnly ne true}">
 											<td style="text-align: right;">
-												${KualiForm.totalFromControl}
-												<!--$<c:out value="${KualiForm.totalFromControl}" />-->
+                                                <fmt:formatNumber value="${KualiForm.totalFromControl}" currencySymbol="$" type="currency"/>
 											</td>
 											<td style="text-align: right;">
-												${KualiForm.unallocatedBalance}
-												<!--$<c:out value="${KualiForm.unallocatedBalance}" />-->
+                                                <fmt:formatNumber value="${KualiForm.unallocatedBalance}" currencySymbol="$" type="currency"/>
 											</td>
 										</c:if>
 									</c:if>
 									<c:if test="${showCCAndBtbA}">
 										<td style="text-align: right;">
-											 ${KualiForm.document.documentHeader.financialDocumentTotalAmount}
+                                            <fmt:formatNumber value="${KualiForm.document.documentHeader.financialDocumentTotalAmount}" currencySymbol="$" type="currency"/>
 										</td>
 										<td style="text-align: right;">
-											${KualiForm.unallocatedBalance}
-											<!--$<c:out value="${KualiForm.unallocatedBalance}" />-->
+                                            <fmt:formatNumber value="${KualiForm.unallocatedBalance}" currencySymbol="$" type="currency"/>
 										</td>
 									</c:if>
 									<td style="text-align: right;">
-										${KualiForm.totalApplied}
-										<!--$<c:out value="${KualiForm.totalApplied}" />-->
+                                        <fmt:formatNumber value="${KualiForm.totalApplied}" currencySymbol="$" type="currency"/>
 									</td>
 								</tr>
 							</table>
