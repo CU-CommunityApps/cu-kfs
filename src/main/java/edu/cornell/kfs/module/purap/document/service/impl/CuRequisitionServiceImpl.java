@@ -115,7 +115,7 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
         // we don't have to loop through items too many times.
         String purchaseOrderRequiresCommodityCode = parameterService.getParameterValueAsString(PurchaseOrderDocument.class,
                 PurapRuleConstants.ITEMS_REQUIRE_COMMODITY_CODE_IND);
-        boolean commodityCodeRequired = purchaseOrderRequiresCommodityCode.equals("Y");
+        boolean commodityCodeRequired = "Y".equals(purchaseOrderRequiresCommodityCode);
         
         for (Iterator iter = requisition.getItems().iterator(); iter.hasNext();) {
             RequisitionItem item = (RequisitionItem) iter.next();

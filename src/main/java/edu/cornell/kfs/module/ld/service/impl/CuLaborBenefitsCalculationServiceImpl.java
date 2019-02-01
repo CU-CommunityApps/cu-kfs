@@ -38,7 +38,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
                 LOG.debug("sysParam2: " + sysParam2);
 
                 //if sysParam2 == Y then check to see if it's a cost sharing sub account
-                if (sysParam2.equalsIgnoreCase("Y")) {
+                if ("Y".equalsIgnoreCase(sysParam2)) {
                     //lookup the A21SubAccount to get the cost sharing source account
                     Map<String, Object> subFieldValues = new HashMap<String, Object>();
                     subFieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
