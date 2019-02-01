@@ -32,7 +32,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     protected String reportConcurFileNameLabel;
     protected String summarySubTitle;
     protected String cashAdvancesProcessedInPdpLabel;
-    protected String recordsBypassedInvalidEmployeeGroupIdLabel;
     protected String cashAdvancesBypassedRelatedToExpenseReportLabel;
     protected String recordsBypassedTravelRequestOnlyLabel;
     protected String duplicateCashAdvanceRequestsLabel;
@@ -125,7 +124,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, totalsBreak);
         getReportWriterService().writeFormattedMessageLine(hdrRowFormat, getRecordsNotSentToPdpSubLabel(), KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING);
         getReportWriterService().writeNewLines(1);
-        getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsBypassedInvalidEmployeeGroupId().getItemLabel(), reportData.getRecordsBypassedInvalidEmployeeGroupId().getRecordCount(), reportData.getRecordsBypassedInvalidEmployeeGroupId().getDollarAmount().toString());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel(), reportData.getCashAdvancesBypassedRelatedToExpenseReport().getRecordCount(), reportData.getCashAdvancesBypassedRelatedToExpenseReport().getDollarAmount().toString());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getRecordsBypassedTravelRequestOnly().getItemLabel(), reportData.getRecordsBypassedTravelRequestOnly().getRecordCount(), reportData.getRecordsBypassedTravelRequestOnly().getDollarAmount().toString());
         getReportWriterService().writeFormattedMessageLine(rowFormat, reportData.getDuplicateCashAdvanceRequests().getItemLabel(), reportData.getDuplicateCashAdvanceRequests().getRecordCount(), reportData.getDuplicateCashAdvanceRequests().getDollarAmount().toString());
@@ -200,9 +198,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
     private void ensureSummaryLabelsHaveValues (ConcurRequestExtractBatchReportData reportData) {
         if (StringUtils.isEmpty(reportData.getCashAdvancesProcessedInPdp().getItemLabel())) {
             reportData.getCashAdvancesProcessedInPdp().setItemLabel(getCashAdvancesProcessedInPdpLabel());
-        }
-        if (StringUtils.isEmpty(reportData.getRecordsBypassedInvalidEmployeeGroupId().getItemLabel())) {
-            reportData.getRecordsBypassedInvalidEmployeeGroupId().setItemLabel(this.getRecordsBypassedInvalidEmployeeGroupIdLabel());
         }
         if (StringUtils.isEmpty(reportData.getCashAdvancesBypassedRelatedToExpenseReport().getItemLabel())) {
             reportData.getCashAdvancesBypassedRelatedToExpenseReport().setItemLabel(getCashAdvancesBypassedRelatedToExpenseReportLabel());
@@ -350,14 +345,6 @@ public class ConcurRequestExtractReportServiceImpl implements ConcurRequestExtra
 
     public void setConcurReportEmailService(ConcurReportEmailService concurReportEmailService) {
         this.concurReportEmailService = concurReportEmailService;
-    }
-
-    public String getRecordsBypassedInvalidEmployeeGroupIdLabel() {
-        return recordsBypassedInvalidEmployeeGroupIdLabel;
-    }
-
-    public void setRecordsBypassedInvalidEmployeeGroupIdLabel(String recordsBypassedInvalidEmployeeGroupIdLabel) {
-        this.recordsBypassedInvalidEmployeeGroupIdLabel = recordsBypassedInvalidEmployeeGroupIdLabel;
     }
 
 }
