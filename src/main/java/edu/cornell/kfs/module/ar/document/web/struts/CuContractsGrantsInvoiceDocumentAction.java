@@ -145,7 +145,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         if (CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION.equals(question)) {
             if (ConfirmationQuestion.NO.equals(buttonClicked)) {
                 forward = mapping.findForward(KFSConstants.MAPPING_BASIC);
-            } else if (ConfirmationQuestion.YES.equals(buttonClicked) && contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().isFinalBillIndicator()) {
+            } else if (ConfirmationQuestion.YES.equals(buttonClicked)) {
                 try {
                     Pair<Date, Date> billingPeriod = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingPeriod());
                     Date billingPeriodEndDate = billingPeriod.getRight();
