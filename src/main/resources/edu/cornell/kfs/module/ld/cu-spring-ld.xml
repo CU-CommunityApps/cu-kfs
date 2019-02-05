@@ -64,13 +64,6 @@
             </list>
         </property>
     </bean>
-    
-    <bean id="cuLaborObjectDao" parent="platformAwareDao" class="edu.cornell.kfs.module.ld.dataaccess.impl.CULaborObjectDaoOjb" />
-    <bean id="cuLaborObjectService" class="edu.cornell.kfs.module.ld.service.impl.CULaborObjectServiceImpl">
-		<property name="cuLaborObjectDao">
-			<ref bean="cuLaborObjectDao" />
-		</property>
-	</bean>
 	
 	<bean id="laborLedgerBatchFileLookupableHelperService" class="edu.cornell.kfs.module.ld.businessobject.lookup.LaborLedgerBatchFileLookupableHelperServiceImpl" scope="prototype" parent="cf.lookupableHelperService">
          <property name="dateTimeService" ref="dateTimeService" />
