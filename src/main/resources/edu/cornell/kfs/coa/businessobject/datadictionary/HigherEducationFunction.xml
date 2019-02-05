@@ -50,43 +50,4 @@
 	            </list>
 	    </property>
 	</bean>	
-<!-- Business Object Lookup Definition -->
-
-
-	<!-- Business Object Lookup Definition -->
-
-
-	<bean id="HigherEducationFunction-lookupDefinition" parent="HigherEducationFunction-lookupDefinition-parentBean" />
-
-	<bean id="HigherEducationFunction-lookupDefinition-parentBean"
-		abstract="true" parent="LookupDefinition">
-		<property name="title" value="Higher Education Function Lookup" />
-
-		<property name="defaultSort">
-			<bean parent="SortDefinition">
-				<property name="attributeNames">
-					<list>
-						<value>financialHigherEdFunctionCd</value>
-					</list>
-				</property>
-			</bean>
-		</property>
-		<property name="lookupFields">
-			<list>
-				<bean parent="FieldDefinition" p:attributeName="financialHigherEdFunctionCd" />
-				<bean parent="FieldDefinition" p:attributeName="financialHigherEdFunctionNm" />
-				<bean parent="FieldDefinition" p:attributeName="active" />
-			</list>
-		</property>
-		<property name="resultFields">
-			<list>
-				<bean parent="FieldDefinition" p:attributeName="financialHigherEdFunctionCd" />
-				<bean parent="FieldDefinition" p:attributeName="financialHigherEdFunctionNm" />
-				<bean parent="FieldDefinition" p:attributeName="finUnivBdgtOfficeFunctionCd" />
-				<bean parent="FieldDefinition" p:attributeName="finAicpaFunctionCode" />
-				<bean parent="FieldDefinition" p:attributeName="financialFederalFunctionCode" />
-				<bean parent="FieldDefinition" p:attributeName="active" />
-			</list>
-		</property>
-	</bean>
 </beans>
