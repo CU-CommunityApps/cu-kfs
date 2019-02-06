@@ -314,7 +314,5 @@
     <bean id="batchFileLookupable" parent="batchFileLookupable-parentBean" scope="prototype"/>
     <bean id="batchFileLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
           p:lookupableHelperService-ref="batchFileLookupableHelperService"/>
-          
-    <bean id="batchFileDirectoryService" parent="batchFileDirectoryService-parentBean" class="edu.cornell.kfs.sys.service.impl.CuBatchFileDirectoryServiceImpl" />
 
 </beans>
