@@ -25,7 +25,7 @@ public class BeanFilterPostProcessor implements BeanDefinitionRegistryPostProces
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         Arrays.stream(registry.getBeanDefinitionNames())
-                .filter(this::shouldFilterBeanDefinition)
+                .filter(this::shouldRemoveBeanDefinition)
                 .forEach(registry::removeBeanDefinition);
     }
 
@@ -34,7 +34,7 @@ public class BeanFilterPostProcessor implements BeanDefinitionRegistryPostProces
         // Do nothing.
     }
 
-    protected boolean shouldFilterBeanDefinition(String beanName) {
+    protected boolean shouldRemoveBeanDefinition(String beanName) {
         return !beanWhitelist.contains(beanName);
     }
 
