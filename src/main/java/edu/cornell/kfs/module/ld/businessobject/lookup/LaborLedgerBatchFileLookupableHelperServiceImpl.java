@@ -12,8 +12,9 @@ import org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceI
 
 import edu.cornell.kfs.module.ld.businessobject.LaborLedgerBatchFile;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.lookup.CuBatchFileLookupableHelperServiceImpl;
 
-public class LaborLedgerBatchFileLookupableHelperServiceImpl extends BatchFileLookupableHelperServiceImpl {
+public class LaborLedgerBatchFileLookupableHelperServiceImpl extends CuBatchFileLookupableHelperServiceImpl {
 	private static final Logger LOG = LogManager.getLogger(LaborLedgerBatchFileLookupableHelperServiceImpl.class);
 
 	@Override
