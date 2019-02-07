@@ -7,6 +7,8 @@ import java.io.Reader;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.FlatFileObjectSpecification;
 import org.kuali.kfs.sys.batch.FlatFileParseTracker;
@@ -20,6 +22,10 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
 public class CuDelimitedFlatFileParser extends FlatFileParserBase {
+
+    private static final Logger LOG = LogManager.getLogger(CuDelimitedFlatFileParser.class);
+
+    protected Class<? extends FlatFileParseTracker> flatFileParseTrackerClass;
 
     @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
@@ -41,17 +47,23 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
         FlatFileParseTracker tracker = buildNewParseTrackerInstanceFromPrototype();
         tracker.initialize(preSplitSpec);
         
-        for (String[] segmentedLine : flatFileReader) {
-            lineNumber++;
-            String firstLineSegment = (segmentedLine.length > 0) ? segmentedLine[0] : KFSConstants.EMPTY_STRING;
-            Object parseIntoObject = tracker.getObjectToParseInto(firstLineSegment);
-            if (parseIntoObject != null) {
-                FlatFileObjectSpecification parseSpecification = preSplitSpec.getObjectSpecification(parseIntoObject.getClass());
-                if (CollectionUtils.isNotEmpty(parseSpecification.getParseProperties())) {
-                    preSplitSpec.parseLineIntoObject(parseSpecification, segmentedLine, parseIntoObject, lineNumber);
-                    tracker.completeLineParse();
+        try {
+            for (String[] segmentedLine : flatFileReader) {
+                lineNumber++;
+                String firstLineSegment = (segmentedLine.length > 0) ? segmentedLine[0] : KFSConstants.EMPTY_STRING;
+                Object parseIntoObject = tracker.getObjectToParseInto(firstLineSegment);
+                if (parseIntoObject != null) {
+                    FlatFileObjectSpecification parseSpecification = preSplitSpec.getObjectSpecification(parseIntoObject.getClass());
+                    if (CollectionUtils.isNotEmpty(parseSpecification.getParseProperties())) {
+                        preSplitSpec.parseLineIntoObject(parseSpecification, segmentedLine, parseIntoObject, lineNumber);
+                        tracker.completeLineParse();
+                    }
                 }
             }
+        } catch (RuntimeException e) {
+            LOG.error("parseResultFromReader: File parsing encountered an exception on line " + lineNumber
+                    + " or line " + (lineNumber + 1) + "; the data file may have a syntax error");
+            throw e;
         }
         
         return tracker.getParsedObjects();
@@ -82,7 +94,20 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
     }
 
     protected FlatFileParseTracker buildNewParseTrackerInstanceFromPrototype() {
-        return SpringContext.getBean(FlatFileParseTracker.class);
+        if (flatFileParseTrackerClass == null) {
+            return SpringContext.getBean(FlatFileParseTracker.class);
+        } else {
+            try {
+                return flatFileParseTrackerClass.newInstance();
+            } catch (IllegalAccessException | InstantiationException e) {
+                throw new RuntimeException("Could not create tracker of type " + flatFileParseTrackerClass.getName(), e);
+            }
+        }
+        
+    }
+
+    public void setFlatFileParseTrackerClass(Class<? extends FlatFileParseTracker> flatFileParseTrackerClass) {
+        this.flatFileParseTrackerClass = flatFileParseTrackerClass;
     }
 
 }

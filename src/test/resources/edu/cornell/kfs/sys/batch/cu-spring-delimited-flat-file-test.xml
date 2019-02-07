@@ -16,19 +16,21 @@
         </property>
     </bean>
 
-    <bean id="TestCommaDelimitedFileType" class="edu.cornell.kfs.sys.batch.TestDelimitedFlatFileParser" parent="FlatFileParser"
+    <bean id="TestCommaDelimitedFileType" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser"
           p:flatFileSpecification-ref="TestCommaDelimitedFileSpecification"
           p:fileTypeIdentifier="testCommaDelimitedFileType"
           p:fileExtension="csv"
           p:directoryPath="${staging.directory}/sys/batch/flatfile"
-          p:fileNamePrefix="test_comma_delim_"/>
+          p:fileNamePrefix="test_comma_delim_"
+          p:flatFileParseTrackerClass="org.kuali.kfs.sys.batch.FlatFileParseTrackerImpl"/>
 
-    <bean id="TestSemicolonDelimitedFileType" class="edu.cornell.kfs.sys.batch.TestDelimitedFlatFileParser" parent="FlatFileParser"
+    <bean id="TestSemicolonDelimitedFileType" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser"
           p:flatFileSpecification-ref="TestSemicolonDelimitedFileSpecification"
           p:fileTypeIdentifier="testSemicolonDelimitedFileType"
           p:fileExtension="txt"
           p:directoryPath="${staging.directory}/sys/batch/flatfile"
-          p:fileNamePrefix="test_sc_delim_"/>
+          p:fileNamePrefix="test_sc_delim_"
+          p:flatFileParseTrackerClass="org.kuali.kfs.sys.batch.FlatFileParseTrackerImpl"/>
 
     <bean id="TestCommaDelimitedFileSpecification" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileSpecification"
           p:delimiter=",">
