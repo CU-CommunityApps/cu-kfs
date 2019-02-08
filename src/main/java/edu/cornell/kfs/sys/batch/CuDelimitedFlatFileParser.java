@@ -29,12 +29,10 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
 
     @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
-        try (
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(fileByteContent);
-            InputStreamReader streamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(streamReader);
-            CSVReader flatFileReader = buildFlatFileReader(bufferedReader);
-        ) {
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(fileByteContent);
+                InputStreamReader streamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                CSVReader flatFileReader = buildFlatFileReader(bufferedReader)) {
             return parseResultFromReader(flatFileReader);
         } catch (Exception e) {
             throw new ParseException("Exception encountered while parsing delimited flat file", e);
@@ -62,7 +60,7 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
             }
         } catch (RuntimeException e) {
             LOG.error("parseResultFromReader: File parsing encountered an exception on line " + lineNumber
-                    + " or line " + (lineNumber + 1) + "; the data file may have a syntax error");
+                    + " or line " + (lineNumber + 1) + "; the data file may have a syntax error", e);
             throw e;
         }
         
@@ -88,7 +86,8 @@ public class CuDelimitedFlatFileParser extends FlatFileParserBase {
         if (flatFileSpecification == null) {
             throw new IllegalStateException("The flat file specification cannot be null");
         } else if (!(flatFileSpecification instanceof FlatFileSpecificationForProcessingPreSplitLines)) {
-            throw new IllegalStateException("The given flat file specification does not support processing pre-split file lines");
+            throw new IllegalStateException("The flat file specification of type " + flatFileSpecification.getClass().getName()
+                    + " is not an implementation of " + FlatFileSpecificationForProcessingPreSplitLines.class.getName());
         }
         return (FlatFileSpecificationForProcessingPreSplitLines) flatFileSpecification;
     }
