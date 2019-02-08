@@ -190,7 +190,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         if (person != null) {
             ((CuDisbursementVoucherDocument) dvForm.getDocument()).templateEmployee(person);
             dvForm.setTempPayeeIdNumber(payeeIdNumber);
-            dvForm.setOldPayeeType(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_EMPLOYEE);
+            dvForm.setOldPayeeType(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
 
         }
         else {

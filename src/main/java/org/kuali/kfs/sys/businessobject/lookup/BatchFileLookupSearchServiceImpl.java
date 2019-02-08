@@ -61,17 +61,19 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
     }
 
     @Override
+    public int getResultCount(Class<? extends BusinessObjectBase> businessObjectClass,
+            MultivaluedMap<String, String> fieldValues) {
+        return getSearchResults(businessObjectClass, fieldValues).size();
+    }
+
+    @Override
     public Map<String, Object> serializeBusinessObject(BusinessObjectBase businessObject, Person user) {
         BatchFile batchFile = (BatchFile)businessObject;
         Map<String, Object> batchFileInfo = new LinkedHashMap<>();
         batchFileInfo.put("path", batchFile.getPath());
         batchFileInfo.put("fileName", batchFile.getFileName());
-        batchFileInfo.put("lastModifiedDate", batchFile.getLastModifiedDate());
+        batchFileInfo.put("lastModifiedDate", batchFile.getLastModifiedDate().getTime());
         batchFileInfo.put("fileSize", batchFile.getFileSize());
-        List<Map<String, Object>> actionLinks = getActionLinks(batchFile, user);
-        if (!actionLinks.isEmpty()) {
-            batchFileInfo.put("actions", getActionLinks(batchFile, user));
-        }
         return batchFileInfo;
     }
 

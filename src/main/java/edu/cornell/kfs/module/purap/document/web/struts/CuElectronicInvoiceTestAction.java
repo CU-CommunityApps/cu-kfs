@@ -66,7 +66,7 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         response.setContentType("application/xml");
         StringBuffer sbContentDispValue = new StringBuffer();
         String useJavascript = request.getParameter("useJavascript");
-        if (useJavascript == null || useJavascript.equalsIgnoreCase("false")) {
+        if (useJavascript == null || "false".equalsIgnoreCase(useJavascript)) {
             sbContentDispValue.append("attachment");
         }
         else {
