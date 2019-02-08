@@ -59,7 +59,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     @Override
-    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = ((ContractsGrantsInvoiceDocumentForm) form).getContractsGrantsInvoiceDocument();
 
         String warningMessage = getContractsGrantsInvoiceDocumentWarningMessage(contractsGrantsInvoiceDocument);
@@ -70,7 +70,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             }
         }
 
-        return super.route(mapping, form, request, response);
+        return super.save(mapping, form, request, response);
     }
 
     protected String getContractsGrantsInvoiceDocumentWarningMessage(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
