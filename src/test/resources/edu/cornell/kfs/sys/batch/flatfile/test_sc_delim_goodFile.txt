@@ -1,0 +1,3 @@
+HEADER;GoodFile;This file should parse correctly
+DATA;Line1;This is the first line;02/01/2019;100.50;true
+DATA;Line2;This is the second line;02/04/2019;33.00;false

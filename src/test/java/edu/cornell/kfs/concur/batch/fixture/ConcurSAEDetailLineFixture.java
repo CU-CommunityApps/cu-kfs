@@ -13,6 +13,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Helper fixture for generating ConcurStandardAccountingExtractDetailLine POJOs.
@@ -343,6 +344,27 @@ public enum ConcurSAEDetailLineFixture {
     ATM_AND_REQUESTED_CASH_ADVANCE_TEST_LINE6(DEFAULT_UNUSED_ATM_CASH_ADVANCE, ConcurSAEFileFixture.ATM_AND_REQUESTED_CASH_ADVANCE_TEST, -7.00,
             buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_3)),
 
+    DEFAULT_PARSE_FLAT_FILE_TEST_CAR_MILEAGE_DEBIT(DEFAULT_DEBIT, null,
+            buildOverride(LineField.EXPENSE_TYPE, ConcurTestConstants.PERSONAL_CAR_MILEAGE_EXPENSE_TYPE),
+            buildOverride(LineField.PROJECT_CODE, ConcurTestConstants.PROJ_AA_778899),
+            buildOverride(LineField.ORG_REF_ID, ConcurTestConstants.ORG_REF_123ABC),
+            buildOverride(LineField.REPORT_END_DATE, "01/31/2019")),
+    DEFAULT_PARSE_FLAT_FILE_TEST_TAXI_DEBIT(DEFAULT_DEBIT, null,
+            buildOverride(LineField.REPORT_ENTRY_ID, ConcurTestConstants.REPORT_ENTRY_ID_2),
+            buildOverride(LineField.EXPENSE_TYPE, ConcurTestConstants.TAXI_EXPENSE_TYPE),
+            buildOverride(LineField.PROJECT_CODE, ConcurTestConstants.PROJ_QX_400000),
+            buildOverride(LineField.ORG_REF_ID, ConcurTestConstants.ORG_REF_777JJJ),
+            buildOverride(LineField.REPORT_END_DATE, "01/31/2019")),
+
+    PARSE_FLAT_FILE_NO_QUOTES_TEST_LINE1(DEFAULT_PARSE_FLAT_FILE_TEST_CAR_MILEAGE_DEBIT, ConcurSAEFileFixture.PARSE_FLAT_FILE_NO_QUOTES_TEST, 600.11),
+    PARSE_FLAT_FILE_NO_QUOTES_TEST_LINE2(DEFAULT_PARSE_FLAT_FILE_TEST_CAR_MILEAGE_DEBIT, ConcurSAEFileFixture.PARSE_FLAT_FILE_NO_QUOTES_TEST, 400.22),
+    PARSE_FLAT_FILE_NO_QUOTES_TEST_LINE3(DEFAULT_PARSE_FLAT_FILE_TEST_TAXI_DEBIT, ConcurSAEFileFixture.PARSE_FLAT_FILE_NO_QUOTES_TEST, 230.03),
+
+    PARSE_FLAT_FILE_WITH_QUOTES_TEST_LINE1(DEFAULT_PARSE_FLAT_FILE_TEST_CAR_MILEAGE_DEBIT, ConcurSAEFileFixture.PARSE_FLAT_FILE_WITH_QUOTES_TEST, 600.11),
+    PARSE_FLAT_FILE_WITH_QUOTES_TEST_LINE2(DEFAULT_PARSE_FLAT_FILE_TEST_CAR_MILEAGE_DEBIT, ConcurSAEFileFixture.PARSE_FLAT_FILE_WITH_QUOTES_TEST, 400.22,
+            buildOverride(LineField.JOURNAL_PAYER_PAYMENT_TYPE_NAME, ConcurTestConstants.DELIMITED_PAYMENT_TYPE)),
+    PARSE_FLAT_FILE_WITH_QUOTES_TEST_LINE3(DEFAULT_PARSE_FLAT_FILE_TEST_TAXI_DEBIT, ConcurSAEFileFixture.PARSE_FLAT_FILE_WITH_QUOTES_TEST, 230.03),
+
     PDP_EXAMPLE_DEBIT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE),
     PDP_EXAMPLE_CASH_ADVANCE(DEFAULT_CASH_ADVANCE, ConcurSAEFileFixture.PDP_EXAMPLE),
     PDP_EXAMPLE_PRE_PAID_AMOUNT(DEFAULT_DEBIT, ConcurSAEFileFixture.PDP_EXAMPLE,
@@ -525,7 +547,7 @@ public enum ConcurSAEDetailLineFixture {
         detailLine.setOrgRefId(orgRefId);
         detailLine.setJournalDebitCredit(journalDebitCredit);
         detailLine.setJournalAmount(new KualiDecimal(journalAmount));
-        detailLine.setJournalAmountString(String.valueOf(journalAmount));
+        detailLine.setJournalAmountString(getJournalAmountString());
         detailLine.setReportEndDate(ConcurFixtureUtils.toSqlDate(reportEndDate));
         detailLine.setPolicy(ConcurTestConstants.DEFAULT_POLICY_NAME);
         detailLine.setExpenseType(expenseType);
@@ -546,6 +568,11 @@ public enum ConcurSAEDetailLineFixture {
 
     public Boolean getReportEntryIsPersonalFlagAsBoolean() {
         return Boolean.valueOf(KRADConstants.YES_INDICATOR_VALUE.equals(reportEntryIsPersonalFlag));
+    }
+
+    public String getJournalAmountString() {
+        String journalAmountString = new KualiDecimal(journalAmount).toString() + "00";
+        return (journalAmount > 0) ? CUKFSConstants.PLUS_SIGN + journalAmountString : journalAmountString;
     }
 
     // This getter is primarily meant for use as a method reference.

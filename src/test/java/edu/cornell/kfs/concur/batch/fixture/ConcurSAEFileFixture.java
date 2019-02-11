@@ -64,6 +64,8 @@ public enum ConcurSAEFileFixture {
     MULTI_REPORT_ATM_CASH_ADVANCE_TEST(4, 0),
     ATM_CASH_ADVANCE_MULTI_FEE_TEST(6, 0),
     ATM_AND_REQUESTED_CASH_ADVANCE_TEST(6, -13.00),
+    PARSE_FLAT_FILE_NO_QUOTES_TEST("567", "02/01/2019", 3, 1230.36),
+    PARSE_FLAT_FILE_WITH_QUOTES_TEST("568", "02/01/2019", 3, 1230.36),
     
     PDP_EXAMPLE(10, 0.00),
     PDP_TEST(4, 550);
@@ -79,6 +81,13 @@ public enum ConcurSAEFileFixture {
 
     private ConcurSAEFileFixture(String batchDate, int recordCount, double journalAmountTotal) {
         this.batchId = Integer.toString(ordinal() + 1);
+        this.batchDate = batchDate;
+        this.recordCount = Integer.valueOf(recordCount);
+        this.journalAmountTotal = journalAmountTotal;
+    }
+
+    private ConcurSAEFileFixture(String batchId, String batchDate, int recordCount, double journalAmountTotal) {
+        this.batchId = batchId;
         this.batchDate = batchDate;
         this.recordCount = Integer.valueOf(recordCount);
         this.journalAmountTotal = journalAmountTotal;

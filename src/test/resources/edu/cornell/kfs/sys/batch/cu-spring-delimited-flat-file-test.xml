@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="staging.directory">src/test/resources/edu/cornell/kfs</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="TestCommaDelimitedFileType" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser"
+          p:flatFileSpecification-ref="TestCommaDelimitedFileSpecification"
+          p:fileTypeIdentifier="testCommaDelimitedFileType"
+          p:fileExtension="csv"
+          p:directoryPath="${staging.directory}/sys/batch/flatfile"
+          p:fileNamePrefix="test_comma_delim_"
+          p:flatFileParseTrackerClass="org.kuali.kfs.sys.batch.FlatFileParseTrackerImpl"/>
+
+    <bean id="TestSemicolonDelimitedFileType" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser"
+          p:flatFileSpecification-ref="TestSemicolonDelimitedFileSpecification"
+          p:fileTypeIdentifier="testSemicolonDelimitedFileType"
+          p:fileExtension="txt"
+          p:directoryPath="${staging.directory}/sys/batch/flatfile"
+          p:fileNamePrefix="test_sc_delim_"
+          p:flatFileParseTrackerClass="org.kuali.kfs.sys.batch.FlatFileParseTrackerImpl"/>
+
+    <bean id="TestCommaDelimitedFileSpecification" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileSpecification"
+          p:delimiter=",">
+        <property name="objectSpecifications">
+            <list>
+                <bean parent="FlatFilePrefixObjectSpecification"
+                      p:linePrefix="HEADER" p:businessObjectClass="edu.cornell.kfs.sys.batch.dto.DelimitedFileDTO">
+                    <property name="parseProperties">
+                        <list>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="1" p:propertyName="fileId"/>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="description"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="FlatFilePrefixObjectSpecification"
+                      p:linePrefix="DATA"
+                      p:businessObjectClass="edu.cornell.kfs.sys.batch.dto.DelimitedFileLineDTO"
+                      p:parentBusinessObjectClass="edu.cornell.kfs.sys.batch.dto.DelimitedFileDTO"
+                      p:parentTargetProperty="fileLines">
+                    <property name="parseProperties">
+                        <list>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="1" p:propertyName="lineId"/>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="2" p:propertyName="description"/>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="3" p:propertyName="lineDate"
+                                  p:formatterClass="org.kuali.kfs.sys.businessobject.format.BatchDateFormatter"
+                                  p:dateFormat="MM/dd/yyyy"/>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="4" p:propertyName="lineAmount"
+                                  p:formatterClass="edu.cornell.kfs.sys.businessobject.format.RemovePlusSignKualiDecimalFormatter"/>
+                            <bean parent="DelimitedFlatFilePropertySpecification" p:lineSegmentIndex="5" p:propertyName="lineFlag"
+                                  p:formatterClass="org.kuali.rice.core.web.format.BooleanFormatter"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="TestSemicolonDelimitedFileSpecification" parent="TestCommaDelimitedFileSpecification" p:delimiter=";"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="TestCommaDelimitedFileType"/>
+                <idref bean="TestSemicolonDelimitedFileType"/>
+                <idref bean="TestCommaDelimitedFileSpecification"/>
+                <idref bean="TestSemicolonDelimitedFileSpecification"/>
+                <idref bean="dateTimeService"/>
+                <idref bean="FlatFileParser"/>
+                <idref bean="FlatFilePrefixObjectSpecification"/>
+                <idref bean="DelimitedFlatFilePropertySpecification"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>

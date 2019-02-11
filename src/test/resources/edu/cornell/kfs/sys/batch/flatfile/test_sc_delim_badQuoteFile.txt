@@ -1,0 +1,3 @@
+HEADER;BadQuoteFile;"This file should fail parsing; not all of the semicolons are quoted correctly"
+DATA;"Line1;With;Many;Semicolons";This is the first line;02/21/2019;101.52;false
+DATA;Line2;"This is the second line; it has a semicolon in the description but lacks proper quotes;02/22/2019;38.88;true

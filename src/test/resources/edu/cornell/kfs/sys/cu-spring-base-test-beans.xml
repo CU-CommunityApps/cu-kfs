@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the base Spring file that should be imported by any test cases
+    that need to load a Spring context and yet still remain a micro-test.
+    A test case's Spring file should override the "beanFilterPostProcessor"
+    bean, and then merge-override the "beanWhitelist" property to specify
+    the IDs of the exact beans that should be allowed to load.
+    
+    Be sure to use the "idref" element to add bean IDs to the overridden set,
+    to ensure that the unit test will require updates when the affected beans
+    are updated accordingly.
+    
+    If placeholder resolution is needed, then the test XML may optionally
+    override the "propertyPlaceholderConfigurer" bean to specify the properties
+    to use for substitution.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean"/>
+
+    <bean id="propertyPlaceholderConfigurer-parentBean" abstract="true" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props/>
+        </property>
+    </bean>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean"/>
+
+    <bean id="beanFilterPostProcessor-parentBean" abstract="true" class="edu.cornell.kfs.sys.util.BeanFilterPostProcessor">
+        <property name="beanWhitelist">
+            <set>
+                <idref bean="beanFilterPostProcessor"/>
+                <idref bean="beanFilterPostProcessor-parentBean"/>
+                <idref bean="propertyPlaceholderConfigurer"/>
+                <idref bean="propertyPlaceholderConfigurer-parentBean"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
