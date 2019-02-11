@@ -59,18 +59,32 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     @Override
+    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ActionForward forward = validateBillingPeriod(mapping, form, request, response);
+        return forward != null ? forward : super.approve(mapping, form, request, response);
+    }
+
+    @Override
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ActionForward forward = validateBillingPeriod(mapping, form, request, response);
+        return forward != null ? forward : super.save(mapping, form, request, response);
+    }
+
+    @Override
+    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ActionForward forward = validateBillingPeriod(mapping, form, request, response);
+        return forward != null ? forward : super.route(mapping, form, request, response);
+    }
+
+    protected ActionForward validateBillingPeriod(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = ((ContractsGrantsInvoiceDocumentForm) form).getContractsGrantsInvoiceDocument();
+        ActionForward forward = null;
 
         String warningMessage = getContractsGrantsInvoiceDocumentWarningMessage(contractsGrantsInvoiceDocument);
         if (StringUtils.isNotEmpty(warningMessage)) {
-            ActionForward forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD, warningMessage, contractsGrantsInvoiceDocument);
-            if (forward != null) {
-                return forward;
-            }
+            forward = promptForFinalBillConfirmation(mapping, form, request, response, KFSConstants.ROUTE_METHOD, warningMessage, contractsGrantsInvoiceDocument);
         }
-
-        return super.save(mapping, form, request, response);
+        return forward;
     }
 
     protected String getContractsGrantsInvoiceDocumentWarningMessage(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
