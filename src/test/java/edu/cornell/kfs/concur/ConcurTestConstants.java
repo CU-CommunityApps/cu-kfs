@@ -31,6 +31,8 @@ public class ConcurTestConstants {
     public static final int FY_2017 = 2017;
     public static final String DEFAULT_POLICY_NAME = "Travel";
     public static final String DEFAULT_EXPENSE_TYPE_NAME = "Hotel";
+    public static final String PERSONAL_CAR_MILEAGE_EXPENSE_TYPE = "Personal Car Mileage";
+    public static final String TAXI_EXPENSE_TYPE = "Taxi";
     public static final String REPORT_ENTRY_ID_1 = "1234";
     public static final String REPORT_ENTRY_ID_2 = "1235";
     public static final String REPORT_ENTRY_ID_3 = "2234";
@@ -42,6 +44,7 @@ public class ConcurTestConstants {
     public static final String REQUEST_ID_2 = "ZZ11YY22XX33WW44VV55";
     public static final String SOURCE_DOC_NUMBER_1 = "10987654";
     public static final String TEST_FILE_NAME = "testFile01.txt";
+    public static final String DELIMITED_PAYMENT_TYPE = "User|Or|University";
 
     public static final String DASH_SUB_ACCOUNT_NUMBER = "-----";
     public static final String DASH_SUB_OBJECT_CODE = "---";

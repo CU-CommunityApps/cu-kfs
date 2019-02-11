@@ -134,9 +134,11 @@
 	<bean id="concurStandardAccountingExtractCashAdvanceService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurStandardAccountingExtractCashAdvanceServiceImpl" abstract="true">
 	</bean>
 	
-	<bean id="standardAccountExtractFileType" parent="FlatFileParser">
+	<bean id="standardAccountExtractFileType" parent="standardAccountExtractFileType-parentBean"/>
+	
+	<bean id="standardAccountExtractFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser">
         <property name="flatFileSpecification">
-            <bean class="org.kuali.kfs.sys.batch.DelimitedFlatFileSpecification">
+            <bean class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileSpecification">
                 <property name="delimiter" value="|"/>
                 <property name="objectSpecifications">
                     <list>

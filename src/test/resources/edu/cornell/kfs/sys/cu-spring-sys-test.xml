@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Helper Spring bean overrides file containing micro-test-friendly versions
+    of various kfs-sys beans.
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+
+    <bean id="DelimitedFlatFilePropertySpecification" abstract="true"
+          class="edu.cornell.kfs.sys.batch.TestDelimitedFlatFilePropertySpecification"/>
+
+</beans>

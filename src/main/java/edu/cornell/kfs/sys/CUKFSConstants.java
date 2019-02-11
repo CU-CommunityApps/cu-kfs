@@ -161,5 +161,6 @@ public class CUKFSConstants {
     public static final String BACKSLASH = "\\";
     public static final String DOUBLE_QUOTE = "\"";
     public static final String CAPITAL_X = "X";
+    public static final String PLUS_SIGN = "+";
 
 }
