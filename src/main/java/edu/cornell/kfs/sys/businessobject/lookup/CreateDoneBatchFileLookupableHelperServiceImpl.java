@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
@@ -35,7 +35,7 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
 			MultivaluedMap<String, String> fieldValues) {
 
 		List<BusinessObjectBase> results = super.getSearchResults(businessObjectClass, fieldValues);
-		List createDoneBatchFiles = new ArrayList<CreateDoneBatchFile>();
+		List<BusinessObjectBase> createDoneBatchFiles = new ArrayList<BusinessObjectBase>();
 		for (Object file : results) {
 			BatchFile batchFile = (BatchFile) file;
 			CreateDoneBatchFile createDoneBatchFile;
@@ -44,7 +44,7 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
 				createDoneBatchFiles.add(createDoneBatchFile);
 			} catch (FileNotFoundException e) {
 				LOG.error(
-						"An error has occured while creating a CreateDoneBatchFile from the BatchFile object in the search results: "
+						"getSearchResults(): An error has occured while creating a CreateDoneBatchFile from the BatchFile object in the search results: "
 								+ e.getMessage());
 				throw new RuntimeException(e);
 			}
