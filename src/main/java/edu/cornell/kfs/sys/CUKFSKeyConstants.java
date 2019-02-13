@@ -223,4 +223,14 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String ERROR_DOCUMENT_SUB_ACCOUNT_GLOBAL_CG_EXPENSE_REQUIRED_SECTION = "error.document.subAccountGlobal.cgExpenseRequiredSection";
     
     public static final String ERROR_DOCUMENT_CONTRACT_GRANT_INVOICE_PRORATE_NO_AWARD_BUDGET_TOTAL = "error.document.contractsGrantsInvoice.prorate.no.award.budget.total";
+    public static final String WARNING_CINV_FINAL_BILL_INDICATOR = "warning.document.contractGrantsInvoice.final.bill.indicator";
+    public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodEndDate.before.lastBilledDate";
+    public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_BEFORE_BILLING_PERIOD_START_DATE = "warning.document.contractGrantsInvoice.billingPeriodEndDate.before.billingPeriodStartDate";
+    public static final String WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_AWARD_START_DATE = "warning.document.contractGrantsInvoice.billingPeriodStartDate.before.awardStartDate";
+    public static final String WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH = "warning.document.contractGrantsInvoice.dateRange.invalidFormatLength";
+    public static final String WARNING_CINV_DATE_RANGE_PARSE_EXCEPTION = "warning.document.contractGrantsInvoice.dateRange.parseException";
+    public static final String ERROR_CINV_SETTING_LAST_BILLED_DATE = "error.document.contractGrantsInvoice.settingLastBilledDate.exception";
+    public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodEndDate.after.lastBilledDate";
+    public static final String WARNING_CINV_BILLING_PERIOD_START_DATE_AFTER_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodStartDate.after.lastBilledDate";
+    public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_TODAY = "warning.document.contractGrantsInvoice.billingPeriodEndDate.after.today";
 }
