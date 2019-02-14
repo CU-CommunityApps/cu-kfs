@@ -225,8 +225,10 @@
 <!-- Business Object Lookup Definition -->
 
     <bean id="ObjectCode-lookupDefinition" parent="ObjectCode-lookupDefinition-parentBean"/>
-    <bean id="ObjectCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
-          p:title="Object Code Lookup">
+    <bean id="ObjectCode-lookupDefinition-parentBean" abstract="true"
+          parent="ObjectCode-lookupDefinition-base-parentBean"/>
+    <bean id="ObjectCode-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Object Code Lookup" p:multipleValuesResultSetLimit="-1">
         <property name="defaultSort">
             <bean parent="SortDefinition">
                 <property name="attributeNames">
