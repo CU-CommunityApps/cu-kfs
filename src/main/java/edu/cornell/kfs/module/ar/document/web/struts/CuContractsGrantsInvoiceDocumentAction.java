@@ -109,7 +109,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             } catch (ParseException ex) {
                 LOG.error("getContractsGrantsInvoiceDocumentWarningMessage: " + ex.getMessage());
                 String warningMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_PARSE_EXCEPTION);
-                warningMessages.add(warningMessage + CuArConstants.QUESTION_NEWLINE_STRING + ex.toString());
+                warningMessages.add(MessageFormat.format(warningMessage, new String[] {billingPeriod}));
             }
         }
 
