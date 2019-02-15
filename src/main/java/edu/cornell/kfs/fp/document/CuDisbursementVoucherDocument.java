@@ -722,10 +722,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         // the campus code via the business object service.
         if (chartOrg != null && chartOrg.getOrganization() != null) {
             setCampusCode(chartOrg.getOrganization().getOrganizationPhysicalCampusCode());
-        }
-        // A valid campus code was not found; therefore, use the default affiliated
-        // campus code.
-        else {
+        } else {
+            // A valid campus code was not found; therefore, use the default affiliated  campus code.
             String affiliatedCampusCode = currentUser.getCampusCode();
             setCampusCode(affiliatedCampusCode);
         }
