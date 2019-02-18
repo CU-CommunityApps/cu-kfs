@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -47,7 +47,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
 
             if (formFile.length > 0) {
                 String uploadFileName = accountingXmlDocumentBackupLink.getFileName();
-                String mimeType = URLConnection.guessContentTypeFromName(uploadFileName);
+                String mimeType = findMimeType(uploadFileName);
                 int fileSize = (int) formFile.length;
                 String attachmentType = null;
 
@@ -68,6 +68,25 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
             LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), e);
             throw new ValidationException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
         }      
+    }
+
+    protected String findMimeType(String uploadFileName) {
+        String mimeType = URLConnection.guessContentTypeFromName(uploadFileName);
+        if (StringUtils.isEmpty(mimeType)) {
+            LOG.error("findMimeType, could not determine mime type from file name using URLConnection object. the file name is " + uploadFileName);
+            String[] splitFileName = StringUtils.split(uploadFileName, ".");
+            if (splitFileName != null) {
+                int lastArrayElement = splitFileName.length - 1;
+                if (lastArrayElement > -1) {
+                    mimeType = splitFileName[lastArrayElement];
+                    LOG.info("findMimeType, determined mime type from file name's last extension value: " + mimeType);
+                } else {
+                    LOG.error("findMimeType, could not parse the file name, setting mime type to empty string");
+                    mimeType = StringUtils.EMPTY;
+                }
+            }
+        }
+        return StringUtils.lowerCase(mimeType);
     }
 
     protected byte[] downloadByteArray(AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) throws IOException {
