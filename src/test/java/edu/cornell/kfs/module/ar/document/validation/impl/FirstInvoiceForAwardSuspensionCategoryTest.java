@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
-import org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.dataaccess.ContractsGrantsInvoiceDocumentDao;
 import org.kuali.kfs.sys.KFSConstants;
@@ -46,6 +46,7 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
         initializeDocumentMappings();
         financialSystemDocumentService = new FinancialSystemDocumentServiceImpl();
         suspensionCategory = new FirstInvoiceForAwardSuspensionCategory();
@@ -54,9 +55,10 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
     }
 
     protected void initializeDocumentMappings() {
+        Supplier<ContractsGrantsInvoiceDocument> mockDocumentGenerator = () -> PowerMockito.spy(new ContractsGrantsInvoiceDocument());
         testDocuments = new EnumMap<>(ContractsGrantsInvoiceDocumentFixture.class);
         for (ContractsGrantsInvoiceDocumentFixture fixture : getTestFixtures()) {
-            testDocuments.put(fixture, buildMockInvoiceDocument(fixture));
+            testDocuments.put(fixture, fixture.toMockContractsGrantsInvoiceDocument(mockDocumentGenerator));
         }
     }
 
@@ -67,16 +69,6 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
                 ContractsGrantsInvoiceDocumentFixture.DOCUMENT_4_PROPOSAL_97979,
                 ContractsGrantsInvoiceDocumentFixture.DOCUMENT_5_PROPOSAL_97979,
                 ContractsGrantsInvoiceDocumentFixture.DOCUMENT_6_PROPOSAL_97979);
-    }
-
-    protected ContractsGrantsInvoiceDocument buildMockInvoiceDocument(ContractsGrantsInvoiceDocumentFixture fixture) {
-        PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
-        ContractsGrantsInvoiceDocument document = PowerMockito.spy(new ContractsGrantsInvoiceDocument());
-        InvoiceGeneralDetail invoiceGeneralDetail = new InvoiceGeneralDetail();
-        invoiceGeneralDetail.setProposalNumber(fixture.proposalNumber);
-        document.setInvoiceGeneralDetail(invoiceGeneralDetail);
-        document.setDocumentNumber(fixture.documentNumber);
-        return document;
     }
 
     protected ContractsGrantsInvoiceDocumentDao buildMockContractsGrantsInvoiceDocumentDao() {
