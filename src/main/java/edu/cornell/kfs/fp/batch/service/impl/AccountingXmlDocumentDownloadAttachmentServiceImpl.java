@@ -71,14 +71,17 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     }
 
     protected String findMimeType(String uploadFileName) {
+        if (StringUtils.isBlank(uploadFileName)) {
+            return StringUtils.EMPTY;
+        }
         String mimeType = URLConnection.guessContentTypeFromName(uploadFileName);
-        if (StringUtils.isEmpty(mimeType)) {
+        if (StringUtils.isBlank(mimeType)) {
             LOG.error("findMimeType, could not determine mime type from file name using URLConnection object. the file name is " + uploadFileName);
             String[] splitFileName = StringUtils.split(uploadFileName, ".");
             if (splitFileName != null) {
-                int lastArrayElement = splitFileName.length - 1;
-                if (lastArrayElement > -1) {
-                    mimeType = splitFileName[lastArrayElement];
+                int lastArrayElementIndex = splitFileName.length - 1;
+                if (lastArrayElementIndex > -1) {
+                    mimeType = splitFileName[lastArrayElementIndex];
                     LOG.info("findMimeType, determined mime type from file name's last extension value: " + mimeType);
                 } else {
                     LOG.error("findMimeType, could not parse the file name, setting mime type to empty string");

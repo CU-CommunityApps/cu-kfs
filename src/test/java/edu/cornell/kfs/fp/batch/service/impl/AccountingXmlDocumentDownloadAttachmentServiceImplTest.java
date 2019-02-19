@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kuali.kfs.sys.KFSConstants;
 
 public class AccountingXmlDocumentDownloadAttachmentServiceImplTest {
     
@@ -76,8 +77,14 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImplTest {
     }
     
     @Test
+    public void testFindMimeTypeSpaceFileName() {
+        String mimeType = attachmentService.findMimeType(KFSConstants.BLANK_SPACE);
+        assertEquals(StringUtils.EMPTY, mimeType);
+    }
+    
+    @Test
     public void testFindMimeTypeNullFileName() {
-        String mimeType = attachmentService.findMimeType(StringUtils.EMPTY);
+        String mimeType = attachmentService.findMimeType(null);
         assertEquals(StringUtils.EMPTY, mimeType);
     }
 
