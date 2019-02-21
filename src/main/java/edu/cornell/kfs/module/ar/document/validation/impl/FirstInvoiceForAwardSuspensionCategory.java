@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.ar.document.validation.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -63,30 +64,37 @@ public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBa
             throw new IllegalStateException("No account details were found for CINV document "
                     + contractsGrantsInvoiceDocument.getDocumentNumber());
         }
-        Map<String, String> extraCriteria = new HashMap<>();
         InvoiceAccountDetail firstAccountDetail = contractsGrantsInvoiceDocument.getAccountDetails().get(0);
-        Account account = getAccountForInvoiceDetail(firstAccountDetail);
         
         switch (invoicingOption) {
             case ArConstants.INV_ACCOUNT :
             case ArConstants.INV_SCHEDULE :
-                extraCriteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CHART_OF_ACCOUNTS_CODE,
-                        firstAccountDetail.getChartOfAccountsCode());
-                extraCriteria.put(ArPropertyConstants.ACCOUNT_DETAILS_ACCOUNT_NUMBER,
-                        firstAccountDetail.getAccountNumber());
-                break;
+                return buildCriteriaToMatchSoleAccountForInvoice(firstAccountDetail);
             case ArConstants.INV_CONTRACT_CONTROL_ACCOUNT :
-                extraCriteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE,
-                        account.getContractControlFinCoaCode());
-                extraCriteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_ACCOUNT_NUMBER,
-                        account.getContractControlAccountNumber());
-                break;
+                return buildCriteriaToMatchSoleContractControlAccountForInvoice(firstAccountDetail);
             case ArConstants.INV_AWARD :
             default :
-                break;
+                return Collections.emptyMap();
         }
-        
-        return extraCriteria;
+    }
+
+    protected Map<String, String> buildCriteriaToMatchSoleAccountForInvoice(InvoiceAccountDetail firstAccountDetailForInvoice) {
+        Map<String, String> criteria = new HashMap<>();
+        criteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CHART_OF_ACCOUNTS_CODE,
+                firstAccountDetailForInvoice.getChartOfAccountsCode());
+        criteria.put(ArPropertyConstants.ACCOUNT_DETAILS_ACCOUNT_NUMBER,
+                firstAccountDetailForInvoice.getAccountNumber());
+        return criteria;
+    }
+
+    protected Map<String, String> buildCriteriaToMatchSoleContractControlAccountForInvoice(InvoiceAccountDetail firstAccountDetailForInvoice) {
+        Account firstAccountForInvoice = getAccountForInvoiceDetail(firstAccountDetailForInvoice);
+        Map<String, String> criteria = new HashMap<>();
+        criteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE,
+                firstAccountForInvoice.getContractControlFinCoaCode());
+        criteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_ACCOUNT_NUMBER,
+                firstAccountForInvoice.getContractControlAccountNumber());
+        return criteria;
     }
 
     protected Account getAccountForInvoiceDetail(InvoiceAccountDetail accountDetail) {
