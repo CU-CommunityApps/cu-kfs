@@ -39,10 +39,12 @@
             </th>
             <td class="datacell" style="width: 25%;">
                 <div id="document.proposalNumber.div">
-                    <kul:htmlControlAttribute
-                            attributeEntry="${invoiceGeneralDetailAttributes.proposalNumber}"
-                            property="document.invoiceGeneralDetail.proposalNumber"
-                            readOnly="true" />
+                	<kul:inquiry boClassName="org.kuali.kfs.module.cg.businessobject.Award" keyValues="proposalNumber=${KualiForm.document.invoiceGeneralDetail.proposalNumber}" render="true">
+                		<kul:htmlControlAttribute
+		                    attributeEntry="${invoiceGeneralDetailAttributes.proposalNumber}"
+		                    property="document.invoiceGeneralDetail.proposalNumber"
+		                    readOnly="true" />
+                	</kul:inquiry>
                 </div>
             </td>
             <th class="right" style="width: 25%;">
