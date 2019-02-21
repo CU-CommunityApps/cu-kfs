@@ -10,12 +10,17 @@ public class CuArPropertyConstants {
         public static final String FINAL_BILL = "finalBill";
         public static final String PARTIAL_BILL = "partialBill";
         public static final String TOTAL_PROGRAM_OUTLAYS_TO_DATE = "totalProgramOutlaysToDate";
-        public static final String ACCOUNT_DETAILS_CHART_OF_ACCOUNTS_CODE = ArPropertyConstants.ACCOUNT_DETAILS
+    }
+
+    public static class ContractsGrantsInvoiceAccountDetailFields {
+        public static final String CHART_OF_ACCOUNTS_CODE = ArPropertyConstants.ACCOUNT_DETAILS
                 + KFSConstants.DELIMITER + KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE;
-        public static final String ACCOUNT_DETAILS_CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE = ArPropertyConstants.ACCOUNT_DETAILS
+        public static final String ACCOUNT_NUMBER = ArPropertyConstants.ACCOUNT_DETAILS
+                + KFSConstants.DELIMITER + KFSPropertyConstants.ACCOUNT_NUMBER;
+        public static final String CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE = ArPropertyConstants.ACCOUNT_DETAILS
                 + KFSConstants.DELIMITER + KFSPropertyConstants.ACCOUNT
                 + KFSConstants.DELIMITER + KFSPropertyConstants.CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE;
-        public static final String ACCOUNT_DETAILS_CONTRACT_CONTROL_ACCOUNT_NUMBER = ArPropertyConstants.ACCOUNT_DETAILS
+        public static final String CONTRACT_CONTROL_ACCOUNT_NUMBER = ArPropertyConstants.ACCOUNT_DETAILS
                 + KFSConstants.DELIMITER + KFSPropertyConstants.ACCOUNT
                 + KFSConstants.DELIMITER + KFSPropertyConstants.CONTRACT_CONTROL_ACCOUNT_NUMBER;
     }

@@ -65,12 +65,13 @@ public class FirstInvoiceForAwardSuspensionCategoryTest {
         String documentNumber = StringUtils.substringAfter(documentNumberCriteria, SearchOperator.NOT.op());
         String proposalNumber = criteria.get(ArPropertyConstants.ContractsGrantsInvoiceDocumentFields.PROPOSAL_NUMBER);
         String detailChartCode = criteria.get(
-                CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CHART_OF_ACCOUNTS_CODE);
-        String detailAccountNumber = criteria.get(ArPropertyConstants.ACCOUNT_DETAILS_ACCOUNT_NUMBER);
+                CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.CHART_OF_ACCOUNTS_CODE);
+        String detailAccountNumber = criteria.get(
+                CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.ACCOUNT_NUMBER);
         String ccChartCode = criteria.get(
-                CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE);
+                CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE);
         String ccAccountNumber = criteria.get(
-                CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_ACCOUNT_NUMBER);
+                CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.CONTRACT_CONTROL_ACCOUNT_NUMBER);
         
         assertExpectedDocumentStatusCriteriaArePresent(criteria);
         assertDocumentNumberCriteriaHasCorrectPrefix(documentNumberCriteria);

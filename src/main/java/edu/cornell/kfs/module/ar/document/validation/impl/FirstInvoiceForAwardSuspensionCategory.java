@@ -31,10 +31,10 @@ public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBa
 
     @Override
     public boolean shouldSuspend(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
-        return priorSuccessfulInvoicesDoNotExist(contractsGrantsInvoiceDocument);
+        return !priorSuccessfulInvoicesExist(contractsGrantsInvoiceDocument);
     }
 
-    protected boolean priorSuccessfulInvoicesDoNotExist(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+    protected boolean priorSuccessfulInvoicesExist(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         Map<String, String> criteria = new HashMap<>();
         String proposalNumber = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
         String documentNumber = contractsGrantsInvoiceDocument.getDocumentNumber();
@@ -50,7 +50,7 @@ public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBa
         criteria.putAll(extraCriteria);
         
         Collection<ContractsGrantsInvoiceDocument> priorInvoices = contractsGrantsInvoiceDocumentDao.getMatchingInvoicesByCollection(criteria);
-        return CollectionUtils.isEmpty(priorInvoices);
+        return CollectionUtils.isNotEmpty(priorInvoices);
     }
 
     protected String buildSuccessfulDocumentStatusesCriteria() {
@@ -80,9 +80,9 @@ public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBa
 
     protected Map<String, String> buildCriteriaToMatchSoleAccountForInvoice(InvoiceAccountDetail firstAccountDetailForInvoice) {
         Map<String, String> criteria = new HashMap<>();
-        criteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CHART_OF_ACCOUNTS_CODE,
+        criteria.put(CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.CHART_OF_ACCOUNTS_CODE,
                 firstAccountDetailForInvoice.getChartOfAccountsCode());
-        criteria.put(ArPropertyConstants.ACCOUNT_DETAILS_ACCOUNT_NUMBER,
+        criteria.put(CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.ACCOUNT_NUMBER,
                 firstAccountDetailForInvoice.getAccountNumber());
         return criteria;
     }
@@ -90,9 +90,9 @@ public class FirstInvoiceForAwardSuspensionCategory extends SuspensionCategoryBa
     protected Map<String, String> buildCriteriaToMatchSoleContractControlAccountForInvoice(InvoiceAccountDetail firstAccountDetailForInvoice) {
         Account firstAccountForInvoice = getAccountForInvoiceDetail(firstAccountDetailForInvoice);
         Map<String, String> criteria = new HashMap<>();
-        criteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE,
+        criteria.put(CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.CONTRACT_CONTROL_CHART_OF_ACCOUNTS_CODE,
                 firstAccountForInvoice.getContractControlFinCoaCode());
-        criteria.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.ACCOUNT_DETAILS_CONTRACT_CONTROL_ACCOUNT_NUMBER,
+        criteria.put(CuArPropertyConstants.ContractsGrantsInvoiceAccountDetailFields.CONTRACT_CONTROL_ACCOUNT_NUMBER,
                 firstAccountForInvoice.getContractControlAccountNumber());
         return criteria;
     }
