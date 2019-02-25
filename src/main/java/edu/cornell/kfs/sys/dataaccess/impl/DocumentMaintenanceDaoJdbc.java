@@ -16,22 +16,16 @@ import org.kuali.rice.kew.api.KEWPropertyConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.lang.annotation.Annotation;
-import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc implements DocumentMaintenanceDao {
 	private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceDaoJdbc.class);
@@ -51,20 +45,13 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
             List<String> documentIdsToRequeue = new ArrayList<>();
 
             try {
-                final Collection<String> docTypeIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
-                final Collection<String> roleIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
+                final Collection<String> docTypeIds = findNonRequeueableDocumentTyppes();
+                final Collection<String> roleIds = findRequeueableRoleIds();
 
                 String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size(), true);
                 selectStatement = con.prepareStatement(selectStatementSql);
 
-                int index = 1;
-                for (String docTypeId: docTypeIds) {
-                    selectStatement.setString(index++, docTypeId);
-                }
-
-                for (String roleId: roleIds) {
-                    selectStatement.setString(index++, roleId);
-                }
+                addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
 
                 queryResultSet = selectStatement.executeQuery();
 
@@ -75,20 +62,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
                 queryResultSet.close();
             } finally {
-                if (queryResultSet != null) {
-                    try {
-                        queryResultSet.close();
-                    } catch (SQLException e) {
-                        LOG.error("getDocumentRequeueValues: Could not close ResultSet");
-                    }
-                }
-                if (selectStatement != null) {
-                    try {
-                        selectStatement.close();
-                    } catch (SQLException e) {
-                        LOG.error("getDocumentRequeueValues: Could not close selection PreparedStatement");
-                    }
-                }
+                processQueryFinally(selectStatement, queryResultSet);
             }
             return documentIdsToRequeue;
         });
@@ -180,22 +154,14 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
             List<ActionItemNoteDetailDto> notes = new ArrayList<ActionItemNoteDetailDto>();
 
             try {
-                final Collection<String> docTypeIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
-                final Collection<String> roleIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
+                final Collection<String> docTypeIds = findNonRequeueableDocumentTyppes();
+                final Collection<String> roleIds = findRequeueableRoleIds();
 
                 String selectStatementSql = buildActionNoteQuery(docTypeIds.size(), roleIds.size());
-                LOG.info("getActionNotesToBeRequeued, selectStatementSql: " + selectStatementSql);
                 
                 selectStatement = con.prepareStatement(selectStatementSql);
 
-                int index = 1;
-                for (String docTypeId: docTypeIds) {
-                    selectStatement.setString(index++, docTypeId);
-                }
-
-                for (String roleId: roleIds) {
-                    selectStatement.setString(index++, roleId);
-                }
+                addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
 
                 queryResultSet = selectStatement.executeQuery();
 
@@ -208,25 +174,49 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
                 queryResultSet.close();
             } finally {
-                if (queryResultSet != null) {
-                    try {
-                        queryResultSet.close();
-                    } catch (SQLException e) {
-                        LOG.error("getDocumentRequeueValues: Could not close ResultSet");
-                    }
-                }
-                if (selectStatement != null) {
-                    try {
-                        selectStatement.close();
-                    } catch (SQLException e) {
-                        LOG.error("getDocumentRequeueValues: Could not close selection PreparedStatement");
-                    }
-                }
+                processQueryFinally(selectStatement, queryResultSet);
             }
             return notes;
 	    });
 	    
 	}
+
+    private Collection<String> findNonRequeueableDocumentTyppes() {
+        return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
+    }
+
+    private Collection<String> findRequeueableRoleIds() {
+        return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
+    }
+
+    private void addDocumentIdAndRoleIdsToSelectStatement(PreparedStatement selectStatement,
+            final Collection<String> docTypeIds, final Collection<String> roleIds) throws SQLException {
+        int index = 1;
+        for (String docTypeId: docTypeIds) {
+            selectStatement.setString(index++, docTypeId);
+        }
+
+        for (String roleId: roleIds) {
+            selectStatement.setString(index++, roleId);
+        }
+    }
+
+    private void processQueryFinally(PreparedStatement selectStatement, ResultSet queryResultSet) {
+        if (queryResultSet != null) {
+            try {
+                queryResultSet.close();
+            } catch (SQLException e) {
+                LOG.error("processQueryFinally: Could not close ResultSet", e);
+            }
+        }
+        if (selectStatement != null) {
+            try {
+                selectStatement.close();
+            } catch (SQLException e) {
+                LOG.error("processQueryFinally: Could not close selection PreparedStatement", e);
+            }
+        }
+    }
 	
 	private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
         StringBuilder sb = new StringBuilder();
