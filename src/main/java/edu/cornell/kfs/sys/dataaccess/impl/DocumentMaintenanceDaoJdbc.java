@@ -2,12 +2,15 @@ package edu.cornell.kfs.sys.dataaccess.impl;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.DocumentRequeueStep;
+import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
+import org.kuali.rice.kew.actionitem.ActionItem;
+import org.kuali.rice.kew.actionitem.ActionItemExtension;
 import org.kuali.rice.kew.actionrequest.ActionRequestValue;
 import org.kuali.rice.kew.api.KEWPropertyConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -51,7 +54,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                 final Collection<String> docTypeIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
                 final Collection<String> roleIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
 
-                String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size());
+                String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size(), true);
                 selectStatement = con.prepareStatement(selectStatementSql);
 
                 int index = 1;
@@ -91,7 +94,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
         });
 	}
 
-	private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount) {
+	private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount, boolean includeOrderByClause) {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select DOC_HDR_ID from CYNERGY.KREW_DOC_HDR_T where ");
@@ -128,9 +131,11 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 			sql.append(",?");
 		}
 
-		sql.append("))) order by ");
-		sql.append(workflowDocumentHeaderColumnName);
-		sql.append(" ASC");
+		sql.append(")))");
+		
+		if (includeOrderByClause) {
+		    sql.append(" order by ").append(workflowDocumentHeaderColumnName).append(" ASC");
+		}
 
 		return sql.toString();
 	}
@@ -166,6 +171,72 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
 		return tableName;
 	}
+	
+	@Override
+	public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
+	    return getJdbcTemplate().execute((ConnectionCallback<List<ActionItemNoteDetailDto>>) con -> {
+	        PreparedStatement selectStatement = null;
+            ResultSet queryResultSet = null;
+            List<ActionItemNoteDetailDto> notes = new ArrayList<ActionItemNoteDetailDto>();
+
+            try {
+                final Collection<String> docTypeIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
+                final Collection<String> roleIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
+
+                String selectStatementSql = buildActionNoteQuery(docTypeIds.size(), roleIds.size());
+                LOG.info("getActionNotesToBeRequeued, selectStatementSql: " + selectStatementSql);
+                
+                selectStatement = con.prepareStatement(selectStatementSql);
+
+                int index = 1;
+                for (String docTypeId: docTypeIds) {
+                    selectStatement.setString(index++, docTypeId);
+                }
+
+                for (String roleId: roleIds) {
+                    selectStatement.setString(index++, roleId);
+                }
+
+                queryResultSet = selectStatement.executeQuery();
+
+                while (queryResultSet.next()) {
+                    String principleId = queryResultSet.getString(1);
+                    String docHeaderId = queryResultSet.getString(2);
+                    String actionNote = queryResultSet.getString(3);
+                    notes.add(new ActionItemNoteDetailDto(principleId, docHeaderId, actionNote));
+                }
+
+                queryResultSet.close();
+            } finally {
+                if (queryResultSet != null) {
+                    try {
+                        queryResultSet.close();
+                    } catch (SQLException e) {
+                        LOG.error("getDocumentRequeueValues: Could not close ResultSet");
+                    }
+                }
+                if (selectStatement != null) {
+                    try {
+                        selectStatement.close();
+                    } catch (SQLException e) {
+                        LOG.error("getDocumentRequeueValues: Could not close selection PreparedStatement");
+                    }
+                }
+            }
+            return notes;
+	    });
+	    
+	}
+	
+	private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note ");
+        sb.append("from CYNERGY.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, CYNERGY.");
+        sb.append(retrieveTableNameFromAnnotations(ActionItemExtension.class)).append(" aie ");
+        sb.append("where ai.actn_itm_id = aie.actn_itm_id ");
+        sb.append("and ai.doc_hdr_id in (").append(buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false)).append(")");
+        return sb.toString();
+    }
 	
 	public ParameterService getParameterService() {
 		return parameterService;
