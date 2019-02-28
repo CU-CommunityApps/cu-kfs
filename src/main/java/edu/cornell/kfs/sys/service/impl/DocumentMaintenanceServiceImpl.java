@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.CoreConfigHelper;
 import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -16,6 +17,7 @@ import org.kuali.rice.kew.actionitem.ActionItem;
 import org.kuali.rice.kew.actionitem.ActionItemExtension;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.document.DocumentRefreshQueue;
+import org.kuali.rice.kew.service.KEWServiceLocator;
 import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.kuali.rice.ksb.api.KsbApiServiceLocator;
 import org.kuali.rice.ksb.api.messaging.AsynchronousCallback;
@@ -47,20 +49,16 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
             //MessageHelper messageHelper = KsbApiServiceLocator.getMessageHelper();
             //AsynchronousCallback callback;
             //DocumentRefreshQueue documentRequeuer = messageHelper.getServiceAsynchronously(KewApiServiceLocator.DOCUMENT_REFRESH_QUEUE, callback);
-            List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
-            DocumentRefreshQueue documentRequeuer;
-            if (CollectionUtils.isEmpty(noteDetailsForDocument)) {
-                documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), docId, WAIT_TIME_NO_WAIT);
-            } else { 
-                documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), docId, WAIT_ONE_MINUTE);
-            }
-            //DocumentRefreshQueue documentRequeuer = messageHelper.getServiceAsynchronously(KewApiServiceLocator.DOCUMENT_REFRESH_QUEUE, CoreConfigHelper.getApplicationId());
+            
+            //DocumentRefreshQueue documentRequeuer = KewApiServiceLocator.getDocumentRequeuerService(CoreConfigHelper.getApplicationId(), docId, WAIT_TIME_NO_WAIT);
+            DocumentRefreshQueue documentRequeuer = (DocumentRefreshQueue) SpringContext.getService("rice.kew.documentRefreshQueue");
+                    
+            
             
             documentRequeuer.refreshDocument(docId);
             
             
-            
-
+            List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
             for (ActionItemNoteDetailDto detailDto : noteDetailsForDocument) {
                 List<ActionItem> actionItems = findActionItem(detailDto);
                 if (CollectionUtils.isNotEmpty(actionItems)) {
@@ -70,12 +68,12 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
                         ActionItemExtension actionItemExtension = findActionItemEtencsion(item.getId());
                         if (ObjectUtils.isNull(actionItemExtension)) {
                             actionItemExtension = buildActionItemExtension(detailDto, item);
-                            LOG.info("requeueDocuments, adding note details " + detailDto.toString() + " to actio item " + item.getId());
+                            LOG.info("requeueDocuments, adding note details " + detailDto.toString() + " to action item " + item.getId());
                         } else {
                             actionItemExtension.setActionNote(detailDto.getActionNote());
                             actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
-                            actionItemExtension.setLockVerNbr(actionItemExtension.getLockVerNbr() + 1);
-                            LOG.info("requeueDocuments, updating note details " + detailDto.toString() + " to actio item " + item.getId());
+                            //actionItemExtension.setLockVerNbr(actionItemExtension.getLockVerNbr() + 1);
+                            LOG.info("requeueDocuments, updating note details " + detailDto.toString() + " to action item " + item.getId());
                         }
                         KRADServiceLocator.getDataObjectService().save(actionItemExtension);
                     }
@@ -92,7 +90,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     private ActionItemExtension buildActionItemExtension(ActionItemNoteDetailDto detailDto, ActionItem item) {
         ActionItemExtension actionItemExtension = new ActionItemExtension();
         actionItemExtension.setActionItemId(item.getId());
-        actionItemExtension.setLockVerNbr(new Integer(1));
+        //actionItemExtension.setLockVerNbr(new Integer(1));
         actionItemExtension.setActionNote(detailDto.getActionNote());
         actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
         return actionItemExtension;

@@ -172,7 +172,8 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                     String docHeaderId = queryResultSet.getString(2);
                     String actionNote = queryResultSet.getString(3);
                     Timestamp noteTimeStamp = queryResultSet.getTimestamp(4, Calendar.getInstance());
-                    notes.add(new ActionItemNoteDetailDto(principleId, docHeaderId, actionNote, noteTimeStamp));
+                    String origianlActionItemId = queryResultSet.getString(5);
+                    notes.add(new ActionItemNoteDetailDto(principleId, docHeaderId, actionNote, origianlActionItemId, noteTimeStamp));
                 }
 
                 queryResultSet.close();
@@ -223,7 +224,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 	
 	private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
         StringBuilder sb = new StringBuilder();
-        sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note, aie.note_ts ");
+        sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note, aie.note_ts, ai.actn_itm_id ");
         sb.append("from CYNERGY.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, CYNERGY.");
         sb.append(retrieveTableNameFromAnnotations(ActionItemExtension.class)).append(" aie ");
         sb.append("where ai.actn_itm_id = aie.actn_itm_id ");

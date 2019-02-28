@@ -7,15 +7,17 @@ public class ActionItemNoteDetailDto {
     private String docHeaderId;
     private String actionNote;
     private Timestamp noteTimeStamp;
+    private String orginalActionItemId;
     
     public ActionItemNoteDetailDto() {
         
     }
     
-    public ActionItemNoteDetailDto(String principleId, String docHeaderId, String actionNote, Timestamp noteTimeStamp) {
+    public ActionItemNoteDetailDto(String principleId, String docHeaderId, String actionNote, String orginalActionItemId, Timestamp noteTimeStamp) {
         this.principleId = principleId;
         this.docHeaderId = docHeaderId;
         this.actionNote = actionNote;
+        this.orginalActionItemId = orginalActionItemId;
         this.noteTimeStamp = noteTimeStamp;
     }
 
@@ -51,6 +53,14 @@ public class ActionItemNoteDetailDto {
         this.noteTimeStamp = noteTimeStamp;
     }
 
+    public String getOrginalActionItemId() {
+        return orginalActionItemId;
+    }
+
+    public void setOrginalActionItemId(String orginalActionItemId) {
+        this.orginalActionItemId = orginalActionItemId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -58,6 +68,7 @@ public class ActionItemNoteDetailDto {
         sb.append("' docHeaderId: '").append(docHeaderId);
         sb.append("' noteTimeStamp: '").append(noteTimeStamp).append("'");
         sb.append("' actionNote: '").append(actionNote).append("'");
+        sb.append("' original action item id: '").append(orginalActionItemId).append("'");
         return sb.toString();
     }
 
