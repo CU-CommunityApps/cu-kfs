@@ -1,8 +1,10 @@
 package edu.cornell.kfs.sys.dataaccess;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ActionItemNoteDetailDto {
+public class ActionItemNoteDetailDto implements Serializable {
+    private static final long serialVersionUID = 9115076028165986273L;
     private String principleId;
     private String docHeaderId;
     private String actionNote;
@@ -66,8 +68,8 @@ public class ActionItemNoteDetailDto {
         StringBuilder sb = new StringBuilder();
         sb.append("principleId: '").append(principleId);
         sb.append("' docHeaderId: '").append(docHeaderId);
-        sb.append("' noteTimeStamp: '").append(noteTimeStamp).append("'");
-        sb.append("' actionNote: '").append(actionNote).append("'");
+        sb.append("' noteTimeStamp: '").append(noteTimeStamp);
+        sb.append("' actionNote: '").append(actionNote);
         sb.append("' original action item id: '").append(orginalActionItemId).append("'");
         return sb.toString();
     }

@@ -162,5 +162,9 @@ public class CUKFSConstants {
     public static final String DOUBLE_QUOTE = "\"";
     public static final String CAPITAL_X = "X";
     public static final String PLUS_SIGN = "+";
+    
+    public static final String DOCUMENT_ID = "documentId";
+    
+    public static final String DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME = "rice.kew.documentRefreshQueue";
 
 }
