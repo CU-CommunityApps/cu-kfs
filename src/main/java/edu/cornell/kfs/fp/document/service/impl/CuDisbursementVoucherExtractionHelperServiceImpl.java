@@ -70,10 +70,9 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(document.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.CUSTOMER);
             pg.setTaxablePayment(Boolean.FALSE);
-        }
-        // If the payee is an employee, set these flags accordingly
-        else if ((pd.isVendor() && SpringContext.getBean(VendorService.class).isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger()))
+        } else if ((pd.isVendor() && SpringContext.getBean(VendorService.class).isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger()))
                     || document.getDvPayeeDetail().isEmployee()) {
+        		// If the payee is an employee, set these flags accordingly
             pg.setEmployeeIndicator(Boolean.TRUE);
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.EMPLOYEE);
             pg.setTaxablePayment(

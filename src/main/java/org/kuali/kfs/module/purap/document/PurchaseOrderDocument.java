@@ -688,9 +688,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
                     SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrder(this);
                     SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-                }
-                // DOCUMENT DISAPPROVED
-                else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
+                } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
+                    // DOCUMENT DISAPPROVED
                     String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
                     String disapprovalStatus = findDisapprovalStatus(nodeName);
 
@@ -701,9 +700,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                         logAndThrowRuntimeException("No status found to set for document being disapproved in node '" + nodeName + "'");
                     }
 
-                }
-                // DOCUMENT CANCELED
-                else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
+                } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
+                    // DOCUMENT CANCELED
                     updateAndSaveAppDocStatus(PurchaseOrderStatuses.APPDOC_CANCELLED);
                 }
             } catch (WorkflowException e) {

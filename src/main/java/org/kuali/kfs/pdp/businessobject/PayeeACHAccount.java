@@ -136,18 +136,16 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
                     return name;
                 }
             }
-        }
-        // for Entity, retrieve from Entity table by entity ID
-        else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
+        } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
+            // for Entity, retrieve from Entity table by entity ID
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
                 EntityDefault entity = KimApiServiceLocator.getIdentityService().getEntityDefault(payeeIdNumber);
                 if (ObjectUtils.isNotNull(entity) && ObjectUtils.isNotNull(entity.getName())) {
                     return entity.getName().getCompositeName();
                 }
             }
-        }
-        // for Vendor, retrieves from Vendor table by vendor number
-        else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.VENDOR_ID)) {
+        } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.VENDOR_ID)) {
+            // for Vendor, retrieves from Vendor table by vendor number
             VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(payeeIdNumber);
             if (ObjectUtils.isNotNull(vendor)) {
                 return vendor.getVendorName();

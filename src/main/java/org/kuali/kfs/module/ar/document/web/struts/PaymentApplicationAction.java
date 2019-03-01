@@ -275,9 +275,8 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                 // handle the user clicking full apply
                 if (detailApplication.isFullApply()) {
                     detailApplication.setAmountApplied(detailApplication.getAmountOpen());
-                }
-                // handle the user manually entering an amount
-                else {
+                } else {
+                    // handle the user manually entering an amount
                     if (detailApplication.isFullApplyChanged()) { // means it went from true to false
                         detailApplication.setAmountApplied(KualiDecimal.ZERO);
                     }
@@ -600,11 +599,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                 if (payAppDoc.isFinal()) {
                     nonAppliedControlDocs.addAll(payAppDoc.getPaymentApplicationDocumentsUsedAsControlDocuments());
                     nonAppliedControlHoldings.addAll(payAppDoc.getNonAppliedHoldingsUsedAsControls());
-                }
-
-                // otherwise, we pull all available non-zero non-applied holdings for
-                // this customer, and make the associated docs and non-applied holdings available
-                else {
+                } else {
+                    // otherwise, we pull all available non-zero non-applied holdings for
+                    // this customer, and make the associated docs and non-applied holdings available
                     // retrieve the set of available non-applied holdings for this customer
                     NonAppliedHoldingService nonAppliedHoldingService = SpringContext.getBean(NonAppliedHoldingService.class);
                     nonAppliedControlHoldings.addAll(nonAppliedHoldingService.getNonAppliedHoldingsForCustomer(customerNumber));
