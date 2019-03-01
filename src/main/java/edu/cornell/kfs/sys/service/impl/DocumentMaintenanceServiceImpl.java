@@ -35,11 +35,10 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 
         List<ActionItemNoteDetailDto> noteDetails = documentMaintenanceDao.getActionNotesToBeRequeued();
         LOG.info("requeueDocuments: Total number of action note details: " + noteDetails.size());
-
+        
         for (String docId : docIds) {
             LOG.info("requeueDocuments: Requesting requeue for document: " + docId);
             DocumentRefreshQueue documentRequeuer = (DocumentRefreshQueue) SpringContext.getService(CUKFSConstants.DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME);
-            
             documentRequeuer.refreshDocument(docId);
             
             List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);

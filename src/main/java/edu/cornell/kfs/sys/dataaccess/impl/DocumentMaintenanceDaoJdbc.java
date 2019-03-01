@@ -47,7 +47,7 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
             List<String> documentIdsToRequeue = new ArrayList<>();
 
             try {
-                final Collection<String> docTypeIds = findNonRequeueableDocumentTyppes();
+                final Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
                 final Collection<String> roleIds = findRequeueableRoleIds();
 
                 String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size(), true);
@@ -148,19 +148,19 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 		return tableName;
 	}
 	
-	@Override
-	public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
-	    return getJdbcTemplate().execute((ConnectionCallback<List<ActionItemNoteDetailDto>>) con -> {
-	        PreparedStatement selectStatement = null;
+    @Override
+    public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
+        return getJdbcTemplate().execute((ConnectionCallback<List<ActionItemNoteDetailDto>>) con -> {
+            PreparedStatement selectStatement = null;
             ResultSet queryResultSet = null;
             List<ActionItemNoteDetailDto> notes = new ArrayList<ActionItemNoteDetailDto>();
 
             try {
-                final Collection<String> docTypeIds = findNonRequeueableDocumentTyppes();
+                final Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
                 final Collection<String> roleIds = findRequeueableRoleIds();
 
                 String selectStatementSql = buildActionNoteQuery(docTypeIds.size(), roleIds.size());
-                
+
                 selectStatement = con.prepareStatement(selectStatementSql);
 
                 addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
@@ -181,11 +181,10 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                 processQueryFinally(selectStatement, queryResultSet);
             }
             return notes;
-	    });
-	    
-	}
+        });
+    }
 
-    private Collection<String> findNonRequeueableDocumentTyppes() {
+    private Collection<String> findNonRequeueableDocumentTypes() {
         return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
     }
 
@@ -222,13 +221,15 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
         }
     }
 	
-	private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
+    private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
         StringBuilder sb = new StringBuilder();
         sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note, aie.note_ts, ai.actn_itm_id ");
         sb.append("from CYNERGY.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, CYNERGY.");
         sb.append(retrieveTableNameFromAnnotations(ActionItemExtension.class)).append(" aie ");
         sb.append("where ai.actn_itm_id = aie.actn_itm_id ");
-        sb.append("and ai.doc_hdr_id in (").append(buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false)).append(")");
+        sb.append("and ai.doc_hdr_id in (");
+        sb.append(buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false));
+        sb.append(")");
         return sb.toString();
     }
 	
