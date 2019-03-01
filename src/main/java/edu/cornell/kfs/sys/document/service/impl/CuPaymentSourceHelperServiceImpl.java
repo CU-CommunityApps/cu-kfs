@@ -51,17 +51,15 @@ public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperService
                             pnt = new PaymentNoteText();
                             pnt.setCustomerNoteLineNbr(new KualiInteger(previousLineCount++));
                         pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + choppedWord.replaceAll("\\n", "").trim());
-                        }
-                        // We can't add any additional note lines, or we'll exceed the maximum, therefore
-                        // just break out of the loop early - there's nothing left to do.
-                        else {
+                        } else {
+                            // We can't add any additional note lines, or we'll exceed the maximum, therefore
+                            // just break out of the loop early - there's nothing left to do.
                             break;
                         }
                     }
-                }
-                // This should be the most common case.  Simply create a new PaymentNoteText,
-                // add the line at the correct line location.
-                else {
+                } else {
+                    // This should be the most common case.  Simply create a new PaymentNoteText, add the line at the
+                    // correct line location.
                     pnt = new PaymentNoteText();
                     pnt.setCustomerNoteLineNbr(new KualiInteger(previousLineCount++));
                 pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER + noteLine.replaceAll("\\n", "").trim());

@@ -236,7 +236,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
             this.refreshReferenceObject("purapDocument");
         }
 
-        if (purapDocument.isUseTaxIndicator() == false) {
+        if (!purapDocument.isUseTaxIndicator()) {
             taxAmount = this.itemSalesTaxAmount;
         }
         else {
@@ -256,7 +256,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
             this.refreshReferenceObject("purapDocument");
         }
 
-        if (purapDocument.isUseTaxIndicator() == false) {
+        if (!purapDocument.isUseTaxIndicator()) {
             this.itemSalesTaxAmount = itemTaxAmount;
         }
 

@@ -823,7 +823,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
             // if the institution's validate account distribution indicator is true and
             // there is a validation error in the accounts to distribute then we should display an error
-            if (institutionNeedsDistributeAccountValidation && needToDistributeAccount && (validateDistributeAccounts(purchasingForm.getDocument(), distributionsourceAccountingLines) == false)) {
+            if (institutionNeedsDistributeAccountValidation && needToDistributeAccount
+                    && !validateDistributeAccounts(purchasingForm.getDocument(), distributionsourceAccountingLines)) {
                 foundAccountDistributionError = true;
             }
 

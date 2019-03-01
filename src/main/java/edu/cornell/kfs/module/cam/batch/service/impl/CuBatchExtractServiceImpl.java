@@ -149,9 +149,9 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
             // generally for non-zero transaction ledger amount we should create a single GL entry with that amount,
             if (nonZero && !hasPositiveAndNegative) {
                 businessObjectService.save(generalLedgerEntry);
-            }
-            // but if there is FO revision or negative amount lines such as discount, create and save the set of debit(positive) and credit(negative) entries initialized with zero transaction amounts
-            else {
+            } else {
+                // but if there is FO revision or negative amount lines such as discount, create and save the set of
+                // debit(positive) and credit(negative) entries initialized with zero transaction amounts
                 debitEntry = createPositiveGlEntry(entry);
                 businessObjectService.save(debitEntry);
                 creditEntry = createNegativeGlEntry(entry);

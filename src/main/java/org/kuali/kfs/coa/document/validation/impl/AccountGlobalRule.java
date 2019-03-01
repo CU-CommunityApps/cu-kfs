@@ -663,10 +663,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		// if the old version of the account had no expiration date, and the new one has a date
 		if (ObjectUtils.isNull(oldExpDate) && ObjectUtils.isNotNull(newExpDate)) {
 			expDateHasChanged = true;
-		}
-
-		// if there was an old and a new expDate, but they're different
-		else if (ObjectUtils.isNotNull(oldExpDate) && ObjectUtils.isNotNull(newExpDate)) {
+        } else if (ObjectUtils.isNotNull(oldExpDate) && ObjectUtils.isNotNull(newExpDate)) {
+            // if there was an old and a new expDate, but they're different
 			if (!oldExpDate.equals(newExpDate)) {
 				expDateHasChanged = true;
 			}
