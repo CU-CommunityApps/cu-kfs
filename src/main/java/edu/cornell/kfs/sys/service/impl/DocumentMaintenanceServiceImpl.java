@@ -1,5 +1,6 @@
 package edu.cornell.kfs.sys.service.impl;
 
+import edu.cornell.cynergy.kew.actionlist.service.impl.ActionListBuilder;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
@@ -16,12 +17,15 @@ import org.kuali.rice.core.api.criteria.PredicateFactory;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kew.actionitem.ActionItem;
 import org.kuali.rice.kew.actionitem.ActionItemExtension;
+import org.kuali.rice.kew.actionlist.dao.impl.ActionListPriorityComparator;
+import org.kuali.rice.kew.api.action.ActionItemContract;
 import org.kuali.rice.kew.api.document.DocumentRefreshQueue;
 import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
@@ -43,25 +47,40 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
             
             List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
             for (ActionItemNoteDetailDto detailDto : noteDetailsForDocument) {
-                List<ActionItem> actionItems = findActionItem(detailDto);
-                if (CollectionUtils.isNotEmpty(actionItems)) {
-                    ActionItem item = actionItems.get(0);
-                    if (ObjectUtils.isNotNull(item)) {
-                        ActionItemExtension actionItemExtension = findActionItemExtension(item.getId());
-                        if (ObjectUtils.isNull(actionItemExtension)) {
-                            actionItemExtension = buildActionItemExtension(detailDto, item);
-                            LOG.info("requeueDocuments, adding note details " + detailDto.toString() + " to action item " + item.getId());
-                        } else {
-                            actionItemExtension.setActionNote(detailDto.getActionNote());
-                            actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
-                            LOG.info("requeueDocuments, updating note details " + detailDto.toString() + " to action item " + item.getId());
-                        }
-                        KRADServiceLocator.getDataObjectService().save(actionItemExtension);
+                ActionItem actionItem = findActionItem(detailDto);
+                if (ObjectUtils.isNotNull(actionItem)) {
+                    ActionItemExtension actionItemExtension = findActionItemExtension(actionItem.getId());
+                    if (ObjectUtils.isNull(actionItemExtension)) {
+                        actionItemExtension = buildActionItemExtension(detailDto, actionItem);
+                        LOG.info("requeueDocuments, adding note details " + detailDto.toString() + " to action item " + actionItem.getId());
+                    } else {
+                        actionItemExtension.setActionNote(detailDto.getActionNote());
+                        actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
+                        LOG.info("requeueDocuments, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
                     }
+                    KRADServiceLocator.getDataObjectService().save(actionItemExtension);
                 }
             }
         }
         return true;
+    }
+    
+    private ActionItem findActionItem(ActionItemNoteDetailDto detailDto) {
+        QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(
+                PredicateFactory.equal(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
+                PredicateFactory.equal(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
+        List<ActionItem> items = KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
+        ActionListBuilder actionListBuilder = new ActionListBuilder();
+        ActionItem selectedActionItem = null;
+        Comparator<ActionItemContract> priorityComparator = new ActionListPriorityComparator();
+        for (ActionItem currentItem : items) {
+            if (ObjectUtils.isNull(selectedActionItem)) {
+                selectedActionItem = currentItem;
+            } else {
+                selectedActionItem = (priorityComparator.compare(selectedActionItem, currentItem) >= 0) ? selectedActionItem : currentItem; 
+            }
+        }
+        return selectedActionItem;
     }
     
     private ActionItemExtension findActionItemExtension(String actionItemId) {
@@ -74,13 +93,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         actionItemExtension.setActionNote(detailDto.getActionNote());
         actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
         return actionItemExtension;
-    }
-    
-    private List<ActionItem> findActionItem(ActionItemNoteDetailDto detailDto) {
-        QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.equal(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
-                PredicateFactory.equal(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
-        return KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
     }
     
     private List<ActionItemNoteDetailDto> findNoteDetailsForDocument(List<ActionItemNoteDetailDto> noteDetails, String documentId) {
