@@ -168,12 +168,12 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
                 queryResultSet = selectStatement.executeQuery();
 
                 while (queryResultSet.next()) {
-                    String principleId = queryResultSet.getString(1);
+                    String principalId = queryResultSet.getString(1);
                     String docHeaderId = queryResultSet.getString(2);
                     String actionNote = queryResultSet.getString(3);
                     Timestamp noteTimeStamp = queryResultSet.getTimestamp(4, Calendar.getInstance());
-                    String origianlActionItemId = queryResultSet.getString(5);
-                    notes.add(new ActionItemNoteDetailDto(principleId, docHeaderId, actionNote, origianlActionItemId, noteTimeStamp));
+                    String originalActionItemId = queryResultSet.getString(5);
+                    notes.add(new ActionItemNoteDetailDto(principalId, docHeaderId, actionNote, originalActionItemId, noteTimeStamp));
                 }
 
                 queryResultSet.close();

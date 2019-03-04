@@ -5,30 +5,30 @@ import java.sql.Timestamp;
 
 public class ActionItemNoteDetailDto implements Serializable {
     private static final long serialVersionUID = 9115076028165986273L;
-    private String principleId;
+    private String principalId;
     private String docHeaderId;
     private String actionNote;
     private Timestamp noteTimeStamp;
-    private String orginalActionItemId;
+    private String originalActionItemId;
     
     public ActionItemNoteDetailDto() {
         
     }
     
-    public ActionItemNoteDetailDto(String principleId, String docHeaderId, String actionNote, String orginalActionItemId, Timestamp noteTimeStamp) {
-        this.principleId = principleId;
+    public ActionItemNoteDetailDto(String principalId, String docHeaderId, String actionNote, String originalActionItemId, Timestamp noteTimeStamp) {
+        this.principalId = principalId;
         this.docHeaderId = docHeaderId;
         this.actionNote = actionNote;
-        this.orginalActionItemId = orginalActionItemId;
+        this.originalActionItemId = originalActionItemId;
         this.noteTimeStamp = noteTimeStamp;
     }
 
-    public String getPrincipleId() {
-        return principleId;
+    public String getPrincipalId() {
+        return principalId;
     }
 
-    public void setPrincipleId(String principleId) {
-        this.principleId = principleId;
+    public void setPrincipalId(String principalId) {
+        this.principalId = principalId;
     }
 
     public String getDocHeaderId() {
@@ -46,7 +46,7 @@ public class ActionItemNoteDetailDto implements Serializable {
     public void setActionNote(String actionNote) {
         this.actionNote = actionNote;
     }
-    
+
     public Timestamp getNoteTimeStamp() {
         return noteTimeStamp;
     }
@@ -55,22 +55,22 @@ public class ActionItemNoteDetailDto implements Serializable {
         this.noteTimeStamp = noteTimeStamp;
     }
 
-    public String getOrginalActionItemId() {
-        return orginalActionItemId;
+    public String getOriginalActionItemId() {
+        return originalActionItemId;
     }
 
-    public void setOrginalActionItemId(String orginalActionItemId) {
-        this.orginalActionItemId = orginalActionItemId;
+    public void setOriginalActionItemId(String originalActionItemId) {
+        this.originalActionItemId = originalActionItemId;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("principleId: '").append(principleId);
+        sb.append("principalId: '").append(principalId);
         sb.append("' docHeaderId: '").append(docHeaderId);
         sb.append("' noteTimeStamp: '").append(noteTimeStamp);
         sb.append("' actionNote: '").append(actionNote);
-        sb.append("' original action item id: '").append(orginalActionItemId).append("'");
+        sb.append("' original action item id: '").append(originalActionItemId).append("'");
         return sb.toString();
     }
 

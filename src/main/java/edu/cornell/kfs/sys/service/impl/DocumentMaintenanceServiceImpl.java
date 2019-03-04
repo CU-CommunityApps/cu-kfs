@@ -5,7 +5,7 @@ import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 import edu.cornell.kfs.sys.service.DocumentMaintenanceService;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +47,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
                 if (CollectionUtils.isNotEmpty(actionItems)) {
                     ActionItem item = actionItems.get(0);
                     if (ObjectUtils.isNotNull(item)) {
-                        ActionItemExtension actionItemExtension = findActionItemEtencsion(item.getId());
+                        ActionItemExtension actionItemExtension = findActionItemExtension(item.getId());
                         if (ObjectUtils.isNull(actionItemExtension)) {
                             actionItemExtension = buildActionItemExtension(detailDto, item);
                             LOG.info("requeueDocuments, adding note details " + detailDto.toString() + " to action item " + item.getId());
@@ -64,7 +64,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         return true;
     }
     
-    private ActionItemExtension findActionItemEtencsion(String actionItemId) {
+    private ActionItemExtension findActionItemExtension(String actionItemId) {
         return KRADServiceLocator.getDataObjectService().find(ActionItemExtension.class, actionItemId);
     }
 
@@ -78,7 +78,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     
     private List<ActionItem> findActionItem(ActionItemNoteDetailDto detailDto) {
         QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.equal(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipleId()),
+                PredicateFactory.equal(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
                 PredicateFactory.equal(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
         return KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
     }
