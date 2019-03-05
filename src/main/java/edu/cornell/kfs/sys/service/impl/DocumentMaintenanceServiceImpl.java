@@ -1,6 +1,5 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import edu.cornell.cynergy.kew.actionlist.service.impl.ActionListBuilder;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
@@ -18,14 +17,13 @@ import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kew.actionitem.ActionItem;
 import org.kuali.rice.kew.actionitem.ActionItemExtension;
 import org.kuali.rice.kew.actionlist.dao.impl.ActionListPriorityComparator;
-import org.kuali.rice.kew.api.action.ActionItemContract;
 import org.kuali.rice.kew.api.document.DocumentRefreshQueue;
 import org.kuali.rice.krad.service.KRADServiceLocator;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceService {
@@ -69,16 +67,14 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         QueryByCriteria query = QueryByCriteria.Builder.fromPredicates(
                 PredicateFactory.equal(KFSPropertyConstants.PRINCIPAL_ID, detailDto.getPrincipalId()),
                 PredicateFactory.equal(CUKFSConstants.DOCUMENT_ID, detailDto.getDocHeaderId()));
-        List<ActionItem> items = KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
-        ActionListBuilder actionListBuilder = new ActionListBuilder();
+        List<ActionItem> actionItems = KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
         ActionItem selectedActionItem = null;
-        Comparator<ActionItemContract> priorityComparator = new ActionListPriorityComparator();
-        for (ActionItem currentItem : items) {
-            if (ObjectUtils.isNull(selectedActionItem)) {
-                selectedActionItem = currentItem;
-            } else {
-                selectedActionItem = (priorityComparator.compare(selectedActionItem, currentItem) >= 0) ? selectedActionItem : currentItem; 
-            }
+        if (LOG.isDebugEnabled() ) {
+            LOG.info("findActionItem, number of action items for principle " +  detailDto.getPrincipalId() + " and cocument number " 
+                    + detailDto.getDocHeaderId() + " is " + CollectionUtils.size(actionItems));
+        }
+        if (CollectionUtils.isNotEmpty(actionItems)) {
+            selectedActionItem = (ActionItem) Collections.max(actionItems, new ActionListPriorityComparator());
         }
         return selectedActionItem;
     }
