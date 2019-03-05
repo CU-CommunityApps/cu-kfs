@@ -70,7 +70,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         List<ActionItem> actionItems = KRADServiceLocator.getDataObjectService().findMatching(ActionItem.class, query).getResults();
         ActionItem selectedActionItem = null;
         if (LOG.isDebugEnabled() ) {
-            LOG.info("findActionItem, number of action items for principle " +  detailDto.getPrincipalId() + " and cocument number " 
+            LOG.debug("findActionItem, number of action items for principal " +  detailDto.getPrincipalId() + " and document number " 
                     + detailDto.getDocHeaderId() + " is " + CollectionUtils.size(actionItems));
         }
         if (CollectionUtils.isNotEmpty(actionItems)) {
