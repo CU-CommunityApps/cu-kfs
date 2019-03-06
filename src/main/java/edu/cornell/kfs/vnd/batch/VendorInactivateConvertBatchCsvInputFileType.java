@@ -73,22 +73,6 @@ public class VendorInactivateConvertBatchCsvInputFileType  extends CsvBatchInput
         return true;
     }
     
-    /**
-     * override super class implementation to specify/convert to the expected data structure
-     * 
-     * For customer load, it will be CustomerDigesterVO
-     * 
-     * @see org.kuali.kfs.sys.batch.CsvBatchInputFileTypeBase#parse(byte[])
-     */
-    @Override
-    public Object parse(byte[] fileByteContent) throws ParseException {
-        
-        //super class should have already defined a way to parse the content
-        Object parsedContents = super.parse(fileByteContent);        
-        List<VendorInactivateConvertBatch> vendors = (List<VendorInactivateConvertBatch>)convertParsedObjectToVO(parsedContents);
-        return vendors;    
-    }
-    
   
     public String getAuthorPrincipalName(File file) {
         String[] fileNameParts = StringUtils.split(file.getName(), FILE_NAME_DELIM);
