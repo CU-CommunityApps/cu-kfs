@@ -4,8 +4,10 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -28,19 +30,51 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
     @Override
     public void generateReport(CreateAccountingDocumentReportItem reportItem) {
         reportWriterService.initialize();
-        if (reportItem.isXmlSuccessfullyLoaded()) {
-            generateSummary(reportItem);
-            reportWriterService.writeNewLines(2);
-            generateErredDocumentSection(reportItem.getDocumentsInError());
-            reportWriterService.writeNewLines(2);
-            generateSuccessDocumentSection(reportItem.getDocumentsSuccessfullyRouted());
+        if (reportItem.isNonBusinessRuleFailure() 
+                && (ObjectUtils.isNotNull(reportItem.getValidationErrorMessage()) && StringUtils.isNotBlank(reportItem.getValidationErrorMessage()))) {
+            LOG.info("generateReport: generateFileFailureDueToHeaderValidationErrorSummary request was issued.");
+            generateFileFailureDueToHeaderValidationErrorSummary(reportItem);
         } else {
-            writeFileName(reportItem);
-            reportWriterService.writeMultipleFormattedMessageLines(formatString(
-                    configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_ERROR), 
-                    reportItem.getReportItemMessage()));
+            if (reportItem.isNonBusinessRuleFailure()) {
+                LOG.info("generateReport: generateFileFailureSummary request was issued.");
+                generateFileFailureSummary(reportItem);
+            } else {
+                LOG.info("generateReport: generateFileProcessingSummary request was issued.");
+                generateFileProcessingSummary(reportItem);
+            }
         }
         reportWriterService.destroy();
+    }
+    
+    private void generateFileProcessingSummary(CreateAccountingDocumentReportItem reportItem) {
+        generateSummary(reportItem);
+        reportWriterService.writeNewLines(2);
+        generateErredDocumentSection(reportItem);
+        reportWriterService.writeNewLines(2);
+        generateSuccessDocumentSection(reportItem.getDocumentsSuccessfullyRouted());
+    }
+    
+    private void generateFileFailureDueToHeaderValidationErrorSummary(CreateAccountingDocumentReportItem reportItem) {
+        reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_SUB_HEADER));
+
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_REPORT_ITEM_MESSAGE), reportItem.getReportItemMessage()));
+        
+        reportWriterService.writeNewLines(1);
+        writeFileName(reportItem);
+        reportWriterService.writeNewLines(1);
+        reportWriterService.writeFormattedMessageLine(reportItem.getValidationErrorMessage());
+    }
+    
+    private void generateFileFailureSummary(CreateAccountingDocumentReportItem reportItem) {
+        reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_SUB_HEADER));
+        
+        writeFileName(reportItem);
+        
+        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_REPORT_ITEM_MESSAGE), reportItem.getReportItemMessage()));
     }
     
     private void generateSummary(CreateAccountingDocumentReportItem reportItem) {
@@ -71,14 +105,38 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_FILE_NAME), reportItem.getXmlFileName()));
     }
     
-    private void generateErredDocumentSection(List<CreateAccountingDocumentReportItemDetail> documentsInError) {
+    private void generateErredDocumentSection(CreateAccountingDocumentReportItem reportItem) {
+        generateErredRawDataValidationDocumentSection(reportItem);
+        reportWriterService.writeNewLines(2);
+        generateErredBusinessRuleDocumentsSection(reportItem);
+    }
+    
+    private void generateErredRawDataValidationDocumentSection(CreateAccountingDocumentReportItem reportItem) {
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
-                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_DOCUMENTS_SUB_HEADER));
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_SUB_HEADER));
+        
+        List<CreateAccountingDocumentReportItemDetail> documentsInError = reportItem.getDocumentsInError();
+        boolean validationErrorNotDetected = true;
+        
         if (CollectionUtils.isNotEmpty(documentsInError)) {
-            documentsInError.stream().forEach(detail -> generateErrorDetail(detail));
-        } else {
+            documentsInError.stream().forEach(detail -> generateValidationErrorDetail(detail, validationErrorNotDetected));
+        }
+    }
+    
+    private void generateErredBusinessRuleDocumentsSection(CreateAccountingDocumentReportItem reportItem) {
+        reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
+                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_SUB_HEADER));
+        
+        List<CreateAccountingDocumentReportItemDetail> documentsInError = reportItem.getDocumentsInError();
+        boolean businessRuleErrorNotDetected = true;
+        
+        if (CollectionUtils.isNotEmpty(documentsInError)) {
+            documentsInError.stream().forEach(detail -> generateBusinessRuleErrorDetail(detail, businessRuleErrorNotDetected));
+        }
+        
+        if (CollectionUtils.isEmpty(documentsInError) || businessRuleErrorNotDetected) {
             reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(
-                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_DOCUMENTS_NONE));
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_DOCUMENTS_NONE));
         }
     }
     
@@ -93,11 +151,28 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         }
     }
     
-    private void generateErrorDetail(CreateAccountingDocumentReportItemDetail detail) {
-        generateSharedDetails(detail);
-        reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
-                CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_DOCUMENTS_MESSAGE), detail.getErrorMessage()));
-        reportWriterService.writeNewLines(1);
+    private void generateValidationErrorDetail(CreateAccountingDocumentReportItemDetail detail, boolean validationErrorNotDetected) {
+        if (detail.isRawDataValidationError()) {
+            validationErrorNotDetected = false;
+            reportWriterService.writeNewLines(1);
+            reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_RAW_DATA));
+            reportWriterService.writeFormattedMessageLine(detail.getRawDocumentData());
+            reportWriterService.writeNewLines(1);
+            reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_VALIDATION_DOCUMENTS_MESSAGE), detail.getErrorMessage()));
+            reportWriterService.writeNewLines(1);
+        }
+    }
+    
+    private void generateBusinessRuleErrorDetail(CreateAccountingDocumentReportItemDetail detail, boolean businessRuleErrorNotDetected) {
+        if (detail.isNotRawDataValidationError()) {
+            businessRuleErrorNotDetected = false;
+            generateSharedDetails(detail);
+            reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_ERRED_BUSINESS_RULE_DOCUMENTS_MESSAGE), detail.getErrorMessage()));
+            reportWriterService.writeNewLines(1);
+        }
     }
     
     private void generateSuccessDetail(CreateAccountingDocumentReportItemDetail detail) {

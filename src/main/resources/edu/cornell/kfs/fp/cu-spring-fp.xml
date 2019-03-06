@@ -801,6 +801,10 @@
         <property name="createAccountingDocumentService" ref="createAccountingDocumentService"/>
     </bean>
 
+    <bean id="createAccountingDocumentValidationService" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentValidationServiceImpl">
+        <property name="configurationService" ref="kualiConfigurationService"/>
+    </bean>
+
     <bean id="createAccountingDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.CreateAccountingDocumentServiceImpl">
         <property name="batchInputFileService" ref="batchInputFileService"/>
         <property name="accountingDocumentBatchInputFileType" ref="accountingXmlDocumentInputFileType"/>
@@ -809,6 +813,7 @@
         <property name="configurationService" ref="kualiConfigurationService"/>
         <property name="createAccountingDocumentReportService" ref="createAccountingDocumentReportService"/>
         <property name="parameterService" ref="parameterService"/>
+        <property name="createAccountingDocumentValidationService" ref="createAccountingDocumentValidationService"/>
     </bean>
 
     <bean id="accountingXmlDocumentInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
