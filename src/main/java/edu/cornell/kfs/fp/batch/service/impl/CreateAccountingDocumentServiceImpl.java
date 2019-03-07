@@ -71,7 +71,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     protected void processAccountingDocumentFromXml(String fileName, CreateAccountingDocumentLogReport logReport) {
         CreateAccountingDocumentReportItem reportItem = new CreateAccountingDocumentReportItem(fileName);
-        boolean headerValidationFailed = true;
+        boolean headerValidationFailed = false;
         String headerValidationErrorMessage = KFSConstants.EMPTY_STRING;
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
@@ -81,7 +81,6 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             reportItem.setFileOverview(accountingXmlDocuments.getOverview());
             
             if (createAccountingDocumentValidationService.isValidXmlFileHeaderData(accountingXmlDocuments, reportItem)) {
-                headerValidationFailed = false;
                 int documentCount = accountingXmlDocuments.getDocuments().size();
                 LOG.info("processAccountingDocumentFromXml: Found " + documentCount + " documents to process from file: " + fileName);
                 
@@ -92,6 +91,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
             } else {
                 LOG.info("processAccountingDocumentFromXml: File failed header data elements validation checks: " + fileName);
+                headerValidationFailed = true;
                 StringBuilder sb = new StringBuilder();
                 sb.append(configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILED_HEADER_VALIDATION));
                 sb.append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE).append(reportItem.getValidationErrorMessage());
@@ -123,7 +123,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         } else {
             logReport.getFilesSuccessfullyProcessed().add(fileName);
         }
-        LOG.info("processAccountingDocumentFromXml: Value of reportItem.isNonBusinessRuleFailure just prior to method return =" + reportItem.isNonBusinessRuleFailure() + "=");
+        LOG.info("processAccountingDocumentFromXml: Value of reportItem.isNonBusinessRuleFailure just prior to method return =" + reportItem.isNonBusinessRuleFailure());
     }
     
     private void configureReportItemDataForXmlLoadSuccess(CreateAccountingDocumentReportItem reportItem, int fileDocumentCount) {

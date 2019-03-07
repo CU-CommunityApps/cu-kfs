@@ -24,12 +24,14 @@ public class CreateAccountingDocumentValidationServiceImpl implements CreateAcco
     
     protected ConfigurationService configurationService;
     
+    @Override
     public boolean isValidXmlFileHeaderData(AccountingXmlDocumentListWrapper accountingXmlDocument, CreateAccountingDocumentReportItem reportItem) {
         boolean allValidationChecksPassed = isReportEmailAddressValid(accountingXmlDocument.getReportEmail(), reportItem);
         allValidationChecksPassed &= isOverviewValid(accountingXmlDocument.getOverview(), reportItem);
         return allValidationChecksPassed;
     }
     
+    @Override
     public boolean isAllRequiredDataValid(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItemDetail reportItemDetail) {
         boolean allValidationChecksPassed = isIndexNumberValid(accountingXmlDocument.getIndex(), reportItemDetail);
         allValidationChecksPassed &= isDocumentTypeCodeValid(accountingXmlDocument.getDocumentTypeCode(), reportItemDetail);

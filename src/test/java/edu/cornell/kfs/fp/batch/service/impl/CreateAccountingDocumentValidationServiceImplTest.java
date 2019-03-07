@@ -102,6 +102,85 @@ public class CreateAccountingDocumentValidationServiceImplTest {
         boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
         assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_DESCRIPTION_TEST.expectedResults, actualResults);
     }
+    
+    @Test
+    public void testIndexDocumentTypeIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_TEST.expectedResults, actualResults);
+    }
+    
+    @Test
+    public void testIndexDescriptionIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DESCRIPTION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DESCRIPTION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testIndexExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_EXPLANATION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testDocumentTypeDescriptionIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_DOCUMENT_TYPE_DESCRIPTION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_DOCUMENT_TYPE_DESCRIPTION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testDocumentTypeExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_DOCUMENT_TYPE_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_DOCUMENT_TYPE_EXPLANATION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testDescriptionExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_DESCRIPTION_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_DESCRIPTION_EXPLANATION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testIndexDocumentTypeDescriptionIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_DESCRIPTION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_DESCRIPTION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testIndexDocumentTypeExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_EXPLANATION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testIndexDescriptionExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DESCRIPTION_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DESCRIPTION_EXPLANATION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testDocumentTypeDescriptionExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_DOCUMENT_TYPE_DESCRIPTION_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_DOCUMENT_TYPE_DESCRIPTION_EXPLANATION_TEST.expectedResults, actualResults);
+    }
+    @Test
+    public void testIndexDocumentTypeDescriptionExplanationIsInvalid() {
+        AccountingXmlDocumentEntry dataToBeTested = AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_DESCRIPTION_EXPLANATION_TEST.toDocumentEntryPojo();
+        CreateAccountingDocumentReportItemDetail reportItemDetail = new CreateAccountingDocumentReportItemDetail();
+        boolean actualResults = createAccountingDocumentValidationService.isAllRequiredDataValid(dataToBeTested, reportItemDetail);
+        assertEquals(LABEL_FOR_TESTING_RESULTS, AccountingXmlDocumentEntryPojoFixture.BAD_INDEX_DOCUMENT_TYPE_DESCRIPTION_EXPLANATION_TEST.expectedResults, actualResults);
+    }
 
     private static class TestCreateAccountingDocumentValidationServiceImpl extends CreateAccountingDocumentValidationServiceImpl {
         public TestCreateAccountingDocumentValidationServiceImpl() {
