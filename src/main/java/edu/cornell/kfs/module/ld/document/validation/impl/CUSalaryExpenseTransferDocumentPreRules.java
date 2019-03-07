@@ -19,6 +19,7 @@
 package edu.cornell.kfs.module.ld.document.validation.impl;
 
 import org.kuali.kfs.fp.service.AccountingDocumentPreRuleService;
+import org.kuali.kfs.kns.rules.PromptBeforeValidationBase;
 import org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument;
 import org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferDocumentPreRules;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -40,7 +41,7 @@ public class CUSalaryExpenseTransferDocumentPreRules extends SalaryExpenseTransf
     public boolean doPrompts(Document document) {
         boolean preRulesOK = super.doPrompts(document);
 
-        preRulesOK &= SpringContext.getBean(AccountingDocumentPreRuleService.class).expiredAccountOverrideQuestion((AccountingDocumentBase) document, this, this.event);
+        preRulesOK &= SpringContext.getBean(AccountingDocumentPreRuleService.class).expiredAccountOverrideQuestion((AccountingDocumentBase) document, (PromptBeforeValidationBase)this);
 
         return preRulesOK;
     }

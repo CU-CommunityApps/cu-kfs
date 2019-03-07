@@ -64,7 +64,4 @@
 
     <bean id="invoicePaidAppliedDao" parent="platformAwareDao" class="org.kuali.kfs.module.ar.dataaccess.impl.InvoicePaidAppliedDaoOjb"/>
 
-    <bean id="fundsManagerDerivedRoleTypeService" parent="fundsManagerDerivedRoleTypeService-parentBean"
-            class="edu.cornell.kfs.module.ar.identity.CuFundsManagerDerivedRoleTypeServiceImpl"/>
-
 </beans>
