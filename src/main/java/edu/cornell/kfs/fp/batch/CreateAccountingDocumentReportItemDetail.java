@@ -1,5 +1,9 @@
 package edu.cornell.kfs.fp.batch;
 
+import org.kuali.kfs.sys.KFSConstants;
+
+import org.kuali.kfs.krad.util.ObjectUtils;
+
 public class CreateAccountingDocumentReportItemDetail {
 
     private int indexNumber;
@@ -9,6 +13,8 @@ public class CreateAccountingDocumentReportItemDetail {
     private String documentNumber;
     private String errorMessage;
     private boolean successfullyRouted;
+    private boolean rawDataValidationError;
+    private String rawDocumentData;
 
     public int getIndexNumber() {
         return indexNumber;
@@ -64,6 +70,32 @@ public class CreateAccountingDocumentReportItemDetail {
 
     public void setSuccessfullyRouted(boolean successfullyRouted) {
         this.successfullyRouted = successfullyRouted;
+    }
+
+    public boolean isRawDataValidationError() {
+        return rawDataValidationError;
+    }
+    
+    public boolean isNotRawDataValidationError() {
+        return !rawDataValidationError;
+    }
+
+    public void setRawDataValidationError(boolean rawDataValidationError) {
+        this.rawDataValidationError = rawDataValidationError;
+    }
+
+    public String getRawDocumentData() {
+        return rawDocumentData;
+    }
+
+    public void setRawDocumentData(String rawDocumentData) {
+        this.rawDocumentData = rawDocumentData;
+    }
+    
+    public void appendErrorMessageToExistingErrorMessage(String additionalErrorMessageContent) {
+        this.setErrorMessage((ObjectUtils.isNotNull(this.getErrorMessage()) ? this.getErrorMessage() : KFSConstants.EMPTY_STRING)
+                + KFSConstants.NEWLINE + KFSConstants.NEWLINE + additionalErrorMessageContent);
+         
     }
 
 }

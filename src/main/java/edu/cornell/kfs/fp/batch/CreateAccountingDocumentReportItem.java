@@ -14,6 +14,7 @@ public class CreateAccountingDocumentReportItem {
     private String fileOverview;
     private List<CreateAccountingDocumentReportItemDetail> documentsInError;
     private List<CreateAccountingDocumentReportItemDetail> documentsSuccessfullyRouted;
+    private String validationErrorMessage;
 
     public CreateAccountingDocumentReportItem(String xmlFileName) {
         this.xmlFileName = xmlFileName;
@@ -92,4 +93,12 @@ public class CreateAccountingDocumentReportItem {
 	public void setNonBusinessRuleFailure(boolean nonBusinessRuleFailure) {
 		this.nonBusinessRuleFailure = nonBusinessRuleFailure;
 	}
+
+    public String getValidationErrorMessage() {
+        return validationErrorMessage;
+    }
+
+    public void setValidationErrorMessage(String validationErrorMessage) {
+        this.validationErrorMessage = validationErrorMessage;
+    }
 }

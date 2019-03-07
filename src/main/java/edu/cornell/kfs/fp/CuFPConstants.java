@@ -183,4 +183,17 @@ public class CuFPConstants {
     
     public static final String CREDENTIAL_BASE_URL = "CREDENTIAL_BASE_URL";
     public static final String DI = "DI";
+
+    public static class CreateAccountingDocumentValidatedDataElements {
+        public static final String ACCOUNT_NBR = "account_nbr";
+        public static final String AMOUNT = "amount";
+        public static final String COA_CD = "coa_cd";
+        public static final String DESCRIPTION = "Description";
+        public static final String DOCUMENT_TYPE = "DocumentType";
+        public static final String EXPLANATION = "Explanation";
+        public static final String INDEX = "Index";
+        public static final String OBJECT_CD = "object_cd";
+        public static final String OVERVIEW = "Overview";
+        public static final String REPORT_EMAIL = "ReportEmail";
+    }
 }

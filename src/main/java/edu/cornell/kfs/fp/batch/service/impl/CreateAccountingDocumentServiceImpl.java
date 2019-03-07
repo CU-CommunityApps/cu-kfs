@@ -36,6 +36,7 @@ import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
@@ -50,17 +51,17 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     protected ConfigurationService configurationService;
     protected CreateAccountingDocumentReportService createAccountingDocumentReportService;
     protected ParameterService parameterService;
+    protected CreateAccountingDocumentValidationService createAccountingDocumentValidationService;
 
     @Override
     public boolean createAccountingDocumentsFromXml() {
         List<String> inputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(accountingDocumentBatchInputFileType);
         LOG.info("createAccountingDocumentsFromXml: Found " + inputFileNames.size() + " files to process");
-        
         CreateAccountingDocumentLogReport logReport = new CreateAccountingDocumentLogReport();
         
         inputFileNames.stream()
                 .forEach(fileName -> processAccountingDocumentFromXml(fileName, logReport));
-        
+
         LOG.info("createAccountingDocumentsFromXml, files with non business rule errors: " + logReport.getFilesWithNonBusinessRuleFailures());
         LOG.info("createAccountingDocumentsFromXml, files successfully processed: " + logReport.getFilesSuccessfullyProcessed());
         LOG.info("createAccountingDocumentsFromXml: Finished processing all pending accounting document XML files");
@@ -70,27 +71,47 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     protected void processAccountingDocumentFromXml(String fileName, CreateAccountingDocumentLogReport logReport) {
         CreateAccountingDocumentReportItem reportItem = new CreateAccountingDocumentReportItem(fileName);
+        boolean headerValidationFailed = false;
+        String headerValidationErrorMessage = KFSConstants.EMPTY_STRING;
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
-            
             byte[] fileData = LoadFileUtils.safelyLoadFileBytes(fileName);
-            AccountingXmlDocumentListWrapper accountingXmlDocuments = (AccountingXmlDocumentListWrapper) batchInputFileService.parse(
-                    accountingDocumentBatchInputFileType, fileData);
-            int documentCount = accountingXmlDocuments.getDocuments().size();
-            LOG.info("processAccountingDocumentFromXml: Found " + documentCount + " documents to process from file: " + fileName);
-            reportItem.setXmlSuccessfullyLoaded(true);
-            reportItem.setNumberOfDocumentInFile(documentCount);
+            AccountingXmlDocumentListWrapper accountingXmlDocuments = (AccountingXmlDocumentListWrapper) batchInputFileService.parse(accountingDocumentBatchInputFileType, fileData);
             reportItem.setReportEmailAddress(accountingXmlDocuments.getReportEmail());
             reportItem.setFileOverview(accountingXmlDocuments.getOverview());
-            accountingXmlDocuments.getDocuments().stream()
-                    .forEach(xmlDocument -> processAccountingDocumentEntryFromXml(xmlDocument, reportItem));
             
+            if (createAccountingDocumentValidationService.isValidXmlFileHeaderData(accountingXmlDocuments, reportItem)) {
+                int documentCount = accountingXmlDocuments.getDocuments().size();
+                LOG.info("processAccountingDocumentFromXml: Found " + documentCount + " documents to process from file: " + fileName);
+                
+                configureReportItemDataForXmlLoadSuccess(reportItem, documentCount);
+                
+                accountingXmlDocuments.getDocuments().stream()
+                        .forEach(xmlDocument -> processAccountingDocumentEntryFromXml(xmlDocument, reportItem));
+
+            } else {
+                LOG.info("processAccountingDocumentFromXml: File failed header data elements validation checks: " + fileName);
+                headerValidationFailed = true;
+                StringBuilder sb = new StringBuilder();
+                sb.append(configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILED_HEADER_VALIDATION));
+                sb.append(KFSConstants.NEWLINE).append(KFSConstants.NEWLINE).append(reportItem.getValidationErrorMessage());
+                headerValidationErrorMessage = sb.toString();
+                LOG.info("processAccountingDocumentFromXml: else clause throwing Exception with error message '" + headerValidationErrorMessage + "'");
+                throw new Exception(sb.toString());
+            }
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
+            
         } catch (Exception e) {
             reportItem.setXmlSuccessfullyLoaded(false);
             reportItem.setNonBusinessRuleFailure(true);
-            String reportErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR)
-                    + KFSConstants.BLANK_SPACE + e.getMessage();
+            String reportErrorMessage;
+            if (headerValidationFailed) {
+                reportErrorMessage =  configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR)
+                        + KFSConstants.BLANK_SPACE + headerValidationErrorMessage;
+            } else {
+                reportErrorMessage = configurationService.getPropertyValueAsString(CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_XML_PROCESSING_ERROR)
+                        + KFSConstants.BLANK_SPACE + e.getMessage();
+            }
             reportItem.setReportItemMessage(reportErrorMessage);
             LOG.error("processAccountingDocumentFromXml: Error processing accounting document XML file", e);
         } finally {
@@ -102,19 +123,35 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         } else {
             logReport.getFilesSuccessfullyProcessed().add(fileName);
         }
-        
+        LOG.info("processAccountingDocumentFromXml: Value of reportItem.isNonBusinessRuleFailure just prior to method return =" + reportItem.isNonBusinessRuleFailure());
+    }
+    
+    private void configureReportItemDataForXmlLoadSuccess(CreateAccountingDocumentReportItem reportItem, int fileDocumentCount) {
+        reportItem.setXmlSuccessfullyLoaded(true);
+        reportItem.setNumberOfDocumentInFile(fileDocumentCount);
     }
 
     protected void processAccountingDocumentEntryFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItem reportItem) {
-        GlobalVariables.getMessageMap().clearErrorMessages();
-        CreateAccountingDocumentReportItemDetail detail = new CreateAccountingDocumentReportItemDetail();
-        detail.setIndexNumber(accountingXmlDocument.getIndex().intValue());
-        detail.setDocumentType(accountingXmlDocument.getDocumentTypeCode());
-        detail.setDocumentDescription(accountingXmlDocument.getDescription());
-        detail.setDocumentExplanation(accountingXmlDocument.getExplanation());
+        CreateAccountingDocumentReportItemDetail reportDetail = new CreateAccountingDocumentReportItemDetail();
+        
+        if (createAccountingDocumentValidationService.isAllRequiredDataValid(accountingXmlDocument, reportDetail)) {
+            reportDetail.setIndexNumber(accountingXmlDocument.getIndex().intValue());
+            reportDetail.setDocumentType(accountingXmlDocument.getDocumentTypeCode());
+            reportDetail.setDocumentDescription(accountingXmlDocument.getDescription());
+            reportDetail.setDocumentExplanation(accountingXmlDocument.getExplanation());
+            
+            createAndRouteAccountingDocumentFromXml(accountingXmlDocument, reportDetail, reportItem);
+        } else {
+            reportDetail.setRawDataValidationError(true);
+            reportDetail.setRawDocumentData(accountingXmlDocument.toString());
+            reportDetail.setSuccessfullyRouted(false);
+            reportItem.getDocumentsInError().add(reportDetail);
+        }
+    }
+
+    protected void createAndRouteAccountingDocumentFromXml(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItemDetail reportDetail, CreateAccountingDocumentReportItem reportItem) {
         try {
-            LOG.info("processAccountingDocumentEntryFromXml: Started processing accounting document of type: "
-                    + accountingXmlDocument.getDocumentTypeCode());
+            LOG.info("createAndRouteAccountingDocumentFromXml: Started processing accounting document of type: " + accountingXmlDocument.getDocumentTypeCode());
             
             String documentGeneratorBeanName = CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX + accountingXmlDocument.getDocumentTypeCode();
             AccountingDocumentGenerator<? extends AccountingDocument> documentGenerator = findDocumentGenerator(documentGeneratorBeanName);
@@ -122,24 +159,23 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             document = (AccountingDocument) documentService.routeDocument(
                     document, CuFPConstants.ACCOUNTING_DOCUMENT_XML_ROUTE_ANNOTATION, getAllAdHocRecipients(document));
             
-            LOG.info("processAccountingDocumentEntryFromXml: Finished processing and routing accounting document " + document.getDocumentNumber()
-                    + " of type: " + accountingXmlDocument.getDocumentTypeCode());
-            detail.setSuccessfullyRouted(true);
-            detail.setDocumentNumber(document.getDocumentNumber());
-            reportItem.getDocumentsSuccessfullyRouted().add(detail);
+            LOG.info("createAndRouteAccountingDocumentFromXml: Finished processing and routing accounting document "
+                    + document.getDocumentNumber() + " of type: " + accountingXmlDocument.getDocumentTypeCode());
+            reportDetail.setSuccessfullyRouted(true);
+            reportDetail.setDocumentNumber(document.getDocumentNumber());
+            reportItem.getDocumentsSuccessfullyRouted().add(reportDetail);
         } catch (RuntimeException | WorkflowException e) {
-            detail.setSuccessfullyRouted(false);
+            reportDetail.setSuccessfullyRouted(false);
             if (e instanceof ValidationException) {
                 String errorMessage = buildValidationErrorMessage((ValidationException) e);
-                LOG.error("processAccountingDocumentEntryFromXml: Could not route accounting document - "
-                        + errorMessage);
-                detail.setErrorMessage(errorMessage);
+                LOG.error("createAndRouteAccountingDocumentFromXml: Could not route accounting document - " + errorMessage);
+                reportDetail.setErrorMessage(errorMessage);
             } else {
-                LOG.error("processAccountingDocumentEntryFromXml: Error processing accounting XML document", e);
-                detail.setErrorMessage("Non validation error: " + e.getMessage());
+                LOG.error("createAndRouteAccountingDocumentFromXml: Error processing accounting XML document", e);
+                reportDetail.setErrorMessage("Non validation error: " + e.getMessage());
                 reportItem.setNonBusinessRuleFailure(true);
             }
-            reportItem.getDocumentsInError().add(detail);
+            reportItem.getDocumentsInError().add(reportDetail);
         } finally {
             GlobalVariables.getMessageMap().clearErrorMessages();
         }
@@ -194,6 +230,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     protected void removeDoneFileQuietly(String dataFileName) {
         try {
             fileStorageService.removeDoneFiles(Collections.singletonList(dataFileName));
+            LOG.info("removeDoneFileQuietly: Done file removed for file: " + dataFileName);
         } catch (RuntimeException e) {
             LOG.error("removeDoneFileQuietly: Could not delete .done file for accounting document XML", e);
         }
@@ -209,6 +246,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             toAddress = fromAddress;
         }
         createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
+        LOG.info("createAndEmailReport: Report created and emailed.");
     }
     
     protected String getCreateAccountingDocumentReportEmailAddress() {
@@ -245,7 +283,12 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
-    
+
+    public void setCreateAccountingDocumentValidationService(
+            CreateAccountingDocumentValidationService createAccountingDocumentValidationService) {
+        this.createAccountingDocumentValidationService = createAccountingDocumentValidationService;
+    }
+
     protected class CreateAccountingDocumentLogReport {
         private List<String> filesWithNonBusinessRuleFailures;
         private List<String> filesSuccessfullyProcessed;
@@ -262,8 +305,6 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         public List<String> getFilesSuccessfullyProcessed() {
             return filesSuccessfullyProcessed;
         }
-        
-        
     }
 
 }

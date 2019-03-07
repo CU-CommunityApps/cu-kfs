@@ -86,9 +86,12 @@ import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
+import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
+import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
+import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
@@ -133,7 +136,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
         createAccountingDocumentService.setParameterService(buildParameterService());
-        
+        createAccountingDocumentService.setCreateAccountingDocumentValidationService(new TestCreateAccountingDocumentValidationService());
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         createTargetTestDirectory();
@@ -769,7 +772,7 @@ public class CreateAccountingDocumentServiceImplTest {
         functionControl.setFinancialSystemFunctionActiveIndicator(true);
         return functionControl;
     }
-    
+
     private DisbursementVoucherTravelService buildMockDisbursementVoucherTravelService() {
         DisbursementVoucherTravelService travelService = Mockito.mock(DisbursementVoucherTravelService.class);
         Mockito.when(travelService.calculateMileageAmount(Mockito.anyInt(), Mockito.any())).thenReturn(new KualiDecimal(50));
@@ -976,6 +979,19 @@ public class CreateAccountingDocumentServiceImplTest {
         public void sendReportEmail(String toAddress, String fromAddress) {
         }
         
+    }
+    
+    private class TestCreateAccountingDocumentValidationService implements CreateAccountingDocumentValidationService {
+        
+        @Override
+        public boolean isValidXmlFileHeaderData(AccountingXmlDocumentListWrapper accountingXmlDocuments, CreateAccountingDocumentReportItem reportItem) {
+            return true;
+        }
+        
+        @Override
+        public boolean isAllRequiredDataValid(AccountingXmlDocumentEntry accountingXmlDocument, CreateAccountingDocumentReportItemDetail reportItemDetail) {
+            return true;
+        }
     }
 
 }
