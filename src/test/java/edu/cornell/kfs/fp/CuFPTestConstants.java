@@ -55,5 +55,7 @@ public class CuFPTestConstants {
     public static final String TEST_SUB_OBJ_CODE_10X = "10X";
     public static final String TEST_PROJECT_CODE_EB_PLGIFX = "EB-PLGIFX";
     public static final String TEST_PROJECT_CODE_EB_PLGIFT = "EB-PLGIFT";
-
+    
+    public static final String TEST_CREATE_ACCOUNT_DOCUMENT_INVALID_DATA = "Detected invalid data value {0} for element: {1}";
+    public static final String TEST_CREATE_ACCOUNT_DOCUMENT_NULL_BLANK_DATA = "Detected null or blank data for element: {0}";
 }

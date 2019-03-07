@@ -11,7 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Document", namespace = StringUtils.EMPTY)
@@ -178,4 +179,15 @@ public class AccountingXmlDocumentEntry {
         this.disbursementVoucherDetail = disbursementVoucherDetail;
     }
 
+    public String toString() {
+        StringBuilder sb = new StringBuilder("AccountingXmlDocumentEntry:: ").append(System.lineSeparator());
+        sb.append("Index: ").append((ObjectUtils.isNotNull(index) ? index.intValue() : "null")).append(System.lineSeparator());
+        sb.append("DocumentType: ").append(documentTypeCode).append(System.lineSeparator());
+        sb.append("Description: ").append(description).append(System.lineSeparator());
+        sb.append("Explanation: ").append(explanation).append(System.lineSeparator());
+        sb.append("OrganizationDocumentNumber: ").append(organizationDocumentNumber).append(System.lineSeparator());
+        sb.append("PostingFiscalYear: ").append((ObjectUtils.isNotNull(postingFiscalYear) ? postingFiscalYear.intValue() : "null")).append(System.lineSeparator());
+        return sb.toString();
+    }
+    
 }
