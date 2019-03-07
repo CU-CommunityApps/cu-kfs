@@ -2,32 +2,33 @@ package edu.cornell.kfs.sys.dataaccess.impl;
 
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.batch.DocumentRequeueStep;
-import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.kuali.rice.kew.actionitem.ActionItem;
-import org.kuali.rice.kew.actionitem.ActionItemExtension;
 import org.kuali.rice.kew.actionrequest.ActionRequestValue;
 import org.kuali.rice.kew.api.KEWPropertyConstants;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.DocumentRouteHeaderValue;
 import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.lang.annotation.Annotation;
+import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc implements DocumentMaintenanceDao {
 	private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceDaoJdbc.class);
@@ -47,13 +48,20 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
             List<String> documentIdsToRequeue = new ArrayList<>();
 
             try {
-                final Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
-                final Collection<String> roleIds = findRequeueableRoleIds();
+                final Collection<String> docTypeIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
+                final Collection<String> roleIds = parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
 
-                String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size(), true);
+                String selectStatementSql = buildRequeueSqlQuery(docTypeIds.size(), roleIds.size());
                 selectStatement = con.prepareStatement(selectStatementSql);
 
-                addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
+                int index = 1;
+                for (String docTypeId: docTypeIds) {
+                    selectStatement.setString(index++, docTypeId);
+                }
+
+                for (String roleId: roleIds) {
+                    selectStatement.setString(index++, roleId);
+                }
 
                 queryResultSet = selectStatement.executeQuery();
 
@@ -64,13 +72,26 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
                 queryResultSet.close();
             } finally {
-                processQueryFinally(selectStatement, queryResultSet);
+                if (queryResultSet != null) {
+                    try {
+                        queryResultSet.close();
+                    } catch (SQLException e) {
+                        LOG.error("getDocumentRequeueValues: Could not close ResultSet");
+                    }
+                }
+                if (selectStatement != null) {
+                    try {
+                        selectStatement.close();
+                    } catch (SQLException e) {
+                        LOG.error("getDocumentRequeueValues: Could not close selection PreparedStatement");
+                    }
+                }
             }
             return documentIdsToRequeue;
         });
 	}
 
-	private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount, boolean includeOrderByClause) {
+	private String buildRequeueSqlQuery(int docTypeIdCount, int roleIdCount) {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select DOC_HDR_ID from CYNERGY.KREW_DOC_HDR_T where ");
@@ -107,11 +128,9 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 			sql.append(",?");
 		}
 
-		sql.append(")))");
-		
-		if (includeOrderByClause) {
-		    sql.append(" order by ").append(workflowDocumentHeaderColumnName).append(" ASC");
-		}
+		sql.append("))) order by ");
+		sql.append(workflowDocumentHeaderColumnName);
+		sql.append(" ASC");
 
 		return sql.toString();
 	}
@@ -147,91 +166,6 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
 		return tableName;
 	}
-	
-    @Override
-    public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
-        return getJdbcTemplate().execute((ConnectionCallback<List<ActionItemNoteDetailDto>>) con -> {
-            PreparedStatement selectStatement = null;
-            ResultSet queryResultSet = null;
-            List<ActionItemNoteDetailDto> notes = new ArrayList<ActionItemNoteDetailDto>();
-
-            try {
-                final Collection<String> docTypeIds = findNonRequeueableDocumentTypes();
-                final Collection<String> roleIds = findRequeueableRoleIds();
-
-                String selectStatementSql = buildActionNoteQuery(docTypeIds.size(), roleIds.size());
-
-                selectStatement = con.prepareStatement(selectStatementSql);
-
-                addDocumentIdAndRoleIdsToSelectStatement(selectStatement, docTypeIds, roleIds);
-
-                queryResultSet = selectStatement.executeQuery();
-
-                while (queryResultSet.next()) {
-                    String principalId = queryResultSet.getString(1);
-                    String docHeaderId = queryResultSet.getString(2);
-                    String actionNote = queryResultSet.getString(3);
-                    Timestamp noteTimeStamp = queryResultSet.getTimestamp(4, Calendar.getInstance());
-                    String originalActionItemId = queryResultSet.getString(5);
-                    notes.add(new ActionItemNoteDetailDto(principalId, docHeaderId, actionNote, originalActionItemId, noteTimeStamp));
-                }
-
-                queryResultSet.close();
-            } finally {
-                processQueryFinally(selectStatement, queryResultSet);
-            }
-            return notes;
-        });
-    }
-
-    private Collection<String> findNonRequeueableDocumentTypes() {
-        return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.NON_REQUEUABLE_DOCUMENT_TYPES);
-    }
-
-    private Collection<String> findRequeueableRoleIds() {
-        return parameterService.getParameterValuesAsString(DocumentRequeueStep.class, CUKFSParameterKeyConstants.REQUEUABLE_ROLES);
-    }
-
-    private void addDocumentIdAndRoleIdsToSelectStatement(PreparedStatement selectStatement,
-            final Collection<String> docTypeIds, final Collection<String> roleIds) throws SQLException {
-        int index = 1;
-        for (String docTypeId: docTypeIds) {
-            selectStatement.setString(index++, docTypeId);
-        }
-
-        for (String roleId: roleIds) {
-            selectStatement.setString(index++, roleId);
-        }
-    }
-
-    private void processQueryFinally(PreparedStatement selectStatement, ResultSet queryResultSet) {
-        if (queryResultSet != null) {
-            try {
-                queryResultSet.close();
-            } catch (SQLException e) {
-                LOG.error("processQueryFinally: Could not close ResultSet", e);
-            }
-        }
-        if (selectStatement != null) {
-            try {
-                selectStatement.close();
-            } catch (SQLException e) {
-                LOG.error("processQueryFinally: Could not close selection PreparedStatement", e);
-            }
-        }
-    }
-	
-    private String buildActionNoteQuery(int docTypeIdCount, int roleIdCount) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("select ai.prncpl_id, ai.doc_hdr_id, aie.actn_note, aie.note_ts, ai.actn_itm_id ");
-        sb.append("from CYNERGY.").append(retrieveTableNameFromAnnotations(ActionItem.class)).append(" ai, CYNERGY.");
-        sb.append(retrieveTableNameFromAnnotations(ActionItemExtension.class)).append(" aie ");
-        sb.append("where ai.actn_itm_id = aie.actn_itm_id ");
-        sb.append("and ai.doc_hdr_id in (");
-        sb.append(buildRequeueSqlQuery(docTypeIdCount, roleIdCount, false));
-        sb.append(")");
-        return sb.toString();
-    }
 	
 	public ParameterService getParameterService() {
 		return parameterService;
