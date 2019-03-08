@@ -1,6 +1,7 @@
 package edu.cornell.kfs.sys.dataaccess;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface DocumentMaintenanceDao {
 
@@ -10,5 +11,11 @@ public interface DocumentMaintenanceDao {
 	 * @return list of documentIds
 	 */
 	Collection<String> getDocumentRequeueValues();
+	
+	/**
+	 * Finds the actions list notes for the documents that will be re-queued.
+	 * @return
+	 */
+	List<ActionItemNoteDetailDto> getActionNotesToBeRequeued();
 
 }
