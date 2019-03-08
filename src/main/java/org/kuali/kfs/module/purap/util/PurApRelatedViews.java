@@ -363,7 +363,7 @@ public class PurApRelatedViews {
             group.lineItemView = liview; // could be current document
             for (CorrectionReceivingView crview : crviews) {
                 if (StringUtils.equals(crview.getLineItemReceivingDocumentNumber(), liview.getDocumentNumber()) &&
-                        !documentNumber.equals(crview.getDocumentNumber())) {// exclude current document
+                    !documentNumber.equals(crview.getDocumentNumber())) { // exclude current document
                     group.addCorrectionView(crview);
                 }
             }

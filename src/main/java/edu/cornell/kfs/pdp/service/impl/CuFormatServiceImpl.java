@@ -107,7 +107,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         // if no payments found for format clear the format process
         if (preFormatProcessSummary.getProcessSummaryList().size() == 0) {
             LOG.debug("startFormatProcess() No payments to process.  Format process ending");
-            clearUnfinishedFormat(paymentProcess.getId().intValue());// ?? maybe call end format process
+            clearUnfinishedFormat(paymentProcess.getId().intValue());
         }
 
         return preFormatProcessSummary;
