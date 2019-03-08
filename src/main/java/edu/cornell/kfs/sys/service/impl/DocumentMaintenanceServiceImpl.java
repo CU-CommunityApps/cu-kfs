@@ -30,7 +30,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     private static final Logger LOG = LogManager.getLogger(DocumentMaintenanceServiceImpl.class);
     private DocumentMaintenanceDao documentMaintenanceDao;
 
-    @Transactional
+    @Override
     public boolean requeueDocuments() {
         Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
         LOG.info("requeueDocuments: Total number of documents flagged for requeuing: " + docIds.size());
@@ -39,28 +39,33 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         LOG.info("requeueDocuments: Total number of action note details: " + noteDetails.size());
         
         for (String docId : docIds) {
-            LOG.info("requeueDocuments: Requesting requeue for document: " + docId);
-            DocumentRefreshQueue documentRequeuer = (DocumentRefreshQueue) SpringContext.getService(CUKFSConstants.DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME);
-            documentRequeuer.refreshDocument(docId);
-            
-            List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
-            for (ActionItemNoteDetailDto detailDto : noteDetailsForDocument) {
-                ActionItem actionItem = findActionItem(detailDto);
-                if (ObjectUtils.isNotNull(actionItem)) {
-                    ActionItemExtension actionItemExtension = findActionItemExtension(actionItem.getId());
-                    if (ObjectUtils.isNull(actionItemExtension)) {
-                        actionItemExtension = buildActionItemExtension(detailDto, actionItem);
-                        LOG.info("requeueDocuments, adding note details " + detailDto.toString() + " to action item " + actionItem.getId());
-                    } else {
-                        actionItemExtension.setActionNote(detailDto.getActionNote());
-                        actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
-                        LOG.info("requeueDocuments, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
-                    }
-                    KRADServiceLocator.getDataObjectService().save(actionItemExtension);
-                }
-            }
+            requeueDocumentByDocumentId(noteDetails, docId);
         }
         return true;
+    }
+    
+    @Transactional
+    private void requeueDocumentByDocumentId(List<ActionItemNoteDetailDto> noteDetails, String docId) {
+        LOG.info("requeueDocumentByDocumentId: Requesting requeue for document: " + docId);
+        DocumentRefreshQueue documentRequeuer = (DocumentRefreshQueue) SpringContext.getService(CUKFSConstants.DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME);
+        documentRequeuer.refreshDocument(docId);
+        
+        List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
+        for (ActionItemNoteDetailDto detailDto : noteDetailsForDocument) {
+            ActionItem actionItem = findActionItem(detailDto);
+            if (ObjectUtils.isNotNull(actionItem)) {
+                ActionItemExtension actionItemExtension = findActionItemExtension(actionItem.getId());
+                if (ObjectUtils.isNull(actionItemExtension)) {
+                    actionItemExtension = buildActionItemExtension(detailDto, actionItem);
+                    LOG.info("requeueDocumentByDocumentId, adding note details " + detailDto.toString() + " to action item " + actionItem.getId());
+                } else {
+                    actionItemExtension.setActionNote(detailDto.getActionNote());
+                    actionItemExtension.setNoteTimeStamp(detailDto.getNoteTimeStamp());
+                    LOG.info("requeueDocumentByDocumentId, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
+                }
+                KRADServiceLocator.getDataObjectService().save(actionItemExtension);
+            }
+        }
     }
     
     private ActionItem findActionItem(ActionItemNoteDetailDto detailDto) {
