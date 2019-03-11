@@ -234,7 +234,6 @@ public class CUKFSKeyConstants extends KFSKeyConstants {
     public static final String WARNING_CINV_BILLING_PERIOD_START_DATE_AFTER_LAST_BILLED_DATE = "warning.document.contractGrantsInvoice.billingPeriodStartDate.after.lastBilledDate";
     public static final String WARNING_CINV_BILLING_PERIOD_END_DATE_AFTER_TODAY = "warning.document.contractGrantsInvoice.billingPeriodEndDate.after.today";
 
-    public static final String WARNING_BANK_NOT_REQUIRED = "warning.document.withBanking.bank.not.required";
     public static final String ERROR_BANK_REQUIRED_PER_PAYMENT_METHOD = "error.document.withBanking.bank.required";
     public static final String ERROR_BANK_INVALID = "error.document.withBanking.bank.invalid";
 }
