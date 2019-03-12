@@ -1,55 +1,62 @@
 package edu.cornell.kfs.module.purap.document.validation.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocumentBase;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.AccountsPayableBankCodeValidation;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSParameterKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
-import org.kuali.kfs.sys.document.validation.event.AttributedRouteDocumentEvent;
+import org.kuali.rice.core.api.parameter.ParameterEvaluator;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.sys.document.validation.impl.CuBankCodeValidation;
 
 public class CuAccountsPayableBankCodeValidation extends AccountsPayableBankCodeValidation {
-	
-	@Override
-	public boolean validate(AttributedDocumentEvent event) {
+    
+    private ParameterEvaluatorService parameterEvaluatorService;
+    
+    @Override
+    public boolean validate(AttributedDocumentEvent event) {
         AccountsPayableDocumentBase apDocument = (AccountsPayableDocumentBase) getAccountingDocumentForValidation();
 
-        // check if one of the extended UA documents, if so, take the payment method into account, otherwise, revert to baseline behavior
-        boolean isValid = true;
-        if ( apDocument instanceof PaymentRequestDocument) {
-        	if (StringUtils.isNotBlank(apDocument.getBankCode())) {
-        		// PREQ bank code is not required
-                isValid = CuBankCodeValidation.validate(apDocument.getBankCode(), "document." + PurapPropertyConstants.BANK_CODE, ((CuPaymentRequestDocument)apDocument).getPaymentMethodCode(), false, true);            
-                if ( isValid ) {
-                    if ( !(event instanceof AttributedRouteDocumentEvent) &&  StringUtils.isNotBlank(apDocument.getBankCode())
-                        && !CuBankCodeValidation.doesBankCodeNeedToBePopulated(((CuPaymentRequestDocument)apDocument).getPaymentMethodCode()) ) {
-                        apDocument.setBank(null);
-                        apDocument.setBankCode(null);                
-                    }
-                }
-        	}
-        }  else if ( apDocument instanceof VendorCreditMemoDocument ) {
-        	if (StringUtils.isNotBlank(apDocument.getBankCode())) {
-        	     isValid = CuBankCodeValidation.validate(apDocument.getBankCode(), "document." + PurapPropertyConstants.BANK_CODE,  ((CuVendorCreditMemoDocument)apDocument).getPaymentMethodCode(), false, true);                        
-        	     if ( isValid ) {
-                // clear out the bank code on the document if not needed (per the message set by the call above)
-        	          if ( StringUtils.isNotBlank(apDocument.getBankCode())
-        	        		        && !CuBankCodeValidation.doesBankCodeNeedToBePopulated(((CuVendorCreditMemoDocument)apDocument).getPaymentMethodCode()) ) {
-        	        	    apDocument.setBank(null);
-        	        	    apDocument.setBankCode(null);                
-        	        }
-               }
-        	}
-        } else {
-            isValid = CuBankCodeValidation.validate(apDocument.getBankCode(), "document." + PurapPropertyConstants.BANK_CODE, false, true);
+        if (!isDocumentTypeUsingBankCode(apDocument)) {
+            return true;
         }
 
+        String paymentMethodCode = getPaymentMethodCodeFromDocumentIfSupported(apDocument);
+        boolean isValid = CuBankCodeValidation.validate(
+                apDocument.getBankCode(), KFSPropertyConstants.DOCUMENT + KFSConstants.DELIMITER + PurapPropertyConstants.BANK_CODE,
+                paymentMethodCode, false, true);
+
         return isValid;
-	}
+    }
+
+    // This method is private on the superclass, so it has been copied into this class and tweaked accordingly.
+    protected boolean isDocumentTypeUsingBankCode(AccountsPayableDocumentBase apDocument) {
+        String documentTypeName = apDocument.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+        ParameterEvaluator evaluator = parameterEvaluatorService.getParameterEvaluator(
+                Bank.class, KFSParameterKeyConstants.BANK_CODE_DOCUMENT_TYPES, documentTypeName);
+        return evaluator.evaluationSucceeds();
+    }
+
+    protected String getPaymentMethodCodeFromDocumentIfSupported(AccountsPayableDocumentBase apDocument) {
+        if (apDocument instanceof PaymentRequestDocument) {
+            return ((CuPaymentRequestDocument) apDocument).getPaymentMethodCode();
+        } else if (apDocument instanceof VendorCreditMemoDocument) {
+            return ((CuVendorCreditMemoDocument) apDocument).getPaymentMethodCode();
+        } else {
+            return KFSConstants.EMPTY_STRING;
+        }
+    }
+
+    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
+        this.parameterEvaluatorService = parameterEvaluatorService;
+    }
 
 }
