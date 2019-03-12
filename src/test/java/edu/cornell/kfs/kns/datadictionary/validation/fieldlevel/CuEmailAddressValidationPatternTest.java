@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
 import org.junit.After;
 import org.junit.Before;
 
@@ -26,7 +29,6 @@ public class CuEmailAddressValidationPatternTest {
     public void setUp() throws Exception {
         pattern = PowerMockito.spy(new EmailAddressValidationPattern());
         String emailRegEx = getProperty(PATTERN_CONSTRAINT);
-        System.err.println(emailRegEx);
         PowerMockito.doReturn(emailRegEx).when(pattern, "getRegexString");
     }
     
@@ -54,6 +56,25 @@ public class CuEmailAddressValidationPatternTest {
             boolean actualResults = pattern.matches(testAddress.emailAdress);
             assertEquals(testAddress.emailAdress + " should be " + testAddress.validAdress, testAddress.validAdress, actualResults);
         }
+    }
+    
+    @Test
+    public void testValidateEmailAddressByInternetAddress() {
+        for (EmailAdressTestValue testAddress : EmailAdressTestValue.values()) {
+            boolean actualResults = validateEmailByInternetAddress(testAddress.emailAdress);
+            assertEquals(testAddress.emailAdress + " should be " + testAddress.validAdress, testAddress.validAdress, actualResults);
+        }
+    }
+    
+    private boolean validateEmailByInternetAddress(String email) {
+        try {
+            InternetAddress ia = new InternetAddress(email);
+            ia.validate();
+            return true;
+        } catch (AddressException e) {
+            return false;
+        }
+        
     }
    
 }
