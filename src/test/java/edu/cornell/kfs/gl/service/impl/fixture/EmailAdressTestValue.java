@@ -14,8 +14,8 @@ public enum EmailAdressTestValue {
     SPACE_BAD(" @a", false),
     //DOT_ADDRESS_BAD(".@a.org", false),
     HYPHEN_ADDRESS_BAD("\"-@a.org\"", false),
-    //HYPHEN_ZONE_BAD("something@a.o-rg", false),
-    UNDERSCOREW_DOMAIN_BAD("someone@foo_bar.com", false);
+    HYPHEN_ZONE_BAD("something@a.o-rg", true);
+    //UNDERSCOREW_DOMAIN_BAD("someone@foo_bar.com", false);
     
     public final String emailAdress;
     public final boolean validAdress;
