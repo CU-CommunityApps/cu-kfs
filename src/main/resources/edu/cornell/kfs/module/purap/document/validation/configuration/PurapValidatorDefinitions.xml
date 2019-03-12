@@ -162,7 +162,8 @@
     <property name="businessObjectService" ref="businessObjectService" />
     </bean>
     
-    <bean id="PurchasingAccountsPayable-bankCodeValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuAccountsPayableBankCodeValidation" abstract="true"/>
+    <bean id="PurchasingAccountsPayable-bankCodeValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuAccountsPayableBankCodeValidation" abstract="true"
+            p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
     	<!--  KFSPTS-1891 -->
 	<bean id="PaymentRequest-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestWireTransferValidation" abstract="true" />
