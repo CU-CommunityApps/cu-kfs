@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.EmailAddressValidationPattern;
 import org.powermock.api.mockito.PowerMockito;
 
-import edu.cornell.kfs.gl.service.impl.fixture.EmailAdressTestValue;
+import edu.cornell.kfs.gl.service.impl.fixture.EmailAddressTestValue;
 
 import static org.junit.Assert.assertEquals;
 
@@ -52,17 +52,17 @@ public class CuEmailAddressValidationPatternTest {
     
     @Test
     public void testValidateEmailAddressByRegularExpression() {
-        for (EmailAdressTestValue testAddress : EmailAdressTestValue.values()) {
-            boolean actualResults = pattern.matches(testAddress.emailAdress);
-            assertEquals(testAddress.emailAdress + " should be " + testAddress.validAdress, testAddress.validAdress, actualResults);
+        for (EmailAddressTestValue testAddress : EmailAddressTestValue.values()) {
+            boolean actualResults = pattern.matches(testAddress.emailAddress);
+            assertEquals(testAddress.emailAddress + " should be " + testAddress.validAddress, testAddress.validAddress, actualResults);
         }
     }
     
     @Test
     public void testValidateEmailAddressByInternetAddress() {
-        for (EmailAdressTestValue testAddress : EmailAdressTestValue.values()) {
-            boolean actualResults = validateEmailByInternetAddress(testAddress.emailAdress);
-            assertEquals(testAddress.emailAdress + " should be " + testAddress.validAdress, testAddress.validAdress, actualResults);
+        for (EmailAddressTestValue testAddress : EmailAddressTestValue.values()) {
+            boolean actualResults = validateEmailByInternetAddress(testAddress.emailAddress);
+            assertEquals(testAddress.emailAddress + " should be " + testAddress.validAddress, testAddress.validAddress, actualResults);
         }
     }
     
