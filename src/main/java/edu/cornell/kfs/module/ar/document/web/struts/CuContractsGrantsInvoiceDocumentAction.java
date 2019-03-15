@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.integration.ar.ArIntegrationConstants;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -103,7 +104,7 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
             billingPeriod = StringUtils.defaultString(billingPeriod);
             String warningMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH);
             warningMessages.add(MessageFormat.format(warningMessage, new String[] {billingPeriod}));
-        } else {
+        } else if (shouldValidateBillingPeriodDateRange(contractsGrantsInvoiceDocument)) {
             try {
                 validateBillingPeriodDateRange(contractsGrantsInvoiceDocument, warningMessages);
             } catch (ParseException ex) {
@@ -144,6 +145,23 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
         Pair<Date, Date> awardDateRange = parseDateRange(contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAwardDateRange());
         if (dateTimeService.dateDiff(billingPeriodStartDate, awardDateRange.getLeft(), false) >= 1) {
             warningMessages.add(configurationService.getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_BILLING_PERIOD_START_DATE_BEFORE_AWARD_START_DATE));
+        }
+    }
+    
+    private boolean shouldValidateBillingPeriodDateRange(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+        String frequencyCode = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getBillingFrequencyCode();
+        if (StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.LETTER_OF_CREDIT) ||
+                StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING) ||
+                StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.MILESTONE)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("shouldValidateBillingPeriodDateRange, the billing frequency '" + frequencyCode + "' should NOT require validation of billing period date range ");
+            }
+            return false;
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("shouldValidateBillingPeriodDateRange, the billing frequency '" + frequencyCode + "' should require validation of billing period date range ");
+            }
+            return true;
         }
     }
 
