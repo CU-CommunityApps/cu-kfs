@@ -233,9 +233,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         }
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#templateBillingAddress(org.kuali.kfs.module.purap.businessobject.BillingAddress).
-     */
     @Override
     public void templateBillingAddress(BillingAddress billingAddress) {
         if (ObjectUtils.isNotNull(billingAddress)) {
@@ -307,7 +304,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return null;
     }
 
-
     @Override
     public void addItem(PurApItem item) {
         item.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
@@ -319,8 +315,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         // remove associated asset items
         PurApItem item = items.get(lineNum);
         if (ObjectUtils.isNotNull(item) && item.getItemIdentifier() != null) {
-            PurchasingCapitalAssetItem purchasingCapitalAssetItem = getPurchasingCapitalAssetItemByItemIdentifier(item.getItemIdentifier());
-
+            PurchasingCapitalAssetItem purchasingCapitalAssetItem =
+                    getPurchasingCapitalAssetItemByItemIdentifier(item.getItemIdentifier());
+            
             if (ObjectUtils.isNotNull(purchasingCapitalAssetItem)) {
                 getPurchasingCapitalAssetItems().remove(purchasingCapitalAssetItem);
             }
@@ -485,7 +482,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      * parameter.
      */
     public boolean isEnableReceivingDocumentRequiredIndicator() {
-        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.RECEIVING_DOCUMENT_REQUIRED_IND);
+        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+                KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                PurapParameterConstants.RECEIVING_DOCUMENT_REQUIRED_IND);
     }
 
     /**
@@ -493,7 +492,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      * controlling parameter.
      */
     public boolean isEnablePaymentRequestPositiveApprovalIndicator() {
-        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.PAYMENT_REQUEST_POSITIVE_APPROVAL_IND);
+        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+                KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                PurapParameterConstants.PAYMENT_REQUEST_POSITIVE_APPROVAL_IND);
     }
 
     @Override
@@ -1503,9 +1504,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return item;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#buildListOfDeletionAwareLists()
-     */
     @Override
     public List buildListOfDeletionAwareLists() {
         List managedLists = new ArrayList<List>();
