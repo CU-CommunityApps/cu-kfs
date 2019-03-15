@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.integration.ar.ArIntegrationConstants;
+import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -149,7 +150,13 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
     
     private boolean shouldValidateBillingPeriodDateRange(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
-        String frequencyCode = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward().getBillingFrequency().getFrequency(); 
+        ContractsAndGrantsBillingAward award =  contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+        String frequencyCode = StringUtils.EMPTY;
+        if (ObjectUtils.isNotNull(award)) {
+            frequencyCode = award.getBillingFrequencyCode();
+        } else {
+            LOG.error("shouldValidateBillingPeriodDateRange, No award found for CINV document " + contractsGrantsInvoiceDocument.getDocumentNumber());
+        }
         if (StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.LETTER_OF_CREDIT) ||
                 StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.PREDETERMINED_BILLING) ||
                 StringUtils.equalsIgnoreCase(frequencyCode, ArIntegrationConstants.BillingFrequencyValues.MILESTONE)) {
