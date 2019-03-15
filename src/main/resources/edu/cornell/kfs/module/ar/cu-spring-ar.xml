@@ -37,13 +37,15 @@
 
 	<bean id="customerLoadService" parent="customerLoadService-parentBean"
 		class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
+        
+    <bean id="cuContractsGrantsInvoiceCreateDocumentService" parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
 
-	<bean id="contractsGrantsInvoiceCreateDocumentService"
-		  class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
-		  parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
+    <bean id="contractsGrantsInvoiceCreateDocumentService" 
+          class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
+          parent="contractsGrantsInvoiceCreateDocumentService-parentBean"
+          p:cuContractsGrantsInvoiceDocumentService-ref="cuContractsGrantsInvoiceDocumentService" />
 
-	
-    <bean id="cuContractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean" />
+    <bean id="cuContractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService" />
     
     <bean id="contractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean"
           class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsInvoiceDocumentServiceImpl">

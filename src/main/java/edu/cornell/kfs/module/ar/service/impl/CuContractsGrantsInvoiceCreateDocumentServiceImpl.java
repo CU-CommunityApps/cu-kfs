@@ -111,7 +111,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     
     protected String findContractControlAccountNumber(List<InvoiceAccountDetail> details) {
         for (InvoiceAccountDetail detail : details) {
-            Account contractControlAccount = cuContractsGrantsInvoiceDocumentService.determineContractControlAccount(detail);
+            Account contractControlAccount = getCuContractsGrantsInvoiceDocumentService().determineContractControlAccount(detail);
             if (ObjectUtils.isNotNull(contractControlAccount) 
                     && StringUtils.isNotBlank(contractControlAccount.getAccountNumber())) {
                 return contractControlAccount.getAccountNumber();
@@ -169,6 +169,15 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             }
         }
         return false;
+    }
+
+    public CuContractsGrantsInvoiceDocumentService getCuContractsGrantsInvoiceDocumentService() {
+        return cuContractsGrantsInvoiceDocumentService;
+    }
+
+    public void setCuContractsGrantsInvoiceDocumentService(
+            CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService) {
+        this.cuContractsGrantsInvoiceDocumentService = cuContractsGrantsInvoiceDocumentService;
     }
 
 }
