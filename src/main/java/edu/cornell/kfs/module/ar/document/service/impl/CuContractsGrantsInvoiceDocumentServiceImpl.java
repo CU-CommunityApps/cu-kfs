@@ -9,13 +9,17 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArKeyConstants;
 import org.kuali.kfs.module.ar.ArPropertyConstants;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
+import org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail;
+import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode;
+import org.kuali.kfs.module.ar.businessobject.OrganizationAccountingDefault;
 import org.kuali.kfs.module.ar.businessobject.SystemInformation;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl;
@@ -27,10 +31,11 @@ import org.kuali.kfs.sys.util.ReflectionMap;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
+import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl {
+public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl implements CuContractsGrantsInvoiceDocumentService {
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentServiceImpl.class);
 
     // Customized to default final status date to last modified date
@@ -549,5 +554,57 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
     }
     
+    @Override
+    protected String getRecipientAccountNumber(List<InvoiceAccountDetail> accountDetails) {
+        if (CollectionUtils.isNotEmpty(accountDetails)) {
+            Account contractControlAccount = determineContractControlAccount(accountDetails.get(0));
+            if (ObjectUtils.isNotNull(contractControlAccount) 
+                    && StringUtils.isNotBlank(contractControlAccount.getAccountNumber())) {
+                return contractControlAccount.getAccountNumber();
+            }
+        }
+        return null;
+    }
+    
+    //Part of the logic to determine contract control account was obtained from FINP-4726.
+    @Override
+    public Account determineContractControlAccount(InvoiceAccountDetail invoiceAccountDetail) {
+        Account contractControlAccount = null;
+        Account account = invoiceAccountDetail.getAccount();
+        if (ObjectUtils.isNull(account)) {
+            invoiceAccountDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
+            account = invoiceAccountDetail.getAccount();
+        }
+        if (ObjectUtils.isNotNull(account)) {
+            contractControlAccount = account.getContractControlAccount();
+            if (ObjectUtils.isNull(contractControlAccount)) {
+                account.refreshReferenceObject(KFSPropertyConstants.CONTRACT_CONTROL_ACCOUNT);
+                contractControlAccount = account.getContractControlAccount();
+            }
+        }
+        return contractControlAccount;
+    }
+    
+    @Override
+    protected CustomerInvoiceDetail createSourceAccountingLinesByContractControlAccount(
+            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
+            final OrganizationAccountingDefault organizationAccountingDefault) {
+        String coaCode = null;
+        String accountNumber = null;
+
+        List<InvoiceAccountDetail> accountDetails = contractsGrantsInvoiceDocument.getAccountDetails();
+        if (CollectionUtils.isNotEmpty(accountDetails)) {
+            Account contractControlAccount = determineContractControlAccount(accountDetails.get(0));
+            if (ObjectUtils.isNotNull(contractControlAccount)) {
+                coaCode = contractControlAccount.getChartOfAccountsCode();
+                accountNumber = contractControlAccount.getAccountNumber();
+            }
+        }
+
+        String objectCode = organizationAccountingDefault.getDefaultInvoiceFinancialObjectCode();
+
+        return createSourceAccountingLine(contractsGrantsInvoiceDocument.getDocumentNumber(),
+                coaCode, accountNumber, objectCode, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
+    }
 
 }
