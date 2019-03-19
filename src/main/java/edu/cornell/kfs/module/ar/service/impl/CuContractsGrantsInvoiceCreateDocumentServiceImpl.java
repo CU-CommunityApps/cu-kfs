@@ -15,7 +15,6 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.coa.businessobject.Account;
-import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorMessage;
@@ -30,8 +29,11 @@ import edu.cornell.kfs.module.ar.CuArParameterConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
+import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
+    
+    protected CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService;
     
     /**
      * Fixes NullPointerException that can occur when getting the award total amount.
@@ -109,8 +111,10 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     
     protected String findContractControlAccountNumber(List<InvoiceAccountDetail> details) {
         for (InvoiceAccountDetail detail : details) {
-            if (StringUtils.isNotBlank(detail.getAccountNumber())) {
-                return detail.getAccountNumber();
+            Account contractControlAccount = getCuContractsGrantsInvoiceDocumentService().determineContractControlAccount(detail);
+            if (ObjectUtils.isNotNull(contractControlAccount) 
+                    && StringUtils.isNotBlank(contractControlAccount.getAccountNumber())) {
+                return contractControlAccount.getAccountNumber();
             }
         }
         return StringUtils.EMPTY;
@@ -165,6 +169,15 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             }
         }
         return false;
+    }
+
+    public CuContractsGrantsInvoiceDocumentService getCuContractsGrantsInvoiceDocumentService() {
+        return cuContractsGrantsInvoiceDocumentService;
+    }
+
+    public void setCuContractsGrantsInvoiceDocumentService(
+            CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService) {
+        this.cuContractsGrantsInvoiceDocumentService = cuContractsGrantsInvoiceDocumentService;
     }
 
 }
