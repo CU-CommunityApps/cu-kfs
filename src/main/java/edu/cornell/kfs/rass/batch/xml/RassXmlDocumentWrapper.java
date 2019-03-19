@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.DateTimeUtils;
 
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
@@ -59,6 +61,17 @@ public class RassXmlDocumentWrapper {
 
     public void setAgencies(List<RassXmlAgencyEntry> agencies) {
         this.agencies = agencies;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof RassXmlDocumentWrapper) {
+            RassXmlDocumentWrapper other = (RassXmlDocumentWrapper) o;
+            return DateUtils.isSameInstant(extractDate, other.getExtractDate());
+        } else {
+            return false;
+        }
+        
     }
 
 }
