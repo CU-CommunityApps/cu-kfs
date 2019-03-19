@@ -38,6 +38,14 @@ public class RassXmlAwardEntry {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String projectTitle;
     
+    @XmlElement(name = "Start_Date", namespace = StringUtils.EMPTY, required = true)
+    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    private Date startDate;
+    
+    @XmlElement(name = "Stop_Date", namespace = StringUtils.EMPTY, required = true)
+    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    private Date stopDate;
+    
     @XmlElement(name = "Direct_Cost_Amount", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
     private KualiDecimal directCostAmount;
@@ -50,9 +58,25 @@ public class RassXmlAwardEntry {
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
     private KualiDecimal totalAMount;
     
+    @XmlElement(name = "Grant_Number", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String grantNumber;
+    
     @XmlElement(name = "Grant_Description", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String grantDescription;
+    
+    @XmlElement(name = "Federal_Pass_Through", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String federalPassThrough;
+    
+    @XmlElement(name = "Federal_Pass_Through_Agency_Number", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String federalPassThroughAgencyNumber;
+    
+    @XmlElement(name = "CFDA_Number", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    private String cfdaNumber;
     
     @XmlElement(name = "Organization_Code", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -72,6 +96,150 @@ public class RassXmlAwardEntry {
     
     public RassXmlAwardEntry() {
         principalAndCoPrincipalInvestigators = new ArrayList<RassXMLAwardPiCoPiEntry>();
+    }
+
+    public String getProposalNumber() {
+        return proposalNumber;
+    }
+
+    public void setProposalNumber(String proposalNumber) {
+        this.proposalNumber = proposalNumber;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAgencyNumber() {
+        return agencyNumber;
+    }
+
+    public void setAgencyNumber(String agencyNumber) {
+        this.agencyNumber = agencyNumber;
+    }
+
+    public String getProjectTitle() {
+        return projectTitle;
+    }
+
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(Date stopDate) {
+        this.stopDate = stopDate;
+    }
+
+    public KualiDecimal getDirectCostAmount() {
+        return directCostAmount;
+    }
+
+    public void setDirectCostAmount(KualiDecimal directCostAmount) {
+        this.directCostAmount = directCostAmount;
+    }
+
+    public KualiDecimal getIndirectCostAMount() {
+        return indirectCostAMount;
+    }
+
+    public void setIndirectCostAMount(KualiDecimal indirectCostAMount) {
+        this.indirectCostAMount = indirectCostAMount;
+    }
+
+    public KualiDecimal getTotalAMount() {
+        return totalAMount;
+    }
+
+    public void setTotalAMount(KualiDecimal totalAMount) {
+        this.totalAMount = totalAMount;
+    }
+
+    public String getGrantNumber() {
+        return grantNumber;
+    }
+
+    public void setGrantNumber(String grantNumber) {
+        this.grantNumber = grantNumber;
+    }
+
+    public String getGrantDescription() {
+        return grantDescription;
+    }
+
+    public void setGrantDescription(String grantDescription) {
+        this.grantDescription = grantDescription;
+    }
+
+    public String getFederalPassThrough() {
+        return federalPassThrough;
+    }
+
+    public void setFederalPassThrough(String federalPassThrough) {
+        this.federalPassThrough = federalPassThrough;
+    }
+
+    public String getFederalPassThroughAgencyNumber() {
+        return federalPassThroughAgencyNumber;
+    }
+
+    public void setFederalPassThroughAgencyNumber(String federalPassThroughAgencyNumber) {
+        this.federalPassThroughAgencyNumber = federalPassThroughAgencyNumber;
+    }
+
+    public String getCfdaNumber() {
+        return cfdaNumber;
+    }
+
+    public void setCfdaNumber(String cfdaNumber) {
+        this.cfdaNumber = cfdaNumber;
+    }
+
+    public String getOrganizationCode() {
+        return organizationCode;
+    }
+
+    public void setOrganizationCode(String organizationCode) {
+        this.organizationCode = organizationCode;
+    }
+
+    public String getCostShareRequiredString() {
+        return costShareRequiredString;
+    }
+
+    public void setCostShareRequiredString(String costShareRequiredString) {
+        this.costShareRequiredString = costShareRequiredString;
+    }
+
+    public Date getFinalReportDueDate() {
+        return finalReportDueDate;
+    }
+
+    public void setFinalReportDueDate(Date finalReportDueDate) {
+        this.finalReportDueDate = finalReportDueDate;
+    }
+
+    public List<RassXMLAwardPiCoPiEntry> getPrincipalAndCoPrincipalInvestigators() {
+        return principalAndCoPrincipalInvestigators;
+    }
+
+    public void setPrincipalAndCoPrincipalInvestigators(List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators) {
+        this.principalAndCoPrincipalInvestigators = principalAndCoPrincipalInvestigators;
     }
     
 

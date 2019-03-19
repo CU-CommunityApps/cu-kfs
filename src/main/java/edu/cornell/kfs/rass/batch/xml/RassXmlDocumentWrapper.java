@@ -28,8 +28,37 @@ public class RassXmlDocumentWrapper {
     @XmlElement(name = "Award", namespace = StringUtils.EMPTY, required = true)
     private List<RassXmlAwardEntry> awards;
     
+    @XmlElementWrapper(name = "Agencies", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Agency", namespace = StringUtils.EMPTY, required = true)
+    private List<RassXmlAgencyEntry> agencies;
+    
     public RassXmlDocumentWrapper() {
         awards = new ArrayList<RassXmlAwardEntry>();
+        agencies = new ArrayList<RassXmlAgencyEntry>();
+    }
+
+    public Date getExtractDate() {
+        return extractDate;
+    }
+
+    public void setExtractDate(Date extractDate) {
+        this.extractDate = extractDate;
+    }
+
+    public List<RassXmlAwardEntry> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(List<RassXmlAwardEntry> awards) {
+        this.awards = awards;
+    }
+
+    public List<RassXmlAgencyEntry> getAgencies() {
+        return agencies;
+    }
+
+    public void setAgencies(List<RassXmlAgencyEntry> agencies) {
+        this.agencies = agencies;
     }
 
 }
