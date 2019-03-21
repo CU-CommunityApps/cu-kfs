@@ -1,5 +1,6 @@
 package edu.cornell.kfs.rass.batch.xml;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
@@ -40,8 +42,9 @@ public class RassXmlDocumentWrapperMarshalTest {
     @Test
     public void testUnMarshallingExample() throws JAXBException {
         File xmlFile = new File(RASS_EXAMPLE_FILE_PATH);
-        RassXmlDocumentWrapper wrapper = cuMarshaalSdervice.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
-        assertTrue(wrapper!=null);
+        RassXmlDocumentWrapper actualWrapper = cuMarshaalSdervice.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        RassXmlDocumentWrapper expectedWrapper = RassXmlDocumentWrapperFixture.RASS_EXAMPLE.toRassXmlDocumentWrapper();
+        assertEquals(expectedWrapper, actualWrapper);
     }
 
 }

@@ -11,11 +11,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTimeUtils;
 
-import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Kfs", namespace = StringUtils.EMPTY)
@@ -23,7 +24,7 @@ public class RassXmlDocumentWrapper {
     
     
     @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    @XmlJavaTypeAdapter(RassStringToJavaDateTimeAdapter.class)
     private Date extractDate;
     
     @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY, required = true)
@@ -67,7 +68,7 @@ public class RassXmlDocumentWrapper {
     public boolean equals(Object o) {
         if (o instanceof RassXmlDocumentWrapper) {
             RassXmlDocumentWrapper other = (RassXmlDocumentWrapper) o;
-            return DateUtils.isSameInstant(extractDate, other.getExtractDate());
+            return ObjectUtils.equals(extractDate, other.getExtractDate());
         } else {
             return false;
         }
