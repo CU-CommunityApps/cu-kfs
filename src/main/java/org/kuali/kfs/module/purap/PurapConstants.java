@@ -1064,8 +1064,8 @@ public class PurapConstants {
     public static final Map<String, Class<?>> uncopyableFieldsForSplitPurchaseOrder() {
         Map<String, Class<?>> returnMap = new HashMap<String, Class<?>>();
         returnMap.put(KFSPropertyConstants.DOCUMENT_HEADER, null);
-        returnMap.put(PurapPropertyConstants.PURAP_DOC_ID, null);        // We need to have a new PO ID.
-        returnMap.put(PurapPropertyConstants.ITEMS, null);               // Items (including additional charges) are to be excluded from the copy.
+        returnMap.put(PurapPropertyConstants.PURAP_DOC_ID, null);
+        returnMap.put(PurapPropertyConstants.ITEMS, null);
         returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_VENDOR_QUOTES, null);
         returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_INITIALIZATION_DATE, null);
         returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_AWARDED_DATE, null);

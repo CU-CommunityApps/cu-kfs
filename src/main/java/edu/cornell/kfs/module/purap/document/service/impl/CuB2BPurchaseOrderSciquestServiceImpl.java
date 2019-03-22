@@ -458,7 +458,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }
 
         //check indicator to decide if receiving or delivery address should be sent to the vendor
-        if (purchaseOrder.getAddressToVendorIndicator()) {  //use receiving address
+        if (purchaseOrder.getAddressToVendorIndicator()) { //use receiving address
             cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getReceivingName().trim()).append("]]></AddressLine>\n");
             cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[").append(purchaseOrder.getReceivingLine1Address().trim()).append("]]></AddressLine>\n");
             if (ObjectUtils.isNull(purchaseOrder.getReceivingLine2Address())) {
@@ -473,11 +473,6 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             cxml.append("          <Country isocountrycode=\"").append(purchaseOrder.getReceivingCountryCode()).append("\">").append(purchaseOrder.getReceivingCountryCode()).append("</Country>\n");
         }
         else { //use final delivery address
-            /* replaced this with getBuildingLine so institutions can customize what info they need on this line
-            if (StringUtils.isNotEmpty(purchaseOrder.getDeliveryBuildingName())) {
-                cxml.append("          <Contact label=\"Building\" linenumber=\"5\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingName()).append(" (").append(purchaseOrder.getDeliveryBuildingCode()).append(")]]></Contact>\n");
-            }
-            */
             cxml.append(getBuildingLine(purchaseOrder));
             cxml.append("          <AddressLine label=\"Street1\" linenumber=\"1\"><![CDATA[").append(purchaseOrder.getDeliveryBuildingLine1Address().trim()).append("]]></AddressLine>\n");
             cxml.append("          <AddressLine label=\"Street2\" linenumber=\"2\"><![CDATA[Room #").append(purchaseOrder.getDeliveryBuildingRoomNumber().trim()).append("]]></AddressLine>\n");

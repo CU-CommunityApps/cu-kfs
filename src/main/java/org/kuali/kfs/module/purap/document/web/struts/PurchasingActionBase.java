@@ -290,7 +290,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 // returning from a building lookup in a capital asset tab location (update location address)
                 String buildingCodeParam = findBuildingCodeFromCapitalAssetBuildingLookup(request);
                 if (!StringUtils.isEmpty(buildingCodeParam)) {
-                    PurchasingFormBase purchasingForm = (PurchasingFormBase)form;
+                    PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
                     updateCapitalAssetLocation(request, purchasingForm, document, buildingCodeParam);
                 }
             }

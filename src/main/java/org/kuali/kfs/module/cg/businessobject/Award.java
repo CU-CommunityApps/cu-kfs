@@ -798,7 +798,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
                 .filter(awardAccount -> awardAccount.isActive()
                         && (CollectionUtils.isEmpty(selectedAccounts)
                             || selectedAccounts.contains(
-                                    awardAccount.getChartOfAccountsCode()+ awardAccount.getAccountNumber())))
+                                    awardAccount.getChartOfAccountsCode() + awardAccount.getAccountNumber())))
                 .collect(Collectors.toList());
     }
 

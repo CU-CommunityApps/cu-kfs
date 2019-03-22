@@ -60,7 +60,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         boolean success = true;
 
         Collection<FinancialSystemDocumentHeader> documentList = getDocumentsToDisapprove();
-        LOG.info("Total documents to process "  + documentList.size());
+        LOG.info("Total documents to process " + documentList.size());
 	String documentHeaderId = null;
 
 	// CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).

@@ -1725,7 +1725,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         DocumentBuilder builder = null;
         try {
-            builder = builderFactory.newDocumentBuilder();  // Create the parser
+            builder = builderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             LOG.error("addNamespaceDefinition() Error getting document builder - " + e.getMessage());
             throw new RuntimeException(e);
