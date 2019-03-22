@@ -214,8 +214,8 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
 
                     // decide if current accounting line should be consolidated into debit or credit entry based on the above criteria
                     boolean isDebitEntry = hasRevisionWithMixedLines ?
-                            (usuallyNegative ?  !isPositive : isPositive) :   // case 2.2
-                            (isPREQ ? isPositive : !isPositive);              // case 1.1/1.2/2.1
+                            (usuallyNegative ? !isPositive : isPositive) : // case 2.2
+                            (isPREQ ? isPositive : !isPositive); // case 1.1/1.2/2.1
                     GeneralLedgerEntry currentEntry = isDebitEntry ? debitEntry : creditEntry;
                     
                     if(ObjectUtils.isNull(generalLedgerAccountIdentifier)){

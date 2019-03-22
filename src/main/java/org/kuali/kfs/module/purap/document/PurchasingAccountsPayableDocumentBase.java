@@ -105,7 +105,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     protected Integer accountsPayablePurchasingDocumentLinkIdentifier;
     protected boolean useTaxIndicator;
     protected String vendorAttentionName;
-    protected String accountDistributionMethod;  //code for account distribution method
+    protected String accountDistributionMethod; //code for account distribution method
 
     // NOT PERSISTED IN DB
     protected String vendorNumber;

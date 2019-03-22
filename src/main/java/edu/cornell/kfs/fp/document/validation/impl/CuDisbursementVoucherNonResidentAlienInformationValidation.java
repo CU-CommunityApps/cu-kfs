@@ -362,7 +362,7 @@ public class CuDisbursementVoucherNonResidentAlienInformationValidation extends 
 
         // RUN FOR SUBMISSION
 
-        if (validationType != "GENERATE") {
+        if (!"GENERATE".equals(validationType)) {
             // verify tax lines have been generated
             if ((nonResidentAlienTax.getFederalIncomeTaxPercent().isNonZero()
                     || nonResidentAlienTax.getStateIncomeTaxPercent().isNonZero())) {

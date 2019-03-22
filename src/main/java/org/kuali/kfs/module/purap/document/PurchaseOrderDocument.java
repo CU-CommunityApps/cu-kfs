@@ -172,8 +172,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     protected String retransmitHeader;
     protected Integer purchaseOrderQuoteListIdentifier;
     protected KualiDecimal internalPurchasingLimit;
-    protected boolean pendingSplit = false;           // Needed for authorization
-    protected boolean copyingNotesWhenSplitting;      // Check box on Split PO tab
+    protected boolean pendingSplit = false; // Needed for authorization
+    protected boolean copyingNotesWhenSplitting; // Check box on Split PO tab
     protected boolean assigningSensitiveData = false; // whether the form is currently used for assigning sensitive data to the PO
     protected List<PurchaseOrderSensitiveData> purchaseOrderSensitiveData;
     protected String assignedUserPrincipalName; // this serves as a temporary holder before validation is done

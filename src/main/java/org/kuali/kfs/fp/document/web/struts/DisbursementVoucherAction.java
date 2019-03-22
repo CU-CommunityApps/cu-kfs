@@ -118,7 +118,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             }
         }
         
-        if(dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED) ||
+        if (dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED) ||
         		dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.ENROUTE)) {
         		checkForDuplicatePayments(dvDoc);		
         }

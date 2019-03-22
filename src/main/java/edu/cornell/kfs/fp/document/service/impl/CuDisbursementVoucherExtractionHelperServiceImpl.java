@@ -186,7 +186,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         }
         pd.setCustPaymentDocNbr(document.getDocumentNumber());
         pd.setInvoiceNbr(filterOutIllegalXmlCharacters(document.getInvoiceNumber()));
-        if(ObjectUtils.isNull(document.getInvoiceDate())) {
+        if (ObjectUtils.isNull(document.getInvoiceDate())) {
             pd.setInvoiceDate(new java.sql.Date(processRunDate.getTime()));
         } else {
             pd.setInvoiceDate(document.getInvoiceDate());

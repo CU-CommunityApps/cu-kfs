@@ -36,7 +36,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     protected Integer accountIdentifier;
     private Integer itemIdentifier;
     private BigDecimal accountLinePercent;
-    private String postingPeriodCode;  //stored in DB only for PREQ and CM Account History
+    private String postingPeriodCode; //stored in DB only for PREQ and CM Account History
     private KualiDecimal alternateAmountForGLEntryCreation; // not stored in DB; needed for disencumbrances and such
     public Integer purApSequenceNumber;
 

@@ -26,7 +26,6 @@ import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
-import org.kuali.kfs.integration.purap.ItemCapitalAsset;
 import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
@@ -194,9 +193,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public abstract PurchasingDocumentSpecificService getDocumentSpecificService();
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocument#templateVendorDetail(org.kuali.kfs.vnd.businessobject.VendorDetail)
-     */
     @Override
     public void templateVendorDetail(VendorDetail vendorDetail) {
         if (ObjectUtils.isNotNull(vendorDetail)) {
@@ -209,9 +205,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         }
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocument#templateVendorContract(org.kuali.kfs.vnd.businessobject.VendorContract)
-     */
     @Override
     public void templateVendorContract(VendorContract vendorContract) {
         if (ObjectUtils.isNotNull(vendorContract)) {
@@ -224,9 +217,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         }
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#templateVendorAddress(org.kuali.kfs.vnd.businessobject.VendorAddress)
-     */
     @Override
     public void templateVendorAddress(VendorAddress vendorAddress) {
         super.templateVendorAddress(vendorAddress);
@@ -243,9 +233,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         }
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#templateBillingAddress(org.kuali.kfs.module.purap.businessobject.BillingAddress).
-     */
     @Override
     public void templateBillingAddress(BillingAddress billingAddress) {
         if (ObjectUtils.isNotNull(billingAddress)) {
@@ -261,9 +248,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         }
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#templateReceivingAddress(org.kuali.kfs.module.purap.businessobject.ReceivingAddress).
-     */
     @Override
     public void templateReceivingAddress(ReceivingAddress receivingAddress) {
         if (receivingAddress != null) {
@@ -294,7 +278,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public void loadReceivingAddress() {
         String chartCode = getChartOfAccountsCode();
         String orgCode = getOrganizationCode();
-        ReceivingAddress address = SpringContext.getBean(ReceivingAddressService.class).findUniqueDefaultByChartOrg(chartCode, orgCode);
+        ReceivingAddress address = SpringContext.getBean(ReceivingAddressService.class)
+                .findUniqueDefaultByChartOrg(chartCode, orgCode);
         // if default address for chart/org not found, look for chart default
         if (address == null && orgCode != null) {
             address = SpringContext.getBean(ReceivingAddressService.class).findUniqueDefaultByChartOrg(chartCode, null);
@@ -303,8 +288,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     /**
-     * Iterates through the purchasingCapitalAssetItems of the document and returns the purchasingCapitalAssetItem with the item id equal to the number given, or null if a
-     * match is not found.
+     * Iterates through the purchasingCapitalAssetItems of the document and returns the purchasingCapitalAssetItem with
+     * the item id equal to the number given, or null if a match is not found.
      *
      * @param itemIdentifier item id to match on.
      * @return the PurchasingCapitalAssetItem if a match is found, else null.
@@ -319,26 +304,20 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return null;
     }
 
-
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#addItem(org.kuali.kfs.module.purap.businessobject.PurApItem)
-     */
     @Override
     public void addItem(PurApItem item) {
         item.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
         super.addItem(item);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument#deleteItem(int lineNum)
-     */
     @Override
     public void deleteItem(int lineNum) {
         // remove associated asset items
         PurApItem item = items.get(lineNum);
         if (ObjectUtils.isNotNull(item) && item.getItemIdentifier() != null) {
-            PurchasingCapitalAssetItem purchasingCapitalAssetItem = getPurchasingCapitalAssetItemByItemIdentifier(item.getItemIdentifier());
-
+            PurchasingCapitalAssetItem purchasingCapitalAssetItem =
+                    getPurchasingCapitalAssetItemByItemIdentifier(item.getItemIdentifier());
+            
             if (ObjectUtils.isNotNull(purchasingCapitalAssetItem)) {
                 getPurchasingCapitalAssetItems().remove(purchasingCapitalAssetItem);
             }
@@ -350,12 +329,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         super.deleteItem(lineNum);
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#populateDocumentForRouting()
-     */
     @Override
     public void populateDocumentForRouting() {
-        commodityCodesForRouting = new ArrayList<CommodityCode>();
+        commodityCodesForRouting = new ArrayList<>();
         List<PurchasingItemBase> previousPOItems = new ArrayList<PurchasingItemBase>();
         if (this instanceof PurchaseOrderAmendmentDocument) {
             previousPOItems = getPreviousPoItems();
@@ -496,26 +472,29 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     // GETTERS AND SETTERS
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocument.getItemParser().
-     */
     @Override
     public ItemParser getItemParser() {
         return new ItemParserBase();
     }
 
     /**
-     * Decides whether receivingDocumentRequiredIndicator functionality shall be enabled according to the controlling parameter.
+     * Decides whether receivingDocumentRequiredIndicator functionality shall be enabled according to the controlling
+     * parameter.
      */
     public boolean isEnableReceivingDocumentRequiredIndicator() {
-        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.RECEIVING_DOCUMENT_REQUIRED_IND);
+        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+                KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                PurapParameterConstants.RECEIVING_DOCUMENT_REQUIRED_IND);
     }
 
     /**
-     * Decides whether paymentRequestPositiveApprovalIndicator functionality shall be enabled according to the controlling parameter.
+     * Decides whether paymentRequestPositiveApprovalIndicator functionality shall be enabled according to the
+     * controlling parameter.
      */
     public boolean isEnablePaymentRequestPositiveApprovalIndicator() {
-        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.PAYMENT_REQUEST_POSITIVE_APPROVAL_IND);
+        return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+                KfsParameterConstants.PURCHASING_DOCUMENT.class,
+                PurapParameterConstants.PAYMENT_REQUEST_POSITIVE_APPROVAL_IND);
     }
 
     @Override
@@ -1374,8 +1353,9 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Override
     public void setReceivingDocumentRequiredIndicator(boolean receivingDocumentRequiredIndicator) {
-        // if receivingDocumentRequiredIndicator functionality is disabled, always set it to false, overriding the passed-in value
-        if (!isEnableReceivingDocumentRequiredIndicator()) {
+        // if receivingDocumentRequiredIndicator functionality is disabled, always set it to false, overriding the
+        // passed-in value
+    		if (!isEnableReceivingDocumentRequiredIndicator()) {
             receivingDocumentRequiredIndicator = false;
         } else {
             this.receivingDocumentRequiredIndicator = receivingDocumentRequiredIndicator;
@@ -1389,7 +1369,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Override
     public void setPaymentRequestPositiveApprovalIndicator(boolean paymentRequestPositiveApprovalIndicator) {
-        // if paymentRequestPositiveApprovalIndicator functionality is disabled, always set it to false, overriding the passed-in value
+        // if paymentRequestPositiveApprovalIndicator functionality is disabled, always set it to false, overriding the
+        // passed-in value
         if (!isEnablePaymentRequestPositiveApprovalIndicator()) {
             paymentRequestPositiveApprovalIndicator = false;
         } else {
@@ -1523,33 +1504,31 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return item;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#buildListOfDeletionAwareLists()
-     */
     @Override
     public List buildListOfDeletionAwareLists() {
         List managedLists = new ArrayList<List>();
         managedLists.add(getDeletionAwareAccountingLines());
         managedLists.add(getDeletionAwareUseTaxItems());
         if (allowDeleteAwareCollection) {
-            List<ItemCapitalAsset> assetLists = new ArrayList<ItemCapitalAsset>();
-            if (StringUtils.equals(this.getCapitalAssetSystemTypeCode(), PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                for (PurchasingCapitalAssetItem capitalAssetItem : this.getPurchasingCapitalAssetItems()) {
-                    //We only need to add the itemCapitalAssets to assetLists if the system is not null, otherwise
-                    //just let the assetLists be empty ArrayList.
-                    if (capitalAssetItem.getPurchasingCapitalAssetSystem() != null) {
-                        assetLists.addAll(capitalAssetItem.getPurchasingCapitalAssetSystem().getItemCapitalAssets());
+            List assetLists = new ArrayList<>();
+            if (StringUtils.equals(getCapitalAssetSystemTypeCode(), PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
+                for (PurchasingCapitalAssetItem capitalAssetItem : getPurchasingCapitalAssetItems()) {
+                    CapitalAssetSystem system = capitalAssetItem.getPurchasingCapitalAssetSystem();
+                    if (ObjectUtils.isNotNull(system)) {
+                        assetLists.addAll(system.getItemCapitalAssets());
+                        assetLists.addAll(system.getCapitalAssetLocations());
                     }
                 }
             } else {
-                for (CapitalAssetSystem system : this.getPurchasingCapitalAssetSystems()) {
+                for (CapitalAssetSystem system : getPurchasingCapitalAssetSystems()) {
                     assetLists.addAll(system.getItemCapitalAssets());
+                    assetLists.addAll(system.getCapitalAssetLocations());
                 }
             }
             managedLists.add(assetLists);
-            managedLists.add(this.getPurchasingCapitalAssetSystems());
-            managedLists.add(this.getPurchasingCapitalAssetItems());
-            managedLists.add(this.getItems());
+            managedLists.add(getPurchasingCapitalAssetSystems());
+            managedLists.add(getPurchasingCapitalAssetItems());
+            managedLists.add(getItems());
         }
         return managedLists;
     }
@@ -1562,7 +1541,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public void prepareForSave(KualiDocumentEvent event) {
         super.prepareForSave(event);
         if (StringUtils.isNotBlank(this.getCapitalAssetSystemTypeCode())) {
-            if (this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM) || this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.MULTIPLE)) {
+            if (this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM)
+                    || this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.MULTIPLE)) {
                 //If the system state is ONE or MULT, we have to remove all the systems on the items because it's not applicable.
                 for (PurchasingCapitalAssetItem camsItem : this.getPurchasingCapitalAssetItems()) {
                     camsItem.setPurchasingCapitalAssetSystem(null);
@@ -1571,7 +1551,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         }
         if (event instanceof RouteDocumentEvent || event instanceof ApproveDocumentEvent) {
 
-            boolean defaultUseTaxIndicatorValue = SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(this);
+            boolean defaultUseTaxIndicatorValue = SpringContext.getBean(PurchasingService.class)
+                    .getDefaultUseTaxIndicatorValue(this);
             SpringContext.getBean(PurapService.class).updateUseTaxIndicator(this, defaultUseTaxIndicatorValue);
         }
         // KFSUPGRADE-583

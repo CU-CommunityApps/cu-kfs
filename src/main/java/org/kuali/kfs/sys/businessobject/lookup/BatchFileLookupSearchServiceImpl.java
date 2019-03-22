@@ -56,25 +56,8 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
             MultivaluedMap<String, String> fieldValues) {
         return getFiles(fieldValues)
                 .parallelStream()
-                .map(batchFile -> (BusinessObjectBase)batchFile)
+                .map(batchFile -> (BusinessObjectBase) batchFile)
                 .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    @Override
-    public int getResultCount(Class<? extends BusinessObjectBase> businessObjectClass,
-            MultivaluedMap<String, String> fieldValues) {
-        return getSearchResults(businessObjectClass, fieldValues).size();
-    }
-
-    @Override
-    public Map<String, Object> serializeBusinessObject(BusinessObjectBase businessObject, Person user) {
-        BatchFile batchFile = (BatchFile)businessObject;
-        Map<String, Object> batchFileInfo = new LinkedHashMap<>();
-        batchFileInfo.put("path", batchFile.getPath());
-        batchFileInfo.put("fileName", batchFile.getFileName());
-        batchFileInfo.put("lastModifiedDate", batchFile.getLastModifiedDate().getTime());
-        batchFileInfo.put("fileSize", batchFile.getFileSize());
-        return batchFileInfo;
     }
 
     private List<BatchFile> getFiles(MultivaluedMap<String, String> fieldValues) {
@@ -221,7 +204,7 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
 
     @Override
     public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
-        BatchFile batchFile = (BatchFile)businessObject;
+        BatchFile batchFile = (BatchFile) businessObject;
         List<Map<String, Object>> actionLinks = new LinkedList<>();
 
         if (canDownloadFile(batchFile, user)) {
