@@ -72,8 +72,10 @@ public class RassXmlDocumentWrapper {
     public boolean equals(Object o) {
         if (o instanceof RassXmlDocumentWrapper) {
             RassXmlDocumentWrapper other = (RassXmlDocumentWrapper) o;
-            return ObjectUtils.equals(extractDate, other.getExtractDate()) &&
+            return Objects.equals(extractDate, other.getExtractDate()) &&
+                    Objects.equals(awards, other.getAwards()) &&
                     Objects.equals(agencies, other.getAgencies());
+
         } else {
             return false;
         }
@@ -83,6 +85,13 @@ public class RassXmlDocumentWrapper {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("RassXmlDocumentWrapper: [ extractDate:").append(extractDate);
+        if (CollectionUtils.isNotEmpty(awards)) {
+            for (RassXmlAgencyEntry agency : agencies) {
+                sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(awards.toString()).append(KFSConstants.SQUARE_BRACKET_RIGHT);
+            }
+        } else {
+            sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append("NO AWAWRDS").append(KFSConstants.SQUARE_BRACKET_RIGHT);
+        }
         if (CollectionUtils.isNotEmpty(agencies)) {
             for (RassXmlAgencyEntry agency : agencies) {
                 sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(agency.toString()).append(KFSConstants.SQUARE_BRACKET_RIGHT);

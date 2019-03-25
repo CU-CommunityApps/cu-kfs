@@ -3,6 +3,7 @@ package edu.cornell.kfs.rass.batch.xml;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,6 +14,7 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
@@ -240,6 +242,59 @@ public class RassXmlAwardEntry {
 
     public void setPrincipalAndCoPrincipalInvestigators(List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators) {
         this.principalAndCoPrincipalInvestigators = principalAndCoPrincipalInvestigators;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        
+        /*
+    private List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators;
+         */
+        
+        if (o instanceof RassXmlAwardEntry) {
+            RassXmlAwardEntry other = (RassXmlAwardEntry) o;
+            return StringUtils.equals(proposalNumber, other.getProposalNumber()) &&
+                    StringUtils.equals(status, other.getStatus()) &&
+                    StringUtils.equals(projectTitle, other.getProjectTitle()) &&
+                    Objects.equals(startDate, other.getStartDate()) &&
+                    Objects.equals(stopDate, other.getStopDate()) &&
+                    Objects.equals(directCostAmount, other.getDirectCostAmount()) &&
+                    Objects.equals(indirectCostAMount, other.getIndirectCostAMount()) &&
+                    Objects.equals(totalAMount, other.getTotalAMount()) &&
+                    StringUtils.equals(grantNumber, other.getGrantNumber()) &&
+                    StringUtils.equals(grantDescription, other.getGrantDescription()) &&
+                    StringUtils.equals(federalPassThrough, other.getFederalPassThrough()) &&
+                    StringUtils.equals(federalPassThroughAgencyNumber, other.getFederalPassThroughAgencyNumber()) &&
+                    StringUtils.equals(cfdaNumber, other.getCfdaNumber()) &&
+                    StringUtils.equals(organizationCode, other.getOrganizationCode()) &&
+                    StringUtils.equals(costShareRequiredString, other.getCostShareRequiredString());
+                    //Objects.equals(finalReportDueDate, other.getFinalReportDueDate());
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RassXmlAwardEntry: [proposalNumber: ").append(proposalNumber);
+        sb.append(", status:").append(status);
+        sb.append(", projectTitle:").append(projectTitle);
+        sb.append(", startDate:").append(startDate);
+        sb.append(", stopDate:").append(stopDate);
+        sb.append(", directCostAmount:").append(directCostAmount);
+        sb.append(", indirectCostAMount:").append(indirectCostAMount);
+        sb.append(", totalAMount:").append(totalAMount);
+        sb.append(", grantNumber:").append(grantNumber);
+        sb.append(", grantDescription:").append(grantDescription);
+        sb.append(", federalPassThrough:").append(federalPassThrough);
+        sb.append(", federalPassThroughAgencyNumber:").append(federalPassThroughAgencyNumber);
+        sb.append(", cfdaNumber:").append(cfdaNumber);
+        sb.append(", organizationCode:").append(organizationCode);
+        sb.append(", costShareRequiredString:").append(costShareRequiredString);
+        sb.append(", finalReportDueDate:").append(finalReportDueDate);
+        sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
+        return sb.toString();
     }
     
 
