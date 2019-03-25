@@ -7,11 +7,14 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
@@ -45,6 +48,11 @@ public class RassXmlDocumentWrapperMarshalTest {
         RassXmlDocumentWrapper actualWrapper = cuMarshaalSdervice.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         RassXmlDocumentWrapper expectedWrapper = RassXmlDocumentWrapperFixture.RASS_EXAMPLE.toRassXmlDocumentWrapper();
         assertEquals(expectedWrapper, actualWrapper);
+    }
+    
+    public static final DateTimeFormatter getRASSDateTimeFormatter() {
+        DateTimeFormatter dateformatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FOMRAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+        return dateformatter;
     }
 
 }

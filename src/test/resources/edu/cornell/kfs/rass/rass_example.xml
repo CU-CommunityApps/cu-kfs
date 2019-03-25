@@ -73,5 +73,12 @@
       <Common_Name>United States Department of Something </Common_Name>
       <Agency_Origin>USA</Agency_Origin>
     </Agency>
+    <Agency>
+      <Number>101</Number>
+      <Reporting_Name>Test</Reporting_Name>
+      <Full_Name>Test University</Full_Name>
+      <Type_Code>U</Type_Code>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
   </Agencies>
 </Kfs>
