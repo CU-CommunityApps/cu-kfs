@@ -1,0 +1,77 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<bean id="cu-rass" parent="rassModuleConfiguration-parentBean"/>
+		
+	<bean id="rassModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration" abstract="true">
+    	<property name="namespaceCode" value="KFS-RASS" />
+		<property name="initializeDataDictionary" value="false" />
+        <property name="packagePrefixes">
+            <list>
+                <value>edu.cornell.kfs.rass</value>
+            </list>
+        </property>
+		<property name="dataDictionaryPackages">
+			<list>
+                <value>classpath:edu/cornell/kfs/rass/businessobject/datadictionary/*.xml</value>
+			</list>
+		</property>
+		<property name="databaseRepositoryFilePaths">
+			<list>
+				<value>edu/cornell/kfs/rass/cu-ojb-rass.xml</value>
+			</list>
+		</property>
+		<property name="jobNames">
+			<list>
+				<value>rassUpdateBatchJob</value>
+			</list>
+		</property>
+	
+		<property name="triggerNames">
+			<list>
+
+			</list>
+		</property>
+		
+		<property name="batchFileDirectories">
+         	<list>
+            	<value>${reports.directory}/rass</value>
+          	</list>
+        </property>
+										
+	</bean>
+
+    <bean id="rassModuleService" parent="rassModuleService-parentBean"/>
+
+    <bean id="rassModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true">
+		<property name="moduleConfiguration" ref="cu-rass" />
+	</bean>
+
+	<bean id="rassService" class="edu.cornell.kfs.rass.service.impl.RassServiceImpl">
+	</bean>
+	
+	<bean id="rassStep" class="edu.cornell.kfs.rass.batch.RassStep" parent="step">
+		<property name="rassService">
+			<ref bean="rassService" />
+		</property>
+	</bean>
+	
+	
+	
+	<bean id="rassUpdateBatchJob" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="rassStep" />
+			</list>
+		</property>
+	</bean>
+	
+
+</beans>
