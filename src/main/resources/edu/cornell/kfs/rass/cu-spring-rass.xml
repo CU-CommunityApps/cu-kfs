@@ -54,7 +54,7 @@
 		<property name="moduleConfiguration" ref="cu-rass" />
 	</bean>
 
-	<bean id="rassService" class="edu.cornell.kfs.rass.service.impl.RassServiceImpl">
+	<bean id="rassService" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImpl">
 	</bean>
 	
 	<bean id="rassStep" class="edu.cornell.kfs.rass.batch.RassStep" parent="step">

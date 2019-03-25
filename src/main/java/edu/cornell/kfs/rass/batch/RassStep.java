@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.kuali.kfs.sys.batch.AbstractStep;
 
-import edu.cornell.kfs.rass.service.RassService;
+import edu.cornell.kfs.rass.batch.service.RassService;
 
 public class RassStep extends AbstractStep{
 	
@@ -13,9 +13,7 @@ public class RassStep extends AbstractStep{
 	@Override
 	public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
 		rassService.readXML();
-		rassService.updateAgencies();
-		rassService.updateProposals();
-		rassService.updateAwards();
+		rassService.updateKFS();
 		return true;
 	}
 
