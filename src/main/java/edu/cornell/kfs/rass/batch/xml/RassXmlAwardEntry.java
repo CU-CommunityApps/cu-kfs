@@ -18,7 +18,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
-import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Award", namespace = StringUtils.EMPTY)
@@ -41,11 +41,11 @@ public class RassXmlAwardEntry {
     private String projectTitle;
     
     @XmlElement(name = "Start_Date", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
     private Date startDate;
     
     @XmlElement(name = "Stop_Date", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
     private Date stopDate;
     
     @XmlElement(name = "Direct_Cost_Amount", namespace = StringUtils.EMPTY, required = false)
@@ -89,7 +89,7 @@ public class RassXmlAwardEntry {
     private String costShareRequiredString;
     
     @XmlElement(name = "Final_Fiscal_Report_Due_Date", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
     private Date finalReportDueDate;
     
     @XmlElementWrapper(name = "PI_and_CoPIs", namespace = StringUtils.EMPTY, required = true)
@@ -250,7 +250,6 @@ public class RassXmlAwardEntry {
         /*
     private List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators;
          */
-        
         if (o instanceof RassXmlAwardEntry) {
             RassXmlAwardEntry other = (RassXmlAwardEntry) o;
             return StringUtils.equals(proposalNumber, other.getProposalNumber()) &&
@@ -267,11 +266,11 @@ public class RassXmlAwardEntry {
                     StringUtils.equals(federalPassThroughAgencyNumber, other.getFederalPassThroughAgencyNumber()) &&
                     StringUtils.equals(cfdaNumber, other.getCfdaNumber()) &&
                     StringUtils.equals(organizationCode, other.getOrganizationCode()) &&
-                    StringUtils.equals(costShareRequiredString, other.getCostShareRequiredString());
-                    //Objects.equals(finalReportDueDate, other.getFinalReportDueDate());
+                    StringUtils.equals(costShareRequiredString, other.getCostShareRequiredString()) &&
+                    Objects.equals(finalReportDueDate, other.getFinalReportDueDate());
         } else {
             return false;
-        }
+        }    
     }
     
     @Override

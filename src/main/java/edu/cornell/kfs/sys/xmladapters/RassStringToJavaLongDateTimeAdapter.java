@@ -11,9 +11,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
-public class RassStringToJavaDateTimeAdapter extends XmlAdapter<String, Date> {
+public class RassStringToJavaLongDateTimeAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FOMRAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FOMRAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
 
     @Override
     public Date unmarshal(String value) throws Exception {

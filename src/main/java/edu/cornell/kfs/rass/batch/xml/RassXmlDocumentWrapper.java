@@ -19,7 +19,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTimeUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.sys.xmladapters.RassStringToJavaDateTimeAdapter;
+import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,7 +28,7 @@ public class RassXmlDocumentWrapper {
     
     
     @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(RassStringToJavaDateTimeAdapter.class)
+    @XmlJavaTypeAdapter(RassStringToJavaLongDateTimeAdapter.class)
     private Date extractDate;
     
     @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY, required = true)

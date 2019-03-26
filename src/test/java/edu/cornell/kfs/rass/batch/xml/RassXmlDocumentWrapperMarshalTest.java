@@ -47,11 +47,18 @@ public class RassXmlDocumentWrapperMarshalTest {
         File xmlFile = new File(RASS_EXAMPLE_FILE_PATH);
         RassXmlDocumentWrapper actualWrapper = cuMarshaalSdervice.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         RassXmlDocumentWrapper expectedWrapper = RassXmlDocumentWrapperFixture.RASS_EXAMPLE.toRassXmlDocumentWrapper();
+        System.err.println("Actual Wrapper:   " + actualWrapper.toString());
+        System.err.println("Expected Wrapper: " + expectedWrapper.toString());
         assertEquals(expectedWrapper, actualWrapper);
     }
     
-    public static final DateTimeFormatter getRASSDateTimeFormatter() {
+    public static final DateTimeFormatter getRASSLongDateTimeFormatter() {
         DateTimeFormatter dateformatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FOMRAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+        return dateformatter;
+    }
+    
+    public static final DateTimeFormatter getRASSShortDateTimeFormatter() {
+        DateTimeFormatter dateformatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
         return dateformatter;
     }
 

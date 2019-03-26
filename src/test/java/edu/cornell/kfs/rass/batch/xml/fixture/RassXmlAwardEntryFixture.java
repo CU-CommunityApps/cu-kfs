@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormatter;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -17,9 +17,9 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum RassXmlAwardEntryFixture {
     FIRST("141414", "OS", "2345", "First Example Project", null, null, new KualiDecimal(5300000.000), new KualiDecimal(700000.000), new KualiDecimal(6000000.000),
-            null, null, null, null, null, "3434", null, null),
+            StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "3434", "Y", null),
     ANOTHER("141415", "RS", "24680", "Another Example", null, null, new KualiDecimal(0), new KualiDecimal(0), new KualiDecimal(0),
-            null, null, "GRT", null, null, "2374", "Y", null);
+            StringUtils.EMPTY, "GRT", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "2374", "Y", "2022-09-30");
     public final String proposalNumber;
     public final String status;
     public final String agencyNumber;
@@ -43,7 +43,7 @@ public enum RassXmlAwardEntryFixture {
             KualiDecimal totalAMount, String grantNumber, String grantDescription, String federalPassThrough,
             String federalPassThroughAgencyNumber, String cfdaNumber, String organizationCode,
             String costShareRequiredString, String finalReportDueDateString) {
-        DateTimeFormatter dateformatter = RassXmlDocumentWrapperMarshalTest.getRASSDateTimeFormatter();
+        DateTimeFormatter dateformatter = RassXmlDocumentWrapperMarshalTest.getRASSShortDateTimeFormatter();
         this.proposalNumber = proposalNumber;
         this.status = status;
         this.agencyNumber = agencyNumber;
