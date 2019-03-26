@@ -46,4 +46,14 @@
             </list>
         </property>
     </bean>
+
+    <bean id="AgencyMaintenanceDocument-EditAgency" parent="AgencyMaintenanceDocument-EditAgency-parentBean">
+        <property name="maintainableItems">
+            <list merge="true">
+                <bean parent="MaintainableFieldDefinition" p:name="extension.agencyCommonName"/>
+                <bean parent="MaintainableFieldDefinition" p:name="extension.agencyOriginCode"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

@@ -6,6 +6,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+    <bean id="Agency" parent="Agency-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="Agency-extension-agencyCommonName"/>
+                <ref bean="Agency-extension-agencyOriginCode"/>
+            </list>
+        </property>
+    </bean>
 
   <bean id="Agency-agencyNumber" parent="Agency-agencyNumber-parentBean">
 
@@ -22,5 +30,28 @@
   	</property>
     
   </bean>
-  
+
+    <bean id="Agency-extension-agencyCommonName" parent="Agency-extension-agencyCommonName-parentBean"/>
+    <bean id="Agency-extension-agencyCommonName-parentBean" abstract="true" parent="AgencyExtendedAttribute-agencyCommonName"
+            p:name="extension.agencyCommonName"/>
+
+    <bean id="Agency-extension-agencyOriginCode" parent="Agency-extension-agencyOriginCode-parentBean"/>
+    <bean id="Agency-extension-agencyOriginCode-parentBean" abstract="true" parent="AgencyExtendedAttribute-agencyOriginCode"
+            p:name="extension.agencyOriginCode">
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="agencyOriginValuesFinder" p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="Agency-inquirySectionDefinition-details" parent="Agency-inquirySectionDefinition-details-parentBean">
+        <property name="inquiryFields">
+            <list merge="true">
+                <bean parent="FieldDefinition" p:attributeName="extension.agencyCommonName"/>
+                <bean parent="FieldDefinition" p:attributeName="extension.agencyOriginCode"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="agencyOriginValuesFinder" class="edu.cornell.kfs.module.cg.businessobject.options.AgencyOriginValuesFinder"/>
+
 </beans>

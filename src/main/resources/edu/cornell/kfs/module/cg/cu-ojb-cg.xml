@@ -130,4 +130,72 @@
 		
 	</class-descriptor>
 
+    <class-descriptor class="org.kuali.kfs.module.cg.businessobject.Agency" table="CG_AGENCY_T">
+        <field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" primarykey="true"
+                          index="true"/>
+        <field-descriptor name="reportingName" column="CG_AGENCY_RPT_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="fullName" column="CG_AGENCY_FULL_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="indirectAmount" column="CG_AGNCY_INDR_AMT" jdbc-type="DECIMAL"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+        <field-descriptor name="active" column="CG_AGENCY_HIST_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.sys.dataaccess.OjbCharBooleanFieldInverseConversion"/>
+        <field-descriptor name="inStateIndicator" column="CG_AGNCY_IN_ST_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="agencyTypeCode" column="CG_AGENCY_TYP_CD" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="reportsToAgencyNumber" column="CG_RPTTO_AGNCY_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="cageNumber" column="CAGE_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dodacNumber" column="DODAC_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dunAndBradstreetNumber" column="DUNS_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dunsPlusFourNumber" column="DUNS_PLUS_FOUR_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="customerNumber" column="CUST_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerTypeCode" column="CUST_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="customerCreationOptionCode" column="CUST_CRTN_OPTN_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="dunningCampaign" column="CMPGN_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="stateAgencyIndicator" column="STATE_AGENCY_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <reference-descriptor name="agencyType" class-ref="org.kuali.kfs.module.cg.businessobject.AgencyType"
+                              auto-retrieve="true"
+                              auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="agencyTypeCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="reportsToAgency" class-ref="org.kuali.kfs.module.cg.businessobject.Agency"
+                              auto-retrieve="true"
+                              auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="reportsToAgencyNumber"/>
+        </reference-descriptor>
+        <collection-descriptor name="agencyAddresses"
+                               element-class-ref="org.kuali.kfs.module.cg.businessobject.AgencyAddress"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+                               auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <orderby name="agencyAddressIdentifier" sort="ASC"/>
+            <inverse-foreignkey field-ref="agencyNumber"/>
+        </collection-descriptor>
+        <reference-descriptor name="extension" class-ref="edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute"
+                auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="agencyNumber"/>
+        </reference-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute" table="CG_AGENCY_TX">
+        <field-descriptor name="agencyNumber" column="CG_AGENCY_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="agencyCommonName" column="CG_AGENCY_COMMON_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="agencyOriginCode" column="CG_AGENCY_ORIGIN_CD" jdbc-type="VARCHAR"/>
+        <reference-descriptor name="agencyOrigin" class-ref="edu.cornell.kfs.module.cg.businessobject.AgencyOrigin"
+                auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="agencyOriginCode"/>
+        </reference-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.module.cg.businessobject.AgencyOrigin" table="CG_AGENCY_ORIGIN_T">
+        <field-descriptor name="agencyOriginCode" column="CG_AGENCY_ORIGIN_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    </class-descriptor>
+
 </descriptor-repository>

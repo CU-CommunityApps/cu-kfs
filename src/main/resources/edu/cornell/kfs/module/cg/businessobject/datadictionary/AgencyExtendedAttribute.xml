@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:dd="http://rice.kuali.org/dd"
+        xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="AgencyExtendedAttribute" parent="AgencyExtendedAttribute-parentBean"/>
+ 
+    <bean id="AgencyExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"
+            p:businessObjectClass="edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute"
+            p:objectLabel="Agency Extended Attribute">
+        <property name="attributes">
+            <list>
+                <ref bean="AgencyExtendedAttribute-agencyNumber"/>
+                <ref bean="AgencyExtendedAttribute-agencyCommonName"/>
+                <ref bean="AgencyExtendedAttribute-agencyOriginCode"/>
+            </list>
+        </property>
+        <property name="relationships">
+            <list>
+                <bean parent="RelationshipDefinition" p:objectAttributeName="agencyOrigin">
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition"
+                                    p:sourceName="agencyOriginCode" p:targetName="agencyOriginCode"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AgencyExtendedAttribute-agencyNumber" parent="AgencyExtendedAttribute-agencyNumber-parentBean"/>
+    <bean id="AgencyExtendedAttribute-agencyNumber-parentBean" abstract="true" parent="Agency-agencyNumber"/>
+
+    <bean id="AgencyExtendedAttribute-agencyCommonName" parent="AgencyExtendedAttribute-agencyCommonName-parentBean"/>
+    <bean id="AgencyExtendedAttribute-agencyCommonName-parentBean" abstract="true" parent="AttributeDefinition"
+            p:name="agencyCommonName"
+            p:label="Agency Common Name"
+            p:shortLabel="Common Name"
+            p:maxLength="125">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="140" />
+        </property>
+    </bean>
+
+    <bean id="AgencyExtendedAttribute-agencyOriginCode" parent="AgencyExtendedAttribute-agencyOriginCode-parentBean"/>
+    <bean id="AgencyExtendedAttribute-agencyOriginCode-parentBean" abstract="true" parent="AgencyOrigin-agencyOriginCode"/>
+
+</beans>
