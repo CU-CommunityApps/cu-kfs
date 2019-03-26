@@ -4,32 +4,35 @@ import edu.cornell.kfs.rass.batch.service.RassService;
 
 public class RassServiceImpl implements RassService {
 
+	private String rassFilePath;
+
 	@Override
 	public void readXML() {
 
 	}
-	
+
 	@Override
 	public boolean updateKFS() {
-		updateAgencies();
-		updateProposals();
-		updateAwards();
+		boolean successfullyUpdated = updateAgencies();
+		successfullyUpdated &= updateProposals();
+		successfullyUpdated &= updateAwards();
+		return successfullyUpdated;
+	}
+
+	protected boolean updateAgencies() {
 		return false;
 	}
 
-	@Override
-	public boolean updateAgencies() {
+	protected boolean updateProposals() {
 		return false;
 	}
 
-	@Override
-	public boolean updateProposals() {
+	protected boolean updateAwards() {
 		return false;
 	}
 
-	@Override
-	public boolean updateAwards() {
-		return false;
+	public void setRassFilePath(String rassFilePath) {
+		this.rassFilePath = rassFilePath;
 	}
 
 }
