@@ -18,8 +18,7 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public class RassXmlDocumentWrapperMarshalTest {
-    public static final String RASS_DELTA_FILE_BASE_PATH = "src/test/resources/edu/cornell/kfs/rass/"; 
-    public static final String RASS_EXAMPLE_FILE_PATH = RASS_DELTA_FILE_BASE_PATH + "rass_example.xml";
+    public static final String RASS_EXAMPLE_FILE_PATH = "src/test/resources/edu/cornell/kfs/rass/rass_example.xml";
     
     private CUMarshalService cuMarshaalSdervice;
     
