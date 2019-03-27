@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
+import edu.cornell.kfs.sys.xmladapters.NullableKualiDecimalXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,15 +49,15 @@ public class RassXmlAwardEntry {
     private Date stopDate;
     
     @XmlElement(name = "Direct_Cost_Amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    @XmlJavaTypeAdapter(NullableKualiDecimalXmlAdapter.class)
     private KualiDecimal directCostAmount;
     
     @XmlElement(name = "Indirect_Cost_Amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    @XmlJavaTypeAdapter(NullableKualiDecimalXmlAdapter.class)
     private KualiDecimal indirectCostAMount;
     
     @XmlElement(name = "Total_Amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    @XmlJavaTypeAdapter(NullableKualiDecimalXmlAdapter.class)
     private KualiDecimal totalAMount;
     
     @XmlElement(name = "Grant_Number", namespace = StringUtils.EMPTY, required = false)

@@ -16,9 +16,11 @@ import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum RassXmlAwardEntryFixture {
-    FIRST("141414", "OS", "2345", "First Example Project", null, null, new KualiDecimal(5300000.000), new KualiDecimal(700000.000), new KualiDecimal(6000000.000),
+    FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, new KualiDecimal(5300000.000), new KualiDecimal(700000.000), new KualiDecimal(6000000.000),
             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "3434", "Y", null),
-    ANOTHER("141415", "RS", "24680", "Another Example", null, null, new KualiDecimal(0), new KualiDecimal(0), new KualiDecimal(0),
+    ANOTHER("141415", "RS", "24680", "Another Example", null, "2050-12-31", new KualiDecimal(0), new KualiDecimal(0), new KualiDecimal(0),
+            StringUtils.EMPTY, "GRT", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "2374", "Y", "2022-09-30"),
+    NULL_AMOUNTS("35656", "RS", "24680", "Award with empty totals", null, "2050-12-31", new KualiDecimal(0), null, null,
             StringUtils.EMPTY, "GRT", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "2374", "Y", "2022-09-30");
     public final String proposalNumber;
     public final String status;
@@ -39,17 +41,16 @@ public enum RassXmlAwardEntryFixture {
     public final Date finalReportDueDate;
     
     private RassXmlAwardEntryFixture(String proposalNumber, String status, String agencyNumber, String projectTitle,
-            Date startDate, Date stopDate, KualiDecimal directCostAmount, KualiDecimal indirectCostAMount,
+            String startDateString, String stopDateString, KualiDecimal directCostAmount, KualiDecimal indirectCostAMount,
             KualiDecimal totalAMount, String grantNumber, String grantDescription, String federalPassThrough,
             String federalPassThroughAgencyNumber, String cfdaNumber, String organizationCode,
             String costShareRequiredString, String finalReportDueDateString) {
-        DateTimeFormatter dateformatter = RassXmlDocumentWrapperMarshalTest.getRASSShortDateTimeFormatter();
         this.proposalNumber = proposalNumber;
         this.status = status;
         this.agencyNumber = agencyNumber;
         this.projectTitle = projectTitle;
-        this.startDate = startDate;
-        this.stopDate = stopDate;
+        this.startDate = parseShortDate(startDateString);
+        this.stopDate = parseShortDate(stopDateString);
         this.directCostAmount = directCostAmount;
         this.indirectCostAMount = indirectCostAMount;
         this.totalAMount = totalAMount;
@@ -60,11 +61,17 @@ public enum RassXmlAwardEntryFixture {
         this.cfdaNumber = cfdaNumber;
         this.organizationCode = organizationCode;
         this.costShareRequiredString = costShareRequiredString;
-        if (StringUtils.isNotBlank(finalReportDueDateString)) {
-            this.finalReportDueDate = dateformatter.parseDateTime(finalReportDueDateString).toDate();
+        this.finalReportDueDate = parseShortDate(finalReportDueDateString);
+    }
+    
+    private Date parseShortDate(String dateString) {
+        DateTimeFormatter dateformatter = RassXmlDocumentWrapperMarshalTest.getRASSShortDateTimeFormatter();
+        if (StringUtils.isNotBlank(dateString)) {
+            return dateformatter.parseDateTime(dateString).toDate();
         } else {
-            this.finalReportDueDate = null;
+            return null;
         }
+        
     }
     
     public RassXmlAwardEntry toRassXmlAwardEntry() {
