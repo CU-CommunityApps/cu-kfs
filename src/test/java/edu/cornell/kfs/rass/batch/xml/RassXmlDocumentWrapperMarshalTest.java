@@ -47,8 +47,6 @@ public class RassXmlDocumentWrapperMarshalTest {
         File xmlFile = new File(RASS_EXAMPLE_FILE_PATH);
         RassXmlDocumentWrapper actualWrapper = cuMarshaalSdervice.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         RassXmlDocumentWrapper expectedWrapper = RassXmlDocumentWrapperFixture.RASS_EXAMPLE.toRassXmlDocumentWrapper();
-        System.err.println("Actual Wrapper:   " + actualWrapper.toString());
-        System.err.println("Expected Wrapper: " + expectedWrapper.toString());
         assertEquals(expectedWrapper, actualWrapper);
     }
     

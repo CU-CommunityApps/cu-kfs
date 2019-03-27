@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -40,6 +40,28 @@ public class RassXMLAwardPiCoPiEntry {
 
     public void setPrincipalName(String principalName) {
         this.principalName = principalName;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RassXMLAwardPiCoPiEntry: [ primaryString:").append(primaryString);
+        sb.append(", principalName:").append(principalName);
+        sb.append(", isPrimaryPI:").append(isPrimaryPI());
+        sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof RassXMLAwardPiCoPiEntry) {
+            RassXMLAwardPiCoPiEntry other = (RassXMLAwardPiCoPiEntry) o;
+            return StringUtils.equals(primaryString, other.getPrimaryString()) &&
+                    StringUtils.equals(primaryString, other.getPrimaryString());
+            
+        } else {
+            return false;
+        }
     }
 
 }

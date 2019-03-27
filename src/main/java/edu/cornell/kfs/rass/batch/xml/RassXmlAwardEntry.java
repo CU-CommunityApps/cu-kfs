@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -267,7 +268,9 @@ public class RassXmlAwardEntry {
                     StringUtils.equals(cfdaNumber, other.getCfdaNumber()) &&
                     StringUtils.equals(organizationCode, other.getOrganizationCode()) &&
                     StringUtils.equals(costShareRequiredString, other.getCostShareRequiredString()) &&
-                    Objects.equals(finalReportDueDate, other.getFinalReportDueDate());
+                    Objects.equals(finalReportDueDate, other.getFinalReportDueDate()) &&
+                    Objects.equals(principalAndCoPrincipalInvestigators, other.getPrincipalAndCoPrincipalInvestigators());
+                    
         } else {
             return false;
         }    
@@ -292,6 +295,13 @@ public class RassXmlAwardEntry {
         sb.append(", organizationCode:").append(organizationCode);
         sb.append(", costShareRequiredString:").append(costShareRequiredString);
         sb.append(", finalReportDueDate:").append(finalReportDueDate);
+        if (CollectionUtils.isNotEmpty(principalAndCoPrincipalInvestigators)) {
+            for (RassXMLAwardPiCoPiEntry pi : principalAndCoPrincipalInvestigators) {
+                sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(pi.toString()).append(KFSConstants.SQUARE_BRACKET_RIGHT);
+            }
+        } else {
+            sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append("NO INVESTIGATIORS").append(KFSConstants.SQUARE_BRACKET_RIGHT);
+        }
         sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
         return sb.toString();
     }
