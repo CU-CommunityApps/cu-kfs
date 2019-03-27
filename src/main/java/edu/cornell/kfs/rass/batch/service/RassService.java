@@ -1,9 +1,13 @@
 package edu.cornell.kfs.rass.batch.service;
 
+import java.util.List;
+
+import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
+
 public interface RassService {
 
-	void readXML();
+	List<RassXmlDocumentWrapper> readXML();
 
-	boolean updateKFS();
+	boolean updateKFS(List<RassXmlDocumentWrapper> rassXmlDocumentWrappers);
 
 }
