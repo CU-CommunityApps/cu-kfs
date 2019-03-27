@@ -2,18 +2,12 @@ package edu.cornell.kfs.rass.batch.xml.fixture;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormatter;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapperMarshalTest;
-import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
-import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum RassXmlAwardEntryFixture {
     FIRST("141414", "OS", "2345", "First Example Project", "2017-12-31", null, new KualiDecimal(5300000.000), new KualiDecimal(700000.000), new KualiDecimal(6000000.000),

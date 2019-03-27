@@ -13,19 +13,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.joda.time.DateTimeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Kfs", namespace = StringUtils.EMPTY)
 public class RassXmlDocumentWrapper {
-    
     
     @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(RassStringToJavaLongDateTimeAdapter.class)

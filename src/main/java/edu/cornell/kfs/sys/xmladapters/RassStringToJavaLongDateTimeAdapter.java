@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,7 +25,7 @@ public class RassStringToJavaLongDateTimeAdapter extends XmlAdapter<String, Date
         return (value != null) ? DATE_FORMATTER.print(value.getTime()) : null;
     }
 
-    public static DateTime parseToDateTime(String value) {
+    private static DateTime parseToDateTime(String value) {
         return DateTime.parse(value, DATE_FORMATTER);
     }
 

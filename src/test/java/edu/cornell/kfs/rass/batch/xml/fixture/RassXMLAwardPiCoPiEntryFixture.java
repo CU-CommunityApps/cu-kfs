@@ -1,6 +1,6 @@
 package edu.cornell.kfs.rass.batch.xml.fixture;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 
