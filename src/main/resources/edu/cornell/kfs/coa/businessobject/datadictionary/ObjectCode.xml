@@ -79,6 +79,15 @@
                 <bean parent="InactivationBlockingDefinition" p:blockedReferencePropertyName="extension.contractGrantReportingCode"/>
             </list>
         </property>
+        <property name="accessRestrictedAttributes">
+            <list>
+                <bean parent="ChartRestriction" p:attribute-ref="ObjectCode-chartOfAccountsCode"/>
+                <bean parent="ChartHierarchyRestriction" p:attribute-ref="ObjectCode-chartOfAccountsCode"/>
+                <bean parent="ObjectLevelRestriction" p:attribute-ref="ObjectCode-financialObjectLevelCode"/>
+                <bean parent="ObjectConsolidationRestriction"
+                      p:attribute-ref="ObjectCode-financialObjectLevel.financialConsolidationObjectCode"/>
+            </list>
+         </property>
       </bean>
 
 <!-- Attribute Definitions -->
