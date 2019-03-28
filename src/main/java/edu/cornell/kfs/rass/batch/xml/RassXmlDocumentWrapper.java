@@ -12,9 +12,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 
@@ -77,25 +76,13 @@ public class RassXmlDocumentWrapper {
     }
     
     @Override
+    public int hashCode() {
+        return Objects.hash(extractDate, awards, agencies);
+    }
+    
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("RassXmlDocumentWrapper: [ extractDate:").append(extractDate);
-        if (CollectionUtils.isNotEmpty(awards)) {
-            for (RassXmlAgencyEntry agency : agencies) {
-                sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(awards.toString()).append(KFSConstants.SQUARE_BRACKET_RIGHT);
-            }
-        } else {
-            sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append("NO AWAWRDS").append(KFSConstants.SQUARE_BRACKET_RIGHT);
-        }
-        if (CollectionUtils.isNotEmpty(agencies)) {
-            for (RassXmlAgencyEntry agency : agencies) {
-                sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(agency.toString()).append(KFSConstants.SQUARE_BRACKET_RIGHT);
-            }
-        } else {
-            sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append("NO AGENCIES").append(KFSConstants.SQUARE_BRACKET_RIGHT);
-        }
-        sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
-        return sb.toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

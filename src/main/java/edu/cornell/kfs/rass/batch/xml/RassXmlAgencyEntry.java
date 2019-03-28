@@ -1,5 +1,7 @@
 package edu.cornell.kfs.rass.batch.xml;
 
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -8,37 +10,37 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Agency", namespace = StringUtils.EMPTY)
 public class RassXmlAgencyEntry {
     
-    @XmlElement(name = "Number", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Number", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String number;
     
-    @XmlElement(name = "Reporting_Name", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Reporting_Name", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String reportingName;
     
-    @XmlElement(name = "Full_Name", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Full_Name", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String fullName;
     
-    @XmlElement(name = "Type_Code", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Type_Code", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String typeCode;
     
-    @XmlElement(name = "Reports_to_Agency_Number", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Reports_to_Agency_Number", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String reportsToAgencyNumber;
     
-    @XmlElement(name = "Common_Name", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Common_Name", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String commonName;
     
-    @XmlElement(name = "Agency_Origin", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Agency_Origin", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String agencyOrigin;
 
@@ -115,16 +117,13 @@ public class RassXmlAgencyEntry {
     }
     
     @Override
+    public int hashCode() {
+        return Objects.hash(number, reportingName, fullName, typeCode, reportsToAgencyNumber, commonName, agencyOrigin);
+    }
+    
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("RassXmlAgencyEntry [number:").append(number);
-        sb.append(", fullName:").append(fullName);
-        sb.append(", typeCode:").append(typeCode);
-        sb.append(", reportsToAgencyNumber:").append(reportsToAgencyNumber);
-        sb.append(", commonName:").append(commonName);
-        sb.append(", agencyOrigin:").append(agencyOrigin);
-        sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
-        return sb.toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

@@ -13,7 +13,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class RassStringToJavaLongDateTimeAdapter extends XmlAdapter<String, Date> {
 
-    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FOMRAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
+    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
 
     @Override
     public Date unmarshal(String value) throws Exception {
@@ -25,7 +25,7 @@ public class RassStringToJavaLongDateTimeAdapter extends XmlAdapter<String, Date
         return (value != null) ? DATE_FORMATTER.print(value.getTime()) : null;
     }
 
-    private static DateTime parseToDateTime(String value) {
+    public static DateTime parseToDateTime(String value) {
         return DateTime.parse(value, DATE_FORMATTER);
     }
 

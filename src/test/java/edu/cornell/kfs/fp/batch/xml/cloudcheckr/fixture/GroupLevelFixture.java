@@ -7,7 +7,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupLevel;
-import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
+import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 
 public enum GroupLevelFixture {
     DEPT_1_COST_CENTER_1(CloudCheckrFixtureConstants.ACCOUNT_NONE, CloudCheckrFixtureConstants.DEPT1_COSTCENTER2_COST),
@@ -70,7 +70,7 @@ public enum GroupLevelFixture {
         this.friendlyName = friendlyName;
         this.cost = new KualiDecimal(cost);
         this.usageQuantity = new Double(usageQuantity);
-        this.nextLevel = AccountingXmlDocumentFixtureUtils.toImmutableList(nextLevel);
+        this.nextLevel = XmlDocumentFixtureUtils.toImmutableList(nextLevel);
     }
     
     private GroupLevelFixture(String groupValue, String friendlyName, double cost, GroupLevelFixture[] nextLevel) {

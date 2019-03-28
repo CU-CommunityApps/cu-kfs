@@ -5,22 +5,22 @@ import org.apache.commons.lang3.StringUtils;
 import edu.cornell.kfs.rass.batch.xml.RassXMLAwardPiCoPiEntry;
 
 public enum RassXMLAwardPiCoPiEntryFixture {
-    cah292_PRIMARY("Y", "cah292"),
-    NO_NAME_PRIMARH("Y", StringUtils.EMPTY),
-    jdh34_CO_PI("N", "jdh34");
+    cah292_PRIMARY(Boolean.TRUE, "cah292"),
+    NO_NAME_PRIMARY(Boolean.TRUE, StringUtils.EMPTY),
+    jdh34_CO_PI(Boolean.FALSE, "jdh34");
     
-    public final String primaryString;
-    public final String principalName;
+    public final Boolean primary;
+    public final String projectDirectorPrincipalName;
     
-    private RassXMLAwardPiCoPiEntryFixture(String primaryString, String principalName) {
-        this.primaryString = primaryString;
-        this.principalName = principalName;
+    private RassXMLAwardPiCoPiEntryFixture(Boolean primary, String projectDirectorPrincipalName) {
+        this.primary = primary;
+        this.projectDirectorPrincipalName = projectDirectorPrincipalName;
     }
     
     public RassXMLAwardPiCoPiEntry toRassXMLAwardPiCoPiEntry() {
         RassXMLAwardPiCoPiEntry piEntry = new RassXMLAwardPiCoPiEntry();
-        piEntry.setPrimaryString(primaryString);
-        piEntry.setPrincipalName(principalName);
+        piEntry.setPrimary(primary);
+        piEntry.setProjectDirectorPrincipalName(projectDirectorPrincipalName);
         return piEntry;
     }
 

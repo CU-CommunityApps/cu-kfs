@@ -13,12 +13,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.sys.xmladapters.NullableKualiDecimalXmlAdapter;
+import edu.cornell.kfs.sys.xmladapters.BooleanNullPossibleXmlAdapter;
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalNullPossibleXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,16 +50,16 @@ public class RassXmlAwardEntry {
     private Date stopDate;
     
     @XmlElement(name = "Direct_Cost_Amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NullableKualiDecimalXmlAdapter.class)
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
     private KualiDecimal directCostAmount;
     
     @XmlElement(name = "Indirect_Cost_Amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NullableKualiDecimalXmlAdapter.class)
-    private KualiDecimal indirectCostAMount;
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
+    private KualiDecimal indirectCostAmount;
     
     @XmlElement(name = "Total_Amount", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NullableKualiDecimalXmlAdapter.class)
-    private KualiDecimal totalAMount;
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
+    private KualiDecimal totalAmount;
     
     @XmlElement(name = "Grant_Number", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -70,8 +70,8 @@ public class RassXmlAwardEntry {
     private String grantDescription;
     
     @XmlElement(name = "Federal_Pass_Through", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String federalPassThrough;
+    @XmlJavaTypeAdapter(BooleanNullPossibleXmlAdapter.class)
+    private Boolean federalPassThrough;
     
     @XmlElement(name = "Federal_Pass_Through_Agency_Number", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -86,8 +86,8 @@ public class RassXmlAwardEntry {
     private String organizationCode;
     
     @XmlElement(name = "Cost_Share_Required", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    private String costShareRequiredString;
+    @XmlJavaTypeAdapter(BooleanNullPossibleXmlAdapter.class)
+    private Boolean costShareRequired;
     
     @XmlElement(name = "Final_Fiscal_Report_Due_Date", namespace = StringUtils.EMPTY, required = true)
     @XmlJavaTypeAdapter(RassStringToJavaShortDateTimeAdapter.class)
@@ -157,20 +157,20 @@ public class RassXmlAwardEntry {
         this.directCostAmount = directCostAmount;
     }
 
-    public KualiDecimal getIndirectCostAMount() {
-        return indirectCostAMount;
+    public KualiDecimal getIndirectCostAmount() {
+        return indirectCostAmount;
     }
 
-    public void setIndirectCostAMount(KualiDecimal indirectCostAMount) {
-        this.indirectCostAMount = indirectCostAMount;
+    public void setIndirectCostAmount(KualiDecimal indirectCostAmount) {
+        this.indirectCostAmount = indirectCostAmount;
     }
 
-    public KualiDecimal getTotalAMount() {
-        return totalAMount;
+    public KualiDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotalAMount(KualiDecimal totalAMount) {
-        this.totalAMount = totalAMount;
+    public void setTotalAmount(KualiDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public String getGrantNumber() {
@@ -189,11 +189,11 @@ public class RassXmlAwardEntry {
         this.grantDescription = grantDescription;
     }
 
-    public String getFederalPassThrough() {
+    public Boolean getFederalPassThrough() {
         return federalPassThrough;
     }
 
-    public void setFederalPassThrough(String federalPassThrough) {
+    public void setFederalPassThrough(Boolean federalPassThrough) {
         this.federalPassThrough = federalPassThrough;
     }
 
@@ -221,12 +221,12 @@ public class RassXmlAwardEntry {
         this.organizationCode = organizationCode;
     }
 
-    public String getCostShareRequiredString() {
-        return costShareRequiredString;
+    public Boolean getCostShareRequired() {
+        return costShareRequired;
     }
 
-    public void setCostShareRequiredString(String costShareRequiredString) {
-        this.costShareRequiredString = costShareRequiredString;
+    public void setCostShareRequired(Boolean costShareRequired) {
+        this.costShareRequired = costShareRequired;
     }
 
     public Date getFinalReportDueDate() {
@@ -247,10 +247,6 @@ public class RassXmlAwardEntry {
     
     @Override
     public boolean equals(Object o) {
-        
-        /*
-    private List<RassXMLAwardPiCoPiEntry> principalAndCoPrincipalInvestigators;
-         */
         if (o instanceof RassXmlAwardEntry) {
             RassXmlAwardEntry other = (RassXmlAwardEntry) o;
             return StringUtils.equals(proposalNumber, other.getProposalNumber()) &&
@@ -259,15 +255,15 @@ public class RassXmlAwardEntry {
                     Objects.equals(startDate, other.getStartDate()) &&
                     Objects.equals(stopDate, other.getStopDate()) &&
                     Objects.equals(directCostAmount, other.getDirectCostAmount()) &&
-                    Objects.equals(indirectCostAMount, other.getIndirectCostAMount()) &&
-                    Objects.equals(totalAMount, other.getTotalAMount()) &&
+                    Objects.equals(indirectCostAmount, other.getIndirectCostAmount()) &&
+                    Objects.equals(totalAmount, other.getTotalAmount()) &&
                     StringUtils.equals(grantNumber, other.getGrantNumber()) &&
                     StringUtils.equals(grantDescription, other.getGrantDescription()) &&
-                    StringUtils.equals(federalPassThrough, other.getFederalPassThrough()) &&
+                    Objects.equals(federalPassThrough, other.getFederalPassThrough()) &&
                     StringUtils.equals(federalPassThroughAgencyNumber, other.getFederalPassThroughAgencyNumber()) &&
                     StringUtils.equals(cfdaNumber, other.getCfdaNumber()) &&
                     StringUtils.equals(organizationCode, other.getOrganizationCode()) &&
-                    StringUtils.equals(costShareRequiredString, other.getCostShareRequiredString()) &&
+                    Objects.equals(costShareRequired, other.getCostShareRequired()) &&
                     Objects.equals(finalReportDueDate, other.getFinalReportDueDate()) &&
                     Objects.equals(principalAndCoPrincipalInvestigators, other.getPrincipalAndCoPrincipalInvestigators());
                     
@@ -277,33 +273,15 @@ public class RassXmlAwardEntry {
     }
     
     @Override
+    public int hashCode() {
+        return Objects.hash(proposalNumber, status, projectTitle, startDate, stopDate, directCostAmount, indirectCostAmount, totalAmount, grantNumber, grantDescription,
+                federalPassThrough, federalPassThroughAgencyNumber, cfdaNumber, organizationCode, costShareRequired, finalReportDueDate, principalAndCoPrincipalInvestigators, 
+                principalAndCoPrincipalInvestigators);
+    }
+    
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("RassXmlAwardEntry: [proposalNumber: ").append(proposalNumber);
-        sb.append(", status:").append(status);
-        sb.append(", projectTitle:").append(projectTitle);
-        sb.append(", startDate:").append(startDate);
-        sb.append(", stopDate:").append(stopDate);
-        sb.append(", directCostAmount:").append(directCostAmount);
-        sb.append(", indirectCostAMount:").append(indirectCostAMount);
-        sb.append(", totalAMount:").append(totalAMount);
-        sb.append(", grantNumber:").append(grantNumber);
-        sb.append(", grantDescription:").append(grantDescription);
-        sb.append(", federalPassThrough:").append(federalPassThrough);
-        sb.append(", federalPassThroughAgencyNumber:").append(federalPassThroughAgencyNumber);
-        sb.append(", cfdaNumber:").append(cfdaNumber);
-        sb.append(", organizationCode:").append(organizationCode);
-        sb.append(", costShareRequiredString:").append(costShareRequiredString);
-        sb.append(", finalReportDueDate:").append(finalReportDueDate);
-        if (CollectionUtils.isNotEmpty(principalAndCoPrincipalInvestigators)) {
-            for (RassXMLAwardPiCoPiEntry pi : principalAndCoPrincipalInvestigators) {
-                sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append(pi.toString()).append(KFSConstants.SQUARE_BRACKET_RIGHT);
-            }
-        } else {
-            sb.append(KFSConstants.SQUARE_BRACKET_LEFT).append("NO INVESTIGATIORS").append(KFSConstants.SQUARE_BRACKET_RIGHT);
-        }
-        sb.append(KFSConstants.SQUARE_BRACKET_RIGHT);
-        return sb.toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 
 }

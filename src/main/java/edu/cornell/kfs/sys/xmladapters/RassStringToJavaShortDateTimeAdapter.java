@@ -25,7 +25,7 @@ public class RassStringToJavaShortDateTimeAdapter extends XmlAdapter<String, Dat
         return (value != null) ? DATE_FORMATTER.print(value.getTime()) : null;
     }
 
-    private static DateTime parseToDateTime(String value) {
+    public static DateTime parseToDateTime(String value) {
         return DateTime.parse(value, DATE_FORMATTER);
     }
     

@@ -20,34 +20,25 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 public class RassXmlDocumentWrapperMarshalTest {
     public static final String RASS_EXAMPLE_FILE_PATH = "src/test/resources/edu/cornell/kfs/rass/rass_example.xml";
     
-    private CUMarshalService cuMarshaalSdervice;
+    private CUMarshalService cuMarshalService;
     
     @Before
     public void setup() {
-        cuMarshaalSdervice = new CUMarshalServiceImpl();
+        cuMarshalService = new CUMarshalServiceImpl();
     }
     
     @After
     public void tearDown() {
-        cuMarshaalSdervice = null;
+        cuMarshalService = null;
     }
     
     @Test
     public void testUnMarshallingExample() throws JAXBException {
         File xmlFile = new File(RASS_EXAMPLE_FILE_PATH);
-        RassXmlDocumentWrapper actualWrapper = cuMarshaalSdervice.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
+        RassXmlDocumentWrapper actualWrapper = cuMarshalService.unmarshalFile(xmlFile, RassXmlDocumentWrapper.class);
         RassXmlDocumentWrapper expectedWrapper = RassXmlDocumentWrapperFixture.RASS_EXAMPLE.toRassXmlDocumentWrapper();
-        assertEquals(expectedWrapper, actualWrapper);
-    }
-    
-    public static final DateTimeFormatter getRASSLongDateTimeFormatter() {
-        DateTimeFormatter dateformatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FOMRAT_yyyy_MM_dd_T_HH_mm_ss_SSS);
-        return dateformatter;
-    }
-    
-    public static final DateTimeFormatter getRASSShortDateTimeFormatter() {
-        DateTimeFormatter dateformatter = DateTimeFormat.forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
-        return dateformatter;
+        assertEquals("Wrappers should match", expectedWrapper, actualWrapper);
+        assertEquals("Wrappers' hash code should match", expectedWrapper.hashCode(), actualWrapper.hashCode());
     }
 
 }
