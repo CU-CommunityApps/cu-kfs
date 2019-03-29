@@ -8,14 +8,16 @@
     <bean id="AgencyOrigin" parent="AgencyOrigin-parentBean"/>
     <bean id="AgencyOrigin-parentBean" abstract="true" parent="BusinessObjectEntry"
             p:businessObjectClass="edu.cornell.kfs.module.cg.businessobject.AgencyOrigin"
+            p:name="AgencyOrigin"
+            p:businessObjectAdminService-ref="defaultBoAdminService"
             p:objectLabel="Agency Origin"
             p:titleAttribute="Agency Origin"
             p:inquiryDefinition-ref="AgencyOrigin-inquiryDefinition"
             p:lookupDefinition-ref="AgencyOrigin-lookupDefinition">
         <property name="attributes">
             <list>
-                <ref bean="AgencyOrigin-agencyOriginCode"/>
-                <ref bean="AgencyOrigin-agencyOriginName"/>
+                <ref bean="AgencyOrigin-code"/>
+                <ref bean="AgencyOrigin-name"/>
                 <ref bean="AgencyOrigin-active"/>
             </list>
         </property>
@@ -23,9 +25,9 @@
 
     <!-- Attribute Definitions -->
 
-    <bean id="AgencyOrigin-agencyOriginCode" parent="AgencyOrigin-agencyOriginCode-parentBean"/>
-    <bean id="AgencyOrigin-agencyOriginCode-parentBean" abstract="true" parent="AttributeDefinition"
-            p:name="agencyOriginCode"
+    <bean id="AgencyOrigin-code" parent="AgencyOrigin-code-parentBean"/>
+    <bean id="AgencyOrigin-code-parentBean" abstract="true" parent="AttributeDefinition"
+            p:name="code"
             p:label="Agency Origin Code"
             p:shortLabel="Origin Code"
             p:maxLength="15"
@@ -35,9 +37,9 @@
         </property>
     </bean>
 
-    <bean id="AgencyOrigin-agencyOriginName" parent="AgencyOrigin-agencyOriginName-parentBean"/>
-    <bean id="AgencyOrigin-agencyOriginName-parentBean" abstract="true" parent="AttributeDefinition"
-            p:name="agencyOriginName"
+    <bean id="AgencyOrigin-name" parent="AgencyOrigin-name-parentBean"/>
+    <bean id="AgencyOrigin-name-parentBean" abstract="true" parent="AttributeDefinition"
+            p:name="name"
             p:label="Agency Origin Name"
             p:shortLabel="Origin Name"
             p:maxLength="50"
@@ -62,8 +64,8 @@
                         p:numberOfColumns="1">
                     <property name="inquiryFields">
                         <list>
-                            <bean parent="FieldDefinition" p:attributeName="agencyOriginCode"/>
-                            <bean parent="FieldDefinition" p:attributeName="agencyOriginName"/>
+                            <bean parent="FieldDefinition" p:attributeName="code"/>
+                            <bean parent="FieldDefinition" p:attributeName="name"/>
                             <bean parent="FieldDefinition" p:attributeName="active"/>
                         </list>
                     </property>
@@ -82,15 +84,15 @@
             <bean parent="SortDefinition">
                 <property name="attributeNames">
                     <list>
-                        <value>agencyOriginCode</value>
+                        <value>code</value>
                     </list>
                 </property>
              </bean>
         </property>
         <property name="lookupAttributeDefinitions">
             <list>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-agencyOriginCode"/>
-                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-agencyOriginName"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-code"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-name"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
                         parent="AgencyOrigin-active" p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                         p:defaultValue="Y"/>
@@ -99,25 +101,25 @@
         <property name="LookupResultAttributeDefinitions">
             <list>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
-                        parent="AgencyOrigin-agencyOriginCode"
+                        parent="AgencyOrigin-code"
                         p:disableInquiry="true"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
-                        parent="AgencyOrigin-agencyOriginName"/>
+                        parent="AgencyOrigin-name"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                         parent="AgencyOrigin-active"/>
             </list>
         </property>
         <property name="lookupFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="agencyOriginCode"/>
-                <bean parent="FieldDefinition" p:attributeName="agencyOriginName"/>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
                 <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
             </list>
         </property>
         <property name="resultFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="agencyOriginCode"/>
-                <bean parent="FieldDefinition" p:attributeName="agencyOriginName"/>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>

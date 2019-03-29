@@ -23,7 +23,7 @@ public class AgencyOriginValuesFinder extends KeyValuesBase {
         List<KeyValue> keyValues = new ArrayList<>();
         keyValues.add(new ConcreteKeyValue(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING));
         agencyOrigins.stream()
-                .map(agencyOrigin -> new ConcreteKeyValue(agencyOrigin.getAgencyOriginCode(), agencyOrigin.getAgencyOriginName()))
+                .map(agencyOrigin -> new ConcreteKeyValue(agencyOrigin.getCode(), agencyOrigin.getName()))
                 .forEach(keyValues::add);
         return keyValues;
     }

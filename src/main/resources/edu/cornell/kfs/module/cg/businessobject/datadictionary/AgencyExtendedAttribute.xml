@@ -23,7 +23,7 @@
                     <property name="primitiveAttributes">
                         <list>
                             <bean parent="PrimitiveAttributeDefinition"
-                                    p:sourceName="agencyOriginCode" p:targetName="agencyOriginCode"/>
+                                    p:sourceName="agencyOriginCode" p:targetName="code"/>
                         </list>
                     </property>
                 </bean>
@@ -47,7 +47,8 @@
     </bean>
 
     <bean id="AgencyExtendedAttribute-agencyOriginCode" parent="AgencyExtendedAttribute-agencyOriginCode-parentBean"/>
-    <bean id="AgencyExtendedAttribute-agencyOriginCode-parentBean" abstract="true" parent="AgencyOrigin-agencyOriginCode">
+    <bean id="AgencyExtendedAttribute-agencyOriginCode-parentBean" abstract="true" parent="AgencyOrigin-code"
+            p:name="agencyOriginCode">
         <property name="control">
             <bean parent="SelectControlDefinition" p:valuesFinder-ref="agencyOriginValuesFinder" p:includeKeyInLabel="false"/>
         </property>

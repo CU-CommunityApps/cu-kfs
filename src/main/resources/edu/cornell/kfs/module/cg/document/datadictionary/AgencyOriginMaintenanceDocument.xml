@@ -19,7 +19,7 @@
         </property>
         <property name="lockingKeys">
             <list>
-                <value>agencyOriginCode</value>
+                <value>code</value>
             </list>
         </property>
     </bean>
@@ -31,8 +31,8 @@
             p:id="agencyOriginSection" p:title="Edit Agency Origin">
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="agencyOriginCode" p:required="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="agencyOriginName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="code" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="name" p:required="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
             </list>
         </property>
