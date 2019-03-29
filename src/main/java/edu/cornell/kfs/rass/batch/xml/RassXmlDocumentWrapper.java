@@ -26,11 +26,11 @@ public class RassXmlDocumentWrapper {
     private Date extractDate;
     
     @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY)
-    @XmlElement(name = "Award", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Award", namespace = StringUtils.EMPTY)
     private List<RassXmlAwardEntry> awards;
     
     @XmlElementWrapper(name = "Agencies", namespace = StringUtils.EMPTY)
-    @XmlElement(name = "Agency", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Agency", namespace = StringUtils.EMPTY)
     private List<RassXmlAgencyEntry> agencies;
     
     public RassXmlDocumentWrapper() {
