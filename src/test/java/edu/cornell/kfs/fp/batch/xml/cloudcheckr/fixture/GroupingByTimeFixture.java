@@ -3,7 +3,7 @@ package edu.cornell.kfs.fp.batch.xml.cloudcheckr.fixture;
 import java.util.List;
 
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.GroupingByTime;
-import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
+import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 
 public enum GroupingByTimeFixture {
     DEPT1_GROUP1(groupCostDateFixtureArrayBuilder(GroupCostDateFixture.DEPT1_COSTDATE1), 
@@ -39,8 +39,8 @@ public enum GroupingByTimeFixture {
     public final List<GroupingFixture> groupingFixtures;
     
     private GroupingByTimeFixture(GroupCostDateFixture[] groupCostDateFixtureArray, GroupingFixture[] groupingFixtureArray) {
-        groupCostDateFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(groupCostDateFixtureArray);
-        groupingFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(groupingFixtureArray);
+        groupCostDateFixtures = XmlDocumentFixtureUtils.toImmutableList(groupCostDateFixtureArray);
+        groupingFixtures = XmlDocumentFixtureUtils.toImmutableList(groupingFixtureArray);
     }
     
     public GroupingByTime toGroupingByTime() {

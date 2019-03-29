@@ -1,6 +1,6 @@
 package edu.cornell.kfs.fp.batch.xml.fixture;
 
-import static edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
+import static edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
 import java.util.List;
 
@@ -18,6 +18,7 @@ import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
 
 @SuppressWarnings("deprecation")
@@ -517,13 +518,13 @@ public enum AccountingXmlDocumentEntryFixture {
         this.explanation = defaultToEmptyStringIfBlank(explanation);
         this.organizationDocumentNumber = defaultToEmptyStringIfBlank(organizationDocumentNumber);
         this.postingFiscalYear = (postingFiscalYear != 0) ? Integer.valueOf(postingFiscalYear) : null;
-        this.sourceAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
-        this.targetAccountingLines = AccountingXmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
-        this.items = AccountingXmlDocumentFixtureUtils.toImmutableList(items);
+        this.sourceAccountingLines = XmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
+        this.targetAccountingLines = XmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
+        this.items = XmlDocumentFixtureUtils.toImmutableList(items);
         this.dvDetails = dvDetails;
-        this.notes = AccountingXmlDocumentFixtureUtils.toImmutableList(notes);
-        this.adHocRecipients = AccountingXmlDocumentFixtureUtils.toImmutableList(adHocRecipients);
-        this.backupLinks = AccountingXmlDocumentFixtureUtils.toImmutableList(backupLinks);
+        this.notes = XmlDocumentFixtureUtils.toImmutableList(notes);
+        this.adHocRecipients = XmlDocumentFixtureUtils.toImmutableList(adHocRecipients);
+        this.backupLinks = XmlDocumentFixtureUtils.toImmutableList(backupLinks);
     }
 
     private AccountingXmlDocumentEntryFixture(AccountingXmlDocumentEntryFixture baseFixture, long index) {
@@ -551,17 +552,17 @@ public enum AccountingXmlDocumentEntryFixture {
         documentEntry.setOrganizationDocumentNumber(organizationDocumentNumber);
         documentEntry.setPostingFiscalYear(postingFiscalYear);
         documentEntry.setSourceAccountingLines(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(sourceAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
+                XmlDocumentFixtureUtils.convertToPojoList(sourceAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
         documentEntry.setTargetAccountingLines(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(targetAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
+                XmlDocumentFixtureUtils.convertToPojoList(targetAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
         documentEntry.setItems(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(items, AccountingXmlDocumentItemFixture::toItemPojo));
+                XmlDocumentFixtureUtils.convertToPojoList(items, AccountingXmlDocumentItemFixture::toItemPojo));
         documentEntry.setNotes(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(notes, AccountingXmlDocumentNote::new));
+                XmlDocumentFixtureUtils.convertToPojoList(notes, AccountingXmlDocumentNote::new));
         documentEntry.setAdHocRecipients(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(adHocRecipients, AccountingXmlDocumentAdHocRecipientFixture::toAdHocRecipientPojo));
+                XmlDocumentFixtureUtils.convertToPojoList(adHocRecipients, AccountingXmlDocumentAdHocRecipientFixture::toAdHocRecipientPojo));
         documentEntry.setBackupLinks(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(backupLinks, AccountingXmlDocumentBackupLinkFixture::toBackupLinkPojo));
+                XmlDocumentFixtureUtils.convertToPojoList(backupLinks, AccountingXmlDocumentBackupLinkFixture::toBackupLinkPojo));
         return documentEntry;
     }
 

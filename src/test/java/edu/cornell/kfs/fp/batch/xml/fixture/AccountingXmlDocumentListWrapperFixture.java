@@ -5,6 +5,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
+import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 public enum AccountingXmlDocumentListWrapperFixture {
@@ -194,7 +195,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
         this.createDate = createDate;
         this.reportEmail = reportEmail;
         this.overview = overview;
-        this.documents = AccountingXmlDocumentFixtureUtils.toImmutableList(documents);
+        this.documents = XmlDocumentFixtureUtils.toImmutableList(documents);
         this.expectedResults = expectedResults;
     }
 
@@ -205,7 +206,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
         listWrapper.setReportEmail(reportEmail);
         listWrapper.setOverview(overview);
         listWrapper.setDocuments(
-                AccountingXmlDocumentFixtureUtils.convertToPojoList(documents, AccountingXmlDocumentEntryFixture::toDocumentEntryPojo));
+                XmlDocumentFixtureUtils.convertToPojoList(documents, AccountingXmlDocumentEntryFixture::toDocumentEntryPojo));
         return listWrapper;
     }
 
