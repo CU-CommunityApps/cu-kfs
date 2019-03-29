@@ -39,13 +39,20 @@
             p:name="agencyCommonName"
             p:label="Agency Common Name"
             p:shortLabel="Common Name"
-            p:maxLength="125">
+            p:maxLength="125"
+            p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
         <property name="control">
-            <bean parent="TextControlDefinition" p:size="140" />
+            <bean parent="TextControlDefinition" p:size="100" />
         </property>
     </bean>
 
     <bean id="AgencyExtendedAttribute-agencyOriginCode" parent="AgencyExtendedAttribute-agencyOriginCode-parentBean"/>
-    <bean id="AgencyExtendedAttribute-agencyOriginCode-parentBean" abstract="true" parent="AgencyOrigin-agencyOriginCode"/>
+    <bean id="AgencyExtendedAttribute-agencyOriginCode-parentBean" abstract="true" parent="AgencyOrigin-agencyOriginCode">
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="agencyOriginValuesFinder" p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="agencyOriginValuesFinder" class="edu.cornell.kfs.module.cg.businessobject.options.AgencyOriginValuesFinder"/>
 
 </beans>

@@ -37,11 +37,7 @@
 
     <bean id="Agency-extension-agencyOriginCode" parent="Agency-extension-agencyOriginCode-parentBean"/>
     <bean id="Agency-extension-agencyOriginCode-parentBean" abstract="true" parent="AgencyExtendedAttribute-agencyOriginCode"
-            p:name="extension.agencyOriginCode">
-        <property name="control">
-            <bean parent="SelectControlDefinition" p:valuesFinder-ref="agencyOriginValuesFinder" p:includeKeyInLabel="false"/>
-        </property>
-    </bean>
+            p:name="extension.agencyOriginCode"/>
 
     <bean id="Agency-inquirySectionDefinition-details" parent="Agency-inquirySectionDefinition-details-parentBean">
         <property name="inquiryFields">
@@ -51,7 +47,5 @@
             </list>
         </property>
     </bean>
-
-    <bean id="agencyOriginValuesFinder" class="edu.cornell.kfs.module.cg.businessobject.options.AgencyOriginValuesFinder"/>
 
 </beans>

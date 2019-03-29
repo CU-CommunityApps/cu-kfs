@@ -32,6 +32,7 @@
         <property name="maintainableItems">
             <list>
                 <bean parent="MaintainableFieldDefinition" p:name="agencyOriginCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="agencyOriginName" p:required="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
             </list>
         </property>

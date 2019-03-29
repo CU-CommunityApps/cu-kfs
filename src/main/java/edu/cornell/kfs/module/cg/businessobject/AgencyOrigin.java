@@ -8,6 +8,7 @@ public class AgencyOrigin extends PersistableBusinessObjectBase implements Mutab
     private static final long serialVersionUID = 452550276748816849L;
 
     private String agencyOriginCode;
+    private String agencyOriginName;
     private boolean active;
 
     public String getAgencyOriginCode() {
@@ -16,6 +17,14 @@ public class AgencyOrigin extends PersistableBusinessObjectBase implements Mutab
 
     public void setAgencyOriginCode(String agencyOriginCode) {
         this.agencyOriginCode = agencyOriginCode;
+    }
+
+    public String getAgencyOriginName() {
+        return agencyOriginName;
+    }
+
+    public void setAgencyOriginName(String agencyOriginName) {
+        this.agencyOriginName = agencyOriginName;
     }
 
     @Override

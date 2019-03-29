@@ -15,6 +15,7 @@
         <property name="attributes">
             <list>
                 <ref bean="AgencyOrigin-agencyOriginCode"/>
+                <ref bean="AgencyOrigin-agencyOriginName"/>
                 <ref bean="AgencyOrigin-active"/>
             </list>
         </property>
@@ -27,9 +28,22 @@
             p:name="agencyOriginCode"
             p:label="Agency Origin Code"
             p:shortLabel="Origin Code"
-            p:maxLength="15">
+            p:maxLength="15"
+            p:validationPattern-ref="AlphaNumericValidation">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="20"/>
+        </property>
+    </bean>
+
+    <bean id="AgencyOrigin-agencyOriginName" parent="AgencyOrigin-agencyOriginName-parentBean"/>
+    <bean id="AgencyOrigin-agencyOriginName-parentBean" abstract="true" parent="AttributeDefinition"
+            p:name="agencyOriginName"
+            p:label="Agency Origin Name"
+            p:shortLabel="Origin Name"
+            p:maxLength="50"
+            p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="55"/>
         </property>
     </bean>
 
@@ -49,6 +63,7 @@
                     <property name="inquiryFields">
                         <list>
                             <bean parent="FieldDefinition" p:attributeName="agencyOriginCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="agencyOriginName"/>
                             <bean parent="FieldDefinition" p:attributeName="active"/>
                         </list>
                     </property>
@@ -75,6 +90,7 @@
         <property name="lookupAttributeDefinitions">
             <list>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-agencyOriginCode"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-agencyOriginName"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
                         parent="AgencyOrigin-active" p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                         p:defaultValue="Y"/>
@@ -86,18 +102,22 @@
                         parent="AgencyOrigin-agencyOriginCode"
                         p:disableInquiry="true"/>
                 <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                        parent="AgencyOrigin-agencyOriginName"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
                         parent="AgencyOrigin-active"/>
             </list>
         </property>
         <property name="lookupFields">
             <list>
                 <bean parent="FieldDefinition" p:attributeName="agencyOriginCode"/>
+                <bean parent="FieldDefinition" p:attributeName="agencyOriginName"/>
                 <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
             </list>
         </property>
         <property name="resultFields">
             <list>
                 <bean parent="FieldDefinition" p:attributeName="agencyOriginCode"/>
+                <bean parent="FieldDefinition" p:attributeName="agencyOriginName"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
