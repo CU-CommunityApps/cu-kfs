@@ -5,7 +5,7 @@ import java.util.List;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.cloudcheckr.CloudCheckrWrapper;
-import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentFixtureUtils;
+import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 
 public enum CloudCheckrWrapperFixture {
     BASIC_CORNELL_TEST(CloudCheckrFixtureConstants.CORNELL_TEST_FILE_TOTAL, CloudCheckrFixtureConstants.CORNELL_TEST_FILE_MAX, 
@@ -32,8 +32,8 @@ public enum CloudCheckrWrapperFixture {
         this.maximum = new KualiDecimal(max);
         this.minimum = new KualiDecimal(min);
         this.average = new KualiDecimal(average);
-        groupLevelFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(groupLevelFixtureArray);
-        groupingByTimeFixtures = AccountingXmlDocumentFixtureUtils.toImmutableList(groupingByTimeFixtureArray);
+        groupLevelFixtures = XmlDocumentFixtureUtils.toImmutableList(groupLevelFixtureArray);
+        groupingByTimeFixtures = XmlDocumentFixtureUtils.toImmutableList(groupingByTimeFixtureArray);
     }
     
     private CloudCheckrWrapperFixture(double total, double max, double min, double average, GroupLevelFixture[] groupLevelFixtureArray) {

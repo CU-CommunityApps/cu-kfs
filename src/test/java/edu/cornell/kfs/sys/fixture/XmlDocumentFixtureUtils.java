@@ -1,4 +1,4 @@
-package edu.cornell.kfs.fp.batch.xml.fixture;
+package edu.cornell.kfs.sys.fixture;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
-public class AccountingXmlDocumentFixtureUtils {
+public class XmlDocumentFixtureUtils {
 
     public static String defaultToEmptyStringIfBlank(String value) {
         return StringUtils.defaultIfBlank(value, StringUtils.EMPTY);

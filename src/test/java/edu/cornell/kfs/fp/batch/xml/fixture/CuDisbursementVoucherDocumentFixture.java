@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
+
 public enum CuDisbursementVoucherDocumentFixture {
     EMPTY(),
     JANE_DOE_DV_DETAIL("DISB", "Doe, Jane", "X", "E", 50, "Freeville", "Jane Doe", 25,
@@ -49,8 +51,8 @@ public enum CuDisbursementVoucherDocumentFixture {
         this.conferenceDestination = conferenceDestination;
         this.nonEmployeeTravelerName = nonEmployeeTravelerName;
         this.nonEmployeeCarMileage = nonEmployeeCarMileage;
-        this.nonEmployeeTravelerExpense = AccountingXmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerExpenseArray);
-        this.nonEmployeeTravelerPrepaidExpense = AccountingXmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerPrepaidExpenseArray);
+        this.nonEmployeeTravelerExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerExpenseArray);
+        this.nonEmployeeTravelerPrepaidExpense = XmlDocumentFixtureUtils.toImmutableList(nonEmployeeTravelerPrepaidExpenseArray);
     }
     
     private static CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture[] buildExpenseFixtureArray(CuDisbursementVoucherDocumentNonEmployeeTravelExpenseFixture... fixtures) {
