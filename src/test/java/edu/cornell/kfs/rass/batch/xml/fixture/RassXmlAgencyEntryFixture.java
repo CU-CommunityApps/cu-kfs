@@ -15,7 +15,7 @@ public enum RassXmlAgencyEntryFixture {
     public final String commonName;
     public final String agencyOrigin;
     
-    private RassXmlAgencyEntryFixture(String number, String reportingName,String fullName, String typeCode, String reportsToAgencyNumber, String commonName, String agencyOrigin) {
+    private RassXmlAgencyEntryFixture(String number, String reportingName, String fullName, String typeCode, String reportsToAgencyNumber, String commonName, String agencyOrigin) {
         this.number = number;
         this.reportingName = reportingName;
         this.fullName = fullName;

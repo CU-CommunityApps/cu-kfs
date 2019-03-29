@@ -18,11 +18,11 @@ import edu.cornell.kfs.sys.xmladapters.BooleanNullPossibleXmlAdapter;
 @XmlRootElement(name = "PI_or_CoPI", namespace = StringUtils.EMPTY)
 public class RassXMLAwardPiCoPiEntry {
     
-    @XmlElement(name = "Primary", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Primary", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(BooleanNullPossibleXmlAdapter.class)
     private Boolean primary;
     
-    @XmlElement(name = "Project_Director_Principal_Name", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Project_Director_Principal_Name", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String projectDirectorPrincipalName;
     

@@ -21,15 +21,15 @@ import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 @XmlRootElement(name = "Kfs", namespace = StringUtils.EMPTY)
 public class RassXmlDocumentWrapper {
     
-    @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY, required = true)
+    @XmlElement(name = "Extract_Begin_Timestamp", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(RassStringToJavaLongDateTimeAdapter.class)
     private Date extractDate;
     
-    @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY, required = true)
+    @XmlElementWrapper(name = "Awards", namespace = StringUtils.EMPTY)
     @XmlElement(name = "Award", namespace = StringUtils.EMPTY, required = true)
     private List<RassXmlAwardEntry> awards;
     
-    @XmlElementWrapper(name = "Agencies", namespace = StringUtils.EMPTY, required = true)
+    @XmlElementWrapper(name = "Agencies", namespace = StringUtils.EMPTY)
     @XmlElement(name = "Agency", namespace = StringUtils.EMPTY, required = true)
     private List<RassXmlAgencyEntry> agencies;
     

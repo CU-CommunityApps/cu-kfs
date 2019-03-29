@@ -275,8 +275,7 @@ public class RassXmlAwardEntry {
     @Override
     public int hashCode() {
         return Objects.hash(proposalNumber, status, projectTitle, startDate, stopDate, directCostAmount, indirectCostAmount, totalAmount, grantNumber, grantDescription,
-                federalPassThrough, federalPassThroughAgencyNumber, cfdaNumber, organizationCode, costShareRequired, finalReportDueDate, principalAndCoPrincipalInvestigators, 
-                principalAndCoPrincipalInvestigators);
+                federalPassThrough, federalPassThroughAgencyNumber, cfdaNumber, organizationCode, costShareRequired, finalReportDueDate, principalAndCoPrincipalInvestigators);
     }
     
     @Override

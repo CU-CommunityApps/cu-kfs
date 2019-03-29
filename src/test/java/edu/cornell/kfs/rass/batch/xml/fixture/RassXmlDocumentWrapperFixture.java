@@ -18,7 +18,7 @@ public enum RassXmlDocumentWrapperFixture {
     public final List<RassXmlAgencyEntryFixture> agencies;
     
     private RassXmlDocumentWrapperFixture(String extractDateString, RassXmlAwardEntryFixture[] awardsArray, RassXmlAgencyEntryFixture[] agencyArray) {
-        extractDate = new DateTime(RassStringToJavaLongDateTimeAdapter.parseToDateTime(extractDateString).toDate());
+        extractDate = RassStringToJavaLongDateTimeAdapter.parseToDateTime(extractDateString);
         awards = XmlDocumentFixtureUtils.toImmutableList(awardsArray);
         agencies = XmlDocumentFixtureUtils.toImmutableList(agencyArray);
     }

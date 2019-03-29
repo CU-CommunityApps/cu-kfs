@@ -79,7 +79,7 @@ public enum RassXmlAwardEntryFixture {
     
     private DateTime parseShortDate(String dateString) {
         if (StringUtils.isNotBlank(dateString)) {
-            return new DateTime(RassStringToJavaShortDateTimeAdapter.parseToDateTime(dateString).toDate());
+            return RassStringToJavaShortDateTimeAdapter.parseToDateTime(dateString);
         } else {
             return null;
         }
