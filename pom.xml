@@ -47,6 +47,11 @@
         <spring-security-core.version>4.2.6.RELEASE</spring-security-core.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <checkstyle.version>8.19</checkstyle.version>
+        <checkstyle.plugin.version>3.0.0</checkstyle.plugin.version>
+        <sevntu.checkstyle.plugin.version>1.33.0</sevntu.checkstyle.plugin.version>
     </properties>
 
     <profiles>
@@ -144,6 +149,29 @@
                             <filtered>false</filtered>
                         </overlay>
                     </overlays>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.github.sevntu-checkstyle</groupId>
+                        <artifactId>sevntu-checkstyle-maven-plugin</artifactId>
+                        <version>${sevntu.checkstyle.plugin.version}</version>
+                    </dependency>
+                </dependencies>
+                <!-- Specifying configuration here will take effect on the execution of "mvn checkstyle:checkstyle",
+                     but will not take effect on the execution of "mvn site"  -->
+                <configuration>
+                    <configLocation>src/main/config/CU_Checkstyle.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
                 </configuration>
             </plugin>
         </plugins>
@@ -768,6 +796,22 @@
             </exclusions>
         </dependency>
     </dependencies>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.plugin.version}</version>
+                <!-- Specifying configuration here will take effect on the execution of "mvn site",
+                     but will not take effect on the execution of "mvn checkstyle:checkstyle"  -->
+                <configuration>
+                    <configLocation>src/main/config/CU_Checkstyle.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <distributionManagement>
         <repository>
