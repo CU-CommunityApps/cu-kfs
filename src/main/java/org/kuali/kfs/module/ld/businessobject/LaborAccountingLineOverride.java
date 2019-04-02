@@ -31,8 +31,14 @@ import java.util.Set;
 /**
  * Labor business object for Labor Accounting Line Override
  */
-public class LaborAccountingLineOverride {
+public final class LaborAccountingLineOverride {
 
+    /**
+     * Private Constructor since this is a util class that should never be instantiated.
+     */
+    private LaborAccountingLineOverride() {
+    }
+    
     /**
      * On the given AccountingLine, converts override input checkboxes from a Struts Form into a persistable override code.
      *

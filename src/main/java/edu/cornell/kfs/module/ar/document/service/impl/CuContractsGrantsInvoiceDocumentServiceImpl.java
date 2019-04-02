@@ -480,8 +480,8 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     }
 
     private void setFinalStatusDate(ContractsGrantsInvoiceDocument document, Map<String, Object> parameterMap) {
-        if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateFinalized())) {
-            parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateFinalized().toDate()));
+        if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateApproved())) {
+            parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateApproved().toDate()));
         } else if (ObjectUtils.isNotNull(document.getDocumentHeader().getWorkflowDocument().getDateLastModified())) {
             parameterMap.put(ArPropertyConstants.FINAL_STATUS_DATE, getDateTimeService().toDateString(document.getDocumentHeader().getWorkflowDocument().getDateLastModified().toDate()));
         }

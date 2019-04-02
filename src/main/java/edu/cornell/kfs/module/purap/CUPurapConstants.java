@@ -12,7 +12,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
  * Cornell University specific constants class for holding and defining constants necessary for Cornell's implementation of the Kuali Financial System.
  *
  */
-public class CUPurapConstants extends PurapConstants {
+public class CUPurapConstants {
     
     public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";  //This is how we identify the name in DV's, so to be consistent we're using the same string here
     public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";  // This is how we identify the first address line in DV's but payment req's don't have a second address line
@@ -95,9 +95,9 @@ public class CUPurapConstants extends PurapConstants {
        
         
         static {
-            STATUSES_ALLOWING_AUTO_CLOSE.add(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
-            STATUSES_ALLOWING_AUTO_CLOSE.add(PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
-            STATUSES_ALLOWING_AUTO_CLOSE.addAll(PaymentRequestStatuses.CANCELLED_STATUSES);
+            STATUSES_ALLOWING_AUTO_CLOSE.add(PurapConstants.PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED);
+            STATUSES_ALLOWING_AUTO_CLOSE.add(PurapConstants.PaymentRequestStatuses.APPDOC_AUTO_APPROVED);
+            STATUSES_ALLOWING_AUTO_CLOSE.addAll(PurapConstants.PaymentRequestStatuses.CANCELLED_STATUSES);
   
         }
     }
