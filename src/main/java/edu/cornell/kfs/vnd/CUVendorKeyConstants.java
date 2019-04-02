@@ -15,12 +15,10 @@
  */
 package edu.cornell.kfs.vnd;
 
-import org.kuali.kfs.vnd.VendorKeyConstants;
-
 /**
  * Holds error key constants for Vendor.
  */
-public class CUVendorKeyConstants extends VendorKeyConstants {
+public class CUVendorKeyConstants {
 
     // Vendor Maintenance
     public static final String CONFIRM_VENDOR_DATE_EXPIRED = "message.vendorMaint.confirm.expired.date";

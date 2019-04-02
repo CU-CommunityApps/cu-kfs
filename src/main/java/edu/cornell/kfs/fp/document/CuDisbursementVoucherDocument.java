@@ -207,7 +207,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         java.util.Date today = getDateTimeService().getCurrentDate();
         if ((vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate.before(today))
                 && (vendorFederalWithholdingTaxEndDate == null || vendorFederalWithholdingTaxEndDate.after(today))) {
-            this.disbVchrPayeeTaxControlCode = CuDisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
+            this.disbVchrPayeeTaxControlCode = DisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
         }
 
         // if vendor is foreign, default alien payment code to true

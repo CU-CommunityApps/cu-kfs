@@ -1,5 +1,6 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -7,11 +8,13 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.CollectorBatch;
+import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -120,8 +123,8 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         criteria.add(KFSPropertyConstants.FILE_NAME, wildcardFileName);
         criteria.add(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);
         
-        List<? extends BusinessObject> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria);
-        return searchResults.size();
+        Pair<Collection<? extends BusinessObjectBase>, Integer> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria, 0, 500, CUKFSPropertyConstants.LAST_MODIFIED_DATE,true);
+        return searchResults.getRight();
     }
     
     private String buildDateRangeStringForCurrentDate() {

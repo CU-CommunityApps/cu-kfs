@@ -8,6 +8,7 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.service.impl.PdpExtractServiceImpl;
+import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
@@ -104,9 +105,9 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
         PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
         if (paymentGroup.isPayableByACH()) {
-            paymentGroup.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.ACH);
+            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
         } else {
-            paymentGroup.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.CHECK);
+            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
         }
         
         return paymentGroup;
@@ -117,9 +118,9 @@ public class CuPdpExtractServiceImpl extends PdpExtractServiceImpl {
         PaymentGroup paymentGroup = super.populatePaymentGroup(creditMemoDocument, batch);
         
         if (paymentGroup.isPayableByACH()) {
-            paymentGroup.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.ACH);
+            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
         } else {
-            paymentGroup.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.CHECK);
+            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
         }
         
         return paymentGroup;

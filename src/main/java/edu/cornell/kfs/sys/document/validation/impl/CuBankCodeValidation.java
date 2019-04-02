@@ -6,12 +6,14 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.validation.impl.BankCodeValidation;
+import org.kuali.kfs.sys.service.BankService;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
-public class CuBankCodeValidation extends BankCodeValidation {
+public class CuBankCodeValidation{
 
+	protected static volatile BankService bankService;
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     public static boolean validate(Document document, String bankCode, String bankCodeProperty, boolean requireDeposit, boolean requireDisbursement) {
@@ -71,6 +73,20 @@ public class CuBankCodeValidation extends BankCodeValidation {
             paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
         }
         return paymentMethodGeneralLedgerPendingEntryService;
+    }
+    
+    /**
+     * @return the default implementation of the BankService
+     */
+    protected static BankService getBankService() {
+        if (bankService == null) {
+            bankService = SpringContext.getBean(BankService.class);
+        }
+        return bankService;
+    }
+    
+    public static void setBankService(BankService bankService) {
+        CuBankCodeValidation.bankService = bankService;
     }
 
 }

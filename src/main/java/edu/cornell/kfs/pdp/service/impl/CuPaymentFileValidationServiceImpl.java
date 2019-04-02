@@ -12,6 +12,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentFileLoad;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.service.impl.PaymentFileValidationServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.OriginationCode;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -71,7 +72,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
                     paymentGroup.validateVendorIdAndCustomerInstitutionIdentifier(); 
                 } catch(RuntimeException e1) {
                     LOG.error("processGroupValidation, there was an error validating customer institution information", e1);
-                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUKFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING, new String[] { e1.getMessage() });
+                    errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING, new String[] { e1.getMessage() });
                 }
             } else {
                 LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());

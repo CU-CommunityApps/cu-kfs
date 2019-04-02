@@ -24,6 +24,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.RequisitionStatuses;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
@@ -72,7 +73,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
 
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        if (nodeName.equals(CUPurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();
+        if (nodeName.equals(PurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();
         if (nodeName.equals(CUPurapWorkflowConstants.B2B_AUTO_PURCHASE_ORDER)) { 
             boolean isB2BAutoPurchaseOrder =  isB2BAutoPurchaseOrder();
             if(isB2BAutoPurchaseOrder) this.paymentRequestPositiveApprovalIndicator=true;
