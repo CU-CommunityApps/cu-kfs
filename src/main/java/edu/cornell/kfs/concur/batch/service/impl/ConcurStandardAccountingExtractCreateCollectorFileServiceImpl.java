@@ -46,6 +46,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
             ConcurStandardAccountingExtractCreateCollectorFileServiceImpl.class);
 
     protected static final String DATE_RANGE_FORMAT = "%s..%s";
+    private static final int BATCH_FILE_SEARCH_RESULTS_LIMIT = 500;
 
     protected ConcurStandardAccountingExtractValidationService concurSAEValidationService;
     protected ConcurRequestedCashAdvanceService concurRequestedCashAdvanceService;
@@ -123,7 +124,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         criteria.add(KFSPropertyConstants.FILE_NAME, wildcardFileName);
         criteria.add(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);
         
-        Pair<Collection<? extends BusinessObjectBase>, Integer> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria, 0, 500, null, true);
+        Pair<Collection<? extends BusinessObjectBase>, Integer> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria, 0, BATCH_FILE_SEARCH_RESULTS_LIMIT, null, true);
         return searchResults.getRight();
     }
     
