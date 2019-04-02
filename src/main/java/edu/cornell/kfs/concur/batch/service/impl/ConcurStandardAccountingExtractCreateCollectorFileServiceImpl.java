@@ -123,7 +123,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
         criteria.add(KFSPropertyConstants.FILE_NAME, wildcardFileName);
         criteria.add(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);
         
-        Pair<Collection<? extends BusinessObjectBase>, Integer> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria, 0, 500, CUKFSPropertyConstants.LAST_MODIFIED_DATE,true);
+        Pair<Collection<? extends BusinessObjectBase>, Integer> searchResults = batchFileLookupableHelperService.getSearchResults(BatchFile.class, criteria, 0, 500, null, true);
         return searchResults.getRight();
     }
     
