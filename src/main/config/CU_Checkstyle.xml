@@ -247,7 +247,7 @@
         </module>
         
         <module name="NestedTryDepth">
-        	<property name="severity" value="warning"/>
+        	<property name="severity" value="info"/>
             <property name="max" value="3"/>
         </module>
 		
@@ -286,7 +286,7 @@
 		</module>
 		
 		<module name="ParameterName">
-			<property name="severity" value="info"/>
+			<property name="severity" value="warning"/>
 		</module>
 		
 		<module name="ParameterNumber">
@@ -302,7 +302,7 @@
 		</module>
 		
 		<module name="RedundantModifier">
-			<property name="severity" value="info"/>
+			<property name="severity" value="warning"/>
 		</module>
 
 		<module name="RegexpSinglelineJava">
