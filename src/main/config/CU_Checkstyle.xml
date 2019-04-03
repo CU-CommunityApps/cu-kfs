@@ -34,7 +34,7 @@
         
         <module name="BooleanExpressionComplexity">
         	<property name="max" value="5"/>
-            <property name="severity" value="warning"/>
+            <property name="severity" value="info"/>
         </module>
         
         <module name="ClassDataAbstractionCoupling">
@@ -63,7 +63,7 @@
         </module>
 
 		<module name="DefaultComesLast">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="error"/>
 		</module>
 		
 		<module name="EmptyBlock">
@@ -72,11 +72,11 @@
 		</module>
 		
 		<module name="EmptyForInitializerPad">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 
 		<module name="EmptyForIteratorPad">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 
 		<module name="EmptyStatement">
@@ -99,17 +99,12 @@
 			<property name="severity" value="warning"/>
 		</module>
 		
-		<!-- 
-		<module name="FileContentsHolder">
-		</module>
-		 -->
-		
 		<module name="FinalClass">
 			<property name="severity" value="warning"/>
 		</module>
 		
 		<module name="GenericWhitespace">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="HiddenField">
@@ -161,19 +156,12 @@
 		</module>
 
 		<module name="InnerAssignment">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="InterfaceIsType">
 			<property name="severity" value="warning"/>
 		</module>
-		
-		<!-- 
-		<module name="LeftCurly">
-			<property name="severity" value="info"/>
-			<property name="maxLineLength" value="160"/>
-		</module>
-		 -->
 		
 		<module name="LineLength">
 			<property name="severity" value="ignore"/>
@@ -199,7 +187,7 @@
 		</module>
 
 		<module name="MethodLength">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
 			<property name="max" value="150"/>
 			<property name="countEmpty" value="false"/>
 		</module>
@@ -209,7 +197,7 @@
 		</module>
 		
 		<module name="MethodParamPad">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 
 		<module name="MethodTypeParameterName">
@@ -226,11 +214,11 @@
 		</module>
 
 		<module name="MissingSwitchDefault">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 
 		<module name="ModifiedControlVariable">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="ModifierOrder">
@@ -254,7 +242,7 @@
 		</module>
 		
         <module name="NestedIfDepth">
-        	<property name="severity" value="warning"/>
+        	<property name="severity" value="info"/>
             <property name="max" value="3"/>
         </module>
         
@@ -268,16 +256,16 @@
 		</module>
 		
 		<module name="NoWhitespaceAfter">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 			<property name="tokens" value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
 		</module>
 		
 		<module name="NoWhitespaceBefore">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="OperatorWrap">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="OuterTypeNumber">
@@ -286,7 +274,7 @@
 		</module>
 		
 		<module name="PackageAnnotation">
-      		<property name="severity" value="warning"/>
+      		<property name="severity" value="info"/>
 		</module>
 		
 		<module name="PackageDeclaration">
