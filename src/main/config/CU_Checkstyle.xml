@@ -46,7 +46,7 @@
         </module>
         
 		<module name="ClassTypeParameterName">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="warning"/>
 		</module>
         
         <module name="ConstantName">
@@ -92,7 +92,8 @@
 		</module>
 
 		<module name="ExplicitInitialization">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
+			<property name="onlyObjectReferences" value="true"/>
 		</module>
 		
 		<module name="FallThrough">
@@ -133,7 +134,7 @@
 		</module>
 		
 		<module name="IllegalThrows">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="IllegalType">
