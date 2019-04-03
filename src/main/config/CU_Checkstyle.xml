@@ -50,7 +50,7 @@
 		</module>
         
         <module name="ConstantName">
-        	<property name="severity" value="info"/>
+        	<property name="severity" value="warning"/>
         	<property name="applyToPrivate" value="false"/>
         </module>
         
@@ -96,7 +96,7 @@
 		</module>
 		
 		<module name="FallThrough">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="FinalClass">
@@ -146,7 +146,7 @@
 		</module>
 		
 		<module name="Indentation">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
 			<property name="basicOffset" value="2"/>
             <property name="braceAdjustment" value="0"/>
             <property name="caseIndent" value="2"/>
@@ -320,7 +320,7 @@
         </module>
 		
 		<module name="ReturnCount">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="RightCurly">
@@ -356,17 +356,17 @@
 		</module>
 		
 		<module name="ThrowsCount">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 			<property name="max" value="5"/>
 		</module>
 
 		<module name="TodoComment">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 			<property name="format" value="TODO:|FIXME:"/>
 		</module>
 
 		<module name="TrailingComment">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="TypeName">
@@ -374,11 +374,11 @@
 		</module>
 		
 		<module name="TypecastParenPad">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="UnnecessaryParentheses">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="UnusedImports">
@@ -406,7 +406,7 @@
 	</module>
    
   	<module name="FileLength">
-		<property name="severity" value="warning"/>
+		<property name="severity" value="info"/>
 	</module>
 	
 	<module name="FileTabCharacter">
@@ -419,6 +419,6 @@
 	</module>
 	
 	<module name="Translation">
-		<property name="severity" value="warning"/>
+		<property name="severity" value="info"/>
 	</module>
 </module>
