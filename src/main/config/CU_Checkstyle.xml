@@ -55,7 +55,7 @@
         </module>
         
         <module name="CovariantEquals">
-        	<property name="severity" value="warning"/>
+        	<property name="severity" value="error"/>
         </module>
                 
         <module name="DeclarationOrder">
@@ -84,7 +84,7 @@
 		</module>
 		
 		<module name="EqualsAvoidNull">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="EqualsHashCode">
@@ -274,7 +274,7 @@
 		</module>
 		
 		<module name="PackageAnnotation">
-      		<property name="severity" value="info"/>
+      		<property name="severity" value="error"/>
 		</module>
 		
 		<module name="PackageDeclaration">
