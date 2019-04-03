@@ -7,6 +7,7 @@ import java.util.List;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.service.KeyValuesService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.util.ConcreteKeyValue;
 import org.kuali.rice.core.api.util.KeyValue;
@@ -19,7 +20,8 @@ public class AgencyOriginValuesFinder extends KeyValuesBase {
 
     @Override
     public List<KeyValue> getKeyValues() {
-        Collection<AgencyOrigin> agencyOrigins = getKeyValuesService().findAll(AgencyOrigin.class);
+        Collection<AgencyOrigin> agencyOrigins = getKeyValuesService().findAllOrderBy(
+                AgencyOrigin.class, KFSPropertyConstants.CODE, false);
         List<KeyValue> keyValues = new ArrayList<>();
         keyValues.add(new ConcreteKeyValue(KFSConstants.EMPTY_STRING, KFSConstants.EMPTY_STRING));
         agencyOrigins.stream()

@@ -23,8 +23,6 @@
         </property>
     </bean>
 
-    <!-- Attribute Definitions -->
-
     <bean id="AgencyOrigin-code" parent="AgencyOrigin-code-parentBean"/>
     <bean id="AgencyOrigin-code-parentBean" abstract="true" parent="AttributeDefinition"
             p:name="code"
@@ -52,8 +50,6 @@
     <bean id="AgencyOrigin-active" parent="AgencyOrigin-active-parentBean"/>
     <bean id="AgencyOrigin-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator" p:name="active"/>
 
-    <!-- Business Object Inquiry Definition -->
-
     <bean id="AgencyOrigin-inquiryDefinition" parent="AgencyOrigin-inquiryDefinition-parentBean"/>
     <bean id="AgencyOrigin-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
             p:title="Agency Origin Inquiry">
@@ -74,14 +70,12 @@
         </property>
     </bean>
 
-    <!-- Business Object Lookup Definition -->
-
     <bean id="AgencyOrigin-lookupDefinition" parent="AgencyOrigin-lookupDefinition-parentBean"/>
     <bean id="AgencyOrigin-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
             p:title="Agency Origin Lookup"
             p:lookupSearchService-ref="defaultLookupSearchService">
         <property name="defaultSort">
-            <bean parent="SortDefinition">
+            <bean parent="SortDefinition" p:sortAscending="false">
                 <property name="attributeNames">
                     <list>
                         <value>code</value>
