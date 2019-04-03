@@ -147,7 +147,7 @@
 		</module>
 		
 		<module name="Indentation">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
 			<property name="basicOffset" value="2"/>
             <property name="braceAdjustment" value="0"/>
             <property name="caseIndent" value="2"/>
@@ -194,7 +194,7 @@
 		</module>
 
 		<module name="MethodName">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="MethodParamPad">
@@ -291,7 +291,7 @@
 		</module>
 		
 		<module name="ParameterNumber">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="ParenPad">
@@ -329,11 +329,11 @@
 		</module>
 		
 		<module name="SimplifyBooleanExpression">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="warning"/>
 		</module>
 		
 		<module name="SimplifyBooleanReturn">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="warning"/>
 		</module>
 		
 		<module name="StaticVariableName">
@@ -402,7 +402,7 @@
 		</module>
 		
 		<module name="WhitespaceAround">
-			<property name="severity" value="ignore"/>
+			<property name="severity" value="info"/>
 		</module>
 	</module>
    
