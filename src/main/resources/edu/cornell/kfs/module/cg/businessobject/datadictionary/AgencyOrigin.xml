@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:dd="http://rice.kuali.org/dd"
+        xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://rice.kuali.org/dd http://rice.kuali.org/dd/dd.xsd">
+
+    <bean id="AgencyOrigin" parent="AgencyOrigin-parentBean"/>
+    <bean id="AgencyOrigin-parentBean" abstract="true" parent="BusinessObjectEntry"
+            p:businessObjectClass="edu.cornell.kfs.module.cg.businessobject.AgencyOrigin"
+            p:name="AgencyOrigin"
+            p:businessObjectAdminService-ref="defaultBoAdminService"
+            p:objectLabel="Agency Origin"
+            p:titleAttribute="Agency Origin"
+            p:inquiryDefinition-ref="AgencyOrigin-inquiryDefinition"
+            p:lookupDefinition-ref="AgencyOrigin-lookupDefinition">
+        <property name="attributes">
+            <list>
+                <ref bean="AgencyOrigin-code"/>
+                <ref bean="AgencyOrigin-name"/>
+                <ref bean="AgencyOrigin-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AgencyOrigin-code" parent="AgencyOrigin-code-parentBean"/>
+    <bean id="AgencyOrigin-code-parentBean" abstract="true" parent="AttributeDefinition"
+            p:name="code"
+            p:label="Agency Origin Code"
+            p:shortLabel="Origin Code"
+            p:maxLength="15"
+            p:validationPattern-ref="AlphaNumericValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="20"/>
+        </property>
+    </bean>
+
+    <bean id="AgencyOrigin-name" parent="AgencyOrigin-name-parentBean"/>
+    <bean id="AgencyOrigin-name-parentBean" abstract="true" parent="AttributeDefinition"
+            p:name="name"
+            p:label="Agency Origin Name"
+            p:shortLabel="Origin Name"
+            p:maxLength="50"
+            p:validationPattern-ref="AnyCharacterWithWhitespaceValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="55"/>
+        </property>
+    </bean>
+
+    <bean id="AgencyOrigin-active" parent="AgencyOrigin-active-parentBean"/>
+    <bean id="AgencyOrigin-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator" p:name="active"/>
+
+    <bean id="AgencyOrigin-inquiryDefinition" parent="AgencyOrigin-inquiryDefinition-parentBean"/>
+    <bean id="AgencyOrigin-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+            p:title="Agency Origin Inquiry">
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition"
+                        p:title="Agency Origin Details"
+                        p:numberOfColumns="1">
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="code"/>
+                            <bean parent="FieldDefinition" p:attributeName="name"/>
+                            <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="AgencyOrigin-lookupDefinition" parent="AgencyOrigin-lookupDefinition-parentBean"/>
+    <bean id="AgencyOrigin-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+            p:title="Agency Origin Lookup"
+            p:lookupSearchService-ref="defaultLookupSearchService">
+        <property name="defaultSort">
+            <bean parent="SortDefinition" p:sortAscending="false">
+                <property name="attributeNames">
+                    <list>
+                        <value>code</value>
+                    </list>
+                </property>
+             </bean>
+        </property>
+        <property name="lookupAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-code"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition" parent="AgencyOrigin-name"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupAttributeDefinition"
+                        parent="AgencyOrigin-active" p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
+                        p:defaultValue="Y"/>
+            </list>
+        </property>
+        <property name="LookupResultAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                        parent="AgencyOrigin-code"
+                        p:disableInquiry="true"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                        parent="AgencyOrigin-name"/>
+                <bean class="org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition"
+                        parent="AgencyOrigin-active"/>
+            </list>
+        </property>
+        <property name="lookupFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+            </list>
+        </property>
+        <property name="resultFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="code"/>
+                <bean parent="FieldDefinition" p:attributeName="name"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

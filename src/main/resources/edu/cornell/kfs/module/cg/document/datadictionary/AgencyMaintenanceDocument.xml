@@ -25,7 +25,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="AgencyMaintenanceDocument" parent="AgencyMaintenanceDocument-parentBean" >
+    <bean id="AgencyMaintenanceDocument" parent="AgencyMaintenanceDocument-parentBean"
+            p:maintainableClass="edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl">
         <property name="businessRulesClass" value="edu.cornell.kfs.module.cg.document.validation.impl.CuAgencyRule"/>
     </bean>
 
@@ -46,4 +47,14 @@
             </list>
         </property>
     </bean>
+
+    <bean id="AgencyMaintenanceDocument-EditAgency" parent="AgencyMaintenanceDocument-EditAgency-parentBean">
+        <property name="maintainableItems">
+            <list merge="true">
+                <bean parent="MaintainableFieldDefinition" p:name="extension.agencyCommonName"/>
+                <bean parent="MaintainableFieldDefinition" p:name="extension.agencyOriginCode"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>
