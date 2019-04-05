@@ -12,7 +12,6 @@
       		<property name="max" value="100"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="AnnotationUseStyle">
       		<property name="severity" value="error"/>
       		<property name="elementStyle" value="ignore"/>
@@ -29,9 +28,8 @@
         	<property name="severity" value="warning"/>
         </module>
         
-        <!-- new in checkstyle 5 -->
         <module name="AvoidStaticImport">
-           <property name="severity" value="warning"/>
+           <property name="severity" value="ignore"/>
         </module>
         
         <module name="BooleanExpressionComplexity">
@@ -40,20 +38,20 @@
         </module>
         
         <module name="ClassDataAbstractionCoupling">
-            <property name="severity" value="info"/>
+            <property name="severity" value="ignore"/>
         </module>
         
         <module name="ClassFanOutComplexity">
-            <property name="severity" value="info"/>
+            <property name="severity" value="ignore"/>
         </module>
         
-        <!-- new in checkstyle 5 -->
 		<module name="ClassTypeParameterName">
 			<property name="severity" value="warning"/>
 		</module>
         
         <module name="ConstantName">
         	<property name="severity" value="warning"/>
+        	<property name="applyToPrivate" value="false"/>
         </module>
         
         <module name="CovariantEquals">
@@ -61,7 +59,7 @@
         </module>
                 
         <module name="DeclarationOrder">
-        	<property name="severity" value="warning"/>
+        	<property name="severity" value="ignore"/>
         </module>
 
 		<module name="DefaultComesLast">
@@ -85,38 +83,33 @@
 			<property name="severity" value="warning"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="EqualsAvoidNull">
 			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="EqualsHashCode">
-			<!-- <property name="severity" value="error"/>-->
 			<property name="severity" value="warning"/>
 		</module>
 
 		<module name="ExplicitInitialization">
 			<property name="severity" value="info"/>
+			<property name="onlyObjectReferences" value="true"/>
 		</module>
 		
 		<module name="FallThrough">
 			<property name="severity" value="info"/>
 		</module>
 		
-		<module name="FileContentsHolder">
-		</module>
-		
 		<module name="FinalClass">
 			<property name="severity" value="warning"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="GenericWhitespace">
 			<property name="severity" value="info"/>
 		</module>
 		
 		<module name="HiddenField">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="ignore"/>
 			<property name="ignoreConstructorParameter" value="true"/>
 			<property name="ignoreSetter" value="true"/>
 			<property name="ignoreAbstractMethods" value="true"/>
@@ -127,7 +120,7 @@
 		</module>
 		
 		<module name="IllegalCatch">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
 		</module>
 
 		<module name="IllegalImport">
@@ -136,7 +129,7 @@
 		</module>
 
 		<module name="IllegalInstantiation">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
     		<property name="classes" value="java.lang.Boolean"/>
 		</module>
 		
@@ -149,13 +142,18 @@
 			<property name="illegalClassNames" value="java.util.GregorianCalendar, java.util.Hashtable, java.util.Vector"/>
 		</module>
 		
-		<!-- TODO need to configure if wanted -->
 		<module name="ImportControl">
 			<property name="severity" value="ignore"/>
 		</module>
 		
 		<module name="Indentation">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
+			<property name="basicOffset" value="2"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="2"/>
+            <property name="throwsIndent" value="2"/>
+            <property name="lineWrappingIndentation" value="2"/>
+            <property name="arrayInitIndent" value="2"/>
 		</module>
 
 		<module name="InnerAssignment">
@@ -165,15 +163,9 @@
 		<module name="InterfaceIsType">
 			<property name="severity" value="warning"/>
 		</module>
-
-		<module name="LeftCurly">
-			<property name="severity" value="info"/>
-			<!-- this will check all scopes but private -->
-			<property name="maxLineLength" value="160"/>
-		</module>
 		
 		<module name="LineLength">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
 			<property name="max" value="160"/>
             <property name="tabWidth" value="4"/>
 		</module>
@@ -188,7 +180,7 @@
 		</module>
 		
 		<module name="MagicNumber">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
 		</module>
 		
 		<module name="MemberName">
@@ -209,21 +201,17 @@
 			<property name="severity" value="info"/>
 		</module>
 
-		<!-- new in checkstyle 5 -->
 		<module name="MethodTypeParameterName">
 			<property name="severity" value="warning"/>
 		</module>
 
-		<!-- new in checkstyle 5 -->
 		<module name="MissingDeprecated">
-      		<property name="severity" value="warning"/>
+      		<property name="severity" value="ignore"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="MissingOverride">
       		<property name="severity" value="warning"/>
-      		 <!--set to false when we offically move to Java 6--> 
-      		<property name="javaFiveCompatibility" value="true"/>
+      		<property name="javaFiveCompatibility" value="false"/>
 		</module>
 
 		<module name="MissingSwitchDefault">
@@ -235,7 +223,7 @@
 		</module>
 		
 		<module name="ModifierOrder">
-			<property name="severity" value="info"/>
+			<property name="severity" value="ignore"/>
 		</module>
 		
 		<module name="MultipleStringLiterals">
@@ -264,7 +252,6 @@
             <property name="max" value="3"/>
         </module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="NoFinalizer">
 			<property name="severity" value="warning"/>
 		</module>
@@ -282,13 +269,11 @@
 			<property name="severity" value="info"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="OuterTypeNumber">
 			<property name="severity" value="warning"/>
 			<property name="max" value="1"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="PackageAnnotation">
       		<property name="severity" value="error"/>
 		</module>
@@ -321,7 +306,6 @@
 			<property name="severity" value="warning"/>
 		</module>
 
-		<!-- new in checkstyle 5 -->
 		<module name="RegexpSinglelineJava">
 			<property name="severity" value="warning"/>
             <property name="format" value="System\.out*$"/>
@@ -329,7 +313,6 @@
             <property name="ignoreComments" value="true"/>
         </module>
         
-        <!-- new in checkstyle 5 -->
         <module name="RegexpSinglelineJava">
         	<property name="severity" value="warning"/>
             <property name="format" value="System\.err*$"/>
@@ -369,7 +352,6 @@
 			<property name="severity" value="error"/>
 		</module>
 		
-		<!-- new in checkstyle 5 -->
 		<module name="SuppressWarnings">
       		<property name="severity" value="warning"/>
 		</module>
@@ -409,7 +391,7 @@
 		</module>
 		
 		<module name="VisibilityModifier">
-			<property name="severity" value="warning"/>
+			<property name="severity" value="ignore"/>
 			<property name="packageAllowed" value="true"/>
             <property name="protectedAllowed" value="true"/>
 		</module>
@@ -424,14 +406,12 @@
 		</module>
 	</module>
    
-     <!-- moved in checkstyle 5 -->
   	<module name="FileLength">
 		<property name="severity" value="info"/>
 	</module>
 	
-	<!-- new in checkstyle 5 -->
 	<module name="FileTabCharacter">
-		<property name="severity" value="info"/>
+		<property name="severity" value="ignore"/>
 		<property name="eachLine" value="false"/>
 	</module>
 	
@@ -442,30 +422,4 @@
 	<module name="Translation">
 		<property name="severity" value="info"/>
 	</module>
-	
-	<!-- this property must be set by maven & the eclipse plugin -->
-	<module name="SuppressionFilter">
-    	<property name="file" value="${cs.suppression.file}"/>
-    </module>
-	
-	<module name="SuppressionCommentFilter">
-    	<property name="offCommentFormat" value="CHECKSTYLE_OFF: ALL"/>
-    	<property name="onCommentFormat" value="CHECKSTYLE_ON: ALL"/>
-    	
-    	<!-- 
-    		This is for specifying checks that we do not want suppressed with the ALL suppression filter.
-    		Notice the ?!(negative lookahead) in the regex. They can still be suppressed individually if needed.
-    	 -->
-    	<property name="checkFormat" value="^((?!(EqualsHashCode)).)*$"/>
-    </module>
-	
-	<module name="SuppressionCommentFilter">
-    	<property name="offCommentFormat" value="CHECKSTYLE_OFF\:([\w\|]+)"/>
-    	<property name="onCommentFormat" value="CHECKSTYLE_ON\:([\w\|]+)"/>
-    	<property name="checkFormat" value="$1"/>
-    </module>
-    
-    <!-- does the team want to use this?
-    <module name="SuppressWithNearbyCommentFilter">
-    </module>-->
 </module>
