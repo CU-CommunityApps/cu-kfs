@@ -41,36 +41,29 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         if (PurapConstants.PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
             WorkflowDocument workflowDocument = poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument();
             //  amendment doc needs to lock its field for initiator while enroute
-            if (workflowDocument.isInitiated() || workflowDocument.isSaved() || workflowDocument.isCompletionRequested()) {
+            if (workflowDocument.isInitiated() || workflowDocument.isSaved()
+                    || workflowDocument.isCompletionRequested()) {
                 editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
             }
         }
 		// KFSUPGRADE-339
         if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
-        	editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
+        	    editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
         }
-        if (SpringContext.getBean(PurapService.class).isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {
+        if (getPurapService().isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {
             editModes.add(PurchaseOrderEditMode.UNORDERED_ITEM_ACCOUNT_ENTRY);
         }
 
-        boolean showDisableRemoveAccounts = true;
         PurchaseOrderAmendmentDocument purchaseOrderAmendmentDocument = (PurchaseOrderAmendmentDocument) document;
-        List<PurApItem> aboveTheLinePOItems = PurApItemUtils.getAboveTheLineOnly(purchaseOrderAmendmentDocument.getItems());
-        PurchaseOrderDocument po = (PurchaseOrderDocument) document;
-        boolean containsUnpaidPaymentRequestsOrCreditMemos = po.getContainsUnpaidPaymentRequestsOrCreditMemos();
-    ItemLoop:
+        List<PurApItem> aboveTheLinePOItems =
+                PurApItemUtils.getAboveTheLineOnly(purchaseOrderAmendmentDocument.getItems());
+        boolean containsUnpaidPaymentRequestsOrCreditMemos = poDocument.getContainsUnpaidPaymentRequestsOrCreditMemos();
         for (PurApItem poItem : aboveTheLinePOItems) {
-            boolean acctLinesEditable = allowAccountingLinesAreEditable((PurchaseOrderItem) poItem, containsUnpaidPaymentRequestsOrCreditMemos);
-            for (PurApAccountingLine poAccoutingLine : poItem.getSourceAccountingLines()) {
-                if (!acctLinesEditable) {
-                    showDisableRemoveAccounts = false;
-                    break ItemLoop;
-                }
+            if (!allowAccountingLinesAreEditable((PurchaseOrderItem) poItem,
+                    containsUnpaidPaymentRequestsOrCreditMemos)) {
+                editModes.add(PurchaseOrderEditMode.DISABLE_REMOVE_ACCTS);
+                break;
             }
-        }
-
-        if (!showDisableRemoveAccounts) {
-            editModes.add(PurchaseOrderEditMode.DISABLE_REMOVE_ACCTS);
         }
 
         // KFSPTS-985

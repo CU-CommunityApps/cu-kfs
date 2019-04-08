@@ -6,6 +6,7 @@ import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.businessobject.ExpenseTransferAccountingLine;
 import org.kuali.kfs.module.ld.businessobject.LaborLedgerPendingEntry;
 import org.kuali.kfs.module.ld.document.SalaryExpenseTransferDocument;
+import org.kuali.kfs.module.ld.util.LaborPendingEntryGenerator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
@@ -29,7 +30,7 @@ public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocume
         boolean isSuccessful = true;
         ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        List<LaborLedgerPendingEntry> expensePendingEntries = CuLaborPendingEntryGenerator.generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
+        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator.generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
             isSuccessful &= this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }

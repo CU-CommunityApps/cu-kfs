@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.LoadPaymentStatus;
@@ -154,9 +155,9 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      */
     private void assignDisbursementTypeCode(PaymentGroup pg) {
         if (pg.isPayableByACH()) {
-            pg.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.ACH);
+            pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
         } else {
-            pg.setDisbursementTypeCode(CUPdpConstants.DisbursementTypeCodes.CHECK);
+            pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
         }
     }
     

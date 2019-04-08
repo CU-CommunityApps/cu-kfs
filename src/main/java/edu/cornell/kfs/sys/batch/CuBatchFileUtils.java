@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.sys.batch.BatchFileUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 
 import com.rsmart.kuali.kfs.sys.KFSConstants;
 
-public class CuBatchFileUtils extends BatchFileUtils {
+public class CuBatchFileUtils {
 
     public static List<File> retrieveBatchFileStagingRootDirectories() {
         ConfigurationService kualiConfigurationService = SpringContext.getBean(ConfigurationService.class);

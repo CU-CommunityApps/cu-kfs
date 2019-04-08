@@ -1,8 +1,6 @@
 package edu.cornell.kfs.module.purap;
 
-import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
-
-public class CUPurapAuthorizationConstants extends PurapAuthorizationConstants {
+public class CUPurapAuthorizationConstants {
 
     
     public static class CURequisitionEditMode  {

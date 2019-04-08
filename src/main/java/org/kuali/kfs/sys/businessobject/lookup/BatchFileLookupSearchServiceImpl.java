@@ -18,6 +18,9 @@
  */
 package org.kuali.kfs.sys.businessobject.lookup;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOCase;
@@ -26,7 +29,9 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
+import org.kuali.kfs.krad.datadictionary.LookupResultAttributeDefinition;
 import org.kuali.kfs.krad.service.LookupSearchService;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
@@ -39,6 +44,7 @@ import org.kuali.rice.kim.api.identity.Person;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -48,16 +54,46 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
+    private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public List<BusinessObjectBase> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,
-            MultivaluedMap<String, String> fieldValues) {
-        return getFiles(fieldValues)
-                .parallelStream()
-                .map(batchFile -> (BusinessObjectBase) batchFile)
-                .collect(Collectors.toCollection(LinkedList::new));
+    public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,
+            MultivaluedMap<String, String> fieldValues, int skip, int limit, String sortField, boolean sortAscending) {
+
+        List<BatchFile> allFiles = getFiles(fieldValues);
+        Stream<BatchFile> stream = allFiles.parallelStream();
+        if (sortField != null) {
+            LookupResultAttributeDefinition resultAttributeDefinition = getBusinessObjectDictionaryService()
+                    .getLookupResultAttributeDefinition(businessObjectClass, sortField);
+            if (resultAttributeDefinition != null) {
+                Comparator fieldComparator = resultAttributeDefinition.getComparator();
+                if (!sortAscending) {
+                    fieldComparator = fieldComparator.reversed();
+                }
+
+                final Comparator<Object> comparator = fieldComparator;
+                stream = stream.sorted((file1, file2) -> compare(comparator, file1, file2, sortField));
+            }
+        }
+
+        List<BatchFile> sortedAndSliced = stream.skip(skip).limit(limit).collect(Collectors.toList());
+        return Pair.of(sortedAndSliced, allFiles.size());
+    }
+
+    private int compare(Comparator comparator, BusinessObjectBase left, BusinessObjectBase right, String key) {
+        Object leftValue = null;
+        Object rightValue = null;
+        try {
+            leftValue = PropertyUtils.getProperty(left, key);
+            rightValue = PropertyUtils.getProperty(right, key);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LOG.warn("Unable to sort BusinessObject: " + left.getClass().getSimpleName() + " on property named: " +
+                    key);
+        }
+        return comparator.compare(leftValue, rightValue);
     }
 
     private List<BatchFile> getFiles(MultivaluedMap<String, String> fieldValues) {

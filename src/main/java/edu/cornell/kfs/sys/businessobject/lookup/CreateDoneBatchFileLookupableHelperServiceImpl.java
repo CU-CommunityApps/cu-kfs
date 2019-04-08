@@ -2,6 +2,7 @@ package edu.cornell.kfs.sys.businessobject.lookup;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Properties;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
@@ -31,12 +33,12 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
 	protected CreateDoneBatchFileAuthorizationService createDoneAuthorizationService;
 
 	@Override
-	public List<BusinessObjectBase> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,
-			MultivaluedMap<String, String> fieldValues) {
+	public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(Class<? extends BusinessObjectBase> businessObjectClass,
+            MultivaluedMap<String, String> fieldValues, int skip, int limit, String sortField, boolean sortAscending) {
 
-		List<BusinessObjectBase> results = super.getSearchResults(businessObjectClass, fieldValues);
+		Pair<Collection<? extends BusinessObjectBase>, Integer>  results = super.getSearchResults(businessObjectClass, fieldValues, skip, limit, sortField, sortAscending);
 		List<BusinessObjectBase> createDoneBatchFiles = new ArrayList<BusinessObjectBase>();
-		for (Object file : results) {
+		for (Object file : results.getLeft()) {
 			BatchFile batchFile = (BatchFile) file;
 			CreateDoneBatchFile createDoneBatchFile;
 			try {
@@ -49,7 +51,7 @@ public class CreateDoneBatchFileLookupableHelperServiceImpl extends BatchFileLoo
 				throw new RuntimeException(e);
 			}
 		}
-		return createDoneBatchFiles;
+		return Pair.of(createDoneBatchFiles, createDoneBatchFiles.size());
 	}
 
 	@Override

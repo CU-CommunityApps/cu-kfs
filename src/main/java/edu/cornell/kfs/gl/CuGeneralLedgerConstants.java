@@ -1,8 +1,6 @@
 package edu.cornell.kfs.gl;
 
-import org.kuali.kfs.gl.GeneralLedgerConstants;
-
-public class CuGeneralLedgerConstants extends GeneralLedgerConstants {
+public class CuGeneralLedgerConstants {
 
 	public static final String ANNUAL_CLOSING_CHARTS_PARAM = "ANNUAL_CLOSING_CHARTS";
 
@@ -10,7 +8,7 @@ public class CuGeneralLedgerConstants extends GeneralLedgerConstants {
 		static final public String CASH_REVERSION_OBJECT_CODE_PARM = "CASH_REVERSION_OBJECT_CODE";
 	}
 
-	public static class CuBatchFileSystem extends BatchFileSystem {
+	public static class CuBatchFileSystem {
 		static final public String ACCOUNT_REVERSION_CLOSING_FILE = "gl_acct_reversion_closing";
 		static final public String ACCOUNT_REVERSION_PRE_CLOSING_FILE = "gl_acct_reversion_pre_closing";
 	}

@@ -495,8 +495,9 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     public ContractsAndGrantsCfda getCfda() {
-        return cfda = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(
+        cfda = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(
                 ContractsAndGrantsCfda.class).retrieveExternalizableBusinessObjectIfNecessary(this, cfda, "cfda");
+        return cfda;
     }
 
     public List<ContractsAndGrantsAccountAwardInformation> getAwards() {

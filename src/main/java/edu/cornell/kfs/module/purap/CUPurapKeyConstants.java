@@ -3,12 +3,10 @@
  */
 package edu.cornell.kfs.module.purap;
 
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-
 /**
  *
  */
-public class CUPurapKeyConstants extends PurapKeyConstants {
+public class CUPurapKeyConstants {
 	public static final String ERROR_PAYMENT_REQUEST_ITEM_TOTAL_NOT_EQUAL = "error.paymentRequest.item.TotalInvoice.notEqual";
 	
     public static final String PURAP_ITEM_NONQTY = "error.purap.item.itemtype.nonqty";

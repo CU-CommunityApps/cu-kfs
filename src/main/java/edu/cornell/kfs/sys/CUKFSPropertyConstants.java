@@ -21,7 +21,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 /**
  * Property name constants.
  */
-public class CUKFSPropertyConstants extends KFSPropertyConstants {
+public class CUKFSPropertyConstants {
 
     // KFSUPGRADE-779
     public static final String DOC_HDR_FINANCIAL_DOCUMENT_STATUS_CODE = "documentHeader.financialDocumentStatusCode";

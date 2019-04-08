@@ -64,10 +64,10 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         if (KFSConstants.PaymentPayeeTypes.EMPLOYEE.equals(payeeTypeCode) || 
         CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI.equals(payeeTypeCode) ||
         CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT.equals(payeeTypeCode)) {
-            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, CuDisbursementVoucherConstants.NON_VENDOR_EMPLOYEE_PAYEE_TYPE_LABEL_PARM_NM);
+            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, DisbursementVoucherConstants.NON_VENDOR_EMPLOYEE_PAYEE_TYPE_LABEL_PARM_NM);
         }
         else if (KFSConstants.PaymentPayeeTypes.VENDOR.equals(payeeTypeCode)) {
-            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, CuDisbursementVoucherConstants.PO_AND_DV_PAYEE_TYPE_LABEL_PARM_NM);
+            payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, DisbursementVoucherConstants.PO_AND_DV_PAYEE_TYPE_LABEL_PARM_NM);
         }
         else if (KFSConstants.PaymentPayeeTypes.REVOLVING_FUND_VENDOR.equals(payeeTypeCode)) {
             payeeTypeDescription = this.getVendorTypeDescription(VendorConstants.VendorTypes.REVOLVING_FUND);
