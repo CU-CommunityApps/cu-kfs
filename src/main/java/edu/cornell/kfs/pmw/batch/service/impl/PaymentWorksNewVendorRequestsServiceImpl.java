@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.SupplierDiversity;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
@@ -84,12 +85,14 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
             PaymentWorksVendor stgNewVendorRequestDetailToProcess = getPaymentWorksWebServiceCallsService().obtainPmwNewVendorRequestDetailForPmwIdentifier(pmwNewVendorRequestId, reportData);
             if (canPaymentWorksNewVendorRequestProcessingContinueForVendor(stgNewVendorRequestDetailToProcess, reportData, pmwNewVendorRequestId)) {
                 PaymentWorksVendor savedStgNewVendorRequestDetailToProcess = null;
+                String stagingTableSaveExceptionMessageForUser = KFSConstants.BLANK_SPACE;
                 try {
                     savedStgNewVendorRequestDetailToProcess = pmwPendingNewVendorRequestInitialSaveToKfsStagingTable(stgNewVendorRequestDetailToProcess);
                 } catch (Exception e) {
-                    LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS, unable to save payment works vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId, e);
+                    LOG.error("processEachPaymentWorksNewVendorRequestIntoKFS: Caught Exception attempting PMW vendor save to KFS staging table, unable to save PaymentWorks vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId, e);
+                    stagingTableSaveExceptionMessageForUser = parseSqlExceptionStringForOracleError(e.toString());
                 }
-                if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
+                if (pmwNewVendorSaveToStagingTableWasSuccessful(savedStgNewVendorRequestDetailToProcess, stgNewVendorRequestDetailToProcess, stagingTableSaveExceptionMessageForUser, reportData)) {
                     if (pmwNewVendorRequestProcessingIntoKfsWasSuccessful(savedStgNewVendorRequestDetailToProcess, reportData)) {
                         LOG.info("processEachPaymentWorksNewVendorRequestIntoKFS, successfully processed vendor for pmwNewVendorRequestId: " + pmwNewVendorRequestId);
                     } else {
@@ -351,14 +354,34 @@ public class PaymentWorksNewVendorRequestsServiceImpl implements PaymentWorksNew
         return pmwVendor;
     }
     
-    private boolean pmwNewVendorSaveToStagingTableWasSuccessful(PaymentWorksVendor pmwNewVendorRequestModifiedByOjbSave, PaymentWorksNewVendorRequestsBatchReportData reportData) {
+    private boolean pmwNewVendorSaveToStagingTableWasSuccessful(PaymentWorksVendor pmwNewVendorRequestModifiedByOjbSave, 
+            PaymentWorksVendor pmwNewVendorRequestReceivedFromWebServiceCall, String processingErrorMessage, PaymentWorksNewVendorRequestsBatchReportData reportData) {
         if (ObjectUtils.isNotNull(pmwNewVendorRequestModifiedByOjbSave)) {
             return true;
-        }
-        else {
+        } else {
             reportData.getRecordsThatCouldNotBeProcessedSummary().incrementRecordCount();
-            reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestModifiedByOjbSave.toString(), getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_SAVE_TO_PMW_STAGING_TABLE_FAILED_ERROR_MESSAGE)));
+            reportData.addPmwVendorThatCouldNotBeProcessed(new PaymentWorksBatchReportRawDataItem(pmwNewVendorRequestReceivedFromWebServiceCall.toString(), 
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(PaymentWorksKeyConstants.INITIAL_SAVE_TO_PMW_STAGING_TABLE_FAILED_ERROR_MESSAGE), processingErrorMessage)));
             return false;
+        }
+    }
+    
+    private String parseSqlExceptionStringForOracleError(String exceptionString) {
+        int startPosition = exceptionString.indexOf(PaymentWorksConstants.PaymentWorksVendorStagingTableParseExceptionConstants.EXCEPTION_REASON_START_STRING);
+        int endPosition = exceptionString.indexOf(PaymentWorksConstants.PaymentWorksVendorStagingTableParseExceptionConstants.EXCEPTION_REASON_END_CHAR, startPosition);
+        String reasonForSqlException = PaymentWorksConstants.PaymentWorksVendorStagingTableParseExceptionConstants.DEFAULT_EXCEPTION_MESSAGE;
+        
+        if (requestedIndexWasFound(startPosition) && requestedIndexWasFound(endPosition)) {
+            reasonForSqlException = exceptionString.substring(startPosition, (endPosition + 1));
+        }
+        return reasonForSqlException;
+    }
+    
+    private boolean requestedIndexWasFound (int indexFound) {
+        if (indexFound == -1) {
+            return false;
+        } else {
+            return true;
         }
     }
     
