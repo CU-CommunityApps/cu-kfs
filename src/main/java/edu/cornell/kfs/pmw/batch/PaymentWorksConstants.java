@@ -121,6 +121,12 @@ public class PaymentWorksConstants {
         public static final String NEW_VENDOR_REQUESTS_SUPPLIER_UPLOAD_REPORT_NAME = "New Vendor Requests Upload Suppliers to PaymentWorks";
     }
     
+    public static final class PaymentWorksVendorStagingTableParseExceptionConstants {
+        public static final String DEFAULT_EXCEPTION_MESSAGE = "Could not determine exception failure reason for initial KFS staging table save of PaymentWorks vendor.";
+        public static final String EXCEPTION_REASON_START_STRING = "value too large for column";
+        public static final char EXCEPTION_REASON_END_CHAR = ')';
+    }
+    
     public enum PaymentWorksNewVendorRequestStatusType {
         APPROVED(1, "1", "Approved"),
         PROCESSED(2, "2", "Processed"),
