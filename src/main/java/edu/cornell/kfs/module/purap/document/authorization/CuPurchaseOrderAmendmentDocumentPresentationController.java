@@ -50,7 +50,7 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
         if (PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
         	    editModes.add(PurchaseOrderEditMode.AMENDMENT_ENTRY);
         }
-        if (SpringContext.getBean(PurapService.class).isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {
+        if (getPurapService().isDocumentStoppedInRouteNode((PurchasingAccountsPayableDocument) document, "New Unordered Items")) {
             editModes.add(PurchaseOrderEditMode.UNORDERED_ITEM_ACCOUNT_ENTRY);
         }
 

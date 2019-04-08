@@ -278,7 +278,7 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
         return can;
     }
     
-    PurapService getPurapService() {
+    protected PurapService getPurapService() {
         if (purapService == null) {
             purapService = SpringContext.getBean(PurapService.class);
         }
