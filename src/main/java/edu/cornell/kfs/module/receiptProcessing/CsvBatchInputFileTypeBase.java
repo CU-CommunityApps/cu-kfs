@@ -136,12 +136,13 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
 
             //check the content size as well if headers are validated
             int line = 1;
-            List<String> inputDataList = null;
-            while ((inputDataList = Arrays.asList(csvReader.readNext())) != null && errorMessage != null) {
+            List<String> inputDataList = Arrays.asList(csvReader.readNext());
+            while (inputDataList != null && errorMessage != null) {
                 //if the data list size does not match header list (its missing data)
                 if (inputDataList.size() != expectedHeaderList.size()) {
                     errorMessage = "line " + line + " layout does not match the header";
                 }
+                inputDataList = Arrays.asList(csvReader.readNext());
                 line++;
             }
         }

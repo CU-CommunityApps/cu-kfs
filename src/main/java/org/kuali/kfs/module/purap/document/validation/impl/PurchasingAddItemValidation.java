@@ -26,6 +26,7 @@ import org.kuali.kfs.kns.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.ItemFields;
 import org.kuali.kfs.module.purap.PurapConstants.ItemTypeCodes;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
@@ -240,8 +241,8 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
             String itemTypeCode = newItem.getItemTypeCode();
             for(PurApItem item : purapDocument.getItems()) {
                 if (StringUtils.isNotBlank(item.getItemTypeCode()) && !itemTypeCode.equalsIgnoreCase(item.getItemTypeCode()) &&
-                         (CUPurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode()) ||
-                                CUPurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode()))) {
+                         (PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode()) ||
+                                PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode()))) {
                     GlobalVariables.getMessageMap().addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
                     GlobalVariables.getMessageMap().putError(CUPurapPropertyConstants.ITEM_TYPE_CODE, CUPurapKeyConstants.PURAP_MIX_ITEM_QTY_NONQTY);
                     valid &= false;

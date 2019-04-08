@@ -1,8 +1,6 @@
 package edu.cornell.kfs.pdp;
 
-import org.kuali.kfs.pdp.PdpConstants;
-
-public class CUPdpConstants extends PdpConstants {
+public class CUPdpConstants {
 	
     public static class PdpDocumentTypes {
     	public static String DISBURSEMENT_VOUCHER = "DVCA";

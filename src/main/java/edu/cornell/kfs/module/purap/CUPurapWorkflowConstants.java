@@ -8,7 +8,7 @@ import org.kuali.kfs.module.purap.PurapConstants.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 
 
-public class CUPurapWorkflowConstants extends PurapWorkflowConstants{
+public class CUPurapWorkflowConstants {
 
 	  public static final String B2B_AUTO_PURCHASE_ORDER = "B2BAutoPurchaseOrder";
 	  // KFSPTS-1891
@@ -34,7 +34,7 @@ public class CUPurapWorkflowConstants extends PurapWorkflowConstants{
 	  
 	  public static class PaymentRequestDocument {
 	        public enum NodeDetailEnum implements NodeDetails {
-	            ADHOC_REVIEW(DOC_ADHOC_NODE_NAME, null, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS, false), 
+	            ADHOC_REVIEW(PurapWorkflowConstants.DOC_ADHOC_NODE_NAME, null, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS, false), 
 	            ACCOUNTS_PAYABLE_REVIEW("ImageAttachment", PaymentRequestStatuses.APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_IN_PROCESS, false), 
 	            AWAITING_RECEIVING_REVIEW("PurchaseWasReceived", PaymentRequestStatuses.APPDOC_AWAITING_RECEIVING_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false), 
 	            RECEIVING("Receiving", PaymentRequestStatuses.APPDOC_AWAITING_RECEIVING_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false),

@@ -1,8 +1,6 @@
 package  edu.cornell.kfs.module.purap;
 
-import org.kuali.kfs.module.purap.PurapParameterConstants;
-
-public class CUPurapParameterConstants extends PurapParameterConstants {
+public class CUPurapParameterConstants {
     public static final String PURAP_PREQ_PAY_DATE_VARIANCE = "NUMBER_OF_DAYS_TO_DECREASE_PAY_DATE_BY";
 	
 	public static final String B2B_TOTAL_AMOUNT_FOR_AUTO_PO = "B2B_TOTAL_AMOUNT_FOR_AUTO_PO";

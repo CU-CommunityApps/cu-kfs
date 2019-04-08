@@ -19,7 +19,6 @@
 package org.kuali.kfs.module.purap.document.authorization;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants;
@@ -33,7 +32,6 @@ import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.rice.kew.api.WorkflowDocument;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,8 @@ import java.util.Set;
 
 public class PurchaseOrderDocumentPresentationController extends PurchasingAccountsPayableDocumentPresentationController {
 
+    private PurapService purapService;
+    
     @Override
     public boolean canEdit(Document document) {
         PurchaseOrderDocument poDocument = (PurchaseOrderDocument)document;
@@ -132,16 +132,14 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
-        PurchaseOrderDocument poDocument = (PurchaseOrderDocument)document;
-        
-        WorkflowDocument workflowDocument = poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument();
+        PurchaseOrderDocument poDocument = (PurchaseOrderDocument) document;
         
         String statusCode = poDocument.getApplicationDocumentStatus();
 
         editModes.add(PurchaseOrderEditMode.ASSIGN_SENSITIVE_DATA);
 
         //if the ENABLE_COMMODITY_CODE_IND system parameter is Y then add this edit mode so that the commodity code fields would display on the document.
-        boolean enableCommodityCode = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
+        boolean enableCommodityCode = getParameterService().getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_COMMODITY_CODE_IND);
         if (enableCommodityCode) {
             editModes.add(PurchaseOrderEditMode.ENABLE_COMMODITY_CODE);
         }
@@ -170,7 +168,7 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
 
         // if not B2B requisition, users can edit the posting year if within a given amount of time set in a parameter
         if (!RequisitionSources.B2B.equals(poDocument.getRequisitionSourceCode()) && 
-                SpringContext.getBean(PurapService.class).allowEncumberNextFiscalYear() && 
+        		getPurapService().allowEncumberNextFiscalYear() && 
                 (PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(statusCode) || 
                         PurchaseOrderStatuses.APPDOC_WAITING_FOR_VENDOR.equals(statusCode) ||
                         PurchaseOrderStatuses.APPDOC_WAITING_FOR_DEPARTMENT.equals(statusCode) ||
@@ -180,7 +178,7 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
         }
 
         // check if purap tax is enabled
-        boolean salesTaxInd = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);                
+        boolean salesTaxInd = getParameterService().getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);                
         if (salesTaxInd) {
             editModes.add(PurapAuthorizationConstants.PURAP_TAX_ENABLED);
 
@@ -195,7 +193,7 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
         }
 
         // set display mode for Receiving Address section according to parameter value
-        boolean displayReceivingAddress = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_RECEIVING_ADDRESS_IND);                
+        boolean displayReceivingAddress = getParameterService().getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_RECEIVING_ADDRESS_IND);
         if (displayReceivingAddress) {
             editModes.add(PurchaseOrderEditMode.DISPLAY_RECEIVING_ADDRESS);
         }
@@ -258,7 +256,7 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
 
         // transmission method must be one of those specified by the parameter
         if (can) {
-            List<String> methods = new ArrayList<String>( SpringContext.getBean(ParameterService.class).getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PURAP_PO_PRINT_PREVIEW_TRANSMISSION_METHOD_TYPES) );
+        	 List<String> methods = new ArrayList<>(getParameterService().getParameterValuesAsString(PurchaseOrderDocument.class, PurapParameterConstants.PURAP_PO_PRINT_PREVIEW_TRANSMISSION_METHOD_TYPES));
             String method = poDocument.getPurchaseOrderTransmissionMethodCode();
             can = (methods == null || methods.contains(method));
         }
@@ -278,5 +276,16 @@ public class PurchaseOrderDocumentPresentationController extends PurchasingAccou
         can = can && poDocument.isPurchaseOrderCurrentIndicator() && !poDocument.isPendingActionIndicator();
 
         return can;
+    }
+    
+    protected PurapService getPurapService() {
+        if (purapService == null) {
+            purapService = SpringContext.getBean(PurapService.class);
+        }
+        return purapService;
+    }
+
+    public void setPurapService(PurapService purapService) {
+        this.purapService = purapService;
     }
 }

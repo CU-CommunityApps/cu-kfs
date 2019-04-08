@@ -10,6 +10,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ld.LaborConstants;
 import org.kuali.kfs.module.ld.LaborPropertyConstants;
 import org.kuali.kfs.module.ld.businessobject.BenefitsCalculation;
@@ -28,13 +31,10 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.module.ld.document.service.impl.CuLaborPendingEntryConverterServiceImpl;
 
-public class CuLaborPendingEntryGenerator extends LaborPendingEntryGenerator {
+public class CuLaborPendingEntryGenerator {
 	
     public static List<LaborLedgerPendingEntry> generateOffsetPendingEntries(List<LaborLedgerPendingEntry> expenseEntries, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         List<LaborLedgerPendingEntry> offsetPendingEntries = new ArrayList<LaborLedgerPendingEntry>();
@@ -93,7 +93,7 @@ public class CuLaborPendingEntryGenerator extends LaborPendingEntryGenerator {
                     fringeBenefitObjectCode = bc.getPositionFringeBenefitObjectCode();
                 }
                 
-                List<LaborLedgerPendingEntry> pendingEntries = generateBenefitPendingEntries(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
+                List<LaborLedgerPendingEntry> pendingEntries = LaborPendingEntryGenerator.generateBenefitPendingEntries(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
                 benefitPendingEntries.addAll(pendingEntries);
             }
         }
@@ -166,7 +166,7 @@ public class CuLaborPendingEntryGenerator extends LaborPendingEntryGenerator {
 
 
         //refresh nonupdateable references for financial object...
-        refreshObjectCodeNonUpdateableReferences(benefitClearingPendingEntries);   
+        LaborPendingEntryGenerator.refreshObjectCodeNonUpdateableReferences(benefitClearingPendingEntries);   
         
         return benefitClearingPendingEntries;
     }

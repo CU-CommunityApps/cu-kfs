@@ -15,12 +15,10 @@
  */
 package edu.cornell.kfs.vnd;
 
-import org.kuali.kfs.vnd.VendorPropertyConstants;
-
 /**
  * Property name constants.
  */
-public class CUVendorPropertyConstants extends VendorPropertyConstants {
+public class CUVendorPropertyConstants {
 
 	public static final String INSURANCE_REQUIRED = "extension.insuranceRequiredIndicator";
 	

@@ -1,8 +1,6 @@
 package edu.cornell.kfs.sys;
 
-import org.kuali.kfs.sys.KFSKeyConstants;
-
-public class CUKFSKeyConstants extends KFSKeyConstants {
+public class CUKFSKeyConstants {
 
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_COMMODITY_CODE = "message.batchUpload.title.commodityCode";
     public static final String MESSAGE_BATCH_UPLOAD_TITLE_INACTIVATE_CONVERT_CODE = "message.batchUpload.title.InactivateConvertCode";

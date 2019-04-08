@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * Holds constants for PURAP.
  */
-public class PurapConstants {
+public final class PurapConstants {
 
     public static final String PURAP_NAMESPACE = "KFS-PURAP";
 
@@ -1467,5 +1467,10 @@ public class PurapConstants {
    public static final String PO_DISAPPROVAL_ANNOTATION_TEXT= "message.document.purap.disapprove.annotation";
    public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
 
-
+   /**
+    * Private Constructor since this is a constants class that should never be instantiated.
+    */
+   private PurapConstants() {
+   }
+   
 }

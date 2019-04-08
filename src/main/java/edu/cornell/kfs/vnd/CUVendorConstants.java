@@ -19,13 +19,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.kuali.kfs.vnd.VendorConstants;
-
 
 /**
  * Holds constants for Vendor.
  */
-public class CUVendorConstants extends VendorConstants {
+public class CUVendorConstants {
 	public static final String VENDOR_DOCUMENT_TYPE_NAME = "PVEN";
     public static final String EXPIRED_DATE_QUESTION_ID = "confirmVendorDateExpiration";
 
@@ -39,7 +37,7 @@ public class CUVendorConstants extends VendorConstants {
     }
     
         
-    public static class CUAddressTypes extends AddressTypes{
+    public static class CUAddressTypes {
         public static final String TAX = "TX";
     }
 
