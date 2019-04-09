@@ -26,7 +26,6 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.util.ClassLoaderUtils;
 import org.kuali.rice.core.api.util.ContextClassLoaderBinder;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -37,8 +36,6 @@ import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface
  * This is the default implementation of the CULegacyTravelService interface.
  * 
  */
-
-@NonTransactional
 public class CULegacyTravelServiceImpl implements edu.cornell.kfs.fp.document.service.CULegacyTravelService {
 	private static final Logger LOG = LogManager.getLogger(CULegacyTravelServiceImpl.class);
 

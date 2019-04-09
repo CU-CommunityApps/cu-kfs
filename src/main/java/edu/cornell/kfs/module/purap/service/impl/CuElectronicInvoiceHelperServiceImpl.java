@@ -95,7 +95,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -1417,7 +1416,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 // end KFSUPGRADE-484
     // KFSUPGRADE-485
     @Override
-    @NonTransactional
     public boolean doMatchingProcess(ElectronicInvoiceRejectDocument rejectDocument){
         /*
          * This is needed here since if the user changes the DUNS number.
@@ -1471,7 +1469,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    @NonTransactional
     public boolean createPaymentRequest(ElectronicInvoiceRejectDocument rejectDocument){
 
         if (rejectDocument.getInvoiceRejectReasons().size() > 0){

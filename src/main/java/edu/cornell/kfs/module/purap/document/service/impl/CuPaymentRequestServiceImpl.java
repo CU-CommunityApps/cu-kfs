@@ -28,7 +28,6 @@ import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImp
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -55,7 +54,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
 
     @Override
-    @NonTransactional
     public void removeIneligibleAdditionalCharges(PaymentRequestDocument document) {
         List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
 
@@ -86,7 +84,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public PaymentRequestDocument addHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
@@ -106,7 +103,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#removeHoldOnPaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
     @Override
-    @NonTransactional
     public PaymentRequestDocument removeHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
@@ -123,7 +119,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public void requestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
@@ -142,7 +137,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#removeHoldOnPaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
     @Override
-    @NonTransactional
     public void removeRequestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
         // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
@@ -158,7 +152,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public void cancelExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note) {
         LOG.debug("cancelExtractedPaymentRequest() started");
         if (PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequest.getApplicationDocumentStatus())) {
@@ -194,7 +187,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      *      java.lang.String)
      */
     @Override
-    @NonTransactional
     public void resetExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note) {
         LOG.debug("resetExtractedPaymentRequest() started");
         if (PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequest.getApplicationDocumentStatus())) {
@@ -221,7 +213,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public void markPaid(PaymentRequestDocument pr, Date processDate) {
         LOG.debug("markPaid() started");
 
@@ -283,7 +274,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    @NonTransactional
     public void populatePaymentRequest(PaymentRequestDocument paymentRequestDocument) {
     	super.populatePaymentRequest(paymentRequestDocument);
     	
@@ -306,7 +296,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    @NonTransactional
     public void changeVendor(PaymentRequestDocument preq, Integer headerId, Integer detailId) {
     	super.changeVendor(preq, headerId, detailId);
     	// KFSPTS-1891
@@ -380,7 +369,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      *      org.kuali.kfs.vnd.businessobject.PaymentTermType)
      */
     @Override
-    @NonTransactional
     public java.sql.Date calculatePayDate(Date invoiceDate, PaymentTermType terms) {
         LOG.debug("calculatePayDate() started");
         // calculate the invoice + processed calendar

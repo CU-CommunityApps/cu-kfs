@@ -58,7 +58,6 @@ import org.kuali.kfs.module.cam.util.ObjectValueUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
@@ -86,7 +85,6 @@ public class GlLineServiceImpl implements GlLineService {
     protected CapitalAssetInformationDao capitalAssetInformationDao;
 
     @Override
-    @NonTransactional
     public Document createAssetGlobalDocument(GeneralLedgerEntry primary, Integer capitalAssetLineNumber)
             throws WorkflowException {
         // initiate a new document
@@ -199,7 +197,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public CapitalAssetInformation findCapitalAssetInformation(String documentNumber, Integer capitalAssetLineNumber) {
         Map<String, String> primaryKeys = new HashMap<>(2);
         primaryKeys.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
@@ -209,7 +206,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public List<CapitalAssetInformation> findAllCapitalAssetInformation(String documentNumber) {
         Map<String, String> primaryKeys = new HashMap<>(1);
         primaryKeys.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
@@ -219,7 +215,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public List<CapitalAssetInformation> findCapitalAssetInformationForGLLine(GeneralLedgerEntry entry) {
         Map<String, String> fields = new HashMap<>();
         fields.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, entry.getDocumentNumber());
@@ -349,7 +344,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public long findUnprocessedCapitalAssetInformation(String documentNumber) {
         Map<String, String> fieldValues = new HashMap<>(2);
         fieldValues.put(CamsPropertyConstants.CapitalAssetInformation.DOCUMENT_NUMBER, documentNumber);
@@ -360,7 +354,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public Collection<GeneralLedgerEntry> findMatchingGeneralLedgerEntries(Collection<GeneralLedgerEntry> allGLEntries,
             CapitalAssetAccountsGroupDetails accountingDetails) {
         Collection<GeneralLedgerEntry> matchingGLEntries = new ArrayList<>();
@@ -455,7 +448,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public Collection<GeneralLedgerEntry> findAllGeneralLedgerEntry(String documentNumber) {
         Map<String, String> fieldValues = new HashMap<>(1);
         fieldValues.put(CamsPropertyConstants.GeneralLedgerEntry.DOCUMENT_NUMBER, documentNumber);
@@ -512,7 +504,6 @@ public class GlLineServiceImpl implements GlLineService {
     }
 
     @Override
-    @NonTransactional
     public Document createAssetPaymentDocument(GeneralLedgerEntry primaryGlEntry, Integer capitalAssetLineNumber)
             throws WorkflowException {
         // Find out the GL Entry
@@ -962,42 +953,34 @@ public class GlLineServiceImpl implements GlLineService {
         return ++nextAccountingLineNumber;
     }
 
-    @NonTransactional
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    @NonTransactional
     public void setAssetGlobalService(AssetGlobalService assetGlobalService) {
         this.assetGlobalService = assetGlobalService;
     }
 
-    @NonTransactional
     public void setObjectTypeService(ObjectTypeService objectTypeService) {
         this.objectTypeService = objectTypeService;
     }
 
-    @NonTransactional
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
     }
 
-    @NonTransactional
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 
-    @NonTransactional
     public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
         this.parameterEvaluatorService = parameterEvaluatorService;
     }
 
-    @NonTransactional
     public void setDocumentHeaderService(DocumentHeaderService documentHeaderService) {
         this.documentHeaderService = documentHeaderService;
     }
 
-    @NonTransactional
     public void setCapitalAssetInformationDao(CapitalAssetInformationDao dao) {
         this.capitalAssetInformationDao = dao;
     }
