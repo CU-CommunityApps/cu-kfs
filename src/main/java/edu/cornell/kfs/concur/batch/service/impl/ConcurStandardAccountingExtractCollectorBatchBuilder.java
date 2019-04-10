@@ -1,12 +1,14 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -267,16 +269,23 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         if (matchedEntry == null) {
           consolidatedOriginEntries.add(entry);
         } else {
+          LOG.info("consolidateOriginEntries, found a transaction to consolidate: " + matchedEntry);
           transactionsWereConsolidated = true;
           KualiDecimal newTotal = matchedEntry.getTransactionLedgerEntryAmount().add(entry.getTransactionLedgerEntryAmount());
           matchedEntry.setTransactionLedgerEntryAmount(newTotal);
         }
       }
       
-      if (transactionsWereConsolidated) {
-        collectorBatch.setOriginEntries(consolidatedOriginEntries);
+    if (transactionsWereConsolidated) {
+      Map<String, MutableInt> nextSequenceNumbers = new HashMap<>();
+      for (OriginEntryFull entry : consolidatedOriginEntries) {
+        MutableInt nextSequenceNumber = nextSequenceNumbers
+            .computeIfAbsent(entry.getDocumentNumber(), key -> new MutableInt(0));
+        nextSequenceNumber.increment();
+        entry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.toInteger());
       }
-      
+      collectorBatch.setOriginEntries(consolidatedOriginEntries);
+    }
       
       LOG.info("consolidateOriginEntries, consolidated number of origin entries: " + consolidatedOriginEntries.size());
     }
