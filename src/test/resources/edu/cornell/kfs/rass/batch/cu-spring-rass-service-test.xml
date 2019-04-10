@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/rass/cu-spring-rass.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="staging.directory">src/test/resources/edu/cornell/kfs</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImplTest$Factory"/>
+
+    <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
+
+    <bean id="documentService" factory-bean="testServiceFactory" factory-method="buildMockDocumentService"/>
+
+    <bean id="dataDictionaryService" factory-bean="testServiceFactory" factory-method="buildMockDataDictionaryService"/>
+
+    <bean id="agencyService" factory-bean="testServiceFactory" factory-method="buildMockAgencyService"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="rassService"/>
+                <idref bean="agencyDefinition"/>
+                <idref bean="cuMarshalService"/>
+                <idref bean="cuMarshalService-parentBean"/>
+                <idref bean="testServiceFactory"/>
+                <idref bean="maintenanceDocumentService"/>
+                <idref bean="documentService"/>
+                <idref bean="dataDictionaryService"/>
+                <idref bean="agencyService"/>
+                <idref bean="dateTimeService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
