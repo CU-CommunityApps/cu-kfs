@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -260,69 +260,69 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
         collectorBatch.setTotalAmount(totalDebitAmount);
     }
     
-  private void consolidateOriginEntries() {
-    List<OriginEntryFull> consolidatedOriginEntries = new ArrayList<OriginEntryFull>();
-    LOG.info("consolidateOriginEntries, starting number of origin entries: " + collectorBatch.getOriginEntries().size());
-    boolean transactionsWereConsolidated = false;
-    for (OriginEntryFull entry : collectorBatch.getOriginEntries()) {
-      OriginEntryFull matchedEntry = findMatchingOriginEntryFull(consolidatedOriginEntries, entry);
-      if (matchedEntry == null) {
-        consolidatedOriginEntries.add(entry);
-      } else {
-        LOG.debug("consolidateOriginEntries, found a transaction to consolidate: " + matchedEntry);
-        transactionsWereConsolidated = true;
-        KualiDecimal newTotal = matchedEntry.getTransactionLedgerEntryAmount()
-            .add(entry.getTransactionLedgerEntryAmount());
-        matchedEntry.setTransactionLedgerEntryAmount(newTotal);
-      }
+    private void consolidateOriginEntries() {
+        List<OriginEntryFull> consolidatedOriginEntries = new ArrayList<OriginEntryFull>();
+        LOG.info("consolidateOriginEntries, starting number of origin entries: "  + collectorBatch.getOriginEntries().size());
+        boolean transactionsWereConsolidated = false;
+        for (OriginEntryFull entry : collectorBatch.getOriginEntries()) {
+            OriginEntryFull matchedEntry = findMatchingOriginEntryFull(consolidatedOriginEntries, entry);
+            if (matchedEntry == null) {
+                consolidatedOriginEntries.add(entry);
+            } else {
+                LOG.debug("consolidateOriginEntries, found a transaction to consolidate: " + matchedEntry);
+                transactionsWereConsolidated = true;
+                KualiDecimal newTotal = matchedEntry.getTransactionLedgerEntryAmount().add(entry.getTransactionLedgerEntryAmount());
+                matchedEntry.setTransactionLedgerEntryAmount(newTotal);
+            }
+        }
+
+        if (transactionsWereConsolidated) {
+            Map<String, MutableInt> nextSequenceNumbers = new HashMap<>();
+            for (OriginEntryFull entry : consolidatedOriginEntries) {
+                MutableInt nextSequenceNumber = nextSequenceNumbers.computeIfAbsent(entry.getDocumentNumber(),
+                        key -> new MutableInt(0));
+                nextSequenceNumber.increment();
+                entry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.toInteger());
+            }
+            collectorBatch.setOriginEntries(consolidatedOriginEntries);
+        }
+        LOG.info("consolidateOriginEntries, consolidated number of origin entries: " + consolidatedOriginEntries.size());
     }
 
-    if (transactionsWereConsolidated) {
-      Map<String, MutableInt> nextSequenceNumbers = new HashMap<>();
-      for (OriginEntryFull entry : consolidatedOriginEntries) {
-        MutableInt nextSequenceNumber = nextSequenceNumbers.computeIfAbsent(entry.getDocumentNumber(), key -> new MutableInt(0));
-        nextSequenceNumber.increment();
-        entry.setTransactionLedgerEntrySequenceNumber(nextSequenceNumber.toInteger());
-      }
-      collectorBatch.setOriginEntries(consolidatedOriginEntries);
-    }
-    LOG.info("consolidateOriginEntries, consolidated number of origin entries: " + consolidatedOriginEntries.size());
-  }
+    private OriginEntryFull findMatchingOriginEntryFull(List<OriginEntryFull> entries, OriginEntryFull searchEntry) {
+        for (OriginEntryFull entry : entries) {
+            EqualsBuilder eb = new EqualsBuilder();
+            eb.append(entry.getAccountNumber(), searchEntry.getAccountNumber());
+            eb.append(entry.getDocumentNumber(), searchEntry.getDocumentNumber());
+            eb.append(entry.getReferenceFinancialDocumentNumber(), searchEntry.getReferenceFinancialDocumentNumber());
+            eb.append(entry.getReferenceFinancialDocumentTypeCode(), searchEntry.getReferenceFinancialDocumentTypeCode());
+            eb.append(entry.getFinancialDocumentReversalDate(), searchEntry.getFinancialDocumentReversalDate());
+            eb.append(entry.getFinancialDocumentTypeCode(), searchEntry.getFinancialDocumentTypeCode());
+            eb.append(entry.getFinancialBalanceTypeCode(), searchEntry.getFinancialBalanceTypeCode());
+            eb.append(entry.getChartOfAccountsCode(), searchEntry.getChartOfAccountsCode());
+            eb.append(entry.getFinancialObjectTypeCode(), searchEntry.getFinancialObjectTypeCode());
+            eb.append(entry.getFinancialObjectCode(), searchEntry.getFinancialObjectCode());
+            eb.append(entry.getFinancialSubObjectCode(), searchEntry.getFinancialSubObjectCode());
+            eb.append(entry.getFinancialSystemOriginationCode(), searchEntry.getFinancialSystemOriginationCode());
+            eb.append(entry.getReferenceFinancialSystemOriginationCode(), searchEntry.getReferenceFinancialSystemOriginationCode());
+            eb.append(entry.getOrganizationDocumentNumber(), searchEntry.getOrganizationDocumentNumber());
+            eb.append(entry.getOrganizationReferenceId(), searchEntry.getOrganizationReferenceId());
+            eb.append(entry.getProjectCode(), searchEntry.getProjectCode());
+            eb.append(entry.getSubAccountNumber(), searchEntry.getSubAccountNumber());
+            eb.append(entry.getTransactionDate(), searchEntry.getTransactionDate());
+            eb.append(entry.getTransactionDebitCreditCode(), searchEntry.getTransactionDebitCreditCode());
+            eb.append(entry.getTransactionEncumbranceUpdateCode(), searchEntry.getTransactionEncumbranceUpdateCode());
+            eb.append(entry.getTransactionLedgerEntryDescription(), searchEntry.getTransactionLedgerEntryDescription());
+            eb.append(entry.getUniversityFiscalPeriodCode(), searchEntry.getUniversityFiscalPeriodCode());
+            eb.append(entry.getUniversityFiscalYear(), searchEntry.getUniversityFiscalYear());
+            eb.append(entry.isTransactionScrubberOffsetGenerationIndicator(), searchEntry.isTransactionScrubberOffsetGenerationIndicator());
 
-  private OriginEntryFull findMatchingOriginEntryFull(List<OriginEntryFull> entries, OriginEntryFull searchEntry) {
-    for (OriginEntryFull entry : entries) {
-      EqualsBuilder eb = new EqualsBuilder();
-      eb.append(entry.getAccountNumber(), searchEntry.getAccountNumber());
-      eb.append(entry.getDocumentNumber(), searchEntry.getDocumentNumber());
-      eb.append(entry.getReferenceFinancialDocumentNumber(), searchEntry.getReferenceFinancialDocumentNumber());
-      eb.append(entry.getReferenceFinancialDocumentTypeCode(), searchEntry.getReferenceFinancialDocumentTypeCode());
-      eb.append(entry.getFinancialDocumentReversalDate(), searchEntry.getFinancialDocumentReversalDate());
-      eb.append(entry.getFinancialDocumentTypeCode(), searchEntry.getFinancialDocumentTypeCode());
-      eb.append(entry.getFinancialBalanceTypeCode(), searchEntry.getFinancialBalanceTypeCode());
-      eb.append(entry.getChartOfAccountsCode(), searchEntry.getChartOfAccountsCode());
-      eb.append(entry.getFinancialObjectTypeCode(), searchEntry.getFinancialObjectTypeCode());
-      eb.append(entry.getFinancialObjectCode(), searchEntry.getFinancialObjectCode());
-      eb.append(entry.getFinancialSubObjectCode(), searchEntry.getFinancialSubObjectCode());
-      eb.append(entry.getFinancialSystemOriginationCode(), searchEntry.getFinancialSystemOriginationCode());
-      eb.append(entry.getReferenceFinancialSystemOriginationCode(), searchEntry.getReferenceFinancialSystemOriginationCode());
-      eb.append(entry.getOrganizationDocumentNumber(), searchEntry.getOrganizationDocumentNumber());
-      eb.append(entry.getOrganizationReferenceId(), searchEntry.getOrganizationReferenceId());
-      eb.append(entry.getProjectCode(), searchEntry.getProjectCode());
-      eb.append(entry.getSubAccountNumber(), searchEntry.getSubAccountNumber());
-      eb.append(entry.getTransactionDate(), searchEntry.getTransactionDate());
-      eb.append(entry.getTransactionDebitCreditCode(), searchEntry.getTransactionDebitCreditCode());
-      eb.append(entry.getTransactionEncumbranceUpdateCode(), searchEntry.getTransactionEncumbranceUpdateCode());
-      eb.append(entry.getTransactionLedgerEntryDescription(), searchEntry.getTransactionLedgerEntryDescription());
-      eb.append(entry.getUniversityFiscalPeriodCode(), searchEntry.getUniversityFiscalPeriodCode());
-      eb.append(entry.getUniversityFiscalYear(), searchEntry.getUniversityFiscalYear());
-      eb.append(entry.isTransactionScrubberOffsetGenerationIndicator(), searchEntry.isTransactionScrubberOffsetGenerationIndicator());
-
-      if (eb.isEquals()) {
-        return entry;
-      }
+            if (eb.isEquals()) {
+                return entry;
+            }
+        }
+        return null;
     }
-    return null;
-  }
 
     protected boolean isDebitEntry(OriginEntryFull originEntry) {
         return StringUtils.equals(KFSConstants.GL_DEBIT_CODE, originEntry.getTransactionDebitCreditCode());

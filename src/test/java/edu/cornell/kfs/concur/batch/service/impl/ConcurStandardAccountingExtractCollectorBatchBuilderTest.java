@@ -61,7 +61,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractCashA
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractValidationService;
 
 public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
-  private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractCollectorBatchBuilderTest.class);
+    private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractCollectorBatchBuilderTest.class);
 
     protected static final int MIN_YEAR = 2000;
 
@@ -354,7 +354,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
         assertEquals("Wrong number of origin entries", expectedEntries.size(), actualEntries.size());
         
         for (int i = 0; i < expectedEntries.size(); i++) {
-          LOG.debug("assertOriginEntriesHaveCorrectDataAndOrdering, validating transaction number " + i);
+            LOG.debug("assertOriginEntriesHaveCorrectDataAndOrdering, validating transaction number " + i);
             assertOriginEntryHasCorrectData(expectedEntries.get(i), actualEntries.get(i));
         }
     }
