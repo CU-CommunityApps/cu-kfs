@@ -45,8 +45,8 @@ public class CuPreEncumbranceActionTest {
     
     private KualiAccountingDocumentFormBase buildMockKualiAccountingDocumentFormBase() {
         PowerMockito.suppress(PowerMockito.constructor(KualiAccountingDocumentFormBase.class));
-        KualiAccountingDocumentFormBase document = PowerMockito.spy(new KualiAccountingDocumentFormBase());
-        return document;
+        KualiAccountingDocumentFormBase form = PowerMockito.spy(new KualiAccountingDocumentFormBase());
+        return form;
     }
     
     private PreEncumbranceDocument buildMockPreEncumbranceDocument() {

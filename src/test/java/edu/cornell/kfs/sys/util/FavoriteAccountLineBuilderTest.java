@@ -82,6 +82,7 @@ public class FavoriteAccountLineBuilderTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         userProcurementProfileValidationService = new UserProcurementProfileValidationServiceImpl();
         userFavoriteAccountService = new ExtendedTestUserFavoriteAccountService();
         
@@ -119,21 +120,17 @@ public class FavoriteAccountLineBuilderTest {
     }
 
     private static CuRequisitionDocument buildMockCuRequisitionDocument() {
-        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         CuRequisitionDocument document = PowerMockito.spy(new CuRequisitionDocument());
         return document;
     }
     
     private static PurchaseOrderDocument buildMockPurchaseOrderDocument() {
-        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         PurchaseOrderDocument document = PowerMockito.spy(new PurchaseOrderDocument());
         return document;
     }
     
     private static IWantDocument buildMockIWantDocument() {
-        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         IWantDocument document = PowerMockito.spy(new IWantDocument());
-        document.setAccounts(new ArrayList<IWantAccount>());
         return document; 
     }
 
