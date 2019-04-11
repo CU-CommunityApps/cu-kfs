@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.service.DataDictionaryService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -23,7 +24,6 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.exception.WorkflowException;
-import org.kuali.rice.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.batch.service.RassService;
@@ -32,17 +32,16 @@ import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 
-
 public class RassServiceImpl implements RassService {
 
     private static final Logger LOG = LogManager.getLogger(RassServiceImpl.class);
 
-    private CUMarshalService cuMarshalService;
-    private MaintenanceDocumentService maintenanceDocumentService;
-    private DocumentService documentService;
-    private DataDictionaryService dataDictionaryService;
-    private RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
-    private String rassFilePath;
+    protected CUMarshalService cuMarshalService;
+    protected MaintenanceDocumentService maintenanceDocumentService;
+    protected DocumentService documentService;
+    protected DataDictionaryService dataDictionaryService;
+    protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
+    protected String rassFilePath;
 
     @Override
     public List<RassXmlDocumentWrapper> readXML() {
@@ -63,7 +62,7 @@ public class RassServiceImpl implements RassService {
         return successfullyUpdated;
     }
 
-    protected <T, R extends BusinessObject> boolean updateBOs(List<RassXmlDocumentWrapper> rassXmlDocumentWrappers,
+    protected <T, R extends PersistableBusinessObject> boolean updateBOs(List<RassXmlDocumentWrapper> rassXmlDocumentWrappers,
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         boolean success = true;
         
@@ -95,7 +94,7 @@ public class RassServiceImpl implements RassService {
         return success;
     }
 
-    protected <T, R extends BusinessObject> boolean processObject(T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
+    protected <T, R extends PersistableBusinessObject> boolean processObject(T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
         try {
             LOG.info("processObject: Processing " + objectDefinition.printObjectLabelAndKeys(xmlObject));
             R existingObject = objectDefinition.findExistingObject(xmlObject);
@@ -112,15 +111,9 @@ public class RassServiceImpl implements RassService {
         return true;
     }
 
-    protected <T, R extends BusinessObject> void createObject(T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
+    protected <T, R extends PersistableBusinessObject> void createObject(T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("createObject: Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
-        Supplier<R> businessObjectGenerator = () -> {
-            try {
-                return objectDefinition.getBusinessObjectClass().newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
-                throw new RuntimeException(e);
-            }
-        };
+        Supplier<R> businessObjectGenerator = () -> createMinimalObject(objectDefinition.getBusinessObjectClass());
         R businessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectGenerator, objectDefinition);
         if (businessObject instanceof MutableInactivatable) {
             ((MutableInactivatable) businessObject).setActive(true);
@@ -133,11 +126,18 @@ public class RassServiceImpl implements RassService {
                 + " to create " + objectDefinition.printObjectLabelAndKeys(xmlObject));
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T, R extends BusinessObject> void updateObject(T xmlObject, R oldBusinessObject,
+    protected <R extends PersistableBusinessObject> R createMinimalObject(Class<R> businessObjectClass) {
+        try {
+            return businessObjectClass.newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected <T, R extends PersistableBusinessObject> void updateObject(T xmlObject, R oldBusinessObject,
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("updateObject: Updating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
-        Supplier<R> businessObjectCopier = () -> (R) ObjectUtils.deepCopy(oldBusinessObject);
+        Supplier<R> businessObjectCopier = () -> deepCopyObject(oldBusinessObject);
         R newBusinessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectCopier, objectDefinition);
         
         if (businessObjectWasUpdatedByXml(oldBusinessObject, newBusinessObject, objectDefinition)) {
@@ -153,7 +153,12 @@ public class RassServiceImpl implements RassService {
         }
     }
 
-    protected <T, R extends BusinessObject> R buildAndPopulateBusinessObjectFromPojo(T xmlObject, Supplier<R> businessObjectSupplier,
+    @SuppressWarnings("unchecked")
+    protected <R extends PersistableBusinessObject> R deepCopyObject(R businessObject) {
+        return (R) ObjectUtils.deepCopy(businessObject);
+    }
+
+    protected <T, R extends PersistableBusinessObject> R buildAndPopulateBusinessObjectFromPojo(T xmlObject, Supplier<R> businessObjectSupplier,
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
@@ -188,7 +193,7 @@ public class RassServiceImpl implements RassService {
         return cleanedValue;
     }
 
-    protected <R extends BusinessObject> boolean businessObjectWasUpdatedByXml(R oldBo, R newBo,
+    protected <R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(R oldBo, R newBo,
             RassObjectTranslationDefinition<?, R> objectDefinition) {
         return objectDefinition.getPropertyMappings().values()
                 .stream()
@@ -199,7 +204,7 @@ public class RassServiceImpl implements RassService {
                 });
     }
 
-    protected <R extends BusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentAsSystemUser(
+    protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentAsSystemUser(
             Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition) {
         try {
             return GlobalVariables.doInNewGlobalVariables(
@@ -214,7 +219,7 @@ public class RassServiceImpl implements RassService {
         return new UserSession(KFSConstants.SYSTEM_USER);
     }
 
-    protected <R extends BusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
+    protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
             Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition)
             throws WorkflowException {
         R newBo = businessObjects.getRight();
@@ -235,7 +240,7 @@ public class RassServiceImpl implements RassService {
         return maintenanceDocument;
     }
 
-    protected <R extends BusinessObject> String buildDocumentDescription(
+    protected <R extends PersistableBusinessObject> String buildDocumentDescription(
             R newBo, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition) {
         String actionLabel = getLabelForAction(maintenanceAction);
         return String.format(RassConstants.RASS_MAINTENANCE_DOCUMENT_DESCRIPTION_FORMAT,

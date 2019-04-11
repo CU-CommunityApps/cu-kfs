@@ -2,10 +2,10 @@ package edu.cornell.kfs.rass.batch.xml;
 
 import java.util.Map;
 
+import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.rice.krad.bo.BusinessObject;
 
-public abstract class RassObjectTranslationDefinition<T, R extends BusinessObject> {
+public abstract class RassObjectTranslationDefinition<T, R extends PersistableBusinessObject> {
 
     private String documentTypeName;
     private String rootXmlObjectListPropertyName;

@@ -11,7 +11,8 @@ import edu.cornell.kfs.sys.xmladapters.RassStringToJavaLongDateTimeAdapter;
 
 public enum RassXmlDocumentWrapperFixture {
         RASS_EXAMPLE("2019-03-15T22:15:07.273", awardFixtures(RassXmlAwardEntryFixture.FIRST, RassXmlAwardEntryFixture.ANOTHER, RassXmlAwardEntryFixture.NULL_AMOUNTS), 
-                agencyFixtures(RassXmlAgencyEntryFixture.SOME, RassXmlAgencyEntryFixture.DoS, RassXmlAgencyEntryFixture.TEST));
+                agencyFixtures(RassXmlAgencyEntryFixture.SOME, RassXmlAgencyEntryFixture.DoS, RassXmlAgencyEntryFixture.TEST)),
+        RASS_SINGLE_AGENCY_FILE("2019-03-15T22:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME_V2));
     
     public final DateTime extractDate;
     public final List<RassXmlAwardEntryFixture> awards;

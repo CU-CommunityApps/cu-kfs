@@ -58,9 +58,13 @@
 		<property name="moduleConfiguration" ref="cu-rass" />
 	</bean>
 
-	<bean id="rassService" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImpl"
+	<bean id="rassService" parent="rassService-parentBean"/>
+	<bean id="rassService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImpl"
 			p:rassFilePath="${staging.directory}/rass"
 			p:cuMarshalService-ref="cuMarshalService"
+			p:maintenanceDocumentService-ref="maintenanceDocumentService"
+			p:documentService-ref="documentService"
+			p:dataDictionaryService-ref="dataDictionaryService"
 			p:agencyDefinition-ref="agencyDefinition"/>
 
 	<bean id="rassStep" class="edu.cornell.kfs.rass.batch.RassStep"

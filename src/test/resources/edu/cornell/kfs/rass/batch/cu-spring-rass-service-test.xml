@@ -18,7 +18,10 @@
         </property>
     </bean>
 
-    <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImplTest$Factory"/>
+    <bean id="rassService" parent="rassService-parentBean"
+            class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImplTest$TestRassServiceImpl"/>
+
+    <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImplTest$ServiceFactory"/>
 
     <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
 
@@ -32,6 +35,7 @@
         <property name="beanWhitelist">
             <set merge="true">
                 <idref bean="rassService"/>
+                <idref bean="rassService-parentBean"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="cuMarshalService"/>
                 <idref bean="cuMarshalService-parentBean"/>
