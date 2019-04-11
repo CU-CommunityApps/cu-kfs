@@ -8,20 +8,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import edu.cornell.kfs.sys.service.impl.TestUserFavoriteAccountServiceImpl;
-import org.easymock.EasyMock;
-import org.easymock.IMockBuilder;
-import org.easymock.Mock;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLineBase;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
@@ -32,8 +27,11 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.krad.document.Document;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
@@ -49,6 +47,9 @@ import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
 import edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceImpl;
 
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({CuRequisitionDocument.class, PurchaseOrderDocument.class, IWantDocument.class})
 public class FavoriteAccountLineBuilderTest {
     private static UserProcurementProfileValidationService userProcurementProfileValidationService;
     private static UserFavoriteAccountService userFavoriteAccountService;
@@ -59,11 +60,8 @@ public class FavoriteAccountLineBuilderTest {
     private static List<PurApAccountingLine> reqsAccounts;
     private static List<PurApAccountingLine> poAccounts;
 
-    @Mock
     private static CuRequisitionDocument reqsDoc;
-    @Mock
     private static PurchaseOrderDocument poDoc;
-    @Mock
     private static IWantDocument iwntDoc;
 
     private static final Integer TEST_FAVORITE_ACCOUNT_LINE_ID = Integer.valueOf(1);
@@ -74,7 +72,7 @@ public class FavoriteAccountLineBuilderTest {
 
     private static final Integer TEST_ALT_FAVORITE_ACCOUNT_LINE_ID = Integer.valueOf(2);
     private static final Integer TEST_ALT_USER_PROFILE_ID = Integer.valueOf(4);
-    private static final String TEST_ALT_CHART_CODE = "IT";
+    private static final String TEST_ALT_CHART_CODE = TEST_CHART_CODE;
     private static final String TEST_ALT_ACCOUNT_NUMBER = "1653311";
     private static final String TEST_ALT_SUB_ACCOUNT_NUMBER = "58800";
     private static final String TEST_ALT_OBJECT_CODE = "6540";
@@ -84,6 +82,7 @@ public class FavoriteAccountLineBuilderTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
         userProcurementProfileValidationService = new UserProcurementProfileValidationServiceImpl();
         userFavoriteAccountService = new ExtendedTestUserFavoriteAccountService();
         
@@ -91,9 +90,9 @@ public class FavoriteAccountLineBuilderTest {
         poAccounts = new ArrayList<PurApAccountingLine>();
         reqsItem = new RequisitionItem();
         poItem = new PurchaseOrderItem();
-        reqsDoc = getMockedDocument(CuRequisitionDocument.class);
-        poDoc = getMockedDocument(PurchaseOrderDocument.class);
-        iwntDoc = getMockedDocument(IWantDocument.class);
+        reqsDoc = buildMockCuRequisitionDocument();
+        poDoc = buildMockPurchaseOrderDocument();
+        iwntDoc = buildMockIWantDocument();
         
         iwntDoc.setAccounts(new ArrayList<IWantAccount>());
         
@@ -120,16 +119,19 @@ public class FavoriteAccountLineBuilderTest {
         GlobalVariables.setMessageMap(new MessageMap());
     }
 
-    private static <T extends Document> T getMockedDocument(Class<T> documentClass) {
-    	Pattern nonMockedMethodsPattern = Pattern.compile("^(get|set).*$");
-        List<String> methodNames = new ArrayList<>();
-        for (Method method : documentClass.getMethods()) {
-            if (!Modifier.isFinal(method.getModifiers()) && !nonMockedMethodsPattern.matcher(method.getName()).matches()) {
-                methodNames.add(method.getName());
-            }
-        }
-        IMockBuilder<T> builder = EasyMock.createMockBuilder(documentClass).addMockedMethods(methodNames.toArray(new String[0]));
-        return builder.createNiceMock();
+    private static CuRequisitionDocument buildMockCuRequisitionDocument() {
+        CuRequisitionDocument document = PowerMockito.spy(new CuRequisitionDocument());
+        return document;
+    }
+    
+    private static PurchaseOrderDocument buildMockPurchaseOrderDocument() {
+        PurchaseOrderDocument document = PowerMockito.spy(new PurchaseOrderDocument());
+        return document;
+    }
+    
+    private static IWantDocument buildMockIWantDocument() {
+        IWantDocument document = PowerMockito.spy(new IWantDocument());
+        return document; 
     }
 
     @Before
@@ -469,12 +471,13 @@ public class FavoriteAccountLineBuilderTest {
     private static class ExtendedTestUserFavoriteAccountService extends TestUserFavoriteAccountServiceImpl {
         @Override
         public FavoriteAccount getSelectedFavoriteAccount(Integer accountLineIdentifier) {
+            FavoriteAccount favAccount = null;
             if (TEST_FAVORITE_ACCOUNT_LINE_ID.equals(accountLineIdentifier)) {
-                return testFavoriteAccount;
+                favAccount = testFavoriteAccount;
             } else if (TEST_ALT_FAVORITE_ACCOUNT_LINE_ID.equals(accountLineIdentifier)) {
-                return testAltFavoriteAccount;
+                favAccount = testAltFavoriteAccount;
             }
-            return null;
+            return favAccount;
         }
     }
 
