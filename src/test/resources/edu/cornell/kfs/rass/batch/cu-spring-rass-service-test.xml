@@ -29,6 +29,8 @@
 
     <bean id="dataDictionaryService" factory-bean="testServiceFactory" factory-method="buildMockDataDictionaryService"/>
 
+    <bean id="enDocumentRouteHeaderService" factory-bean="testServiceFactory" factory-method="buildMockRouteHeaderService"/>
+
     <bean id="agencyService" factory-bean="testServiceFactory" factory-method="buildMockAgencyService"/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
@@ -36,6 +38,7 @@
             <set merge="true">
                 <idref bean="rassService"/>
                 <idref bean="rassService-parentBean"/>
+                <idref bean="rassProperty"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="cuMarshalService"/>
                 <idref bean="cuMarshalService-parentBean"/>
@@ -43,6 +46,7 @@
                 <idref bean="maintenanceDocumentService"/>
                 <idref bean="documentService"/>
                 <idref bean="dataDictionaryService"/>
+                <idref bean="enDocumentRouteHeaderService"/>
                 <idref bean="agencyService"/>
                 <idref bean="dateTimeService"/>
             </set>

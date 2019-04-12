@@ -1,5 +1,6 @@
 package edu.cornell.kfs.rass.batch.xml.fixture;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
@@ -26,13 +27,13 @@ public enum RassXmlAgencyEntryFixture {
     
     private RassXmlAgencyEntryFixture(String number, String reportingName, String fullName, String typeCode, String reportsToAgencyNumber,
             String commonName, String agencyOrigin, boolean existsByDefaultForSearching) {
-        this.number = number;
-        this.reportingName = reportingName;
-        this.fullName = fullName;
-        this.typeCode = typeCode;
-        this.reportsToAgencyNumber = reportsToAgencyNumber;
-        this.commonName = commonName;
-        this.agencyOrigin = agencyOrigin;
+        this.number = defaultToNullIfBlank(number);
+        this.reportingName = defaultToNullIfBlank(reportingName);
+        this.fullName = defaultToNullIfBlank(fullName);
+        this.typeCode = defaultToNullIfBlank(typeCode);
+        this.reportsToAgencyNumber = defaultToNullIfBlank(reportsToAgencyNumber);
+        this.commonName = defaultToNullIfBlank(commonName);
+        this.agencyOrigin = defaultToNullIfBlank(agencyOrigin);
         this.existsByDefaultForSearching = existsByDefaultForSearching;
     }
     
@@ -64,6 +65,10 @@ public enum RassXmlAgencyEntryFixture {
         agency.setExtension(agencyExtension);
         
         return agency;
+    }
+
+    private String defaultToNullIfBlank(String value) {
+        return StringUtils.defaultIfBlank(value, null);
     }
 
 }

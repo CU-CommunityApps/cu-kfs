@@ -1,7 +1,8 @@
 package edu.cornell.kfs.rass.batch.xml;
 
-import java.util.Map;
+import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -9,7 +10,7 @@ public abstract class RassObjectTranslationDefinition<T, R extends PersistableBu
 
     private String documentTypeName;
     private String rootXmlObjectListPropertyName;
-    private Map<String, String> propertyMappings;
+    private List<RassPropertyDefinition> propertyMappings;
 
     public String getDocumentTypeName() {
         return documentTypeName;
@@ -27,11 +28,11 @@ public abstract class RassObjectTranslationDefinition<T, R extends PersistableBu
         this.rootXmlObjectListPropertyName = rootXmlObjectListPropertyName;
     }
 
-    public Map<String, String> getPropertyMappings() {
+    public List<RassPropertyDefinition> getPropertyMappings() {
         return propertyMappings;
     }
 
-    public void setPropertyMappings(Map<String, String> propertyMappings) {
+    public void setPropertyMappings(List<RassPropertyDefinition> propertyMappings) {
         this.propertyMappings = propertyMappings;
     }
 
@@ -62,6 +63,8 @@ public abstract class RassObjectTranslationDefinition<T, R extends PersistableBu
     public abstract String printPrimaryKeyValues(T xmlObject);
 
     public abstract String printPrimaryKeyValues(R businessObject);
+
+    public abstract List<Pair<Class<?>, String>> getListOfObjectUpdatesToWaitFor(T xmlObject);
 
     public abstract R findExistingObject(T xmlObject);
 

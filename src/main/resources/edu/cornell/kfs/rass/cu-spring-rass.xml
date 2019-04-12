@@ -65,7 +65,10 @@
 			p:maintenanceDocumentService-ref="maintenanceDocumentService"
 			p:documentService-ref="documentService"
 			p:dataDictionaryService-ref="dataDictionaryService"
-			p:agencyDefinition-ref="agencyDefinition"/>
+			p:routeHeaderService-ref="enDocumentRouteHeaderService"
+			p:agencyDefinition-ref="agencyDefinition"
+			p:documentStatusCheckDelayMillis="1000"
+			p:maxStatusCheckAttempts="30"/>
 
 	<bean id="rassStep" class="edu.cornell.kfs.rass.batch.RassStep"
 		parent="step">
@@ -74,20 +77,22 @@
 		</property>
 	</bean>
 
+	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.xml.RassPropertyDefinition"/>
+
 	<bean id="agencyDefinition" class="edu.cornell.kfs.rass.batch.xml.AgencyTranslationDefinition"
 			p:agencyService-ref="agencyService"
 			p:rootXmlObjectListPropertyName="agencies"
 			p:documentTypeName="AGCY">
 		<property name="propertyMappings">
-			<map>
-				<entry key="number" value="agencyNumber"/>
-				<entry key="reportingName" value="reportingName"/>
-				<entry key="fullName" value="fullName"/>
-				<entry key="typeCode" value="agencyTypeCode"/>
-				<entry key="reportsToAgencyNumber" value="reportsToAgencyNumber"/>
-				<entry key="commonName" value="extension.agencyCommonName"/>
-				<entry key="agencyOrigin" value="extension.agencyOriginCode"/>
-			</map>
+			<list>
+				<bean parent="rassProperty" p:xmlName="number" p:boName="agencyNumber" p:required="true"/>
+				<bean parent="rassProperty" p:xmlName="reportingName" p:boName="reportingName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlName="fullName" p:boName="fullName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlName="typeCode" p:boName="agencyTypeCode" p:required="true"/>
+				<bean parent="rassProperty" p:xmlName="reportsToAgencyNumber" p:boName="reportsToAgencyNumber" p:required="false"/>
+				<bean parent="rassProperty" p:xmlName="commonName" p:boName="extension.agencyCommonName" p:required="false"/>
+				<bean parent="rassProperty" p:xmlName="agencyOrigin" p:boName="extension.agencyOriginCode" p:required="false"/>
+			</list>
 		</property>
 	</bean>
 

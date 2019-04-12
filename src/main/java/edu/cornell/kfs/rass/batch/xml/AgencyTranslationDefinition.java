@@ -1,6 +1,10 @@
 package edu.cornell.kfs.rass.batch.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -34,6 +38,18 @@ public class AgencyTranslationDefinition extends RassObjectTranslationDefinition
     @Override
     public String printPrimaryKeyValues(Agency agency) {
         return agency.getAgencyNumber();
+    }
+
+    @Override
+    public List<Pair<Class<?>, String>> getListOfObjectUpdatesToWaitFor(RassXmlAgencyEntry xmlAgency) {
+        List<Pair<Class<?>, String>> objectsToWaitFor = new ArrayList<>();
+        objectsToWaitFor.add(
+                Pair.of(Agency.class, xmlAgency.getNumber()));
+        if (StringUtils.isNotBlank(xmlAgency.getReportsToAgencyNumber())) {
+            objectsToWaitFor.add(
+                    Pair.of(Agency.class, xmlAgency.getReportsToAgencyNumber()));
+        }
+        return objectsToWaitFor;
     }
 
     @Override

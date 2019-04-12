@@ -10,4 +10,10 @@ public final class RassConstants {
     public static final String RASS_MAINTENANCE_NEW_ACTION_DESCRIPTION = "Creation";
     public static final String RASS_ROUTE_ACTION_ANNOTATION = "Automatically created and routed";
 
+    public enum RassProcessingStatus {
+        SUCCESS,
+        ERROR,
+        SKIPPED;
+    }
+
 }

@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,9 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
+import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.kuali.rice.kim.api.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -199,18 +202,20 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         
         public MaintenanceDocumentService buildMockMaintenanceDocumentService() throws Exception {
             MaintenanceDocumentService maintenanceDocumentService = Mockito.mock(MaintenanceDocumentService.class);
+            MutableInt documentIdSequence = new MutableInt(1000);
             
             Mockito.when(maintenanceDocumentService.setupNewMaintenanceDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-                    .then(this::buildNewMaintenanceDocument);
+                    .then(invocation -> buildNewMaintenanceDocument(invocation, documentIdSequence.addAndGet(1)));
             
             return maintenanceDocumentService;
         }
         
-        protected MaintenanceDocument buildNewMaintenanceDocument(InvocationOnMock invocation) {
+        protected MaintenanceDocument buildNewMaintenanceDocument(InvocationOnMock invocation, int documentNumberAsInt) {
             try {
                 String businessObjectClassName = Objects.requireNonNull(invocation.getArgument(0));
                 String documentTypeName = Objects.requireNonNull(invocation.getArgument(1));
                 String maintenanceAction = Objects.requireNonNull(invocation.getArgument(2));
+                String documentNumber = String.valueOf(documentNumberAsInt);
                 
                 Class<? extends PersistableBusinessObject> businessObjectClass = getBusinessObjectClass(businessObjectClassName, documentTypeName);
                 Class<? extends Maintainable> maintainableClass = getMaintainableClass(documentTypeName);
@@ -227,9 +232,11 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 oldMaintainable.setDataObjectClass(businessObjectClass);
                 newMaintainable.setDataObject(newBo);
                 newMaintainable.setDataObjectClass(businessObjectClass);
+                documentHeader.setDocumentNumber(documentNumber);
                 maintenanceDocument.setOldMaintainableObject(oldMaintainable);
                 maintenanceDocument.setNewMaintainableObject(newMaintainable);
                 maintenanceDocument.setDocumentHeader(documentHeader);
+                maintenanceDocument.setDocumentNumber(documentNumber);
                 
                 return maintenanceDocument;
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -289,7 +296,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             return documentService;
         }
         
-        public DataDictionaryService buildMockDataDictionaryService() {
+        public DataDictionaryService buildMockDataDictionaryService() throws Exception {
             DataDictionaryService dataDictionaryService = Mockito.mock(DataDictionaryService.class);
             
             Mockito.when(dataDictionaryService.getAttributeMaxLength(Mockito.any(), Mockito.anyString()))
@@ -298,7 +305,16 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             return dataDictionaryService;
         }
         
-        public AgencyService buildMockAgencyService() {
+        public RouteHeaderService buildMockRouteHeaderService() throws Exception {
+            RouteHeaderService routeHeaderService = Mockito.mock(RouteHeaderService.class);
+            
+            Mockito.when(routeHeaderService.getDocumentStatus(Mockito.anyString()))
+                    .thenReturn(KewApiConstants.ROUTE_HEADER_FINAL_CD);
+            
+            return routeHeaderService;
+        }
+        
+        public AgencyService buildMockAgencyService() throws Exception {
             AgencyService agencyService = Mockito.mock(AgencyService.class);
             
             Arrays.stream(RassXmlAgencyEntryFixture.values())
