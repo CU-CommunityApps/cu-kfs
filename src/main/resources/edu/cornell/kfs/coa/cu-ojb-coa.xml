@@ -1529,6 +1529,10 @@
 	<class-descriptor class="edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute" table="CA_HIGHR_ED_FUNC_TX">
 	    <field-descriptor name="financialHigherEdFunctionCd" column="FIN_HGH_ED_FUNC_CD" 
 	    	jdbc-type="VARCHAR" primarykey="true" index="true" />
+	    <field-descriptor name="objectId" column="OBJ_ID" 
+	    	jdbc-type="VARCHAR" index="true" />
+	    <field-descriptor name="versionNumber" column="VER_NBR" 
+	    	jdbc-type="BIGINT" locking="true" />
 	    <field-descriptor name="financialHigherEdFunctionDescription" column="FIN_HGH_ED_FUNC_DESC" 
 	    	jdbc-type="VARCHAR" />
 	</class-descriptor>
