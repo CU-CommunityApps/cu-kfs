@@ -2,7 +2,6 @@ package edu.cornell.kfs.rass.batch.xml;
 
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -64,7 +63,7 @@ public abstract class RassObjectTranslationDefinition<T, R extends PersistableBu
 
     public abstract String printPrimaryKeyValues(R businessObject);
 
-    public abstract List<Pair<Class<?>, String>> getListOfObjectUpdatesToWaitFor(T xmlObject);
+    public abstract List<String> getKeysOfObjectUpdatesToWaitFor(T xmlObject);
 
     public abstract R findExistingObject(T xmlObject);
 

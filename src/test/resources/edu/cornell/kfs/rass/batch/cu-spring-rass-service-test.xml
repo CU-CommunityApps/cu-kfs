@@ -40,6 +40,12 @@
                 <idref bean="rassService-parentBean"/>
                 <idref bean="rassProperty"/>
                 <idref bean="agencyDefinition"/>
+                <idref bean="batchInputFileService"/>
+                <idref bean="batchInputFileService-parentBean"/>
+                <idref bean="rassXmlInputFileType"/>
+                <idref bean="rassXmlInputFileType-parentBean"/>
+                <idref bean="fileStorageService"/>
+                <idref bean="fileStorageService-parentBean"/>
                 <idref bean="cuMarshalService"/>
                 <idref bean="cuMarshalService-parentBean"/>
                 <idref bean="testServiceFactory"/>

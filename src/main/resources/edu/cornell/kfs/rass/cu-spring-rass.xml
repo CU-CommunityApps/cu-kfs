@@ -61,7 +61,9 @@
 	<bean id="rassService" parent="rassService-parentBean"/>
 	<bean id="rassService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImpl"
 			p:rassFilePath="${staging.directory}/rass"
-			p:cuMarshalService-ref="cuMarshalService"
+			p:batchInputFileService-ref="batchInputFileService"
+			p:batchInputFileType-ref="rassXmlInputFileType"
+			p:fileStorageService-ref="fileStorageService"
 			p:maintenanceDocumentService-ref="maintenanceDocumentService"
 			p:documentService-ref="documentService"
 			p:dataDictionaryService-ref="dataDictionaryService"
@@ -69,6 +71,17 @@
 			p:agencyDefinition-ref="agencyDefinition"
 			p:documentStatusCheckDelayMillis="1000"
 			p:maxStatusCheckAttempts="30"/>
+
+	<bean id="rassXmlInputFileType" parent="rassXmlInputFileType-parentBean"/>
+	<bean id="rassXmlInputFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"
+			p:dateTimeService-ref="dateTimeService"
+			p:cuMarshalService-ref="cuMarshalService"
+			p:directoryPath="${staging.directory}/rass"
+			p:fileExtension="xml"
+			p:fileTypeIdentifier="rassXmlInputFileType"
+			p:titleKey="message.batchUpload.title.accountingXmlDocument"
+			p:fileNamePrefix="rassXmlFile_"
+			p:pojoClass="edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper"/>
 
 	<bean id="rassStep" class="edu.cornell.kfs.rass.batch.RassStep"
 		parent="step">

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.service.AgencyService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.kew.api.KewApiConstants;
@@ -42,7 +44,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
 import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
+import edu.cornell.kfs.rass.RassConstants.RassResultCode;
 import edu.cornell.kfs.rass.RassTestConstants;
+import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
@@ -83,15 +87,20 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                         agencies(Pair.of(RassXmlAgencyEntryFixture.SOME_V2, KRADConstants.MAINTENANCE_EDIT_ACTION))));
     }
 
-    private final void assertXmlContentsPerformExpectedObjectUpdates(List<RassXmlDocumentWrapperFixture> xmlContents,
+    private void assertXmlContentsPerformExpectedObjectUpdates(List<RassXmlDocumentWrapperFixture> xmlContents,
             ExpectedResultsHolder expectedResultsHolder) throws Exception {
-        List<RassXmlDocumentWrapper> rassXmlDocumentWrappers = xmlContents.stream()
+        List<RassXmlFileParseResult> fileResults = xmlContents.stream()
                 .map(RassXmlDocumentWrapperFixture::toRassXmlDocumentWrapper)
+                .map(this::encaseWrapperInSuccessfulFileResult)
                 .collect(Collectors.toCollection(ArrayList::new));
         
-        rassService.updateKFS(rassXmlDocumentWrappers);
+        rassService.updateKFS(fileResults);
         
         assertAgenciesWereUpdatedAsExpected(expectedResultsHolder.expectedAgencies);
+    }
+
+    private RassXmlFileParseResult encaseWrapperInSuccessfulFileResult(RassXmlDocumentWrapper documentWrapper) {
+        return new RassXmlFileParseResult(KFSConstants.EMPTY_STRING, RassResultCode.SUCCESS, Optional.of(documentWrapper));
     }
 
     private void assertAgenciesWereUpdatedAsExpected(List<Pair<RassXmlAgencyEntryFixture, String>> expectedResults) {

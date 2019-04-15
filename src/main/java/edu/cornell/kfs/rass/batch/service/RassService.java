@@ -2,12 +2,13 @@ package edu.cornell.kfs.rass.batch.service;
 
 import java.util.List;
 
-import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
+import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
+import edu.cornell.kfs.rass.batch.RassXmlObjectGroupResult;
 
 public interface RassService {
 
-	List<RassXmlDocumentWrapper> readXML();
+    List<RassXmlFileParseResult> readXML();
 
-	boolean updateKFS(List<RassXmlDocumentWrapper> rassXmlDocumentWrappers);
+    List<RassXmlObjectGroupResult> updateKFS(List<RassXmlFileParseResult> successfullyParsedFiles);
 
 }
