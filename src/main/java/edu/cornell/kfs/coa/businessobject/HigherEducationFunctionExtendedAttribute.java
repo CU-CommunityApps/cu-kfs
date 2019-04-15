@@ -7,7 +7,7 @@ public class HigherEducationFunctionExtendedAttribute extends PersistableBusines
 	protected String financialHigherEdFunctionDescription;
 
 	public HigherEducationFunctionExtendedAttribute() {
-
+		super();
 	}
 
 	public String getFinancialHigherEdFunctionCd() {
