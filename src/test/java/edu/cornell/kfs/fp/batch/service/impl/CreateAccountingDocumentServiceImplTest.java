@@ -108,11 +108,13 @@ import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
+import edu.cornell.kfs.sys.util.MockDocumentUtils.TestAdHocRoutePerson;
+import edu.cornell.kfs.sys.util.MockDocumentUtils.TestNote;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class})
+@PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class, TestAdHocRoutePerson.class, TestNote.class})
 public class CreateAccountingDocumentServiceImplTest {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
@@ -368,6 +370,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService = Mockito.spy(createAccountingDocumentService);
         Mockito.when(createAccountingDocumentService.getNewDocument(YearEndDistributionOfIncomeAndExpenseDocument.class)).
             thenThrow(new ResourceLoaderException("Emulate problem getting services"));
+
         copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
         boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertFalse("When there is a problem calling services, the job should fail", results);

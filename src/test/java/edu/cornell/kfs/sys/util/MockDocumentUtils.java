@@ -103,37 +103,50 @@ public class MockDocumentUtils {
         }
     }
 
+    /*
+     * If you use this function you must add the following annotation to your unit test
+     * @PrepareForTest({MockDocumentUtils.TestNote.class})
+     */
     public static Note buildMockNote(String noteText) {
         Note note = buildMockNote();
         note.setNoteText(noteText);
         return note;
     }
-
+    
+    /*
+     * If you use this function you must add the following annotation to your unit test
+     * @PrepareForTest({MockDocumentUtils.TestNote.class})
+     */
     public static Note buildMockNote() {
-        Note note = EasyMock.partialMockBuilder(Note.class)
-                .addMockedMethod("setNotePostedTimestampToCurrent")
-                .createNiceMock();
-        
+        PowerMockito.suppress(PowerMockito.constructor(Note.class));
+        TestNote note = PowerMockito.spy(new TestNote());
+        try {
+            PowerMockito.doNothing().when(note, "setNotePostedTimestampToCurrent");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         note.setNotePostedTimestampToCurrent();
-        EasyMock.expectLastCall().anyTimes();
         
-        EasyMock.replay(note);
         return note;
     }
-
+    
+    public static class TestNote extends Note {
+        private static final long serialVersionUID = 5758013202304326694L;
+        
+    }
+    
+    /*
+     * If you use this function you must add the following annotation to your unit test
+     * @PrepareForTest({MockDocumentUtils.TestAdHocRoutePerson.class})
+     */
     public static AdHocRoutePerson buildMockAdHocRoutePerson() {
-        TestAdHocRoutePerson adHocPerson = EasyMock.partialMockBuilder(TestAdHocRoutePerson.class)
-                .createNiceMock();
-        EasyMock.replay(adHocPerson);
+        PowerMockito.suppress(PowerMockito.constructor(AdHocRoutePerson.class));
+        TestAdHocRoutePerson adHocPerson = PowerMockito.spy(new TestAdHocRoutePerson());
         adHocPerson.setType(AdHocRouteRecipient.PERSON_TYPE);
         adHocPerson.setPerson(new PersonImpl());
         return adHocPerson;
     }
 
-    /**
-     * Helper AdHocRoutePerson subclass that allows for setting the recipient's ID
-     * without invoking any service locators.
-     */
     public static class TestAdHocRoutePerson extends AdHocRoutePerson {
         private static final long serialVersionUID = 1L;
 
