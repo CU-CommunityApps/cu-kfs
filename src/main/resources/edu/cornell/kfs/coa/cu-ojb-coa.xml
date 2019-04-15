@@ -1531,7 +1531,7 @@
 	    <field-descriptor name="financialHigherEdFunctionCd" column="FIN_HGH_ED_FUNC_CD" 
 	    	jdbc-type="VARCHAR" primarykey="true" index="true" />
 	    <field-descriptor name="financialHigherEdFunctionDescription" column="FIN_HGH_ED_FUNC_CD_DESC" 
-	    	jdbc-type="VARCHAR" primarykey="true" index="true" />
+	    	jdbc-type="VARCHAR" />
     </class-descriptor>
 	
 	<class-descriptor class="org.kuali.kfs.coa.businessobject.PriorYearAccount" table="CA_PRIOR_YR_ACCT_T">
