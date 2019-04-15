@@ -1,9 +1,7 @@
 package edu.cornell.kfs.sys.util;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
-import org.easymock.EasyMock;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
@@ -25,7 +23,11 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
-public class MockDocumentUtils {
+public final class MockDocumentUtils {
+    
+    private MockDocumentUtils() {
+        
+    }
 
     public static <T extends Document> T buildMockDocument(Class<T> documentClass) {
         PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));

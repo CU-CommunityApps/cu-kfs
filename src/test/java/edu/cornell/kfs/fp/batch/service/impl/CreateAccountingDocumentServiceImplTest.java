@@ -367,9 +367,7 @@ public class CreateAccountingDocumentServiceImplTest {
     
     @Test
     public void testServiceError() throws Exception {
-        createAccountingDocumentService = Mockito.spy(createAccountingDocumentService);
-        Mockito.when(createAccountingDocumentService.getNewDocument(YearEndDistributionOfIncomeAndExpenseDocument.class)).
-            thenThrow(new ResourceLoaderException("Emulate problem getting services"));
+        createAccountingDocumentService.setFailToCreateDocument(true);
 
         copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
         boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
@@ -840,6 +838,7 @@ public class CreateAccountingDocumentServiceImplTest {
         private UniversityDateService universityDateService;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
+        private boolean failToCreateDocument;
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
@@ -853,6 +852,11 @@ public class CreateAccountingDocumentServiceImplTest {
             this.universityDateService = universityDateService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
+            this.failToCreateDocument = false;
+        }
+
+        public void setFailToCreateDocument(boolean failToCreateDocument) {
+            this.failToCreateDocument = failToCreateDocument;
         }
 
         public void initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping... documentMappings) {
@@ -933,6 +937,9 @@ public class CreateAccountingDocumentServiceImplTest {
 
         @Override
         protected Document getNewDocument(Class<? extends Document> documentClass) {
+            if (failToCreateDocument) {
+                throw new ResourceLoaderException("Emulate problem getting services");
+            }
             if (documentClass == null) {
                 throw new IllegalStateException("Document class should not have been null");
             } else if (generatorDoesNotExistForDocumentClass(documentClass)) {
