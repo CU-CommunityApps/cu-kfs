@@ -17,7 +17,9 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
+import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
@@ -26,36 +28,34 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 public class MockDocumentUtils {
 
     public static <T extends Document> T buildMockDocument(Class<T> documentClass) {
-        return buildMockDocument(documentClass, (document) -> {});
+        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
+        T document = null;
+        try {
+            document = PowerMockito.spy(documentClass.newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        performInitializationFromSkippedConstructor(document);
+        return document;
     }
 
     public static <T extends AccountingDocument> T buildMockAccountingDocument(Class<T> documentClass) {
-        return buildMockDocument(documentClass,
-                (accountingDocument) -> setupMockedAccountingDocumentMethods(accountingDocument, documentClass),
-                "getSourceAccountingLineClass", "getTargetAccountingLineClass");
-    }
-
-    private static void setupMockedAccountingDocumentMethods(AccountingDocument accountingDocument, Class<? extends AccountingDocument> documentClass) {
+        T document = buildMockDocument(documentClass);
+        
         Class<? extends SourceAccountingLine> sourceAccountingLineClass = AccountingDocumentClassMappingUtils
                 .getSourceAccountingLineClassByDocumentClass(documentClass);
         Class<? extends TargetAccountingLine> targetAccountingLineClass = AccountingDocumentClassMappingUtils
                 .getTargetAccountingLineClassByDocumentClass(documentClass);
         
-        EasyMock.expect(accountingDocument.getSourceAccountingLineClass())
-                .andStubReturn(sourceAccountingLineClass);
-        EasyMock.expect(accountingDocument.getTargetAccountingLineClass())
-                .andStubReturn(targetAccountingLineClass);
-    }
-
-    public static <T extends Document> T buildMockDocument(Class<T> documentClass, Consumer<? super T> documentMockingConfigurer, String... mockedMethods) {
-        T document = EasyMock.partialMockBuilder(documentClass)
-                .addMockedMethods(mockedMethods)
-                .createNiceMock();
-        documentMockingConfigurer.accept(document);
-        EasyMock.replay(document);
-        
-        performInitializationFromSkippedConstructor(document);
-        
+        try {
+            PowerMockito.doReturn(sourceAccountingLineClass).when(document, "getSourceAccountingLineClass");
+            PowerMockito.doReturn(targetAccountingLineClass).when(document, "getTargetAccountingLineClass");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+            
+        }
         return document;
     }
 
