@@ -21,5 +21,25 @@
           p:name="extension.financialHigherEdFunctionDescription"/>
 
 	 <!-- Business Object Inquiry Definition -->
+	
+	<bean id="HigherEducationFunction-inquiryDefinition-override" parent="DataDictionaryBeanOverride">
+	    <property name="beanName" value="HigherEducationFunction-inquiryDefinition" />
+	        <property name="fieldOverrides">
+	        <list>
+	           <bean parent="FieldOverrideForListElementInsert" >
+	            <property name="propertyName" value="inquirySections[0].inquiryFields" />
+	            <property name="propertyNameForElementCompare" value="attributeName" />
+	            <property name="element">
+	            <bean parent="FieldDefinition" p:attributeName="financialHigherEdFunctionNm" />
+	            </property>
+	            <property name="insertAfter">
+	                <list>         
+	                <bean parent="FieldDefinition" p:attributeName="extension.financialHigherEdFunctionDescription" />
+	            </list>                    
+	            </property>
+	         </bean>
+	            </list>
+	    </property>
+	</bean>	
 
 </beans>
