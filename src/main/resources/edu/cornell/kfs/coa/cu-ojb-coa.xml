@@ -1523,7 +1523,7 @@
 	        <foreignkey field-ref="finAicpaFunctionCode" />
 	    </reference-descriptor>
 	    <reference-descriptor name="extension" class-ref="edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-            <foreignkey field-ref="financialHigherEdFunctionCd" />
+	    		<foreignkey field-ref="financialHigherEdFunctionCd" />
         </reference-descriptor>
 	</class-descriptor>
 	<class-descriptor class="edu.cornell.kfs.coa.businessobject.HigherEducationFunctionExtendedAttribute" table="CA_HIGHR_ED_FUNC_TX">
