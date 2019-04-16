@@ -42,6 +42,7 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
@@ -80,6 +81,8 @@ import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
@@ -98,15 +101,20 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
+import edu.cornell.kfs.sys.util.MockDocumentUtils.TestAdHocRoutePerson;
+import edu.cornell.kfs.sys.util.MockDocumentUtils.TestNote;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class, TestAdHocRoutePerson.class, TestNote.class})
 public class CreateAccountingDocumentServiceImplTest {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
@@ -359,9 +367,8 @@ public class CreateAccountingDocumentServiceImplTest {
     
     @Test
     public void testServiceError() throws Exception {
-        createAccountingDocumentService = Mockito.spy(createAccountingDocumentService);
-        Mockito.when(createAccountingDocumentService.getNewDocument(YearEndDistributionOfIncomeAndExpenseDocument.class)).
-            thenThrow(new ResourceLoaderException("Emulate problem getting services"));
+        createAccountingDocumentService.setFailToCreateDocument(true);
+
         copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
         boolean results = createAccountingDocumentService.createAccountingDocumentsFromXml();
         assertFalse("When there is a problem calling services, the job should fail", results);
@@ -831,6 +838,7 @@ public class CreateAccountingDocumentServiceImplTest {
         private UniversityDateService universityDateService;
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
+        private boolean failToCreateDocument;
 
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
@@ -844,6 +852,11 @@ public class CreateAccountingDocumentServiceImplTest {
             this.universityDateService = universityDateService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
+            this.failToCreateDocument = false;
+        }
+
+        public void setFailToCreateDocument(boolean failToCreateDocument) {
+            this.failToCreateDocument = failToCreateDocument;
         }
 
         public void initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping... documentMappings) {
@@ -924,6 +937,9 @@ public class CreateAccountingDocumentServiceImplTest {
 
         @Override
         protected Document getNewDocument(Class<? extends Document> documentClass) {
+            if (failToCreateDocument) {
+                throw new ResourceLoaderException("Emulate problem getting services");
+            }
             if (documentClass == null) {
                 throw new IllegalStateException("Document class should not have been null");
             } else if (generatorDoesNotExistForDocumentClass(documentClass)) {

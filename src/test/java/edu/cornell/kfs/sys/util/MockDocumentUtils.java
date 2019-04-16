@@ -1,9 +1,7 @@
 package edu.cornell.kfs.sys.util;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
-import org.easymock.EasyMock;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
@@ -17,45 +15,47 @@ import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
+import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.rice.kim.impl.identity.PersonImpl;
+import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 
-public class MockDocumentUtils {
+public final class MockDocumentUtils {
+    
+    private MockDocumentUtils() {
+        
+    }
 
     public static <T extends Document> T buildMockDocument(Class<T> documentClass) {
-        return buildMockDocument(documentClass, (document) -> {});
+        PowerMockito.suppress(PowerMockito.constructor(LedgerPostingDocumentBase.class));
+        T document = null;
+        try {
+            document = PowerMockito.spy(documentClass.newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        performInitializationFromSkippedConstructor(document);
+        return document;
     }
 
     public static <T extends AccountingDocument> T buildMockAccountingDocument(Class<T> documentClass) {
-        return buildMockDocument(documentClass,
-                (accountingDocument) -> setupMockedAccountingDocumentMethods(accountingDocument, documentClass),
-                "getSourceAccountingLineClass", "getTargetAccountingLineClass");
-    }
-
-    private static void setupMockedAccountingDocumentMethods(AccountingDocument accountingDocument, Class<? extends AccountingDocument> documentClass) {
+        T document = buildMockDocument(documentClass);
+        
         Class<? extends SourceAccountingLine> sourceAccountingLineClass = AccountingDocumentClassMappingUtils
                 .getSourceAccountingLineClassByDocumentClass(documentClass);
         Class<? extends TargetAccountingLine> targetAccountingLineClass = AccountingDocumentClassMappingUtils
                 .getTargetAccountingLineClassByDocumentClass(documentClass);
         
-        EasyMock.expect(accountingDocument.getSourceAccountingLineClass())
-                .andStubReturn(sourceAccountingLineClass);
-        EasyMock.expect(accountingDocument.getTargetAccountingLineClass())
-                .andStubReturn(targetAccountingLineClass);
-    }
-
-    public static <T extends Document> T buildMockDocument(Class<T> documentClass, Consumer<? super T> documentMockingConfigurer, String... mockedMethods) {
-        T document = EasyMock.partialMockBuilder(documentClass)
-                .addMockedMethods(mockedMethods)
-                .createNiceMock();
-        documentMockingConfigurer.accept(document);
-        EasyMock.replay(document);
-        
-        performInitializationFromSkippedConstructor(document);
-        
+        try {
+            PowerMockito.doReturn(sourceAccountingLineClass).when(document, "getSourceAccountingLineClass");
+            PowerMockito.doReturn(targetAccountingLineClass).when(document, "getTargetAccountingLineClass");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+            
+        }
         return document;
     }
 
@@ -103,37 +103,50 @@ public class MockDocumentUtils {
         }
     }
 
+    /*
+     * If you use this function you must add the following annotation to your unit test
+     * @PrepareForTest({MockDocumentUtils.TestNote.class})
+     */
     public static Note buildMockNote(String noteText) {
         Note note = buildMockNote();
         note.setNoteText(noteText);
         return note;
     }
-
+    
+    /*
+     * If you use this function you must add the following annotation to your unit test
+     * @PrepareForTest({MockDocumentUtils.TestNote.class})
+     */
     public static Note buildMockNote() {
-        Note note = EasyMock.partialMockBuilder(Note.class)
-                .addMockedMethod("setNotePostedTimestampToCurrent")
-                .createNiceMock();
-        
+        PowerMockito.suppress(PowerMockito.constructor(Note.class));
+        TestNote note = PowerMockito.spy(new TestNote());
+        try {
+            PowerMockito.doNothing().when(note, "setNotePostedTimestampToCurrent");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         note.setNotePostedTimestampToCurrent();
-        EasyMock.expectLastCall().anyTimes();
         
-        EasyMock.replay(note);
         return note;
     }
-
+    
+    public static class TestNote extends Note {
+        private static final long serialVersionUID = 5758013202304326694L;
+        
+    }
+    
+    /*
+     * If you use this function you must add the following annotation to your unit test
+     * @PrepareForTest({MockDocumentUtils.TestAdHocRoutePerson.class})
+     */
     public static AdHocRoutePerson buildMockAdHocRoutePerson() {
-        TestAdHocRoutePerson adHocPerson = EasyMock.partialMockBuilder(TestAdHocRoutePerson.class)
-                .createNiceMock();
-        EasyMock.replay(adHocPerson);
+        PowerMockito.suppress(PowerMockito.constructor(AdHocRoutePerson.class));
+        TestAdHocRoutePerson adHocPerson = PowerMockito.spy(new TestAdHocRoutePerson());
         adHocPerson.setType(AdHocRouteRecipient.PERSON_TYPE);
         adHocPerson.setPerson(new PersonImpl());
         return adHocPerson;
     }
 
-    /**
-     * Helper AdHocRoutePerson subclass that allows for setting the recipient's ID
-     * without invoking any service locators.
-     */
     public static class TestAdHocRoutePerson extends AdHocRoutePerson {
         private static final long serialVersionUID = 1L;
 
