@@ -15,8 +15,7 @@
 	
 	<!-- Attribute Definitions -->
 
-	 
-	 <bean id="HigherEducationFunction-extension-financialHigherEdFunctionDescription" parent="HigherEducationFunction-extension-financialHigherEdFunctionDescription-parentBean"/>
+	<bean id="HigherEducationFunction-extension-financialHigherEdFunctionDescription" parent="HigherEducationFunction-extension-financialHigherEdFunctionDescription-parentBean"/>
     <bean id="HigherEducationFunction-extension-financialHigherEdFunctionDescription-parentBean" abstract="true" parent="HigherEducationFunctionExtendedAttribute-financialHigherEdFunctionDescription"
           p:name="extension.financialHigherEdFunctionDescription"/>
 
