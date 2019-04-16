@@ -35,7 +35,6 @@ public final class MockDocumentUtils {
         try {
             document = PowerMockito.spy(documentClass.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
         performInitializationFromSkippedConstructor(document);
@@ -54,7 +53,6 @@ public final class MockDocumentUtils {
             PowerMockito.doReturn(sourceAccountingLineClass).when(document, "getSourceAccountingLineClass");
             PowerMockito.doReturn(targetAccountingLineClass).when(document, "getTargetAccountingLineClass");
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
             
         }
