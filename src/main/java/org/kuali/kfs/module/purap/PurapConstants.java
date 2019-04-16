@@ -1124,86 +1124,7 @@ public final class PurapConstants {
 
     }
 
-    private static final Map<String, Class<?>> uncopyableFields() {
-        Map<String, Class<?>> fields = new HashMap<String, Class<?>>();
-        fields.put(KFSConstants.VERSION_NUMBER, null);
-        fields.put("LOG", null);
-        fields.put(KFSPropertyConstants.GENERAL_LEDGER_PENDING_ENTRIES, null);
-        fields.put(PurapPropertyConstants.CAPITAL_ASSET_ITEM_IDENTIFIER, null);
-        fields.put(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_IDENTIFIER, null);
-        fields.put("serialVersionUID", null);
-        return fields;
-    }
-
-    /*
-     * Fields that shouldn't be copied by our reflective copy method. This should only contain fields that are known throughout
-     * objects not item/doc specific ones
-     */
-    public static final Map<String, Class<?>> KNOWN_UNCOPYABLE_FIELDS = uncopyableFields();
-
-    private static final Map<String, Class<?>> uncopyableItemFields() {
-        Map<String, Class<?>> fields = new HashMap<String, Class<?>>();
-        fields.put(PurapPropertyConstants.ITEM_IDENTIFIER, null);
-        fields.put(PurapPropertyConstants.ACCOUNTS, null);
-        return fields;
-    }
-
-    /*
-     * Fields that shouldn't be copied by our reflective copy method. This should only contain fields that are known throughout
-     * objects not item/doc specific ones
-     */
-    public static final Map<String, Class<?>> ITEM_UNCOPYABLE_FIELDS = uncopyableItemFields();
-
-    private static final Map<String, Class<?>> uncopyablePREQItemFields() {
-        Map<String, Class<?>> fields = new HashMap<String, Class<?>>(ITEM_UNCOPYABLE_FIELDS);
-        fields.put(PurapPropertyConstants.QUANTITY, null);
-        fields.put(PurapPropertyConstants.EXTENDED_PRICE, null);
-        fields.put(PurapPropertyConstants.ITEM_TAX_AMOUNT, null);
-        fields.put(PurapPropertyConstants.ITEM_SALES_TAX_AMOUNT, null);
-        return fields;
-    }
-
-
-    /*
-     * fields that shouldn't be copied on PREQ item
-     */
-    public static final Map<String, Class<?>> PREQ_ITEM_UNCOPYABLE_FIELDS = uncopyablePREQItemFields();
-
-    public static final Map<String, Class> uncopyableFieldsForPurchaseOrder() {
-        Map<String, Class> returnMap = new HashMap<String, Class>();
-        returnMap.put(KFSPropertyConstants.DOCUMENT_NUMBER, null);
-        returnMap.put(PurapPropertyConstants.ITEM_IDENTIFIER, PurchaseOrderItem.class);
-        returnMap.put(PurapPropertyConstants.ACCOUNT_IDENTIFIER, PurchaseOrderAccount.class);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_VENDOR_QUOTE_IDENTIFIER, PurchaseOrderVendorQuote.class);
-        returnMap.put("relatedRequisitionViews", PurchasingAccountsPayableDocumentBase.class);
-        returnMap.put("relatedPurchaseOrderViews", PurchasingAccountsPayableDocumentBase.class);
-        returnMap.put("relatedPaymentRequestViews", PurchasingAccountsPayableDocumentBase.class);
-        returnMap.put("relatedCreditMemoViews", PurchasingAccountsPayableDocumentBase.class);
-        returnMap.put("paymentHistoryPaymentRequestViews", PurchasingAccountsPayableDocumentBase.class);
-        returnMap.put("paymentHistoryCreditMemoViews", PurchasingAccountsPayableDocumentBase.class);
-        return returnMap;
-    }
-
-    public static final Map<String, Class> UNCOPYABLE_FIELDS_FOR_PO = uncopyableFieldsForPurchaseOrder();
-
-    public static final Map<String, Class<?>> uncopyableFieldsForSplitPurchaseOrder() {
-        Map<String, Class<?>> returnMap = new HashMap<String, Class<?>>();
-        returnMap.put(KFSPropertyConstants.DOCUMENT_HEADER, null);
-        returnMap.put(PurapPropertyConstants.PURAP_DOC_ID, null);
-        returnMap.put(PurapPropertyConstants.ITEMS, null);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_VENDOR_QUOTES, null);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_INITIALIZATION_DATE, null);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_AWARDED_DATE, null);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_DUE_DATE, null);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_TYPE_CODE, null);
-        returnMap.put(PurapPropertyConstants.PURCHASE_ORDER_QUOTE_VENDOR_NOTE_TEXT, null);
-        return returnMap;
-    }
-
     public static final Map<String, Class<?>> UNCOPYABLE_FIELDS_FOR_SPLIT_PO = uncopyableFieldsForSplitPurchaseOrder();
-
-    @Deprecated // this should be removed - use the central definition in KFSConstants
-    public static final String PURAP_ORIGIN_CODE = "01";
 
     @Deprecated // this is mostly a duplication of an earlier subclass
     public static final class PurapDocTypeCodes {
@@ -1215,30 +1136,6 @@ public final class PurapConstants {
         public static final String PO_REOPEN_DOCUMENT = "POR";
         public static final String PO_VOID_DOCUMENT = "POV";
     }
-
-    public static final Integer PRORATION_SCALE = new Integer(6);
-    public static final Integer CREDITMEMO_PRORATION_SCALE = new Integer(20);
-
-    @Deprecated // This information needs to be looked up from the DD
-    private static HashMap<String, String> getPurapParameterDetailTypeCodes() {
-        HashMap<String, String> map;
-        map = new HashMap<String, String>();
-        map.put("REQS", RequisitionDocument.class.getName());
-        map.put("PO", PurchaseOrderDocument.class.getName());
-        map.put("POC", PurchaseOrderDocument.class.getName());
-        map.put("POR", PurchaseOrderDocument.class.getName());
-        map.put("POA", PurchaseOrderDocument.class.getName());
-        map.put("POPH", PurchaseOrderDocument.class.getName());
-        map.put("PORH", PurchaseOrderDocument.class.getName());
-        map.put("PORT", PurchaseOrderDocument.class.getName());
-        map.put("POV", PurchaseOrderDocument.class.getName());
-        map.put("POSP", PurchaseOrderDocument.class.getName());
-        map.put("PREQ", PaymentRequestDocument.class.getName());
-        map.put("CM", VendorCreditMemoDocument.class.getName());
-          return map;
-    }
-
-    public static final HashMap<String, String> PURAP_DETAIL_TYPE_CODE_MAP = getPurapParameterDetailTypeCodes();
 
     public static class CapitalAssetTabStrings {
         public static final String SYSTEM_DEFINITION = "Definition: A system is any group of line items added together to create one or more identical assets. Systems are further defined as line items that work together to perform one function. Each of the line items must be necessary for the system to function.";
@@ -1370,15 +1267,6 @@ public final class PurapConstants {
 
     }
 
-    public static String PRODUCTION_ENVIRONMENT = "PRD";
-
-    public static String FAX_TEST_PHONE_NUMBER = "FAX_TEST_PHONE_NUMBER";
-
-    public static final String ELECTRONIC_INVOICE_FILE_TYPE_INDENTIFIER = "electronicInvoiceInputFileType";
-    public static final String B2B_PO_RESPONSE_FILE_TYPE_INDENTIFIER = "b2bPOResponseFileType";
-    public static final String B2B_PUNCH_OUT_ORDER_FILE_TYPE_INDENTIFIER = "b2bPunchOutOrderFileType";
-    public static final String B2B_PUNCH_OUT_RESPONSE_FILE_TYPE_INDENTIFIER = "b2bPunchOutResponseFileType";
-
     public static class CapitalAssetAvailability {
         public static final String NONE = "NONE";
         public static final String ONCE = "ONCE";
@@ -1392,8 +1280,10 @@ public final class PurapConstants {
     }
 
     public static final class CAMS_REQUIREDNESS_FIELDS {
+        public static final Map<String, String> REQUIREDNESS_FIELDS_BY_PARAMETER_NAMES = getRequirednessFieldsByParameterNames();
+        
         private static final Map<String, String> getRequirednessFieldsByParameterNames() {
-            Map<String, String> fieldsByParameterNames = new HashMap<String, String>();
+            Map<String, String> fieldsByParameterNames = new HashMap<>();
             fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_NUMBER_ON_REQUISITION, "itemCapitalAssets.capitalAssetNumber");
             fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TRANSACTION_TYPE_ON_REQUISITION, "capitalAssetTransactionTypeCode");
             fieldsByParameterNames.put(PurapParameterConstants.CapitalAsset.CHARTS_REQUIRING_ASSET_TYPE_ON_REQUISITION, "capitalAssetTypeCode");
@@ -1420,8 +1310,6 @@ public final class PurapConstants {
 
             return Collections.unmodifiableMap(fieldsByParameterNames);
         }
-
-        public static final Map<String, String> REQUIREDNESS_FIELDS_BY_PARAMETER_NAMES = getRequirednessFieldsByParameterNames();
     }
 
     public static class CapitalAssetSystemStates{
@@ -1571,31 +1459,5 @@ public final class PurapConstants {
         public static final String BOTH_WITH_DEFAULT_PROPORTIONAL_DESCRIPTION = "Both, with Proportional as default";
         public static final String BOTH_WITH_DEFAULT_SEQUENTIAL_DESCRIPTION = "Both, with Sequential as default";
     }
-
-    public static final String PURAP_APPLICATION_DOCUMENT_ID_NOT_AVAILABLE = "Not Available";
-    public static final String PURAP_APPLICATION_DOCUMENT_STATUS_NOT_AVAILABLE = "Not Available";
-
-    public static final String DELIVERY_BUILDING_NAME_INACTIVE_ERROR = "document.deliveryBuildingName";
-    public static final String DELIVERY_ROOM_NUMBER_INACTIVE_ERROR   = "document.deliveryBuildingRoomNumber";
-
-    public static final String PURAP_REQS_ORG_CD   = "document.organizationCode";
-
-    public static final String PO_RETRANSMIT_SELECT_TAB_ERRORS = "document.items";
-
-    public static final String ITEM_PURCHASING_COMMODITY_CODE = "distributePurchasingCommodityCode";
-
-    public static final String ITEM_TYPE_QTY = "Qty";
-    public static final String ITEM_TYPE_NO_QTY = "No Qty";
-
-
-   public static final String PO_FINAL_ANNOTATION_TEXT= "message.document.purap.final.annotation";
-   public static final String PO_DISAPPROVAL_ANNOTATION_TEXT= "message.document.purap.disapprove.annotation";
-   public static final String PO_CANCEL_ANNOTATION_TEXT= "message.document.purap.cancel.annotation";
-
-   /**
-    * Private Constructor since this is a constants class that should never be instantiated.
-    */
-   private PurapConstants() {
-   }
    
 }

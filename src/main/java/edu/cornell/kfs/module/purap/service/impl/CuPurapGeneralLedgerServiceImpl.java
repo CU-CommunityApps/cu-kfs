@@ -83,7 +83,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(preq.getDocumentNumber()));
 
         // when cancelling a PREQ, do not book encumbrances if PO is CLOSED
-        if (encumbrances != null && !(CANCEL_PAYMENT_REQUEST.equals(processType) && PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED.equals(preq.getPurchaseOrderDocument().getApplicationDocumentStatus()))) {
+		if (encumbrances != null
+				&& !(CANCEL_PAYMENT_REQUEST.equals(processType) && PurapConstants.PurchaseOrderStatuses.APPDOC_CLOSED
+						.equals(preq.getPurchaseOrderDocument().getApplicationDocumentStatus()))) {
             LOG.debug("generateEntriesPaymentRequest() generate encumbrance entries");
             if (CREATE_PAYMENT_REQUEST.equals(processType)) {
                 // on create, use CREDIT code for encumbrances

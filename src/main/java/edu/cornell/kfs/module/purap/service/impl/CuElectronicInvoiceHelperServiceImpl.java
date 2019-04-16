@@ -1155,8 +1155,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     	return false;
     }
     
-    public ElectronicInvoiceRejectDocument createRejectDocument(ElectronicInvoice eInvoice, ElectronicInvoiceOrder electronicInvoiceOrder, ElectronicInvoiceLoad eInvoiceLoad) {
-        LOG.info("Creating reject document [DUNS=" + eInvoice.getDunsNumber() + ",POID=" + electronicInvoiceOrder.getInvoicePurchaseOrderID() + "]");
+	public ElectronicInvoiceRejectDocument createRejectDocument(ElectronicInvoice eInvoice,
+			ElectronicInvoiceOrder electronicInvoiceOrder, ElectronicInvoiceLoad eInvoiceLoad) {
+		LOG.info("Creating reject document [DUNS=" + eInvoice.getDunsNumber() + ",POID="
+				+ electronicInvoiceOrder.getInvoicePurchaseOrderID() + "]");
 
         ElectronicInvoiceRejectDocument eInvoiceRejectDocument;
 
