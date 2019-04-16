@@ -92,7 +92,8 @@
 
 	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.xml.RassPropertyDefinition"/>
 
-	<bean id="agencyDefinition" class="edu.cornell.kfs.rass.batch.xml.AgencyTranslationDefinition"
+	<bean id="agencyDefinition" parent="agencyDefinition-parentBean"/>
+	<bean id="agencyDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.xml.AgencyTranslationDefinition"
 			p:agencyService-ref="agencyService"
 			p:rootXmlObjectListPropertyName="agencies"
 			p:documentTypeName="AGCY">

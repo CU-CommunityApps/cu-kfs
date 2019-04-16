@@ -63,10 +63,10 @@ public class AgencyTranslationDefinition extends RassObjectTranslationDefinition
     @Override
     public void processCustomTranslationForBusinessObjectEdit(
             RassXmlAgencyEntry xmlAgency, Agency oldAgency, Agency newAgency) {
-        newAgency.refreshReferenceObject(KFSPropertyConstants.AGENCY_TYPE);
-        newAgency.refreshReferenceObject(KFSPropertyConstants.REPORTS_TO_AGENCY);
+        refreshReferenceObject(newAgency, KFSPropertyConstants.AGENCY_TYPE);
+        refreshReferenceObject(newAgency, KFSPropertyConstants.REPORTS_TO_AGENCY);
         AgencyExtendedAttribute agencyExtension = (AgencyExtendedAttribute) newAgency.getExtension();
-        agencyExtension.refreshReferenceObject(CuCGPropertyConstants.AGENCY_ORIGIN);
+        refreshReferenceObject(agencyExtension, CuCGPropertyConstants.AGENCY_ORIGIN);
     }
 
 }

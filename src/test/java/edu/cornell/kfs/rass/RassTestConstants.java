@@ -11,5 +11,6 @@ public final class RassTestConstants {
 
     public static final String RASS_SERVICE_BEAN_NAME = "rassService";
     public static final String AGENCY_SERVICE_BEAN_NAME = "agencyService";
+    public static final String ROUTE_HEADER_SERVICE_BEAN_NAME = "enDocumentRouteHeaderService";
 
 }

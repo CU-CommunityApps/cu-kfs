@@ -12,8 +12,21 @@ public final class RassConstants {
 
     public enum RassResultCode {
         SUCCESS,
+        SUCCESS_NEW,
+        SUCCESS_EDIT,
         ERROR,
         SKIPPED;
+        
+        public static boolean isSuccessfulResult(RassResultCode resultCode) {
+            switch (resultCode) {
+                case SUCCESS :
+                case SUCCESS_NEW :
+                case SUCCESS_EDIT :
+                    return true;
+                default :
+                    return false;
+            }
+        }
     }
 
 }

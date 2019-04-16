@@ -10,7 +10,9 @@ public enum RassXmlAgencyEntryFixture {
     SOME("468", "Some", "Some University", "U", "", "Some University", "USA"),
     DoS("579", "SM", "United States Department of Something ", "F", "", "United States Department of Something ", "USA"),
     TEST("101", "Test", "Test University", "U", null, null, "USA"),
-    SOME_V2("468", "Some", "Some University", "U", "", "Some Other University", "USA", false);
+    SOME_V2("468", "Some", "Some University", "U", "", "Some Other University", "USA", false),
+    LIMITED("555", "Limited", "Limited Ltd.", "C", "468", "Limited Ltd.", "USA", false),
+    FIJI_DOT("975", "Fiji_DoT", "Fiji Department of Treasury", "G", "", "Fiji Treasury Department", "Foreign", false);
 
     public final String number;
     public final String reportingName;

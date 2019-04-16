@@ -23,14 +23,18 @@ public class RassStep extends AbstractStep{
         List<RassXmlFileParseResult> successfulResults = getSuccessfullyParsedFileResults(parseResults);
         List<RassXmlObjectGroupResult> processingResults = rassService.updateKFS(successfulResults);
         RassXmlReport report = new RassXmlReport(parseResults, processingResults);
-        LOG.info("execute, the number of files found to process is: " + report.getFileParseResults().size());
+        sendReport(report);
         return true;
     }
 
-    public List<RassXmlFileParseResult> getSuccessfullyParsedFileResults(List<RassXmlFileParseResult> parseResults) {
+    protected List<RassXmlFileParseResult> getSuccessfullyParsedFileResults(List<RassXmlFileParseResult> parseResults) {
         return parseResults.stream()
                 .filter(parseResult -> RassResultCode.SUCCESS.equals(parseResult.getResultCode()))
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    protected void sendReport(RassXmlReport report) {
+        LOG.debug("sendReport, The report-sending functionality has not been implemented yet.");
     }
 
     public void setRassService(RassService rassService) {

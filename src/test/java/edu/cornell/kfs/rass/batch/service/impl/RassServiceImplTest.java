@@ -1,58 +1,45 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
-import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.bo.PersistableBusinessObject;
-import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.krad.maintenance.Maintainable;
-import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
-import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MaintenanceDocumentService;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
-import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
-import org.kuali.rice.kim.api.identity.Person;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Stubber;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
-import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
 import edu.cornell.kfs.rass.RassConstants.RassResultCode;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
-import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.RassXmlObjectGroupResult;
+import edu.cornell.kfs.rass.batch.RassXmlObjectResult;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
+import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
 import edu.cornell.kfs.sys.util.LoadSpringFile;
-import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
 
 @RunWith(PowerMockRunner.class)
@@ -64,7 +51,7 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     private AgencyService mockAgencyService;
     private TestRassServiceImpl rassService;
 
-    private List<Pair<Agency, String>> agencyUpdates;
+    private List<Maintainable> agencyUpdates;
 
     @Before
     public void setUp() throws Exception {
@@ -81,37 +68,203 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
     @Test
     public void testUpdateSingleAgency() throws Exception {
-        List<RassXmlDocumentWrapperFixture> xmlContents = Collections.singletonList(RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_FILE);
-        assertXmlContentsPerformExpectedObjectUpdates(xmlContents,
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
                 expectedResults(
-                        agencies(Pair.of(RassXmlAgencyEntryFixture.SOME_V2, KRADConstants.MAINTENANCE_EDIT_ACTION))));
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testCreateSingleAgency() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.SUCCESS_NEW)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testCreateAndUpdateMultipleAgenciesFromSingleFile() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.SUCCESS_NEW),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testHandleSingleExistingAgencyWithNoChanges() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_EXISTING_AGENCY_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME, RassResultCode.SKIPPED)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testUpdateAgencyAndIgnoreSubsequentDuplicateUpdate() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SKIPPED)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testCreateAgencyAndIgnoreSubsequentDuplicateCreate() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.SUCCESS_NEW),
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.SKIPPED)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testLoadMultipleFilesWithAgencies() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.SUCCESS_NEW),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SKIPPED),
+                                agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassResultCode.SUCCESS_NEW)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testWaitForRouteStatusAfterUpdateToSameAgency() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SKIPPED)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testTimeoutOfRouteStatusCheckAfterUpdateToSameAgency() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.ERROR)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
     }
 
     private void assertXmlContentsPerformExpectedObjectUpdates(List<RassXmlDocumentWrapperFixture> xmlContents,
-            ExpectedResultsHolder expectedResultsHolder) throws Exception {
+            ExpectedObjectGroupResultsHolder expectedResultsHolder) throws Exception {
         List<RassXmlFileParseResult> fileResults = xmlContents.stream()
                 .map(RassXmlDocumentWrapperFixture::toRassXmlDocumentWrapper)
                 .map(this::encaseWrapperInSuccessfulFileResult)
                 .collect(Collectors.toCollection(ArrayList::new));
         
-        rassService.updateKFS(fileResults);
+        List<RassXmlObjectGroupResult> actualResults = rassService.updateKFS(fileResults);
         
-        assertAgenciesWereUpdatedAsExpected(expectedResultsHolder.expectedAgencies);
+        assertAgenciesWereUpdatedAndReportedAsExpected(expectedResultsHolder, actualResults);
     }
 
     private RassXmlFileParseResult encaseWrapperInSuccessfulFileResult(RassXmlDocumentWrapper documentWrapper) {
         return new RassXmlFileParseResult(KFSConstants.EMPTY_STRING, RassResultCode.SUCCESS, Optional.of(documentWrapper));
     }
 
-    private void assertAgenciesWereUpdatedAsExpected(List<Pair<RassXmlAgencyEntryFixture, String>> expectedResults) {
+    private void assertAgenciesWereUpdatedAndReportedAsExpected(
+            ExpectedObjectGroupResultsHolder expectedGroupResults, List<RassXmlObjectGroupResult> actualGroupResults) {
+        ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> expectedAgencyGroupResults = expectedGroupResults.getExpectedAgencyResults();
+        List<ExpectedObjectResult<RassXmlAgencyEntryFixture>> expectedSuccessfulAgencyChanges = getExpectedSuccessfulResults(
+                expectedAgencyGroupResults.getExpectedObjectResults());
+        RassXmlObjectGroupResult actualAgencyGroupResults = getGroupResultForType(actualGroupResults, Agency.class);
+        
+        assertCorrectObjectResultsWereReported(expectedAgencyGroupResults, actualAgencyGroupResults);
+        assertAgenciesWereUpdatedAsExpected(expectedSuccessfulAgencyChanges);
+    }
+
+    private RassXmlObjectGroupResult getGroupResultForType(List<RassXmlObjectGroupResult> actualGroupResults, Class<?> businessObjectClass) {
+        return actualGroupResults.stream()
+                .filter(groupResult -> businessObjectClass.equals(groupResult.getBusinessObjectClass()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Could not find processing results for BO type " + businessObjectClass));
+    }
+
+    private <E extends Enum<E>> void assertCorrectObjectResultsWereReported(
+            ExpectedObjectGroupResult<E> expectedGroupResult, RassXmlObjectGroupResult actualGroupResult) {
+        Class<?> expectedBusinessObjectClass = expectedGroupResult.getBusinessObjectClass();
+        List<ExpectedObjectResult<E>> expectedResults = expectedGroupResult.getExpectedObjectResults();
+        List<RassXmlObjectResult> actualResults = actualGroupResult.getObjectResults();
+        
+        assertEquals("Wrong businessobject class for result group", expectedBusinessObjectClass, actualGroupResult.getBusinessObjectClass());
+        assertEquals("Wrong result code for group", expectedGroupResult.getResultCode(), actualGroupResult.getResultCode());
+        assertEquals("Wrong number of processing results for type " + expectedBusinessObjectClass, expectedResults.size(), actualResults.size());
+        
+        for (int i = 0; i < expectedResults.size(); i++) {
+            ExpectedObjectResult<?> expectedResult = expectedResults.get(i);
+            RassXmlObjectResult actualResult = actualResults.get(i);
+            assertEquals("Wrong business object class at index " + i, expectedBusinessObjectClass, actualResult.getBusinessObjectClass());
+            assertEquals("Wrong object primary key at index " + i, expectedResult.getPrimaryKey(), actualResult.getPrimaryKey());
+            assertEquals("Wrong result code at index " + i, expectedResult.getResultCode(), actualResult.getResultCode());
+            if (RassResultCode.isSuccessfulResult(expectedResult.getResultCode())) {
+                assertTrue("A document should have been created for successful result at index " + i,
+                        StringUtils.isNotBlank(actualResult.getDocumentId()));
+            } else {
+                assertTrue("A document should not have been created for result at index " + i,
+                        StringUtils.isBlank(actualResult.getDocumentId()));
+            }
+        }
+    }
+
+    private void assertAgenciesWereUpdatedAsExpected(List<ExpectedObjectResult<RassXmlAgencyEntryFixture>> expectedResults) {
         assertEquals("Wrong number of agencies created or updated", expectedResults.size(), agencyUpdates.size());
         for (int i = 0; i < expectedResults.size(); i++) {
-            Pair<RassXmlAgencyEntryFixture, String> expectedResult = expectedResults.get(i);
-            Pair<Agency, String> actualResult = agencyUpdates.get(i);
-            assertEquals("Wrong maintenance action for agency at index " + i, expectedResult.getRight(), actualResult.getRight());
+            ExpectedObjectResult<RassXmlAgencyEntryFixture> expectedResult = expectedResults.get(i);
+            Maintainable actualResult = agencyUpdates.get(i);
+            assertEquals("Wrong maintenance action for agency at index " + i,
+                    expectedResult.getExpectedMaintenanceAction(), actualResult.getMaintenanceAction());
             
-            RassXmlAgencyEntryFixture expectedAgency = expectedResult.getLeft();
-            Agency actualAgency = actualResult.getLeft();
+            RassXmlAgencyEntryFixture expectedAgency = expectedResult.getBusinessObjectFixture();
+            Agency actualAgency = (Agency) actualResult.getDataObject();
             assertEquals("Wrong agency number at index " + i, expectedAgency.number, actualAgency.getAgencyNumber());
             assertEquals("Wrong reporting name at index " + i, expectedAgency.reportingName, actualAgency.getReportingName());
             assertEquals("Wrong full name at index " + i, expectedAgency.fullName, actualAgency.getFullName());
@@ -125,217 +278,75 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         }
     }
 
-    private void recordModifiedAgencyAndUpdateAgencyService(Agency agency, String maintenanceAction) {
+    private <E extends Enum<E>> List<ExpectedObjectResult<E>> getExpectedSuccessfulResults(List<ExpectedObjectResult<E>> expectedResults) {
+        return expectedResults.stream()
+                .filter(expectedResult -> RassResultCode.isSuccessfulResult(expectedResult.getResultCode()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private void recordModifiedAgencyAndUpdateAgencyService(Maintainable agencyMaintainable) {
+        Agency agency = (Agency) agencyMaintainable.getDataObject();
         String agencyNumber = agency.getAgencyNumber();
-        agencyUpdates.add(Pair.of(agency, maintenanceAction));
+        agencyUpdates.add(agencyMaintainable);
         Mockito.doReturn(agency)
                 .when(mockAgencyService).getByPrimaryId(agencyNumber);
     }
 
-    private ExpectedResultsHolder expectedResults(Pair<RassXmlAgencyEntryFixture, String>[] expectedAgencies) {
-        return new ExpectedResultsHolder(expectedAgencies);
+    private void overrideStatusesReturnedByRouteHeaderService(int documentNumberAsInt, String... routeStatuses) {
+        if (routeStatuses == null || routeStatuses.length == 0) {
+            throw new IllegalArgumentException("at least one route status must be specified");
+        }
+        RouteHeaderService routeHeaderService = springContext.getBean(RassTestConstants.ROUTE_HEADER_SERVICE_BEAN_NAME, RouteHeaderService.class);
+        String documentNumber = String.valueOf(documentNumberAsInt);
+        
+        Stubber valuesToReturn = Mockito.doReturn(routeStatuses[0]);
+        for (int i = 1; i < routeStatuses.length; i++) {
+            valuesToReturn = valuesToReturn.doReturn(routeStatuses[i]);
+        }
+        valuesToReturn.when(routeHeaderService).getDocumentStatus(Mockito.eq(documentNumber));
+    }
+
+    private List<RassXmlDocumentWrapperFixture> xmlFiles(RassXmlDocumentWrapperFixture... xmlFileFixtures) {
+        return Arrays.asList(xmlFileFixtures);
+    }
+
+    private ExpectedObjectGroupResultsHolder expectedResults(
+            ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> expectedAgencies,
+            ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedProposals,
+            ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedAwards) {
+        return new ExpectedObjectGroupResultsHolder(expectedAgencies, expectedProposals, expectedAwards);
     }
 
     @SafeVarargs
-    private final Pair<RassXmlAgencyEntryFixture, String>[] agencies(Pair<RassXmlAgencyEntryFixture, String>... expectedAgencies) {
-        return expectedAgencies;
+    private final ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> agencies(
+            RassResultCode resultCode, ExpectedObjectResult<RassXmlAgencyEntryFixture>... expectedAgencies) {
+        return new ExpectedObjectGroupResult<>(Agency.class, resultCode, expectedAgencies);
     }
 
-    private static class ExpectedResultsHolder {
-        private final List<Pair<RassXmlAgencyEntryFixture, String>> expectedAgencies;
-        
-        private ExpectedResultsHolder(Pair<RassXmlAgencyEntryFixture, String>[] expectedAgencies) {
-            this.expectedAgencies = Collections.unmodifiableList(Arrays.asList(expectedAgencies));
-        }
+    private ExpectedObjectResult<RassXmlAgencyEntryFixture> agency(RassXmlAgencyEntryFixture agencyFixture, RassResultCode resultCode) {
+        return new ExpectedObjectResult<>(agencyFixture, resultCode, fixture -> fixture.number);
     }
 
-    public static class TestRassServiceImpl extends RassServiceImpl {
-        
-        private BiConsumer<Agency, String> agencyUpdateTracker;
-        
-        private void setAgencyUpdateTracker(BiConsumer<Agency, String> agencyUpdateTracker) {
-            this.agencyUpdateTracker = agencyUpdateTracker;
-        }
-        
-        @Override
-        protected <R extends PersistableBusinessObject> R createMinimalObject(Class<R> businessObjectClass) {
-            R businessObject = super.createMinimalObject(businessObjectClass);
-            if (businessObject instanceof Agency) {
-                businessObject.setExtension(new AgencyExtendedAttribute());
-            }
-            return wrapObjectAndSuppressReferenceRefreshes(businessObject);
-        }
-        
-        @Override
-        protected <R extends PersistableBusinessObject> R deepCopyObject(R businessObject) {
-            R objectCopy = super.deepCopyObject(businessObject);
-            return wrapObjectAndSuppressReferenceRefreshes(objectCopy);
-        }
-        
-        protected <R extends PersistableBusinessObject> R wrapObjectAndSuppressReferenceRefreshes(R businessObject) {
-            R businessObjectSpy = Mockito.spy(businessObject);
-            Mockito.doNothing()
-                    .when(businessObjectSpy).refreshReferenceObject(Mockito.anyString());
-            
-            if (businessObject instanceof Agency) {
-                PersistableBusinessObjectExtension extensionSpy = Mockito.spy(businessObjectSpy.getExtension());
-                Mockito.doNothing()
-                        .when(extensionSpy).refreshReferenceObject(Mockito.anyString());
-                businessObjectSpy.setExtension(extensionSpy);
-            }
-            
-            return businessObjectSpy;
-        }
-        
-        @Override
-        protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
-                Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition)
-                throws WorkflowException {
-            MaintenanceDocument maintenanceDocument = super.createAndRouteMaintenanceDocument(businessObjects, maintenanceAction, objectDefinition);
-            Object newBusinessObject = maintenanceDocument.getNewMaintainableObject().getDataObject();
-            if (newBusinessObject instanceof Agency) {
-                agencyUpdateTracker.accept((Agency) newBusinessObject, maintenanceAction);
-            }
-            return maintenanceDocument;
-        }
-        
-        @Override
-        protected UserSession buildSessionForSystemUser() {
-            Person mockSystemUser = MockPersonUtil.createMockPerson(UserNameFixture.kfs);
-            return MockPersonUtil.createMockUserSession(mockSystemUser);
-        }
-        
+    @SafeVarargs
+    private final ExpectedObjectGroupResult<RassXmlAwardEntryFixture> proposals(
+            RassResultCode resultCode, ExpectedObjectResult<RassXmlAwardEntryFixture>... expectedProposals) {
+        return new ExpectedObjectGroupResult<>(Proposal.class, resultCode, expectedProposals);
     }
 
-    public static class ServiceFactory {
-        
-        public MaintenanceDocumentService buildMockMaintenanceDocumentService() throws Exception {
-            MaintenanceDocumentService maintenanceDocumentService = Mockito.mock(MaintenanceDocumentService.class);
-            MutableInt documentIdSequence = new MutableInt(1000);
-            
-            Mockito.when(maintenanceDocumentService.setupNewMaintenanceDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-                    .then(invocation -> buildNewMaintenanceDocument(invocation, documentIdSequence.addAndGet(1)));
-            
-            return maintenanceDocumentService;
-        }
-        
-        protected MaintenanceDocument buildNewMaintenanceDocument(InvocationOnMock invocation, int documentNumberAsInt) {
-            try {
-                String businessObjectClassName = Objects.requireNonNull(invocation.getArgument(0));
-                String documentTypeName = Objects.requireNonNull(invocation.getArgument(1));
-                String maintenanceAction = Objects.requireNonNull(invocation.getArgument(2));
-                String documentNumber = String.valueOf(documentNumberAsInt);
-                
-                Class<? extends PersistableBusinessObject> businessObjectClass = getBusinessObjectClass(businessObjectClassName, documentTypeName);
-                Class<? extends Maintainable> maintainableClass = getMaintainableClass(documentTypeName);
-                validateMaintenanceAction(maintenanceAction);
-                
-                MaintenanceDocumentBase maintenanceDocument = PowerMockito.spy(new MaintenanceDocumentBase());
-                FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
-                Maintainable oldMaintainable = maintainableClass.newInstance();
-                Maintainable newMaintainable = maintainableClass.newInstance();
-                PersistableBusinessObject oldBo = businessObjectClass.newInstance();
-                PersistableBusinessObject newBo = businessObjectClass.newInstance();
-                
-                oldMaintainable.setDataObject(oldBo);
-                oldMaintainable.setDataObjectClass(businessObjectClass);
-                newMaintainable.setDataObject(newBo);
-                newMaintainable.setDataObjectClass(businessObjectClass);
-                documentHeader.setDocumentNumber(documentNumber);
-                maintenanceDocument.setOldMaintainableObject(oldMaintainable);
-                maintenanceDocument.setNewMaintainableObject(newMaintainable);
-                maintenanceDocument.setDocumentHeader(documentHeader);
-                maintenanceDocument.setDocumentNumber(documentNumber);
-                
-                return maintenanceDocument;
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        
-        @SuppressWarnings("unchecked")
-        protected Class<? extends PersistableBusinessObject> getBusinessObjectClass(String businessObjectClassName, String documentTypeName)
-                throws ClassNotFoundException {
-            Class<? extends PersistableBusinessObject> businessObjectClass = (Class<? extends PersistableBusinessObject>) Class.forName(businessObjectClassName);
-            Class<? extends PersistableBusinessObject> expectedBusinessObjectClass;
-            
-            switch (documentTypeName) {
-                case RassTestConstants.AGENCY_DOC_TYPE_NAME :
-                    expectedBusinessObjectClass = Agency.class;
-                    break;
-                default :
-                    throw new IllegalArgumentException("Cannot find BO class for document type " + documentTypeName);
-            }
-            
-            if (!expectedBusinessObjectClass.isAssignableFrom(businessObjectClass)) {
-                throw new IllegalArgumentException(
-                        expectedBusinessObjectClass.getSimpleName() + " does not support BO type " + businessObjectClassName);
-            }
-            
-            return businessObjectClass;
-        }
-        
-        protected Class<? extends Maintainable> getMaintainableClass(String documentTypeName) {
-            switch (documentTypeName) {
-                case RassTestConstants.AGENCY_DOC_TYPE_NAME :
-                    return CuAgencyMaintainableImpl.class;
-                default :
-                    throw new IllegalArgumentException("Cannot find maintainable class for document type " + documentTypeName);
-            }
-        }
-        
-        protected void validateMaintenanceAction(String maintenanceAction) {
-            switch (maintenanceAction) {
-                case KRADConstants.MAINTENANCE_NEW_ACTION :
-                case KRADConstants.MAINTENANCE_EDIT_ACTION :
-                    return;
-                default :
-                    throw new IllegalArgumentException("Unexpected or unsupported maintenance action " + maintenanceAction);
-            }
-        }
-        
-        public DocumentService buildMockDocumentService() throws Exception {
-            DocumentService documentService = Mockito.mock(DocumentService.class);
-            
-            Mockito.when(documentService.saveDocument(Mockito.any(MaintenanceDocument.class)))
-                    .then(invocation -> invocation.getArgument(0));
-            Mockito.when(documentService.routeDocument(Mockito.any(MaintenanceDocument.class), Mockito.anyString(), Mockito.any()))
-                    .then(invocation -> invocation.getArgument(0));
-            
-            return documentService;
-        }
-        
-        public DataDictionaryService buildMockDataDictionaryService() throws Exception {
-            DataDictionaryService dataDictionaryService = Mockito.mock(DataDictionaryService.class);
-            
-            Mockito.when(dataDictionaryService.getAttributeMaxLength(Mockito.any(), Mockito.anyString()))
-                    .thenReturn(RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
-            
-            return dataDictionaryService;
-        }
-        
-        public RouteHeaderService buildMockRouteHeaderService() throws Exception {
-            RouteHeaderService routeHeaderService = Mockito.mock(RouteHeaderService.class);
-            
-            Mockito.when(routeHeaderService.getDocumentStatus(Mockito.anyString()))
-                    .thenReturn(KewApiConstants.ROUTE_HEADER_FINAL_CD);
-            
-            return routeHeaderService;
-        }
-        
-        public AgencyService buildMockAgencyService() throws Exception {
-            AgencyService agencyService = Mockito.mock(AgencyService.class);
-            
-            Arrays.stream(RassXmlAgencyEntryFixture.values())
-                    .filter(fixture -> fixture.existsByDefaultForSearching)
-                    .forEach(fixture -> {
-                        Mockito.when(agencyService.getByPrimaryId(fixture.number))
-                                .thenReturn(fixture.toAgency());
-                    });
-            
-            return agencyService;
-        }
-        
+    @SuppressWarnings("unused")
+    private ExpectedObjectResult<RassXmlAwardEntryFixture> proposal(RassXmlAwardEntryFixture awardFixture, RassResultCode resultCode) {
+        return new ExpectedObjectResult<>(awardFixture, resultCode, fixture -> fixture.proposalNumber);
+    }
+
+    @SafeVarargs
+    private final ExpectedObjectGroupResult<RassXmlAwardEntryFixture> awards(
+            RassResultCode resultCode, ExpectedObjectResult<RassXmlAwardEntryFixture>... expectedAwards) {
+        return new ExpectedObjectGroupResult<>(Award.class, resultCode, expectedAwards);
+    }
+
+    @SuppressWarnings("unused")
+    private ExpectedObjectResult<RassXmlAwardEntryFixture> award(RassXmlAwardEntryFixture awardFixture, RassResultCode resultCode) {
+        return new ExpectedObjectResult<>(awardFixture, resultCode, fixture -> fixture.proposalNumber);
     }
 
 }

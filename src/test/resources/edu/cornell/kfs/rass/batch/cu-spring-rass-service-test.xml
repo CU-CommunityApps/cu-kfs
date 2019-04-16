@@ -18,10 +18,13 @@
         </property>
     </bean>
 
-    <bean id="rassService" parent="rassService-parentBean"
-            class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImplTest$TestRassServiceImpl"/>
+    <bean id="rassService" parent="rassService-parentBean" class="edu.cornell.kfs.rass.batch.service.impl.TestRassServiceImpl"
+            p:documentStatusCheckDelayMillis="100"
+            p:maxStatusCheckAttempts="3"/>
 
-    <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImplTest$ServiceFactory"/>
+	<bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.xml.TestAgencyTranslationDefinition"/>
+
+    <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 
     <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
 
@@ -40,6 +43,7 @@
                 <idref bean="rassService-parentBean"/>
                 <idref bean="rassProperty"/>
                 <idref bean="agencyDefinition"/>
+                <idref bean="agencyDefinition-parentBean"/>
                 <idref bean="batchInputFileService"/>
                 <idref bean="batchInputFileService-parentBean"/>
                 <idref bean="rassXmlInputFileType"/>

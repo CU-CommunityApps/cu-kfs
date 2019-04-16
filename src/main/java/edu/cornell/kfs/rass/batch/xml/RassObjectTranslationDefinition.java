@@ -43,6 +43,14 @@ public abstract class RassObjectTranslationDefinition<T, R extends PersistableBu
         // Do nothing by default.
     }
 
+    public boolean businessObjectEditIsPermitted(T xmlObject, R oldBusinessObject) {
+        return true;
+    }
+
+    public boolean otherCustomObjectPropertiesHaveDifferences(R oldBusinessObject, R newBusinessObject) {
+        return false;
+    }
+
     public String printObjectLabelAndKeys(T xmlObject) {
         return getObjectLabel() + KFSConstants.BLANK_SPACE + printPrimaryKeyValues(xmlObject);
     }
@@ -66,5 +74,9 @@ public abstract class RassObjectTranslationDefinition<T, R extends PersistableBu
     public abstract List<String> getKeysOfObjectUpdatesToWaitFor(T xmlObject);
 
     public abstract R findExistingObject(T xmlObject);
+
+    protected void refreshReferenceObject(PersistableBusinessObject businessObject, String propertyName) {
+        businessObject.refreshReferenceObject(propertyName);
+    }
 
 }

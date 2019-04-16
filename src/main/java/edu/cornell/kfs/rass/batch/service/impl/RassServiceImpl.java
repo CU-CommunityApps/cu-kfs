@@ -107,7 +107,7 @@ public class RassServiceImpl implements RassService {
         PendingDocumentTracker documentTracker = new PendingDocumentTracker();
         
         RassXmlObjectGroupResult agencyResults = updateBOs(successfullyParsedFiles, agencyDefinition, documentTracker);
-        LOG.debug("updateKFS, NOTE: Proposal and Award parsing still needs to be implemented!");
+        LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
         
         waitForRemainingGeneratedDocumentsToFinish(documentTracker);
         
@@ -138,11 +138,12 @@ public class RassServiceImpl implements RassService {
                 for (Object xmlObject : xmlObjects) {
                     T typedXmlObject = objectDefinition.getXmlObjectClass().cast(xmlObject);
                     RassXmlObjectResult result = processObject(typedXmlObject, objectDefinition, documentTracker);
-                    if (RassResultCode.SUCCESS.equals(result)) {
+                    if (RassResultCode.isSuccessfulResult(result.getResultCode())) {
                         documentTracker.addDocumentIdToTrack(result);
-                    } else if (RassResultCode.ERROR.equals(result)) {
+                    } else if (RassResultCode.ERROR.equals(result.getResultCode())) {
                         documentTracker.addObjectUpdateFailureToTrack(result);
                     }
+                    objectResults.add(result);
                 }
                 LOG.info("updateBOs, Finished processing " + objectDefinition.getObjectLabel() + " objects from file");
             }
@@ -256,7 +257,7 @@ public class RassServiceImpl implements RassService {
                 + " to create " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         return new RassXmlObjectResult(
                 objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(businessObject),
-                maintenanceDocument.getDocumentNumber(), RassResultCode.SUCCESS);
+                maintenanceDocument.getDocumentNumber(), RassResultCode.SUCCESS_NEW);
     }
 
     protected <R extends PersistableBusinessObject> R createMinimalObject(Class<R> businessObjectClass) {
@@ -270,11 +271,20 @@ public class RassServiceImpl implements RassService {
     protected <T, R extends PersistableBusinessObject> RassXmlObjectResult updateObject(T xmlObject, R oldBusinessObject,
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("updateObject, Updating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
+        
+        if (!objectDefinition.businessObjectEditIsPermitted(xmlObject, oldBusinessObject)) {
+            LOG.info("updateObject, Updates are not permitted for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
+                    + " so any changes to it will be skipped");
+            return new RassXmlObjectResult(
+                    objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
+                    RassResultCode.SKIPPED);
+        }
+        
         Supplier<R> businessObjectCopier = () -> deepCopyObject(oldBusinessObject);
         R newBusinessObject = buildAndPopulateBusinessObjectFromPojo(xmlObject, businessObjectCopier, objectDefinition);
+        objectDefinition.processCustomTranslationForBusinessObjectEdit(xmlObject, oldBusinessObject, newBusinessObject);
         
         if (businessObjectWasUpdatedByXml(oldBusinessObject, newBusinessObject, objectDefinition)) {
-            objectDefinition.processCustomTranslationForBusinessObjectEdit(xmlObject, oldBusinessObject, newBusinessObject);
             Pair<R, R> oldAndNewBos = Pair.of(oldBusinessObject, newBusinessObject);
             MaintenanceDocument maintenanceDocument = createAndRouteMaintenanceDocumentAsSystemUser(
                     oldAndNewBos, KRADConstants.MAINTENANCE_EDIT_ACTION, objectDefinition);
@@ -282,7 +292,7 @@ public class RassServiceImpl implements RassService {
                     + " to edit " + objectDefinition.printObjectLabelAndKeys(xmlObject));
             return new RassXmlObjectResult(
                     objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(newBusinessObject),
-                    maintenanceDocument.getDocumentNumber(), RassResultCode.SUCCESS);
+                    maintenanceDocument.getDocumentNumber(), RassResultCode.SUCCESS_EDIT);
         } else {
             LOG.info("updateObject, Skipping updates for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " because either no changes were made or changes were only made to the truncated data portions");
@@ -337,13 +347,14 @@ public class RassServiceImpl implements RassService {
 
     protected <R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(R oldBo, R newBo,
             RassObjectTranslationDefinition<?, R> objectDefinition) {
-        return objectDefinition.getPropertyMappings().stream()
+        boolean basicPropertiesHaveDifferences = objectDefinition.getPropertyMappings().stream()
                 .map(RassPropertyDefinition::getBoName)
                 .anyMatch(propertyName -> {
                     Object oldValue = ObjectPropertyUtils.getPropertyValue(oldBo, propertyName);
                     Object newValue = ObjectPropertyUtils.getPropertyValue(newBo, propertyName);
                     return !Objects.equals(oldValue, newValue);
                 });
+        return basicPropertiesHaveDifferences || objectDefinition.otherCustomObjectPropertiesHaveDifferences(oldBo, newBo);
     }
 
     protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentAsSystemUser(
@@ -371,6 +382,7 @@ public class RassServiceImpl implements RassService {
             maintenanceDocument.getOldMaintainableObject().setDataObject(businessObjects.getLeft());
         }
         maintenanceDocument.getNewMaintainableObject().setDataObject(newBo);
+        maintenanceDocument.getNewMaintainableObject().setMaintenanceAction(maintenanceAction);
         maintenanceDocument.getDocumentHeader().setDocumentDescription(
                 buildDocumentDescription(newBo, maintenanceAction, objectDefinition));
         
