@@ -29,7 +29,6 @@
 
         <aws-java-sdk-dynamodb.version>1.11.18</aws-java-sdk-dynamodb.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
-        <easymock.version>3.4</easymock.version>
         <hibernate-validator-annotation-processor.version>5.4.1.Final</hibernate-validator-annotation-processor.version>
         <httpclient.version>4.5.5</httpclient.version>
         <jasperreports.version>2.0.4</jasperreports.version>
@@ -605,12 +604,6 @@
             <version>${backport-util-concurrent.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>${easymock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator-annotation-processor</artifactId>
             <version>${hibernate-validator-annotation-processor.version}</version>
@@ -701,12 +694,6 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-easymock</artifactId>
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
