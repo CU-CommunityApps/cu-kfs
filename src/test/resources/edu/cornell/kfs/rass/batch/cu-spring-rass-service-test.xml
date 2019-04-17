@@ -19,7 +19,7 @@
     </bean>
 
     <bean id="rassService" parent="rassService-parentBean" class="edu.cornell.kfs.rass.batch.service.impl.TestRassServiceImpl"
-            p:documentStatusCheckDelayMillis="100"
+            p:documentStatusCheckDelayMillis="50"
             p:maxStatusCheckAttempts="3"/>
 
 	<bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.xml.TestAgencyTranslationDefinition"/>

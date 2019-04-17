@@ -178,34 +178,44 @@ public class RassServiceImpl implements RassService {
         return result;
     }
 
-    protected void waitForRemainingGeneratedDocumentsToFinish(PendingDocumentTracker documentTracker) {
-        try {
-            waitForMatchingPriorDocumentsToFinish(documentTracker.getIdsForAllObjectsWithTrackedDocuments(), documentTracker);
-        } catch (RuntimeException e) {
-            LOG.error("waitForAllRemainingDocumentsToFinish, unexpected error while checking document route statuses", e);
+    protected <T> void waitForMatchingPriorDocumentsToFinish(
+            T xmlObject, RassObjectTranslationDefinition<T, ?> objectDefinition, PendingDocumentTracker documentTracker) {
+        List<String> objectKeys = objectDefinition.getKeysOfObjectUpdatesToWaitFor(xmlObject);
+        for (String objectKey : objectKeys) {
+            if (documentTracker.didObjectFailToUpdate(objectKey)) {
+                throw new RuntimeException("Cannot proceed with processing object because an update failure was detected for "
+                        + RassUtil.getSimpleClassNameFromClassAndKeyIdentifier(objectKey)
+                        + " with ID " + RassUtil.getKeyFromClassAndKeyIdentifier(objectKey));
+            }
+            
+            String documentId = documentTracker.getTrackedDocumentId(objectKey);
+            if (StringUtils.isNotBlank(documentId)) {
+                waitForDocumentToFinishRouting(documentId);
+                documentTracker.stopTrackingDocumentForObject(objectKey);
+            }
         }
     }
 
-    protected <T> void waitForMatchingPriorDocumentsToFinish(
-            T xmlObject, RassObjectTranslationDefinition<T, ?> objectDefinition, PendingDocumentTracker documentTracker) {
-        List<String> objectsToWaitFor = objectDefinition.getKeysOfObjectUpdatesToWaitFor(xmlObject);
-        waitForMatchingPriorDocumentsToFinish(objectsToWaitFor, documentTracker);
+    protected void waitForRemainingGeneratedDocumentsToFinish(PendingDocumentTracker documentTracker) {
+        try {
+            for (String objectKey : documentTracker.getIdsForAllObjectsWithTrackedDocuments()) {
+                if (!documentTracker.didObjectFailToUpdate(objectKey)) {
+                    String documentId = documentTracker.getTrackedDocumentId(objectKey);
+                    waitForDocumentToFinishRoutingQuietly(documentId);
+                }
+                documentTracker.stopTrackingDocumentForObject(objectKey);
+            }
+        } catch (RuntimeException e) {
+            LOG.error("waitForRemainingGeneratedDocumentsToFinish, unexpected error while checking document route statuses", e);
+        }
     }
 
-    protected void waitForMatchingPriorDocumentsToFinish(
-            List<String> objectsToWaitFor, PendingDocumentTracker documentTracker) {
-        for (String objectToWaitFor : objectsToWaitFor) {
-            if (documentTracker.didObjectFailToUpdate(objectToWaitFor)) {
-                throw new RuntimeException("Cannot proceed with processing object because an update failure was detected for "
-                        + RassUtil.getSimpleClassNameFromClassAndKeyIdentifier(objectToWaitFor)
-                        + " with ID " + RassUtil.getKeyFromClassAndKeyIdentifier(objectToWaitFor));
-            }
-            
-            String documentId = documentTracker.getTrackedDocumentId(objectToWaitFor);
-            if (StringUtils.isNotBlank(documentId)) {
-                waitForDocumentToFinishRouting(documentId);
-                documentTracker.stopTrackingDocumentForObject(objectToWaitFor);
-            }
+    protected void waitForDocumentToFinishRoutingQuietly(String documentId) {
+        try {
+            waitForDocumentToFinishRouting(documentId);
+        } catch (RuntimeException e) {
+            LOG.error("waitForDocumentToFinishRoutingQuietly, unexpected error encountered when waiting for document " + documentId
+                    + "to finish routing; will skip waiting for this document further", e);
         }
     }
 
@@ -213,7 +223,7 @@ public class RassServiceImpl implements RassService {
         int timesChecked = 0;
         while (shouldKeepWaitingForDocument(documentId)) {
             timesChecked++;
-            if (timesChecked == maxStatusCheckAttempts) {
+            if (timesChecked >= maxStatusCheckAttempts) {
                 throw new RuntimeException("Document finalization checking timed out for document " + documentId);
             }
             

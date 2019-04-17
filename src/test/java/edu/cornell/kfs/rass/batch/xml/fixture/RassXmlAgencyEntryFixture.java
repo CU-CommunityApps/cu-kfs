@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
+import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 
 public enum RassXmlAgencyEntryFixture {
@@ -12,7 +13,8 @@ public enum RassXmlAgencyEntryFixture {
     TEST("101", "Test", "Test University", "U", null, null, "USA"),
     SOME_V2("468", "Some", "Some University", "U", "", "Some Other University", "USA", false),
     LIMITED("555", "Limited", "Limited Ltd.", "C", "468", "Limited Ltd.", "USA", false),
-    FIJI_DOT("975", "Fiji_DoT", "Fiji Department of Treasury", "G", "", "Fiji Treasury Department", "Foreign", false);
+    FIJI_DOT("975", "Fiji_DoT", "Fiji Department of Treasury", "G", "", "Fiji Treasury Department", "Foreign", false),
+    FORCE_ERROR(RassTestConstants.ERROR_OBJECT_KEY, "ForceError", "Force Error", "C", "", "Force an error!", "USA", false);
 
     public final String number;
     public final String reportingName;

@@ -16,7 +16,8 @@ public enum RassXmlDocumentWrapperFixture {
         RASS_MULTIPLE_AGENCIES_CREATE_UPDATE_FILE("2019-03-17T22:15:07.273", awardFixtures(),
                 agencyFixtures(RassXmlAgencyEntryFixture.LIMITED, RassXmlAgencyEntryFixture.SOME_V2)),
         RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE("2019-03-18T12:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.FIJI_DOT)),
-        RASS_SINGLE_EXISTING_AGENCY_FILE("2019-03-18T22:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME));
+        RASS_SINGLE_EXISTING_AGENCY_FILE("2019-03-18T22:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME)),
+        RASS_FORCE_AGENCY_GROUP_ERROR_FILE("2019-03-18T23:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.FORCE_ERROR));
     
     public final DateTime extractDate;
     public final List<RassXmlAwardEntryFixture> awards;

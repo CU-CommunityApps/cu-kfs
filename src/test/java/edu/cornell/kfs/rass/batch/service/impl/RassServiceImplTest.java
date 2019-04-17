@@ -178,7 +178,24 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     @Test
-    public void testTimeoutOfRouteStatusCheckAfterUpdateToSameAgency() throws Exception {
+    public void testWaitForRouteStatusAfterUpdateToReferencedAgency() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.SUCCESS_NEW)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testTimeoutOfRouteStatusCheck() throws Exception {
         overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
                 KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
@@ -186,11 +203,93 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
                         RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
-                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE),
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
                 expectedResults(
                         agencies(RassResultCode.SUCCESS,
                                 agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.ERROR)),
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.ERROR)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testRouteStatusCheckErrorWhenDocumentEntersUnsuccessfulStatus() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.LIMITED, RassResultCode.ERROR)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testWaitOnlyAtEndIfObjectUpdatesDoNotReferencePriorOnes() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassResultCode.SUCCESS_NEW)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testHandleRoutingTimeoutQuietlyIfObjectUpdatesDoNotReferencePriorOnes() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_ENROUTE_CD,
+                KewApiConstants.ROUTE_HEADER_ENROUTE_CD, KewApiConstants.ROUTE_HEADER_PROCESSED_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassResultCode.SUCCESS_NEW)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testHandleRouteStatusCheckErrorQuietlyIfObjectUpdatesDoNotReferencePriorOnes() throws Exception {
+        overrideStatusesReturnedByRouteHeaderService(RassMockServiceFactory.FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID,
+                KewApiConstants.ROUTE_HEADER_EXCEPTION_CD);
+        
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT),
+                                agency(RassXmlAgencyEntryFixture.FIJI_DOT, RassResultCode.SUCCESS_NEW)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
+    public void testHandleErrorAtObjectGroupLevel() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_SINGLE_AGENCY_UPDATE_FILE,
+                        RassXmlDocumentWrapperFixture.RASS_FORCE_AGENCY_GROUP_ERROR_FILE),
+                expectedResults(
+                        agencies(RassResultCode.ERROR,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT)),
                         proposals(RassResultCode.SUCCESS),
                         awards(RassResultCode.SUCCESS)));
     }
