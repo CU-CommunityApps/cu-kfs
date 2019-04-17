@@ -208,9 +208,9 @@ public class StaleCheckExtractServiceImplTest {
                 currentFileResult.markAsUnprocessable();
                 throw e;
             } finally {
-				if (CollectionUtils.isEmpty(currentFileResult.getRowResults())) {
-					currentFileResult.markAsUnprocessable();
-				}
+            		if (CollectionUtils.isEmpty(currentFileResult.getRowResults())) {
+            			currentFileResult.markAsUnprocessable();
+            		}
                 fileResults.put(generateFileResultKey(inputFileName), currentFileResult);
                 currentFileResult = null;
             }
