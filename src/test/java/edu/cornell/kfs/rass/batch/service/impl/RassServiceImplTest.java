@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
 import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
@@ -24,10 +22,6 @@ import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Stubber;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
 import edu.cornell.kfs.rass.RassConstants.RassResultCode;
@@ -42,9 +36,6 @@ import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
 import edu.cornell.kfs.sys.util.LoadSpringFile;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("org.apache.logging.log4j.*")
-@PrepareForTest({MaintenanceDocumentBase.class})
 @LoadSpringFile("edu/cornell/kfs/rass/batch/cu-spring-rass-service-test.xml")
 public class RassServiceImplTest extends SpringEnabledMicroTestBase {
 
@@ -56,10 +47,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        PowerMockito.suppress(PowerMockito.defaultConstructorIn(MaintenanceDocumentBase.class));
         
         agencyUpdates = new ArrayList<>();
-        
         mockAgencyService = springContext.getBean(RassTestConstants.AGENCY_SERVICE_BEAN_NAME, AgencyService.class);
         
         rassService = springContext.getBean(RassTestConstants.RASS_SERVICE_BEAN_NAME, TestRassServiceImpl.class);

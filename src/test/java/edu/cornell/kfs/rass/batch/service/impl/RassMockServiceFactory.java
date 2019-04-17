@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.Maintainable;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
@@ -15,11 +14,11 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
 import edu.cornell.kfs.rass.RassTestConstants;
@@ -51,7 +50,8 @@ public class RassMockServiceFactory {
             Class<? extends Maintainable> maintainableClass = getMaintainableClass(documentTypeName);
             validateMaintenanceAction(maintenanceAction);
             
-            MaintenanceDocumentBase maintenanceDocument = PowerMockito.spy(new MaintenanceDocumentBase());
+            FinancialSystemMaintenanceDocument maintenanceDocument = Mockito.mock(
+                    FinancialSystemMaintenanceDocument.class, Mockito.CALLS_REAL_METHODS);
             FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
             Maintainable oldMaintainable = maintainableClass.newInstance();
             Maintainable newMaintainable = maintainableClass.newInstance();
