@@ -14,6 +14,8 @@ public enum RassXmlAgencyEntryFixture {
     SOME_V2("468", "Some", "Some University", "U", "", "Some Other University", "USA", false),
     LIMITED("555", "Limited", "Limited Ltd.", "C", "468", "Limited Ltd.", "USA", false),
     FIJI_DOT("975", "Fiji_DoT", "Fiji Department of Treasury", "G", "", "Fiji Treasury Department", "Foreign", false),
+    DoS_LONG_DESC("579", "SM", "United States Department of Something with Very Long Text", "F", "",
+            "Some United States Government Department with a Significantly Long Name", "USA", false),
     FORCE_ERROR(RassTestConstants.ERROR_OBJECT_KEY, "ForceError", "Force Error", "C", "", "Force an error!", "USA", false);
 
     public final String number;
@@ -57,18 +59,26 @@ public enum RassXmlAgencyEntryFixture {
         Agency agency = new Agency();
         agency.setAgencyNumber(number);
         agency.setReportingName(reportingName);
-        agency.setFullName(fullName);
+        agency.setFullName(getTruncatedFullName());
         agency.setAgencyTypeCode(typeCode);
         agency.setReportsToAgencyNumber(reportsToAgencyNumber);
         agency.setActive(true);
         
         AgencyExtendedAttribute agencyExtension = new AgencyExtendedAttribute();
         agencyExtension.setAgencyNumber(number);
-        agencyExtension.setAgencyCommonName(commonName);
+        agencyExtension.setAgencyCommonName(getTruncatedCommonName());
         agencyExtension.setAgencyOriginCode(agencyOrigin);
         agency.setExtension(agencyExtension);
         
         return agency;
+    }
+
+    public String getTruncatedFullName() {
+        return StringUtils.left(fullName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
+    }
+
+    public String getTruncatedCommonName() {
+        return StringUtils.left(commonName, RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
     }
 
     private String defaultToNullIfBlank(String value) {

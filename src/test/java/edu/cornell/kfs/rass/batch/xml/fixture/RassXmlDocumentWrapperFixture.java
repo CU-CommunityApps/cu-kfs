@@ -17,6 +17,7 @@ public enum RassXmlDocumentWrapperFixture {
                 agencyFixtures(RassXmlAgencyEntryFixture.LIMITED, RassXmlAgencyEntryFixture.SOME_V2)),
         RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE("2019-03-18T12:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.FIJI_DOT)),
         RASS_SINGLE_EXISTING_AGENCY_FILE("2019-03-18T22:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME)),
+        RASS_AGENCY_UPDATE_LENGTH_TRUNCATE_FILE("2019-03-18T22:15:37.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.DoS_LONG_DESC)),
         RASS_FORCE_AGENCY_GROUP_ERROR_FILE("2019-03-18T23:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.FORCE_ERROR));
     
     public final DateTime extractDate;

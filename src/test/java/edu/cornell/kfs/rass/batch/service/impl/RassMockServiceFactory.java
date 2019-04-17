@@ -129,7 +129,7 @@ public class RassMockServiceFactory {
     public DataDictionaryService buildMockDataDictionaryService() throws Exception {
         DataDictionaryService dataDictionaryService = Mockito.mock(DataDictionaryService.class);
         
-        Mockito.when(dataDictionaryService.getAttributeMaxLength(Mockito.any(), Mockito.anyString()))
+        Mockito.when(dataDictionaryService.getAttributeMaxLength(Mockito.any(Class.class), Mockito.anyString()))
                 .thenReturn(RassTestConstants.DEFAULT_DD_FIELD_MAX_LENGTH);
         
         return dataDictionaryService;

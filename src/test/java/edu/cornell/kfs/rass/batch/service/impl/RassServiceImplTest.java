@@ -93,6 +93,18 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
     }
 
     @Test
+    public void testUpdateAgencyWithTextFieldsExceedingMaxLength() throws Exception {
+        assertXmlContentsPerformExpectedObjectUpdates(
+                xmlFiles(
+                        RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_LENGTH_TRUNCATE_FILE),
+                expectedResults(
+                        agencies(RassResultCode.SUCCESS,
+                                agency(RassXmlAgencyEntryFixture.DoS_LONG_DESC, RassResultCode.SUCCESS_EDIT)),
+                        proposals(RassResultCode.SUCCESS),
+                        awards(RassResultCode.SUCCESS)));
+    }
+
+    @Test
     public void testHandleSingleExistingAgencyWithNoChanges() throws Exception {
         assertXmlContentsPerformExpectedObjectUpdates(
                 xmlFiles(
@@ -355,13 +367,13 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
             Agency actualAgency = (Agency) actualResult.getDataObject();
             assertEquals("Wrong agency number at index " + i, expectedAgency.number, actualAgency.getAgencyNumber());
             assertEquals("Wrong reporting name at index " + i, expectedAgency.reportingName, actualAgency.getReportingName());
-            assertEquals("Wrong full name at index " + i, expectedAgency.fullName, actualAgency.getFullName());
+            assertEquals("Wrong full name at index " + i, expectedAgency.getTruncatedFullName(), actualAgency.getFullName());
             assertEquals("Wrong type code at index " + i, expectedAgency.typeCode, actualAgency.getAgencyTypeCode());
             assertEquals("Wrong reports-to agency number at index " + i,
                     expectedAgency.reportsToAgencyNumber, actualAgency.getReportsToAgencyNumber());
             
             AgencyExtendedAttribute actualExtension = (AgencyExtendedAttribute) actualAgency.getExtension();
-            assertEquals("Wrong common name at index " + i, expectedAgency.commonName, actualExtension.getAgencyCommonName());
+            assertEquals("Wrong common name at index " + i, expectedAgency.getTruncatedCommonName(), actualExtension.getAgencyCommonName());
             assertEquals("Wrong origin code at index " + i, expectedAgency.agencyOrigin, actualExtension.getAgencyOriginCode());
         }
     }
