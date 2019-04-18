@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
@@ -20,8 +21,12 @@ public class RassStep extends AbstractStep{
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         List<RassXmlFileParseResult> parseResults = rassService.readXML();
+        if (CollectionUtils.isEmpty(parseResults)) {
+            LOG.info("execute, Skipping XML processing because no pending RASS XML files were found");
+            return true;
+        }
         List<RassXmlFileParseResult> successfulResults = getSuccessfullyParsedFileResults(parseResults);
-        List<RassXmlObjectGroupResult> processingResults = rassService.updateKFS(successfulResults);
+        RassXmlProcessingResults processingResults = rassService.updateKFS(successfulResults);
         RassXmlReport report = new RassXmlReport(parseResults, processingResults);
         sendReport(report);
         return true;

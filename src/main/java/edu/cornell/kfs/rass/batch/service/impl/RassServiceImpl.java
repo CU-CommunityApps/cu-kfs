@@ -1,7 +1,6 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,35 +13,35 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 import org.kuali.kfs.krad.service.DataDictionaryService;
-import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.uif.util.ObjectPropertyUtils;
-import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.Proposal;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.rice.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.rice.kew.api.KewApiConstants;
-import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
+import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassConstants.RassResultCode;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.RassXmlObjectGroupResult;
 import edu.cornell.kfs.rass.batch.RassXmlObjectResult;
+import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
+import edu.cornell.kfs.rass.batch.service.RassRoutingService;
 import edu.cornell.kfs.rass.batch.service.RassService;
 import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.xml.RassPropertyDefinition;
@@ -58,8 +57,7 @@ public class RassServiceImpl implements RassService {
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType batchInputFileType;
     protected FileStorageService fileStorageService;
-    protected MaintenanceDocumentService maintenanceDocumentService;
-    protected DocumentService documentService;
+    protected RassRoutingService rassRoutingService;
     protected DataDictionaryService dataDictionaryService;
     protected RouteHeaderService routeHeaderService;
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
@@ -70,6 +68,10 @@ public class RassServiceImpl implements RassService {
     @Override
     public List<RassXmlFileParseResult> readXML() {
         List<String> rassInputFileNames = batchInputFileService.listInputFileNamesWithDoneFile(batchInputFileType);
+        if (CollectionUtils.isEmpty(rassInputFileNames)) {
+            LOG.info("readXML, No RASS XML files were found for processing");
+            return Collections.emptyList();
+        }
         LOG.info("readXML, Reading " + rassInputFileNames.size() + " RASS XML files to process into KFS");
         return rassInputFileNames.stream()
                 .map(this::parseRassXml)
@@ -100,18 +102,23 @@ public class RassServiceImpl implements RassService {
         }
     }
 
+    @Transactional
     @Override
-    public List<RassXmlObjectGroupResult> updateKFS(List<RassXmlFileParseResult> successfullyParsedFiles) {
+    public RassXmlProcessingResults updateKFS(List<RassXmlFileParseResult> successfullyParsedFiles) {
         LOG.info("updateKFS, Processing " + successfullyParsedFiles.size() + " RASS XML files into KFS");
         
         PendingDocumentTracker documentTracker = new PendingDocumentTracker();
         
         RassXmlObjectGroupResult agencyResults = updateBOs(successfullyParsedFiles, agencyDefinition, documentTracker);
+        RassXmlObjectGroupResult proposalResults = new RassXmlObjectGroupResult(
+                Proposal.class, Collections.emptyList(), RassResultCode.SUCCESS);
+        RassXmlObjectGroupResult awardResults = new RassXmlObjectGroupResult(
+                Award.class, Collections.emptyList(), RassResultCode.SUCCESS);
         LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
         
         waitForRemainingGeneratedDocumentsToFinish(documentTracker);
         
-        return Arrays.asList(agencyResults);
+        return new RassXmlProcessingResults(agencyResults, proposalResults, awardResults);
     }
 
     protected <T, R extends PersistableBusinessObject> RassXmlObjectGroupResult updateBOs(List<RassXmlFileParseResult> parsedFiles,
@@ -142,6 +149,7 @@ public class RassServiceImpl implements RassService {
                         documentTracker.addDocumentIdToTrack(result);
                     } else if (RassResultCode.ERROR.equals(result.getResultCode())) {
                         documentTracker.addObjectUpdateFailureToTrack(result);
+                        groupResultCode = RassResultCode.ERROR;
                     }
                     objectResults.add(result);
                 }
@@ -198,6 +206,7 @@ public class RassServiceImpl implements RassService {
 
     protected void waitForRemainingGeneratedDocumentsToFinish(PendingDocumentTracker documentTracker) {
         try {
+            LOG.info("waitForRemainingGeneratedDocumentsToFinish, Waiting for pending maintenance documents to finish routing");
             for (String objectKey : documentTracker.getIdsForAllObjectsWithTrackedDocuments()) {
                 if (!documentTracker.didObjectFailToUpdate(objectKey)) {
                     String documentId = documentTracker.getTrackedDocumentId(objectKey);
@@ -205,8 +214,9 @@ public class RassServiceImpl implements RassService {
                 }
                 documentTracker.stopTrackingDocumentForObject(objectKey);
             }
+            LOG.info("waitForRemainingGeneratedDocumentsToFinish, Finished waiting for maintenance documents");
         } catch (RuntimeException e) {
-            LOG.error("waitForRemainingGeneratedDocumentsToFinish, unexpected error while checking document route statuses", e);
+            LOG.error("waitForRemainingGeneratedDocumentsToFinish, Unexpected error while checking document route statuses", e);
         }
     }
 
@@ -214,7 +224,7 @@ public class RassServiceImpl implements RassService {
         try {
             waitForDocumentToFinishRouting(documentId);
         } catch (RuntimeException e) {
-            LOG.error("waitForDocumentToFinishRoutingQuietly, unexpected error encountered when waiting for document " + documentId
+            LOG.error("waitForDocumentToFinishRoutingQuietly, Unexpected error encountered when waiting for document " + documentId
                     + "to finish routing; will skip waiting for this document further", e);
         }
     }
@@ -230,7 +240,7 @@ public class RassServiceImpl implements RassService {
             try {
                 Thread.sleep(documentStatusCheckDelayMillis);
             } catch (InterruptedException e) {
-                LOG.warn("waitForDocumentToFinishRouting, document-checking delay was interrupted", e);
+                LOG.warn("waitForDocumentToFinishRouting, Document-checking delay was interrupted", e);
             }
         }
     }
@@ -261,7 +271,7 @@ public class RassServiceImpl implements RassService {
         }
         objectDefinition.processCustomTranslationForBusinessObjectCreate(xmlObject, businessObject);
         Pair<R, R> pairWithNewObjectOnly = Pair.of(null, businessObject);
-        MaintenanceDocument maintenanceDocument = createAndRouteMaintenanceDocumentAsSystemUser(
+        MaintenanceDocument maintenanceDocument = rassRoutingService.createAndRouteMaintenanceDocument(
                 pairWithNewObjectOnly, KRADConstants.MAINTENANCE_NEW_ACTION, objectDefinition);
         LOG.info("createObject, Successfully routed document " + maintenanceDocument.getDocumentNumber()
                 + " to create " + objectDefinition.printObjectLabelAndKeys(xmlObject));
@@ -296,7 +306,7 @@ public class RassServiceImpl implements RassService {
         
         if (businessObjectWasUpdatedByXml(oldBusinessObject, newBusinessObject, objectDefinition)) {
             Pair<R, R> oldAndNewBos = Pair.of(oldBusinessObject, newBusinessObject);
-            MaintenanceDocument maintenanceDocument = createAndRouteMaintenanceDocumentAsSystemUser(
+            MaintenanceDocument maintenanceDocument = rassRoutingService.createAndRouteMaintenanceDocument(
                     oldAndNewBos, KRADConstants.MAINTENANCE_EDIT_ACTION, objectDefinition);
             LOG.info("updateObject, Successfully routed document " + maintenanceDocument.getDocumentNumber()
                     + " to edit " + objectDefinition.printObjectLabelAndKeys(xmlObject));
@@ -367,55 +377,6 @@ public class RassServiceImpl implements RassService {
         return basicPropertiesHaveDifferences || objectDefinition.otherCustomObjectPropertiesHaveDifferences(oldBo, newBo);
     }
 
-    protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentAsSystemUser(
-            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition) {
-        try {
-            return GlobalVariables.doInNewGlobalVariables(
-                    buildSessionForSystemUser(),
-                    () -> createAndRouteMaintenanceDocument(businessObjects, maintenanceAction, objectDefinition));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected UserSession buildSessionForSystemUser() {
-        return new UserSession(KFSConstants.SYSTEM_USER);
-    }
-
-    protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
-            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition)
-            throws WorkflowException {
-        R newBo = businessObjects.getRight();
-        MaintenanceDocument maintenanceDocument = maintenanceDocumentService.setupNewMaintenanceDocument(
-                objectDefinition.getBusinessObjectClass().getName(), objectDefinition.getDocumentTypeName(), maintenanceAction);
-        if (StringUtils.equals(KRADConstants.MAINTENANCE_EDIT_ACTION, maintenanceAction)) {
-            maintenanceDocument.getOldMaintainableObject().setDataObject(businessObjects.getLeft());
-        }
-        maintenanceDocument.getNewMaintainableObject().setDataObject(newBo);
-        maintenanceDocument.getNewMaintainableObject().setMaintenanceAction(maintenanceAction);
-        maintenanceDocument.getDocumentHeader().setDocumentDescription(
-                buildDocumentDescription(newBo, maintenanceAction, objectDefinition));
-        
-        maintenanceDocument = (MaintenanceDocument) documentService.saveDocument(maintenanceDocument);
-        GlobalVariables.getMessageMap().clearErrorMessages();
-        maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(
-                maintenanceDocument, RassConstants.RASS_ROUTE_ACTION_ANNOTATION, null);
-        
-        return maintenanceDocument;
-    }
-
-    protected <R extends PersistableBusinessObject> String buildDocumentDescription(
-            R newBo, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition) {
-        String actionLabel = getLabelForAction(maintenanceAction);
-        return String.format(RassConstants.RASS_MAINTENANCE_DOCUMENT_DESCRIPTION_FORMAT,
-                actionLabel, objectDefinition.printObjectLabelAndKeys(newBo));
-    }
-
-    protected String getLabelForAction(String maintenanceAction) {
-        return StringUtils.equals(KRADConstants.MAINTENANCE_NEW_ACTION, maintenanceAction)
-                ? RassConstants.RASS_MAINTENANCE_NEW_ACTION_DESCRIPTION : maintenanceAction;
-    }
-
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
     }
@@ -428,12 +389,8 @@ public class RassServiceImpl implements RassService {
         this.fileStorageService = fileStorageService;
     }
 
-    public void setMaintenanceDocumentService(MaintenanceDocumentService maintenanceDocumentService) {
-        this.maintenanceDocumentService = maintenanceDocumentService;
-    }
-
-    public void setDocumentService(DocumentService documentService) {
-        this.documentService = documentService;
+    public void setRassRoutingService(RassRoutingService rassRoutingService) {
+        this.rassRoutingService = rassRoutingService;
     }
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {

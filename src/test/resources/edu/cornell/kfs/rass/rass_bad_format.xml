@@ -1,0 +1,109 @@
+<Kfs>
+  <Extract_Begin_Timestamp>2019-03-15T22:15:07.273</Extract_Begin_Timestamp>
+  <Awards>
+    <Award>
+      <Proposal_Number>141414</Proposal_Number>
+      <Status>OS</Status>
+      <Agency_Number>2345</Agency_Number>
+      <Project_Title>First Example Project</Project_Title>
+      <Start_Date>2017-12-31</Start_Date>
+      <Stop_Date/>
+      <Direct_Cost_Amount>5300000.000</Direct_Cost_Amount>
+      <Indirect_Cost_Amount>700000.000</Indirect_Cost_Amount>
+      <Total_Amount>6000000.000</Total_Amount>
+      <Purpose/>
+      <Grant_Number/>
+      <Grant_Description/>
+      <Federal_Pass_Through/>
+      <Federal_Pass_Through_Agency_Number/>
+      <CFDA_Number/>
+      <Organization_Code>3434</Organization_Code>
+      <Cost_Share_Required>Y</Cost_Share_Required>
+      <Final_Fiscal_Report_Due_Date/>
+      <PI_and_CoPIs>
+        <PI_or_CoPI>
+          <Primary>Y</Primary>
+          <Project_Director_Principal_Name>cah292</Project_Director_Principal_Name>
+        </PI_or_CoPI>
+      </PI_and_CoPIs_ERROR_ERROR>
+    </Award>
+    <Award>
+      <Proposal_Number>141415</Proposal_Number>
+      <Status>RS</Status>
+      <Agency_Number>24680</Agency_Number>
+      <Project_Title>Another Example</Project_Title>
+      <Start_Date/>
+      <Stop_Date>2050-12-31</Stop_Date>
+      <Direct_Cost_Amount>0.000</Direct_Cost_Amount>
+      <Indirect_Cost_Amount>0.000</Indirect_Cost_Amount>
+      <Total_Amount>0.000</Total_Amount>
+      <Purpose/>
+      <Grant_Number/>
+      <Grant_Description>GRT</Grant_Description>
+      <Federal_Pass_Through/>
+      <Federal_Pass_Through_Agency_Number/>
+      <CFDA_Number/>
+      <Organization_Code>2374</Organization_Code>
+      <Cost_Share_Required>Y</Cost_Share_Required>
+      <Final_Fiscal_Report_Due_Date>2022-09-30</Final_Fiscal_Report_Due_Date>
+      <PI_and_CoPIs>
+        <PI_or_CoPI>
+          <Primary>Y</Primary>
+          <Project_Director_Principal_Name/>
+        </PI_or_CoPI>
+      </PI_and_CoPIs>
+    </Award>
+     <Award>
+      <Proposal_Number>35656</Proposal_Number>
+      <Status>RS</Status>
+      <Agency_Number>24680</Agency_Number>
+      <Project_Title>Award with empty totals</Project_Title>
+      <Start_Date/>
+      <Stop_Date>2050-12-31</Stop_Date>
+      <Direct_Cost_Amount>0.000</Direct_Cost_Amount>
+      <Indirect_Cost_Amount/>
+      <Purpose/>
+      <Grant_Number/>
+      <Grant_Description>GRT</Grant_Description>
+      <Federal_Pass_Through/>
+      <Federal_Pass_Through_Agency_Number/>
+      <CFDA_Number/>
+      <Organization_Code>2374</Organization_Code>
+      <Cost_Share_Required>Y</Cost_Share_Required>
+      <Final_Fiscal_Report_Due_Date>2022-09-30</Final_Fiscal_Report_Due_Date>
+      <PI_and_CoPIs>
+        <PI_or_CoPI>
+          <Primary>N</Primary>
+          <Project_Director_Principal_Name>jdh34</Project_Director_Principal_Name>
+        </PI_or_CoPI>
+      </PI_and_CoPIs>
+    </Award>
+  </Awards>
+  <Agencies>
+    <Agency>
+      <Number>468</Number>
+      <Reporting_Name>Some</Reporting_Name>
+      <Full_Name>Some University</Full_Name>
+      <Type_Code>U</Type_Code>
+      <Reports_to_Agency_Number/>
+      <Common_Name>Some University</Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+    <Agency>
+      <Number>579</Number>
+      <Reporting_Name>SM</Reporting_Name>
+      <Full_Name>United States Department of Something </Full_Name>
+      <Type_Code>F</Type_Code>
+      <Reports_to_Agency_Number/>
+      <Common_Name>United States Department of Something </Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+    <Agency>
+      <Number>101</Number>
+      <Reporting_Name>Test</Reporting_Name>
+      <Full_Name>Test University</Full_Name>
+      <Type_Code>U</Type_Code>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+  </Agencies>
+</Kfs>

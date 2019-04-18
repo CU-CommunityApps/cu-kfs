@@ -3,13 +3,13 @@ package edu.cornell.kfs.rass.batch.service.impl;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 
-public final class ExpectedObjectGroupResultsHolder {
+public final class ExpectedProcessingResults {
 
     private final ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> expectedAgencyResults;
     private final ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedProposalResults;
     private final ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedAwardResults;
 
-    public ExpectedObjectGroupResultsHolder(
+    public ExpectedProcessingResults(
             ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> expectedAgencyResults,
             ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedProposalResults,
             ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedAwardResults) {

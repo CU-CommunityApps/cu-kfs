@@ -64,13 +64,18 @@
 			p:batchInputFileService-ref="batchInputFileService"
 			p:batchInputFileType-ref="rassXmlInputFileType"
 			p:fileStorageService-ref="fileStorageService"
-			p:maintenanceDocumentService-ref="maintenanceDocumentService"
-			p:documentService-ref="documentService"
+			p:rassRoutingService-ref="rassRoutingService"
 			p:dataDictionaryService-ref="dataDictionaryService"
 			p:routeHeaderService-ref="enDocumentRouteHeaderService"
 			p:agencyDefinition-ref="agencyDefinition"
 			p:documentStatusCheckDelayMillis="1000"
-			p:maxStatusCheckAttempts="30"/>
+			p:maxStatusCheckAttempts="60"/>
+
+	<bean id="rassRoutingService" parent="rassRoutingService-parentBean"/>
+	<bean id="rassRoutingService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassRoutingServiceImpl"
+			p:maintenanceDocumentService-ref="maintenanceDocumentService"
+			p:documentService-ref="documentService"
+			p:dataDictionaryService-ref="dataDictionaryService"/>
 
 	<bean id="rassXmlInputFileType" parent="rassXmlInputFileType-parentBean"/>
 	<bean id="rassXmlInputFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"

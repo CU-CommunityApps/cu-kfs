@@ -26,6 +26,10 @@ public class RassXmlFileParseResult {
         return resultCode;
     }
 
+    public boolean hasParsedContent() {
+        return parsedContent.isPresent();
+    }
+
     public RassXmlDocumentWrapper getParsedContent() {
         return parsedContent
                 .orElseThrow(() -> new IllegalStateException("No successfully-parsed data exists for file " + rassXmlFileName));

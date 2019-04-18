@@ -13,7 +13,7 @@
     <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
         <property name="properties">
             <props merge="true">
-                <prop key="staging.directory">src/test/resources/edu/cornell/kfs</prop>
+                <prop key="staging.directory">test</prop>
             </props>
         </property>
     </bean>
@@ -22,7 +22,10 @@
             p:documentStatusCheckDelayMillis="50"
             p:maxStatusCheckAttempts="3"/>
 
-	<bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.xml.TestAgencyTranslationDefinition"/>
+    <bean id="rassRoutingService" parent="rassRoutingService-parentBean"
+            class="edu.cornell.kfs.rass.batch.service.impl.TestRassRoutingServiceImpl"/>
+
+    <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.xml.TestAgencyTranslationDefinition"/>
 
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 
@@ -36,11 +39,15 @@
 
     <bean id="agencyService" factory-bean="testServiceFactory" factory-method="buildMockAgencyService"/>
 
+    <bean id="fileStorageService" parent="fileStorageService-parentBean" p:pathPrefix="."/>
+
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
         <property name="beanWhitelist">
             <set merge="true">
                 <idref bean="rassService"/>
                 <idref bean="rassService-parentBean"/>
+                <idref bean="rassRoutingService"/>
+                <idref bean="rassRoutingService-parentBean"/>
                 <idref bean="rassProperty"/>
                 <idref bean="agencyDefinition"/>
                 <idref bean="agencyDefinition-parentBean"/>

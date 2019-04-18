@@ -118,8 +118,6 @@ public class RassMockServiceFactory {
     public DocumentService buildMockDocumentService() throws Exception {
         DocumentService documentService = Mockito.mock(DocumentService.class);
         
-        Mockito.when(documentService.saveDocument(Mockito.any(MaintenanceDocument.class)))
-                .then(invocation -> invocation.getArgument(0));
         Mockito.when(documentService.routeDocument(Mockito.any(MaintenanceDocument.class), Mockito.anyString(), Mockito.any()))
                 .then(invocation -> invocation.getArgument(0));
         

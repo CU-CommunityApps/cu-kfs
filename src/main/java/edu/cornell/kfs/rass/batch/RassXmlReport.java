@@ -7,19 +7,19 @@ import java.util.List;
 public class RassXmlReport {
 
     private final List<RassXmlFileParseResult> fileParseResults;
-    private final List<RassXmlObjectGroupResult> objectGroupResults;
+    private final RassXmlProcessingResults processingResults;
 
-    public RassXmlReport(List<RassXmlFileParseResult> fileParseResults, List<RassXmlObjectGroupResult> objectGroupResults) {
+    public RassXmlReport(List<RassXmlFileParseResult> fileParseResults, RassXmlProcessingResults processingResults) {
         this.fileParseResults = Collections.unmodifiableList(new ArrayList<>(fileParseResults));
-        this.objectGroupResults = Collections.unmodifiableList(new ArrayList<>(objectGroupResults));
+        this.processingResults = processingResults;
     }
 
     public List<RassXmlFileParseResult> getFileParseResults() {
         return fileParseResults;
     }
 
-    public List<RassXmlObjectGroupResult> getObjectGroupResults() {
-        return objectGroupResults;
+    public RassXmlProcessingResults getProcessingResults() {
+        return processingResults;
     }
 
 }
