@@ -766,5 +766,71 @@
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
+        <Document>
+            <Index>9</Index>
+            <DocumentType>YEBA</DocumentType>
+            <Description>Test YEBA Document in multi doc file</Description>
+            <Explanation>This is a YEBA doc for testing</Explanation>
+            <OrganizationDocumentNumber>WXYZ567D</OrganizationDocumentNumber>
+            <PostingFiscalYear>2018</PostingFiscalYear>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1433000</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4480</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>40.00</amount>
+                    <base_amount>0</base_amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1433000</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>5390</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>40.00</amount>
+                    <base_amount>0</base_amount>
+                    <month_03_amount>40.00</month_03_amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>C200222</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4480</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>40.00</amount>
+                    <base_amount>0</base_amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>C200222</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>5390</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <amount>40.00</amount>
+                    <month_03_amount>40.00</month_03_amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <NoteList>
+                <Note>
+                    <Description>Sample YEBA Note for the multi doc testing file</Description>
+                </Note>
+            </NoteList>
+        </Document>
     </DocumentList>
 </DocumentWrapper>

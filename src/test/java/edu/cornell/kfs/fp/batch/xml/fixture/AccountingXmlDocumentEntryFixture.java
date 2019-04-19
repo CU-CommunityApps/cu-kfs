@@ -407,6 +407,18 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE),
             CuDisbursementVoucherDocumentFixture.JANE_DOE_DV_DETAIL),
+    MULTI_DOC_TYPE_TEST_YEBA(9, CuFPTestConstants.YEAR_END_BUDGET_ADJUSTMENT_DOC_TYPE,
+            "Test YEBA Document in multi doc file", "This is a YEBA doc for testing", "WXYZ567D", CuFPTestConstants.FY_2018,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_AMOUNT_40_BASE_0_NO_MONTHS,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_5390_AMOUNT_40_BASE_0_MONTH03_40),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_4480_AMOUNT_40_BASE_0_NO_MONTHS,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_AMOUNT_40_NO_BASE_MONTH03_40),
+            notes(
+                    "Sample YEBA Note for the multi doc testing file"),
+            adHocRecipients(),
+            backupLinks()),
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,

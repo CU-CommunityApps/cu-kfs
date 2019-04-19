@@ -152,7 +152,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_BA,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_SB,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEDI,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DV)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DV,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEBA)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(
