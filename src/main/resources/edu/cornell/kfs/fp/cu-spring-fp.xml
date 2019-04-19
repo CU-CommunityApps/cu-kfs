@@ -876,6 +876,13 @@
         <property name="configurationService" ref="configurationService"/>
         <property name="fiscalYearFunctionControlService" ref="fiscalYearFunctionControlService"/>
     </bean>
+    
+    <bean id="AccountingDocumentGenerator_YEBA" class="edu.cornell.kfs.fp.batch.service.impl.CuYearEndBudgetAdjustmentDocumentGenerator">
+        <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
+        <property name="fiscalYearFunctionControlService" ref="fiscalYearFunctionControlService"/>
+    </bean>
 
     <bean id="AccountingDocumentGenerator_SB" class="edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator">
         <property name="personService" ref="personService"/>

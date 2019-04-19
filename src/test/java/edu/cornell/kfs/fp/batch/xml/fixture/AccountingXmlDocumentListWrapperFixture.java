@@ -12,6 +12,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
     BASE_WRAPPER("09/28/2017", "abc123@cornell.edu", "Example XML file", documents()),
     BASE_IB_WRAPPER("02/26/2018", "xyz789@cornell.edu", "Example IB XML file", documents()),
     BASE_BA_WRAPPER("04/20/2018", "ggg555@cornell.edu", "Example BA XML file", documents()),
+    BASE_YEBA_WRAPPER("04/18/2019", "xyz555@cornell.edu", "Example YEBA XML file", documents()),
     BASE_SB_WRAPPER("05/24/2018", "cba001@cornell.edu", "Example SB XML file", documents()),
 
     MULTI_DI_DOCUMENT_TEST(
@@ -89,6 +90,15 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_BA_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_BA_DOCUMENT_TEST_DOC1)),
+    SINGLE_YEBA_DOCUMENT_TEST(
+            BASE_YEBA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_YEBA_DOCUMENT_TEST_DOC1)),
+    MUTLI_YEBA_DOCUMENT_TEST(
+            BASE_YEBA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_YEBA_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.BASE_YEBA_WITH_ZERO_AND_SINGLE_MONTHS_NO_ADHOC_NO_BACKUP)),
     SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST(
             BASE_BA_WRAPPER,
             documents(
@@ -142,7 +152,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_BA,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_SB,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEDI,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DV)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DV,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEBA)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(

@@ -136,7 +136,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
                 AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
-                AccountingDocumentMapping.DV_DOCUMENT);
+                AccountingDocumentMapping.DV_DOCUMENT, AccountingDocumentMapping.YEBA_DOCUMENT);
         createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
@@ -248,6 +248,20 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("single-ba-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.SINGLE_BA_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithSingleYEBADocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yeba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_YEBA_DOCUMENT_TEST);
+    }
+    
+    @Test
+    public void testLoadSingleFileWithMutliYEBADocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yeba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MUTLI_YEBA_DOCUMENT_TEST);
     }
 
     @Test
@@ -877,8 +891,10 @@ public class CreateAccountingDocumentServiceImplTest {
             if (accountingDocumentGenerator instanceof CuBudgetAdjustmentDocumentGenerator) {
                 CuBudgetAdjustmentDocumentGenerator baGenerator = (CuBudgetAdjustmentDocumentGenerator) accountingDocumentGenerator;
                 baGenerator.setFiscalYearFunctionControlService(fiscalYearFunctionControlService);
-            }
-            if (accountingDocumentGenerator instanceof CuDisbursementVoucherDocumentGenerator) {
+            } else if (accountingDocumentGenerator instanceof CuYearEndBudgetAdjustmentDocumentGenerator) {
+                CuYearEndBudgetAdjustmentDocumentGenerator yebaGenerator = (CuYearEndBudgetAdjustmentDocumentGenerator) accountingDocumentGenerator;
+                yebaGenerator.setFiscalYearFunctionControlService(fiscalYearFunctionControlService);
+            } else  if (accountingDocumentGenerator instanceof CuDisbursementVoucherDocumentGenerator) {
                 CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) accountingDocumentGenerator;
                 dvGenerator.setUniversityDateService(universityDateService);
                 dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
