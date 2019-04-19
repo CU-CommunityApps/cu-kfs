@@ -256,6 +256,13 @@ public class CreateAccountingDocumentServiceImplTest {
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.SINGLE_YEBA_DOCUMENT_TEST);
     }
+    
+    @Test
+    public void testLoadSingleFileWithMutliYEBADocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-yeba-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MUTLI_YEBA_DOCUMENT_TEST);
+    }
 
     @Test
     public void testLoadSingleFileWithSingleBADocumentLackingBAAccountProperties() throws Exception {

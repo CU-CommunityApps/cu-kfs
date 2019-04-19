@@ -94,6 +94,11 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_YEBA_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_YEBA_DOCUMENT_TEST_DOC1)),
+    MUTLI_YEBA_DOCUMENT_TEST(
+            BASE_YEBA_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_YEBA_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.BASE_YEBA_WITH_ZERO_AND_SINGLE_MONTHS_NO_ADHOC_NO_BACKUP)),
     SINGLE_BA_NO_BASEAMOUNT_OR_MONTHS_DOCUMENT_TEST(
             BASE_BA_WRAPPER,
             documents(
