@@ -8,6 +8,7 @@ public class CuFPTestConstants {
     public static final String TEST_CREDENTIAL_GROUP_CODE = "TESTGRP";
     public static final String AWS_CREDENTIAL_GROUP_CODE = "AWS-Bill";
     public static final String BUDGET_ADJUSTMENT_DOC_TYPE = "BA";
+    public static final String YEAR_END_BUDGET_ADJUSTMENT_DOC_TYPE = "YEBA";
     public static final String DISBURSEMENT_VOUCHER_DOC_TYPE = "DV";
     public static final int FY_2016 = 2016;
     public static final int FY_2018 = 2018;
