@@ -140,8 +140,8 @@ public class RassServiceImplTest extends SpringEnabledMicroTestBase {
                 xmlFiles(
                         RassXmlDocumentWrapperFixture.RASS_AGENCY_UPDATE_MISSING_FIELD_FILE),
                 expectedResults(
-                        agencies(RassResultCode.SUCCESS,
-                                agency(RassXmlAgencyEntryFixture.SOME_V2, RassResultCode.SUCCESS_EDIT)),
+                        agencies(RassResultCode.ERROR,
+                                agency(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD, RassResultCode.ERROR)),
                         proposals(RassResultCode.SUCCESS),
                         awards(RassResultCode.SUCCESS)));
     }

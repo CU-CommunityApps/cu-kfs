@@ -25,7 +25,7 @@ public enum RassXmlDocumentWrapperFixture {
         RASS_SINGLE_FOREIGN_AGENCY_CREATE_FILE("2019-03-18T12:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.FIJI_DOT)),
         RASS_SINGLE_EXISTING_AGENCY_FILE("2019-03-18T22:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME)),
         RASS_AGENCY_UPDATE_LENGTH_TRUNCATE_FILE("2019-03-18T22:15:37.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.DoS_LONG_DESC)),
-        RASS_AGENCY_UPDATE_MISSING_FIELD_FILE("2019-03-18T22:15:38.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME_V2_MISSING_FIELD)),
+        RASS_AGENCY_UPDATE_MISSING_FIELD_FILE("2019-03-18T22:15:38.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.SOME_V2_MISSING_REQ_FIELD)),
         RASS_LONG_AGENCY_NUMBER_CREATE_FILE("2019-03-18T22:15:38.279", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.LONG_KEY)),
         RASS_FORCE_AGENCY_GROUP_ERROR_FILE("2019-03-18T23:15:07.273", awardFixtures(), agencyFixtures(RassXmlAgencyEntryFixture.FORCE_ERROR)),
         RASS_EMPTY_FILE("2019-03-18T23:15:07.999", awardFixtures(), agencyFixtures());

@@ -331,15 +331,19 @@ public class RassServiceImpl implements RassService {
             RassObjectTranslationDefinition<T, R> objectDefinition) {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
+        List<String> missingRequiredFields = new ArrayList<>();
         for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
             Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlName());
             Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass, propertyMapping.getBoName(), xmlPropertyValue);
             if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
-                LOG.warn("buildAndPopulateBusinessObjectFromPojo, required field " + propertyMapping.getBoName()
-                        + "is null/blank for " + objectDefinition.getObjectLabel() + "; will leave this value as-is on the KFS object");
+                missingRequiredFields.add(propertyMapping.getXmlName());
             } else {
                 ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoName(), cleanedPropertyValue);
             }
+        }
+        if (!missingRequiredFields.isEmpty()) {
+            throw new RuntimeException(objectDefinition.printObjectLabelAndKeys(xmlObject)
+                    + " is missing values for the following required fields: " + missingRequiredFields.toString());
         }
         return businessObject;
     }
