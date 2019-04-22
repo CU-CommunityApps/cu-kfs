@@ -23,7 +23,6 @@ import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationP
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.rice.location.api.state.State;
 import org.kuali.rice.location.api.state.StateService;
@@ -31,8 +30,6 @@ import org.kuali.rice.location.api.state.StateService;
 /**
  * Service implementation for the PostalCodeBase structure. This is the default implementation, that is delivered with Kuali.
  */
-
-@NonTransactional
 public class PostalCodeValidationServiceImpl implements PostalCodeValidationService {
 
 protected StateService stateService;

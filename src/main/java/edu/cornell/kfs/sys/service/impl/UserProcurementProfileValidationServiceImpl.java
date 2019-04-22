@@ -22,6 +22,7 @@ import org.kuali.kfs.kns.service.DictionaryValidationService;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -84,7 +85,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 					if (account != account1) {
 						if (StringUtils.isNotBlank(account.getDescription()) && StringUtils.isNotBlank(account1.getDescription()) 
 								&& StringUtils.equals(account.getDescription(), account1.getDescription())) {
-							GlobalVariables.getMessageMap().putError(KFSPropertyConstants.DESCRIPTION, CUKFSKeyConstants.ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION);
+							GlobalVariables.getMessageMap().putError(KRADPropertyConstants.DESCRIPTION, CUKFSKeyConstants.ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION);
 							
 						}
 						if (account.equals(account1)) {

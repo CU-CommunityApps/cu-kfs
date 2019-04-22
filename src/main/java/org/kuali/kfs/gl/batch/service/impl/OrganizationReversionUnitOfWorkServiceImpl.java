@@ -37,27 +37,15 @@ public class OrganizationReversionUnitOfWorkServiceImpl extends ReversionUnitOfW
      * Immediate deletion awaits all entries of the unit of work summary tables in the persistence store once
      * you call this method, for this method is both powerful and deadly and also gets called to clear out
      * those tables before every single org reversion run.
-     * @see org.kuali.kfs.gl.batch.service.OrganizationReversionUnitOfWorkService#removeAll()
      */
     public void destroyAllUnitOfWorkSummaries() {
         orgReversionUnitOfWorkDao.destroyAllUnitOfWorkSummaries();
     }
 
-   
-    /**
-     * Gets the orgReversionUnitOfWorkDao attribute.
-     * 
-     * @return Returns the orgReversionUnitOfWorkDao.
-     */
     public ReversionUnitOfWorkDao getOrgReversionUnitOfWorkDao() {
         return orgReversionUnitOfWorkDao;
     }
 
-    /**
-     * Sets the orgReversionUnitOfWorkDao attribute value.
-     * 
-     * @param orgReversionUnitOfWorkDao The orgReversionUnitOfWorkDao to set.
-     */
     public void setOrgReversionUnitOfWorkDao(ReversionUnitOfWorkDao orgReversionUnitOfWorkDao) {
         this.orgReversionUnitOfWorkDao = orgReversionUnitOfWorkDao;
     }

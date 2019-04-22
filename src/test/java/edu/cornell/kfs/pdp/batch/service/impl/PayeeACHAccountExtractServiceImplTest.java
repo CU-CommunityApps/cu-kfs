@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -592,6 +593,9 @@ public class PayeeACHAccountExtractServiceImplTest {
                 currentFileResult.markAsUnprocessable();
                 throw e;
             } finally {
+            		if (CollectionUtils.isEmpty(currentFileResult.getRowResults())) {
+            			currentFileResult.markAsUnprocessable();
+            		}
                 fileResults.put(generateFileResultKey(inputFileName), currentFileResult);
                 currentFileResult = null;
             }

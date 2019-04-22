@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
@@ -39,7 +38,6 @@ import edu.cornell.kfs.gl.batch.service.impl.GenericReversionCategory;
  * This service implementation is the default implementation of the OrganizationReversion service that is delivered with Kuali.
  */
 
-@NonTransactional
 public class AccountReversionServiceImpl implements AccountReversionService {
 	private static final Logger LOG = LogManager.getLogger(AccountReversionServiceImpl.class);
 

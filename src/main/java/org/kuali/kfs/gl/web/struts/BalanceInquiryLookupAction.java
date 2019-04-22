@@ -120,11 +120,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
 
     /**
      * search - sets the values of the data entered on the form on the jsp into a map and then searches for the results.
-     * <p>
-     * KRAD Conversion: Lookupable performs customization of the results if balance inquiry. The result rows are added
-     * to a collection based on field's actual size if truncated is > 7.
-     * <p>
-     * Fields are in data dictionary for bo Balance.
      */
     public ActionForward search(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -141,10 +136,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
-        List<ResultRow> resultTable = new ArrayList<ResultRow>();
-        boolean bounded = true;
+        List<ResultRow> resultTable = new ArrayList<>();
         Collection displayList = performMultipleValueLookup(lookupForm, resultTable, getMaxRowsPerPage(lookupForm),
-                bounded);
+                true);
         CollectionIncomplete incompleteDisplayList = (CollectionIncomplete) displayList;
         Long totalSize = incompleteDisplayList.getActualSizeIfTruncated();
 
@@ -157,8 +151,8 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         }
 
         // TODO: use inheritance instead of this if statement
-        if (lookupable
-                .getLookupableHelperService() instanceof AccountBalanceByConsolidationLookupableHelperServiceImpl) {
+        if (lookupable.getLookupableHelperService() instanceof
+                AccountBalanceByConsolidationLookupableHelperServiceImpl) {
             Object[] resultTableAsArray = resultTable.toArray();
             Collection totalsTable = new ArrayList();
 
@@ -181,12 +175,11 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
                 request.setAttribute(TOTALS_TABLE_KEY, totalsTable);
                 GlobalVariables.getUserSession().addObject(TOTALS_TABLE_KEY, totalsTable);
             } catch (NumberFormatException e) {
-                GlobalVariables.getMessageMap()
-                        .putError(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, KFSKeyConstants.ERROR_CUSTOM,
-                                new String[]{"Fiscal Year must be a four-digit number"});
+                GlobalVariables.getMessageMap().putError(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR,
+                        KFSKeyConstants.ERROR_CUSTOM, "Fiscal Year must be a four-digit number");
             } catch (Exception e) {
                 GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, KFSKeyConstants.ERROR_CUSTOM,
-                        new String[]{"Please report the server error."});
+                        "Please report the server error.≥");
                 LOG.error("Application Errors", e);
             }
         }
@@ -272,10 +265,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         return new ActionForward(backUrl, true);
     }
 
-    /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#sort(org.apache.struts.action.ActionMapping,
-     * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     public ActionForward sort(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -283,10 +272,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         return super.sort(mapping, form, request, response);
     }
 
-    /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#selectAll(org.apache.struts.action.ActionMapping,
-     * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     public ActionForward selectAll(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -294,10 +279,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         return super.selectAll(mapping, form, request, response);
     }
 
-    /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#unselectAll(org.apache.struts.action.ActionMapping,
-     * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     public ActionForward unselectAll(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -305,10 +286,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         return super.unselectAll(mapping, form, request, response);
     }
 
-    /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#switchToPage(org.apache.struts.action.ActionMapping,
-     * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     public ActionForward switchToPage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -326,11 +303,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param maxRowsPerPage
      * @param bounded                whether the results will be bounded
      * @return the list of result BOs, possibly bounded by size
-     * <p>
-     * KRAD Conversion: Lookupable performs customization of the results if balance inquiry. The multiple value results
-     * are sorted.
-     * <p>
-     * Fields are in data dictionary for bo Balance.
      */
     protected Collection performMultipleValueLookup(MultipleValueLookupForm multipleValueLookupForm,
             List<ResultRow> resultTable, int maxRowsPerPage, boolean bounded) {
@@ -371,8 +343,8 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
             lookupResultsService.persistResultsTable(lookupResultsSequenceNumber, resultTable,
                     GlobalVariables.getUserSession().getPerson().getPrincipalId());
         } catch (Exception e) {
-            LOG.error("error occured trying to persist multiple lookup results", e);
-            throw new RuntimeException("error occured trying to persist multiple lookup results");
+            LOG.error("error occurred trying to persist multiple lookup results", e);
+            throw new RuntimeException("error occurred trying to persist multiple lookup results");
         }
 
         // since new search, nothing's checked
@@ -381,17 +353,9 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
         return displayList;
     }
 
-    /**
-     * @see org.kuali.rice.kns.web.struts.action.KualiMultipleValueLookupAction#selectAll(
-     * org.kuali.rice.kns.web.struts.form.MultipleValueLookupForm, int)
-     * <p>
-     * KRAD Conversion: Lookupable performs customization of the results.
-     * <p>
-     * Fields are in data dictionary for bo Balance.
-     */
     @Override
     protected List<ResultRow> selectAll(MultipleValueLookupForm multipleValueLookupForm, int maxRowsPerPage) {
-        List<ResultRow> resultTable = null;
+        List<ResultRow> resultTable;
         try {
             LookupResultsService lookupResultsService = SpringContext.getBean(LookupResultsService.class);
             String lookupResultsSequenceNumber = multipleValueLookupForm.getLookupResultsSequenceNumber();
@@ -420,10 +384,6 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param multipleValueLookupForm the given struts form
      * @param resultTable             the given result table that holds all data being presented
      * @return the map containing all entries available for selection
-     * <p>
-     * KRAD Conversion: Performs customization of the results. Prepares
-     * <p>
-     * There is no use of data dictionary for fields.
      */
     private Map<String, String> getSelectedObjectIds(MultipleValueLookupForm multipleValueLookupForm,
             List<ResultRow> resultTable) {
@@ -436,7 +396,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
             throw new RuntimeException("Fail to create an object of " + businessObjectClassName + e);
         }
 
-        Map<String, String> selectedObjectIds = new HashMap<String, String>();
+        Map<String, String> selectedObjectIds = new HashMap<>();
         Collection<String> segmentedPropertyNames = segmentedBusinessObject.getSegmentedPropertyNames();
         for (ResultRow row : resultTable) {
             for (Column column : row.getColumns()) {

@@ -725,49 +725,6 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     /**
-     * An inner class to point to a specific entry in a group
-     */
-    protected class EntryHolder {
-        private Date date;
-        private Object holder;
-
-        /**
-         * Constructs a NonAppliedHolding.EntryHolder
-         *
-         * @param date   of doc
-         * @param holder the entry to point to
-         */
-        public EntryHolder(Date date, Object holder) {
-            this.date = date;
-            this.holder = holder;
-        }
-
-        public Date getDate() {
-            return this.date;
-        }
-
-        public Object getHolder() {
-            return this.holder;
-        }
-    }
-
-    /**
-     * This comparator is used internally for sorting the list of invoices
-     */
-    protected static class EntryHolderComparator implements Comparator<EntryHolder> {
-
-        /**
-         * Compares two Objects based on their creation date
-         *
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(EntryHolder rosencrantz, EntryHolder guildenstern) {
-            return rosencrantz.getDate().compareTo(guildenstern.getDate());
-        }
-    }
-
-    /**
      * This method updates the customer invoice details when a new invoice is selected
      *
      * @param mapping
@@ -971,6 +928,49 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
             PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
             invoicePaidAppliedDao.deleteAllInvoicePaidApplieds(paymentApplicationDocument.getDocumentNumber());
             paymentApplicationForm.setManualInvoicePaidAppliedDatabaseDeletionRequired(false);
+        }
+    }
+    
+    /**
+     * An inner class to point to a specific entry in a group
+     */
+    protected class EntryHolder {
+        private Date date;
+        private Object holder;
+
+        /**
+         * Constructs a NonAppliedHolding.EntryHolder
+         *
+         * @param date   of doc
+         * @param holder the entry to point to
+         */
+        public EntryHolder(Date date, Object holder) {
+            this.date = date;
+            this.holder = holder;
+        }
+
+        public Date getDate() {
+            return this.date;
+        }
+
+        public Object getHolder() {
+            return this.holder;
+        }
+    }
+
+    /**
+     * This comparator is used internally for sorting the list of invoices
+     */
+    protected static class EntryHolderComparator implements Comparator<EntryHolder> {
+
+        /**
+         * Compares two Objects based on their creation date
+         *
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public int compare(EntryHolder rosencrantz, EntryHolder guildenstern) {
+            return rosencrantz.getDate().compareTo(guildenstern.getDate());
         }
     }
 

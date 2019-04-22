@@ -35,7 +35,6 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.rice.core.api.parameter.ParameterEvaluator;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
@@ -46,7 +45,6 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantView;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 
-@NonTransactional
 public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapService {
 
     protected ParameterEvaluatorService parameterEvaluatorService;
