@@ -26,6 +26,7 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrantsInvoiceDocumentServiceImpl implements CuContractsGrantsInvoiceDocumentService {
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentServiceImpl.class);
@@ -33,15 +34,24 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     @Override
     protected Map<String, String> getTemplateParameterList(ContractsGrantsInvoiceDocument document) {
         Map<String, String> templateParameters = super.getTemplateParameterList(document);
+        Map<String, Object> localParameterMap =  new HashMap<String, Object>();
+        
+        if (document.getInvoiceGeneralDetail().isFinalBillIndicator()) {
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, CUKFSConstants.CAPITAL_X);
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, StringUtils.EMPTY);
+        } else {
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.FINAL_BILL, StringUtils.EMPTY);
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.PARTIAL_BILL, CUKFSConstants.CAPITAL_X);
+        }
         
         ContractsGrantsInvoiceDetail totalCostInvoiceDetail = document.getTotalCostInvoiceDetail();
         if (ObjectUtils.isNotNull(totalCostInvoiceDetail)) {
-            Map<String, Object> parameterMap =  new HashMap<String, Object>();
-            
-            parameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.TOTAL_PROGRAM_OUTLAYS_TO_DATE,
+            localParameterMap.put(CuArPropertyConstants.ContractsAndGrantsBillingAwardFields.TOTAL_PROGRAM_OUTLAYS_TO_DATE,
                     totalCostInvoiceDetail.getTotalAmountBilledToDate().add(document.getInvoiceGeneralDetail().getCostShareAmount()));
-            
-            Map<String, String> localParameterMap = new PdfFormattingMap(parameterMap);
+        }
+        
+        if (!localParameterMap.isEmpty()) {
+            LOG.debug("getTemplateParameterList, there were local parameters, adding them to the returning map.");
             templateParameters.putAll(new PdfFormattingMap(localParameterMap));
         }
         
