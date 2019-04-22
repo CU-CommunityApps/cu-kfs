@@ -39,6 +39,8 @@
 
     <bean id="agencyService" factory-bean="testServiceFactory" factory-method="buildMockAgencyService"/>
 
+    <bean id="configurationService" factory-bean="testServiceFactory" factory-method="buildMockConfigurationService"/>
+
     <bean id="fileStorageService" parent="fileStorageService-parentBean" p:pathPrefix="."/>
 
     <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
@@ -66,6 +68,7 @@
                 <idref bean="enDocumentRouteHeaderService"/>
                 <idref bean="agencyService"/>
                 <idref bean="dateTimeService"/>
+                <idref bean="configurationService"/>
             </set>
         </property>
     </bean>

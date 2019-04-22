@@ -34,7 +34,7 @@ public class RassStep extends AbstractStep{
 
     protected List<RassXmlFileParseResult> getSuccessfullyParsedFileResults(List<RassXmlFileParseResult> parseResults) {
         return parseResults.stream()
-                .filter(parseResult -> RassResultCode.SUCCESS.equals(parseResult.getResultCode()))
+                .filter(parseResult -> RassResultCode.isSuccessfulResult(parseResult.getResultCode()))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

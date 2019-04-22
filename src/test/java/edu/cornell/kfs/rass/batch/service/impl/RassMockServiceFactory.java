@@ -15,12 +15,14 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
+import edu.cornell.kfs.rass.RassKeyConstants;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
 
@@ -153,6 +155,17 @@ public class RassMockServiceFactory {
                 });
         
         return agencyService;
+    }
+
+    public ConfigurationService buildMockConfigurationService() throws Exception {
+        ConfigurationService configurationService = Mockito.mock(ConfigurationService.class);
+        
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_DESCRIPTION))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_DESCRIPTION);
+        Mockito.when(configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE))
+                .thenReturn(RassTestConstants.ResourcePropertyValues.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
+        
+        return configurationService;
     }
 
 }

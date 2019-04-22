@@ -16,4 +16,14 @@ public final class RassTestConstants {
     public static final String AGENCY_SERVICE_BEAN_NAME = "agencyService";
     public static final String ROUTE_HEADER_SERVICE_BEAN_NAME = "enDocumentRouteHeaderService";
 
+    public static final class ResourcePropertyValues {
+        
+        private ResourcePropertyValues() {
+            throw new UnsupportedOperationException("Instantiating nested constants class is prohibited");
+        }
+        
+        public static final String MESSAGE_RASS_DOCUMENT_DESCRIPTION = "Auto-Generated {0} of {1}";
+        public static final String MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE = "Automatically created and routed";
+    }
+
 }

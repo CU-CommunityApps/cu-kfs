@@ -1,5 +1,7 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
+import java.text.MessageFormat;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.UserSession;
@@ -13,11 +15,13 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.kew.api.exception.WorkflowException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.rass.RassConstants;
+import edu.cornell.kfs.rass.RassKeyConstants;
 import edu.cornell.kfs.rass.batch.service.RassRoutingService;
 import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -27,6 +31,7 @@ public class RassRoutingServiceImpl implements RassRoutingService {
     protected MaintenanceDocumentService maintenanceDocumentService;
     protected DocumentService documentService;
     protected DataDictionaryService dataDictionaryService;
+    protected ConfigurationService configurationService;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
@@ -48,6 +53,7 @@ public class RassRoutingServiceImpl implements RassRoutingService {
     protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentInternal(
             Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition)
             throws WorkflowException {
+        String annotation = configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
         R newBo = businessObjects.getRight();
         MaintenanceDocument maintenanceDocument = maintenanceDocumentService.setupNewMaintenanceDocument(
                 objectDefinition.getBusinessObjectClass().getName(), objectDefinition.getDocumentTypeName(), maintenanceAction);
@@ -60,7 +66,7 @@ public class RassRoutingServiceImpl implements RassRoutingService {
                 buildDocumentDescription(newBo, maintenanceAction, objectDefinition));
         
         maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(
-                maintenanceDocument, RassConstants.RASS_ROUTE_ACTION_ANNOTATION, null);
+                maintenanceDocument, annotation, null);
         
         return maintenanceDocument;
     }
@@ -68,7 +74,8 @@ public class RassRoutingServiceImpl implements RassRoutingService {
     protected <R extends PersistableBusinessObject> String buildDocumentDescription(
             R newBo, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition) {
         String actionLabel = getLabelForAction(maintenanceAction);
-        String formattedDescription = String.format(RassConstants.RASS_MAINTENANCE_DOCUMENT_DESCRIPTION_FORMAT,
+        String descriptionTemplate = configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_DESCRIPTION);
+        String formattedDescription = MessageFormat.format(descriptionTemplate,
                 actionLabel, objectDefinition.printObjectLabelAndKeys(newBo));
         int maxLength = getDocumentDescriptionMaxLength();
         if (formattedDescription.length() > maxLength) {
@@ -100,6 +107,10 @@ public class RassRoutingServiceImpl implements RassRoutingService {
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }
