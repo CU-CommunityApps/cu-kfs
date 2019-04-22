@@ -187,6 +187,47 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
         return SpringContext.getBean(BatchFileAdminAuthorizationService.class);
     }
 
+    @Override
+    public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
+        BatchFile batchFile = (BatchFile) businessObject;
+        List<Map<String, Object>> actionLinks = new LinkedList<>();
+
+        if (canDownloadFile(batchFile, user)) {
+            Map<String, Object> downloadLink = new LinkedHashMap<>();
+            downloadLink.put("label", "Download");
+            downloadLink.put("url", getDownloadURL(batchFile));
+            downloadLink.put("method", "GET");
+            actionLinks.add(downloadLink);
+        }
+
+        if (canDeleteFile(batchFile, user)) {
+            Map<String, Object> deleteLink = new LinkedHashMap<>();
+            deleteLink.put("label", "Delete");
+            deleteLink.put("url", getResourceURL(batchFile));
+            deleteLink.put("method", "DELETE");
+            actionLinks.add(deleteLink);
+        }
+
+        return actionLinks;
+    }
+
+    private boolean canDownloadFile(BatchFile batchFile, Person user) {
+        return getBatchFileAdminAuthorizationService().canDownload(batchFile, user);
+    }
+
+    private boolean canDeleteFile(BatchFile batchFile, Person user) {
+        return getBatchFileAdminAuthorizationService().canDelete(batchFile, user);
+    }
+
+    private String getResourceURL(BatchFile batchFile) {
+        return SysApiApplication.SYS_ROOT + "/" + SysApiApplication.BUSINESS_OBJECT_RESOURCE + "/BatchFile/" +
+                batchFile.getId();
+    }
+
+    private String getDownloadURL(BatchFile batchFile) {
+        return this.getResourceURL(batchFile) + ".bin";
+    }
+
     protected class BatchFileFinder extends DirectoryWalker {
         private List<BatchFile> results;
 
@@ -236,46 +277,5 @@ public class BatchFileLookupSearchServiceImpl extends LookupSearchService {
             }
             return true;
         }
-    }
-
-    @Override
-    public List<Map<String, Object>> getActionLinks(BusinessObjectBase businessObject, Person user) {
-        BatchFile batchFile = (BatchFile) businessObject;
-        List<Map<String, Object>> actionLinks = new LinkedList<>();
-
-        if (canDownloadFile(batchFile, user)) {
-            Map<String, Object> downloadLink = new LinkedHashMap<>();
-            downloadLink.put("label", "Download");
-            downloadLink.put("url", getDownloadURL(batchFile));
-            downloadLink.put("method", "GET");
-            actionLinks.add(downloadLink);
-        }
-
-        if (canDeleteFile(batchFile, user)) {
-            Map<String, Object> deleteLink = new LinkedHashMap<>();
-            deleteLink.put("label", "Delete");
-            deleteLink.put("url", getResourceURL(batchFile));
-            deleteLink.put("method", "DELETE");
-            actionLinks.add(deleteLink);
-        }
-
-        return actionLinks;
-    }
-
-    private boolean canDownloadFile(BatchFile batchFile, Person user) {
-        return getBatchFileAdminAuthorizationService().canDownload(batchFile, user);
-    }
-
-    private boolean canDeleteFile(BatchFile batchFile, Person user) {
-        return getBatchFileAdminAuthorizationService().canDelete(batchFile, user);
-    }
-
-    private String getResourceURL(BatchFile batchFile) {
-        return SysApiApplication.SYS_ROOT + "/" + SysApiApplication.BUSINESS_OBJECT_RESOURCE + "/BatchFile/" +
-                batchFile.getId();
-    }
-
-    private String getDownloadURL(BatchFile batchFile) {
-        return this.getResourceURL(batchFile) + ".bin";
     }
 }

@@ -489,7 +489,6 @@ public class GlLineServiceImpl implements GlLineService {
         assetGlobal.setDocumentNumber(maintDoc.getDocumentNumber());
         assetGlobal.setConditionCode(CamsConstants.Asset.CONDITION_CODE_E);
 
-        // CSU 6702 BEGIN
         //year end changes
         String docType = DocumentTypeName.ASSET_ADD_GLOBAL;
         ParameterEvaluator evaluator = parameterEvaluatorService
@@ -523,8 +522,8 @@ public class GlLineServiceImpl implements GlLineService {
                 capitalAssetLineNumber);
 
         if (ObjectUtils.isNotNull(capitalAssetInformation)) {
-            // If this was a shell Capital Asset Information record (for example GL Entries from enterprise feed or Vendor Credit Memo)
-            // setup asset allocation info accordingly so it can be changed on Asset Payment Document
+            // If this was a shell Capital Asset Information record (for example GL Entries from enterprise feed or
+            // Vendor Credit Memo) setup asset allocation info accordingly so it can be changed on Asset Payment Document
             if (ObjectUtils.isNull(capitalAssetInformation.getDistributionAmountCode())) {
                 document.setAssetPaymentAllocationTypeCode(KFSConstants.CapitalAssets.DISTRIBUTE_COST_EQUALLY_CODE);
                 document.setAllocationFromFPDocuments(false);
@@ -538,7 +537,8 @@ public class GlLineServiceImpl implements GlLineService {
         updatePreTagInformation(primaryGlEntry, document, capitalAssetLineNumber);
 
         // Asset Payment Detail - sourceAccountingLines on the document....
-        document.getSourceAccountingLines().addAll(createAssetPaymentDetails(primaryGlEntry, document, 0, capitalAssetLineNumber));
+        document.getSourceAccountingLines().addAll(createAssetPaymentDetails(primaryGlEntry, document, 0,
+                capitalAssetLineNumber));
 
         KualiDecimal assetAmount = KualiDecimal.ZERO;
 
@@ -800,13 +800,11 @@ public class GlLineServiceImpl implements GlLineService {
     @Override
     @Transactional
     public void setupCapitalAssetInformation(GeneralLedgerEntry entry) {
-        List<CapitalAccountingLines> capitalAccountingLines;
-
         int nextCapitalAssetLineNumber = capitalAssetInformationDao.getNextCapitalAssetLineNumber(entry.getDocumentNumber());
 
-        capitalAccountingLines = new ArrayList<>();
+        List<CapitalAccountingLines> capitalAccountingLines = new ArrayList<>();
         createCapitalAccountingLine(capitalAccountingLines, entry, null);
-        createNewCapitalAsset(capitalAccountingLines,entry.getDocumentNumber(),null,nextCapitalAssetLineNumber);
+        createNewCapitalAsset(capitalAccountingLines, entry.getDocumentNumber(), null, nextCapitalAssetLineNumber);
     }
 
     /**
@@ -871,7 +869,9 @@ public class GlLineServiceImpl implements GlLineService {
     protected CapitalAccountingLines addCapitalAccountingLine(List<CapitalAccountingLines> capitalAccountingLines,
             GeneralLedgerEntry entry) {
         CapitalAccountingLines cal = new CapitalAccountingLines();
-        String capitalAssetLineType = KFSConstants.GL_CREDIT_CODE.equals(entry.getTransactionDebitCreditCode()) ? KFSConstants.SOURCE : KFSConstants.TARGET;
+        String capitalAssetLineType =
+                KFSConstants.GL_CREDIT_CODE.equals(entry.getTransactionDebitCreditCode()) ? KFSConstants.SOURCE :
+                        KFSConstants.TARGET;
         cal.setLineType(capitalAssetLineType);
         cal.setSequenceNumber(entry.getTransactionLedgerEntrySequenceNumber());
         cal.setChartOfAccountsCode(entry.getChartOfAccountsCode());
@@ -931,8 +931,11 @@ public class GlLineServiceImpl implements GlLineService {
         capitalAssetAccountLine.setChartOfAccountsCode(capitalAccountingLine.getChartOfAccountsCode());
         capitalAssetAccountLine.setAccountNumber(capitalAccountingLine.getAccountNumber());
         capitalAssetAccountLine.setSubAccountNumber(capitalAccountingLine.getSubAccountNumber());
-        capitalAssetAccountLine.setFinancialDocumentLineTypeCode(KFSConstants.SOURCE.equals(capitalAccountingLine.getLineType()) ? KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE : KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
-        capitalAssetAccountLine.setCapitalAssetAccountLineNumber(getNextAccountingLineNumber(capitalAccountingLine, capitalAsset));
+        capitalAssetAccountLine.setFinancialDocumentLineTypeCode(
+                KFSConstants.SOURCE.equals(capitalAccountingLine.getLineType()) ?
+                        KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE : KFSConstants.TARGET_ACCT_LINE_TYPE_CODE);
+        capitalAssetAccountLine.setCapitalAssetAccountLineNumber(getNextAccountingLineNumber(capitalAccountingLine,
+                capitalAsset));
         capitalAssetAccountLine.setCapitalAssetLineNumber(capitalAsset.getCapitalAssetLineNumber());
         capitalAssetAccountLine.setFinancialObjectCode(capitalAccountingLine.getFinancialObjectCode());
         capitalAssetAccountLine.setFinancialSubObjectCode(capitalAccountingLine.getFinancialSubObjectCode());
