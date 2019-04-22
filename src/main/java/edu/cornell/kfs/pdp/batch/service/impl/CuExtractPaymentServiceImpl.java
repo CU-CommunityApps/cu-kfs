@@ -54,10 +54,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     
     private static final String PAYER_NAME = "Cornell University";
     private static final String PAYER_ADDRESS_LINE1 = "Procurement and Payment Services";
-    private static final String PAYER_ADDRESS_LINE2 = "395 Pine Tree Rd Suite 330";
+    private static final String PAYER_ADDRESS_LINE2 = "341 Pine Tree Rd";
     private static final String PAYER_CITY = "Ithaca";
     private static final String PAYER_STATE = "NY";
-    private static final String PAYER_ZIP_CODE = "148502826";
+    private static final String PAYER_ZIP_CODE = "148502820";
     
     protected AchBundlerHelperService achBundlerHelperService;
     
