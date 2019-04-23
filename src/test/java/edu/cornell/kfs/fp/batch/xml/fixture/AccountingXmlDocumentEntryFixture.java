@@ -419,6 +419,22 @@ public enum AccountingXmlDocumentEntryFixture {
                     "Sample YEBA Note for the multi doc testing file"),
             adHocRecipients(),
             backupLinks()),
+    MULTI_DOC_TYPE_TEST_YETF(10, CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
+            "Test YETF Document", "This is only a test YETF document!", "ABCD1234",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S524000_SUB_24100_OBJ_8070_SUB_900_AMT_100_FROM),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_S343717_OBJ_7070_AMT_100_TO),
+            notes(
+                    "A fun testing note for YETF",
+                    "Another note for YETF"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
     DI_WITH_IB_ITEMS_TEST_DOC1(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_YEDI_DOCUMENT_TEST_DOC1(
             BASE_DOCUMENT, 1, KFSConstants.FinancialDocumentTypeCodes.YEAR_END_DISTRIBUTION_OF_INCOME_AND_EXPENSE,
