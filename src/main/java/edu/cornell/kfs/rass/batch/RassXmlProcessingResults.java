@@ -1,27 +1,32 @@
 package edu.cornell.kfs.rass.batch;
 
+import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.Proposal;
+
 public class RassXmlProcessingResults {
 
-    private final RassXmlObjectGroupResult agencyResults;
-    private final RassXmlObjectGroupResult proposalResults;
-    private final RassXmlObjectGroupResult awardResults;
+    private final RassBusinessObjectUpdateResultGrouping<Agency> agencyResults;
+    private final RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults;
+    private final RassBusinessObjectUpdateResultGrouping<Award> awardResults;
 
     public RassXmlProcessingResults(
-            RassXmlObjectGroupResult agencyResults, RassXmlObjectGroupResult proposalResults, RassXmlObjectGroupResult awardResults) {
+            RassBusinessObjectUpdateResultGrouping<Agency> agencyResults, RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults,
+            RassBusinessObjectUpdateResultGrouping<Award> awardResults) {
         this.agencyResults = agencyResults;
         this.proposalResults = proposalResults;
         this.awardResults = awardResults;
     }
 
-    public RassXmlObjectGroupResult getAgencyResults() {
+    public RassBusinessObjectUpdateResultGrouping<Agency> getAgencyResults() {
         return agencyResults;
     }
 
-    public RassXmlObjectGroupResult getProposalResults() {
+    public RassBusinessObjectUpdateResultGrouping<Proposal> getProposalResults() {
         return proposalResults;
     }
 
-    public RassXmlObjectGroupResult getAwardResults() {
+    public RassBusinessObjectUpdateResultGrouping<Award> getAwardResults() {
         return awardResults;
     }
 

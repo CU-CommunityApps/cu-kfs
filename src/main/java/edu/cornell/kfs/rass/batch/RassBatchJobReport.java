@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RassXmlReport {
+public class RassBatchJobReport {
 
     private final List<RassXmlFileParseResult> fileParseResults;
     private final RassXmlProcessingResults processingResults;
 
-    public RassXmlReport(List<RassXmlFileParseResult> fileParseResults, RassXmlProcessingResults processingResults) {
+    public RassBatchJobReport(List<RassXmlFileParseResult> fileParseResults, RassXmlProcessingResults processingResults) {
         this.fileParseResults = Collections.unmodifiableList(new ArrayList<>(fileParseResults));
         this.processingResults = processingResults;
     }

@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.rass.RassConstants.RassResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.RassTestConstants;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlDocumentWrapperFixture;
@@ -65,7 +65,7 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         assertRassXmlFilesParseAsExpected(
                 fileNames(RASS_EXAMPLE),
                 expectedResults(
-                        result(RASS_EXAMPLE, RassResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_EXAMPLE)));
+                        result(RASS_EXAMPLE, RassParseResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_EXAMPLE)));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         assertRassXmlFilesParseAsExpected(
                 fileNames(RASS_EMPTY),
                 expectedResults(
-                        result(RASS_EMPTY, RassResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_EMPTY_FILE)));
+                        result(RASS_EMPTY, RassParseResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_EMPTY_FILE)));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         assertRassXmlFilesParseAsExpected(
                 fileNames(RASS_AWARDS_ONLY),
                 expectedResults(
-                        result(RASS_AWARDS_ONLY, RassResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_AWARDS_ONLY)));
+                        result(RASS_AWARDS_ONLY, RassParseResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_AWARDS_ONLY)));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         assertRassXmlFilesParseAsExpected(
                 fileNames(RASS_AGENCIES_ONLY),
                 expectedResults(
-                        result(RASS_AGENCIES_ONLY, RassResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_AGENCIES_ONLY)));
+                        result(RASS_AGENCIES_ONLY, RassParseResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_AGENCIES_ONLY)));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         assertRassXmlFilesParseAsExpected(
                 fileNames(RASS_BAD_FORMAT),
                 expectedResults(
-                        result(RASS_BAD_FORMAT, RassResultCode.ERROR)));
+                        result(RASS_BAD_FORMAT, RassParseResultCode.ERROR)));
     }
 
     @Test
@@ -105,9 +105,9 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         assertRassXmlFilesParseAsExpected(
                 fileNames(RASS_EXAMPLE, RASS_BAD_FORMAT, RASS_AWARDS_ONLY),
                 expectedResults(
-                        result(RASS_EXAMPLE, RassResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_EXAMPLE),
-                        result(RASS_BAD_FORMAT, RassResultCode.ERROR),
-                        result(RASS_AWARDS_ONLY, RassResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_AWARDS_ONLY)));
+                        result(RASS_EXAMPLE, RassParseResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_EXAMPLE),
+                        result(RASS_BAD_FORMAT, RassParseResultCode.ERROR),
+                        result(RASS_AWARDS_ONLY, RassParseResultCode.SUCCESS, RassXmlDocumentWrapperFixture.RASS_AWARDS_ONLY)));
     }
 
     private void assertRassXmlFilesParseAsExpected(
@@ -131,12 +131,12 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
             assertNotNull("A result object should have been present for file " + expectedFileName, actualResult);
             assertEquals("Wrong parse result code for file " + expectedFileName,
                     expectedResult.getResultCode(), actualResult.getResultCode());
-            if (expectedResult.hasParsedContent()) {
-                assertTrue("Parsed content should have been present for file " + expectedFileName, actualResult.hasParsedContent());
+            if (expectedResult.hasParsedDocumentWrapper()) {
+                assertTrue("Parsed content should have been present for file " + expectedFileName, actualResult.hasParsedDocumentWrapper());
                 assertEquals("Wrong parsed contents for file " + expectedFileName,
-                        expectedResult.getParsedContent(), actualResult.getParsedContent());
+                        expectedResult.getParsedDocumentWrapper(), actualResult.getParsedDocumentWrapper());
             } else {
-                assertFalse("Parsed data should not have been present for file " + expectedFileName, actualResult.hasParsedContent());
+                assertFalse("Parsed data should not have been present for file " + expectedFileName, actualResult.hasParsedDocumentWrapper());
             }
         }
     }
@@ -193,12 +193,12 @@ public class RassServiceImplXmlParseTest extends SpringEnabledMicroTestBase {
         return Arrays.asList(expectedResults);
     }
 
-    private RassXmlFileParseResult result(String baseFileName, RassResultCode resultCode) {
+    private RassXmlFileParseResult result(String baseFileName, RassParseResultCode resultCode) {
         return new RassXmlFileParseResult(
                 buildTargetFileName(baseFileName), resultCode, Optional.empty());
     }
 
-    private RassXmlFileParseResult result(String baseFileName, RassResultCode resultCode, RassXmlDocumentWrapperFixture xmlFixture) {
+    private RassXmlFileParseResult result(String baseFileName, RassParseResultCode resultCode, RassXmlDocumentWrapperFixture xmlFixture) {
         return new RassXmlFileParseResult(
                 buildTargetFileName(baseFileName), resultCode, Optional.of(xmlFixture.toRassXmlDocumentWrapper()));
     }

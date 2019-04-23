@@ -23,7 +23,7 @@ import edu.cornell.kfs.sys.xmladapters.RassStringToJavaShortDateTimeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Award", namespace = StringUtils.EMPTY)
-public class RassXmlAwardEntry {
+public class RassXmlAwardEntry implements RassXmlObject {
     
     @XmlElement(name = "Proposal_Number", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

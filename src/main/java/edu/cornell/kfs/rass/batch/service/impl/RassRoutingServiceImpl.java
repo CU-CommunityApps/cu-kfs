@@ -22,8 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.rass.RassConstants;
 import edu.cornell.kfs.rass.RassKeyConstants;
+import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
 import edu.cornell.kfs.rass.batch.service.RassRoutingService;
-import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class RassRoutingServiceImpl implements RassRoutingService {
@@ -35,8 +36,8 @@ public class RassRoutingServiceImpl implements RassRoutingService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
-            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition) {
+    public <T extends RassXmlObject, R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
+            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<T, R> objectDefinition) {
         try {
             return GlobalVariables.doInNewGlobalVariables(
                     buildSessionForSystemUser(),
@@ -50,8 +51,8 @@ public class RassRoutingServiceImpl implements RassRoutingService {
         return new UserSession(KFSConstants.SYSTEM_USER);
     }
 
-    protected <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentInternal(
-            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition)
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocumentInternal(
+            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<T, R> objectDefinition)
             throws WorkflowException {
         String annotation = configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
         R newBo = businessObjects.getRight();

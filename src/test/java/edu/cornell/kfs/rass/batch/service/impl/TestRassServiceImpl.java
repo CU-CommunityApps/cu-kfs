@@ -6,13 +6,14 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
 import edu.cornell.kfs.rass.RassTestConstants;
-import edu.cornell.kfs.rass.batch.RassXmlObjectResult;
-import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
+import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 
 public class TestRassServiceImpl extends RassServiceImpl {
 
     @Override
-    protected <T, R extends PersistableBusinessObject> RassXmlObjectResult processObject(
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> processObject(
             T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker) {
         if (StringUtils.equals(RassTestConstants.ERROR_OBJECT_KEY, objectDefinition.printPrimaryKeyValues(xmlObject))) {
             throw new RuntimeException("Forced error for " + objectDefinition.printObjectLabelAndKeys(xmlObject));

@@ -4,11 +4,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceDocument;
 
-import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 
 public interface RassRoutingService {
 
-    <R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
-            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<?, R> objectDefinition);
+    <T extends RassXmlObject, R extends PersistableBusinessObject> MaintenanceDocument createAndRouteMaintenanceDocument(
+            Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<T, R> objectDefinition);
 
 }

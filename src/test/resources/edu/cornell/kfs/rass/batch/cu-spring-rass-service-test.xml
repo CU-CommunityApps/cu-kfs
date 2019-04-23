@@ -25,7 +25,7 @@
     <bean id="rassRoutingService" parent="rassRoutingService-parentBean"
             class="edu.cornell.kfs.rass.batch.service.impl.TestRassRoutingServiceImpl"/>
 
-    <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.xml.TestAgencyTranslationDefinition"/>
+    <bean id="agencyDefinition" parent="agencyDefinition-parentBean" class="edu.cornell.kfs.rass.batch.TestAgencyTranslationDefinition"/>
 
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 

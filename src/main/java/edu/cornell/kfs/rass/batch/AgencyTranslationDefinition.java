@@ -1,4 +1,4 @@
-package edu.cornell.kfs.rass.batch.xml;
+package edu.cornell.kfs.rass.batch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.module.cg.CuCGPropertyConstants;
 import edu.cornell.kfs.module.cg.businessobject.AgencyExtendedAttribute;
+import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.util.RassUtil;
 
 public class AgencyTranslationDefinition extends RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> {

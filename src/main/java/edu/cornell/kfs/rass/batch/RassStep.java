@@ -10,10 +10,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
-import edu.cornell.kfs.rass.RassConstants.RassResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.batch.service.RassService;
 
-public class RassStep extends AbstractStep{
+public class RassStep extends AbstractStep {
 
     private RassService rassService;
     private static final Logger LOG = LogManager.getLogger(RassStep.class);
@@ -25,20 +25,20 @@ public class RassStep extends AbstractStep{
             LOG.info("execute, Skipping XML processing because no pending RASS XML files were found");
             return true;
         }
-        List<RassXmlFileParseResult> successfulResults = getSuccessfullyParsedFileResults(parseResults);
+        List<RassXmlFileParseResult> successfulResults = findSuccessfullyParsedFileResults(parseResults);
         RassXmlProcessingResults processingResults = rassService.updateKFS(successfulResults);
-        RassXmlReport report = new RassXmlReport(parseResults, processingResults);
+        RassBatchJobReport report = new RassBatchJobReport(parseResults, processingResults);
         sendReport(report);
         return true;
     }
 
-    protected List<RassXmlFileParseResult> getSuccessfullyParsedFileResults(List<RassXmlFileParseResult> parseResults) {
+    protected List<RassXmlFileParseResult> findSuccessfullyParsedFileResults(List<RassXmlFileParseResult> parseResults) {
         return parseResults.stream()
-                .filter(parseResult -> RassResultCode.isSuccessfulResult(parseResult.getResultCode()))
+                .filter(parseResult -> RassParseResultCode.SUCCESS.equals(parseResult.getResultCode()))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    protected void sendReport(RassXmlReport report) {
+    protected void sendReport(RassBatchJobReport report) {
         LOG.debug("sendReport, The report-sending functionality has not been implemented yet.");
     }
 

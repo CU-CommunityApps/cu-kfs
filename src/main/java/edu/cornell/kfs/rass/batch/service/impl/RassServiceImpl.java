@@ -36,17 +36,20 @@ import org.kuali.rice.kew.api.KewApiConstants;
 import org.kuali.rice.kew.routeheader.service.RouteHeaderService;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.cornell.kfs.rass.RassConstants.RassResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassObjectGroupingUpdateResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
+import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResult;
+import edu.cornell.kfs.rass.batch.RassBusinessObjectUpdateResultGrouping;
+import edu.cornell.kfs.rass.batch.RassObjectTranslationDefinition;
+import edu.cornell.kfs.rass.batch.RassPropertyDefinition;
 import edu.cornell.kfs.rass.batch.RassXmlFileParseResult;
-import edu.cornell.kfs.rass.batch.RassXmlObjectGroupResult;
-import edu.cornell.kfs.rass.batch.RassXmlObjectResult;
 import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassRoutingService;
 import edu.cornell.kfs.rass.batch.service.RassService;
-import edu.cornell.kfs.rass.batch.xml.RassObjectTranslationDefinition;
-import edu.cornell.kfs.rass.batch.xml.RassPropertyDefinition;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
+import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 import edu.cornell.kfs.rass.util.RassUtil;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
@@ -84,10 +87,10 @@ public class RassServiceImpl implements RassService {
             byte[] rassXmlContent = LoadFileUtils.safelyLoadFileBytes(rassInputFileName);
             RassXmlDocumentWrapper parsedContent = (RassXmlDocumentWrapper) batchInputFileService.parse(batchInputFileType, rassXmlContent);
             LOG.info("parseRassXml, successfully parsed RASS XML into data object from file: " + rassInputFileName);
-            return new RassXmlFileParseResult(rassInputFileName, RassResultCode.SUCCESS, Optional.of(parsedContent));
+            return new RassXmlFileParseResult(rassInputFileName, RassParseResultCode.SUCCESS, Optional.of(parsedContent));
         } catch (RuntimeException e) {
             LOG.error("parseRassXml, could not read XML from file: " + rassInputFileName, e);
-            return new RassXmlFileParseResult(rassInputFileName, RassResultCode.ERROR, Optional.empty());
+            return new RassXmlFileParseResult(rassInputFileName, RassParseResultCode.ERROR, Optional.empty());
         } finally {
             removeDoneFileQuietly(rassInputFileName);
         }
@@ -109,11 +112,12 @@ public class RassServiceImpl implements RassService {
         
         PendingDocumentTracker documentTracker = new PendingDocumentTracker();
         
-        RassXmlObjectGroupResult agencyResults = updateBOs(successfullyParsedFiles, agencyDefinition, documentTracker);
-        RassXmlObjectGroupResult proposalResults = new RassXmlObjectGroupResult(
-                Proposal.class, Collections.emptyList(), RassResultCode.SUCCESS);
-        RassXmlObjectGroupResult awardResults = new RassXmlObjectGroupResult(
-                Award.class, Collections.emptyList(), RassResultCode.SUCCESS);
+        RassBusinessObjectUpdateResultGrouping<Agency> agencyResults = updateBOs(
+                successfullyParsedFiles, agencyDefinition, documentTracker);
+        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = new RassBusinessObjectUpdateResultGrouping<>(
+                Proposal.class, Collections.emptyList(), RassObjectGroupingUpdateResultCode.SUCCESS);
+        RassBusinessObjectUpdateResultGrouping<Award> awardResults = new RassBusinessObjectUpdateResultGrouping<>(
+                Award.class, Collections.emptyList(), RassObjectGroupingUpdateResultCode.SUCCESS);
         LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
         
         waitForRemainingGeneratedDocumentsToFinish(documentTracker);
@@ -121,15 +125,16 @@ public class RassServiceImpl implements RassService {
         return new RassXmlProcessingResults(agencyResults, proposalResults, awardResults);
     }
 
-    protected <T, R extends PersistableBusinessObject> RassXmlObjectGroupResult updateBOs(List<RassXmlFileParseResult> parsedFiles,
-            RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker) {
-        List<RassXmlObjectResult> objectResults = new ArrayList<>();
-        RassResultCode groupResultCode = RassResultCode.SUCCESS;
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResultGrouping<R> updateBOs(
+            List<RassXmlFileParseResult> parsedFiles, RassObjectTranslationDefinition<T, R> objectDefinition,
+            PendingDocumentTracker documentTracker) {
+        List<RassBusinessObjectUpdateResult<R>> objectResults = new ArrayList<>();
+        RassObjectGroupingUpdateResultCode groupingResultCode = RassObjectGroupingUpdateResultCode.SUCCESS;
         
         LOG.info("updateBOs, Started processing objects of type " + objectDefinition.getObjectLabel());
         try {
             for (RassXmlFileParseResult parsedFile : parsedFiles) {
-                RassXmlDocumentWrapper documentWrapper = parsedFile.getParsedContent();
+                RassXmlDocumentWrapper documentWrapper = parsedFile.getParsedDocumentWrapper();
                 Date extractDate = documentWrapper.getExtractDate();
                 if (extractDate == null) {
                     LOG.warn("updateBOs, Processing a file that does not specify an extract date");
@@ -144,12 +149,12 @@ public class RassServiceImpl implements RassService {
                         + KFSConstants.BLANK_SPACE + objectDefinition.getObjectLabel() + " objects to process");
                 for (Object xmlObject : xmlObjects) {
                     T typedXmlObject = objectDefinition.getXmlObjectClass().cast(xmlObject);
-                    RassXmlObjectResult result = processObject(typedXmlObject, objectDefinition, documentTracker);
-                    if (RassResultCode.isSuccessfulResult(result.getResultCode())) {
+                    RassBusinessObjectUpdateResult<R> result = processObject(typedXmlObject, objectDefinition, documentTracker);
+                    if (RassObjectUpdateResultCode.isSuccessfulResult(result.getResultCode())) {
                         documentTracker.addDocumentIdToTrack(result);
-                    } else if (RassResultCode.ERROR.equals(result.getResultCode())) {
+                    } else if (RassObjectUpdateResultCode.ERROR.equals(result.getResultCode())) {
                         documentTracker.addObjectUpdateFailureToTrack(result);
-                        groupResultCode = RassResultCode.ERROR;
+                        groupingResultCode = RassObjectGroupingUpdateResultCode.ERROR;
                     }
                     objectResults.add(result);
                 }
@@ -157,17 +162,17 @@ public class RassServiceImpl implements RassService {
             }
         } catch (RuntimeException e) {
             LOG.error("updateBOs, Unexpected exception encountered when processing BOs of type " + objectDefinition.getObjectLabel(), e);
-            groupResultCode = RassResultCode.ERROR;
+            groupingResultCode = RassObjectGroupingUpdateResultCode.ERROR;
             
         }
         LOG.info("updateBOs, Finished processing objects of type " + objectDefinition.getObjectLabel());
         
-        return new RassXmlObjectGroupResult(objectDefinition.getBusinessObjectClass(), objectResults, groupResultCode);
+        return new RassBusinessObjectUpdateResultGrouping<R>(objectDefinition.getBusinessObjectClass(), objectResults, groupingResultCode);
     }
 
-    protected <T, R extends PersistableBusinessObject> RassXmlObjectResult processObject(
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> processObject(
             T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker) {
-        RassXmlObjectResult result;
+        RassBusinessObjectUpdateResult<R> result;
         try {
             LOG.info("processObject, Processing " + objectDefinition.printObjectLabelAndKeys(xmlObject));
             waitForMatchingPriorDocumentsToFinish(xmlObject, objectDefinition, documentTracker);
@@ -180,14 +185,15 @@ public class RassServiceImpl implements RassService {
             LOG.info("processObject, Successfully processed " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         } catch (RuntimeException e) {
             LOG.error("processObject, Failed to process update for " + objectDefinition.printObjectLabelAndKeys(xmlObject), e);
-            result = new RassXmlObjectResult(
-                    objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject), RassResultCode.ERROR);
+            result = new RassBusinessObjectUpdateResult<>(
+                    objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
+                    RassObjectUpdateResultCode.ERROR);
         }
         return result;
     }
 
-    protected <T> void waitForMatchingPriorDocumentsToFinish(
-            T xmlObject, RassObjectTranslationDefinition<T, ?> objectDefinition, PendingDocumentTracker documentTracker) {
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> void waitForMatchingPriorDocumentsToFinish(
+            T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition, PendingDocumentTracker documentTracker) {
         List<String> objectKeys = objectDefinition.getKeysOfObjectUpdatesToWaitFor(xmlObject);
         for (String objectKey : objectKeys) {
             if (documentTracker.didObjectFailToUpdate(objectKey)) {
@@ -261,7 +267,7 @@ public class RassServiceImpl implements RassService {
         }
     }
 
-    protected <T, R extends PersistableBusinessObject> RassXmlObjectResult createObject(
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> createObject(
             T xmlObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("createObject, Creating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         Supplier<R> businessObjectGenerator = () -> createMinimalObject(objectDefinition.getBusinessObjectClass());
@@ -275,9 +281,9 @@ public class RassServiceImpl implements RassService {
                 pairWithNewObjectOnly, KRADConstants.MAINTENANCE_NEW_ACTION, objectDefinition);
         LOG.info("createObject, Successfully routed document " + maintenanceDocument.getDocumentNumber()
                 + " to create " + objectDefinition.printObjectLabelAndKeys(xmlObject));
-        return new RassXmlObjectResult(
+        return new RassBusinessObjectUpdateResult<>(
                 objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(businessObject),
-                maintenanceDocument.getDocumentNumber(), RassResultCode.SUCCESS_NEW);
+                maintenanceDocument.getDocumentNumber(), RassObjectUpdateResultCode.SUCCESS_NEW);
     }
 
     protected <R extends PersistableBusinessObject> R createMinimalObject(Class<R> businessObjectClass) {
@@ -288,16 +294,16 @@ public class RassServiceImpl implements RassService {
         }
     }
 
-    protected <T, R extends PersistableBusinessObject> RassXmlObjectResult updateObject(T xmlObject, R oldBusinessObject,
-            RassObjectTranslationDefinition<T, R> objectDefinition) {
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> RassBusinessObjectUpdateResult<R> updateObject(
+            T xmlObject, R oldBusinessObject, RassObjectTranslationDefinition<T, R> objectDefinition) {
         LOG.info("updateObject, Updating " + objectDefinition.printObjectLabelAndKeys(xmlObject));
         
         if (!objectDefinition.businessObjectEditIsPermitted(xmlObject, oldBusinessObject)) {
             LOG.info("updateObject, Updates are not permitted for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " so any changes to it will be skipped");
-            return new RassXmlObjectResult(
+            return new RassBusinessObjectUpdateResult<>(
                     objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(xmlObject),
-                    RassResultCode.SKIPPED);
+                    RassObjectUpdateResultCode.SKIPPED);
         }
         
         Supplier<R> businessObjectCopier = () -> deepCopyObject(oldBusinessObject);
@@ -310,15 +316,15 @@ public class RassServiceImpl implements RassService {
                     oldAndNewBos, KRADConstants.MAINTENANCE_EDIT_ACTION, objectDefinition);
             LOG.info("updateObject, Successfully routed document " + maintenanceDocument.getDocumentNumber()
                     + " to edit " + objectDefinition.printObjectLabelAndKeys(xmlObject));
-            return new RassXmlObjectResult(
+            return new RassBusinessObjectUpdateResult<>(
                     objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(newBusinessObject),
-                    maintenanceDocument.getDocumentNumber(), RassResultCode.SUCCESS_EDIT);
+                    maintenanceDocument.getDocumentNumber(), RassObjectUpdateResultCode.SUCCESS_EDIT);
         } else {
             LOG.info("updateObject, Skipping updates for " + objectDefinition.printObjectLabelAndKeys(xmlObject)
                     + " because either no changes were made or changes were only made to the truncated data portions");
-            return new RassXmlObjectResult(
+            return new RassBusinessObjectUpdateResult<>(
                     objectDefinition.getBusinessObjectClass(), objectDefinition.printPrimaryKeyValues(newBusinessObject),
-                    RassResultCode.SKIPPED);
+                    RassObjectUpdateResultCode.SKIPPED);
         }
     }
 
@@ -327,18 +333,18 @@ public class RassServiceImpl implements RassService {
         return (R) ObjectUtils.deepCopy(businessObject);
     }
 
-    protected <T, R extends PersistableBusinessObject> R buildAndPopulateBusinessObjectFromPojo(T xmlObject, Supplier<R> businessObjectSupplier,
-            RassObjectTranslationDefinition<T, R> objectDefinition) {
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> R buildAndPopulateBusinessObjectFromPojo(
+            T xmlObject, Supplier<R> businessObjectSupplier, RassObjectTranslationDefinition<T, R> objectDefinition) {
         Class<R> businessObjectClass = objectDefinition.getBusinessObjectClass();
         R businessObject = businessObjectSupplier.get();
         List<String> missingRequiredFields = new ArrayList<>();
         for (RassPropertyDefinition propertyMapping : objectDefinition.getPropertyMappings()) {
-            Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlName());
-            Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass, propertyMapping.getBoName(), xmlPropertyValue);
+            Object xmlPropertyValue = ObjectPropertyUtils.getPropertyValue(xmlObject, propertyMapping.getXmlPropertyName());
+            Object cleanedPropertyValue = cleanPropertyValue(businessObjectClass, propertyMapping.getBoPropertyName(), xmlPropertyValue);
             if (cleanedPropertyValue == null && propertyMapping.isRequired()) {
-                missingRequiredFields.add(propertyMapping.getXmlName());
+                missingRequiredFields.add(propertyMapping.getXmlPropertyName());
             } else {
-                ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoName(), cleanedPropertyValue);
+                ObjectPropertyUtils.setPropertyValue(businessObject, propertyMapping.getBoPropertyName(), cleanedPropertyValue);
             }
         }
         if (!missingRequiredFields.isEmpty()) {
@@ -348,7 +354,8 @@ public class RassServiceImpl implements RassService {
         return businessObject;
     }
 
-    protected Object cleanPropertyValue(Class<?> businessObjectClass, String propertyName, Object propertyValue) {
+    protected Object cleanPropertyValue(
+            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
         if (propertyValue instanceof String) {
             return cleanStringValue(businessObjectClass, propertyName, (String) propertyValue);
         } else {
@@ -356,23 +363,22 @@ public class RassServiceImpl implements RassService {
         }
     }
 
-    protected String cleanStringValue(Class<?> businessObjectClass, String propertyName, String propertyValue) {
+    protected String cleanStringValue(
+            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, String propertyValue) {
         String cleanedValue = StringUtils.defaultIfBlank(propertyValue, null);
         Integer maxLength = dataDictionaryService.getAttributeMaxLength(businessObjectClass, propertyName);
         if (maxLength != null && maxLength > 0 && StringUtils.length(cleanedValue) > maxLength) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("cleanStringValue, Truncating value for business object " + businessObjectClass.getName()
-                        + " and property " + propertyName);
-            }
+            LOG.info("cleanStringValue, Truncating value for business object " + businessObjectClass.getName()
+                    + " and property " + propertyName);
             cleanedValue = StringUtils.left(cleanedValue, maxLength);
         }
         return cleanedValue;
     }
 
-    protected <R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(R oldBo, R newBo,
-            RassObjectTranslationDefinition<?, R> objectDefinition) {
+    protected <T extends RassXmlObject, R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(
+            R oldBo, R newBo, RassObjectTranslationDefinition<T, R> objectDefinition) {
         boolean basicPropertiesHaveDifferences = objectDefinition.getPropertyMappings().stream()
-                .map(RassPropertyDefinition::getBoName)
+                .map(RassPropertyDefinition::getBoPropertyName)
                 .anyMatch(propertyName -> {
                     Object oldValue = ObjectPropertyUtils.getPropertyValue(oldBo, propertyName);
                     Object newValue = ObjectPropertyUtils.getPropertyValue(newBo, propertyName);
@@ -425,7 +431,7 @@ public class RassServiceImpl implements RassService {
         private Map<String, String> objectKeysToDocumentIdsMap = new HashMap<>();
         private Set<String> objectsWithFailedUpdates = new HashSet<>();
         
-        public void addDocumentIdToTrack(RassXmlObjectResult objectResult) {
+        public <R extends PersistableBusinessObject> void addDocumentIdToTrack(RassBusinessObjectUpdateResult<R> objectResult) {
             objectKeysToDocumentIdsMap.put(
                     RassUtil.buildClassAndKeyIdentifier(objectResult), objectResult.getDocumentId());
         }
@@ -442,8 +448,8 @@ public class RassServiceImpl implements RassService {
             objectKeysToDocumentIdsMap.remove(classAndKeyIdentifier);
         }
         
-        public void addObjectUpdateFailureToTrack(RassXmlObjectResult objectResult) {
-            if (!RassResultCode.ERROR.equals(objectResult.getResultCode())) {
+        public <R extends PersistableBusinessObject> void addObjectUpdateFailureToTrack(RassBusinessObjectUpdateResult<R> objectResult) {
+            if (!RassObjectUpdateResultCode.ERROR.equals(objectResult.getResultCode())) {
                 throw new IllegalArgumentException(
                         "processingResult should have had a status of ERROR, but instead had " + objectResult.getResultCode());
             }

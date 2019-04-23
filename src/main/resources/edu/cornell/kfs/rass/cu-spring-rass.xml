@@ -96,22 +96,22 @@
 		</property>
 	</bean>
 
-	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.xml.RassPropertyDefinition"/>
+	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.RassPropertyDefinition"/>
 
 	<bean id="agencyDefinition" parent="agencyDefinition-parentBean"/>
-	<bean id="agencyDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.xml.AgencyTranslationDefinition"
+	<bean id="agencyDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.AgencyTranslationDefinition"
 			p:agencyService-ref="agencyService"
 			p:rootXmlObjectListPropertyName="agencies"
 			p:documentTypeName="AGCY">
 		<property name="propertyMappings">
 			<list>
-				<bean parent="rassProperty" p:xmlName="number" p:boName="agencyNumber" p:required="true"/>
-				<bean parent="rassProperty" p:xmlName="reportingName" p:boName="reportingName" p:required="true"/>
-				<bean parent="rassProperty" p:xmlName="fullName" p:boName="fullName" p:required="true"/>
-				<bean parent="rassProperty" p:xmlName="typeCode" p:boName="agencyTypeCode" p:required="true"/>
-				<bean parent="rassProperty" p:xmlName="reportsToAgencyNumber" p:boName="reportsToAgencyNumber" p:required="false"/>
-				<bean parent="rassProperty" p:xmlName="commonName" p:boName="extension.agencyCommonName" p:required="false"/>
-				<bean parent="rassProperty" p:xmlName="agencyOrigin" p:boName="extension.agencyOriginCode" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="number" p:boPropertyName="agencyNumber" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportingName" p:boPropertyName="reportingName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="fullName" p:boPropertyName="fullName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="typeCode" p:boPropertyName="agencyTypeCode" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportsToAgencyNumber" p:boPropertyName="reportsToAgencyNumber" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="commonName" p:boPropertyName="extension.agencyCommonName" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="agencyOrigin" p:boPropertyName="extension.agencyOriginCode" p:required="false"/>
 			</list>
 		</property>
 	</bean>

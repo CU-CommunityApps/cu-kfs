@@ -1,32 +1,36 @@
 package edu.cornell.kfs.rass.batch.service.impl;
 
+import org.kuali.kfs.module.cg.businessobject.Agency;
+import org.kuali.kfs.module.cg.businessobject.Award;
+import org.kuali.kfs.module.cg.businessobject.Proposal;
+
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAgencyEntryFixture;
 import edu.cornell.kfs.rass.batch.xml.fixture.RassXmlAwardEntryFixture;
 
 public final class ExpectedProcessingResults {
 
-    private final ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> expectedAgencyResults;
-    private final ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedProposalResults;
-    private final ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedAwardResults;
+    private final ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResults;
+    private final ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResults;
+    private final ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedAwardResults;
 
     public ExpectedProcessingResults(
-            ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> expectedAgencyResults,
-            ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedProposalResults,
-            ExpectedObjectGroupResult<RassXmlAwardEntryFixture> expectedAwardResults) {
+            ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> expectedAgencyResults,
+            ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> expectedProposalResults,
+            ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> expectedAwardResults) {
         this.expectedAgencyResults = expectedAgencyResults;
         this.expectedProposalResults = expectedProposalResults;
         this.expectedAwardResults = expectedAwardResults;
     }
 
-    public ExpectedObjectGroupResult<RassXmlAgencyEntryFixture> getExpectedAgencyResults() {
+    public ExpectedObjectUpdateResultGrouping<RassXmlAgencyEntryFixture, Agency> getExpectedAgencyResults() {
         return expectedAgencyResults;
     }
 
-    public ExpectedObjectGroupResult<RassXmlAwardEntryFixture> getExpectedProposalResults() {
+    public ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Proposal> getExpectedProposalResults() {
         return expectedProposalResults;
     }
 
-    public ExpectedObjectGroupResult<RassXmlAwardEntryFixture> getExpectedAwardResults() {
+    public ExpectedObjectUpdateResultGrouping<RassXmlAwardEntryFixture, Award> getExpectedAwardResults() {
         return expectedAwardResults;
     }
 

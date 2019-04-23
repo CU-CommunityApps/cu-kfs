@@ -1,4 +1,4 @@
-package edu.cornell.kfs.rass.batch.xml;
+package edu.cornell.kfs.rass.batch;
 
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 

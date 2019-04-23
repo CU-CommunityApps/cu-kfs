@@ -8,16 +8,24 @@ public final class RassConstants {
 
     public static final String RASS_MAINTENANCE_NEW_ACTION_DESCRIPTION = "Creation";
 
-    public enum RassResultCode {
+    public enum RassParseResultCode {
         SUCCESS,
+        ERROR;
+    }
+
+    public enum RassObjectGroupingUpdateResultCode {
+        SUCCESS,
+        ERROR;
+    }
+
+    public enum RassObjectUpdateResultCode {
         SUCCESS_NEW,
         SUCCESS_EDIT,
         ERROR,
         SKIPPED;
         
-        public static boolean isSuccessfulResult(RassResultCode resultCode) {
+        public static boolean isSuccessfulResult(RassObjectUpdateResultCode resultCode) {
             switch (resultCode) {
-                case SUCCESS :
                 case SUCCESS_NEW :
                 case SUCCESS_EDIT :
                     return true;

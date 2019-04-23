@@ -2,36 +2,36 @@ package edu.cornell.kfs.rass.batch;
 
 import java.util.Optional;
 
-import edu.cornell.kfs.rass.RassConstants.RassResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassParseResultCode;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 
 public class RassXmlFileParseResult {
 
     private final String rassXmlFileName;
-    private final RassResultCode resultCode;
-    private final Optional<RassXmlDocumentWrapper> parsedContent;
+    private final RassParseResultCode resultCode;
+    private final Optional<RassXmlDocumentWrapper> rassXmlDocumentWrapper;
 
     public RassXmlFileParseResult(
-            String rassXmlFileName, RassResultCode resultCode, Optional<RassXmlDocumentWrapper> parsedContent) {
+            String rassXmlFileName, RassParseResultCode resultCode, Optional<RassXmlDocumentWrapper> rassXmlDocumentWrapper) {
         this.rassXmlFileName = rassXmlFileName;
         this.resultCode = resultCode;
-        this.parsedContent = parsedContent;
+        this.rassXmlDocumentWrapper = rassXmlDocumentWrapper;
     }
 
     public String getRassXmlFileName() {
         return rassXmlFileName;
     }
 
-    public RassResultCode getResultCode() {
+    public RassParseResultCode getResultCode() {
         return resultCode;
     }
 
-    public boolean hasParsedContent() {
-        return parsedContent.isPresent();
+    public boolean hasParsedDocumentWrapper() {
+        return rassXmlDocumentWrapper.isPresent();
     }
 
-    public RassXmlDocumentWrapper getParsedContent() {
-        return parsedContent
+    public RassXmlDocumentWrapper getParsedDocumentWrapper() {
+        return rassXmlDocumentWrapper
                 .orElseThrow(() -> new IllegalStateException("No successfully-parsed data exists for file " + rassXmlFileName));
     }
 

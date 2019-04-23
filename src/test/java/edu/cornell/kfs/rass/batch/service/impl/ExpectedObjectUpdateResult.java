@@ -4,15 +4,15 @@ import java.util.function.Function;
 
 import org.kuali.kfs.krad.util.KRADConstants;
 
-import edu.cornell.kfs.rass.RassConstants.RassResultCode;
+import edu.cornell.kfs.rass.RassConstants.RassObjectUpdateResultCode;
 
-public final class ExpectedObjectResult<E extends Enum<E>> {
+public final class ExpectedObjectUpdateResult<E extends Enum<E>> {
 
     private final String primaryKey;
-    private final RassResultCode resultCode;
+    private final RassObjectUpdateResultCode resultCode;
     private final E businessObjectFixture;
 
-    public ExpectedObjectResult(E businessObjectFixture, RassResultCode resultCode, Function<E, String> primaryKeyGetter) {
+    public ExpectedObjectUpdateResult(E businessObjectFixture, RassObjectUpdateResultCode resultCode, Function<E, String> primaryKeyGetter) {
         this.primaryKey = primaryKeyGetter.apply(businessObjectFixture);
         this.resultCode = resultCode;
         this.businessObjectFixture = businessObjectFixture;
@@ -22,7 +22,7 @@ public final class ExpectedObjectResult<E extends Enum<E>> {
         return primaryKey;
     }
 
-    public RassResultCode getResultCode() {
+    public RassObjectUpdateResultCode getResultCode() {
         return resultCode;
     }
 
