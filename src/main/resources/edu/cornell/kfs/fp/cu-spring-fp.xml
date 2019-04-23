@@ -870,7 +870,7 @@
         <property name="configurationService" ref="configurationService"/>
     </bean>
     
-    <bean id="AccountingDocumentGenerator_YETF" class="edu.cornell.kfs.fp.batch.service.impl.YearEndTransferOfFundsDocumentGenerator">
+    <bean id="AccountingDocumentGenerator_YETF" class="edu.cornell.kfs.fp.batch.service.impl.CuYearEndTransferOfFundsDocumentGenerator">
         <property name="personService" ref="personService"/>
         <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
         <property name="configurationService" ref="configurationService"/>

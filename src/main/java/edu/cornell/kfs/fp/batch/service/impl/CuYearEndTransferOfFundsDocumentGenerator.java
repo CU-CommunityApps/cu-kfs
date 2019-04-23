@@ -6,13 +6,13 @@ import org.kuali.kfs.fp.document.YearEndTransferOfFundsDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 
-public class YearEndTransferOfFundsDocumentGenerator extends AccountingDocumentGeneratorBase<YearEndTransferOfFundsDocument> {
+public class CuYearEndTransferOfFundsDocumentGenerator extends AccountingDocumentGeneratorBase<YearEndTransferOfFundsDocument> {
 
-    public YearEndTransferOfFundsDocumentGenerator() {
+    public CuYearEndTransferOfFundsDocumentGenerator() {
         super();
     }
 
-    public YearEndTransferOfFundsDocumentGenerator(Supplier<Note> emptyNoteGenerator, Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator) {
+    public CuYearEndTransferOfFundsDocumentGenerator(Supplier<Note> emptyNoteGenerator, Supplier<AdHocRoutePerson> emptyAdHocRoutePersonGenerator) {
         super(emptyNoteGenerator, emptyAdHocRoutePersonGenerator);
     }
 
