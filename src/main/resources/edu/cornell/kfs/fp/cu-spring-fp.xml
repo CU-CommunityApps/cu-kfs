@@ -869,6 +869,12 @@
         <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
         <property name="configurationService" ref="configurationService"/>
     </bean>
+    
+    <bean id="AccountingDocumentGenerator_YETF" class="edu.cornell.kfs.fp.batch.service.impl.YearEndTransferOfFundsDocumentGenerator">
+        <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
 
     <bean id="AccountingDocumentGenerator_BA" class="edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator">
         <property name="personService" ref="personService"/>
