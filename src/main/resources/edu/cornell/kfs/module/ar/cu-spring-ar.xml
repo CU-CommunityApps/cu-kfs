@@ -68,5 +68,8 @@
           p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"/>
 
     <bean id="invoicePaidAppliedDao" parent="platformAwareDao" class="org.kuali.kfs.module.ar.dataaccess.impl.InvoicePaidAppliedDaoOjb"/>
+    
+    <bean id="arEmailService" parent="arEmailService-parentBean"
+        class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
 
 </beans>
