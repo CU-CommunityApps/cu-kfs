@@ -10,6 +10,7 @@ import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.fp.document.ServiceBillingDocument;
 import org.kuali.kfs.fp.document.TransferOfFundsDocument;
 import org.kuali.kfs.fp.document.YearEndDistributionOfIncomeAndExpenseDocument;
+import org.kuali.kfs.fp.document.YearEndTransferOfFundsDocument;
 import org.kuali.kfs.fp.document.YearEndBudgetAdjustmentDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
@@ -27,6 +28,7 @@ import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuYearEndBudgetAdjustmentDocumentGenerator;
+import edu.cornell.kfs.fp.batch.service.impl.CuYearEndTransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentSourceAccountingLine;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentTargetAccountingLine;
 import edu.cornell.kfs.fp.document.CuBudgetAdjustmentDocument;
@@ -61,7 +63,10 @@ public enum AccountingDocumentMapping {
             CuYearEndDistributionOfIncomeAndExpenseDocumentGenerator::new),
     YEBA_DOCUMENT(CuFPTestConstants.YEAR_END_BUDGET_ADJUSTMENT_DOC_TYPE,
             YearEndBudgetAdjustmentDocument.class, TestBudgetAdjustmentSourceAccountingLine.class, TestBudgetAdjustmentTargetAccountingLine.class,
-            CuYearEndBudgetAdjustmentDocumentGenerator::new);
+            CuYearEndBudgetAdjustmentDocumentGenerator::new),
+    YETF_DOCUMENT(CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
+            YearEndTransferOfFundsDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
+            CuYearEndTransferOfFundsDocumentGenerator::new);
 
     public static final String MAPPING_ENUM_CONST_SUFFIX = "_DOCUMENT";
 
