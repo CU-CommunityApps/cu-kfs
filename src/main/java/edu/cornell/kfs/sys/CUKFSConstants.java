@@ -22,71 +22,6 @@ public class CUKFSConstants {
     public static final String DATE_FORMAT_mm_dd_yyyy_hh_mm_ss_am = "MM/dd/yyyy hh:mm:ss a";
     public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     
-
-    public static final String NON_CONFIDENTIAL_ATTACHMENT_TYPE_LABEL = "Default";
-    
-    // I Want document constants
-    public static final String I_WANT_DOC_ITEM_TAB_ERRORS = "document.item*,newIWantItemLine*";
-    public static final String I_WANT_DOC_ACCOUNT_TAB_ERRORS = "newSourceLine*,document.account*,document.favoriteAccountLineIdentifier";
-    public static final String I_WANT_DOC_VENDOR_TAB_ERRORS = "document.vendor*";
-    public static final String I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS = "document.completeOption";
-    public static final String I_WANT_DOC_MISC_ERRORS = "document.servicePerformedOnCampus*,document.commentsAndSpecialInstructions*";
-    
-    //KFSPTS-1460
-    public static final String SEMICOLON = ";";
-    
-    // KFSUPGRADE-75
-    public static final String MAINTAIN_FAVORITE_ACCOUNT = "Maintain Favorite Account";
-
-    //KFSPTS-2400
-    public static final String STAGING_DIR = "staging";
-    public static final String LD_DIR = "ld";
-    public static final String ENTERPRISE_FEED_DIR = "enterpriseFeed";
-    public static final String FILE_SEPARATOR = "file.separator";
-
-    // KFSUPGRADE-779
-    public static final String PREQ_WIRETRANSFER_TAB_ERRORS = "PREQWireTransfersErrors,document.preqWireTransfer.preqBankName,document.preqWireTransfer.preqBankRoutingNumber,document.preqWireTransfer.preqBankCityName,document.preqWireTransfer.preqBankStateCode," + "document.preqWireTransfer.preqBankCountryCode,document.preqWireTransfer.preqAttentionLineText,document.preqWireTransfer.preqAdditionalWireText,document.preqWireTransfer.preqPayeeAccountNumber,document.preqWireTransfer.preqCurrencyTypeName,document.preqWireTransfer.preqCurrencyTypeCode," + "document.preqWireTransfer.preqWireTransferFeeWaiverIndicator,document.preqWireTransfer.preqPayeeAccountName,document.preqWireTransfer.preqPayeeAccountTypeCode,document.preqWireTransfer.preqAutomatedClearingHouseProfileNumber";
-    public static final String CM_WIRETRANSFER_TAB_ERRORS = "CMWireTransfersErrors,document.cmWireTransfer.cmBankName,document.cmWireTransfer.cmBankRoutingNumber,document.cmWireTransfer.cmBankCityName,document.cmWireTransfer.cmBankStateCode," + "document.cmWireTransfer.cmBankCountryCode,document.cmWireTransfer.cmAttentionLineText,document.cmWireTransfer.cmAdditionalWireText,document.cmWireTransfer.cmPayeeAccountNumber,document.cmWireTransfer.cmCurrencyTypeName,document.cmWireTransfer.cmCurrencyTypeCode," + "document.cmWireTransfer.cmWireTransferFeeWaiverIndicator,document.cmWireTransfer.cmPayeeAccountName,document.cmWireTransfer.cmPayeeAccountTypeCode,document.cmWireTransfer.cmAutomatedClearingHouseProfileNumber";
-    public static final String PREQ_FOREIGNDRAFTS_TAB_ERRORS = "PREQForeignDraftErrors,document.preqWireTransfer.preqForeignCurrencyTypeCode,document.preqWireTransfer.preqForeignCurrencyTypeName";
-    public static final String CM_FOREIGNDRAFTS_TAB_ERRORS = "CMForeignDraftErrors,document.cmWireTransfer.cmForeignCurrencyTypeCode,document.cmWireTransfer.cmForeignCurrencyTypeName";
-    
-    public static final String DV_WIRETRANSFER_TAB_ERRORS_EXTENSION_FIELDS = "document.dvWireTransfer.extension.disbVchrBankStreetAddress,document.dvWireTransfer.extension.disbVchrBankProvince,document.dvWireTransfer.extension.disbVchrBankIBAN,document.dvWireTransfer.extension.disbVchrCorrespondentBankName,document.dvWireTransfer.extension.disbVchrBankSWIFTCode,document.dvWireTransfer.extension.disbVchrCorrespondentBankAddress,document.dvWireTransfer.extension.disbVchrSortOrTransitCode,document.dvWireTransfer.extension.disbVchrCorrespondentBankSwiftCode,document.dvWireTransfer.extension.disbVchrCorrespondentBankRoutingNumber,document.dvWireTransfer.extension.disbVchrCorrespondentBankAccountNumber";
-    public static final String DV_WIRETRANSFER_TAB_ERRORS = "DVWireTransfersErrors,document.dvWireTransfer.disbursementVoucherBankName,document.dvWireTransfer.disbVchrBankRoutingNumber,document.dvWireTransfer.disbVchrBankCityName,document.dvWireTransfer.disbVchrBankStateCode," + "document.dvWireTransfer.disbVchrBankCountryCode,document.dvWireTransfer.disbVchrAttentionLineText,document.dvWireTransfer.disbVchrAdditionalWireText,document.dvWireTransfer.disbVchrPayeeAccountNumber,document.dvWireTransfer.disbVchrCurrencyTypeName,document.dvWireTransfer.disbVchrCurrencyTypeCode," + "document.dvWireTransfer.disbursementVoucherWireTransferFeeWaiverIndicator,document.dvWireTransfer.disbursementVoucherPayeeAccountName,document.dvWireTransfer.disbursementVoucherPayeeAccountTypeCode,document.dvWireTransfer.disbursementVoucherAutomatedClearingHouseProfileNumber," + DV_WIRETRANSFER_TAB_ERRORS_EXTENSION_FIELDS;
-
-    public static final String COA_DOCUMENT_TYPE = "COA";
-    public static final String GACC_DOCUMENT_TYPE = "GACC";
-    
-    public static final String ACCOUNT_NOTE_TEXT = " account document ID ";
-
-    public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
-
-    public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
-
-    public static final String ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX = ".accountExpiredOverride.present";
-    public static final String ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX = ".accountExpiredOverride";
-
-    public static final String SUB_ACCOUNT_GLOBAL_CG_ICR_SECTION_NAME = "Global Sub Account CG ICR Maintenance";
-    public static final String SUB_ACCOUNT_GLOBAL_CG_ICR_ACCOUNTS_SECTION_NAME = "Global Sub Account Indirect Cost Recovery Accounts Maintenance";
-
-    public static final String SUB_ACCOUNT_GLOBAL_NEW_SUB_ACCOUNT_LABEL = "New Sub-Account";
-
-    public static final String INTEGER_VALIDATION_PATTERN_TYPE = "integer";
-
-    public static final String EQUALS_SIGN = "=";
-    public static final String AMPERSAND = "&";
-    public static final String LEFT_PARENTHESIS = "(";
-    public static final String RIGHT_PARENTHESIS = ")";
-    public static final String COLON = ":";
-    public static final String SLASH = "/";
-    public static final String BACKSLASH = "\\";
-    public static final String DOUBLE_QUOTE = "\"";
-    public static final String CAPITAL_X = "X";
-    public static final String PLUS_SIGN = "+";
-    
-    public static final String DOCUMENT_ID = "documentId";
-    
-    public static final String DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME = "rice.kew.documentRefreshQueue";
-    
     public static class SysKimApiConstants {
         public static final String CONTRACTS_AND_GRANTS_PROCESSOR = "Contracts & Grants Processor";
         public static final String ADVANCE_DEPOSIT_ORGANIZATION_REVIEWER_ROLE_NAME = "Advanced Deposit Organization Review";
@@ -147,9 +82,42 @@ public class CUKFSConstants {
         public static final String NON_CONFIDENTIAL_ATTACHMENT_TYPE = "";
     }
 
+    public static final String NON_CONFIDENTIAL_ATTACHMENT_TYPE_LABEL = "Default";
+    
+    // I Want document constants
+    public static final String I_WANT_DOC_ITEM_TAB_ERRORS = "document.item*,newIWantItemLine*";
+    public static final String I_WANT_DOC_ACCOUNT_TAB_ERRORS = "newSourceLine*,document.account*,document.favoriteAccountLineIdentifier";
+    public static final String I_WANT_DOC_VENDOR_TAB_ERRORS = "document.vendor*";
+    public static final String I_WANT_DOC_ORDER_COMPLETED_TAB_ERRORS = "document.completeOption";
+    public static final String I_WANT_DOC_MISC_ERRORS = "document.servicePerformedOnCampus*,document.commentsAndSpecialInstructions*";
+    
+    //KFSPTS-1460
+    public static final String SEMICOLON = ";";
+    
+    // KFSUPGRADE-75
+    public static final String MAINTAIN_FAVORITE_ACCOUNT = "Maintain Favorite Account";
+
+    //KFSPTS-2400
+    public static final String STAGING_DIR = "staging";
+    public static final String LD_DIR = "ld";
+    public static final String ENTERPRISE_FEED_DIR = "enterpriseFeed";
+    public static final String FILE_SEPARATOR = "file.separator";
+
+    // KFSUPGRADE-779
+    public static final String PREQ_WIRETRANSFER_TAB_ERRORS = "PREQWireTransfersErrors,document.preqWireTransfer.preqBankName,document.preqWireTransfer.preqBankRoutingNumber,document.preqWireTransfer.preqBankCityName,document.preqWireTransfer.preqBankStateCode," + "document.preqWireTransfer.preqBankCountryCode,document.preqWireTransfer.preqAttentionLineText,document.preqWireTransfer.preqAdditionalWireText,document.preqWireTransfer.preqPayeeAccountNumber,document.preqWireTransfer.preqCurrencyTypeName,document.preqWireTransfer.preqCurrencyTypeCode," + "document.preqWireTransfer.preqWireTransferFeeWaiverIndicator,document.preqWireTransfer.preqPayeeAccountName,document.preqWireTransfer.preqPayeeAccountTypeCode,document.preqWireTransfer.preqAutomatedClearingHouseProfileNumber";
+    public static final String CM_WIRETRANSFER_TAB_ERRORS = "CMWireTransfersErrors,document.cmWireTransfer.cmBankName,document.cmWireTransfer.cmBankRoutingNumber,document.cmWireTransfer.cmBankCityName,document.cmWireTransfer.cmBankStateCode," + "document.cmWireTransfer.cmBankCountryCode,document.cmWireTransfer.cmAttentionLineText,document.cmWireTransfer.cmAdditionalWireText,document.cmWireTransfer.cmPayeeAccountNumber,document.cmWireTransfer.cmCurrencyTypeName,document.cmWireTransfer.cmCurrencyTypeCode," + "document.cmWireTransfer.cmWireTransferFeeWaiverIndicator,document.cmWireTransfer.cmPayeeAccountName,document.cmWireTransfer.cmPayeeAccountTypeCode,document.cmWireTransfer.cmAutomatedClearingHouseProfileNumber";
+    public static final String PREQ_FOREIGNDRAFTS_TAB_ERRORS = "PREQForeignDraftErrors,document.preqWireTransfer.preqForeignCurrencyTypeCode,document.preqWireTransfer.preqForeignCurrencyTypeName";
+    public static final String CM_FOREIGNDRAFTS_TAB_ERRORS = "CMForeignDraftErrors,document.cmWireTransfer.cmForeignCurrencyTypeCode,document.cmWireTransfer.cmForeignCurrencyTypeName";
+    
+    public static final String DV_WIRETRANSFER_TAB_ERRORS_EXTENSION_FIELDS = "document.dvWireTransfer.extension.disbVchrBankStreetAddress,document.dvWireTransfer.extension.disbVchrBankProvince,document.dvWireTransfer.extension.disbVchrBankIBAN,document.dvWireTransfer.extension.disbVchrCorrespondentBankName,document.dvWireTransfer.extension.disbVchrBankSWIFTCode,document.dvWireTransfer.extension.disbVchrCorrespondentBankAddress,document.dvWireTransfer.extension.disbVchrSortOrTransitCode,document.dvWireTransfer.extension.disbVchrCorrespondentBankSwiftCode,document.dvWireTransfer.extension.disbVchrCorrespondentBankRoutingNumber,document.dvWireTransfer.extension.disbVchrCorrespondentBankAccountNumber";
+    public static final String DV_WIRETRANSFER_TAB_ERRORS = "DVWireTransfersErrors,document.dvWireTransfer.disbursementVoucherBankName,document.dvWireTransfer.disbVchrBankRoutingNumber,document.dvWireTransfer.disbVchrBankCityName,document.dvWireTransfer.disbVchrBankStateCode," + "document.dvWireTransfer.disbVchrBankCountryCode,document.dvWireTransfer.disbVchrAttentionLineText,document.dvWireTransfer.disbVchrAdditionalWireText,document.dvWireTransfer.disbVchrPayeeAccountNumber,document.dvWireTransfer.disbVchrCurrencyTypeName,document.dvWireTransfer.disbVchrCurrencyTypeCode," + "document.dvWireTransfer.disbursementVoucherWireTransferFeeWaiverIndicator,document.dvWireTransfer.disbursementVoucherPayeeAccountName,document.dvWireTransfer.disbursementVoucherPayeeAccountTypeCode,document.dvWireTransfer.disbursementVoucherAutomatedClearingHouseProfileNumber," + DV_WIRETRANSFER_TAB_ERRORS_EXTENSION_FIELDS;
+
     public static class CGParms{
     	public static final String ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION = "ACCOUNTS_EXEMPT_FROM_MULTIPLE_AWARDS_VALIDATION";
     }
+    
+    public static final String COA_DOCUMENT_TYPE = "COA";
+    public static final String GACC_DOCUMENT_TYPE = "GACC";
     
     // KFSPTS-3877
     public static class AccountCreateAndUpdateNotePrefixes {
@@ -157,6 +125,12 @@ public class CUKFSConstants {
         public static final String EDIT = "Edit";
     }
         
+    public static final String ACCOUNT_NOTE_TEXT = " account document ID ";
+
+    public static final String NOTE_SEQUENCE_NAME = "KRNS_NTE_S";
+
+    public static final Set<String> OBJECTS_WITH_IMMEDIATE_BO_LEVEL_NOTE_UPDATE = Collections.singleton("org.kuali.kfs.coa.businessobject.Account");
+
     public static class A21SubAccountDocumentConstants {
         public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
     }
@@ -169,5 +143,30 @@ public class CUKFSConstants {
         public static final String ASSET = "AS";
         public static final String EXPENSE = "EX";
     }
+
+    public static final String ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX = ".accountExpiredOverride.present";
+    public static final String ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX = ".accountExpiredOverride";
+
+    public static final String SUB_ACCOUNT_GLOBAL_CG_ICR_SECTION_NAME = "Global Sub Account CG ICR Maintenance";
+    public static final String SUB_ACCOUNT_GLOBAL_CG_ICR_ACCOUNTS_SECTION_NAME = "Global Sub Account Indirect Cost Recovery Accounts Maintenance";
+
+    public static final String SUB_ACCOUNT_GLOBAL_NEW_SUB_ACCOUNT_LABEL = "New Sub-Account";
+
+    public static final String INTEGER_VALIDATION_PATTERN_TYPE = "integer";
+
+    public static final String EQUALS_SIGN = "=";
+    public static final String AMPERSAND = "&";
+    public static final String LEFT_PARENTHESIS = "(";
+    public static final String RIGHT_PARENTHESIS = ")";
+    public static final String COLON = ":";
+    public static final String SLASH = "/";
+    public static final String BACKSLASH = "\\";
+    public static final String DOUBLE_QUOTE = "\"";
+    public static final String CAPITAL_X = "X";
+    public static final String PLUS_SIGN = "+";
+    
+    public static final String DOCUMENT_ID = "documentId";
+    
+    public static final String DOCUMENT_REFRESH_QUEUE_SERVICE_SPRING_CONTEXT_NAME = "rice.kew.documentRefreshQueue";
 
 }
