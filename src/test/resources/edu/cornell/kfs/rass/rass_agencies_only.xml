@@ -1,0 +1,32 @@
+<Kfs>
+  <Extract_Begin_Timestamp>2019-03-19T22:15:07.273</Extract_Begin_Timestamp>
+  <Awards>
+  </Awards>
+  <Agencies>
+    <Agency>
+      <Number>468</Number>
+      <Reporting_Name>Some</Reporting_Name>
+      <Full_Name>Some University</Full_Name>
+      <Type_Code>U</Type_Code>
+      <Reports_to_Agency_Number/>
+      <Common_Name>Some University</Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+    <Agency>
+      <Number>579</Number>
+      <Reporting_Name>SM</Reporting_Name>
+      <Full_Name>United States Department of Something </Full_Name>
+      <Type_Code>F</Type_Code>
+      <Reports_to_Agency_Number/>
+      <Common_Name>United States Department of Something </Common_Name>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+    <Agency>
+      <Number>101</Number>
+      <Reporting_Name>Test</Reporting_Name>
+      <Full_Name>Test University</Full_Name>
+      <Type_Code>U</Type_Code>
+      <Agency_Origin>USA</Agency_Origin>
+    </Agency>
+  </Agencies>
+</Kfs>

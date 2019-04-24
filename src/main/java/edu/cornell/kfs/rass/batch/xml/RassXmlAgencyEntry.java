@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Agency", namespace = StringUtils.EMPTY)
-public class RassXmlAgencyEntry {
+public class RassXmlAgencyEntry implements RassXmlObject {
     
     @XmlElement(name = "Number", namespace = StringUtils.EMPTY)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
