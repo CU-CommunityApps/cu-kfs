@@ -354,6 +354,12 @@ public class CreateAccountingDocumentServiceImplTest {
     }
     
     @Test
+    public void testLoadSingleFileWithSingleYETFDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-yetf-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YETF_DOCUMENT_TEST);
+    }
+    
+    @Test
     public void testEmptyFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("empty-file-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);

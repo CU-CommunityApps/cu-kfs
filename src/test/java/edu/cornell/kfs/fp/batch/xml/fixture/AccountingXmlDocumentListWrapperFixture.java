@@ -163,6 +163,10 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_YEDI_DOCUMENT_TEST_DOC1)),
+    SINGLE_YETF_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_DOC_TYPE_TEST_YETF)),
     EMPTY_DOCUMENT_TEST(
             BASE_WRAPPER,
             documents(), false),
