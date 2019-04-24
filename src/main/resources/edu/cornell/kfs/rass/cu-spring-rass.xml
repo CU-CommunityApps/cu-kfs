@@ -58,11 +58,36 @@
 		<property name="moduleConfiguration" ref="cu-rass" />
 	</bean>
 
-	<bean id="rassService" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImpl">
-		<property name="rassFilePath">
-			<value>"${staging.directory}/rass"</value>
-		</property>
-	</bean>
+	<bean id="rassService" parent="rassService-parentBean"/>
+	<bean id="rassService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassServiceImpl"
+			p:rassFilePath="${staging.directory}/rass"
+			p:batchInputFileService-ref="batchInputFileService"
+			p:batchInputFileType-ref="rassXmlInputFileType"
+			p:fileStorageService-ref="fileStorageService"
+			p:rassRoutingService-ref="rassRoutingService"
+			p:dataDictionaryService-ref="dataDictionaryService"
+			p:routeHeaderService-ref="enDocumentRouteHeaderService"
+			p:agencyDefinition-ref="agencyDefinition"
+			p:documentStatusCheckDelayMillis="1000"
+			p:maxStatusCheckAttempts="60"/>
+
+	<bean id="rassRoutingService" parent="rassRoutingService-parentBean"/>
+	<bean id="rassRoutingService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassRoutingServiceImpl"
+			p:maintenanceDocumentService-ref="maintenanceDocumentService"
+			p:documentService-ref="documentService"
+			p:dataDictionaryService-ref="dataDictionaryService"
+			p:configurationService-ref="configurationService"/>
+
+	<bean id="rassXmlInputFileType" parent="rassXmlInputFileType-parentBean"/>
+	<bean id="rassXmlInputFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"
+			p:dateTimeService-ref="dateTimeService"
+			p:cuMarshalService-ref="cuMarshalService"
+			p:directoryPath="${staging.directory}/rass"
+			p:fileExtension="xml"
+			p:fileTypeIdentifier="rassXmlInputFileType"
+			p:titleKey="message.batchUpload.title.rassXml"
+			p:fileNamePrefix="rassXmlFile_"
+			p:pojoClass="edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper"/>
 
 	<bean id="rassStep" class="edu.cornell.kfs.rass.batch.RassStep"
 		parent="step">
@@ -71,7 +96,25 @@
 		</property>
 	</bean>
 
+	<bean id="rassProperty" abstract="true" class="edu.cornell.kfs.rass.batch.RassPropertyDefinition"/>
 
+	<bean id="agencyDefinition" parent="agencyDefinition-parentBean"/>
+	<bean id="agencyDefinition-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.AgencyTranslationDefinition"
+			p:agencyService-ref="agencyService"
+			p:rootXmlObjectListPropertyName="agencies"
+			p:documentTypeName="AGCY">
+		<property name="propertyMappings">
+			<list>
+				<bean parent="rassProperty" p:xmlPropertyName="number" p:boPropertyName="agencyNumber" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportingName" p:boPropertyName="reportingName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="fullName" p:boPropertyName="fullName" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="typeCode" p:boPropertyName="agencyTypeCode" p:required="true"/>
+				<bean parent="rassProperty" p:xmlPropertyName="reportsToAgencyNumber" p:boPropertyName="reportsToAgencyNumber" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="commonName" p:boPropertyName="extension.agencyCommonName" p:required="false"/>
+				<bean parent="rassProperty" p:xmlPropertyName="agencyOrigin" p:boPropertyName="extension.agencyOriginCode" p:required="false"/>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="rassUpdateBatchJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
