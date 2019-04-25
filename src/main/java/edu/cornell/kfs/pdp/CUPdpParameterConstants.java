@@ -21,7 +21,7 @@ public final class CUPdpParameterConstants {
         public static final String PAYER_ADDRESS_LINE2 = "PAYER_ADDRESS_LINE2";
         public static final String PAYER_CITY = "PAYER_CITY";
         public static final String PAYER_STATE = "PAYER_STATE";
-        public static final String PAYER_ZIP_CODE = "PAYEE_NAME";
+        public static final String PAYER_ZIP_CODE = "PAYER_ZIP_CODE";
     }
 
     private CUPdpParameterConstants() {
