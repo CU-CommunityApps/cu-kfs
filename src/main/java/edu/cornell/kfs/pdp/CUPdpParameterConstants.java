@@ -13,6 +13,16 @@ public final class CUPdpParameterConstants {
     public static final String UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT = "UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_SUBJECT";
     public static final String UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_BODY = "UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_BODY";
     public static final String PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES = "PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES";
+    
+    public static final class CuPayeeAddressService {
+        public static final String COMPONENT_CODE = "CuPayeeAddressService";
+        public static final String PAYER_NAME = "PAYER_NAME";
+        public static final String PAYER_ADDRESS_LINE1 = "PAYER_ADDRESS_LINE1";
+        public static final String PAYER_ADDRESS_LINE2 = "PAYER_ADDRESS_LINE2";
+        public static final String PAYER_CITY = "PAYER_CITY";
+        public static final String PAYER_STATE = "PAYER_STATE";
+        public static final String PAYER_ZIP_CODE = "PAYEE_NAME";
+    }
 
     private CUPdpParameterConstants() {
         throw new UnsupportedOperationException("Do not call");
