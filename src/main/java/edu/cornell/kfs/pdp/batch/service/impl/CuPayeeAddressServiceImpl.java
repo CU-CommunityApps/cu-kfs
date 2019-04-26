@@ -15,37 +15,37 @@ public class CuPayeeAddressServiceImpl implements CuPayeeAddressService {
 
     @Override
     public String findPayerName() {
-        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_NAME);
+        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_NAME_PARAMETER);
     }
 
     @Override
     public String findPayerAddressLine1() {
-        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_ADDRESS_LINE1);
+        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_ADDRESS_LINE1_PARAMETER);
     }
 
     @Override
     public String findPayerAddressLine2() {
-        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_ADDRESS_LINE2);
+        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_ADDRESS_LINE2_PARAMETER);
     }
 
     @Override
     public String findPayerCity() {
-        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_CITY);
+        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_CITY_PARAMETER);
     }
 
     @Override
     public String findPayerState() {
-        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_STATE);
+        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_STATE_PARAMETER);
     }
 
     @Override
     public String findPayerZipCode() {
-        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_ZIP_CODE);
+        return findParameterValue(CUPdpParameterConstants.CuPayeeAddressService.PAYER_ZIP_CODE_PARAMETER);
     }
     
     protected String findParameterValue(String parameterName) {
         String parameterValue = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.PDP, 
-                CUPdpParameterConstants.CuPayeeAddressService.COMPONENT_CODE, parameterName);
+                CUPdpParameterConstants.CuPayeeAddressService.CU_PAYEE_ADDRESS_SERVICE_COMPONENT, parameterName);
         if (LOG.isDebugEnabled()) {
             LOG.debug("findParameterValue, for parameter " + parameterName + " the value is " + parameterValue);
         }
