@@ -124,33 +124,39 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
         CSVReader csvReader = new CSVReader(new InputStreamReader(fileContents));
         List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
 
-        String errorMessage = null;
+        String errorMessage;
 
-        // validate
         if (!CollectionUtils.isEqualCollection(expectedHeaderList, inputHeaderList)) {
             errorMessage = "CSV Batch Input File contains incorrect number of headers";
             //collection has same elements, now check the exact content orders by looking at the toString comparisons
         } else if (!expectedHeaderList.equals(inputHeaderList)) {
             errorMessage = "CSV Batch Input File headers are different";
         } else {
-
-            //check the content size as well if headers are validated
-            int line = 1;
-            List<String> inputDataList = Arrays.asList(csvReader.readNext());
-            while (inputDataList != null && errorMessage != null) {
-                //if the data list size does not match header list (its missing data)
-                if (inputDataList.size() != expectedHeaderList.size()) {
-                    errorMessage = "line " + line + " layout does not match the header";
-                }
-                inputDataList = Arrays.asList(csvReader.readNext());
-                line++;
-            }
+        		errorMessage = validateDetailRowsContainExpectedNumberOfFields(expectedHeaderList, csvReader);
         }
 
         if (errorMessage != null) {
             LOG.error(errorMessage);
             throw new ParseException(errorMessage);
         }
+    }
+    
+    private String validateDetailRowsContainExpectedNumberOfFields(List<String> expectedHeaderList,
+            CSVReader csvReader) throws IOException {
+        String errorMessage = null;
+
+        int line = 1;
+        String[] nextLine;
+        while ((nextLine = csvReader.readNext()) != null) {
+            List<String> inputDataList = Arrays.asList(nextLine);
+            if (inputDataList.size() != expectedHeaderList.size()) {
+                errorMessage = "line " + line + " layout does not match the header";
+                break;
+            }
+            line++;
+        }
+
+        return errorMessage;
     }
 
     /**

@@ -23,22 +23,17 @@ import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationP
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.rice.location.api.state.State;
 import org.kuali.rice.location.api.state.StateService;
 
-/**
- * Service implementation for the PostalCodeBase structure. This is the default implementation, that is delivered with Kuali.
- */
-
-@NonTransactional
 public class PostalCodeValidationServiceImpl implements PostalCodeValidationService {
 
-protected StateService stateService;
-	
-	@Override
-	public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode, String statePropertyConstant, String postalCodePropertyConstant) {
+    protected StateService stateService;
+
+    @Override
+    public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode,
+            String statePropertyConstant, String postalCodePropertyConstant) {
         boolean valid = true;
 
         if (StringUtils.equals(KFSConstants.COUNTRY_CODE_UNITED_STATES, postalCountryCode)) {
@@ -46,22 +41,24 @@ protected StateService stateService;
             if (StringUtils.isBlank(stateCode)) {
                 valid &= false;
                 if (StringUtils.isNotBlank(statePropertyConstant)) {
-                    GlobalVariables.getMessageMap().putError(statePropertyConstant, KFSKeyConstants.ERROR_US_REQUIRES_STATE);
+                    GlobalVariables.getMessageMap().putError(statePropertyConstant,
+                            KFSKeyConstants.ERROR_US_REQUIRES_STATE);
                 }
             }
 
             if (StringUtils.isBlank(postalCode)) {
                 valid &= false;
                 if (StringUtils.isNotBlank(postalCodePropertyConstant)) {
-                    GlobalVariables.getMessageMap().putError(postalCodePropertyConstant, KFSKeyConstants.ERROR_US_REQUIRES_ZIP);
+                    GlobalVariables.getMessageMap().putError(postalCodePropertyConstant,
+                            KFSKeyConstants.ERROR_US_REQUIRES_ZIP);
                 }
-            }
-            else {
+            } else {
                 ZipcodeValidationPattern zipPattern = getZipcodeValidatePattern();
                 if (!zipPattern.matches(StringUtils.defaultString(postalCode))) {
                     valid &= false;
                     if (StringUtils.isNotBlank(postalCodePropertyConstant)) {
-                        GlobalVariables.getMessageMap().putError(postalCodePropertyConstant, KFSKeyConstants.ERROR_POSTAL_CODE_INVALID);
+                        GlobalVariables.getMessageMap().putError(postalCodePropertyConstant,
+                                KFSKeyConstants.ERROR_POSTAL_CODE_INVALID);
                     }
                 }
             }
@@ -72,12 +69,13 @@ protected StateService stateService;
         if (StringUtils.isNotBlank(postalCountryCode) && StringUtils.isNotBlank(stateCode)) {
             State state = getStateService().getState(postalCountryCode, stateCode);
             if (state == null) {
-                GlobalVariables.getMessageMap().putError(statePropertyConstant, KFSKeyConstants.ERROR_STATE_CODE_INVALID, stateCode);
+                GlobalVariables.getMessageMap().putError(statePropertyConstant,
+                        KFSKeyConstants.ERROR_STATE_CODE_INVALID, stateCode);
                 //KFSPTS-3490
                 valid = false;
             }
         }
-        
+
         return valid;
     }
 	

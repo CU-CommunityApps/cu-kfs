@@ -49,7 +49,6 @@ import org.kuali.kfs.sys.document.service.AccountingDocumentRuleHelperService;
 import org.kuali.kfs.sys.document.validation.impl.AccountingDocumentRuleBaseConstants.GENERAL_LEDGER_PENDING_ENTRY_CODE;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -63,7 +62,6 @@ import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
 import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
-@NonTransactional
 public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPaymentMethodGeneralLedgerPendingEntryService {
 	private static final Logger LOG = LogManager.getLogger(CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.class);
     protected static final String DEFAULT_PAYMENT_METHOD_IF_MISSING = "A"; // check/ACH
