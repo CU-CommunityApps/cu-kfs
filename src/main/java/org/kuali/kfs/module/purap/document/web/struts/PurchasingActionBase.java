@@ -130,16 +130,14 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
  * Struts Action for Purchasing documents.
  */
 public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
+
     private static final Logger LOG = LogManager.getLogger(PurchasingActionBase.class);
     
     private static final int SIZE_5MB =5242880;
 
-    /**
-     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#refresh(org.apache.struts.action.ActionMapping,
-     *      org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PurchasingAccountsPayableFormBase baseForm = (PurchasingAccountsPayableFormBase) form;
 
         PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();

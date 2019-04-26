@@ -78,8 +78,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         if (accountLinePercent != null) {
             accountLinePercent = accountLinePercent.setScale(2, BigDecimal.ROUND_HALF_UP);
             return accountLinePercent;
-        }
-        else {
+        } else {
             return BigDecimal.ZERO.setScale(2, 2);
         }
     }
@@ -89,22 +88,18 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         this.accountLinePercent = accountLinePercent;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.PurApAccountingLine#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
-        return !(StringUtils.isNotEmpty(getAccountNumber()) || StringUtils.isNotEmpty(getChartOfAccountsCode()) || StringUtils.isNotEmpty(getFinancialObjectCode()) || StringUtils.isNotEmpty(getFinancialSubObjectCode()) || StringUtils.isNotEmpty(getOrganizationReferenceId()) || StringUtils.isNotEmpty(getProjectCode()) || StringUtils.isNotEmpty(getSubAccountNumber()) || ObjectUtils.isNotNull(getAccountLinePercent()));
+        return !(StringUtils.isNotEmpty(getAccountNumber()) || StringUtils.isNotEmpty(getChartOfAccountsCode())
+                || StringUtils.isNotEmpty(getFinancialObjectCode())
+                || StringUtils.isNotEmpty(getFinancialSubObjectCode())
+                || StringUtils.isNotEmpty(getOrganizationReferenceId()) || StringUtils.isNotEmpty(getProjectCode())
+                || StringUtils.isNotEmpty(getSubAccountNumber()) || ObjectUtils.isNotNull(getAccountLinePercent()));
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.PurApAccountingLine#createBlankAmountsCopy()
-     */
     @Override
     public PurApAccountingLine createBlankAmountsCopy() {
         PurApAccountingLine newAccount = (PurApAccountingLine) ObjectUtils.deepCopy(this);
-     //   newAccount.setAccountLinePercent(BigDecimal.ZERO);
-     //   newAccount.setAmount(KualiDecimal.ZERO);
         newAccount.setSequenceNumber(0);
         newAccount.setAccountLinePercent(null);
         newAccount.setAmount(null);
@@ -112,16 +107,19 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         return newAccount;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.PurApAccountingLine#accountStringsAreEqual(org.kuali.kfs.sys.businessobject.SourceAccountingLine)
-     */
     @Override
     public boolean accountStringsAreEqual(SourceAccountingLine accountingLine) {
         if (accountingLine == null) {
             return false;
         }
-        return new EqualsBuilder().append(getChartOfAccountsCode(), accountingLine.getChartOfAccountsCode()).append(getAccountNumber(), accountingLine.getAccountNumber()).append(getSubAccountNumber(), accountingLine.getSubAccountNumber()).append(getFinancialObjectCode(), accountingLine.getFinancialObjectCode()).append(getFinancialSubObjectCode(), accountingLine.getFinancialSubObjectCode()).append(getProjectCode(), accountingLine.getProjectCode()).append(getOrganizationReferenceId(), accountingLine.getOrganizationReferenceId())
-                .isEquals();
+        return new EqualsBuilder().append(getChartOfAccountsCode(), accountingLine.getChartOfAccountsCode())
+                .append(getAccountNumber(), accountingLine.getAccountNumber())
+                .append(getSubAccountNumber(), accountingLine.getSubAccountNumber())
+                .append(getFinancialObjectCode(), accountingLine.getFinancialObjectCode())
+                .append(getFinancialSubObjectCode(), accountingLine.getFinancialSubObjectCode())
+                .append(getProjectCode(), accountingLine.getProjectCode())
+                .append(getOrganizationReferenceId(), accountingLine.getOrganizationReferenceId())
+            .isEquals();
     }
 
     @Override
@@ -130,9 +128,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
 
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.businessobject.PurApAccountingLine#generateSourceAccountingLine()
-     */
     @Override
     public SourceAccountingLine generateSourceAccountingLine() {
         // the fields here should probably match method 'accountStringsAreEqual' above
@@ -149,7 +144,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         return sourceLine;
     }
 
-
     @Override
     public int compareTo(Object arg0) {
         if (arg0 instanceof PurApAccountingLine) {
@@ -161,7 +155,9 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
 
     @Override
     public String getString() {
-        return getChartOfAccountsCode() + "~" + getAccountNumber() + "~" + getSubAccountNumber() + "~" + getFinancialObjectCode() + "~" + getFinancialSubObjectCode() + "~" + getProjectCode() + "~" + getOrganizationReferenceId();
+        return getChartOfAccountsCode() + "~" + getAccountNumber() + "~" + getSubAccountNumber() + "~" +
+                getFinancialObjectCode() + "~" + getFinancialSubObjectCode() + "~" + getProjectCode() + "~" +
+                getOrganizationReferenceId();
     }
 
     @Override
@@ -174,23 +170,17 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         this.alternateAmountForGLEntryCreation = alternateAmount;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.businessobject.AccountingLineBase#getSequenceNumber()
-     */
     @Override
     public Integer getSequenceNumber() {
         return this.getAccountIdentifier();
     }
 
-    /**
-     * @see org.kuali.kfs.sys.businessobject.AccountingLineBase#copyFrom(org.kuali.kfs.sys.businessobject.AccountingLine)
-     */
     @Override
     public void copyFrom(AccountingLine other) {
         super.copyFrom(other);
 
         if (other instanceof PurApAccountingLine) {
-            PurApAccountingLine purapOther = (PurApAccountingLine)other;
+            PurApAccountingLine purapOther = (PurApAccountingLine) other;
 
             // Need to fix accountIdentifier and sequenceNumber since they are crossed in the getter in purap
             // i.e. getSequenceNumber() actually returns accountIdentifier, while getPurApSequenceNumber() returns the original sequenceNumber.
@@ -210,12 +200,12 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         //hold onto item reference if there without itemId
         PurApItem item = null;
         PurApItem tempItem = getPurapItem();
-        if(tempItem != null &&
-           tempItem.getItemIdentifier() != null) {
+        if (tempItem != null &&
+            tempItem.getItemIdentifier() != null) {
             item = tempItem;
         }
         super.refreshNonUpdateableReferences();
-        if(ObjectUtils.isNotNull(item)) {
+        if (ObjectUtils.isNotNull(item)) {
             this.setPurapItem(item);
         }
     }
@@ -226,9 +216,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     /**
-     * Sets the requisitionItem attribute.
-     *
-     * @param item
      * @deprecated
      */
     @Override
@@ -248,8 +235,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
 
     /**
      * Overridden to use purap doc identifier, rather than document number
-     *
-     * @see org.kuali.kfs.sys.businessobject.AccountingLineBase#getValuesMap()
      */
     @Override
     public Map getValuesMap() {
@@ -259,11 +244,6 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
         return valuesMap;
     }
 
-    /**
-     * Gets the purApSequenceNumber attribute.
-     *
-     * @return Returns the purApSequenceNumber
-     */
     @Override
     public Integer getPurApSequenceNumber() {
         return super.getSequenceNumber();

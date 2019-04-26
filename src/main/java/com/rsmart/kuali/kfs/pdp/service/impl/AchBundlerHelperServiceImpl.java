@@ -30,7 +30,6 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.dataaccess.PaymentDetailDao;
 import org.kuali.kfs.sys.DynamicCollectionComparator;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
@@ -42,7 +41,6 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 /**
  * A custom service to help with ACH bundler modifications.
  */
-@NonTransactional
 public class AchBundlerHelperServiceImpl implements AchBundlerHelperService {
 	private static final Logger LOG = LogManager.getLogger(AchBundlerHelperServiceImpl.class);
     

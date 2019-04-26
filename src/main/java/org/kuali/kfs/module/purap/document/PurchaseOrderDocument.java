@@ -124,10 +124,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Purchase Order Document
- */
 public class PurchaseOrderDocument extends PurchasingDocumentBase implements MultiselectableDocSearchConversion {
+
     private static final Logger LOG = LogManager.getLogger(PurchaseOrderDocument.class);
 
     protected Timestamp purchaseOrderCreateTimestamp;
@@ -203,8 +201,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     /**
      * Overrides the method in PurchasingAccountsPayableDocumentBase to add the criteria
      * specific to Purchase Order Document.
-     *
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#isInquiryRendered()
      */
     @Override
     public boolean isInquiryRendered() {
@@ -220,12 +216,10 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         }
     }
 
-    /**
-     * @see org.kuali.rice.krad.document.DocumentBase#getDocumentTitle()
-     */
     @Override
     public String getDocumentTitle() {
-        if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(PurchaseOrderDocument.class, PurapParameterConstants.PURAP_OVERRIDE_PO_DOC_TITLE)) {
+        if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(PurchaseOrderDocument.class,
+                PurapParameterConstants.PURAP_OVERRIDE_PO_DOC_TITLE)) {
             return getCustomDocumentTitle();
         }
 
@@ -276,9 +270,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return documentTitle;
     }
 
-    /**
-     * @see org.kuali.kfs.sys.document.AccountingDocument#getSourceAccountingLineClass()
-     */
     @Override
     public Class getSourceAccountingLineClass() {
         //NOTE: do not do anything with this method as it is used by routing etc!
@@ -379,9 +370,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.contractManagerCode = contractManagerCode;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#buildListOfDeletionAwareLists()
-     */
     @Override
     public List buildListOfDeletionAwareLists() {
         List managedLists = super.buildListOfDeletionAwareLists();
@@ -393,9 +381,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return managedLists;
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#getOverrideWorkflowButtons()
-     */
     @Override
     public Boolean getOverrideWorkflowButtons() {
         if (ObjectUtils.isNull(super.getOverrideWorkflowButtons())) {
@@ -405,10 +390,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         return super.getOverrideWorkflowButtons();
     }
 
-
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#customPrepareForSave(KualiDocumentEvent)
-     */
     @Override
     public void customPrepareForSave(KualiDocumentEvent event) {
         super.customPrepareForSave(event);
@@ -450,9 +431,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setSourceAccountingLines(SpringContext.getBean(PurapAccountingService.class).generateSummaryWithNoZeroTotals(this.getItems()));
     }
 
-    /**
-     * @see org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocumentBase#prepareForSave()
-     */
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
         WorkflowDocument workFlowDocument = this.getFinancialSystemDocumentHeader().getWorkflowDocument();

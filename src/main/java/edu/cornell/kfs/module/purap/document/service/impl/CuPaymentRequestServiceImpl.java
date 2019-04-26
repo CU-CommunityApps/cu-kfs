@@ -28,7 +28,6 @@ import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImp
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
@@ -55,15 +54,16 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
 
     @Override
-    @NonTransactional
     public void removeIneligibleAdditionalCharges(PaymentRequestDocument document) {
         List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
 
         for (PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
         	// KFSUPGRADE-473
             //if no extended price or purchase order item unit price, and its an order discount or trade in, remove
-            if ((ObjectUtils.isNull(item.getPurchaseOrderItemUnitPrice()) && ObjectUtils.isNull(item.getExtendedPrice())) &&
-                    (ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE.equals(item.getItemTypeCode()) || ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE.equals(item.getItemTypeCode())) ){            
+			if ((ObjectUtils.isNull(item.getPurchaseOrderItemUnitPrice())
+					&& ObjectUtils.isNull(item.getExtendedPrice()))
+					&& (ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE.equals(item.getItemTypeCode())
+							|| ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE.equals(item.getItemTypeCode()))) {
                 itemsToRemove.add(item);
                 continue;
             }
@@ -86,9 +86,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public PaymentRequestDocument addHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
-        // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
@@ -106,9 +104,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#removeHoldOnPaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
     @Override
-    @NonTransactional
     public PaymentRequestDocument removeHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
-        // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
@@ -123,9 +119,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public void requestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
-        // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
@@ -142,15 +136,12 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#removeHoldOnPaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
     @Override
-    @NonTransactional
     public void removeRequestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
-        // save the note
         Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
 
         clearRequestCancelFields(document);
-
         purapService.saveDocumentNoValidation(document);
         //force reindexing
         reIndexDocument(document);
@@ -158,7 +149,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public void cancelExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note) {
         LOG.debug("cancelExtractedPaymentRequest() started");
         if (PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequest.getApplicationDocumentStatus())) {
@@ -182,7 +172,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         // no explicit save
         // is necessary
         if (LOG.isDebugEnabled()) {
-            LOG.debug("cancelExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() + " Cancelled Without Workflow");
+			LOG.debug("cancelExtractedPaymentRequest() PREQ " + paymentRequest.getPurapDocumentIdentifier() + 
+					" Cancelled Without Workflow");
             LOG.debug("cancelExtractedPaymentRequest() ended");
         }
         //force reindexing
@@ -194,7 +185,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      *      java.lang.String)
      */
     @Override
-    @NonTransactional
     public void resetExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note) {
         LOG.debug("resetExtractedPaymentRequest() started");
         if (PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequest.getApplicationDocumentStatus())) {
@@ -221,7 +211,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    @NonTransactional
     public void markPaid(PaymentRequestDocument pr, Date processDate) {
         LOG.debug("markPaid() started");
 
@@ -283,7 +272,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    @NonTransactional
     public void populatePaymentRequest(PaymentRequestDocument paymentRequestDocument) {
     	super.populatePaymentRequest(paymentRequestDocument);
     	
@@ -306,7 +294,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    @NonTransactional
     public void changeVendor(PaymentRequestDocument preq, Integer headerId, Integer detailId) {
     	super.changeVendor(preq, headerId, detailId);
     	// KFSPTS-1891
@@ -331,6 +318,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
     }
 
+    @Override
     public void clearTax(PaymentRequestDocument document) {
         // remove all existing tax items added by previous calculation
         removeTaxItems(document);
@@ -347,14 +335,14 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         document.setTaxGrossUpIndicator(false);
         document.setTaxUSAIDPerDiemIndicator(false);
         document.setTaxSpecialW4Amount(null);
-
     }
  
     /**
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestsByStatusAndPurchaseOrderId(java.lang.String, java.lang.Integer)
      */
     @Override
-    public Map <String, String> getPaymentRequestsByStatusAndPurchaseOrderId(String applicationDocumentStatus, Integer purchaseOrderId) {
+	public Map<String, String> getPaymentRequestsByStatusAndPurchaseOrderId(String applicationDocumentStatus,
+			Integer purchaseOrderId) {
     	Map<String, String> paymentRequestResults = new HashMap<>();
     	paymentRequestResults.put("hasInProcess", "N");
     	paymentRequestResults.put("checkInProcess", "N");
@@ -380,7 +368,6 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      *      org.kuali.kfs.vnd.businessobject.PaymentTermType)
      */
     @Override
-    @NonTransactional
     public java.sql.Date calculatePayDate(Date invoiceDate, PaymentTermType terms) {
         LOG.debug("calculatePayDate() started");
         // calculate the invoice + processed calendar
@@ -388,7 +375,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         Calendar processedDateCalendar = dateTimeService.getCurrentCalendar();
 
         // add default number of days to processed
-        String defaultDays = parameterService.getParameterValueAsString(PaymentRequestDocument.class, PurapParameterConstants.PURAP_PREQ_PAY_DATE_DEFAULT_NUMBER_OF_DAYS);
+		String defaultDays = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+				PurapParameterConstants.PURAP_PREQ_PAY_DATE_DEFAULT_NUMBER_OF_DAYS);
         processedDateCalendar.add(Calendar.DAY_OF_MONTH, Integer.parseInt(defaultDays));
 
         if (ObjectUtils.isNull(terms) || StringUtils.isEmpty(terms.getVendorPaymentTermsCode())) {
@@ -397,7 +385,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         }
 
         // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation of it's use.
-        String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class, PurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
+		String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+				PurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
         Integer payDateVarianceInt = Integer.valueOf(payDateVariance);
 
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();

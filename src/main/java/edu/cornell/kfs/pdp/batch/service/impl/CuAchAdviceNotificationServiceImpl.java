@@ -28,7 +28,6 @@ import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
-import org.kuali.kfs.sys.service.NonTransactional;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -58,11 +57,8 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     protected CuAchAdviceNotificationErrorReportService cuAchAdviceNotificationErrorReportService;
 
     /**
-     * Set to NonTransactional so the payment advice email sent date will be updated and saved after the email is sent
-     * 
      * @see org.kuali.kfs.pdp.batch.service.AchAdviceNotificationService#sendAdviceNotifications()
      */
-    @NonTransactional
     public void sendAdviceNotifications() {
     	
     	//KFSPTS-1460 - Changes
@@ -156,7 +152,6 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
     	createAndEmailErrorReport(badEmailRecords);
     }
     
-    @NonTransactional
     private void addBadEmailRecord(List<PDPBadEmailRecord> badEmailRecords, PaymentGroup paymentGroup) {
         PDPBadEmailRecord badEmailRecord = new PDPBadEmailRecord(paymentGroup.getPayeeId(), paymentGroup.getId(), paymentGroup.getAdviceEmailAddress(), 
                 paymentGroup.getDisbursementNbr());
@@ -164,7 +159,6 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
         badEmailRecords.add(badEmailRecord);
     }
     
-    @NonTransactional
     private void createAndEmailErrorReport(List<PDPBadEmailRecord> badEmailRecords) {
         if (CollectionUtils.isNotEmpty(badEmailRecords)) {
             LOG.info("createBadEmailReport, there are " + badEmailRecords.size() + " bad email addresses to report");
@@ -181,7 +175,6 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
      * 
      * @param pdpEmailService The pdpEmailService to set.
      */
-    @NonTransactional
     public void setPdpEmailService(CuPdpEmailService pdpEmailService) {
         this.pdpEmailService = pdpEmailService;
     }
@@ -191,7 +184,6 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
      * 
      * @param dateTimeService The dateTimeService to set.
      */
-    @NonTransactional
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
@@ -201,7 +193,6 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
      * 
      * @param businessObjectService The businessObjectService to set.
      */
-    @NonTransactional
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
@@ -211,24 +202,20 @@ public class CuAchAdviceNotificationServiceImpl implements AchAdviceNotification
      * 
      * @param paymentGroupService The paymentGroupService to set.
      */
-    @NonTransactional
     public void setPaymentGroupService(PaymentGroupService paymentGroupService) {
         this.paymentGroupService = paymentGroupService;
     }
     
     //KFSPTS-1460 -- Added
-    @NonTransactional
     public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
         this.achBundlerHelperService = achBundlerHelperService;
     }
     
     //KFSPTS-1460 -- Added
-    @NonTransactional
     public void setAchBundlerAdviceDao(AchBundlerAdviceDao achBundlerAdviceDao) {
         this.achBundlerAdviceDao = achBundlerAdviceDao;
     }
     
-    @NonTransactional
     public void setCuAchAdviceNotificationErrorReportService(
             CuAchAdviceNotificationErrorReportService cuAchAdviceNotificationErrorReportService) {
         this.cuAchAdviceNotificationErrorReportService = cuAchAdviceNotificationErrorReportService;

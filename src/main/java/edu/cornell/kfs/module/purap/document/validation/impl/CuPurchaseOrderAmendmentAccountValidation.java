@@ -23,7 +23,6 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
      */
     @Override
     public boolean validate(AttributedDocumentEvent event) {
-
         boolean valid = true;
         PurchaseOrderDocument poaDocument = (PurchaseOrderDocument) event.getDocument();
         List<PurApItem> items = poaDocument.getItemsActiveOnly();
@@ -32,8 +31,6 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
         List<PurApItem> poItems = po.getItems();
 
         for (PurApItem item : items) {
-            String identifierString = item.getItemIdentifierString();
-
             if (item.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE)
                     && item.getSourceAccountingLines() != null && item.getSourceAccountingLines().size() > 0) {
 
@@ -42,8 +39,9 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
                     for (PurApAccountingLine accountingLine : accountingLines) {
                         if (!accountingLine.getAccount().isActive()) {
                             valid = false;
-                            GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
-                                    PurapKeyConstants.ERROR_ITEM_ACCOUNT_INACTIVE, accountingLine.getAccount().getAccountNumber());
+							GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
+									PurapKeyConstants.ERROR_ITEM_ACCOUNT_INACTIVE,
+									accountingLine.getAccount().getAccountNumber());
                             break;
                         }
                     }
@@ -56,14 +54,14 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
 
     // Copied and tweaked this superclass method, and increased its visibility.
     protected boolean isItemChanged(PurApItem poaItem, List<PurApItem> poItems) {
-
         boolean changed = false;
 
         int poaItemId = poaItem.getItemLineNumber().intValue();
 
         for (PurApItem poItem : poItems) {
 
-            if (poItem.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE) && poaItemId == poItem.getItemLineNumber().intValue()) {
+			if (poItem.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE)
+					&& poaItemId == poItem.getItemLineNumber().intValue()) {
                 if (poaItem.getItemQuantity() == null || poaItem.getItemQuantity().intValue() != poItem.getItemQuantity().intValue()) {
                     changed = true;
                 }

@@ -11,6 +11,8 @@ import com.rsmart.kuali.kfs.cr.batch.StaleCheckExtractCsvInputFileType;
 import edu.cornell.kfs.pdp.CUPdpTestConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.StaleCheckBatchRow;
 import edu.cornell.kfs.sys.CUKFSConstants;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -206,6 +208,9 @@ public class StaleCheckExtractServiceImplTest {
                 currentFileResult.markAsUnprocessable();
                 throw e;
             } finally {
+            		if (CollectionUtils.isEmpty(currentFileResult.getRowResults())) {
+            			currentFileResult.markAsUnprocessable();
+            		}
                 fileResults.put(generateFileResultKey(inputFileName), currentFileResult);
                 currentFileResult = null;
             }
