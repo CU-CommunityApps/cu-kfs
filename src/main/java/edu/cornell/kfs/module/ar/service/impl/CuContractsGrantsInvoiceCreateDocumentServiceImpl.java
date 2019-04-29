@@ -3,29 +3,22 @@ package edu.cornell.kfs.module.ar.service.impl;
 import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
-import org.kuali.kfs.module.ar.ArPropertyConstants;
-import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorMessage;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditReviewDetail;
-import org.kuali.kfs.module.ar.businessobject.Customer;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.ContractsGrantsInvoiceCreateDocumentServiceImpl;
@@ -35,14 +28,11 @@ import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
-import edu.cornell.kfs.module.ar.businessobject.CustomerExtendedAttribute;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
     
-    private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceCreateDocumentServiceImpl.class);
-
     protected CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService;
     
     /**
@@ -186,49 +176,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
             List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
         super.populateInvoiceFromAward(award, awardAccounts, document, accountDetails, locCreationType);
-        Date invoiceDueDate = calculateInvoiceDueDate(document);
-        document.setInvoiceDueDate(invoiceDueDate);
-    }
-
-    protected Date calculateInvoiceDueDate(ContractsGrantsInvoiceDocument document) {
-        Calendar calendar = dateTimeService.getCurrentCalendar();
-        Optional<Integer> customerNetTerms = getCustomerNetTerms(document);
-        int netTermsInDays;
-        
-        if (customerNetTerms.isPresent()) {
-            netTermsInDays = customerNetTerms.get();
-        } else {
-            String defaultNetTerms = parameterService.getParameterValueAsString(
-                    ArConstants.AR_NAMESPACE_CODE, ArConstants.CUSTOMER_COMPONENT, CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
-            try {
-                netTermsInDays = Integer.parseInt(defaultNetTerms);
-            } catch (NumberFormatException e) {
-                LOG.error("calculateInvoiceDueDate, Default net terms parameter is malformed; will use zero as the default instead", e);
-                netTermsInDays = 0;
-            }
-        }
-        
-        calendar.add(Calendar.DATE, netTermsInDays);
-        return new Date(calendar.getTimeInMillis());
-    }
-
-    protected Optional<Integer> getCustomerNetTerms(ContractsGrantsInvoiceDocument document) {
-        Customer customer = null;
-        
-        AccountsReceivableDocumentHeader documentHeader = document.getAccountsReceivableDocumentHeader();
-        if (ObjectUtils.isNotNull(documentHeader)) {
-            documentHeader.refreshReferenceObject(ArPropertyConstants.CustomerInvoiceDocumentFields.CUSTOMER);
-            customer = documentHeader.getCustomer();
-        }
-        
-        if (ObjectUtils.isNotNull(customer)) {
-            CustomerExtendedAttribute customerExtension = (CustomerExtendedAttribute) customer.getExtension();
-            if (ObjectUtils.isNotNull(customerExtension)) {
-                return Optional.ofNullable(customerExtension.getNetTermsInDays());
-            }
-        }
-        
-        return Optional.empty();
+        cuContractsGrantsInvoiceDocumentService.setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
     }
 
     public CuContractsGrantsInvoiceDocumentService getCuContractsGrantsInvoiceDocumentService() {
