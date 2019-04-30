@@ -8,7 +8,7 @@
     <bean id="CustomerExtendedAttribute" parent="CustomerExtendedAttribute-parentBean"/>
  
     <bean id="CustomerExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"
-            p:businessObjectClass="edu.cornell.kfs.module.cg.businessobject.CustomerExtendedAttribute"
+            p:businessObjectClass="edu.cornell.kfs.module.ar.businessobject.CustomerExtendedAttribute"
             p:objectLabel="Agency Extended Attribute">
         <property name="attributes">
             <list>

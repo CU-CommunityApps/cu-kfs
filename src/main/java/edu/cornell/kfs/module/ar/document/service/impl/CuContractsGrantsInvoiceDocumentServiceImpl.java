@@ -59,8 +59,6 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                     totalCostInvoiceDetail.getTotalAmountBilledToDate().add(document.getInvoiceGeneralDetail().getCostShareAmount()));
         }
         
-        localParameterMap.put(ArPropertyConstants.CustomerInvoiceDocumentFields.INVOICE_DUE_DATE, document.getInvoiceDueDate());
-        
         if (!localParameterMap.isEmpty()) {
             LOG.debug("getTemplateParameterList, there were local parameters, adding them to the returning map.");
             templateParameters.putAll(new PdfFormattingMap(localParameterMap));
@@ -187,6 +185,21 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
 
         return createSourceAccountingLine(contractsGrantsInvoiceDocument.getDocumentNumber(),
                 coaCode, accountNumber, objectCode, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
+    }
+
+    /**
+     * Overridden to also update the invoice due date.
+     * 
+     * NOTE: There isn't an easy way to hook in the invoice-due-date updates independently of this
+     * without overlaying the CINV document class. (This method only appears to be called when CINV docs
+     * enter PROCESSED status, so hooking in here is okay for now.) If ContractsGrantsInvoiceDocument
+     * gets updated to make it easier to hook in custom PROCESSED-status handling, then we should rework
+     * this customization.
+     */
+    @Override
+    public void updateLastBilledDate(ContractsGrantsInvoiceDocument document) {
+        super.updateLastBilledDate(document);
+        setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
     }
 
     @Override
