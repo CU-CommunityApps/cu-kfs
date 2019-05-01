@@ -20,6 +20,7 @@ public class CuCommodityCodeUpdateServiceImplTest {
 	private CommodityCodeUpdateServiceImpl commodityCodeUpdateService;
 
 	private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/vnd/fixture/commodityCodeFlatFile.txt";
+	private static final int NUMBER_OF_RECORDS_IN_DATA_FILE = 53321;
     
 	@Before
 	public void setUp() throws Exception {
@@ -44,7 +45,7 @@ public class CuCommodityCodeUpdateServiceImplTest {
 		ArrayList<CommodityCode> someCommodityCodes = (ArrayList<CommodityCode>) commodityCodeUpdateService.parseCommodityCodeList(content);
 		
 		assertNotSame(content.length, 0);
-		assertEquals(53321, someCommodityCodes.size());
+		assertEquals(NUMBER_OF_RECORDS_IN_DATA_FILE, someCommodityCodes.size());
 	}
 	
 	@Test
