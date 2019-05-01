@@ -64,7 +64,6 @@
                     **/ezraUpdateAwardImplTest.java,
                     **/ezraUpdateProposalImplTest.java,
                     **/ezraUpdateSponsorImplTest.java,
-                    **/CuCommodityCodeUpdateServiceImplTest.java
                 </test.excludes>
             </properties>
         </profile>
