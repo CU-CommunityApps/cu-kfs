@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class CuCommodityCodeUpdateServiceImplTest {
     @Test
     public void testParseCommodityCodeList() {
         byte[] content = commodityCodeUpdateService.getFileContent(DATA_FILE_PATH);
-        ArrayList<CommodityCode> someCommodityCodes = (ArrayList<CommodityCode>) commodityCodeUpdateService.parseCommodityCodeList(content);
+        Collection<CommodityCode> someCommodityCodes = commodityCodeUpdateService.parseCommodityCodeList(content);
         assertNotEquals(content.length, 0);
         assertEquals(NUMBER_OF_RECORDS_IN_DATA_FILE, someCommodityCodes.size());
     }
