@@ -1,45 +1,55 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
-import org.apache.commons.io.FileUtils;
-
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiTestBase;
-import org.kuali.kfs.sys.context.SpringContext;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.kuali.kfs.vnd.businessobject.CommodityCode;
-import org.kuali.rice.core.api.config.property.ConfigurationService;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 
-import edu.cornell.kfs.vnd.batch.service.CommodityCodeUpdateService;
+import edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl;
+import edu.cornell.kfs.vnd.batch.CommodityCodeInputFileType;
 
-@ConfigureContext
-public class CuCommodityCodeUpdateServiceImplTest extends KualiTestBase {
+public class CuCommodityCodeUpdateServiceImplTest {
 	
-	private CommodityCodeUpdateService commodityCodeUpdateService;
-    private ConfigurationService  kualiConfigurationService;
+	private CommodityCodeUpdateServiceImpl commodityCodeUpdateService;
 
 	private static final String DATA_FILE_PATH = "src/test/resources/edu/cornell/kfs/vnd/fixture/commodityCodeFlatFile.txt";
     
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		commodityCodeUpdateService = SpringContext.getBean(CommodityCodeUpdateService.class);
+	@Before
+	public void setUp() throws Exception {
+		commodityCodeUpdateService = PowerMockito.spy(new CommodityCodeUpdateServiceImpl());
+		PowerMockito.doReturn(true).when(commodityCodeUpdateService, "updateCommodityCodes", Mockito.any());
+		
+		CuBatchInputFileServiceImpl batchInputFileService = new CuBatchInputFileServiceImpl();
+		commodityCodeUpdateService.setBatchInputFileService(batchInputFileService);
+		
+		CommodityCodeInputFileType commodityCodeInputFileType = new CommodityCodeInputFileType();
+		commodityCodeUpdateService.setCommodityCodeInputFileType(commodityCodeInputFileType);
 	}
 	
+	@After
+	public void tearDown() {
+	    commodityCodeUpdateService = null;
+	}
+	
+	@Test
 	public void testLoadCommodityCodeFile() {
-		byte[] zeroLength = {};
-		ArrayList<CommodityCode> noList = new ArrayList();
-		byte[] noContent = commodityCodeUpdateService.getFileContent("no such file");
-		ArrayList<CommodityCode> noCommodityList = (ArrayList<CommodityCode>) commodityCodeUpdateService.parseCommodityCodeList(zeroLength);
 		byte[] content = commodityCodeUpdateService.getFileContent(DATA_FILE_PATH);
 		ArrayList<CommodityCode> someCommodityCodes = (ArrayList<CommodityCode>) commodityCodeUpdateService.parseCommodityCodeList(content);
 		
-		assertEquals(noContent.length, zeroLength.length);
-		assertEquals(noCommodityList.size(), noList.size());
 		assertNotSame(content.length, 0);
-		assertNotSame(someCommodityCodes.size(), 0);
-		
-		assert(commodityCodeUpdateService.loadCommodityCodeFile(DATA_FILE_PATH));
+		assertEquals(53321, someCommodityCodes.size());
+	}
+	
+	@Test
+	public void testloadCommodityCodeFile() {
+	    assertTrue(commodityCodeUpdateService.loadCommodityCodeFile(DATA_FILE_PATH));
 	}
 
 }
