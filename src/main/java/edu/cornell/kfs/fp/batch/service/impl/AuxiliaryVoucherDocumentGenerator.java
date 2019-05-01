@@ -1,13 +1,23 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.sql.Date;
+import java.util.Collection;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coa.businessobject.AccountingPeriod;
+import org.kuali.kfs.coa.service.AccountingPeriodService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
+import org.kuali.kfs.fp.document.validation.impl.AuxiliaryVoucherDocumentRuleConstants;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.kfs.sys.service.UniversityDateService;
+import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -15,6 +25,12 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 
 public class AuxiliaryVoucherDocumentGenerator
         extends AccountingDocumentGeneratorBase<AuxiliaryVoucherDocument> {
+
+    protected AccountingPeriodService accountingPeriodService;
+    protected UniversityDateService universityDateService;
+    protected ParameterEvaluatorService parameterEvaluatorService;
+    protected ParameterService parameterService;
+    protected DateTimeService dateTimeService;
 
     public AuxiliaryVoucherDocumentGenerator() {
         super();
@@ -67,7 +83,108 @@ public class AuxiliaryVoucherDocumentGenerator
 
     @Override
     protected void populateCustomAccountingDocumentData(AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
-        
+        AccountingPeriod period = findEligibleAccountingPeriod(document, documentEntry);
+        document.setAccountingPeriod(period);
+    }
+
+    /*
+     * NOTE: Much of this period-searching logic has been duplicated and modified from AuxiliaryVoucherForm.
+     * If KualiCo updates the related base code to be more micro-test-friendly, then we should update
+     * the code below accordingly.
+     */
+    protected AccountingPeriod findEligibleAccountingPeriod(
+            AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
+        String xmlPeriod = checkForNonBlankValue(
+                documentEntry.getAccountingPeriod(), "AV document accounting period cannot be blank");
+        Date currentDate = dateTimeService.getCurrentSqlDate();
+        Integer currentFiscalYear = universityDateService.getCurrentFiscalYear();
+        AccountingPeriod currentPeriod = accountingPeriodService.getByDate(currentDate);
+        Collection<AccountingPeriod> openPeriods = accountingPeriodService.getOpenAccountingPeriods();
+        return openPeriods.stream()
+                .filter(this::periodIsNotRestrictedForAVs)
+                .filter(period -> periodHasNotEnded(period, currentPeriod, currentFiscalYear)
+                        || gracePeriodHasNotEnded(period, currentDate, document))
+                .filter(period -> periodMatchesXmlConfiguredPeriod(period, xmlPeriod))
+                .findFirst()
+                .orElseThrow(() -> new ValidationException(xmlPeriod + " is not an eligible accounting period for AV documents"));
+    }
+
+    protected boolean periodIsNotRestrictedForAVs(AccountingPeriod period) {
+        return parameterEvaluatorService.getParameterEvaluator(
+                AuxiliaryVoucherDocument.class, AuxiliaryVoucherDocumentRuleConstants.RESTRICTED_PERIOD_CODES,
+                        period.getUniversityFiscalPeriodCode())
+                .evaluationSucceeds();
+    }
+
+    protected boolean periodHasNotEnded(AccountingPeriod period, AccountingPeriod currentPeriod, Integer currentFiscalYear) {
+        return period.getUniversityFiscalYear().equals(currentFiscalYear)
+                && accountingPeriodService.compareAccountingPeriodsByDate(period, currentPeriod) >= 0;
+    }
+
+    /*
+     * NOTE: This is a duplicate of the logic from AuxiliaryVoucherDocument.calculateIfWithinGracePeriod,
+     * but has been updated accordingly so that it can execute in micro-test situations.
+     * If KualiCo updates the base method to be micro-test-friendly, then we can potentially remove this custom method.
+     */
+    protected boolean gracePeriodHasNotEnded(AccountingPeriod period, Date currentDate, AuxiliaryVoucherDocument document) {
+        Date periodEndDate = period.getUniversityFiscalPeriodEndDate();
+        int today = document.comparableDateForm(currentDate);
+        int periodBegin = document.comparableDateForm(
+                document.calculateFirstDayOfMonth(periodEndDate));
+        int periodClose = document.comparableDateForm(periodEndDate);
+        int gracePeriodClose = periodClose + findAVGracePeriodInDays();
+        return today >= periodBegin && today <= gracePeriodClose;
+    }
+
+    protected int findAVGracePeriodInDays() {
+        String gracePeriodInDays = parameterService.getParameterValueAsString(
+                AuxiliaryVoucherDocument.class, AuxiliaryVoucherDocumentRuleConstants.AUXILIARY_VOUCHER_ACCOUNTING_PERIOD_GRACE_PERIOD);
+        return Integer.parseInt(gracePeriodInDays);
+    }
+
+    protected boolean periodMatchesXmlConfiguredPeriod(AccountingPeriod period, String xmlPeriod) {
+        return StringUtils.equals(period.getUniversityFiscalPeriodName(), xmlPeriod);
+    }
+
+    protected String validateAndGetAuxiliaryVoucherType(AccountingXmlDocumentEntry documentEntry) {
+        String avTypeCode = checkForNonBlankValue(
+                documentEntry.getAuxiliaryVoucherType(), "AV type cannot be blank");
+        switch (avTypeCode) {
+            case KFSConstants.AuxiliaryVoucher.ADJUSTMENT_DOC_TYPE :
+            case KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE :
+                return avTypeCode;
+            case KFSConstants.AuxiliaryVoucher.RECODE_DOC_TYPE :
+                throw new ValidationException("Cannot create XML-based AV documents of type " + avTypeCode);
+            default :
+                throw new ValidationException("Invalid AV document type: " + avTypeCode);
+        }
+    }
+
+    protected String checkForNonBlankValue(String value, String errorMessage) throws ValidationException {
+        if (StringUtils.isBlank(value)) {
+            throw new ValidationException(errorMessage);
+        }
+        return value;
+    }
+
+    public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
+        this.accountingPeriodService = accountingPeriodService;
+    }
+
+    public void setUniversityDateService(UniversityDateService universityDateService) {
+        this.universityDateService = universityDateService;
+    }
+
+    public void setParameterEvaluatorService(ParameterEvaluatorService parameterEvaluatorService) {
+        this.parameterEvaluatorService = parameterEvaluatorService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
 }
