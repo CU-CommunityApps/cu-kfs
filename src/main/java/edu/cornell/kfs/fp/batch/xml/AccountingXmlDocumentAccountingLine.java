@@ -108,6 +108,14 @@ public class AccountingXmlDocumentAccountingLine {
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
     protected KualiDecimal month12Amount;
 
+    @XmlElement(name = "debit_amount", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal debitAmount;
+
+    @XmlElement(name = "credit_amount", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
+    protected KualiDecimal creditAmount;
+
     public String getChartCode() {
         return chartCode;
     }
@@ -284,6 +292,22 @@ public class AccountingXmlDocumentAccountingLine {
         this.month12Amount = month12Amount;
     }
 
+    public KualiDecimal getDebitAmount() {
+        return debitAmount;
+    }
+
+    public void setDebitAmount(KualiDecimal debitAmount) {
+        this.debitAmount = debitAmount;
+    }
+
+    public KualiDecimal getCreditAmount() {
+        return creditAmount;
+    }
+
+    public void setCreditAmount(KualiDecimal creditAmount) {
+        this.creditAmount = creditAmount;
+    }
+
     @Override
     public boolean equals(Object xmlAccountingLineObject) {
         if (xmlAccountingLineObject instanceof AccountingXmlDocumentAccountingLine) {
@@ -309,7 +333,9 @@ public class AccountingXmlDocumentAccountingLine {
                     && Objects.equals(this.month09Amount, xmlAccountingLine.getMonth09Amount())
                     && Objects.equals(this.month10Amount, xmlAccountingLine.getMonth10Amount())
                     && Objects.equals(this.month11Amount, xmlAccountingLine.getMonth11Amount())
-                    && Objects.equals(this.month12Amount, xmlAccountingLine.getMonth12Amount());
+                    && Objects.equals(this.month12Amount, xmlAccountingLine.getMonth12Amount())
+                    && Objects.equals(this.debitAmount, xmlAccountingLine.getDebitAmount())
+                    && Objects.equals(this.creditAmount, xmlAccountingLine.getCreditAmount());
         }
 
         return false;
@@ -319,6 +345,6 @@ public class AccountingXmlDocumentAccountingLine {
     public int hashCode() {
         return Objects.hash(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId, lineDescription, amount,
                 baseAmount, month01Amount, month02Amount, month03Amount, month04Amount, month05Amount, month06Amount, month07Amount,
-                month08Amount, month09Amount, month10Amount, month11Amount, month12Amount);
+                month08Amount, month09Amount, month10Amount, month11Amount, month12Amount, debitAmount, creditAmount);
     }
 }
