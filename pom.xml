@@ -60,7 +60,6 @@
                     **/CuRequisitionServiceImplTest.java,
                     **/IWantDocumentServiceImplTest.java,
                     **/CuElectronicInvoiceHelperServiceImplTest.java,
-                    **/CuPurapAccountingServiceImplTest.java,
                     **/ezraUpdateAwardImplTest.java,
                     **/ezraUpdateProposalImplTest.java,
                     **/ezraUpdateSponsorImplTest.java,
