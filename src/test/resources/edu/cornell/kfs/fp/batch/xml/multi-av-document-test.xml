@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DocumentWrapper>
+    <CreateDate>02/20/2019</CreateDate>
+    <ReportEmail>zyx321@cornell.edu</ReportEmail>
+    <Overview>Example AV XML file</Overview>
+    <DocumentList>
+        <Document>
+            <Index>1</Index>
+            <DocumentType>AV</DocumentType>
+            <Description>Test AV Document</Description>
+            <Explanation>This is an AV document for testing purposes</Explanation>
+            <OrganizationDocumentNumber>WXYZ5678</OrganizationDocumentNumber>
+            <AccountingPeriod>FEB. 2019</AccountingPeriod>
+            <AuxiliaryVoucherType>AVAD</AuxiliaryVoucherType>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1433000</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4480</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <debit_amount>55.00</debit_amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>C200222</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>5390</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <credit_amount>55.00</credit_amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <NoteList>
+                <Note>
+                    <Description>Sample AV Note</Description>
+                </Note>
+                <Note>
+                    <Description>Another AV Note</Description>
+                </Note>
+            </NoteList>
+            <AdhocRecipientList>
+                <Recipient>
+                    <Netid>jdh34</Netid>
+                    <ActionRequested>Approve</ActionRequested>
+                </Recipient>
+            </AdhocRecipientList>
+            <BackupDocumentLinks>
+                <BackupLink>
+                    <Link>http://www.cornell.edu/index.html</Link>
+                    <Description>Cornell index page</Description>
+                    <FileName>index.html</FileName>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
+                </BackupLink>
+            </BackupDocumentLinks>
+        </Document>
+        <Document>
+            <Index>2</Index>
+            <DocumentType>AV</DocumentType>
+            <Description>Test AV Document 2</Description>
+            <Explanation>This is another test AV document</Explanation>
+            <OrganizationDocumentNumber>WXYZ5679</OrganizationDocumentNumber>
+            <AccountingPeriod>FEB. 2019</AccountingPeriod>
+            <AuxiliaryVoucherType>AVAE</AuxiliaryVoucherType>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1433000</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4480</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <debit_amount>55.00</debit_amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>C200222</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>5390</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <credit_amount>55.00</credit_amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <NoteList>
+                <Note>
+                    <Description>Sample AV Note 2</Description>
+                </Note>
+                <Note>
+                    <Description>Another AV Note 2</Description>
+                </Note>
+            </NoteList>
+        </Document>
+        <Document>
+            <Index>3</Index>
+            <DocumentType>AV</DocumentType>
+            <Description>Test AV Document 3</Description>
+            <Explanation>This is yet another test AV document</Explanation>
+            <OrganizationDocumentNumber>WXYZ5680</OrganizationDocumentNumber>
+            <AccountingPeriod>FEB. 2019</AccountingPeriod>
+            <AuxiliaryVoucherType>AVAE</AuxiliaryVoucherType>
+            <ReversalDate>03/31/2019</ReversalDate>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1433000</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>4480</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <debit_amount>55.00</debit_amount>
+                </Accounting>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>C200222</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>5390</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <credit_amount>55.00</credit_amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <NoteList>
+                <Note>
+                    <Description>Sample AV Note 3</Description>
+                </Note>
+                <Note>
+                    <Description>Another AV Note 3</Description>
+                </Note>
+            </NoteList>
+        </Document>
+    </DocumentList>
+</DocumentWrapper>

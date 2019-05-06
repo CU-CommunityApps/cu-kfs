@@ -387,6 +387,12 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     @Test
+    public void testLoadSingleFileWithMultipleAVDocuments() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-av-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.MULTI_AV_DOCUMENT_TEST);
+    }
+
+    @Test
     public void testEmptyFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("empty-file-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);

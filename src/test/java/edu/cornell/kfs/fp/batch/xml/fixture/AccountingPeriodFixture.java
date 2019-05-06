@@ -62,7 +62,7 @@ public enum AccountingPeriodFixture {
         accountingPeriod.setUniversityFiscalPeriodName(getUniversityFiscalPeriodName());
         accountingPeriod.setUniversityFiscalPeriodEndDate(buildSqlDate(universityFiscalPeriodEndDate));
         if (StringUtils.isNotBlank(auxiliaryVoucherDefaultReversalDate)) {
-            accountingPeriod.setAuxiliaryVoucherDefaultReversalDate(buildSqlDate(auxiliaryVoucherDefaultReversalDate));
+            accountingPeriod.setAuxiliaryVoucherDefaultReversalDate(getReversalSqlDate());
         }
         accountingPeriod.setActive(active);
         
@@ -109,6 +109,10 @@ public enum AccountingPeriodFixture {
             default :
                 throw new IllegalStateException("Invalid period code: " + universityFiscalPeriodCode);
         }
+    }
+
+    public Date getReversalSqlDate() {
+        return buildSqlDate(auxiliaryVoucherDefaultReversalDate);
     }
 
     private Date buildSqlDate(String dateString) {

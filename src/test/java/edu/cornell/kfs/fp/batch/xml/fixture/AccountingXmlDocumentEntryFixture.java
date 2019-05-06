@@ -346,7 +346,7 @@ public enum AccountingXmlDocumentEntryFixture {
 
     SINGLE_SB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_SB_NO_ITEMS, 1),
 
-    BASE_AV_WITH_DEBIT_AND_CREDIT(
+    BASE_AV_ADJUSTMENT(
             1, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
             "Test AV Document", "This is an AV document for testing purposes", "WXYZ5678",
             AccountingPeriodFixture.FEB_2019, KFSConstants.AuxiliaryVoucher.ADJUSTMENT_DOC_TYPE, null,
@@ -360,8 +360,36 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    BASE_AV_ACCRUAL_WITH_DEFAULT_REVERSAL(
+            2, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+            "Test AV Document 2", "This is another test AV document", "WXYZ5679",
+            AccountingPeriodFixture.FEB_2019, KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE, null,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_DEBIT_55,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_CREDIT_55),
+            notes(
+                    "Sample AV Note 2",
+                    "Another AV Note 2"),
+            adHocRecipients(),
+            backupLinks()),
+    BASE_AV_ACCRUAL_WITH_SPECIFIC_REVERSAL(
+            3, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+            "Test AV Document 3", "This is yet another test AV document", "WXYZ5680",
+            AccountingPeriodFixture.FEB_2019, KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE, "03/31/2019",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_DEBIT_55,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_CREDIT_55),
+            notes(
+                    "Sample AV Note 3",
+                    "Another AV Note 3"),
+            adHocRecipients(),
+            backupLinks()),
 
-    SINGLE_AV_DOCUMENT_TEST_DOC1(BASE_AV_WITH_DEBIT_AND_CREDIT, 1),
+    SINGLE_AV_DOCUMENT_TEST_DOC1(BASE_AV_ADJUSTMENT, 1),
+
+    MULTI_AV_DOCUMENT_TEST_DOC1(BASE_AV_ADJUSTMENT, 1),
+    MULTI_AV_DOCUMENT_TEST_DOC2(BASE_AV_ACCRUAL_WITH_DEFAULT_REVERSAL, 2),
+    MULTI_AV_DOCUMENT_TEST_DOC3(BASE_AV_ACCRUAL_WITH_SPECIFIC_REVERSAL, 3),
 
     MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
@@ -786,6 +814,8 @@ public enum AccountingXmlDocumentEntryFixture {
             auxiliaryVoucherDocument.setAccountingPeriod(accountingPeriod.toAccountingPeriod());
             if (StringUtils.isNotBlank(reversalDate)) {
                 auxiliaryVoucherDocument.setReversalDate(getParsedReversalDate(java.sql.Date::new));
+            } else if (StringUtils.equals(KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE, auxiliaryVoucherType)) {
+                auxiliaryVoucherDocument.setReversalDate(accountingPeriod.getReversalSqlDate());
             }
         }
     }

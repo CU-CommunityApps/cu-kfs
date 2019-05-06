@@ -147,6 +147,12 @@ public enum AccountingXmlDocumentListWrapperFixture {
             BASE_AV_WRAPPER,
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_AV_DOCUMENT_TEST_DOC1)),
+    MULTI_AV_DOCUMENT_TEST(
+            BASE_AV_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC2,
+                    AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC3)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(
