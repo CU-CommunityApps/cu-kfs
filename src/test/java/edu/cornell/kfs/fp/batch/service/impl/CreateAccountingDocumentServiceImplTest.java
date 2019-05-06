@@ -17,11 +17,13 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -39,18 +41,27 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kuali.kfs.coa.businessobject.AccountingPeriod;
+import org.kuali.kfs.coa.service.AccountingPeriodService;
+import org.kuali.kfs.coa.service.impl.AccountingPeriodServiceImpl;
+import org.kuali.kfs.coreservice.api.CoreServiceConstants;
+import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
+import org.kuali.kfs.coreservice.api.parameter.Parameter;
+import org.kuali.kfs.coreservice.api.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.FiscalYearFunctionControl;
 import org.kuali.kfs.fp.businessobject.InternalBillingItem;
+import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
-import org.kuali.kfs.fp.document.YearEndDistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
+import org.kuali.kfs.fp.document.validation.impl.AuxiliaryVoucherDocumentRuleConstants;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -61,10 +72,12 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
@@ -75,8 +88,10 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.kuali.rice.core.api.config.property.ConfigurationService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
+import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.core.impl.parameter.ParameterEvaluatorServiceImpl;
 import org.kuali.rice.kim.api.identity.Person;
 import org.kuali.rice.kim.api.identity.PersonService;
 import org.mockito.Mockito;
@@ -98,6 +113,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
+import edu.cornell.kfs.fp.batch.xml.fixture.AccountingPeriodFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
@@ -112,6 +128,7 @@ import edu.cornell.kfs.sys.util.MockDocumentUtils.TestAdHocRoutePerson;
 import edu.cornell.kfs.sys.util.MockDocumentUtils.TestNote;
 import edu.cornell.kfs.sys.util.MockPersonUtil;
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
+import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class, TestAdHocRoutePerson.class, TestNote.class})
@@ -130,20 +147,24 @@ public class CreateAccountingDocumentServiceImplTest {
     @Before
     public void setUp() throws Exception {
         ConfigurationService configurationService = buildMockConfigurationService();
+        DateTimeService dateTimeService = buildMockDateTimeService();
+        ParameterService parameterService = buildParameterService();
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
-                configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService());
+                configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
+                buildAccountingPeriodService(), dateTimeService, buildParameterEvaluatorService(parameterService));
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
                 AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
-                AccountingDocumentMapping.DV_DOCUMENT, AccountingDocumentMapping.YEBA_DOCUMENT, AccountingDocumentMapping.YETF_DOCUMENT);
-        createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType());
+                AccountingDocumentMapping.DV_DOCUMENT, AccountingDocumentMapping.YEBA_DOCUMENT, AccountingDocumentMapping.YETF_DOCUMENT,
+                AccountingDocumentMapping.AV_DOCUMENT);
+        createAccountingDocumentService.setAccountingDocumentBatchInputFileType(buildAccountingXmlDocumentInputFileType(dateTimeService));
         createAccountingDocumentService.setBatchInputFileService(new BatchInputFileServiceImpl());
         createAccountingDocumentService.setFileStorageService(buildFileStorageService());
         createAccountingDocumentService.setConfigurationService(configurationService);
         createAccountingDocumentService.setDocumentService(buildMockDocumentService());
         createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
-        createAccountingDocumentService.setParameterService(buildParameterService());
+        createAccountingDocumentService.setParameterService(parameterService);
         createAccountingDocumentService.setCreateAccountingDocumentValidationService(new TestCreateAccountingDocumentValidationService());
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
@@ -358,7 +379,13 @@ public class CreateAccountingDocumentServiceImplTest {
         copyTestFilesAndCreateDoneFiles("single-yetf-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_YETF_DOCUMENT_TEST);
     }
-    
+
+    @Test
+    public void testLoadSingleFileWithSingleAVDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-av-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.SINGLE_AV_DOCUMENT_TEST);
+    }
+
     @Test
     public void testEmptyFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("empty-file-test");
@@ -492,6 +519,8 @@ public class CreateAccountingDocumentServiceImplTest {
             assertObjectListIsCorrect("items",
                     ((InternalBillingDocument) expectedDocument).getItems(), ((InternalBillingDocument) actualDocument).getItems(),
                     this::assertInternalBillingItemIsCorrect);
+        } else if (AuxiliaryVoucherDocument.class.isAssignableFrom(documentClass)) {
+            assertAuxiliaryVoucherDocumentIsCorrect((AuxiliaryVoucherDocument) expectedDocument, (AuxiliaryVoucherDocument) actualDocument);
         }
         
         if (actualDocument instanceof CuDisbursementVoucherDocument) {
@@ -526,6 +555,12 @@ public class CreateAccountingDocumentServiceImplTest {
         assertEquals("Wrong org ref ID", expectedLine.getOrganizationReferenceId(), actualLine.getOrganizationReferenceId());
         assertEquals("Wrong line description", expectedLine.getFinancialDocumentLineDescription(), actualLine.getFinancialDocumentLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+        if (StringUtils.isNotBlank(expectedLine.getDebitCreditCode())) {
+            assertEquals("Wrong debit/credit code", expectedLine.getDebitCreditCode(), actualLine.getDebitCreditCode());
+        } else {
+            assertTrue("Line should not have a debit/credit code set up", StringUtils.isBlank(actualLine.getDebitCreditCode()));
+        }
+        
         if (expectedLine instanceof BudgetAdjustmentAccountingLine) {
             assertBudgetAdjustmentAccountingLinePropertiesAreCorrect(
                     (BudgetAdjustmentAccountingLine) expectedLine, (BudgetAdjustmentAccountingLine) actualLine);
@@ -621,6 +656,13 @@ public class CreateAccountingDocumentServiceImplTest {
         assertEquals("Wrong action requested", expectedAdHocPerson.getActionRequested(), actualAdHocPerson.getActionRequested());
     }
 
+    private void assertAuxiliaryVoucherDocumentIsCorrect(AuxiliaryVoucherDocument expectedDocument, AuxiliaryVoucherDocument actualDocument) {
+        assertEquals("Wrong accounting period code", expectedDocument.getPostingPeriodCode(), actualDocument.getPostingPeriodCode());
+        assertEquals("Wrong accounting period fiscal year", expectedDocument.getPostingYear(), actualDocument.getPostingYear());
+        assertEquals("Wrong AV document type", expectedDocument.getTypeCode(), actualDocument.getTypeCode());
+        assertEquals("Wrong reversal date", expectedDocument.getReversalDate(), actualDocument.getReversalDate());
+    }
+
     private void createTargetTestDirectory() throws IOException {
         File accountingXmlDocumentTestDirectory = new File(TARGET_TEST_FILE_PATH);
         FileUtils.forceMkdir(accountingXmlDocumentTestDirectory);
@@ -658,9 +700,9 @@ public class CreateAccountingDocumentServiceImplTest {
         }
     }
 
-    private JAXBXmlBatchInputFileTypeBase buildAccountingXmlDocumentInputFileType() throws Exception {
+    private JAXBXmlBatchInputFileTypeBase buildAccountingXmlDocumentInputFileType(DateTimeService dateTimeService) throws Exception {
         JAXBXmlBatchInputFileTypeBase inputFileType = new JAXBXmlBatchInputFileTypeBase();
-        inputFileType.setDateTimeService(buildMockDateTimeService());
+        inputFileType.setDateTimeService(dateTimeService);
         inputFileType.setCuMarshalService(new CUMarshalServiceImpl());
         inputFileType.setPojoClass(AccountingXmlDocumentListWrapper.class);
         inputFileType.setFileTypeIdentifier("accountingXmlDocumentFileType");
@@ -675,6 +717,8 @@ public class CreateAccountingDocumentServiceImplTest {
         DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
         Mockito.when(dateTimeService.toDateTimeStringForFilename(Mockito.any())).then(this::formatDate);
         Mockito.when(dateTimeService.getCurrentDate()).then(this::buildNewDate);
+        Mockito.when(dateTimeService.getCurrentSqlDate())
+                .then(this::buildStaticSqlDate);
         return dateTimeService;
     }
     
@@ -685,6 +729,11 @@ public class CreateAccountingDocumentServiceImplTest {
     
     private Date buildNewDate(InvocationOnMock invocation) {
         return new Date();
+    }
+
+    private java.sql.Date buildStaticSqlDate(InvocationOnMock invocation) {
+        DateTime dateTime = StringToJavaDateAdapter.parseToDateTime(CuFPTestConstants.DATE_02_21_2019);
+        return new java.sql.Date(dateTime.getMillis());
     }
 
     private FileStorageService buildFileStorageService() throws Exception {
@@ -726,13 +775,34 @@ public class CreateAccountingDocumentServiceImplTest {
         routedAccountingDocuments.add((AccountingDocument) document);
         return document;
     }
-    
+
+    private ParameterEvaluatorService buildParameterEvaluatorService(ParameterService parameterService) {
+        ParameterEvaluatorServiceImpl evaluatorService = new ParameterEvaluatorServiceImpl();
+        evaluatorService.setParameterService(parameterService);
+        return evaluatorService;
+    }
+
     private ParameterService buildParameterService() {
         ParameterService parameterService = Mockito.mock(ParameterService.class);
         Mockito.when(parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
+        Mockito.when(parameterService.getParameter(AuxiliaryVoucherDocument.class, AuxiliaryVoucherDocumentRuleConstants.RESTRICTED_PERIOD_CODES))
+                .thenReturn(buildRestrictedPeriodsParameter());
+        Mockito.when(parameterService.getParameterValueAsString(
+                AuxiliaryVoucherDocument.class, AuxiliaryVoucherDocumentRuleConstants.AUXILIARY_VOUCHER_ACCOUNTING_PERIOD_GRACE_PERIOD))
+                .thenReturn(CuFPTestConstants.TEST_DEFAULT_GRACE_PERIOD_DAYS);
         return parameterService;
+    }
+
+    private Parameter buildRestrictedPeriodsParameter() {
+        ParameterType.Builder typeBuilder = ParameterType.Builder.create(CuFPTestConstants.DOCUMENT_VALIDATION_PARAMETER_TYPE);
+        Parameter.Builder parameterBuilder = Parameter.Builder.create(
+               CoreServiceConstants.ApplicationIdentifiers.FINANCIALS, KFSConstants.CoreModuleNamespaces.FINANCIAL,
+               CuFPTestConstants.AUXILIARY_VOUCHER_COMPONENT, AuxiliaryVoucherDocumentRuleConstants.RESTRICTED_PERIOD_CODES, typeBuilder);
+        parameterBuilder.setValue(CuFPTestConstants.TEST_RESTRICTED_PERIODS);
+        parameterBuilder.setEvaluationOperator(EvaluationOperator.DISALLOW);
+        return parameterBuilder.build();
     }
 
     private boolean documentPassesBusinessRules(Document document) {
@@ -812,6 +882,57 @@ public class CreateAccountingDocumentServiceImplTest {
         return dateService;
     }
 
+    private AccountingPeriodService buildAccountingPeriodService() {
+        AccountingPeriodServiceImpl accountingPeriodService = Mockito.spy(new AccountingPeriodServiceImpl());
+        accountingPeriodService.setBusinessObjectService(buildMockBusinessObjectService());
+        Mockito.doReturn(buildListOfOpenAccountingPeriods())
+                .when(accountingPeriodService).getOpenAccountingPeriods();
+        Mockito.doAnswer(this::findAccountingPeriodByDate)
+                .when(accountingPeriodService).getByDate(Mockito.any(java.sql.Date.class));
+        return accountingPeriodService;
+    }
+
+    private List<AccountingPeriod> buildListOfOpenAccountingPeriods() {
+        return AccountingPeriodFixture.findOpenAccountingPeriodsAsStream()
+                .map(AccountingPeriodFixture::toAccountingPeriod)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private AccountingPeriod findAccountingPeriodByDate(InvocationOnMock invocation) {
+        java.sql.Date dateArg = invocation.getArgument(0);
+        DateTime dateTime = new DateTime(dateArg.getTime());
+        int month = dateTime.getMonthOfYear();
+        int year = dateTime.getYear();
+        int fiscalPeriod = (month == 6) ? 12 : (month + 6) % 12;
+        int fiscalYear = (fiscalPeriod <= 6) ? year + 1 : year;
+        String fiscalPeriodPrefix = (fiscalPeriod <= 9) ? KFSConstants.ZERO : KFSConstants.EMPTY_STRING;
+        String fiscalPeriodString = fiscalPeriodPrefix + String.valueOf(fiscalPeriod);
+        return findAccountingPeriod(Integer.valueOf(fiscalYear), fiscalPeriodString);
+    }
+
+    private BusinessObjectService buildMockBusinessObjectService() {
+        BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
+        Mockito.when(businessObjectService.findByPrimaryKey(Mockito.eq(AccountingPeriod.class), Mockito.anyMap()))
+                .then(this::findAccountingPeriod);
+        return businessObjectService;
+    }
+
+    private AccountingPeriod findAccountingPeriod(InvocationOnMock invocation) {
+        Map<?, ?> primaryKeys = invocation.getArgument(1);
+        String periodCode = (String) primaryKeys.get(KFSPropertyConstants.UNIVERSITY_FISCAL_PERIOD_CODE);
+        Integer fiscalYear = (Integer) primaryKeys.get(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR);
+        return findAccountingPeriod(fiscalYear, periodCode);
+    }
+
+    private AccountingPeriod findAccountingPeriod(Integer fiscalYear, String periodCode) {
+        Optional<AccountingPeriodFixture> result = AccountingPeriodFixture.findAccountingPeriod(fiscalYear, periodCode);
+        if (result.isPresent()) {
+            return result.get().toAccountingPeriod();
+        } else {
+            return null;
+        }
+    }
+
     private Client buildMockClient() {
         Client client = Mockito.mock(Client.class);
         Mockito.when(client.target(Mockito.any(URI.class))).then(this::buildMockWebTarget);
@@ -856,6 +977,10 @@ public class CreateAccountingDocumentServiceImplTest {
         private DisbursementVoucherTravelService disbursementVoucherTravelService;
         private FiscalYearFunctionControlService fiscalYearFunctionControlService;
         private UniversityDateService universityDateService;
+        private AccountingPeriodService accountingPeriodService;
+        private DateTimeService dateTimeService;
+        private ParameterEvaluatorService parameterEvaluatorService;
+        
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
         private boolean failToCreateDocument;
@@ -863,13 +988,18 @@ public class CreateAccountingDocumentServiceImplTest {
         public TestCreateAccountingDocumentServiceImpl(
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
-                DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService) {
+                DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService,
+                AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService,
+                ParameterEvaluatorService parameterEvaluatorService) {
             this.personService = personService;
             this.downloadAttachmentService = downloadAttachmentService;
             this.disbursementVoucherTravelService = disbursementVoucherTravelService;
             this.configurationService = configurationService;
             this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
             this.universityDateService = universityDateService;
+            this.accountingPeriodService = accountingPeriodService;
+            this.dateTimeService = dateTimeService;
+            this.parameterEvaluatorService = parameterEvaluatorService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
             this.failToCreateDocument = false;
@@ -904,6 +1034,13 @@ public class CreateAccountingDocumentServiceImplTest {
                 CuDisbursementVoucherDocumentGenerator dvGenerator = (CuDisbursementVoucherDocumentGenerator) accountingDocumentGenerator;
                 dvGenerator.setUniversityDateService(universityDateService);
                 dvGenerator.setDisbursementVoucherTravelService(disbursementVoucherTravelService);
+            } else if (accountingDocumentGenerator instanceof AuxiliaryVoucherDocumentGenerator) {
+                AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) accountingDocumentGenerator;
+                avGenerator.setAccountingPeriodService(accountingPeriodService);
+                avGenerator.setUniversityDateService(universityDateService);
+                avGenerator.setParameterEvaluatorService(parameterEvaluatorService);
+                avGenerator.setParameterService(parameterService);
+                avGenerator.setDateTimeService(dateTimeService);
             }
             return accountingDocumentGenerator;
         }
@@ -989,6 +1126,14 @@ public class CreateAccountingDocumentServiceImplTest {
             assertFalse("The error-message-building process should not have encountered an unexpected exception",
                     StringUtils.equals(CuFPConstants.ALTERNATE_BASE_VALIDATION_ERROR_MESSAGE, validationErrorMessage));
             return validationErrorMessage;
+        }
+        
+        @Override
+        public void setParameterService(ParameterService parameterService) {
+            super.setParameterService(parameterService);
+            AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) findDocumentGenerator(
+                    CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX + CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE);
+            avGenerator.setParameterService(parameterService);
         }
     }
     

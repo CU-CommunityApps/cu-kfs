@@ -14,6 +14,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
     BASE_BA_WRAPPER("04/20/2018", "ggg555@cornell.edu", "Example BA XML file", documents()),
     BASE_YEBA_WRAPPER("04/18/2019", "xyz555@cornell.edu", "Example YEBA XML file", documents()),
     BASE_SB_WRAPPER("05/24/2018", "cba001@cornell.edu", "Example SB XML file", documents()),
+    BASE_AV_WRAPPER("02/20/2019", "zyx321@cornell.edu", "Example AV XML file", documents()),
 
     MULTI_DI_DOCUMENT_TEST(
             BASE_WRAPPER,
@@ -142,6 +143,10 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_SB_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
+    SINGLE_AV_DOCUMENT_TEST(
+            BASE_AV_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_AV_DOCUMENT_TEST_DOC1)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(

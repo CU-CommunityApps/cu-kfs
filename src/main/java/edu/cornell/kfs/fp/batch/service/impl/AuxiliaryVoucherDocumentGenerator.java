@@ -2,9 +2,11 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.sql.Date;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -19,6 +21,7 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
+import org.kuali.rice.kew.api.WorkflowDocument;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
@@ -83,8 +86,25 @@ public class AuxiliaryVoucherDocumentGenerator
 
     @Override
     protected void populateCustomAccountingDocumentData(AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
+        DateTime documentCreateDate = getDocumentCreateDate(document);
+        Date documentCreateDateWithoutTime = new Date(documentCreateDate.getMillis());
+        
         AccountingPeriod period = findEligibleAccountingPeriod(document, documentEntry);
         document.setAccountingPeriod(period);
+        
+        String avTypeCode = validateAndGetAuxiliaryVoucherType(documentEntry);
+        document.setTypeCode(avTypeCode);
+        
+        Optional<Date> reversalDate = validateAndGetReversalDateIfApplicable(
+                documentEntry, period, avTypeCode, documentCreateDateWithoutTime);
+        if (reversalDate.isPresent()) {
+            document.setReversalDate(reversalDate.get());
+        }
+    }
+
+    protected DateTime getDocumentCreateDate(AuxiliaryVoucherDocument document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        return workflowDocument.getDateCreated();
     }
 
     /*
@@ -106,7 +126,7 @@ public class AuxiliaryVoucherDocumentGenerator
                         || gracePeriodHasNotEnded(period, currentDate, document))
                 .filter(period -> periodMatchesXmlConfiguredPeriod(period, xmlPeriod))
                 .findFirst()
-                .orElseThrow(() -> new ValidationException(xmlPeriod + " is not an eligible accounting period for AV documents"));
+                .orElseThrow(() -> new ValidationException(xmlPeriod + " is not an eligible open accounting period for AV documents"));
     }
 
     protected boolean periodIsNotRestrictedForAVs(AccountingPeriod period) {
@@ -157,6 +177,30 @@ public class AuxiliaryVoucherDocumentGenerator
                 throw new ValidationException("Cannot create XML-based AV documents of type " + avTypeCode);
             default :
                 throw new ValidationException("Invalid AV document type: " + avTypeCode);
+        }
+    }
+
+    protected Optional<Date> validateAndGetReversalDateIfApplicable(
+            AccountingXmlDocumentEntry documentEntry, AccountingPeriod period, String avTypeCode, Date documentCreateDateWithoutTime) {
+        switch (avTypeCode) {
+            case KFSConstants.AuxiliaryVoucher.ACCRUAL_DOC_TYPE :
+                return Optional.of(validateAndGetReversalDate(documentEntry, period, avTypeCode, documentCreateDateWithoutTime));
+            default :
+                if (documentEntry.getReversalDate() != null) {
+                    throw new ValidationException("Cannot specify a reversal date for AV documents of type " + avTypeCode);
+                }
+                return Optional.empty();
+        }
+    }
+
+    protected Date validateAndGetReversalDate(
+            AccountingXmlDocumentEntry documentEntry, AccountingPeriod period, String avTypeCode, Date documentCreateDateWithoutTime) {
+        java.util.Date xmlReversalDate = documentEntry.getReversalDate();
+        if (xmlReversalDate != null) {
+            return new java.sql.Date(xmlReversalDate.getTime());
+        } else {
+            return accountingPeriodService.getAccountingPeriodReversalDateByType(
+                    avTypeCode, period.getUniversityFiscalPeriodCode(), period.getUniversityFiscalYear(), documentCreateDateWithoutTime);
         }
     }
 

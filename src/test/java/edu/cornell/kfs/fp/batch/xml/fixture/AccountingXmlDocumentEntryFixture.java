@@ -3,8 +3,12 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 import static edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
 import java.util.List;
+import java.util.function.LongFunction;
 
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
+import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
@@ -20,6 +24,7 @@ import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentNote;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
+import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @SuppressWarnings("deprecation")
 public enum AccountingXmlDocumentEntryFixture {
@@ -341,6 +346,23 @@ public enum AccountingXmlDocumentEntryFixture {
 
     SINGLE_SB_NO_ITEMS_DOCUMENT_TEST_DOC1(BASE_SB_NO_ITEMS, 1),
 
+    BASE_AV_WITH_DEBIT_AND_CREDIT(
+            1, CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
+            "Test AV Document", "This is an AV document for testing purposes", "WXYZ5678",
+            AccountingPeriodFixture.FEB_2019, KFSConstants.AuxiliaryVoucher.ADJUSTMENT_DOC_TYPE, null,
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1433000_OBJ_4480_DEBIT_55,
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_C200222_OBJ_5390_CREDIT_55),
+            notes(
+                    "Sample AV Note",
+                    "Another AV Note"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+
+    SINGLE_AV_DOCUMENT_TEST_DOC1(BASE_AV_WITH_DEBIT_AND_CREDIT, 1),
+
     MULTI_DOC_TYPE_TEST_DI(MULTI_DI_DOCUMENT_TEST_DOC1, 1),
     MULTI_DOC_TYPE_TEST_IB(BASE_IB_WITH_ITEMS, 2),
     MULTI_DOC_TYPE_TEST_TF1(3, KFSConstants.TRANSFER_FUNDS,
@@ -533,6 +555,9 @@ public enum AccountingXmlDocumentEntryFixture {
     public final String description;
     public final String explanation;
     public final String organizationDocumentNumber;
+    public final AccountingPeriodFixture accountingPeriod;
+    public final String auxiliaryVoucherType;
+    public final String reversalDate;
     public final Integer postingFiscalYear;
     public final List<AccountingXmlDocumentAccountingLineFixture> sourceAccountingLines;
     public final List<AccountingXmlDocumentAccountingLineFixture> targetAccountingLines;
@@ -551,6 +576,14 @@ public enum AccountingXmlDocumentEntryFixture {
     }
     
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber, AccountingPeriodFixture accountingPeriod, String auxiliaryVoucherType, String reversalDate,
+            AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, accountingPeriod, auxiliaryVoucherType, reversalDate, 0,
+                sourceAccountingLines, targetAccountingLines(), items(), notes, adHocRecipients, backupLinks, CuDisbursementVoucherDocumentFixture.EMPTY);
+    }
+    
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
             String explanation, String organizationDocumentNumber, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
@@ -563,7 +596,7 @@ public enum AccountingXmlDocumentEntryFixture {
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks,
             CuDisbursementVoucherDocumentFixture dvDetails) {
-        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, 0,
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, null, null, null, 0,
                 sourceAccountingLines, targetAccountingLines, items, notes, adHocRecipients, backupLinks, dvDetails);
     }
 
@@ -572,12 +605,12 @@ public enum AccountingXmlDocumentEntryFixture {
             int postingFiscalYear, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
-        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, postingFiscalYear,
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, null, null, null, postingFiscalYear,
                 sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks, CuDisbursementVoucherDocumentFixture.EMPTY);
     }
 
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
-            String explanation, String organizationDocumentNumber,
+            String explanation, String organizationDocumentNumber, AccountingPeriodFixture accountingPeriod, String auxiliaryVoucherType, String reversalDate,
             int postingFiscalYear, AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
             AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, AccountingXmlDocumentItemFixture[] items, String[] notes,
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks,
@@ -587,6 +620,9 @@ public enum AccountingXmlDocumentEntryFixture {
         this.description = description;
         this.explanation = defaultToEmptyStringIfBlank(explanation);
         this.organizationDocumentNumber = defaultToEmptyStringIfBlank(organizationDocumentNumber);
+        this.accountingPeriod = accountingPeriod;
+        this.auxiliaryVoucherType = defaultToEmptyStringIfBlank(auxiliaryVoucherType);
+        this.reversalDate = reversalDate;
         this.postingFiscalYear = (postingFiscalYear != 0) ? Integer.valueOf(postingFiscalYear) : null;
         this.sourceAccountingLines = XmlDocumentFixtureUtils.toImmutableList(sourceAccountingLines);
         this.targetAccountingLines = XmlDocumentFixtureUtils.toImmutableList(targetAccountingLines);
@@ -604,6 +640,9 @@ public enum AccountingXmlDocumentEntryFixture {
         this.description = baseFixture.description;
         this.explanation = baseFixture.explanation;
         this.organizationDocumentNumber = baseFixture.organizationDocumentNumber;
+        this.accountingPeriod = baseFixture.accountingPeriod;
+        this.auxiliaryVoucherType = baseFixture.auxiliaryVoucherType;
+        this.reversalDate = baseFixture.reversalDate;
         this.sourceAccountingLines = baseFixture.sourceAccountingLines;
         this.targetAccountingLines = baseFixture.targetAccountingLines;
         this.items = baseFixture.items;
@@ -620,6 +659,14 @@ public enum AccountingXmlDocumentEntryFixture {
         documentEntry.setDescription(description);
         documentEntry.setExplanation(explanation);
         documentEntry.setOrganizationDocumentNumber(organizationDocumentNumber);
+        if (accountingPeriod != null) {
+            documentEntry.setAccountingPeriod(accountingPeriod.getUniversityFiscalPeriodName());
+        }
+        documentEntry.setAuxiliaryVoucherType(auxiliaryVoucherType);
+        if (StringUtils.isNotBlank(reversalDate)) {
+            documentEntry.setReversalDate(getParsedReversalDate(java.util.Date::new));
+        }
+        
         documentEntry.setPostingFiscalYear(postingFiscalYear);
         documentEntry.setSourceAccountingLines(
                 XmlDocumentFixtureUtils.convertToPojoList(sourceAccountingLines, AccountingXmlDocumentAccountingLineFixture::toAccountingLinePojo));
@@ -646,6 +693,7 @@ public enum AccountingXmlDocumentEntryFixture {
         addAccountingLinesToDocument(accountingDocument);
         addItemsToDocumentIfNecessary(accountingDocument);
         addDvDetailsToDocumentIfNecessary(accountingDocument);
+        addAuxiliaryVoucherSettingsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
         
@@ -729,6 +777,22 @@ public enum AccountingXmlDocumentEntryFixture {
                 dvDoc.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(expense);
             }
         }
+    }
+
+    private void addAuxiliaryVoucherSettingsToDocumentIfNecessary(AccountingDocument accountingDocument) {
+        if (accountingDocument instanceof AuxiliaryVoucherDocument) {
+            AuxiliaryVoucherDocument auxiliaryVoucherDocument = (AuxiliaryVoucherDocument) accountingDocument;
+            auxiliaryVoucherDocument.setTypeCode(auxiliaryVoucherType);
+            auxiliaryVoucherDocument.setAccountingPeriod(accountingPeriod.toAccountingPeriod());
+            if (StringUtils.isNotBlank(reversalDate)) {
+                auxiliaryVoucherDocument.setReversalDate(getParsedReversalDate(java.sql.Date::new));
+            }
+        }
+    }
+
+    private <T extends java.util.Date> T getParsedReversalDate(LongFunction<T> dateConstructor) {
+        DateTime parsedReversalDate = StringToJavaDateAdapter.parseToDateTime(reversalDate);
+        return dateConstructor.apply(parsedReversalDate.getMillis());
     }
 
     // The following methods are only meant to improve the setup and readability of this enum's constants.
