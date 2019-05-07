@@ -218,11 +218,15 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         } else {
             String defaultNetTerms = parameterService.getParameterValueAsString(
                     ArConstants.AR_NAMESPACE_CODE, ArConstants.CUSTOMER_COMPONENT, CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
+            if (StringUtils.isBlank(defaultNetTerms)) {
+                throw new RuntimeException("Could not find a net terms value for parameter " + CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
+            }
+            
             try {
                 netTermsInDays = Integer.parseInt(defaultNetTerms);
             } catch (NumberFormatException e) {
-                LOG.error("calculateInvoiceDueDate, Default net terms parameter is malformed; will use zero as the default instead", e);
-                netTermsInDays = 0;
+                LOG.error("calculateInvoiceDueDate, Net terms parameter value is malformed", e);
+                throw new RuntimeException("Net terms value is malformed for parameter " + CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
             }
         }
         
