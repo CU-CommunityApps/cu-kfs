@@ -485,6 +485,8 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
+    MULTI_DOC_TYPE_TEST_AV(BASE_AV_ADJUSTMENT, 11),
+
     SINGLE_DOC_TYPE_TEST_YETF(1, CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
             "Test YETF Document", "This is only a test YETF document!", "ABCD1234",
             sourceAccountingLines(

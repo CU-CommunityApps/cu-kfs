@@ -393,6 +393,13 @@ public class CreateAccountingDocumentServiceImplTest {
     }
 
     @Test
+    public void testLoadSingleFileWithMultipleAVDocumentsPlusDocumentsWithRulesFailures() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-av-plus-bad-rules-doc-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_AV_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST);
+    }
+
+    @Test
     public void testEmptyFile() throws Exception {
         copyTestFilesAndCreateDoneFiles("empty-file-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(AccountingXmlDocumentListWrapperFixture.EMPTY_DOCUMENT_TEST);

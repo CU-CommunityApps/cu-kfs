@@ -153,6 +153,19 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC2,
                     AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC3)),
+    MULTI_AV_DOCUMENT_WITH_SOME_BAD_RULES_DOCUMENTS_TEST(
+            BASE_AV_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.MULTI_AV_DOCUMENT_TEST_DOC3,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(
@@ -165,7 +178,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEDI,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DV,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEBA,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YETF)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YETF,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_AV)),
     DI_WITH_IB_ITEMS_TEST(
             BASE_WRAPPER,
             documents(
