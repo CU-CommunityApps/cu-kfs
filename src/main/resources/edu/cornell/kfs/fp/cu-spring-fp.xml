@@ -905,4 +905,15 @@
         <property name="vendorService" ref="vendorService"/>
     </bean>
 
+    <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator">
+        <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
+        <property name="accountingPeriodService" ref="accountingPeriodService"/>
+        <property name="universityDateService" ref="universityDateService"/>
+        <property name="parameterEvaluatorService" ref="parameterEvaluatorService"/>
+        <property name="parameterService" ref="parameterService"/>
+        <property name="dateTimeService" ref="dateTimeService"/>
+    </bean>
+
 </beans>
