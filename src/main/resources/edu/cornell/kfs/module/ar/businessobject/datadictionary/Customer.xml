@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="Customer" parent="Customer-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="Customer-extension-netTermsInDays"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="Customer-extension-netTermsInDays" parent="Customer-extension-netTermsInDays-parentBean"/>
+    <bean id="Customer-extension-netTermsInDays-parentBean" abstract="true" parent="CustomerExtendedAttribute-netTermsInDays"
+            p:name="extension.netTermsInDays"/>
+
+    <bean id="Customer-inquirySectionDefinition-corporateInformation"
+            parent="Customer-inquirySectionDefinition-corporateInformation-parentBean">
+        <property name="inquiryFields">
+            <list merge="true">
+                <bean parent="FieldDefinition" p:attributeName="extension.netTermsInDays"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
