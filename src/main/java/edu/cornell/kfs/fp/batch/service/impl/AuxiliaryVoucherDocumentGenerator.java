@@ -123,7 +123,7 @@ public class AuxiliaryVoucherDocumentGenerator
         return openPeriods.stream()
                 .filter(this::periodIsNotRestrictedForAVs)
                 .filter(period -> periodHasNotEnded(period, currentPeriod, currentFiscalYear)
-                        || gracePeriodHasNotEnded(period, currentDate, document))
+                        || isInGracePeriod(period, currentDate, document))
                 .filter(period -> periodMatchesXmlConfiguredPeriod(period, xmlPeriod))
                 .findFirst()
                 .orElseThrow(() -> new ValidationException(xmlPeriod + " is not an eligible open accounting period for AV documents"));
@@ -146,7 +146,7 @@ public class AuxiliaryVoucherDocumentGenerator
      * but has been updated accordingly so that it can execute in micro-test situations.
      * If KualiCo updates the base method to be micro-test-friendly, then we can potentially remove this custom method.
      */
-    protected boolean gracePeriodHasNotEnded(AccountingPeriod period, Date currentDate, AuxiliaryVoucherDocument document) {
+    protected boolean isInGracePeriod(AccountingPeriod period, Date currentDate, AuxiliaryVoucherDocument document) {
         Date periodEndDate = period.getUniversityFiscalPeriodEndDate();
         int today = document.comparableDateForm(currentDate);
         int periodBegin = document.comparableDateForm(
