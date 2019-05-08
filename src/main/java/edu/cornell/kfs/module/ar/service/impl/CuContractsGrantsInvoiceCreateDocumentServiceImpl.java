@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorMessage;
@@ -22,14 +22,14 @@ import org.kuali.kfs.module.ar.businessobject.ContractsGrantsLetterOfCreditRevie
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.ContractsGrantsInvoiceCreateDocumentServiceImpl;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.ar.CuArParameterConstants;
-import org.kuali.kfs.sys.KFSConstants;
-import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends ContractsGrantsInvoiceCreateDocumentServiceImpl {
     
@@ -169,6 +169,14 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
             }
         }
         return false;
+    }
+
+    @Override
+    protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award,
+            List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
+            List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
+        super.populateInvoiceFromAward(award, awardAccounts, document, accountDetails, locCreationType);
+        cuContractsGrantsInvoiceDocumentService.setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
     }
 
     public CuContractsGrantsInvoiceDocumentService getCuContractsGrantsInvoiceDocumentService() {

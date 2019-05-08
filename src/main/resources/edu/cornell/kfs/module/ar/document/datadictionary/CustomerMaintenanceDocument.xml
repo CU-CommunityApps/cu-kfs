@@ -25,4 +25,13 @@
     <property name="businessRulesClass" value="edu.cornell.kfs.module.ar.document.validation.CuCustomerRule"/>
   </bean>
 
+    <bean id="CustomerMaintenanceDocument-CorporateInformation"
+            parent="CustomerMaintenanceDocument-CorporateInformation-parentBean">
+        <property name="maintainableItems">
+            <list merge="true">
+                <bean parent="MaintainableFieldDefinition" p:name="extension.netTermsInDays"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

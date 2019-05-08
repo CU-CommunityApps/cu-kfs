@@ -1,9 +1,12 @@
 package edu.cornell.kfs.module.ar.document.service.impl;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +14,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.ArConstants;
+import org.kuali.kfs.module.ar.ArPropertyConstants;
+import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
+import org.kuali.kfs.module.ar.businessobject.Customer;
 import org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceAccountDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode;
@@ -23,7 +30,9 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
 import edu.cornell.kfs.module.ar.CuArPropertyConstants;
+import edu.cornell.kfs.module.ar.businessobject.CustomerExtendedAttribute;
 import edu.cornell.kfs.module.ar.document.service.CuContractsGrantsInvoiceDocumentService;
 import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -176,6 +185,72 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
 
         return createSourceAccountingLine(contractsGrantsInvoiceDocument.getDocumentNumber(),
                 coaCode, accountNumber, objectCode, getTotalAmountForInvoice(contractsGrantsInvoiceDocument), 1);
+    }
+
+    /**
+     * Overridden to also update the invoice due date.
+     * 
+     * NOTE: There isn't an easy way to hook in the invoice-due-date updates independently of this
+     * without overlaying the CINV document class. (This method only appears to be called when CINV docs
+     * enter PROCESSED status, so hooking in here is okay for now.) If ContractsGrantsInvoiceDocument
+     * gets updated to make it easier to hook in custom PROCESSED-status handling, then we should rework
+     * this customization.
+     */
+    @Override
+    public void updateLastBilledDate(ContractsGrantsInvoiceDocument document) {
+        super.updateLastBilledDate(document);
+        setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
+    }
+
+    @Override
+    public void setInvoiceDueDateBasedOnNetTermsAndCurrentDate(ContractsGrantsInvoiceDocument document) {
+        Date invoiceDueDate = calculateInvoiceDueDate(document);
+        document.setInvoiceDueDate(invoiceDueDate);
+    }
+
+    protected Date calculateInvoiceDueDate(ContractsGrantsInvoiceDocument document) {
+        Calendar calendar = dateTimeService.getCurrentCalendar();
+        Optional<Integer> customerNetTerms = getCustomerNetTerms(document);
+        int netTermsInDays;
+        
+        if (customerNetTerms.isPresent()) {
+            netTermsInDays = customerNetTerms.get();
+        } else {
+            String defaultNetTerms = parameterService.getParameterValueAsString(
+                    ArConstants.AR_NAMESPACE_CODE, ArConstants.CUSTOMER_COMPONENT, CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
+            if (StringUtils.isBlank(defaultNetTerms)) {
+                throw new RuntimeException("Could not find a net terms value for parameter " + CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
+            }
+            
+            try {
+                netTermsInDays = Integer.parseInt(defaultNetTerms);
+            } catch (NumberFormatException e) {
+                LOG.error("calculateInvoiceDueDate, Net terms parameter value is malformed", e);
+                throw new RuntimeException("Net terms value is malformed for parameter " + CuArParameterKeyConstants.CG_INVOICE_TERMS_DUE_DATE);
+            }
+        }
+        
+        calendar.add(Calendar.DATE, netTermsInDays);
+        return new Date(calendar.getTimeInMillis());
+    }
+
+    protected Optional<Integer> getCustomerNetTerms(ContractsGrantsInvoiceDocument document) {
+        Customer customer = null;
+        
+        AccountsReceivableDocumentHeader documentHeader = document.getAccountsReceivableDocumentHeader();
+        if (ObjectUtils.isNotNull(documentHeader)) {
+            documentHeader.refreshReferenceObject(ArPropertyConstants.CustomerInvoiceDocumentFields.CUSTOMER);
+            customer = documentHeader.getCustomer();
+        }
+        
+        if (ObjectUtils.isNotNull(customer)) {
+            CustomerExtendedAttribute customerExtension = (CustomerExtendedAttribute) customer.getExtension();
+            if (ObjectUtils.isNotNull(customerExtension)) {
+                return Optional.ofNullable(customerExtension.getNetTermsInDays());
+            }
+        }
+        
+        return Optional.empty();
     }
 
 }
