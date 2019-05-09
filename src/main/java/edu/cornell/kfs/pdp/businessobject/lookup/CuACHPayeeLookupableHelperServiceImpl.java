@@ -65,11 +65,12 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
          * This is mostly a copy of the superclass's method, but has been tweaked to account for principal name
          * and to conform to our line formatting standards.
          */
-        List<DisbursementPayee> searchResults = new ArrayList<DisbursementPayee>();
+        List<DisbursementPayee> searchResults = new ArrayList<>();
 
         String payeeTypeCode = fieldValues.get(KFSPropertyConstants.PAYEE_TYPE_CODE);
         if (StringUtils.isBlank(payeeTypeCode)) {
-            GlobalVariables.getMessageMap().putInfo(KFSPropertyConstants.PAYEE_TYPE_CODE, PdpKeyConstants.MESSAGE_PDP_ACH_PAYEE_LOOKUP_NO_PAYEE_TYPE);
+            GlobalVariables.getMessageMap().putInfo(KFSPropertyConstants.PAYEE_TYPE_CODE,
+                    PdpKeyConstants.MESSAGE_PDP_ACH_PAYEE_LOOKUP_NO_PAYEE_TYPE);
         }
 
         // CU Customization: Updated "else if" to restrict results to people if principal name is given.
@@ -81,19 +82,20 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
                 || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.ENTITY_ID))
                 || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.PRINCIPAL_NAME))
                 || (StringUtils.isNotBlank(payeeTypeCode)
-                        && (PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(payeeTypeCode) || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(payeeTypeCode)))) {
+                        && (PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(payeeTypeCode)
+                                || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(payeeTypeCode)))) {
             searchResults.addAll(this.getPersonAsPayees(fieldValues));
         } else {
             searchResults.addAll(this.getVendorsAsPayees(fieldValues));
             searchResults.addAll(this.getPersonAsPayees(fieldValues));
         }
 
-        CollectionIncomplete results = new CollectionIncomplete(searchResults, Long.valueOf(searchResults.size()));
+        CollectionIncomplete results = new CollectionIncomplete(searchResults, (long) searchResults.size());
 
         // sort list if default sort column given
         List<String> defaultSortColumns = getDefaultSortColumns();
         if (defaultSortColumns.size() > 0) {
-            Collections.sort(results, new BeanPropertyComparator(getDefaultSortColumns(), true));
+            results.sort(new BeanPropertyComparator(getDefaultSortColumns(), true));
         }
 
         return results;

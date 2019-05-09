@@ -23,12 +23,14 @@ import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.AchService;
 import org.kuali.kfs.pdp.service.impl.FormatServiceImpl;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.rice.core.api.util.type.KualiInteger;
 import org.kuali.rice.kim.api.identity.Person;
 
 import edu.cornell.kfs.pdp.dataaccess.CuFormatPaymentDao;
 import edu.cornell.kfs.pdp.service.CuFormatService;
 
 public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatService {
+
     private static final Logger LOG = LogManager.getLogger(CuFormatServiceImpl.class);
     
     @Override
@@ -77,9 +79,8 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
 
         PaymentStatus format = this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.FORMAT);
 
-        List customerIds = new ArrayList();
-        for (Iterator iter = customers.iterator(); iter.hasNext(); ) {
-            CustomerProfile element = (CustomerProfile) iter.next();
+        List<KualiInteger> customerIds = new ArrayList<>();
+        for (CustomerProfile element : customers) {
             customerIds.add(element.getId());
         }
 
@@ -113,9 +114,8 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         return preFormatProcessSummary;
     }
 
+    @Override
     protected boolean processPaymentGroup(PaymentGroup paymentGroup, PaymentProcess paymentProcess) {
-        boolean successful = true;
-
         paymentGroup.setSortValue(paymentGroupService.getSortGroupId(paymentGroup));
         paymentGroup.setPhysCampusProcessCd(paymentProcess.getCampusCode());
         paymentGroup.setProcess(paymentProcess);
@@ -132,10 +132,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
             paymentGroup.setPaymentStatus(paymentStatus);
         }
         
-        // set payment group bank
-        successful &= validateAndUpdatePaymentGroupBankCode(paymentGroup, paymentGroup.getDisbursementType(), paymentGroup.getBatch().getCustomerProfile());
-        
-        return successful;
+        return validateAndUpdatePaymentGroupBankCode(paymentGroup, paymentGroup.getDisbursementType(), paymentGroup.getBatch().getCustomerProfile());
     }
     
     /**
@@ -144,7 +141,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
      * @param paymentGroup
      */
     protected void populateDisbursementType(PaymentGroup paymentGroup) {
-        DisbursementType disbursementType = null;
+        DisbursementType disbursementType;
         if (paymentGroup.isPayableByCheck()) {
             disbursementType = (DisbursementType) businessObjectService
                     .findBySinglePrimaryKey(DisbursementType.class, PdpConstants.DisbursementTypeCodes.CHECK);

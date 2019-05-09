@@ -38,6 +38,11 @@
     <c:set var="offCampus" value="true" />
 </logic:equal>
 
+<c:set var="readOnlyBuildingCode" value="true" />
+<c:if test="${KualiForm.document.documentHeader.workflowDocument.initiated || KualiForm.document.documentHeader.workflowDocument.saved}">
+    <c:set var="readOnlyBuildingCode" value="false" />
+</c:if>
+
 <c:set var="deleteLocationUrl" value="methodToCall.deleteCapitalAssetLocationByItem.(((${ctr}))).((#${ctr2}#))" />
 <c:set var="refreshAssetLocationBuildingUrl" value="methodToCall.useOffCampusAssetLocationBuildingByItem.(((${ctr}))).((#${ctr2}#))" />
 <c:if test="${PurapConstants.CapitalAssetAvailability.ONCE eq availability}">
@@ -107,7 +112,7 @@
         	<html:submit value="Find Building" style="display:none;" property="methodToCall.populateBuilding" styleId="populate-building-item${ctr}-location${ctr2}-button"/>
             <kul:htmlControlAttribute attributeEntry="${camsLocationAttributes.buildingCode}"
                                       property="${camsAssetLocationProperty}.buildingCode"
-                                      onblur="updateAssetLocation('${ctr}', '${ctr2}')" readOnly="${offCampus}"/>&nbsp;
+                                      onblur="updateAssetLocation('${ctr}', '${ctr2}')" readOnly="${offCampus || readOnlyBuildingCode}"/>&nbsp;
             <c:if test="${(fullEntryMode or amendmentEntry or enableCa) and !poItemInactive}">
                 <kul:lookup boClassName="org.kuali.kfs.sys.businessobject.Building"
                             lookupParameters="${camsAssetLocationProperty}.campusCode:campusCode"

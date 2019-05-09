@@ -46,6 +46,7 @@ import java.util.Map;
  * Integrates with access security module to check security on accounting lines before rendering
  */
 public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
+
     protected boolean hasEditRestrictions;
     protected boolean hasViewRestrictions;
 
@@ -58,16 +59,19 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
     }
 
     /**
-     * Performs access security edit check and sets edit flag on container line to false if access is not allowed or removes
-     * container if view is not allowed
+     * Performs access security edit check and sets edit flag on container line to false if access is not allowed or
+     * removes container if view is not allowed
      */
     @Override
-    public void initialize(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument, List<RenderableAccountingLineContainer> containers, String collectionPropertyName, String collectionItemPropertyName, String newLinePropertyName, Map<String, Object> displayedErrors, Map<String, Object> displayedWarnings, Map<String, Object> displayedInfo, boolean canEdit) {
+    public void initialize(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument,
+            List<RenderableAccountingLineContainer> containers, String collectionPropertyName,
+            String collectionItemPropertyName, String newLinePropertyName, Map<String, Object> displayedErrors,
+            Map<String, Object> displayedWarnings, Map<String, Object> displayedInfo, boolean canEdit) {
         AccessSecurityService accessSecurityService = SpringContext.getBean(AccessSecurityService.class);
         Person currentUser = GlobalVariables.getUserSession().getPerson();
 
         // check view and edit access
-        List<RenderableAccountingLineContainer> unviewableContainers = new ArrayList<RenderableAccountingLineContainer>();
+        List<RenderableAccountingLineContainer> unviewableContainers = new ArrayList<>();
         for (RenderableAccountingLineContainer container : containers) {
             boolean lineHasError = false;
             for (Object errorKeyAsObject : GlobalVariables.getMessageMap().getErrorMessages().keySet() ) {
@@ -89,13 +93,15 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
                 continue;
             }
 
-            boolean viewAllowed = accessSecurityService.canViewDocumentAccountingLine(accountingDocument, container.getAccountingLine(), currentUser);
+            boolean viewAllowed = accessSecurityService.canViewDocumentAccountingLine(accountingDocument,
+                    container.getAccountingLine(), currentUser);
             if (!viewAllowed) {
                 unviewableContainers.add(container);
                 hasViewRestrictions = true;
             }
             else {
-                boolean editAllowed = accessSecurityService.canEditDocumentAccountingLine(accountingDocument, container.getAccountingLine(), currentUser);
+                boolean editAllowed = accessSecurityService.canEditDocumentAccountingLine(accountingDocument,
+                        container.getAccountingLine(), currentUser);
 
                 if (container.isEditableLine() && !editAllowed) {
                     container.setEditableLine(false);
@@ -109,19 +115,17 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
             containers.remove(container);
         }
 
-        super.initialize(groupDefinition, accountingDocument, containers, collectionPropertyName, collectionItemPropertyName, newLinePropertyName, displayedErrors, displayedWarnings, displayedInfo, canEdit);
+        super.initialize(groupDefinition, accountingDocument, containers, collectionPropertyName,
+                collectionItemPropertyName, newLinePropertyName, displayedErrors, displayedWarnings, displayedInfo,
+                canEdit);
     }
 
     /**
      * Adds info message if we have restricted view of any accounting lines and adds an additional key to match on
-     *
-     * @see org.kuali.kfs.sys.document.web.DefaultAccountingLineGroupImpl#renderErrors(javax.servlet.jsp.PageContext,
-     *      javax.servlet.jsp.tagext.Tag)
      */
     @Override
     protected void renderErrors(PageContext pageContext, Tag parentTag) throws JspException {
         renderSecurityMessage(pageContext, parentTag);
-
         renderMessages(pageContext, parentTag, groupDefinition.getErrorKey());
     }
 
@@ -130,7 +134,7 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
      *
      * @param pageContext
      * @param parentTag
-     * @param messageKey - key for messages to display
+     * @param messageKey key for messages to display
      * @throws JspException
      */
     protected void renderMessages(PageContext pageContext, Tag parentTag, String messageKey) throws JspException {
@@ -154,7 +158,8 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
      * @throws JspException
      */
     protected void renderSecurityMessage(PageContext pageContext, Tag parentTag) throws JspException {
-        String secErrorKey = SecConstants.ACCOUNTING_GROUP_ERROR_KEY_PREFIX + collectionItemPropertyName + collectionPropertyName;
+        String secErrorKey = SecConstants.ACCOUNTING_GROUP_ERROR_KEY_PREFIX + collectionItemPropertyName +
+                collectionPropertyName;
 
         // add info message if we are restricting any lines from view
         if (hasEditRestrictions || hasViewRestrictions) {
