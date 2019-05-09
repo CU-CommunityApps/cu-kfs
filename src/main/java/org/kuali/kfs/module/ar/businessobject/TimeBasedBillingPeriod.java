@@ -23,20 +23,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
+import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.module.ar.ArConstants;
 
+import edu.cornell.kfs.module.ar.service.CuContractsGrantsBillingUtilityService;
+
 import java.sql.Date;
+import java.util.List;
 
 public class TimeBasedBillingPeriod extends BillingPeriod {
+    
+    protected final CuContractsGrantsBillingUtilityService cuContractsGrantsBillingUtilityService;
     
     /*
      * CU Customization
      */
     private static final Logger LOG = LogManager.getLogger(TimeBasedBillingPeriod.class);
-    
+        
     public TimeBasedBillingPeriod(ArConstants.BillingFrequencyValues billingFrequency, Date awardStartDate,
-            Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService) {
+            Date currentDate, Date lastBilledDate, AccountingPeriodService accountingPeriodService, CuContractsGrantsBillingUtilityService cuContractsGrantsBillingUtilityService) {
         super(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
+        this.cuContractsGrantsBillingUtilityService = cuContractsGrantsBillingUtilityService;
     }
 
     @Override
@@ -116,4 +123,10 @@ public class TimeBasedBillingPeriod extends BillingPeriod {
         }
         return previousAccountingPeriodCode;
     }
+    
+    @Override
+    protected Date determineLastBilledDateByInvoicingOption(List<ContractsAndGrantsBillingAwardAccount> awardAccounts, String invoicingOptionCode, Date awardLastBilledDate) {
+        return cuContractsGrantsBillingUtilityService.determineLastBilledDateByInvoicingOption(awardAccounts, invoicingOptionCode, awardLastBilledDate);
+    }
+    
 }
