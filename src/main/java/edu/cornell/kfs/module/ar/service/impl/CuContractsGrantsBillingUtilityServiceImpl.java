@@ -38,7 +38,9 @@ public class CuContractsGrantsBillingUtilityServiceImpl extends ContractsGrantsB
             ContractsAndGrantsBillingAwardAccount accountToUse = null;
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (ObjectUtils.isNotNull(accountToUse)) {
-                    if (isNotExpenditureAccount(awardAccount) 
+                    if (isNotExpenditureAccount(awardAccount)
+                            && ObjectUtils.isNotNull(awardAccount.getCurrentLastBilledDate())
+                            && ObjectUtils.isNotNull(accountToUse.getCurrentLastBilledDate())
                             && awardAccount.getCurrentLastBilledDate().after(accountToUse.getCurrentLastBilledDate())) {
                         accountToUse = awardAccount;
                     }
