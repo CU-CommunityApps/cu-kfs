@@ -80,7 +80,7 @@
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
 
     <bean id="cuVerifyBillingFrequencyService" parent="verifyBillingFrequencyService"/>
-    <bean id="verifyBillingFrequencyService-parentBean"
+    <bean id="verifyBillingFrequencyService"
           class="edu.cornell.kfs.module.ar.batch.service.impl.CuVerifyBillingFrequencyServiceImpl"
           p:universityDateService-ref="universityDateService"
           p:businessObjectService-ref="businessObjectService"
@@ -89,7 +89,7 @@
           p:cuContractsGrantsBillingUtilityService-ref="cuContractsGrantsBillingUtilityService"/>
 
     <bean id="cuContractsGrantsBillingUtilityService" parent="contractsGrantsBillingUtilityService"/>
-    <bean id="contractsGrantsBillingUtilityService-parentBean"
+    <bean id="contractsGrantsBillingUtilityService"
           class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsBillingUtilityServiceImpl"
           p:accountService-ref="accountService"
           p:businessObjectService-ref="businessObjectService"

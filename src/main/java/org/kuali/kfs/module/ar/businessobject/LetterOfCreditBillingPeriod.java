@@ -54,7 +54,7 @@ public class LetterOfCreditBillingPeriod extends BillingPeriod {
 
     @Override
     protected Date determineLastBilledDateByInvoicingOption(List<ContractsAndGrantsBillingAwardAccount> awardAccounts, String invoicingOptionCode, Date awardLastBilledDate) {
-        return cuContractsGrantsBillingUtilityService.determineLastBilledDateByInvoicingOption(awardAccounts, invoicingOptionCode,awardLastBilledDate );
+        return cuContractsGrantsBillingUtilityService.determineLastBilledDateByInvoicingOption(awardAccounts, invoicingOptionCode, awardLastBilledDate);
     }
 
 }
