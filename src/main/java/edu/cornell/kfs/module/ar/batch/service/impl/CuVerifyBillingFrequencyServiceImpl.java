@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.ar.batch.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +34,7 @@ public class CuVerifyBillingFrequencyServiceImpl extends VerifyBillingFrequencyS
         Date lastBilledDateToUse;
         if (StringUtils.equals(awardInvoiceOption, ArConstants.INV_CONTRACT_CONTROL_ACCOUNT)
                 || StringUtils.equals(awardInvoiceOption, ArConstants.INV_ACCOUNT)) {
-            if (ObjectUtils.isNotNull(award.getActiveAwardAccounts())) {
+            if (CollectionUtils.isNotEmpty(award.getActiveAwardAccounts())) {
                 lastBilledDateToUse = award.getActiveAwardAccounts().get(0).getCurrentLastBilledDate();
             } else {
                 LOG.error("validateBillingFrequency: NO active award accounts on Award with invoice option of Account or Contract Control Account. Award lastBilledDate being used for CINV creation.");
