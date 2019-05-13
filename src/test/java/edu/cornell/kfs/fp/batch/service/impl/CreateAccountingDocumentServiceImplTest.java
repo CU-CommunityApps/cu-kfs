@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,10 +48,6 @@ import org.junit.runner.RunWith;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.impl.AccountingPeriodServiceImpl;
-import org.kuali.kfs.coreservice.api.CoreServiceConstants;
-import org.kuali.kfs.coreservice.api.parameter.EvaluationOperator;
-import org.kuali.kfs.coreservice.api.parameter.Parameter;
-import org.kuali.kfs.coreservice.api.parameter.ParameterType;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
@@ -61,7 +56,6 @@ import org.kuali.kfs.fp.businessobject.InternalBillingItem;
 import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTravelService;
-import org.kuali.kfs.fp.document.validation.impl.AuxiliaryVoucherDocumentRuleConstants;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.fp.service.impl.FiscalYearFunctionControlServiceImpl;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
@@ -152,7 +146,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
                 configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
-                buildAccountingPeriodService(), dateTimeService, buildParameterEvaluatorService(parameterService));
+                buildAccountingPeriodService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
                 AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
@@ -761,7 +755,14 @@ public class CreateAccountingDocumentServiceImplTest {
             .thenReturn(CuFPTestConstants.TEST_VALIDATION_ERROR_MESSAGE);
         Mockito.when(configurationService.getPropertyValueAsString(CuFPKeyConstants.ERROR_CREATE_ACCOUNTING_DOCUMENT_ATTACHMENT_DOWNLOAD))
             .thenReturn(CuFPTestConstants.TEST_ATTACHMENT_DOWNLOAD_FAILURE_MESSAGE);
+        Mockito.when(configurationService.getPropertyValueAsString(Mockito.startsWith(CuFPTestConstants.AV_VALIDATION_MESSAGE_KEY_PREFIX)))
+            .then(this::buildAuxiliaryVoucherErrorMessage);
         return configurationService;
+    }
+
+    private String buildAuxiliaryVoucherErrorMessage(InvocationOnMock invocation) {
+        String messageKey = invocation.getArgument(0);
+        return messageKey + " {0}";
     }
 
     private PersonService buildMockPersonService() throws Exception {
@@ -800,22 +801,7 @@ public class CreateAccountingDocumentServiceImplTest {
         Mockito.when(parameterService.getParameterValueAsString(KFSConstants.ParameterNamespaces.FINANCIAL, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
-        Mockito.when(parameterService.getParameter(AuxiliaryVoucherDocument.class, AuxiliaryVoucherDocumentRuleConstants.RESTRICTED_PERIOD_CODES))
-                .thenReturn(buildRestrictedPeriodsParameter());
-        Mockito.when(parameterService.getParameterValueAsString(
-                AuxiliaryVoucherDocument.class, AuxiliaryVoucherDocumentRuleConstants.AUXILIARY_VOUCHER_ACCOUNTING_PERIOD_GRACE_PERIOD))
-                .thenReturn(CuFPTestConstants.TEST_DEFAULT_GRACE_PERIOD_DAYS);
         return parameterService;
-    }
-
-    private Parameter buildRestrictedPeriodsParameter() {
-        ParameterType.Builder typeBuilder = ParameterType.Builder.create(CuFPTestConstants.DOCUMENT_VALIDATION_PARAMETER_TYPE);
-        Parameter.Builder parameterBuilder = Parameter.Builder.create(
-               CoreServiceConstants.ApplicationIdentifiers.FINANCIALS, KFSConstants.CoreModuleNamespaces.FINANCIAL,
-               CuFPTestConstants.AUXILIARY_VOUCHER_COMPONENT, AuxiliaryVoucherDocumentRuleConstants.RESTRICTED_PERIOD_CODES, typeBuilder);
-        parameterBuilder.setValue(CuFPTestConstants.TEST_RESTRICTED_PERIODS);
-        parameterBuilder.setEvaluationOperator(EvaluationOperator.DISALLOW);
-        return parameterBuilder.build();
     }
 
     private boolean documentPassesBusinessRules(Document document) {
@@ -900,8 +886,6 @@ public class CreateAccountingDocumentServiceImplTest {
         accountingPeriodService.setBusinessObjectService(buildMockBusinessObjectService());
         Mockito.doReturn(buildListOfOpenAccountingPeriods())
                 .when(accountingPeriodService).getOpenAccountingPeriods();
-        Mockito.doAnswer(this::findAccountingPeriodByDate)
-                .when(accountingPeriodService).getByDate(Mockito.any(java.sql.Date.class));
         return accountingPeriodService;
     }
 
@@ -909,18 +893,6 @@ public class CreateAccountingDocumentServiceImplTest {
         return AccountingPeriodFixture.findOpenAccountingPeriodsAsStream()
                 .map(AccountingPeriodFixture::toAccountingPeriod)
                 .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private AccountingPeriod findAccountingPeriodByDate(InvocationOnMock invocation) {
-        java.sql.Date dateArg = invocation.getArgument(0);
-        DateTime dateTime = new DateTime(dateArg.getTime());
-        int month = dateTime.getMonthOfYear();
-        int year = dateTime.getYear();
-        int fiscalPeriod = (month == 6) ? 12 : (month + 6) % 12;
-        int fiscalYear = (fiscalPeriod <= 6) ? year + 1 : year;
-        String fiscalPeriodPrefix = (fiscalPeriod <= 9) ? KFSConstants.ZERO : KFSConstants.EMPTY_STRING;
-        String fiscalPeriodString = fiscalPeriodPrefix + String.valueOf(fiscalPeriod);
-        return findAccountingPeriod(Integer.valueOf(fiscalYear), fiscalPeriodString);
     }
 
     private BusinessObjectService buildMockBusinessObjectService() {
@@ -991,8 +963,6 @@ public class CreateAccountingDocumentServiceImplTest {
         private FiscalYearFunctionControlService fiscalYearFunctionControlService;
         private UniversityDateService universityDateService;
         private AccountingPeriodService accountingPeriodService;
-        private DateTimeService dateTimeService;
-        private ParameterEvaluatorService parameterEvaluatorService;
         
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
@@ -1002,8 +972,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
                 DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService,
-                AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService,
-                ParameterEvaluatorService parameterEvaluatorService) {
+                AccountingPeriodService accountingPeriodService) {
             this.personService = personService;
             this.downloadAttachmentService = downloadAttachmentService;
             this.disbursementVoucherTravelService = disbursementVoucherTravelService;
@@ -1011,8 +980,6 @@ public class CreateAccountingDocumentServiceImplTest {
             this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
             this.universityDateService = universityDateService;
             this.accountingPeriodService = accountingPeriodService;
-            this.dateTimeService = dateTimeService;
-            this.parameterEvaluatorService = parameterEvaluatorService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
             this.failToCreateDocument = false;
@@ -1050,10 +1017,6 @@ public class CreateAccountingDocumentServiceImplTest {
             } else if (accountingDocumentGenerator instanceof AuxiliaryVoucherDocumentGenerator) {
                 AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) accountingDocumentGenerator;
                 avGenerator.setAccountingPeriodService(accountingPeriodService);
-                avGenerator.setUniversityDateService(universityDateService);
-                avGenerator.setParameterEvaluatorService(parameterEvaluatorService);
-                avGenerator.setParameterService(parameterService);
-                avGenerator.setDateTimeService(dateTimeService);
             }
             return accountingDocumentGenerator;
         }
@@ -1141,13 +1104,6 @@ public class CreateAccountingDocumentServiceImplTest {
             return validationErrorMessage;
         }
         
-        @Override
-        public void setParameterService(ParameterService parameterService) {
-            super.setParameterService(parameterService);
-            AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) findDocumentGenerator(
-                    CuFPConstants.ACCOUNTING_DOCUMENT_GENERATOR_BEAN_PREFIX + CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE);
-            avGenerator.setParameterService(parameterService);
-        }
     }
     
     private static class TestAccountingXmlDocumentDownloadAttachmentService extends AccountingXmlDocumentDownloadAttachmentServiceImpl {

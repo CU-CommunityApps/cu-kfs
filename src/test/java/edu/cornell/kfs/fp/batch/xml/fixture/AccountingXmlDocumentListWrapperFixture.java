@@ -163,8 +163,6 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER,
                     AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
     MULTI_DOCUMENT_TYPES_TEST(
             "02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
