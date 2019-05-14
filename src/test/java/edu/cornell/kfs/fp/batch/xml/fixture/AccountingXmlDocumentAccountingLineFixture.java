@@ -3,6 +3,7 @@ package edu.cornell.kfs.fp.batch.xml.fixture;
 import static edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils.defaultToEmptyStringIfBlank;
 
 import org.kuali.kfs.fp.businessobject.BudgetAdjustmentAccountingLine;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
 
@@ -77,7 +78,10 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     ACCT_J801000_SA_SHAN_OBJ_6600_AMOUNT_10("CS", "J801000", "SHAN", "6600", null, null, null, null, 10.00),
     ACCT_J801000_OBJ_6600_AMOUNT_11("CS", "J801000", null, "6600", null, null, null, null, 11.00),
     ACCT_INTERNAL_OBJ_6600_AMOUNT_12("IT", "Internal", null, "6600", null, null, null, null, 12.00),
-    ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID("IT", "IT*1023715*97601*4020*109**AEH56*BAR", null, "6600", null, null, null, null, 13.00);
+    ACCT_1023715_OBJ_4020_AMOUNT_13_INVALID("IT", "IT*1023715*97601*4020*109**AEH56*BAR", null, "6600", null, null, null, null, 13.00),
+
+    ACCT_1433000_OBJ_4480_DEBIT_55("IT", "1433000", null, "4480", null, null, null, null, 55.00, 0),
+    ACCT_C200222_OBJ_5390_CREDIT_55("IT", "C200222", null, "5390", null, null, null, null, 0, 55.00);
 
     public final String chartCode;
     public final String accountNumber;
@@ -88,6 +92,8 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     public final String orgRefId;
     public final String lineDescription;
     public final KualiDecimal amount;
+    public final KualiDecimal debitAmount;
+    public final KualiDecimal creditAmount;
     public final BudgetAdjustmentAccountDataFixture budgetAdjustmentData;
 
     private AccountingXmlDocumentAccountingLineFixture(
@@ -101,19 +107,26 @@ public enum AccountingXmlDocumentAccountingLineFixture {
             double newAmount, BudgetAdjustmentAccountDataFixture newBudgetAdjustmentData) {
         this(baseFixture.chartCode, baseFixture.accountNumber, baseFixture.subAccountNumber,
                 baseFixture.objectCode, baseFixture.subObjectCode, baseFixture.projectCode, baseFixture.orgRefId,
-                baseFixture.lineDescription, newAmount, newBudgetAdjustmentData);
+                baseFixture.lineDescription, newAmount, 0, 0, newBudgetAdjustmentData);
     }
 
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
             String lineDescription, double amount) {
         this(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId,
-                lineDescription, amount, null);
+                lineDescription, amount, 0, 0, null);
     }
 
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
-            String lineDescription, double amount, BudgetAdjustmentAccountDataFixture budgetAdjustmentData) {
+            String lineDescription, double debitAmount, double creditAmount) {
+        this(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId,
+                lineDescription, 0, debitAmount, creditAmount, null);
+    }
+
+    private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
+            String objectCode, String subObjectCode, String projectCode, String orgRefId,
+            String lineDescription, double amount, double debitAmount, double creditAmount, BudgetAdjustmentAccountDataFixture budgetAdjustmentData) {
         this.chartCode = chartCode;
         this.accountNumber = accountNumber;
         this.subAccountNumber = defaultToEmptyStringIfBlank(subAccountNumber);
@@ -123,6 +136,8 @@ public enum AccountingXmlDocumentAccountingLineFixture {
         this.orgRefId = defaultToEmptyStringIfBlank(orgRefId);
         this.lineDescription = defaultToEmptyStringIfBlank(lineDescription);
         this.amount = new KualiDecimal(amount);
+        this.debitAmount = new KualiDecimal(debitAmount);
+        this.creditAmount = new KualiDecimal(creditAmount);
         this.budgetAdjustmentData = budgetAdjustmentData;
     }
 
@@ -136,7 +151,15 @@ public enum AccountingXmlDocumentAccountingLineFixture {
         accountingLine.setProjectCode(projectCode);
         accountingLine.setOrgRefId(orgRefId);
         accountingLine.setLineDescription(lineDescription);
-        accountingLine.setAmount(amount);
+        
+        if (!KualiDecimal.ZERO.equals(debitAmount)) {
+            accountingLine.setDebitAmount(debitAmount);
+        } else if (!KualiDecimal.ZERO.equals(creditAmount)) {
+            accountingLine.setCreditAmount(creditAmount);
+        } else {
+            accountingLine.setAmount(amount);
+        }
+        
         if (budgetAdjustmentData != null) {
             budgetAdjustmentData.configureAccountingLineXmlPojo(accountingLine);
         }
@@ -155,7 +178,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
             accountingLine.setProjectCode(projectCode);
             accountingLine.setOrganizationReferenceId(orgRefId);
             accountingLine.setFinancialDocumentLineDescription(lineDescription);
-            accountingLine.setAmount(amount);
+            setAccountingLineAmountAndDebitCreditCode(accountingLine);
             if (accountingLine instanceof BudgetAdjustmentAccountingLine) {
                 BudgetAdjustmentAccountingLine budgetAdjustmentLine = (BudgetAdjustmentAccountingLine) accountingLine;
                 budgetAdjustmentLine.setCurrentBudgetAdjustmentAmount(amount);
@@ -166,6 +189,18 @@ public enum AccountingXmlDocumentAccountingLineFixture {
             return accountingLine;
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private <T extends AccountingLine> void setAccountingLineAmountAndDebitCreditCode(T accountingLine) {
+        if (!KualiDecimal.ZERO.equals(debitAmount)) {
+            accountingLine.setAmount(debitAmount);
+            accountingLine.setDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
+        } else if (!KualiDecimal.ZERO.equals(creditAmount)) {
+            accountingLine.setAmount(creditAmount);
+            accountingLine.setDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
+        } else {
+            accountingLine.setAmount(amount);
         }
     }
 
