@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.batch.xml;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,6 +14,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.util.ObjectUtils;
+
+import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Document", namespace = StringUtils.EMPTY)
@@ -38,6 +41,18 @@ public class AccountingXmlDocumentEntry {
 
     @XmlElement(name = "PostingFiscalYear", namespace = StringUtils.EMPTY, required = false)
     protected Integer postingFiscalYear;
+
+    @XmlElement(name = "AccountingPeriod", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String accountingPeriod;
+
+    @XmlElement(name = "AuxiliaryVoucherType", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String auxiliaryVoucherType;
+
+    @XmlElement(name = "ReversalDate", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
+    protected Date reversalDate;
 
     @XmlElementWrapper(name = "SourceAccountingLineList", namespace = StringUtils.EMPTY, required = false)
     @XmlElement(name = "Accounting", namespace = StringUtils.EMPTY, required = false)
@@ -123,6 +138,30 @@ public class AccountingXmlDocumentEntry {
         this.postingFiscalYear = postingFiscalYear;
     }
 
+    public String getAccountingPeriod() {
+        return accountingPeriod;
+    }
+
+    public void setAccountingPeriod(String accountingPeriod) {
+        this.accountingPeriod = accountingPeriod;
+    }
+
+    public String getAuxiliaryVoucherType() {
+        return auxiliaryVoucherType;
+    }
+
+    public void setAuxiliaryVoucherType(String auxiliaryVoucherType) {
+        this.auxiliaryVoucherType = auxiliaryVoucherType;
+    }
+
+    public Date getReversalDate() {
+        return reversalDate;
+    }
+
+    public void setReversalDate(Date reversalDate) {
+        this.reversalDate = reversalDate;
+    }
+
     public List<AccountingXmlDocumentAccountingLine> getSourceAccountingLines() {
         return sourceAccountingLines;
     }
@@ -179,6 +218,7 @@ public class AccountingXmlDocumentEntry {
         this.disbursementVoucherDetail = disbursementVoucherDetail;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("AccountingXmlDocumentEntry:: ").append(System.lineSeparator());
         sb.append("Index: ").append((ObjectUtils.isNotNull(index) ? index.intValue() : "null")).append(System.lineSeparator());
@@ -187,6 +227,9 @@ public class AccountingXmlDocumentEntry {
         sb.append("Explanation: ").append(explanation).append(System.lineSeparator());
         sb.append("OrganizationDocumentNumber: ").append(organizationDocumentNumber).append(System.lineSeparator());
         sb.append("PostingFiscalYear: ").append((ObjectUtils.isNotNull(postingFiscalYear) ? postingFiscalYear.intValue() : "null")).append(System.lineSeparator());
+        sb.append("AccountingPeriod: ").append(accountingPeriod).append(System.lineSeparator());
+        sb.append("AuxiliaryVoucherType: ").append(auxiliaryVoucherType).append(System.lineSeparator());
+        sb.append("ReversalDate: ").append(reversalDate).append(System.lineSeparator());
         return sb.toString();
     }
     
