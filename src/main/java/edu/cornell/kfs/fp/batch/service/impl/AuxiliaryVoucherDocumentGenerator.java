@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
@@ -16,8 +15,8 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
+import org.kuali.rice.core.api.datetime.DateTimeService;
 import org.kuali.rice.core.api.util.type.KualiDecimal;
-import org.kuali.rice.kew.api.WorkflowDocument;
 
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
@@ -27,6 +26,7 @@ public class AuxiliaryVoucherDocumentGenerator
         extends AccountingDocumentGeneratorBase<AuxiliaryVoucherDocument> {
 
     protected AccountingPeriodService accountingPeriodService;
+    protected DateTimeService dateTimeService;
 
     public AuxiliaryVoucherDocumentGenerator() {
         super();
@@ -78,8 +78,7 @@ public class AuxiliaryVoucherDocumentGenerator
 
     @Override
     protected void populateCustomAccountingDocumentData(AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
-        DateTime documentCreateDate = getDocumentCreateDate(document);
-        Date documentCreateDateWithoutTime = new Date(documentCreateDate.getMillis());
+        Date sqlDocumentCreateDate = dateTimeService.getCurrentSqlDate();
         
         AccountingPeriod period = findEligibleAccountingPeriod(document, documentEntry);
         document.setAccountingPeriod(period);
@@ -88,22 +87,12 @@ public class AuxiliaryVoucherDocumentGenerator
         document.setTypeCode(avTypeCode);
         
         Optional<Date> reversalDate = validateAndGetReversalDateIfApplicable(
-                documentEntry, period, avTypeCode, documentCreateDateWithoutTime);
+                documentEntry, period, avTypeCode, sqlDocumentCreateDate);
         if (reversalDate.isPresent()) {
             document.setReversalDate(reversalDate.get());
         }
     }
 
-    protected DateTime getDocumentCreateDate(AuxiliaryVoucherDocument document) {
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return workflowDocument.getDateCreated();
-    }
-
-    /*
-     * NOTE: Much of this period-searching logic has been duplicated and modified from AuxiliaryVoucherForm.
-     * If KualiCo updates the related base code to be more micro-test-friendly, then we should update
-     * the code below accordingly.
-     */
     protected AccountingPeriod findEligibleAccountingPeriod(
             AuxiliaryVoucherDocument document, AccountingXmlDocumentEntry documentEntry) {
         String xmlPeriod = checkForNonBlankValue(
@@ -147,13 +136,13 @@ public class AuxiliaryVoucherDocumentGenerator
     }
 
     protected Date validateAndGetReversalDate(
-            AccountingXmlDocumentEntry documentEntry, AccountingPeriod period, String avTypeCode, Date documentCreateDateWithoutTime) {
+            AccountingXmlDocumentEntry documentEntry, AccountingPeriod period, String avTypeCode, Date sqlDocumentCreateDate) {
         java.util.Date xmlReversalDate = documentEntry.getReversalDate();
         if (xmlReversalDate != null) {
             return new java.sql.Date(xmlReversalDate.getTime());
         } else {
             return accountingPeriodService.getAccountingPeriodReversalDateByType(
-                    avTypeCode, period.getUniversityFiscalPeriodCode(), period.getUniversityFiscalYear(), documentCreateDateWithoutTime);
+                    avTypeCode, period.getUniversityFiscalPeriodCode(), period.getUniversityFiscalYear(), sqlDocumentCreateDate);
         }
     }
 
@@ -172,6 +161,10 @@ public class AuxiliaryVoucherDocumentGenerator
 
     public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
         this.accountingPeriodService = accountingPeriodService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
 }

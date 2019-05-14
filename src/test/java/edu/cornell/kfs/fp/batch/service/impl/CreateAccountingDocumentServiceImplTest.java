@@ -146,7 +146,7 @@ public class CreateAccountingDocumentServiceImplTest {
         createAccountingDocumentService = new TestCreateAccountingDocumentServiceImpl(
                 buildMockPersonService(), buildAccountingXmlDocumentDownloadAttachmentService(),
                 configurationService, buildMockFiscalYearFunctionControlService(), buildMockDisbursementVoucherTravelService(), buildMockUniversityDateService(),
-                buildAccountingPeriodService());
+                buildAccountingPeriodService(), dateTimeService);
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(
                 AccountingDocumentMapping.DI_DOCUMENT, AccountingDocumentMapping.IB_DOCUMENT, AccountingDocumentMapping.TF_DOCUMENT,
                 AccountingDocumentMapping.BA_DOCUMENT, AccountingDocumentMapping.SB_DOCUMENT, AccountingDocumentMapping.YEDI_DOCUMENT,
@@ -963,6 +963,7 @@ public class CreateAccountingDocumentServiceImplTest {
         private FiscalYearFunctionControlService fiscalYearFunctionControlService;
         private UniversityDateService universityDateService;
         private AccountingPeriodService accountingPeriodService;
+        private DateTimeService dateTimeService;
         
         private int nextDocumentNumber;
         private List<String> processingOrderedBaseFileNames;
@@ -972,7 +973,7 @@ public class CreateAccountingDocumentServiceImplTest {
                 PersonService personService, AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService, FiscalYearFunctionControlService fiscalYearFunctionControlService, 
                 DisbursementVoucherTravelService disbursementVoucherTravelService, UniversityDateService universityDateService,
-                AccountingPeriodService accountingPeriodService) {
+                AccountingPeriodService accountingPeriodService, DateTimeService dateTimeService) {
             this.personService = personService;
             this.downloadAttachmentService = downloadAttachmentService;
             this.disbursementVoucherTravelService = disbursementVoucherTravelService;
@@ -980,6 +981,7 @@ public class CreateAccountingDocumentServiceImplTest {
             this.fiscalYearFunctionControlService = fiscalYearFunctionControlService;
             this.universityDateService = universityDateService;
             this.accountingPeriodService = accountingPeriodService;
+            this.dateTimeService = dateTimeService;
             this.nextDocumentNumber = DOCUMENT_NUMBER_START;
             this.processingOrderedBaseFileNames = new ArrayList<>();
             this.failToCreateDocument = false;
@@ -1017,6 +1019,7 @@ public class CreateAccountingDocumentServiceImplTest {
             } else if (accountingDocumentGenerator instanceof AuxiliaryVoucherDocumentGenerator) {
                 AuxiliaryVoucherDocumentGenerator avGenerator = (AuxiliaryVoucherDocumentGenerator) accountingDocumentGenerator;
                 avGenerator.setAccountingPeriodService(accountingPeriodService);
+                avGenerator.setDateTimeService(dateTimeService);
             }
             return accountingDocumentGenerator;
         }

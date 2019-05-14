@@ -22,6 +22,7 @@ import org.kuali.kfs.sys.document.AccountingDocument;
 
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.batch.service.impl.AccountingDocumentGeneratorBase;
+import edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuBudgetAdjustmentDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuDistributionOfIncomeAndExpenseDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.CuYearEndBudgetAdjustmentDocumentGenerator;
@@ -29,7 +30,6 @@ import edu.cornell.kfs.fp.batch.service.impl.CuYearEndDistributionOfIncomeAndExp
 import edu.cornell.kfs.fp.batch.service.impl.CuYearEndTransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.InternalBillingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.ServiceBillingDocumentGenerator;
-import edu.cornell.kfs.fp.batch.service.impl.TestAuxiliaryVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.TestableCuDisbursementVoucherDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.impl.TransferOfFundsDocumentGenerator;
 import edu.cornell.kfs.fp.businessobject.TestBudgetAdjustmentSourceAccountingLine;
@@ -71,7 +71,7 @@ public enum AccountingDocumentMapping {
             CuYearEndTransferOfFundsDocumentGenerator::new),
     AV_DOCUMENT(CuFPTestConstants.AUXILIARY_VOUCHER_DOC_TYPE,
             AuxiliaryVoucherDocument.class, TestSourceAccountingLine.class, TestTargetAccountingLine.class,
-            TestAuxiliaryVoucherDocumentGenerator::new);
+            AuxiliaryVoucherDocumentGenerator::new);
 
     public static final String MAPPING_ENUM_CONST_SUFFIX = "_DOCUMENT";
 
