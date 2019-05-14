@@ -48,6 +48,7 @@ import edu.cornell.kfs.rass.batch.RassXmlProcessingResults;
 import edu.cornell.kfs.rass.batch.service.RassRoutingService;
 import edu.cornell.kfs.rass.batch.service.RassService;
 import edu.cornell.kfs.rass.batch.xml.RassXmlAgencyEntry;
+import edu.cornell.kfs.rass.batch.xml.RassXmlAwardEntry;
 import edu.cornell.kfs.rass.batch.xml.RassXmlDocumentWrapper;
 import edu.cornell.kfs.rass.batch.xml.RassXmlObject;
 import edu.cornell.kfs.rass.util.RassUtil;
@@ -64,6 +65,7 @@ public class RassServiceImpl implements RassService {
     protected DataDictionaryService dataDictionaryService;
     protected RouteHeaderService routeHeaderService;
     protected RassObjectTranslationDefinition<RassXmlAgencyEntry, Agency> agencyDefinition;
+    protected RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition;
     protected String rassFilePath;
     protected long documentStatusCheckDelayMillis;
     protected int maxStatusCheckAttempts;
@@ -114,8 +116,8 @@ public class RassServiceImpl implements RassService {
         
         RassBusinessObjectUpdateResultGrouping<Agency> agencyResults = updateBOs(
                 successfullyParsedFiles, agencyDefinition, documentTracker);
-        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = new RassBusinessObjectUpdateResultGrouping<>(
-                Proposal.class, Collections.emptyList(), RassObjectGroupingUpdateResultCode.SUCCESS);
+        RassBusinessObjectUpdateResultGrouping<Proposal> proposalResults = updateBOs(
+                        successfullyParsedFiles, proposalDefinition, documentTracker);
         RassBusinessObjectUpdateResultGrouping<Award> awardResults = new RassBusinessObjectUpdateResultGrouping<>(
                 Award.class, Collections.emptyList(), RassObjectGroupingUpdateResultCode.SUCCESS);
         LOG.debug("updateKFS, NOTE: Proposal and Award processing still needs to be implemented!");
@@ -358,7 +360,14 @@ public class RassServiceImpl implements RassService {
             Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Object propertyValue) {
         if (propertyValue instanceof String) {
             return cleanStringValue(businessObjectClass, propertyName, (String) propertyValue);
-        } else {
+        }
+        if (propertyValue instanceof Date) {
+        		return cleanDateValue(businessObjectClass, propertyName, (Date) propertyValue);
+        }
+        if (propertyValue instanceof Boolean) {
+    			return cleanBooleanValue(businessObjectClass, propertyName, (Boolean) propertyValue);
+        }
+        	else {
             return propertyValue;
         }
     }
@@ -373,6 +382,19 @@ public class RassServiceImpl implements RassService {
             cleanedValue = StringUtils.left(cleanedValue, maxLength);
         }
         return cleanedValue;
+    }
+    
+    protected java.sql.Date cleanDateValue(
+            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Date propertyValue) {
+        return new java.sql.Date(propertyValue.getTime());
+    }
+    
+    protected Boolean cleanBooleanValue(
+            Class<? extends PersistableBusinessObject> businessObjectClass, String propertyName, Boolean propertyValue) {
+    		if(ObjectUtils.isNull(propertyValue))
+    			return false;
+    		else 
+    			return propertyValue;
     }
 
     protected <T extends RassXmlObject, R extends PersistableBusinessObject> boolean businessObjectWasUpdatedByXml(
@@ -460,5 +482,9 @@ public class RassServiceImpl implements RassService {
             return objectsWithFailedUpdates.contains(classAndKeyIdentifier);
         }
     }
+
+	public void setProposalDefinition(RassObjectTranslationDefinition<RassXmlAwardEntry, Proposal> proposalDefinition) {
+		this.proposalDefinition = proposalDefinition;
+	}
 
 }
