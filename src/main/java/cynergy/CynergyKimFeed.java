@@ -182,9 +182,9 @@ public class CynergyKimFeed {
 	private static final String DEST_DB_USERNAME_PROP = "db-username1";
 	private static final String DEST_DB_PASSWORD_PROP = "db-password1";
 
-	private static final String SKIP_DELTA_FLAG_UPDATES_PROP = "skip-delta-flag-updates";
-	private static final String LOAD_LATEST_DELTA_ONLY_PROP = "load-latest-delta-only";
-	private static final String LOAD_DELTA_WITH_DATE_PROP = "load-delta-with-date";
+	public static final String SKIP_DELTA_FLAG_UPDATES_PROP = "skip-delta-flag-updates";
+	public static final String LOAD_LATEST_DELTA_ONLY_PROP = "load-latest-delta-only";
+	public static final String LOAD_DELTA_WITH_DATE_PROP = "load-delta-with-date";
 
 	private static final String LOGGING_CONFIG_FILE_ARG = "loggingConfigFile";
 

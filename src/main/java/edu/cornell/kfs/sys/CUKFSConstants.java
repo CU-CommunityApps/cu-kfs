@@ -144,6 +144,11 @@ public class CUKFSConstants {
         public static final String EXPENSE = "EX";
     }
 
+    public static class KimFeedConstants {
+        public static final String ALL_UNPROCESSED_DELTAS_MODE = "ALL_UNPROCESSED_DELTAS";
+        public static final String LATEST_DATE_ONLY_MODE = "LATEST_DATE_ONLY";
+    }
+
     public static final String ACCOUNT_EXPIRED_OVERRIDE_PRESENT_PARAMETER_SUFFIX = ".accountExpiredOverride.present";
     public static final String ACCOUNT_EXPIRED_OVERRIDE_PARAMETER_SUFFIX = ".accountExpiredOverride";
 

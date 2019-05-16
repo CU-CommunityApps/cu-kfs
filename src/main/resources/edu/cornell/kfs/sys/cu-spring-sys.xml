@@ -176,7 +176,7 @@
 	</bean>
 
 	<bean id="runKimFeedStep" class="edu.cornell.kfs.sys.batch.RunKimFeedStep" parent="step">
-		<property name="kimFeedProperties">
+		<property name="kimFeedBaseProperties">
 			<props>
 				<prop key="db-url0">${edw.datasource.url}</prop>
 				<prop key="db-username0">${edw.datasource.username}</prop>
@@ -184,9 +184,6 @@
 				<prop key="db-url1">${rice.datasource.url}</prop>
 				<prop key="db-username1">${rice.datasource.username}</prop>
 				<prop key="db-password1">${rice.datasource.password}</prop>
-				<prop key="skip-delta-flag-updates">${kim.feed.skip.delta.flag.updates}</prop>
-				<prop key="load-latest-delta-only">${kim.feed.load.latest.delta.only}</prop>
-				<prop key="load-delta-with-date">${kim.feed.load.delta.with.date}</prop>
 			</props>
 		</property>
 	</bean>
