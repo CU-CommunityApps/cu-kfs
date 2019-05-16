@@ -15,14 +15,14 @@
     </bean>
 
     <bean id="CustomerAddress-customerLine1StreetAddress" parent="CustomerAddress-customerLine1StreetAddress-parentBean"
-            p:maxLength="45"/>
+            p:maxLength="45">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="47"/>
         </property>
     </bean>
 
     <bean id="CustomerAddress-customerLine2StreetAddress" parent="CustomerAddress-customerLine2StreetAddress-parentBean"
-            p:maxLength="45"/>
+            p:maxLength="45">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="47"/>
         </property>
