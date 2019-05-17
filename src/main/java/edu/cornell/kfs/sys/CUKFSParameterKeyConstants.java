@@ -23,6 +23,9 @@ public class CUKFSParameterKeyConstants {
 
     public static final String NON_EDITABLE_CREDENTIAL_VALUES = "NON_EDITABLE_CREDENTIAL_VALUES";
 
+    public static final String KIM_FEED_SKIP_DELTA_FLAG_UPDATES = "KIM_FEED_SKIP_DELTA_FLAG_UPDATES";
+    public static final String KIM_FEED_DELTAS_TO_LOAD = "KIM_FEED_DELTAS_TO_LOAD";
+
     public static class FpParameterConstants {
     	public static final String FP_ALLOWED_BUDGET_BALANCE_TYPES = "ALLOWED_BUDGET_BALANCE_TYPES";
     	public static final String FP_ALLOW_MULTIPLE_SUBFUNDS = "ALLOW_MULTIPLE_SUB_FUNDS";
