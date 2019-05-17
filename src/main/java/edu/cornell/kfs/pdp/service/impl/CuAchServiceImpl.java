@@ -22,7 +22,7 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
     public PayeeACHAccount getAchInformationIncludingInactive(String idType, String payeeId, String achTransactionType) {
         LOG.debug("getAchInformationIncludingInactive() started");
 
-        Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, Object> fields = new HashMap<>();
 
         fields.put(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, idType);
         fields.put(PdpPropertyConstants.ACH_TRANSACTION_TYPE, achTransactionType);

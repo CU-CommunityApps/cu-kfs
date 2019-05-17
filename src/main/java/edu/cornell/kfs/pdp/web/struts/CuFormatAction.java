@@ -34,7 +34,8 @@ public class CuFormatAction extends FormatAction {
     }
     
     @Override
-    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         CuFormatForm formatForm = (CuFormatForm) form;
         
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
@@ -45,7 +46,8 @@ public class CuFormatAction extends FormatAction {
 
         // no data for format because another format process is already running
         if (formatSelection.getStartDate() != null) {
-            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING, 
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
+                    PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING, 
                     dateTimeService.toDateTimeString(formatSelection.getStartDate()));
         } else {
             List<CustomerProfile> customers = formatSelection.getCustomerList();
@@ -70,7 +72,8 @@ public class CuFormatAction extends FormatAction {
     }
    
     @Override
-    public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         CuFormatForm formatForm = (CuFormatForm) form;
     
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
@@ -80,7 +83,7 @@ public class CuFormatAction extends FormatAction {
         }
     
         // Figure out which ones they have selected
-        List selectedCustomers = new ArrayList();
+        List<CustomerProfile> selectedCustomers = new ArrayList<>();
     
         for (CustomerProfile customer : formatForm.getCustomers()) {
             if (customer.isSelectedForFormat()) {

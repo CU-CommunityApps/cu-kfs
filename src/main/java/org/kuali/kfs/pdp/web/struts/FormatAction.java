@@ -56,20 +56,16 @@ import java.util.Properties;
  * This class provides actions for the format process
  */
 public class FormatAction extends KualiAction {
+
     protected FormatService formatService;
 
-    /**
-     * Constructs a FormatAction.java.
-     */
     public FormatAction() {
         formatService = SpringContext.getBean(FormatService.class);
     }
 
-    /**
-     * @see org.kuali.kfs.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping, org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         PdpAuthorizationService authorizationService = SpringContext.getBean(PdpAuthorizationService.class);
 
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
@@ -92,7 +88,8 @@ public class FormatAction extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         FormatForm formatForm = (FormatForm) form;
 
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
@@ -103,17 +100,17 @@ public class FormatAction extends KualiAction {
 
         // no data for format because another format process is already running
         if (formatSelection.getStartDate() != null) {
-            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING, dateTimeService.toDateTimeString(formatSelection.getStartDate()));
-        }
-        else {
+            GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
+                    PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING,
+                    dateTimeService.toDateTimeString(formatSelection.getStartDate()));
+        } else {
             List<CustomerProfile> customers = formatSelection.getCustomerList();
 
             for (CustomerProfile element : customers) {
 
                 if (formatSelection.getCampus().equals(element.getDefaultPhysicalCampusProcessingCode())) {
                     element.setSelectedForFormat(Boolean.TRUE);
-                }
-                else {
+                } else {
                     element.setSelectedForFormat(Boolean.FALSE);
                 }
             }
@@ -137,7 +134,8 @@ public class FormatAction extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         FormatForm formatForm = (FormatForm) form;
 
         DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
@@ -147,7 +145,7 @@ public class FormatAction extends KualiAction {
         }
 
         // Figure out which ones they have selected
-        List selectedCustomers = new ArrayList();
+        List<CustomerProfile> selectedCustomers = new ArrayList<>();
 
         for (CustomerProfile customer : formatForm.getCustomers()) {
             if (customer.isSelectedForFormat()) {
@@ -158,7 +156,8 @@ public class FormatAction extends KualiAction {
         Date paymentDate = dateTimeService.convertToSqlDate(formatForm.getPaymentDate());
         Person kualiUser = GlobalVariables.getUserSession().getPerson();
 
-        FormatProcessSummary formatProcessSummary = formatService.startFormatProcess(kualiUser, formatForm.getCampus(), selectedCustomers, paymentDate, formatForm.getPaymentTypes());
+        FormatProcessSummary formatProcessSummary = formatService.startFormatProcess(kualiUser, formatForm.getCampus(),
+                selectedCustomers, paymentDate, formatForm.getPaymentTypes());
         if (formatProcessSummary.getProcessSummaryList().size() == 0) {
             KNSGlobalVariables.getMessageList().add(PdpKeyConstants.Format.ERROR_PDP_NO_MATCHING_PAYMENT_FOR_FORMAT);
             return mapping.findForward(PdpConstants.MAPPING_SELECTION);
@@ -179,7 +178,8 @@ public class FormatAction extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward continueFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward continueFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         FormatForm formatForm = (FormatForm) form;
         KualiInteger processId = formatForm.getFormatProcessSummary().getProcessId();
 
@@ -205,7 +205,8 @@ public class FormatAction extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward clear(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward clear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         FormatForm formatForm = (FormatForm) form;
 
         List<CustomerProfile> customers = formatForm.getCustomers();
@@ -228,7 +229,8 @@ public class FormatAction extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         FormatForm formatForm = (FormatForm) form;
 
         KualiInteger processId = formatForm.getFormatProcessSummary().getProcessId();
@@ -250,8 +252,8 @@ public class FormatAction extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward clearUnfinishedFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+    public ActionForward clearUnfinishedFormat(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         String processIdParam = request.getParameter(PdpParameterConstants.FormatProcess.PROCESS_ID_PARAM);
         Integer processId = Integer.parseInt(processIdParam);
 
@@ -260,7 +262,6 @@ public class FormatAction extends KualiAction {
         }
 
         return mapping.findForward(KRADConstants.MAPPING_PORTAL);
-
     }
 
     /**
@@ -270,7 +271,8 @@ public class FormatAction extends KualiAction {
      * @return the built url
      */
     private String buildUrl(String processId) {
-        String basePath = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY);
+        String basePath = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+                KFSConstants.APPLICATION_URL_KEY);
 
         Properties parameters = new Properties();
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.SEARCH_METHOD);
@@ -281,8 +283,6 @@ public class FormatAction extends KualiAction {
         parameters.put(KFSConstants.SUPPRESS_ACTIONS, "false");
         parameters.put(PdpPropertyConstants.ProcessSummary.PROCESS_SUMMARY_PROCESS_ID, processId);
 
-        String lookupUrl = UrlFactory.parameterizeUrl(basePath + "/" + KFSConstants.LOOKUP_ACTION, parameters);
-
-        return lookupUrl;
+        return UrlFactory.parameterizeUrl(basePath + "/" + KFSConstants.LOOKUP_ACTION, parameters);
     }
 }

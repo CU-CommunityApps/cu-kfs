@@ -118,8 +118,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         FileInputStream fileContents;
         try {
             fileContents = new FileInputStream(incomingFileName);
-        }
-        catch (FileNotFoundException e1) {
+        } catch (FileNotFoundException e1) {
             LOG.error("file to load not found " + incomingFileName, e1);
             throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
         }
@@ -129,14 +128,13 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         try {
             byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             paymentFile = (PaymentFileLoad) batchInputFileService.parse(paymentInputFileType, fileByteContent);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOG.error("error while getting file bytes:  " + e.getMessage(), e);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
-        }
-        catch (ParseException e1) {
+        } catch (ParseException e1) {
             LOG.error("Error parsing xml " + e1.getMessage());
-            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING, new String[] { e1.getMessage() });
+            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
+                    e1.getMessage());
             // Get customer object from unparsable file so error email can be sent.
             paymentFile = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
         }

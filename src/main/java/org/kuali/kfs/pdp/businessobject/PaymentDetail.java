@@ -48,6 +48,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class PaymentDetail extends PersistableBusinessObjectBase {
+
     private static final Logger LOG = LogManager.getLogger(PaymentDetail.class);
     private static KualiDecimal zero = KualiDecimal.ZERO;
 
@@ -69,8 +70,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     private KualiDecimal invTotOtherCreditAmount;
     private Boolean primaryCancelledPayment;
 
-    private List<PaymentAccountDetail> accountDetail = new ArrayList<PaymentAccountDetail>();
-    private List<PaymentNoteText> notes = new ArrayList<PaymentNoteText>();
+    private List<PaymentAccountDetail> accountDetail = new ArrayList<>();
+    private List<PaymentNoteText> notes = new ArrayList<>();
 
     private KualiInteger paymentGroupId;
     private PaymentGroup paymentGroup;
@@ -80,8 +81,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     public boolean isDetailAmountProvided() {
-        return (origInvoiceAmount != null) || (invTotDiscountAmount != null) || (invTotShipAmount != null)
-                || (invTotOtherDebitAmount != null) || (invTotOtherCreditAmount != null);
+        return origInvoiceAmount != null || invTotDiscountAmount != null || invTotShipAmount != null
+                || invTotOtherDebitAmount != null || invTotOtherCreditAmount != null;
     }
 
     public KualiDecimal getCalculatedPaymentAmount() {
@@ -107,10 +108,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      */
     public boolean isDisbursementActionAllowed() {
         if (paymentGroup.getDisbursementDate() == null) {
-            if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentGroup.getPaymentStatus().getCode())) {
-                return false;
-            }
-            return true;
+            return !PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentGroup.getPaymentStatus().getCode());
         }
 
         String daysStr = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentDetail.class,
@@ -145,7 +143,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      * @param pnts list of notes to add
      */
     public void addNotes(List<PaymentNoteText> pnts) {
-        pnts.stream().forEach(n -> {
+        pnts.forEach(n -> {
             LOG.debug("addNotes() Creating check stub text note: " + n.getCustomerNoteText());
             addNote(n);
         });
@@ -338,37 +336,22 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return requisitionNbr;
     }
 
-    /**
-     * @return the paymentGroup.
-     */
     public PaymentGroup getPaymentGroup() {
         return paymentGroup;
     }
 
-    /**
-     * @param string
-     */
     public void setCustPaymentDocNbr(String string) {
         custPaymentDocNbr = string;
     }
 
-    /**
-     * @param integer
-     */
     public void setId(KualiInteger integer) {
         id = integer;
     }
 
-    /**
-     * @param string
-     */
     public void setInvoiceNbr(String string) {
         invoiceNbr = string;
     }
 
-    /**
-     * @param decimal
-     */
     public void setInvTotDiscountAmount(KualiDecimal decimal) {
         invTotDiscountAmount = decimal;
     }
@@ -377,9 +360,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         invTotDiscountAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param decimal
-     */
     public void setInvTotOtherCreditAmount(KualiDecimal decimal) {
         invTotOtherCreditAmount = decimal;
     }
@@ -388,9 +368,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         invTotOtherCreditAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param decimal
-     */
     public void setInvTotOtherDebitAmount(KualiDecimal decimal) {
         invTotOtherDebitAmount = decimal;
     }
@@ -399,9 +376,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         invTotOtherDebitAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param decimal
-     */
     public void setInvTotShipAmount(KualiDecimal decimal) {
         invTotShipAmount = decimal;
     }
@@ -410,9 +384,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         invTotShipAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param decimal
-     */
     public void setNetPaymentAmount(KualiDecimal decimal) {
         netPaymentAmount = decimal;
     }
@@ -421,16 +392,10 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         netPaymentAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param string
-     */
     public void setOrganizationDocNbr(String string) {
         organizationDocNbr = string;
     }
 
-    /**
-     * @param decimal
-     */
     public void setOrigInvoiceAmount(KualiDecimal decimal) {
         origInvoiceAmount = decimal;
     }
@@ -439,93 +404,54 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         origInvoiceAmount = new KualiDecimal(decimal);
     }
 
-    /**
-     * @param string
-     */
     public void setPurchaseOrderNbr(String string) {
         purchaseOrderNbr = string;
     }
 
-    /**
-     * @param string
-     */
     public void setRequisitionNbr(String string) {
         requisitionNbr = string;
     }
 
-    /**
-     * @return the financialDocumentTypeCode.
-     */
     public String getFinancialDocumentTypeCode() {
         return financialDocumentTypeCode;
     }
 
-    /**
-     * @param financialDocumentTypeCode The financialDocumentTypeCode to set.
-     */
     public void setFinancialDocumentTypeCode(String financialDocumentTypeCode) {
         this.financialDocumentTypeCode = financialDocumentTypeCode;
     }
 
-    /**
-     * @return the primaryCancelledPayment.
-     */
     public Boolean getPrimaryCancelledPayment() {
         return primaryCancelledPayment;
     }
 
-    /**
-     * @param primaryCancelledPayment The primaryCancelledPayment to set.
-     */
     public void setPrimaryCancelledPayment(Boolean primaryCancelledPayment) {
         this.primaryCancelledPayment = primaryCancelledPayment;
     }
 
-    /**
-     * @param paymentGroup The paymentGroup to set.
-     */
     public void setPaymentGroup(PaymentGroup paymentGroup) {
         this.paymentGroup = paymentGroup;
     }
 
-    /**
-     * @return the paymentGroupId attribute.
-     */
     public KualiInteger getPaymentGroupId() {
         return paymentGroupId;
     }
 
-    /**
-     * @param paymentGroupId The paymentGroupId value to set.
-     */
     public void setPaymentGroupId(KualiInteger paymentGroupId) {
         this.paymentGroupId = paymentGroupId;
     }
 
-    /**
-     * @return Returns the financialSystemOriginCode attribute.
-     */
     public String getFinancialSystemOriginCode() {
         return financialSystemOriginCode;
     }
 
-    /**
-     * @param financialSystemOriginCode The financialSystemOriginCode to set.
-     */
     public void setFinancialSystemOriginCode(String financialSystemOriginCode) {
         this.financialSystemOriginCode = financialSystemOriginCode;
     }
 
-    /**
-     * @return the customerInstitutionNumber
-     */
     public String getCustomerInstitutionNumber() {
         return customerInstitutionNumber;
     }
 
-    /**
-     * @param customerInstitutionNumber the customerInstitutionNumber to set
-     */
     public void setCustomerInstitutionNumber(String customerInstitutionNumber) {
         this.customerInstitutionNumber = customerInstitutionNumber;
     }
@@ -554,7 +480,6 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      * @return the number of payments in the disbursement associated with this payment detail.
      */
     public int getNbrOfPaymentsInDisbursement() {
-
         int nbrOfPaymentsInDisbursement = 0;
         if (ObjectUtils.isNotNull((paymentGroup.getDisbursementNbr()))) {
             List<PaymentGroup> paymentGroupList = SpringContext.getBean(PaymentGroupService.class)
